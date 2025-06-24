@@ -36,7 +36,7 @@ const DesktopNavigation: React.FC = () => (
 
 
         {/* Footer Links */}
-        <div className="border-t mt-auto">
+        <div className="border-t h-30 mt-auto">
           <div className="flex gap-4 p-4">
             <Link to="/settings/privacy" className="text-xs text-primary hover:underline">Privacy Policy</Link>
             <Link to="/settings/terms" className="text-xs text-primary hover:underline">Terms of Service</Link>
