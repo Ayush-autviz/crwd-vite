@@ -39,7 +39,7 @@ const PaymentSection: React.FC<PaymentSectionProps> = ({ amount, setCheckout }) 
           onClick={() => setCheckout(true)}
           className="w-full h-12 bg-black hover:bg-black/90 rounded-lg flex items-center justify-center gap-3"
         >
-          <Image
+          <img
             src="/apple-logo.svg"
             alt="Apple Pay"
             width={18}

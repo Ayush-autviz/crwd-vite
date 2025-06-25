@@ -33,7 +33,7 @@ export function CrwdDropdown({ onSelect }: { onSelect?: (id: string) => void }) 
           {crwds.map(crwd => (
             <SelectItem key={crwd.id} value={crwd.id}>
               <div className="flex items-center gap-3">
-                <Image src={crwd.avatar} alt={crwd.name} width={25} height={25} className="rounded w-10 h-10" />
+                <img src={crwd.avatar} alt={crwd.name} width={25} height={25} className="rounded w-10 h-10" />
                 <div>
                   <div className="font-medium text-xs">{crwd.name}</div>
                   <div className="text-xs text-gray-400">{crwd.subtitle}</div>

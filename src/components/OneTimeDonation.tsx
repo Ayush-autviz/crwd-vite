@@ -88,7 +88,7 @@ export default function OneTimeDonation({
                     <div className="flex items-start justify-between">
                       <div className="flex gap-4">
                         <div className="h-16 w-16 rounded-full overflow-hidden flex items-start mt-1">
-                          <Image
+                          <img
                             src={org.imageUrl || "/redcross.png"}
                             alt={`${org.name} logo`}
                             width={48}

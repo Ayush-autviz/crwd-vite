@@ -98,7 +98,9 @@ export default function SettingsEmail() {
         <div className="max-w-2xl mx-auto p-6">
           <Card className="border-none shadow-none">
             <CardHeader>
-              <BackButton />
+              <div className="mb-6">
+                <BackButton variant="outlined" />
+              </div>
               <div className="flex items-center gap-3 mb-2">
                 <Mail className="h-6 w-6 text-primary" />
                 <CardTitle className="text-2xl">Change Email</CardTitle>

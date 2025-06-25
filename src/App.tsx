@@ -13,6 +13,7 @@ import Donation from './pages/Donation'
 import Notifications from './pages/Notifications'
 import Profile from './pages/Profile'
 import ProfileById from './pages/ProfileById'
+import ProfileStatistics from './pages/ProfileStatistics'
 import Settings from './pages/Settings'
 import SettingsEmail from './pages/settings/Email'
 import SettingsPassword from './pages/settings/Password'
@@ -63,6 +64,7 @@ function App() {
                 <Route path="/notifications" element={<Notifications />} />
                 <Route path="/profile" element={<Profile />} />
                 <Route path="/profile/:id" element={<ProfileById />} />
+                <Route path="/profile/:id/statistics" element={<ProfileStatistics />} />
                 <Route path="/settings" element={<Settings />} />
                 <Route path="/settings/email" element={<SettingsEmail />} />
                 <Route path="/settings/password" element={<SettingsPassword />} />

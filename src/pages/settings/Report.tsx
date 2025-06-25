@@ -66,7 +66,9 @@ export default function SettingsReport() {
         <div className="max-w-2xl mx-auto p-6">
           <Card className="border-none shadow-none">
             <CardContent className="p-0">
-              <BackButton />
+              <div className="mb-6">
+                <BackButton variant="outlined" />
+              </div>
               <div className="mb-8">
                 <h1 className="text-2xl font-bold mb-2">Report an Issue</h1>
                 <p className="text-gray-600">
