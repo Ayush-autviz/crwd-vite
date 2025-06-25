@@ -1,4 +1,4 @@
-"// "use client" - not needed in Vite"
+
 
 // import { useTheme } from "next-themes" - using manual theme detection for Vite
 import { Toaster as Sonner, ToasterProps } from "sonner"
