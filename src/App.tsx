@@ -25,6 +25,7 @@ import SettingsReport from './pages/settings/Report'
 import TransactionHistory from './pages/TransactionHistory'
 import Saved from './pages/Saved'
 import YourCrwds from './pages/YourCrwds'
+import ManageCrwd from './pages/ManageCrwd'
 import CreateCrwd from './pages/CreateCrwd'
 import CreatePost from './pages/CreatePost'
 import CreateCause from './pages/CreateCause'
@@ -74,6 +75,7 @@ function App() {
                 <Route path="/transaction-history" element={<TransactionHistory />} />
                 <Route path="/saved" element={<Saved />} />
                 <Route path="/your-crwds" element={<YourCrwds />} />
+                <Route path="/your-crwds/:id" element={<ManageCrwd />} />
                 <Route path="/create-crwd" element={<CreateCrwd />} />
                 <Route path="/create-post" element={<CreatePost />} />
                 <Route path="/create-cause" element={<CreateCause />} />

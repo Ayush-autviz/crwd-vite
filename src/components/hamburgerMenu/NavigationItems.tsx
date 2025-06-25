@@ -42,7 +42,7 @@ const NavigationItems: React.FC<NavigationItemsProps> = ({
   showNewPostButton = false,
 }) => {
   return (
-    <div className={cn("flex flex-col py-2", className)}>
+    <div className={cn("flex flex-col  py-2", className)}>
       {showCreateButton && (
         <Link
           to="/create-crwd"

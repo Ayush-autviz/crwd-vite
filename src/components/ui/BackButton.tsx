@@ -38,7 +38,7 @@ const BackButton: React.FC<BackButtonProps> = ({
     }
   };
 
-  const baseStyles = "inline-flex w-10 h-11 items-center w-fit rounded-full   gap-2 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 ";
+  const baseStyles = "inline-flex items-center gap-2 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 rounded-lg";
 
   const variantStyles = {
     default: "px-3 py-2 hover:bg-gray-100 text-gray-700 hover:text-gray-900",
