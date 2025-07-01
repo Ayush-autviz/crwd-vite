@@ -28,7 +28,7 @@ export default function ProfilePage() {
             <ProfileInterests interests={["Environment", "Food Insecurity", "Education", "Healthcare"]} />
 
             <div className="py-4">
-              <ProfileActivity posts={profileActivity} />
+              <ProfileActivity posts={profileActivity} showLoadMore={true} />
             </div>
           </div>
         </div>

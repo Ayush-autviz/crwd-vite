@@ -14,7 +14,11 @@ const SavedItem: React.FC<SavedItemProps> = ({ avatar, title, subtitle }) => (
       <span className="font-semibold text-sm text-gray-900 truncate">{title}</span>
       <span className="text-xs text-gray-500 truncate">{subtitle}</span>
     </div>
-    <Bookmark size={18} className="text-gray-400 flex-shrink-0" />
+    <Bookmark 
+      size={18} 
+      fill="currentColor" 
+      className="text-blue-500 flex-shrink-0 bookmark-icon hover:text-blue-600 transition-colors" 
+    />
   </div>
 );
 

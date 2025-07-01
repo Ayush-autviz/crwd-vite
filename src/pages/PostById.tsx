@@ -46,11 +46,11 @@ export default function PostById() {
         </div>
 
         {/* Spacer for sticky input */}
-        <div className="h-20" />
+        <div className="h-30" />
       </main>
 
       {/* Sticky Input Bar */}
-      <div className="fixed bottom-0 right-0 bg-white border-t px-4 py-3 flex items-center gap-2 w-full md:w-[calc(100%-288px)]">
+      <div className="fixed bottom-25 md:bottom-0 right-0 bg-white border-t px-4 py-3 flex items-center gap-2 w-full md:w-[calc(100%-288px)] ">
         <div className="flex items-center gap-2 flex-1 bg-gray-100 rounded-full px-4 py-2">
           <img src={post.avatarUrl} alt={post.username} className="w-5 h-5 rounded-full border" />
           <input

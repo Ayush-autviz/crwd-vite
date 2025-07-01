@@ -1,9 +1,9 @@
-import React from 'react'
+import React, { useState } from 'react'
 import SavedHeader from '@/components/saved/SavedHeader'
 import SavedList, { SavedData } from '@/components/saved/SavedList'
 import ProfileNavbar from '@/components/profile/ProfileNavbar';
 
-const savedItems: SavedData[] = [
+const initialSavedItems: SavedData[] = [
   {
     // avatar: 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/6b/Red_Cross_logo.svg/1200px-Red_Cross_logo.svg.png',
     avatar: '/redcross.png',
@@ -25,10 +25,16 @@ const savedItems: SavedData[] = [
 ];
 
 export default function SavedPage() {
+  const [savedItems, setSavedItems] = useState<SavedData[]>(initialSavedItems);
+
+  const handleRemoveItem = (index: number) => {
+    setSavedItems(prevItems => prevItems.filter((_, i) => i !== index));
+  };
+
   return (
     <div className="min-h-screen bg-white">
       <ProfileNavbar title="Saved"  />
-      <SavedList items={savedItems} />
+      <SavedList items={savedItems} onRemoveItem={handleRemoveItem} />
     </div>
   )
 }
