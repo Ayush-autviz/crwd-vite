@@ -21,8 +21,8 @@ const YourCrwdsPage = () => {
   return (
     <div className="h-screen bg-white flex flex-col">
       {/* Top Bar */}
-      <ProfileNavbar title="Your CRWDs" showMobileMenu={false} />
-      <div className="flex items-center h-12 md:hidden px-4 border-b bg-[#F6F7FB]">
+      <ProfileNavbar title="Your CRWDs"  />
+      {/* <div className="flex items-center h-12 md:hidden px-4 border-b bg-[#F6F7FB]">
         <button className="mr-2">
           <ArrowLeft className="w-5 h-5" />
         </button>
@@ -30,7 +30,7 @@ const YourCrwdsPage = () => {
           <img src="/logo.png" alt="logo" width={20} height={20} />
           <span className="font-medium text-sm">Your CRWDs</span>
         </div>
-      </div>
+      </div> */}
       {/* List */}
       <div className="flex-1 px-2 pt-4">
         {mockCrwds.map((crwd) => (

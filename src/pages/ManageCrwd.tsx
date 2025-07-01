@@ -9,11 +9,11 @@ import { Edit2, Check, X, Camera, Trash2, ChevronRight } from 'lucide-react';
 import ProfileNavbar from "@/components/profile/ProfileNavbar";
 import { toast } from 'sonner';
 import { Link } from "react-router-dom";
+import BackButton from "@/components/ui/BackButton";
 
 const mockCrwd = {
   name: "Feed The Hungry",
   username: "Feedthehungry",
-  location: "Las Cruces, NM",
   bio: "This is a bio about feed the hungry. they are foodies on a mission to solve world hunger, one meal at a time.",
   avatar: "https://randomuser.me/api/portraits/men/32.jpg"
 };
@@ -42,14 +42,12 @@ export default function ManageCrwd() {
   const [formData, setFormData] = useState({
     name: mockCrwd.name,
     username: mockCrwd.username,
-    location: mockCrwd.location,
     bio: mockCrwd.bio,
     avatarUrl: mockCrwd.avatar
   });
   const [tempData, setTempData] = useState({
     name: mockCrwd.name,
     username: mockCrwd.username,
-    location: mockCrwd.location,
     bio: mockCrwd.bio
   });
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -84,7 +82,6 @@ export default function ManageCrwd() {
     setTempData({
       name: formData.name,
       username: formData.username,
-      location: formData.location,
       bio: formData.bio
     });
   };
@@ -190,6 +187,11 @@ export default function ManageCrwd() {
       <ProfileNavbar title="Edit CRWD" titleClassName="text-2xl" />
       <div className="w-full">
         <div className="w-full max-w-full mx-auto bg-white overflow-hidden">
+          {/* Back Button */}
+          <div className="px-4 pt-4 mb-6">
+            <BackButton variant="outlined" />
+          </div>
+
           {/* Hidden file input */}
           <input
             ref={fileInputRef}
@@ -228,17 +230,13 @@ export default function ManageCrwd() {
           <div className="divide-y divide-gray-200">
             {renderField('name', 'Name', formData.name)}
             {renderField('username', 'Username', formData.username)}
-            {renderField('location', 'Location', formData.location)}
             {renderField('bio', 'Bio', formData.bio, true)}
           </div>
 
           {/* Currently Supporting Section */}
           <div className="p-4 bg-gray-50 border-t border-gray-200">
             <div className="flex items-center justify-between mb-3">
-              <h3 className="font-semibold text-gray-900">Currently Supporting</h3>
-              <Button variant="ghost" size="sm" className="text-blue-600 hover:text-blue-700">
-                <ChevronRight size={16} />
-              </Button>
+              <h3 className="font-semibold text-gray-900">Currently supporting</h3>
             </div>
             <div className="flex flex-wrap gap-2">
               {currentlySupporting.map((org, index) => (
@@ -256,9 +254,6 @@ export default function ManageCrwd() {
           <div className="p-4 border-t border-gray-200">
             <div className="flex items-center justify-between mb-3">
               <h3 className="font-semibold text-gray-900">Previously Supported</h3>
-              <Button variant="ghost" size="sm" className="text-blue-600 hover:text-blue-700">
-                <ChevronRight size={16} />
-              </Button>
             </div>
             <div className="flex flex-wrap gap-2">
               {previouslySupported.map((org, index) => (
@@ -289,14 +284,6 @@ export default function ManageCrwd() {
                 Delete CRWD
               </Button>
             </div>
-          </div>
-
-          {/* Settings Link */}
-          <div className="px-4 py-3 border-t border-gray-200 bg-gray-50">
-            <Link to="/settings" className="flex items-center text-gray-600 hover:text-gray-800">
-              <span className="text-sm">Advanced Settings</span>
-              <ChevronRight size={16} className="ml-1" />
-            </Link>
           </div>
         </div>
       </div>

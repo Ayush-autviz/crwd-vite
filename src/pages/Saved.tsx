@@ -1,6 +1,7 @@
 import React from 'react'
 import SavedHeader from '@/components/saved/SavedHeader'
 import SavedList, { SavedData } from '@/components/saved/SavedList'
+import ProfileNavbar from '@/components/profile/ProfileNavbar';
 
 const savedItems: SavedData[] = [
   {
@@ -26,7 +27,7 @@ const savedItems: SavedData[] = [
 export default function SavedPage() {
   return (
     <div className="min-h-screen bg-white">
-      <SavedHeader />
+      <ProfileNavbar title="Saved"  />
       <SavedList items={savedItems} />
     </div>
   )

@@ -331,7 +331,7 @@ export default function HomePage() {
 
         {/* Sidebar - Only visible on desktop */}
         <div className="hidden md:block md:col-span-4">
-          <Card className="">
+          {/* <Card className="">
             <CardContent className="">
               <h2 className="text-xl font-bold mb-4">Popular Categories</h2>
               <div className="overflow-x-auto pb-2">
@@ -354,9 +354,9 @@ export default function HomePage() {
                 </div>
               </div>
             </CardContent>
-          </Card>
+          </Card> */}
 
-          <Card className="mt-6">
+          <Card className="">
             <CardContent className="">
               <h2 className="text-xl font-bold mb-4">Start a CRWD</h2>
               <p className="text-muted-foreground mb-4">
