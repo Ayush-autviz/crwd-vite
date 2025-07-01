@@ -57,6 +57,19 @@ export const profileActivity =[
 
 export const popularPosts = [
 {
+  id: 14,
+  avatarUrl: "https://randomuser.me/api/portraits/women/28.jpg",
+  username: "sophiahope",
+  time: "3h",
+  org: "localfoodbank",
+  orgUrl: "/profile",
+  text: `Just finished organizing food packages for 50 families this weekend! Every donation counts and makes a real difference in our community. Thank you to all our amazing volunteers! 🙏✨`,
+  imageUrl: "https://images.unsplash.com/photo-1593113598332-cd288d649433?auto=format&fit=crop&w=600&q=80",
+  likes: 12,
+  comments: 0,
+  shares: 3,
+},
+{
   id: 5,
   avatarUrl: "https://randomuser.me/api/portraits/men/45.jpg",
   username: "johnnydoe",

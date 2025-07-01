@@ -68,7 +68,7 @@ export default function SearchPage() {
 
   return (
     <div className="min-h-screen bg-white">
-      <ProfileNavbar title="Search" />
+      <ProfileNavbar title="Search" showBackButton={false} />
 
       <div className="md:grid md:grid-cols-12 md:gap-4  ">
         {/* Main Content */}

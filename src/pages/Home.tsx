@@ -128,7 +128,7 @@ export default function HomePage() {
 
   return (
     <div className="pb-16 md:pb-0">
-      <ProfileNavbar title="Home" showMobileMenu={true} showDesktopMenu={true} />
+      <ProfileNavbar title="Home" showMobileMenu={true} showDesktopMenu={true} showBackButton={false} />
       <div className="md:grid md:grid-cols-12 md:gap-6 md:p-6">
         {/* Main Content - Takes full width on mobile, 8 columns on desktop */}
         <div className="md:col-span-8">

@@ -12,7 +12,7 @@ import ProfileStats from '../components/profile/ProfileStats';
 export default function ProfilePage() {
   return (
     <div className="pb-16 md:pb-0">
-      <ProfileNavbar title="Profile" />
+      <ProfileNavbar title="Profile" showBackButton={false} />
       <div className="md:grid md:grid-cols-12 md:gap-6 md:p-6">
         {/* Main Content */}
         <div className="md:col-span-8">

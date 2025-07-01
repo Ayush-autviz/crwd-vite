@@ -1,17 +1,20 @@
 import React from 'react'
 import { Button } from '../ui/button'
-import { Archive, Bell, Plus } from 'lucide-react'
+import { Archive, Bell, ChevronLeft, Plus } from 'lucide-react'
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar'
 import HamburgerMenu from '../hamburgerMenu/HamburgerMenu'
 import { cn } from '@/lib/utils'
 import { Link } from 'react-router-dom'
 
-export default function ProfileNavbar({ showMobileMenu = true, showDesktopMenu = true, title, titleClassName }: { showMobileMenu?: boolean, showDesktopMenu?: boolean, title?: string, titleClassName?: string }) {
+export default function ProfileNavbar({ showMobileMenu = true, showDesktopMenu = true, title, titleClassName, showBackButton = true }: { showMobileMenu?: boolean, showDesktopMenu?: boolean, title?: string, titleClassName?: string, showBackButton?: boolean }) {
   return (
     <>
       {
         showMobileMenu && (
           <header className="w-full flex items-center h-16 bg-gray-50 border-b sticky top-0 z-10 md:hidden">
+            {showBackButton && (
+              <ChevronLeft size={26} className=" absolute left-4 top-1/2 -translate-y-1/2 text-gray-700" />
+            )}
             {/* Centered Logo */}
             <div className="flex-grow flex justify-center">
               <Link to="/">

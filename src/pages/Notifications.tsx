@@ -5,7 +5,7 @@ import NotificationTabs from '../components/notificatons/NotificationTabs'
 export default function NotificationsPage() {
   return (
     <section className='bg-white w-full '>
-      <ProfileNavbar title="Notifications" />
+      <ProfileNavbar title="Notifications" showBackButton={false} />
       <NotificationTabs />
     </section>
   )
