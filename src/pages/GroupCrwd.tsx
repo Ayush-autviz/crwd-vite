@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import GroupCrwdHeader from '../components/groupcrwd/GroupCrwdHeader';
 import GroupCrwdSuggested from '../components/groupcrwd/GroupCrwdSuggested';
 import GroupCrwdUpdates from '../components/groupcrwd/GroupCrwdUpdates';
@@ -9,8 +9,17 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Toast } from '@/components/ui/toast';
 
 export default function GroupCrwdPage() {
+  const [hasJoined, setHasJoined] = useState(false);
+  const [showToast, setShowToast] = useState(false);
+
+  const handleJoin = () => {
+    setHasJoined(!hasJoined);
+    setShowToast(true);
+  };
+
   return (
     // <div>
     <>
@@ -20,11 +29,11 @@ export default function GroupCrwdPage() {
         <div className="lg:col-span-2 space-y-6">
 
           {/* <ProfileNavbar title='Group Crwd' /> */}
-          <GroupCrwdHeader />
+          <GroupCrwdHeader hasJoined={hasJoined} onJoin={handleJoin} />
           <GroupCrwdSuggested />
           <GroupCrwdUpdates />
           <GroupCrwdEvent />
-          <GroupCrwdBottomBar />
+          {!hasJoined && <GroupCrwdBottomBar onJoin={handleJoin} />}
         </div>
 
         <div className="lg:col-span-1 space-y-6 px-4 pb-35">
@@ -152,6 +161,12 @@ export default function GroupCrwdPage() {
           </Card>
         </div>
       </div>
+
+      <Toast 
+        show={showToast}
+        onHide={() => setShowToast(false)}
+        message={hasJoined ? "You have joined the group" : "You have left the group"}
+      />
     </>
   );
 }

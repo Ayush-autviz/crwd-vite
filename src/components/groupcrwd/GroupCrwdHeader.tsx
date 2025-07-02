@@ -1,11 +1,15 @@
 "use client"
 
 import React from 'react';
-import { Share2, Bookmark, UserPlus } from 'lucide-react';
+import { Share2, Bookmark, Check } from 'lucide-react';
 import ProfileInterests from '../profile/ProfileInterests';
 import { Button } from '../ui/button';
 import { useNavigate } from 'react-router-dom';
 
+interface GroupCrwdHeaderProps {
+  hasJoined: boolean;
+  onJoin: () => void;
+}
 
 const orgAvatars = [
   "adidas.jpg",
@@ -19,7 +23,7 @@ const orgAvatars = [
   "mclaren.jpg",
 ];
 
-const GroupCrwdHeader: React.FC = () => {
+const GroupCrwdHeader: React.FC<GroupCrwdHeaderProps> = ({ hasJoined, onJoin }) => {
   const navigate = useNavigate();
   return (
     <div className="bg-white  p-4 mx-2   mb-4 flex flex-col gap-4">
@@ -30,8 +34,17 @@ const GroupCrwdHeader: React.FC = () => {
         <Button variant='outline'>
           <Bookmark size={20} />
         </Button>
-        <Button className='cursor-pointer' onClick={() => navigate(`/donation`)} variant='default'>
-          Join
+        <Button 
+          className='cursor-pointer transition-colors' 
+          onClick={onJoin} 
+          variant={hasJoined ? 'outline' : 'default'}
+        >
+          {hasJoined ? (
+            <>
+              <Check size={16} className="mr-1" />
+              Joined
+            </>
+          ) : 'Join'}
         </Button>
       </div>
       {/* Top Row */}

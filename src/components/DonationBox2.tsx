@@ -128,7 +128,7 @@ const DonationBox2 = ({
           {/* Right column - CROWDS, Recents, and Suggested */}
           <div className="md:col-span-7">
             {/* CROWDS Section */}
-            <div className="bg-white p-4 rounded-xl shadow-sm border border-gray-100 mb-4">
+            {/* <div className="bg-white p-4 rounded-xl shadow-sm border border-gray-100 mb-4">
               <div className="flex items-center mb-3">
                 <h2 className="text-sm font-medium text-gray-800">
                   Select from your CRWDS
@@ -165,10 +165,10 @@ const DonationBox2 = ({
                   </button>
                 ))}
               </div>
-            </div>
+            </div> */}
 
             {/* Recents and Suggested Section - Scrollable as a whole */}
-            <div className="bg-blue-50 rounded-xl">
+            <div className="bg-blue-50 rounded-xl mt-4">
               <div className="bg-blue-100 rounded-xl border mb-4 overflow-hidden">
                 {/* Scrollable container for both sections */}
                 <div className="max-h-[350px] overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent">
