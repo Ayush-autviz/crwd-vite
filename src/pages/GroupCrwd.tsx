@@ -10,6 +10,7 @@ import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Toast } from '@/components/ui/toast';
+import { SharePost } from '@/components/ui/SharePost';
 
 export default function GroupCrwdPage() {
   const [hasJoined, setHasJoined] = useState(false);
@@ -24,7 +25,7 @@ export default function GroupCrwdPage() {
     // <div>
     <>
       <ProfileNavbar title='Group Crwd' />
-
+      {/* <SharePost url={window.location.href} title="Feed the hungry - CRWD" description="Join us in supporting families experiencing food insecurity in the greater Atlanta area." /> */}
       <div className="py-6 grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2 space-y-6">
 

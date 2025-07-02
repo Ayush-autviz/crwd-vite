@@ -1,10 +1,11 @@
 "use client"
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Share2, Bookmark, Check } from 'lucide-react';
 import ProfileInterests from '../profile/ProfileInterests';
 import { Button } from '../ui/button';
 import { useNavigate } from 'react-router-dom';
+import { SharePost } from '../ui/SharePost';
 
 interface GroupCrwdHeaderProps {
   hasJoined: boolean;
@@ -25,10 +26,11 @@ const orgAvatars = [
 
 const GroupCrwdHeader: React.FC<GroupCrwdHeaderProps> = ({ hasJoined, onJoin }) => {
   const navigate = useNavigate();
+  const [showShareModal, setShowShareModal] = useState(false);
   return (
     <div className="bg-white  p-4 mx-2   mb-4 flex flex-col gap-4">
       <div className="flex items-center gap-2 ml-auto">
-        <Button variant='outline'>
+        <Button variant='outline' onClick={() => setShowShareModal(true)}>
           <Share2 size={20} />
         </Button>
         <Button variant='outline'>
@@ -99,6 +101,15 @@ const GroupCrwdHeader: React.FC<GroupCrwdHeaderProps> = ({ hasJoined, onJoin }) 
       <div className="text-xs text-gray-500 mt-1">
         Currently supporting <span className="font-semibold">10 Non Profits</span>: Grocery Spot, Food for Thought, Meals on Wheels, American Red Cross, & Pizza Hut… <span onClick={() => navigate(`/members`)} className="text-blue-600 underline cursor-pointer">See All</span>
       </div>
+
+
+      <SharePost 
+        url={window.location.origin + `/groups/1`}
+        title={`Feed the hungry - CRWD`}
+        description="Join us in supporting families experiencing food insecurity in the greater Atlanta area."
+        isOpen={showShareModal}
+        onClose={() => setShowShareModal(false)}
+      />
       {/* Donate Button */}
       {/* <button className="w-full bg-blue-600 text-white rounded-md py-4 font-semibold text-base mt-2 shadow-lg hover:bg-blue-700 transition">Donate</button> */}
     </div>
