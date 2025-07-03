@@ -14,7 +14,7 @@ export default function ProfileNavbar({ showMobileMenu = true, showDesktopMenu =
         showMobileMenu && (
           <header className="w-full flex items-center h-16 bg-gray-50 border-b sticky top-0 z-10 md:hidden">
             {showBackButton && (
-              <ChevronLeft onClick={() => navigate(-1)} size={26} className=" absolute left-4 top-1/2 -translate-y-1/2 text-gray-700 cursor-pointer hover:bg-gray-100 rounded-full p-1" />
+              <ChevronLeft onClick={() => navigate(-1)} size={30} className=" absolute left-4 top-1/2 -translate-y-1/2 text-gray-700 cursor-pointer hover:bg-gray-100 rounded-full p-1" />
             )}
             {/* Centered Logo */}
             <div className="flex-grow flex justify-center">

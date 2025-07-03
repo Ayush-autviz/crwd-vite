@@ -188,9 +188,9 @@ export default function ManageCrwd() {
       <div className="w-full">
         <div className="w-full max-w-full mx-auto bg-white overflow-hidden">
           {/* Back Button */}
-          <div className="px-4 pt-4 mb-6">
+          {/* <div className="px-4 pt-4 mb-6">
             <BackButton variant="outlined" />
-          </div>
+          </div> */}
 
           {/* Hidden file input */}
           <input

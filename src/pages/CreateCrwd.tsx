@@ -36,9 +36,9 @@ export default function CreateCRWDPage() {
       
       <div className="px-4 pt-2 pb-48 lg:max-w-[600px] gap-6 w-full">
         {/* Back Button */}
-        <div className="mb-6">
+        {/* <div className="mb-6">
           <BackButton variant="outlined" />
-        </div>
+        </div> */}
 
         <div className="bg-white rounded-xl shadow-sm p-4 flex flex-col gap-4">
           <div className="flex items-center justify-between">

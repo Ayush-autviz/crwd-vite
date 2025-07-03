@@ -45,7 +45,7 @@ export default function ProfileActivityCard({ post, className, showDelete = fals
 
               <div className="flex-1 min-w-0">
                 <div className="flex items-center justify-between">
-                  <div>
+                  <div className=''>
                     <span className="font-medium text-sm">{post.username}</span>
                     <span className="text-xs text-muted-foreground ml-2">• {post.time}</span>
                   </div>
@@ -108,7 +108,7 @@ export default function ProfileActivityCard({ post, className, showDelete = fals
                   </div>
                 </div>
                 <Link to='/groupcrwd'>
-                  <div className="text-xs text-primary hover:underline">{post.org}</div>
+                  <div className="text-xs text-primary -mt-[2px] hover:underline">{post.org}</div>
                 </Link>
 
                 <div className="text-sm mt-2 mb-3 whitespace-pre-line leading-snug">

@@ -4,15 +4,26 @@ import PostDetailHeader from '@/components/post/PostDetailHeader';
 import { popularPosts, profileActivity } from '@/lib/profile/profileActivity';
 import ProfileActivityCard from '@/components/profile/ProfileActivityCard';
 import { X } from 'lucide-react';
+import ProfileNavbar from '@/components/profile/ProfileNavbar';
+import { Toast } from '@/components/ui/toast';
 
 export default function PostById() {
   const { id } = useParams();
   const [inputValue, setInputValue] = useState('');
+  const [showToast, setShowToast] = useState(false);
   const allPosts = [...popularPosts, ...profileActivity];
   const post = allPosts.find((post) => post.id === parseInt(id || '0'));
 
   const clearInput = () => {
     setInputValue('');
+  };
+
+  const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter' && inputValue.trim()) {
+      // Here you would typically make an API call to save the comment
+      setShowToast(true);
+      clearInput();
+    }
   };
 
   if (!post) {
@@ -31,7 +42,8 @@ export default function PostById() {
 
   return (
     <div className="bg-white min-h-screen flex flex-col relative pb-16">
-      <PostDetailHeader />
+      {/* <PostDetailHeader /> */}
+      <ProfileNavbar title="Post" />
       <main className="flex-1">
         <ProfileActivityCard post={post} className="rounded-none shadow-none border-b border-gray-200" />
 
@@ -89,6 +101,7 @@ export default function PostById() {
             type="text"
             value={inputValue}
             onChange={(e) => setInputValue(e.target.value)}
+            onKeyPress={handleKeyPress}
             placeholder="Join the conversation"
             className="bg-transparent outline-none flex-1 text-sm text-gray-700 placeholder-gray-400 pr-6"
           />
@@ -102,6 +115,12 @@ export default function PostById() {
           )}
         </div>
       </div>
+
+      <Toast 
+        show={showToast}
+        onHide={() => setShowToast(false)}
+        message="Comment posted successfully"
+      />
     </div>
   );
 }

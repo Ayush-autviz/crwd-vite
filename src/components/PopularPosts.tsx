@@ -41,7 +41,7 @@ export const PopularPosts = () => {
       </div>
       
       {/* Load More button at the end of all posts */}
-      <div className="flex justify-center mt-6">
+      <div className="flex justify-center mt-6 mb-8">
         <Button
           onClick={handleLoadMore}
           disabled={isLoading}

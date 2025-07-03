@@ -13,9 +13,9 @@ export default function SettingsPayments() {
 
       <div className="flex-1 w-full bg-white md:rounded-2xl mt-0 md:mt-8 overflow-hidden">
         <div className="max-w-2xl mx-auto p-6 space-y-6">
-          <div className="mb-6">
+          {/* <div className="mb-6">
             <BackButton variant="outlined" />
-          </div>
+          </div> */}
 
           <Card>
             <CardHeader className="flex flex-row items-center justify-between">

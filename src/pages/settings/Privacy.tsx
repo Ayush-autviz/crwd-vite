@@ -14,9 +14,9 @@ export default function SettingsPrivacy() {
         <div className="max-w-4xl mx-auto p-6">
           <Card className="border-none shadow-none">
             <CardContent className="p-0">
-              <div className="mb-6">
+              {/* <div className="mb-6">
                 <BackButton variant="outlined" />
-              </div>
+              </div> */}
               <div className="prose prose-blue max-w-none">
                 <h1 className="text-3xl font-bold mb-8">Privacy Policy</h1>
 
