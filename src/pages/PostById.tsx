@@ -1,16 +1,20 @@
-import React, { useState } from 'react';
-import { useParams } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import PostDetailHeader from '@/components/post/PostDetailHeader';
 import { popularPosts, profileActivity } from '@/lib/profile/profileActivity';
 import ProfileActivityCard from '@/components/profile/ProfileActivityCard';
 import { X } from 'lucide-react';
 import ProfileNavbar from '@/components/profile/ProfileNavbar';
 import { Toast } from '@/components/ui/toast';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
 
 export default function PostById() {
   const { id } = useParams();
   const [inputValue, setInputValue] = useState('');
   const [showToast, setShowToast] = useState(false);
+  const [showDialog, setShowDialog] = useState(false);
+  const navigate = useNavigate();
   const allPosts = [...popularPosts, ...profileActivity];
   const post = allPosts.find((post) => post.id === parseInt(id || '0'));
 
@@ -24,6 +28,34 @@ export default function PostById() {
       setShowToast(true);
       clearInput();
     }
+  };
+
+  useEffect(() => {
+    const handleBackButton = () => {
+      window.history.pushState(null, '', window.location.href);
+      window.onpopstate = function () {
+        if (inputValue.trim()) {
+          window.history.pushState(null, '', window.location.href);
+          setShowDialog(true);
+        } else {
+          navigate('/');
+        }
+      }
+    }
+
+    handleBackButton();
+    return () => {
+      window.onpopstate = null;
+    }
+  }, [inputValue, navigate]);
+
+  const handleConfirmLeave = () => {
+    setShowDialog(false);
+    navigate('/');
+  };
+
+  const handleCancelLeave = () => {
+    setShowDialog(false);
   };
 
   if (!post) {
@@ -42,7 +74,6 @@ export default function PostById() {
 
   return (
     <div className="bg-white min-h-screen flex flex-col relative pb-16">
-      {/* <PostDetailHeader /> */}
       <ProfileNavbar title="Post" />
       <main className="flex-1">
         <ProfileActivityCard post={post} className="rounded-none shadow-none border-b border-gray-200" />
@@ -50,21 +81,20 @@ export default function PostById() {
         {/* Status Row */}
         {post.comments !== 0 && (
           <>
-        <div className="flex items-center gap-2 px-4 py-3 border-b">
-          <img src={post.avatarUrl} alt={post.username} className="w-6 h-6 rounded-full border" />
-          <span className="text-sm text-gray-700 font-medium">@{post.username}</span>
-          <span className="text-sm text-gray-500">is going</span>
-        </div>
+            <div className="flex items-center gap-2 px-4 py-3 border-b">
+              <img src={post.avatarUrl} alt={post.username} className="w-6 h-6 rounded-full border" />
+              <span className="text-sm text-gray-700 font-medium">@{post.username}</span>
+              <span className="text-sm text-gray-500">is going</span>
+            </div>
 
-
-        <div className="flex items-start gap-3 px-4 py-4 border-b">
-          <img src={post.avatarUrl} alt={post.username} className="w-7 h-7 rounded-full border mt-1" />
-          <div>
-            <span className="font-semibold text-sm text-gray-800">@{post.username}</span>
-            <p className="text-sm text-gray-700 leading-snug mt-1">{post.text}</p>
-          </div>
-        </div>
-        </> 
+            <div className="flex items-start gap-3 px-4 py-4 border-b">
+              <img src={post.avatarUrl} alt={post.username} className="w-7 h-7 rounded-full border mt-1" />
+              <div>
+                <span className="font-semibold text-sm text-gray-800">@{post.username}</span>
+                <p className="text-sm text-gray-700 leading-snug mt-1">{post.text}</p>
+              </div>
+            </div>
+          </>
         )}
 
         {/* Comments Section */}
@@ -121,6 +151,25 @@ export default function PostById() {
         onHide={() => setShowToast(false)}
         message="Comment posted successfully"
       />
+
+      <Dialog open={showDialog} onOpenChange={setShowDialog}>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>Leave this page?</DialogTitle>
+            <DialogDescription>
+              You have typed a comment. If you leave now, your comment will be lost.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button variant="outline" onClick={handleCancelLeave}>
+              Stay on this page
+            </Button>
+            <Button variant="destructive" onClick={handleConfirmLeave}>
+              Leave anyway
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
