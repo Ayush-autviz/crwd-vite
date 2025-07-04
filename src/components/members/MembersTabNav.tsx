@@ -10,7 +10,7 @@ interface MembersTabNavProps {
 }
 
 const tabs = [
-  { label: 'Cause', value: 'Cause' },
+  { label: 'Causes', value: 'Causes' },
   { label: 'Members', value: 'Members' },
   { label: 'Collective Donations', value: 'Collective Donations' },
 ];
@@ -36,7 +36,7 @@ const MembersTabNav: React.FC<MembersTabNavProps> = ({
               ? 'bg-primary/20 text-primary'
               : 'bg-gray-100 text-gray-700'
           }`}>
-            {tab.value === 'Cause' ? causesCount :
+            {tab.value === 'Causes' ? causesCount :
              tab.value === 'Members' ? membersCount :
              donationsCount}
           </span>

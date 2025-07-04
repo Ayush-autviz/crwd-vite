@@ -11,14 +11,28 @@ import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Toast } from '@/components/ui/toast';
 import { SharePost } from '@/components/ui/SharePost';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 
 export default function GroupCrwdPage() {
   const [hasJoined, setHasJoined] = useState(false);
   const [showToast, setShowToast] = useState(false);
+  const [showConfirmDialog, setShowConfirmDialog] = useState(false);
 
   const handleJoin = () => {
-    setHasJoined(!hasJoined);
+    if (hasJoined) {
+      // If already joined, show confirmation dialog before unjoining
+      setShowConfirmDialog(true);
+    } else {
+      // If not joined, join directly
+      setHasJoined(true);
+      setShowToast(true);
+    }
+  };
+
+  const handleConfirmUnjoin = () => {
+    setHasJoined(false);
     setShowToast(true);
+    setShowConfirmDialog(false);
   };
 
   return (
@@ -168,6 +182,25 @@ export default function GroupCrwdPage() {
         onHide={() => setShowToast(false)}
         message={hasJoined ? "You have joined the group" : "You have left the group"}
       />
+
+      <Dialog open={showConfirmDialog} onOpenChange={setShowConfirmDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Leave Group</DialogTitle>
+            <DialogDescription>
+              Are you sure you want to leave this group? You can always join back later.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="flex gap-2 justify-end">
+            <Button variant="outline" onClick={() => setShowConfirmDialog(false)}>
+              Cancel
+            </Button>
+            <Button variant="destructive" onClick={handleConfirmUnjoin}>
+              Leave Group
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </>
   );
 }

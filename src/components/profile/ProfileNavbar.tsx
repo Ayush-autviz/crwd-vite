@@ -23,6 +23,7 @@ export default function ProfileNavbar({ showMobileMenu = true, showDesktopMenu =
               </Link>
             </div>
             {/* Archive icon and Hamburger Menu at right */}
+            {!showBackButton && (
             <div className="absolute right-4 top-1/2 -translate-y-1/2 flex items-center gap-2">
               <Link to="/create-post">
                 {/* <Archive strokeWidth={2} className="h-5 w-5 text-gray-700" /> */}
@@ -30,6 +31,7 @@ export default function ProfileNavbar({ showMobileMenu = true, showDesktopMenu =
               </Link>
               <HamburgerMenu />
             </div>
+            )}
           </header>
         )
       }
