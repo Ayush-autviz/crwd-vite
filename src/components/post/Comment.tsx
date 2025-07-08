@@ -58,9 +58,9 @@ export const Comment: React.FC<CommentProps> = ({
           <div className="bg-muted p-3 rounded-lg">
             <div className="flex items-center justify-between mb-1">
               <span className="font-medium text-sm">@{username}</span>
-              <Button variant="ghost" size="icon" className="h-8 w-8">
+              {/* <Button variant="ghost" size="icon" className="h-8 w-8">
                 <MoreHorizontal className="h-4 w-4" />
-              </Button>
+              </Button> */}
             </div>
             <p className="text-sm">{content}</p>
           </div>
