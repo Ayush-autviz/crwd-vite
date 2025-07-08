@@ -24,9 +24,12 @@ const trendingCauses = [
   'Animal Rescue',
 ];
 
-const ProfileSidebar: React.FC = () => (
+const ProfileSidebar: React.FC<{extraInfo?: boolean}> = ({extraInfo = true}) => (
+
   <aside className="space-y-6 w-full">
     {/* Achievements */}
+    {extraInfo && (
+      <>
     <Card>
       <CardContent className="">
         <h2 className="text-xl font-bold mb-4">Achievements</h2>
@@ -68,6 +71,9 @@ const ProfileSidebar: React.FC = () => (
         </Link>
       </CardContent>
     </Card>
+
+    </>
+    )}
 
     {/* Trending Causes */}
     <Card>

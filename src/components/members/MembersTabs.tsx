@@ -69,19 +69,19 @@ const MembersTabs: React.FC = () => {
           donationsCount={34}
         />
         <div className=" py-2 mt-2">
-          {activeTab === 'Cause' && (
+          {activeTab === 'Causes' && (
             // <div className="text-center text-muted-foreground mt-5 px-4">Cause details go here (1 Cause)</div>
-            <div className="px-4 mt-8 md:px-0 md:mt-1">
+            <div className="px-2 mt-2 md:px-0 md:mt-1">
             {/* <h2 className="text-lg font-semibold mb-4">Suggested causes</h2> */}
-            <div className="relative mb-4 mt-1 px-4">
+            <div className="relative mb-4 mt-1 px-2">
               <input
                 type="text"
                 value={search}
                 onChange={e => setSearch(e.target.value)}
                 placeholder="Search members..."
-                className="w-full p-2 pl-12 rounded-lg bg-[#F4F4F8] text-foreground"
+                className="w-full py-2 pl-12 rounded-lg bg-[#F4F4F8] text-foreground "
               />
-              <Search className="absolute left-10 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Search className="absolute left-8 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             </div>
             <div className="space-y-3">
               {suggestedCauses.map((cause, index) => (
@@ -168,12 +168,12 @@ const MembersTabs: React.FC = () => {
                   membersCount={members.length}
                   donationsCount={34}
                 />
-                {activeTab === 'Cause' && (
+                {activeTab === 'Causes' && (
                   // <div className="text-center text-muted-foreground mt-10">Cause details go here (1 Cause)</div>
 
                   <div className="px-4 mt-8 md:px-0 md:mt-1">
                     {/* <h2 className="text-lg font-semibold mb-4">Suggested causes</h2> */}
-                    <div className="relative mb-4 mt-1 px-4">
+                    {/* <div className="relative mb-4 mt-1 px-4">
                       <input
                         type="text"
                         value={search}
@@ -182,7 +182,7 @@ const MembersTabs: React.FC = () => {
                         className="w-full p-2 pl-12 rounded-lg bg-[#F4F4F8] text-foreground"
                       />
                       <Search className="absolute left-10 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                    </div>
+                    </div> */}
                     <div className="space-y-3">
                       {suggestedCauses.map((cause, index) => (
                         <Link to="/cause" key={index} className="block">

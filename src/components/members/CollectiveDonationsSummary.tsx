@@ -14,9 +14,9 @@ const CollectiveDonationsSummary: React.FC<CollectiveDonationsSummaryProps> = ({
       <input
         type="text"
         placeholder="Search"
-        className="w-full p-2 pl-12 rounded-lg bg-[#F4F4F8] text-foreground"
+        className="w-full mt-2 p-2 pl-12 rounded-lg bg-[#F4F4F8] text-foreground"
       />
-      <Search className="absolute left-10 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+      <Search className="absolute mt-1 left-10 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
     </div>
     <div className="text-xs font-semibold text-gray-700 mb-3 px-8 py-4">Impact Metrics</div>
     <div className="divide-y divide-gray-200 border-t border-gray-200">

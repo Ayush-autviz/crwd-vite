@@ -40,6 +40,7 @@ import PostById from './pages/PostById'
 import Menu from './pages/Menu'
 import MobileMenu from './pages/MobileMenu'
 import DonationTest from './pages/DonationTest'
+import UserProfile from './pages/UserProfile'
 
 function App() {
   return (
@@ -91,6 +92,7 @@ function App() {
                 <Route path="/menu" element={<Menu />} />
                 <Route path="/mobile-menu" element={<MobileMenu />} />
                 <Route path="/donation-test" element={<DonationTest />} />
+                <Route path="/user-profile" element={<UserProfile />} />
               </Routes>
             </Layout>
           } />

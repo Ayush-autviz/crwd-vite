@@ -10,9 +10,10 @@ interface ProfileActivityProps {
   posts: PostDetail[];
   showLabel?: boolean;
   showLoadMore?: boolean;
+  imageUrl?: string;
 }
 
-const ProfileActivity: React.FC<ProfileActivityProps> = ({ posts, showLabel, showLoadMore = false }) => {
+const ProfileActivity: React.FC<ProfileActivityProps> = ({ posts, showLabel, showLoadMore = false, imageUrl }) => {
   const [allPosts, setAllPosts] = useState<PostDetail[]>(posts);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -34,7 +35,7 @@ const ProfileActivity: React.FC<ProfileActivityProps> = ({ posts, showLabel, sho
       <div className="space-y-4">
         {allPosts.length > 0 && allPosts.map((post, idx) => (
           // <Link to={`/posts/${post.id}`}>
-          <ProfileActivityCard key={post.id} post={post} />
+          <ProfileActivityCard imageUrl={imageUrl} key={post.id} post={post} />
           // </Link>
         ))}
       </div>

@@ -5,9 +5,10 @@ import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Edit2, Check, X, Camera, Trash2, ChevronRight } from 'lucide-react';
+import { Edit2, Check, X, Camera, Trash2, ChevronRight, Plus, Minus } from 'lucide-react';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import ProfileNavbar from "@/components/profile/ProfileNavbar";
-import { toast } from 'sonner';
+import { Toast } from "@/components/ui/toast";
 import { Link } from "react-router-dom";
 import BackButton from "@/components/ui/BackButton";
 
@@ -39,6 +40,10 @@ export default function ManageCrwd() {
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
   const [editingField, setEditingField] = useState<string | null>(null);
+  const [currentModal, setCurrentModal] = useState<'current' | 'previous' | null>(null);
+  const [currentlySupportingList, setCurrentlySupportingList] = useState(currentlySupporting);
+  const [previouslySupportedList, setPreviouslySupportedList] = useState(previouslySupported);
+  const [toastState, setToastState] = useState({ show: false, message: '' });
   const [formData, setFormData] = useState({
     name: mockCrwd.name,
     username: mockCrwd.username,
@@ -51,6 +56,11 @@ export default function ManageCrwd() {
     bio: mockCrwd.bio
   });
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const showToast = (message: string) => {
+    setToastState({ show: true, message });
+    setTimeout(() => setToastState({ show: false, message: '' }), 1500);
+  };
 
   const handleEdit = (field: string) => {
     setEditingField(field);
@@ -73,7 +83,7 @@ export default function ManageCrwd() {
     setEditingField(null);
 
     // Show success message
-    toast.success('CRWD updated successfully!');
+    showToast('CRWD updated successfully!');
     console.log('Saving CRWD data:', { ...formData, [field]: value });
   };
 
@@ -93,10 +103,24 @@ export default function ManageCrwd() {
       reader.onload = (e) => {
         const newAvatarUrl = e.target?.result as string;
         setFormData(prev => ({ ...prev, avatarUrl: newAvatarUrl }));
-        toast.success('CRWD picture updated!');
+        showToast('CRWD picture updated!');
       };
       reader.readAsDataURL(file);
     }
+  };
+
+  const handleRemoveFromCurrently = (org: typeof currentlySupporting[0]) => {
+    setCurrentlySupportingList(prev => prev.filter(item => item.name !== org.name));
+    setPreviouslySupportedList(prev => [...prev, org]);
+    setCurrentModal(null);
+    showToast(`Removed ${org.name} from currently supporting`);
+  };
+
+  const handleAddToCurrent = (org: typeof previouslySupported[0]) => {
+    setPreviouslySupportedList(prev => prev.filter(item => item.name !== org.name));
+    setCurrentlySupportingList(prev => [...prev, org]);
+    setCurrentModal(null);
+    showToast(`Added ${org.name} to currently supporting`);
   };
 
   const renderField = (field: string, label: string, value: string, isTextarea = false) => {
@@ -184,6 +208,11 @@ export default function ManageCrwd() {
 
   return (
     <div className="w-full flex flex-col items-center justify-start space-y-6 min-h-screen">
+      <Toast 
+        show={toastState.show}
+        message={toastState.message}
+        onHide={() => setToastState({ show: false, message: '' })}
+      />
       <ProfileNavbar title="Edit CRWD" titleClassName="text-2xl" />
       <div className="w-full">
         <div className="w-full max-w-full mx-auto bg-white overflow-hidden">
@@ -237,9 +266,15 @@ export default function ManageCrwd() {
           <div className="p-4 bg-gray-50 border-t border-gray-200">
             <div className="flex items-center justify-between mb-3">
               <h3 className="font-semibold text-gray-900">Currently supporting</h3>
+              <div
+                onClick={() => setCurrentModal('current')}
+                // className="text-blue-600 border-blue-200 hover:bg-blue-50"
+              >
+                <ChevronRight size={16} />
+              </div>
             </div>
             <div className="flex flex-wrap gap-2">
-              {currentlySupporting.map((org, index) => (
+              {currentlySupportingList.map((org, index) => (
                 <div key={index} className="flex items-center bg-white rounded-full p-1 pr-3 shadow-sm">
                   <Avatar className="h-6 w-6 mr-2">
                     <AvatarImage src={org.avatar} alt={org.name} />
@@ -254,9 +289,15 @@ export default function ManageCrwd() {
           <div className="p-4 border-t border-gray-200">
             <div className="flex items-center justify-between mb-3">
               <h3 className="font-semibold text-gray-900">Previously Supported</h3>
+              <div
+                onClick={() => setCurrentModal('previous')}
+                // className="text-blue-600 border-blue-200 hover:bg-blue-50"
+              >
+                <ChevronRight size={16} />
+              </div>
             </div>
             <div className="flex flex-wrap gap-2">
-              {previouslySupported.map((org, index) => (
+              {previouslySupportedList.map((org, index) => (
                 <div key={index} className="flex items-center bg-gray-100 rounded-full p-1 pr-3">
                   <Avatar className="h-6 w-6 mr-2">
                     <AvatarImage src={org.avatar} alt={org.name} />
@@ -266,6 +307,63 @@ export default function ManageCrwd() {
               ))}
             </div>
           </div>
+
+          {/* Modals */}
+          <Dialog open={currentModal === 'current'} onOpenChange={() => setCurrentModal(null)}>
+            <DialogContent className="sm:max-w-[425px]">
+              <DialogHeader>
+                <DialogTitle>Manage Currently Supporting</DialogTitle>
+              </DialogHeader>
+              <div className="grid gap-3 py-4">
+                {currentlySupportingList.map((org, index) => (
+                  <div key={index} className="flex items-center justify-between p-2 bg-white rounded-lg border">
+                    <div className="flex items-center">
+                      <Avatar className="h-8 w-8 mr-3">
+                        <AvatarImage src={org.avatar} alt={org.name} />
+                      </Avatar>
+                      <span className="font-medium text-gray-900">{org.name}</span>
+                    </div>
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      onClick={() => handleRemoveFromCurrently(org)}
+                      className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                    >
+                      Remove
+                    </Button>
+                  </div>
+                ))}
+              </div>
+            </DialogContent>
+          </Dialog>
+
+          <Dialog open={currentModal === 'previous'} onOpenChange={() => setCurrentModal(null)}>
+            <DialogContent className="sm:max-w-[425px]">
+              <DialogHeader>
+                <DialogTitle>Manage Previously Supported</DialogTitle>
+              </DialogHeader>
+              <div className="grid gap-3 py-4">
+                {previouslySupportedList.map((org, index) => (
+                  <div key={index} className="flex items-center justify-between p-2 bg-white rounded-lg border">
+                    <div className="flex items-center">
+                      <Avatar className="h-8 w-8 mr-3">
+                        <AvatarImage src={org.avatar} alt={org.name} />
+                      </Avatar>
+                      <span className="font-medium text-gray-900">{org.name}</span>
+                    </div>
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      onClick={() => handleAddToCurrent(org)}
+                      className="text-green-600 hover:text-green-700 hover:bg-green-50"
+                    >
+                      Add
+                    </Button>
+                  </div>
+                ))}
+              </div>
+            </DialogContent>
+          </Dialog>
 
           {/* Action Buttons */}
           <div className="p-4 border-t border-gray-200 bg-white">

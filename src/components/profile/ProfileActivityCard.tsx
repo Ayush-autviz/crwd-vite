@@ -7,15 +7,15 @@ import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar'
 import { EllipsisIcon, Trash2, Flag } from 'lucide-react'
 import type { PostDetail } from '@/lib/types'
 import { cn } from '@/lib/utils'
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { IoArrowRedoOutline } from "react-icons/io5";
 import { SharePost } from '../ui/SharePost'
 
-export default function ProfileActivityCard({ post, className, showDelete = false }: { post: PostDetail, showDelete?: boolean, className?: string }) {
+export default function ProfileActivityCard({ post, className, showDelete = false, imageUrl }: { post: PostDetail, showDelete?: boolean, className?: string, imageUrl?: string }) {
   const [showMenu, setShowMenu] = useState(false);
   const [showShareModal, setShowShareModal] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
-
+  const navigate = useNavigate();
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
@@ -36,12 +36,15 @@ export default function ProfileActivityCard({ post, className, showDelete = fals
     <>
       <Card key={post.id} className={cn("overflow-hidden border-0 shadow-sm lg:max-w-[600px] ", className)}>
         <CardContent className="">
-          <Link to={`/posts/${post.id}`} className='w-full'>
+          {/* <Link to={`/posts/${post.id}`} className='w-full'> */}
             <div className="flex gap-3">
+              <div onClick={() => navigate(`/user-profile`, {state: {imageUrl: post.avatarUrl, name: post.username}})} className='cursor-pointer'>
               <Avatar className="h-10 w-10 flex-shrink-0">
-                <AvatarImage src={post.avatarUrl} alt={post.username} />
+                <AvatarImage src={imageUrl ?? post.avatarUrl} alt={post.username} />
                 <AvatarFallback>{post.username.charAt(0)}</AvatarFallback>
               </Avatar>
+              </div>
+          <Link to={`/posts/${post.id}`} className='w-full'>
 
               <div className="flex-1 min-w-0">
                 <div className="flex items-center justify-between">
@@ -143,8 +146,9 @@ export default function ProfileActivityCard({ post, className, showDelete = fals
                   </button>
                 </div>
               </div>
+              </Link>
             </div>
-          </Link>
+          {/* </Link> */}
         </CardContent>
       </Card>
 
