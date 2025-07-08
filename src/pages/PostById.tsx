@@ -8,6 +8,108 @@ import ProfileNavbar from '@/components/profile/ProfileNavbar';
 import { Toast } from '@/components/ui/toast';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import { Comment, CommentData } from '@/components/post/Comment';
+
+// Default comments for specific posts
+const defaultComments: Record<number, CommentData[]> = {
+  // Post about food bank volunteering
+  2: [
+    {
+      id: 1,
+      username: "volunteer_123",
+      avatarUrl: "/view.png",
+      content: "This is so inspiring! I'd love to join next time. When do you usually volunteer?",
+      timestamp: new Date(Date.now() - 3600000), // 1 hour ago
+      likes: 5,
+      replies: [
+        {
+          id: 2,
+          username: "mynameismya",
+          avatarUrl: "/view.png",
+          content: "We're there every Saturday morning from 9 AM! Would love to have you join us 😊",
+          timestamp: new Date(Date.now() - 1800000), // 30 minutes ago
+          likes: 2,
+          replies: []
+        }
+      ]
+    }
+  ],
+  // Post about animal shelter
+  4: [
+    {
+      id: 3,
+      username: "pet_lover",
+      avatarUrl: "/view.png",
+      content: "Those puppies are absolutely adorable! 😍 Are they all available for adoption?",
+      timestamp: new Date(Date.now() - 86400000), // 1 day ago
+      likes: 8,
+      replies: [
+        {
+          id: 4,
+          username: "mynameismya",
+          avatarUrl: "/view.png",
+          content: "Yes, they are! The shelter is open daily from 10 AM to 4 PM for visits.",
+          timestamp: new Date(Date.now() - 82800000), // 23 hours ago
+          likes: 3,
+          replies: []
+        }
+      ]
+    },
+    {
+      id: 5,
+      username: "dog_trainer",
+      avatarUrl: "/view.png",
+      content: "I'd be happy to offer a free training session for anyone who adopts! Just DM me.",
+      timestamp: new Date(Date.now() - 43200000), // 12 hours ago
+      likes: 15,
+      replies: []
+    }
+  ],
+  // Post about clean water distribution
+  6: [
+    {
+      id: 6,
+      username: "water_activist",
+      avatarUrl: "/view.png",
+      content: "This is amazing work! How can others get involved in future distributions?",
+      timestamp: new Date(Date.now() - 259200000), // 3 days ago
+      likes: 12,
+      replies: [
+        {
+          id: 7,
+          username: "sarahsmiles",
+          avatarUrl: "/view.png",
+          content: "We're always looking for volunteers! Check our website for upcoming events or DM me for more info.",
+          timestamp: new Date(Date.now() - 172800000), // 2 days ago
+          likes: 6,
+          replies: []
+        }
+      ]
+    }
+  ],
+  // Post about tree planting
+  7: [
+    {
+      id: 8,
+      username: "eco_warrior",
+      avatarUrl: "/view.png",
+      content: "This is exactly what our city needs! Which areas did you focus on?",
+      timestamp: new Date(Date.now() - 432000000), // 5 days ago
+      likes: 9,
+      replies: [
+        {
+          id: 9,
+          username: "mikegreen",
+          avatarUrl: "/view.png",
+          content: "We focused on the downtown area and local schools. Planning more locations for next month!",
+          timestamp: new Date(Date.now() - 345600000), // 4 days ago
+          likes: 4,
+          replies: []
+        }
+      ]
+    }
+  ]
+};
 
 export default function PostById() {
   const { id } = useParams();
@@ -17,16 +119,90 @@ export default function PostById() {
   const navigate = useNavigate();
   const allPosts = [...popularPosts, ...profileActivity];
   const post = allPosts.find((post) => post.id === parseInt(id || '0'));
+  
+  // Initialize comments based on post ID
+  const [comments, setComments] = useState<CommentData[]>(
+    defaultComments[parseInt(id || '0')] || []
+  );
 
-  const clearInput = () => {
-    setInputValue('');
+  const handleAddComment = (content: string) => {
+    if (content.trim()) {
+      const newComment: CommentData = {
+        id: Date.now(),
+        username: "current_user", // In a real app, this would come from auth context
+        avatarUrl: "/view.png", // In a real app, this would come from auth context
+        content: content,
+        timestamp: new Date(),
+        likes: 0,
+        replies: []
+      };
+      setComments(prevComments => [newComment, ...prevComments]);
+      setShowToast(true);
+      setInputValue('');
+    }
+  };
+
+  const handleReply = (commentId: number, content: string) => {
+    const newReply: CommentData = {
+      id: Date.now(),
+      username: "current_user", // In a real app, this would come from auth context
+      avatarUrl: "/view.png", // In a real app, this would come from auth context
+      content: content,
+      timestamp: new Date(),
+      likes: 0,
+      replies: []
+    };
+
+    setComments(prevComments => {
+      const addReplyToComment = (comments: CommentData[]): CommentData[] => {
+        return comments.map(comment => {
+          if (comment.id === commentId) {
+            return {
+              ...comment,
+              replies: [...comment.replies, newReply]
+            };
+          }
+          if (comment.replies.length > 0) {
+            return {
+              ...comment,
+              replies: addReplyToComment(comment.replies)
+            };
+          }
+          return comment;
+        });
+      };
+
+      return addReplyToComment(prevComments);
+    });
+  };
+
+  const handleLike = (commentId: number) => {
+    setComments(prevComments => {
+      const updateCommentLikes = (comments: CommentData[]): CommentData[] => {
+        return comments.map(comment => {
+          if (comment.id === commentId) {
+            return {
+              ...comment,
+              likes: comment.likes + 1
+            };
+          }
+          if (comment.replies.length > 0) {
+            return {
+              ...comment,
+              replies: updateCommentLikes(comment.replies)
+            };
+          }
+          return comment;
+        });
+      };
+
+      return updateCommentLikes(prevComments);
+    });
   };
 
   const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter' && inputValue.trim()) {
-      // Here you would typically make an API call to save the comment
-      setShowToast(true);
-      clearInput();
+      handleAddComment(inputValue);
     }
   };
 
@@ -78,28 +254,9 @@ export default function PostById() {
       <main className="flex-1">
         <ProfileActivityCard post={post} className="rounded-none shadow-none border-b border-gray-200" />
 
-        {/* Status Row */}
-        {post.comments !== 0 && (
-          <>
-            <div className="flex items-center gap-2 px-4 py-3 border-b">
-              <img src={post.avatarUrl} alt={post.username} className="w-6 h-6 rounded-full border" />
-              <span className="text-sm text-gray-700 font-medium">@{post.username}</span>
-              <span className="text-sm text-gray-500">is going</span>
-            </div>
-
-            <div className="flex items-start gap-3 px-4 py-4 border-b">
-              <img src={post.avatarUrl} alt={post.username} className="w-7 h-7 rounded-full border mt-1" />
-              <div>
-                <span className="font-semibold text-sm text-gray-800">@{post.username}</span>
-                <p className="text-sm text-gray-700 leading-snug mt-1">{post.text}</p>
-              </div>
-            </div>
-          </>
-        )}
-
         {/* Comments Section */}
         <div className="px-4 py-6">
-          {post.comments === 0 ? (
+          {comments.length === 0 ? (
             <div className="text-center py-8 px-4">
               <div className="bg-gray-50 rounded-lg p-6 border border-gray-100">
                 <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -112,9 +269,16 @@ export default function PostById() {
               </div>
             </div>
           ) : (
-            <div className="space-y-4">
-              {/* Sample comments would go here */}
-              <p className="text-sm text-gray-600 font-medium">{post.comments} comment{post.comments !== 1 ? 's' : ''}</p>
+            <div className="space-y-6">
+              <p className="text-sm text-gray-600 font-medium">{comments.length} comment{comments.length !== 1 ? 's' : ''}</p>
+              {comments.map((comment) => (
+                <Comment
+                  key={comment.id}
+                  {...comment}
+                  onReply={handleReply}
+                  onLike={handleLike}
+                />
+              ))}
             </div>
           )}
         </div>
@@ -126,7 +290,7 @@ export default function PostById() {
       {/* Sticky Input Bar */}
       <div className="fixed bottom-25 md:bottom-0 right-0 bg-white border-t px-4 py-3 flex items-center gap-2 w-full md:w-[calc(100%-288px)] ">
         <div className="flex items-center gap-2 flex-1 bg-gray-100 rounded-full px-4 py-2 relative">
-          <img src={post.avatarUrl} alt={post.username} className="w-5 h-5 rounded-full border" />
+          <img src="/view.png" alt="current user" className="w-5 h-5 rounded-full border" />
           <input
             type="text"
             value={inputValue}
@@ -137,7 +301,7 @@ export default function PostById() {
           />
           {inputValue && (
             <button
-              onClick={clearInput}
+              onClick={() => setInputValue('')}
               className="absolute right-3 p-1 hover:bg-gray-200 rounded-full transition-colors"
             >
               <X className="w-4 h-4 text-gray-500" />

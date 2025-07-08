@@ -23,7 +23,7 @@ export const profileActivity =[
           text: `Had a great time volunteering at the food bank today! So many smiles and so much hope.`,
           imageUrl: "https://images.unsplash.com/photo-1464983953574-0892a716854b?auto=format&fit=crop&w=600&q=80",
           likes: 5,
-          comments: 1,
+          comments: 0,
           shares: 0,
         },
         {
@@ -35,7 +35,7 @@ export const profileActivity =[
           orgUrl: "/profile",
           text: `Excited to join the Green Earth clean-up event this weekend! Let's make a difference together. 🌱`,
           likes: 8,
-          comments: 2,
+          comments: 0,
           shares: 1,
         },
         {
@@ -48,7 +48,7 @@ export const profileActivity =[
           text: `Met some adorable pups at the shelter. Please consider adopting or fostering if you can! 🐶❤️`,
           imageUrl: "https://images.unsplash.com/photo-1518717758536-85ae29035b6d?auto=format&fit=crop&w=600&q=80",
           likes: 12,
-          comments: 3,
+          comments: 0,
           shares: 4,
         },
       
@@ -79,7 +79,7 @@ export const popularPosts = [
   text: `Just wrapped up an amazing youth leadership workshop! So proud of everyone who participated.`,
   imageUrl: "https://images.unsplash.com/photo-1500534314209-a25ddb2bd429?auto=format&fit=crop&w=600&q=80",
   likes: 15,
-  comments: 4,
+  comments: 0,
   shares: 2,
 },
 {
@@ -92,7 +92,7 @@ export const popularPosts = [
   text: `We distributed clean water kits to over 100 families this week. Thank you to all our volunteers! 💧`,
   imageUrl: "https://images.unsplash.com/photo-1465101046530-73398c7f28ca?auto=format&fit=crop&w=600&q=80",
   likes: 22,
-  comments: 5,
+  comments: 0,
   shares: 6,
 },
 {
@@ -105,7 +105,7 @@ export const popularPosts = [
   text: `Planted 200 trees this weekend! Let's keep making our city greener. 🌳`,
   imageUrl: "https://images.unsplash.com/photo-1465101046530-73398c7f28ca?auto=format&fit=crop&w=600&q=80",
   likes: 30,
-  comments: 7,
+  comments: 0,
   shares: 10,
 },
 {
@@ -118,7 +118,7 @@ export const popularPosts = [
   text: `Hosted a book drive for local schools. Thank you to everyone who donated books! 📚`,
   imageUrl: "https://images.unsplash.com/photo-1515378791036-0648a3ef77b2?auto=format&fit=crop&w=600&q=80",
   likes: 18,
-  comments: 2,
+  comments: 0,
   shares: 3,
 }]
 
@@ -134,7 +134,7 @@ export const morePostsToLoad = [
   text: `Helped serve meals at the homeless shelter yesterday. Every small act of kindness makes a difference! 🤝`,
   imageUrl: "https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?auto=format&fit=crop&w=600&q=80",
   likes: 25,
-  comments: 6,
+  comments: 0,
   shares: 8,
 },
 {
@@ -147,7 +147,7 @@ export const morePostsToLoad = [
   text: `Participated in the charity walk for cancer research. Together we can find a cure! 💜`,
   imageUrl: "https://images.unsplash.com/photo-1559027615-cd4628902d4a?auto=format&fit=crop&w=600&q=80",
   likes: 35,
-  comments: 8,
+  comments: 0,
   shares: 12,
 },
 {
@@ -159,7 +159,7 @@ export const morePostsToLoad = [
   orgUrl: "/profile",
   text: `Spent the afternoon reading to seniors at the care home. Their stories are truly inspiring! 👴👵`,
   likes: 20,
-  comments: 4,
+  comments: 0,
   shares: 5,
 },
 {
@@ -172,6 +172,6 @@ export const morePostsToLoad = [
   text: `Organized a toy drive for underprivileged children. The joy on their faces was priceless! 🧸`,
   imageUrl: "https://images.unsplash.com/photo-1513475382585-d06e58bcb0e0?auto=format&fit=crop&w=600&q=80",
   likes: 42,
-  comments: 10,
+  comments: 0,
   shares: 15,
 }]
