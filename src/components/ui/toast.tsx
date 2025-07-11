@@ -30,8 +30,8 @@ export const Toast: React.FC<ToastProps> = ({
     <div
       className={cn(
         "fixed bottom-20 left-1/2 transform -translate-x-1/2 z-50",
-        "bg-black/90 text-white px-4 py-2 rounded-full",
-        "text-sm font-medium shadow-lg",
+        "bg-black/90 text-white px-4 py-2 rounded-full ",
+        "text-sm font-medium shadow-lg text-center",
         "transition-all duration-300",
         show ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10 pointer-events-none",
         className

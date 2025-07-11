@@ -5,12 +5,28 @@ import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Edit2, Check, X, Camera, Trash2, ChevronRight, Plus, Minus } from 'lucide-react';
+import { Edit2, Check, X, Camera, Trash2, ChevronRight, Plus, Minus, Search } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import ProfileNavbar from "@/components/profile/ProfileNavbar";
 import { Toast } from "@/components/ui/toast";
 import { Link } from "react-router-dom";
 import BackButton from "@/components/ui/BackButton";
+
+// Add type for Cause
+type Cause = {
+  name: string;
+  avatar: string;
+};
+
+// Add available causes data
+const allAvailableCauses: Cause[] = [
+  { name: "Save the Children", avatar: "https://randomuser.me/api/portraits/men/29.jpg" },
+  { name: "UNICEF", avatar: "https://randomuser.me/api/portraits/women/30.jpg" },
+  { name: "World Food Program", avatar: "https://randomuser.me/api/portraits/men/31.jpg" },
+  { name: "Doctors Without Borders", avatar: "https://randomuser.me/api/portraits/women/32.jpg" },
+  { name: "Habitat for Humanity", avatar: "https://randomuser.me/api/portraits/men/33.jpg" },
+  { name: "Ocean Cleanup", avatar: "https://randomuser.me/api/portraits/women/34.jpg" }
+];
 
 const mockCrwd = {
   name: "Feed The Hungry",
@@ -56,6 +72,23 @@ export default function ManageCrwd() {
     bio: mockCrwd.bio
   });
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [showAddCauses, setShowAddCauses] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+
+  // Filter available causes
+  const filteredCauses = allAvailableCauses.filter(cause => 
+    cause.name.toLowerCase().includes(searchQuery.toLowerCase()) &&
+    !currentlySupportingList.some(item => item.name === cause.name) &&
+    !previouslySupportedList.some(item => item.name === cause.name)
+  );
+
+  const handleAddNewCause = (cause: Cause) => {
+    if (!currentlySupportingList.some(item => item.name === cause.name)) {
+      setCurrentlySupportingList(prev => [...prev, cause]);
+      showToast(`Added ${cause.name} to currently supporting`);
+    }
+    setShowAddCauses(false);
+  };
 
   const showToast = (message: string) => {
     setToastState({ show: true, message });
@@ -206,6 +239,103 @@ export default function ManageCrwd() {
     );
   };
 
+  const renderCauseSection = (title: string, causes: Cause[], isPrevious = false) => {
+    return (
+      <div className="bg-gray-50 rounded-lg p-4 mb-6">
+        <div className="flex justify-between items-center mb-4">
+          <h3 className="text-gray-900 font-semibold">{title}</h3>
+          <div className="flex items-center gap-2">
+            {!isPrevious && (
+              <div
+   
+                onClick={() => setShowAddCauses(true)}
+                className="h-8 w-8 p-0 justify-center items-center flex"
+              >
+                <Plus size={16} />
+              </div>
+            )}
+            <div
+              
+            
+              onClick={() => setCurrentModal(isPrevious ? 'previous' : 'current')}
+              className="h-8 w-8 p-0 justify-center items-center flex"
+            >
+              <ChevronRight size={16} />
+            </div>
+          </div>
+        </div>
+        <div className="flex flex-wrap gap-2">
+          {causes.map((cause, index) => (
+            <div
+              key={index}
+              className={`flex items-center gap-2 px-3 py-1 rounded-full ${
+                isPrevious ? 'bg-gray-100' : 'bg-white'
+              } shadow-sm`}
+            >
+              <Avatar className="h-6 w-6">
+                <AvatarImage src={cause.avatar} alt={cause.name} />
+              </Avatar>
+              <span className={`text-sm ${isPrevious ? 'text-gray-600' : 'text-gray-900'}`}>
+                {cause.name}
+              </span>
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  };
+
+  // Add new modal for adding causes
+  const renderAddCausesModal = () => {
+    return (
+      <Dialog open={showAddCauses} onOpenChange={setShowAddCauses}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Add New Causes</DialogTitle>
+          </DialogHeader>
+          <div className="relative">
+            <div className="flex items-center border rounded-md px-3 py-2 mb-4">
+              <Search className="w-5 h-5 text-gray-400 mr-2" />
+              <Input
+                type="text"
+                placeholder="Search causes..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="border-0 p-0 focus-visible:ring-0 shadow-none"
+              />
+            </div>
+            <div className="space-y-4 max-h-[400px] overflow-y-auto">
+              {filteredCauses.map((cause, index) => (
+                <div
+                  key={index}
+                  className="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
+                >
+                  <div className="flex items-center gap-3">
+                    <Avatar className="h-10 w-10">
+                      <AvatarImage src={cause.avatar} alt={cause.name} />
+                    </Avatar>
+                    <span className="font-medium text-gray-900">{cause.name}</span>
+                  </div>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => handleAddNewCause(cause)}
+                    className="bg-green-50 text-green-600 hover:bg-green-100 hover:text-green-700"
+                  >
+                    Add
+                  </Button>
+                </div>
+              ))}
+              {filteredCauses.length === 0 && (
+                <p className="text-center text-gray-500 py-4">No causes found</p>
+              )}
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+    );
+  };
+
   return (
     <div className="w-full flex flex-col items-center justify-start space-y-6 min-h-screen">
       <Toast 
@@ -263,50 +393,10 @@ export default function ManageCrwd() {
           </div>
 
           {/* Currently Supporting Section */}
-          <div className="p-4 bg-gray-50 border-t border-gray-200">
-            <div className="flex items-center justify-between mb-3">
-              <h3 className="font-semibold text-gray-900">Currently supporting</h3>
-              <div
-                onClick={() => setCurrentModal('current')}
-                // className="text-blue-600 border-blue-200 hover:bg-blue-50"
-              >
-                <ChevronRight size={16} />
-              </div>
-            </div>
-            <div className="flex flex-wrap gap-2">
-              {currentlySupportingList.map((org, index) => (
-                <div key={index} className="flex items-center bg-white rounded-full p-1 pr-3 shadow-sm">
-                  <Avatar className="h-6 w-6 mr-2">
-                    <AvatarImage src={org.avatar} alt={org.name} />
-                  </Avatar>
-                  <span className="text-sm text-gray-700">{org.name}</span>
-                </div>
-              ))}
-            </div>
-          </div>
+          {renderCauseSection('Currently supporting', currentlySupportingList)}
 
           {/* Previously Supported Section */}
-          <div className="p-4 border-t border-gray-200">
-            <div className="flex items-center justify-between mb-3">
-              <h3 className="font-semibold text-gray-900">Previously Supported</h3>
-              <div
-                onClick={() => setCurrentModal('previous')}
-                // className="text-blue-600 border-blue-200 hover:bg-blue-50"
-              >
-                <ChevronRight size={16} />
-              </div>
-            </div>
-            <div className="flex flex-wrap gap-2">
-              {previouslySupportedList.map((org, index) => (
-                <div key={index} className="flex items-center bg-gray-100 rounded-full p-1 pr-3">
-                  <Avatar className="h-6 w-6 mr-2">
-                    <AvatarImage src={org.avatar} alt={org.name} />
-                  </Avatar>
-                  <span className="text-sm text-gray-600">{org.name}</span>
-                </div>
-              ))}
-            </div>
-          </div>
+          {renderCauseSection('Previously Supported', previouslySupportedList, true)}
 
           {/* Modals */}
           <Dialog open={currentModal === 'current'} onOpenChange={() => setCurrentModal(null)}>
@@ -385,6 +475,7 @@ export default function ManageCrwd() {
           </div>
         </div>
       </div>
+      {renderAddCausesModal()}
       <div className="h-30 md:hidden"/>
     </div>
   );
