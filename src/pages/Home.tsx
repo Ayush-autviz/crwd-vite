@@ -136,7 +136,7 @@ export default function HomePage() {
           <div className="p-4 md:p-0 md:mb-6">
             <Input
               type="search"
-              placeholder="Search"
+              placeholder="Texas flooding"
               className="bg-muted/50 border-none"
               //@ts-ignore
               prefix={

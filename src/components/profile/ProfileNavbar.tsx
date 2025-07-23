@@ -52,13 +52,15 @@ export default function ProfileNavbar({ showMobileMenu = true, showDesktopMenu =
       </Button> */}
             <div className="relative">
               <div className="absolute z-10 top-0 right-0 w-3 h-3 bg-primary rounded-full"></div>
-              <Avatar>
-                <AvatarImage
-                  src="/placeholder.svg?height=40&width=40"
-                  alt="User"
-                />
-                <AvatarFallback>JD</AvatarFallback>
-              </Avatar>
+              <Link to="/profile">
+                <Avatar className="cursor-pointer hover:opacity-80 transition-opacity">
+                  <AvatarImage
+                    src="/placeholder.svg?height=40&width=40"
+                    alt="User"
+                  />
+                  <AvatarFallback>JD</AvatarFallback>
+                </Avatar>
+              </Link>
             </div>
           </div>
         </header>

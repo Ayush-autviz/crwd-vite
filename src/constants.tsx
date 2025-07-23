@@ -68,5 +68,59 @@ export const RECENTS: Organization[] = [
 ];
 
 export const SUGGESTED: Organization[] = [
-  { id: "201", name: "World Aid", imageUrl: "" },
+  { 
+    id: "201", 
+    name: "World Aid", 
+    imageUrl: "",
+    description: "Providing humanitarian assistance and disaster relief worldwide"
+  },
+  { 
+    id: "202", 
+    name: "Doctors Without Borders", 
+    imageUrl: "",
+    description: "Medical humanitarian organization providing care in crisis zones"
+  },
+  { 
+    id: "203", 
+    name: "World Wildlife Fund", 
+    imageUrl: "",
+    description: "Conservation organization working to preserve wildlife and habitats"
+  },
+  { 
+    id: "204", 
+    name: "UNICEF", 
+    imageUrl: "",
+    description: "United Nations agency providing humanitarian aid to children worldwide"
+  },
+  { 
+    id: "205", 
+    name: "Amnesty International", 
+    imageUrl: "",
+    description: "Human rights organization working to protect people's rights globally"
+  },
+  { 
+    id: "206", 
+    name: "Habitat for Humanity", 
+    imageUrl: "",
+    description: "Building homes and communities for families in need"
+  },
+  { 
+    id: "207", 
+    name: "Feeding America", 
+    imageUrl: "",
+    description: "Fighting hunger and food insecurity across the United States"
+  },
+  { 
+    id: "208", 
+    name: "Save the Children", 
+    imageUrl: "",
+    description: "Protecting children's rights and providing emergency relief"
+  },
+  { 
+    id: "209", 
+    name: "Oxfam", 
+    imageUrl: "",
+    description: "International confederation working to end poverty and injustice"
+  },
+
 ];

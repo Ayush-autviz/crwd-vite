@@ -41,7 +41,7 @@ export default function GroupCrwdPage() {
       <ProfileNavbar title='Group Crwd' />
       {/* <SharePost url={window.location.href} title="Feed the hungry - CRWD" description="Join us in supporting families experiencing food insecurity in the greater Atlanta area." /> */}
       <div className="py-6 grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div className="lg:col-span-2 space-y-6">
+        <div className="lg:col-span-3 space-y-6">
 
           {/* <ProfileNavbar title='Group Crwd' /> */}
           <GroupCrwdHeader hasJoined={hasJoined} onJoin={handleJoin} />
@@ -49,10 +49,11 @@ export default function GroupCrwdPage() {
           <GroupCrwdUpdates />
           <GroupCrwdEvent />
           {!hasJoined && <GroupCrwdBottomBar onJoin={handleJoin} />}
+          <div className='h-45 md:hidden'/>
         </div>
 
-        <div className="lg:col-span-1 space-y-6 px-4 pb-35">
-          {/* Donation Card */}
+        {/* <div className="lg:col-span-1 space-y-6 px-4 pb-35">
+    
           <Card className='hidden md:block'>
             <CardContent>
               <h2 className="text-xl font-bold mb-4 text-center">
@@ -76,7 +77,7 @@ export default function GroupCrwdPage() {
             </CardContent>
           </Card>
 
-          {/* Related Causes */}
+         
           <Card className='hidden md:block'>
             <CardContent className="p-6">
               <h2 className="text-xl font-bold mb-4">Related Causes</h2>
@@ -114,7 +115,7 @@ export default function GroupCrwdPage() {
             </CardContent>
           </Card>
 
-          {/* Recent Activity */}
+      
           <Card className='hidden md:block'>
             <CardContent className="">
               <h2 className="text-xl font-bold mb-4">Recent Activity</h2>
@@ -174,7 +175,7 @@ export default function GroupCrwdPage() {
               </div>
             </CardContent>
           </Card>
-        </div>
+        </div> */}
       </div>
 
       <Toast 

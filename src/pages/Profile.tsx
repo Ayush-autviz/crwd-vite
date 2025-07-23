@@ -4,6 +4,7 @@ import ProfileBio from '../components/profile/ProfileBio';
 
 import ProfileInterests from '../components/profile/ProfileInterests';
 import ProfileActivity from '../components/profile/ProfileActivity';
+import ProfileRecentDonations from '../components/profile/ProfileRecentDonations';
 import ProfileNavbar from '../components/profile/ProfileNavbar';
 import ProfileSidebar from '../components/profile/ProfileSidebar';
 import { profileActivity } from '../lib/profile/profileActivity';
@@ -26,6 +27,10 @@ export default function ProfilePage() {
             <ProfileBio bio="This is a bio about Mya and how she likes to help others and give back to her community. She also loves ice cream." />
             <ProfileStats profileId="123" causes={10} crwds={3} followers={58} following={8} />
             <ProfileInterests interests={["Environment", "Food Insecurity", "Education", "Healthcare"]} />
+
+            <div className="py-4">
+              <ProfileRecentDonations />
+            </div>
 
             <div className="py-4">
               <ProfileActivity posts={profileActivity} showLoadMore={true} />

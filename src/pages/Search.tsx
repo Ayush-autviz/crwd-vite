@@ -78,7 +78,7 @@ export default function SearchPage() {
             <div className="relative group ">
               <Search className="absolute left-4  top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400 group-focus-within:text-gray-600 transition-colors" />
               <Input
-                placeholder="Search for non-profits, organizations, or causes..."
+                placeholder="Texas flooding"
                 className="bg-gray-100 rounded-[10px] border-none px-12 py-4 text-base  placeholder:text-gray-400"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}

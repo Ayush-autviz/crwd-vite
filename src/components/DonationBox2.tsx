@@ -168,12 +168,12 @@ const DonationBox2 = ({
             </div> */}
 
             {/* Recents and Suggested Section - Scrollable as a whole */}
-            <div className="bg-blue-50 rounded-xl mt-4">
-              <div className="bg-blue-100 rounded-xl border mb-4 overflow-hidden">
+            <div className="bg-white rounded-xl mt-4">
+              <div className="bg-white rounded-xl border mb-4 overflow-hidden">
                 {/* Scrollable container for both sections */}
                 <div className="max-h-[350px] overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent">
                   {/* Recents Section */}
-                  <div className="p-4 bg-blue-100 z-10 border-b">
+                  <div className="p-4 bg-blue-white z-10 border-b">
                     <div className="flex items-center">
                       <h2 className="text-sm font-medium text-gray-800">
                         Select from your Recents
@@ -222,7 +222,7 @@ const DonationBox2 = ({
                   </div>
 
                   {/* More Suggested Section */}
-                  <div className="p-4 bg-blue-100 z-10 border-b border-t">
+                  <div className="p-4 bg-white z-10 border-b border-t">
                     <div className="flex items-center">
                       <h2 className="text-sm font-medium text-gray-800">More Suggested</h2>
                     </div>
