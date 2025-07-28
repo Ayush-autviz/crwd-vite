@@ -33,7 +33,9 @@ import CreateCause from './pages/CreateCause'
 import FeedHungry from './pages/FeedHungry'
 import Cause from './pages/Cause'
 import CauseDetail from './pages/CauseDetail'
+import CauseById from './pages/CauseById'
 import GroupCrwd from './pages/GroupCrwd'
+import GroupCrwdById from './pages/GroupCrwdById'
 import Members from './pages/Members'
 import Posts from './pages/Posts'
 import PostById from './pages/PostById'
@@ -85,7 +87,9 @@ function App() {
                 <Route path="/feed-hungry" element={<FeedHungry />} />
                 <Route path="/cause" element={<Cause />} />
                 <Route path="/cause-detail" element={<CauseDetail />} />
+                <Route path="/cause/:id" element={<CauseById />} />
                 <Route path="/groupcrwd" element={<GroupCrwd />} />
+                <Route path="/groupcrwd/:id" element={<GroupCrwdById />} />
                 <Route path="/members" element={<Members />} />
                 <Route path="/posts" element={<Posts />} />
                 <Route path="/posts/:id" element={<PostById />} />

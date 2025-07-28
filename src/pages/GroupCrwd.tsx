@@ -44,7 +44,7 @@ export default function GroupCrwdPage() {
         <div className="lg:col-span-3 space-y-6">
 
           {/* <ProfileNavbar title='Group Crwd' /> */}
-          <GroupCrwdHeader hasJoined={hasJoined} onJoin={handleJoin} />
+          <GroupCrwdHeader hasJoined={hasJoined} onJoin={handleJoin}  id='' />
           <GroupCrwdSuggested />
           <GroupCrwdUpdates showEmpty={true} />
           {/* <GroupCrwdEvent /> */}

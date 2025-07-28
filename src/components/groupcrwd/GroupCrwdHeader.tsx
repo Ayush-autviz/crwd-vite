@@ -10,6 +10,7 @@ import { SharePost } from '../ui/SharePost';
 interface GroupCrwdHeaderProps {
   hasJoined: boolean;
   onJoin: () => void;
+  id: string;
 }
 
 const orgAvatars = [
@@ -24,7 +25,7 @@ const orgAvatars = [
   "mclaren.jpg",
 ];
 
-const GroupCrwdHeader: React.FC<GroupCrwdHeaderProps> = ({ hasJoined, onJoin }) => {
+const GroupCrwdHeader: React.FC<GroupCrwdHeaderProps> = ({ hasJoined, onJoin, id }) => {
   const navigate = useNavigate();
   const [showShareModal, setShowShareModal] = useState(false);
   return (
@@ -104,7 +105,7 @@ const GroupCrwdHeader: React.FC<GroupCrwdHeaderProps> = ({ hasJoined, onJoin }) 
 
 
       <SharePost 
-        url={window.location.origin + `/groups/1`}
+        url={window.location.origin + `/groupcrwd/${id}`}
         title={`Feed the hungry - CRWD`}
         description="Join us in supporting families experiencing food insecurity in the greater Atlanta area."
         isOpen={showShareModal}
