@@ -30,7 +30,7 @@ const ProfileSidebar: React.FC<{extraInfo?: boolean}> = ({extraInfo = true}) => 
     {/* Achievements */}
     {extraInfo && (
       <>
-    <Card>
+    {/* <Card>
       <CardContent className="">
         <h2 className="text-xl font-bold mb-4">Achievements</h2>
         <ul className="space-y-3">
@@ -44,7 +44,7 @@ const ProfileSidebar: React.FC<{extraInfo?: boolean}> = ({extraInfo = true}) => 
           ))}
         </ul>
       </CardContent>
-    </Card>
+    </Card> */}
 
     {/* Suggested Friends */}
     <Card>
@@ -76,7 +76,7 @@ const ProfileSidebar: React.FC<{extraInfo?: boolean}> = ({extraInfo = true}) => 
     )}
 
     {/* Trending Causes */}
-    <Card>
+    {/* <Card>
       <CardContent className="">
         <h2 className="text-xl font-bold mb-4">Trending Causes</h2>
         <div className="flex flex-wrap gap-2">
@@ -93,7 +93,7 @@ const ProfileSidebar: React.FC<{extraInfo?: boolean}> = ({extraInfo = true}) => 
           ))}
         </div>
       </CardContent>
-    </Card>
+    </Card> */}
   </aside>
 );
 

@@ -46,7 +46,7 @@ const ProfileRecentDonations: React.FC = () => {
       <h2 className="text-lg font-semibold mb-4">Recent Donations</h2>
       <div className="space-y-3">
         {recentDonations.map((donation) => (
-          <Link to={`/cause/${donation.id}`} key={donation.id}>
+          <Link to={`/cause`} key={donation.id}>
             <div className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-50 transition-colors cursor-pointer">
               <div className="flex-shrink-0">
                 <img 

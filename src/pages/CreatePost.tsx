@@ -351,9 +351,9 @@ export default function CreatePostPage() {
                     className="w-full min-h-[200px] p-4 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 resize-none"
                   />
                 </div>
-                <div className="text-gray-400 italic text-sm mt-2">
+                {/* <div className="text-gray-400 italic text-sm mt-2">
                   You can share an announcement, picture, event, link, etc.
-                </div>
+                </div> */}
               </div>
             )}
           </div>
@@ -383,12 +383,12 @@ export default function CreatePostPage() {
           >
             <ImageIcon className={`h-6 w-6 ${postType === 'image' ? 'text-primary' : 'text-gray-500'} transition-colors`} />
           </button>
-          <button
+          {/* <button
             onClick={() => handlePostTypeSelect('event')}
             className="focus:outline-none"
           >
             <Calendar className={`h-6 w-6 ${postType === 'event' ? 'text-primary' : 'text-gray-500'} transition-colors`} />
-          </button>
+          </button> */}
         </div>
         <div className="text-muted-foreground text-sm italic">
           {postType ?

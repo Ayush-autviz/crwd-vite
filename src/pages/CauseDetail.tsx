@@ -19,8 +19,8 @@ const CauseDetailPage: React.FC = () => {
       <ProfileNavbar title="Helping Humanity" />
       <div className="flex flex-col space-y-6 py-4">
         <CauseProfileCard onLearnMoreClick={scrollToAboutCard} />
-        <HighLights />
-        <CauseRecentDonations />
+        {/* <HighLights /> */}
+        <CauseRecentDonations showEmpty={true} />
         <div ref={aboutCardRef}>
           <CauseAboutCard />
         </div>
