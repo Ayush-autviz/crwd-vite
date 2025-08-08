@@ -64,9 +64,9 @@ const ProfileRecentDonations: React.FC = () => {
                     ${donation.amount}
                   </span> */}
                 </div>
-                <p className="text-sm text-gray-500">
+                {/* <p className="text-sm text-gray-500">
                   {donation.date}
-                </p>
+                </p> */}
               </div>
             </div>
           </Link>
