@@ -9,6 +9,7 @@ import ProfileSidebar from '../components/profile/ProfileSidebar';
 import { profileActivity } from '../lib/profile/profileActivity';
 import ProfileStats from '../components/profile/ProfileStats';
 import { useLocation } from 'react-router-dom';
+import ProfileRecentDonations from '../components/profile/ProfileRecentDonations';
 
 export default function ProfilePage() {
   const { imageUrl, name } = useLocation().state || { imageUrl: '', name: '' };
@@ -29,6 +30,10 @@ export default function ProfilePage() {
             <ProfileBio bio="This is a bio about Mya and how she likes to help others and give back to her community. She also loves ice cream." />
             <ProfileStats profileId="123" causes={10} crwds={3} followers={58} following={8} />
             <ProfileInterests interests={["Environment", "Food Insecurity", "Education", "Healthcare"]} />
+
+            <div className="py-4">
+              <ProfileRecentDonations />
+            </div>
 
             <div className="py-4">
               <ProfileActivity imageUrl={imageUrl} posts={profileActivity} showLoadMore={true} />
