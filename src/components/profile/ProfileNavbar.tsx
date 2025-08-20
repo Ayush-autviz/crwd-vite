@@ -11,7 +11,7 @@ export default function ProfileNavbar({ showMobileMenu = true, showDesktopMenu =
   return (
     <>
       {
-        showMobileMenu && (
+        showMobileMenu && title !== "Home" && (
           <header className="w-full flex items-center h-16 bg-gray-50 border-b sticky top-0 z-10 md:hidden">
             {showBackButton && (
               <ChevronLeft onClick={() => navigate(-1)} size={30} className=" absolute left-4 top-1/2 -translate-y-1/2 text-gray-700 cursor-pointer hover:bg-gray-100 rounded-full p-1" />
@@ -35,6 +35,52 @@ export default function ProfileNavbar({ showMobileMenu = true, showDesktopMenu =
           </header>
         )
       }
+
+      {
+        showMobileMenu && title === "Home" && (
+          <header className="w-full flex items-center justify-between gap-4 px-5 py-4 border-b-2 border-gray-200 bg-gray-50 sticky top-0 z-10 md:hidden">
+            {/* Logo on the left */}
+            <div className="flex-shrink-0">
+              <Link to="/">
+                <img src="/logo3.png" width={80} height={80} alt="CRWD Logo" className="object-contain" />
+              </Link>
+            </div>
+            
+            {/* Search bar in the center */}
+            <div className="flex-1 flex items-center justify-between bg-gray-100 px-4 py-2 rounded-full max-w-xs">
+              <input
+                type="text"
+                placeholder="Search"
+                className="flex-1 bg-transparent outline-none text-sm placeholder-gray-500"
+              />
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                className="text-gray-500"
+              >
+                <circle cx="11" cy="11" r="8" />
+                <path d="m21 21-4.3-4.3" />
+              </svg>
+            </div>
+            
+            {/* Action buttons on the right */}
+            <div className="flex items-center gap-5">
+              <Link to="/create-post">
+                <Plus strokeWidth={2} className="h-5 w-5 text-black hover:text-gray-700 transition-colors" />
+              </Link>
+              <HamburgerMenu />
+            </div>
+          </header>
+        )
+      }
+
       {showDesktopMenu && (
 
         <header className="w-full bg-card border-b hidden h-16 px-6 md:flex items-center justify-between z-10 sticky top-0">

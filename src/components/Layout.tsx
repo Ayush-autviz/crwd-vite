@@ -80,7 +80,12 @@ export default function Layout({ children }: LayoutProps) {
               variant="ghost"
               className="flex flex-col items-center h-auto py-2 px-0 flex-1 text-muted-foreground"
             >
-              <Home className="h-5 w-5" color={location.pathname === '/' ? 'black' : 'gray'} />
+              {/* <Home className="h-5 w-5" color={location.pathname === '/' ? 'black' : 'gray'} /> */}
+              <img 
+                src={location.pathname === '/' ? "icons/home-fill.png" : "/icons/home.png"} 
+                alt="Home" 
+                className="w-5 h-4.8"
+              />
               <span className={`text-xs ${location.pathname === '/' ? 'text-black' : 'text-gray-500'}`}>Home</span>
             </Button>
           </Link>
@@ -92,7 +97,12 @@ export default function Layout({ children }: LayoutProps) {
               variant="ghost"
               className="flex flex-col items-center h-auto py-2 px-0 flex-1 text-muted-foreground"
             >
-              <Search className="h-5 w-5" color={location.pathname === '/search' ? 'black' : 'gray'} />
+              {/* <Search className="h-5 w-5" color={location.pathname === '/search' ? 'black' : 'gray'} /> */}
+              <img 
+                src={location.pathname === '/search' ? "icons/search-fill.png" : "/icons/search.png"} 
+                alt="Search" 
+                className="w-5 h-5"
+              />
               <span className={`text-xs ${location.pathname === '/search' ? 'text-black' : 'text-gray-500'}`}>Search</span>
             </Button>
           </Link>
@@ -104,7 +114,12 @@ export default function Layout({ children }: LayoutProps) {
               variant="ghost"
               className="flex flex-col items-center h-auto py-2 px-0 flex-1 text-muted-foreground"
             >
-              <Archive className="h-5 w-5" color={location.pathname === '/donation' ? 'black' : 'gray'} />
+              {/* <Archive className="h-5 w-5" color={location.pathname === '/donation' ? 'black' : 'gray'} /> */}
+              <img 
+                src={location.pathname === '/donation' ? "icons/box-fill.png" : "/icons/box.png"} 
+                alt="Donation" 
+                className="w-5 h-5"
+              />
               <span className={`text-xs ${location.pathname === '/donation' ? 'text-black' : 'text-gray-500'}`}>Donation</span>
             </Button>
           </Link>
@@ -116,7 +131,12 @@ export default function Layout({ children }: LayoutProps) {
               variant="ghost"
               className="flex flex-col items-center h-auto py-2 px-0 flex-1 text-muted-foreground"
             >
-              <Bell className="h-5 w-5" color={location.pathname === '/notifications' ? 'black' : 'gray'} />
+              {/* <Bell className="h-5 w-5" color={location.pathname === '/notifications' ? 'black' : 'gray'} /> */}
+              <img 
+                src={location.pathname === '/notifications' ? "icons/bell-fill.png" : "/icons/bell.png"} 
+                alt="Notifications" 
+                className={`${location.pathname === '/notifications' ? 'w-[22px] h-[20px]' : 'w-5 h-5'}`}
+              />
               <span className={`text-xs ${location.pathname === '/notifications' ? 'text-black' : 'text-gray-500'}`}>Activity</span>
             </Button>
           </Link>
@@ -128,7 +148,12 @@ export default function Layout({ children }: LayoutProps) {
               variant="ghost"
               className="flex flex-col items-center h-auto py-2 px-0 flex-1 text-muted-foreground"
             >
-              <User className="h-5 w-5" color={location.pathname === '/profile' ? 'black' : 'gray'} />
+              {/* <User className="h-5 w-5" color={location.pathname === '/profile' ? 'black' : 'gray'} /> */}
+              <img 
+                src={location.pathname === '/profile' ? "icons/user-fill.png" : "/icons/user.png"} 
+                alt="Profile" 
+                className="w-5 h-5"
+              />
               <span className={`text-xs ${location.pathname === '/profile' ? 'text-black' : 'text-gray-500'}`}>Profile</span>
             </Button>
           </Link>
