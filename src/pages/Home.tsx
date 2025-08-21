@@ -32,7 +32,7 @@ export default function HomePage() {
       avatars: ["8", "9", "10", "11"],
     },
   ];
-  
+
   // Sample data for suggested CRWDs
   const suggestedCRWDs = [
     {
@@ -129,7 +129,12 @@ export default function HomePage() {
 
   return (
     <div className="pb-16 md:pb-0">
-      <ProfileNavbar title="Home" showMobileMenu={true} showDesktopMenu={true} showBackButton={false} />
+      <ProfileNavbar
+        title="Home"
+        showMobileMenu={true}
+        showDesktopMenu={true}
+        showBackButton={false}
+      />
       <div className="md:grid md:grid-cols-12 md:gap-6 md:p-6">
         {/* Main Content - Takes full width on mobile, 8 columns on desktop */}
         <div className="md:col-span-8">
@@ -167,7 +172,7 @@ export default function HomePage() {
               {/* <div className="absolute inset-0 bg-gradient-to-r from-primary/5 to-transparent opacity-50"></div> */}
               {/* <div className="absolute top-0 right-0 w-32 h-32 bg-primary/10 rounded-full -translate-y-16 translate-x-16"></div> */}
               {/* <div className="absolute bottom-0 left-0 w-24 h-24 bg-primary/5 rounded-full translate-y-12 -translate-x-12"></div> */}
-              
+
               {/* Content */}
               <div className="relative ">
                 <h1 className="text-primary text-xl md:text-2xl lg:text-3xl font-extrabold text-foreground mb-4 leading-tight max-w-3xl mx-auto">
@@ -190,21 +195,23 @@ export default function HomePage() {
             <CausesCarousel />
           </div>
 
-          <div className="p-4 md:p-0">
+          {/* <div className="p-4 md:p-0">
             <TopicsList topics={topi} />
-          </div>
+          </div> */}
 
           {/* Causes and CRWDs near you Section */}
           <div className="px-4 mt-8 md:px-0 md:mt-8">
             <h2 className="text-lg font-semibold mb-4">
-            Local Causes and CRWDs
+              Local Causes and CRWDs
             </h2>
             <div className="space-y-3">
               {nearbyCauses.map((cause, index) => (
-                <Link to={cause.type === "Cause" ? "/cause" : "/groupcrwd"} key={index} className="block">
-                  <div
-                    className="flex items-center justify-between p-3 rounded-lg hover:bg-muted/50 cursor-pointer transition-colors bg-card"
-                  >
+                <Link
+                  to={cause.type === "Cause" ? "/cause" : "/groupcrwd"}
+                  key={index}
+                  className="block"
+                >
+                  <div className="flex items-center justify-between p-3 rounded-lg hover:bg-muted/50 cursor-pointer transition-colors bg-card">
                     <div className="flex items-center gap-2 md:gap-3 flex-1 min-w-0 mr-2">
                       <Avatar className="h-10 w-10 md:h-12 md:w-12 rounded-full flex-shrink-0">
                         {cause.image && (
@@ -236,7 +243,10 @@ export default function HomePage() {
             </div>
             <div className="flex justify-end mt-4">
               <Link to="/search">
-                <Button variant="link" className="text-primary flex items-center">
+                <Button
+                  variant="link"
+                  className="text-primary flex items-center"
+                >
                   Discover More <ChevronRight className="h-4 w-4 ml-1" />
                 </Button>
               </Link>
@@ -245,7 +255,7 @@ export default function HomePage() {
 
           {/* Categories Section */}
           <div className="px-4 mt-8 md:px-0 md:mt-10">
-            <h2 className="text-lg font-semibold mb-4">Categories</h2>
+            <h2 className="text-lg font-semibold mb-4">Explore Categories</h2>
             <div className="overflow-x-auto pb-2">
               <div className="flex space-x-2 min-w-max">
                 {categories.map((category, index) => (
@@ -265,7 +275,9 @@ export default function HomePage() {
           {/* Suggested CRWDs Section */}
           <div className="px-4 mt-8 md:px-0 md:mt-10">
             <div className="flex justify-between items-center mb-4">
-              <h2 className="text-lg font-semibold">Discover giving in action</h2>
+              <h2 className="text-lg font-semibold">
+                Discover giving in action
+              </h2>
               <Link to="/create-crwd">
                 <Button variant="link" className="text-primary p-0 h-auto">
                   Create a CRWD
@@ -285,7 +297,7 @@ export default function HomePage() {
                           className="w-full h-full object-cover"
                         />
                       </div>
-                      
+
                       {/* Text content below image */}
                       <div className="text-center">
                         <h3 className="font-medium text-sm mb-1">
@@ -295,10 +307,12 @@ export default function HomePage() {
                           {crwd.members}
                         </p>
                         <p className="text-xs text-muted-foreground w-36 leading-relaxed">
-                          {crwd.description.length > 21 ? `${crwd.description.slice(0, 21)}..` : crwd.description}
+                          {crwd.description.length > 21
+                            ? `${crwd.description.slice(0, 21)}..`
+                            : crwd.description}
                         </p>
                       </div>
-                      
+
                       {/* Button at the bottom */}
                       <Button className="bg-primary text-white text-xs py-2 px-4 rounded-lg hover:bg-primary/90 transition-colors">
                         Join the CRWD
@@ -338,7 +352,10 @@ export default function HomePage() {
                       <Button className="bg-primary text-white text-xs py-2 px-3 rounded-lg hover:bg-primary/90 transition-colors">
                         Donate Now
                       </Button>
-                      <Button variant="link" className="text-primary text-xs p-0 h-auto">
+                      <Button
+                        variant="link"
+                        className="text-primary text-xs p-0 h-auto"
+                      >
                         Visit Profile
                       </Button>
                     </div>
@@ -348,7 +365,10 @@ export default function HomePage() {
             </div>
             <div className="flex justify-end mt-4">
               <Link to="/search">
-                <Button variant="link" className="text-primary flex items-center">
+                <Button
+                  variant="link"
+                  className="text-primary flex items-center"
+                >
                   Discover More <ChevronRight className="h-4 w-4 ml-1" />
                 </Button>
               </Link>
@@ -394,14 +414,11 @@ export default function HomePage() {
                 Start your own CRWD to support a cause you care about or connect
                 with like-minded individuals.
               </p>
-              <Button className="w-full">
-                Create a CRWD
-              </Button>
+              <Button className="w-full">Create a CRWD</Button>
             </CardContent>
           </Card>
         </div>
       </div>
-
     </div>
   );
 }

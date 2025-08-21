@@ -4,12 +4,7 @@ import React, { useState, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useNavigate } from "react-router-dom";
-import {
-  Calendar,
-  ImageIcon,
-  Link,
-  X,
-} from "lucide-react";
+import { Calendar, ImageIcon, Link, X } from "lucide-react";
 import ProfileNavbar from "@/components/profile/ProfileNavbar";
 import { Select, SelectTrigger } from "@/components/ui/select";
 import { SelectValue } from "@/components/ui/select";
@@ -53,7 +48,9 @@ export default function CreatePostPage() {
   });
 
   // Track which post type is selected
-  const [postType, setPostType] = useState<'link' | 'image' | 'event' | null>(null);
+  const [postType, setPostType] = useState<"link" | "image" | "event" | null>(
+    null
+  );
 
   // Track selected image
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
@@ -62,12 +59,14 @@ export default function CreatePostPage() {
   // Track URL validation
   const [urlError, setUrlError] = useState<string | null>(null);
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     const { name, value } = e.target;
     setForm((prev) => ({ ...prev, [name]: value }));
 
     // Clear URL error when user starts typing
-    if (name === 'url' && urlError) {
+    if (name === "url" && urlError) {
       setUrlError(null);
     }
   };
@@ -103,11 +102,11 @@ export default function CreatePostPage() {
   };
 
   // Handle post type selection
-  const handlePostTypeSelect = (type: 'link' | 'image' | 'event') => {
+  const handlePostTypeSelect = (type: "link" | "image" | "event") => {
     setPostType(type);
 
     // Reset form fields when switching post types
-    setForm(prev => ({
+    setForm((prev) => ({
       ...prev,
       url: "",
       title: "",
@@ -123,7 +122,7 @@ export default function CreatePostPage() {
     setUrlError(null);
 
     // Trigger image picker for image posts
-    if (type === 'image' && fileInputRef.current) {
+    if (type === "image" && fileInputRef.current) {
       fileInputRef.current.click();
     }
   };
@@ -133,11 +132,11 @@ export default function CreatePostPage() {
     if (!selectedCRWD || !form.content.trim()) return false;
 
     switch (postType) {
-      case 'link':
+      case "link":
         return form.url.trim() && validateUrl(form.url) && !urlError;
-      case 'image':
+      case "image":
         return selectedImage !== null;
-      case 'event':
+      case "event":
         return form.title.trim();
       default:
         return false;
@@ -242,16 +241,24 @@ export default function CreatePostPage() {
                       className="w-full h-full object-cover"
                     />
                   </div>
-                  <span className="text-sm font-medium italic text-gray-500">Posting to {selectedCRWD.name}</span>
+                  <span className="text-sm font-medium italic text-gray-500">
+                    Posting to {selectedCRWD.name}
+                  </span>
                 </div>
               ) : (
                 <>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Select a CRWD to post to
+                    Post to a CRWD
                   </label>
                   <Select>
-                    <SelectTrigger className="w-full sm:w-3/4 md:w-1/2 rounded-lg border px-4 py-2 text-left shadow-none border-none bg-gray-100" onClick={() => setStep(2)}>
-                      <SelectValue placeholder="Choose a CRWD" className="truncate" />
+                    <SelectTrigger
+                      className="w-full sm:w-3/4 md:w-1/2 rounded-lg border px-4 py-2 text-left shadow-none border-none bg-gray-100"
+                      onClick={() => setStep(2)}
+                    >
+                      <SelectValue
+                        placeholder="Select a CRWD (required)"
+                        className="truncate"
+                      />
                     </SelectTrigger>
                   </Select>
                 </>
@@ -276,15 +283,19 @@ export default function CreatePostPage() {
                     name="content"
                     value={form.content}
                     onChange={handleInputChange}
-                    placeholder={postType === 'link' ? "What's on your mind?" :
-                      postType === 'image' ? "What's on your mind?" :
-                        "What's the name of your event?"}
+                    placeholder={
+                      postType === "link"
+                        ? "What's on your mind?"
+                        : postType === "image"
+                        ? "What's on your mind?"
+                        : "What's the name of your event?"
+                    }
                     className="w-full min-h-[100px] p-0 border-0 bg-transparent text-lg focus:outline-none resize-none placeholder:text-gray-400"
                   />
                 </div>
 
                 {/* URL Input for Link Posts */}
-                {postType === 'link' && (
+                {postType === "link" && (
                   <div className="mb-6">
                     <div className="relative">
                       <Input
@@ -297,7 +308,9 @@ export default function CreatePostPage() {
                       />
                       {form.url && (
                         <button
-                          onClick={() => setForm(prev => ({ ...prev, url: "" }))}
+                          onClick={() =>
+                            setForm((prev) => ({ ...prev, url: "" }))
+                          }
                           className="absolute right-0 top-1/2 transform -translate-y-1/2 w-6 h-6 bg-gray-400 rounded-full flex items-center justify-center text-white text-sm hover:bg-gray-500"
                         >
                           <X size={14} />
@@ -305,13 +318,15 @@ export default function CreatePostPage() {
                       )}
                     </div>
                     {urlError && (
-                      <div className="text-red-500 text-sm mt-2">{urlError}</div>
+                      <div className="text-red-500 text-sm mt-2">
+                        {urlError}
+                      </div>
                     )}
                   </div>
                 )}
 
                 {/* Image Preview for Image Posts */}
-                {postType === 'image' && selectedImage && imagePreview && (
+                {postType === "image" && selectedImage && imagePreview && (
                   <div className="mb-6">
                     <div className="relative">
                       <img
@@ -335,13 +350,19 @@ export default function CreatePostPage() {
             ) : selectedCRWD && !postType ? (
               <div className="flex flex-col items-center justify-center h-64 mt-10 px-1">
                 <div className="text-gray-400 text-center">
-                  <div className="text-lg mb-2">Select a post type below to get started</div>
-                  <div className="text-sm">Choose from link, photo, or event</div>
+                  <div className="text-lg mb-2">
+                    Select a post type below to get started
+                  </div>
+                  <div className="text-sm">
+                    Choose from link, photo, or event
+                  </div>
                 </div>
               </div>
             ) : (
               <div className="flex flex-col items-start justify-start h-64 mt-10 px-1">
-                <div className="text-xl text-gray-400 font-light mb-3">Start Typing</div>
+                {/* <div className="text-xl text-gray-400 font-light mb-3">
+                  Start Typing
+                </div> */}
                 <div className="w-full">
                   <textarea
                     name="content"
@@ -372,16 +393,24 @@ export default function CreatePostPage() {
       <div className="border-t px-6 py-4 flex flex-col gap-2 bg-background/80 backdrop-blur-md">
         <div className="flex gap-8 mb-1">
           <button
-            onClick={() => handlePostTypeSelect('link')}
+            onClick={() => handlePostTypeSelect("link")}
             className="focus:outline-none"
           >
-            <Link className={`h-6 w-6 ${postType === 'link' ? 'text-primary' : 'text-gray-500'} transition-colors`} />
+            <Link
+              className={`h-6 w-6 ${
+                postType === "link" ? "text-primary" : "text-gray-500"
+              } transition-colors`}
+            />
           </button>
           <button
-            onClick={() => handlePostTypeSelect('image')}
+            onClick={() => handlePostTypeSelect("image")}
             className="focus:outline-none"
           >
-            <ImageIcon className={`h-6 w-6 ${postType === 'image' ? 'text-primary' : 'text-gray-500'} transition-colors`} />
+            <ImageIcon
+              className={`h-6 w-6 ${
+                postType === "image" ? "text-primary" : "text-gray-500"
+              } transition-colors`}
+            />
           </button>
           {/* <button
             onClick={() => handlePostTypeSelect('event')}
@@ -391,10 +420,9 @@ export default function CreatePostPage() {
           </button> */}
         </div>
         <div className="text-muted-foreground text-sm italic">
-          {postType ?
-            `Create a ${postType === 'link' ? 'link' : postType === 'image' ? 'photo' : 'event'} post` :
-            'Select a post type to get started'
-          }
+          {postType
+            ? "Add a link or image"
+            : "Select a post type to get started"}
         </div>
       </div>
       <div className="h-20 md:hidden" />
