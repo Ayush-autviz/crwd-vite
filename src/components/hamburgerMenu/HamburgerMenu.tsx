@@ -11,7 +11,7 @@ const HamburgerMenu: React.FC = () => (
       <SheetTrigger asChild className='p-2'>
         <MenuIcon size={42} className='text-black' />
       </SheetTrigger>
-      <SheetContent side="left" className="p-0 w-[90vw] max-w-[320px] border-r shadow-lg">
+      <SheetContent side="right" className="p-0 w-[90vw] max-w-[320px] border-l shadow-lg">
         {/* Profile */}
         <div className="flex items-center gap-3 p-4 border-b">
           <Avatar className="h-12 w-12">
@@ -36,6 +36,7 @@ const HamburgerMenu: React.FC = () => (
           <div className="flex gap-4 p-4">
             <Link to="/settings/privacy" className="text-xs text-primary">Privacy Policy</Link>
             <Link to="/settings/terms" className="text-xs text-primary">Terms of Service</Link>
+            <p className="text-xs text-muted-foreground">CRWD @2025</p>
           </div>
         </div>
       </SheetContent>
