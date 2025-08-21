@@ -146,7 +146,7 @@ export default function CreatePostPage() {
   // Step 2: Post to (CRWD selection)
   if (step === 2) {
     return (
-      <div className="min-h-screen flex flex-col bg-background pb-16">
+      <div className="min-h-screen flex flex-col bg-background">
         <ProfileNavbar title="Add a post" />
         <div className="flex items-center p-4 ">
           <button onClick={() => setStep(1)} className="mr-2 flex  text-base">
@@ -223,14 +223,14 @@ export default function CreatePostPage() {
     <div className="min-h-screen flex flex-col bg-gradient-to-b from-background to-muted/40 pb-16">
       <ProfileNavbar title="Add a post" />
 
-      <div className="flex-1 flex flex-col  px-2">
+      <div className="flex-1 flex flex-col  p-4">
         <div className="flex flex-col p-4">
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 sm:gap-0">
             <div className="w-full">
               {selectedCRWD ? (
                 <div
                   className="flex items-center gap-3 w-full sm:w-3/4 md:w-1/2 rounded-lg py-2 cursor-pointer"
-                  onClick={() => setStep(2)}
+                  // onClick={() => setStep(2)}
                 >
                   <div className="w-8 h-8 rounded-full overflow-hidden">
                     <img
@@ -265,14 +265,14 @@ export default function CreatePostPage() {
               )}
             </div>
 
-            <Button
+            {/* <Button
               variant="outline"
               className="rounded-lg px-6 py-2 text-sm font-medium mt-2 sm:mt-0"
               onClick={() => setStep(2)}
               disabled={!canSubmitPost()}
             >
               Post
-            </Button>
+            </Button> */}
           </div>
           <div className="flex-1">
             {selectedCRWD && postType ? (
@@ -348,7 +348,7 @@ export default function CreatePostPage() {
                 )}
               </div>
             ) : selectedCRWD && !postType ? (
-              <div className="flex flex-col items-center justify-center h-64 mt-10 px-1">
+              <div className="flex flex-col items-center justify-center  mt-10 px-1">
                 <div className="text-gray-400 text-center">
                   <div className="text-lg mb-2">
                     Select a post type below to get started
@@ -359,7 +359,7 @@ export default function CreatePostPage() {
                 </div>
               </div>
             ) : (
-              <div className="flex flex-col items-start justify-start h-64 mt-10 px-1">
+              <div className="flex flex-col items-start justify-start mt-10 px-1">
                 {/* <div className="text-xl text-gray-400 font-light mb-3">
                   Start Typing
                 </div> */}
@@ -377,6 +377,48 @@ export default function CreatePostPage() {
                 </div> */}
               </div>
             )}
+
+            {/* Post Type Icons - Always visible below textarea */}
+            <div className="mt-6 px-2">
+              <div className="flex gap-8 mb-2">
+                <button
+                  onClick={() => handlePostTypeSelect("link")}
+                  className="focus:outline-none"
+                >
+                  <Link
+                    className={`h-6 w-6 ${
+                      postType === "link" ? "text-primary" : "text-gray-500"
+                    } transition-colors`}
+                  />
+                </button>
+                <button
+                  onClick={() => handlePostTypeSelect("image")}
+                  className="focus:outline-none"
+                >
+                  <ImageIcon
+                    className={`h-6 w-6 ${
+                      postType === "image" ? "text-primary" : "text-gray-500"
+                    } transition-colors`}
+                  />
+                </button>
+              </div>
+              <div className="text-muted-foreground text-sm italic">
+                {postType
+                  ? "Add a link or image"
+                  : "Select a post type to get started"}
+              </div>
+            </div>
+
+            <div className="mt-8 flex justify-end">
+              <Button
+                variant="default"
+                className="w-full sm:w-auto rounded-lg px-6 py-2 text-sm font-medium bg-primary text-white"
+                onClick={() => setStep(2)}
+                disabled={!canSubmitPost()}
+              >
+                Post
+              </Button>
+            </div>
           </div>
         </div>
       </div>
@@ -389,42 +431,6 @@ export default function CreatePostPage() {
         className="hidden"
       />
 
-      {/* Bottom Bar */}
-      <div className="border-t px-6 py-4 flex flex-col gap-2 bg-background/80 backdrop-blur-md">
-        <div className="flex gap-8 mb-1">
-          <button
-            onClick={() => handlePostTypeSelect("link")}
-            className="focus:outline-none"
-          >
-            <Link
-              className={`h-6 w-6 ${
-                postType === "link" ? "text-primary" : "text-gray-500"
-              } transition-colors`}
-            />
-          </button>
-          <button
-            onClick={() => handlePostTypeSelect("image")}
-            className="focus:outline-none"
-          >
-            <ImageIcon
-              className={`h-6 w-6 ${
-                postType === "image" ? "text-primary" : "text-gray-500"
-              } transition-colors`}
-            />
-          </button>
-          {/* <button
-            onClick={() => handlePostTypeSelect('event')}
-            className="focus:outline-none"
-          >
-            <Calendar className={`h-6 w-6 ${postType === 'event' ? 'text-primary' : 'text-gray-500'} transition-colors`} />
-          </button> */}
-        </div>
-        <div className="text-muted-foreground text-sm italic">
-          {postType
-            ? "Add a link or image"
-            : "Select a post type to get started"}
-        </div>
-      </div>
       <div className="h-20 md:hidden" />
     </div>
   );

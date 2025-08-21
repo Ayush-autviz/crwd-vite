@@ -11,12 +11,14 @@ const data = [
   {
     image: "/grocery.jpg",
     heading: "Set One Donation",
-    subHeading: "Decide your amount once - it splits across your chosen causes.",
+    subHeading:
+      "Decide your amount once - it splits across your chosen causes.",
   },
   {
     image: "/grocery.jpg",
     heading: "Give Together",
-    subHeading: "Join CRWDs to give alongside others and see your shared impact.",
+    subHeading:
+      "Join CRWDs to give alongside others and see your shared impact.",
   },
 ];
 
@@ -45,32 +47,12 @@ export default function CausesCarousel() {
   };
 
   return (
-    <div className="bg-gradient-to-br from-primary/10 via-primary/5 to-background p-5 md:p-6 rounded-2xl shadow-lg border border-primary/20 relative overflow-hidden">
+    <div className="bg-gradient-to-br from-gray-100 via-gray-50 to-background p-5 md:p-6 rounded-2xl shadow-lg border border-gray-200 relative overflow-hidden">
       {/* Background decoration */}
-      <div className="absolute inset-0 bg-gradient-to-r from-primary/5 to-transparent opacity-50"></div>
-      {/* <div className="absolute top-0 right-0 w-32 h-32 bg-primary/10 rounded-full -translate-y-16 translate-x-16"></div>
-      <div className="absolute bottom-0 left-0 w-24 h-24 bg-primary/5 rounded-full translate-y-12 -translate-x-12"></div> */}
+      {/* <div className="absolute inset-0 bg-gradient-to-r from-primary/5 to-transparent opacity-50"></div> */}
 
       {/* Carousel Container */}
       <div className="relative">
-        {/* Navigation Buttons */}
-        {/* <Button
-          variant="ghost"
-          size="icon"
-          onClick={goToPrevious}
-          className="absolute left-2 top-1/2 -translate-y-1/2 z-20 bg-background/80 hover:bg-background border border-border shadow-md"
-        >
-          <ChevronLeft className="h-4 w-4" />
-        </Button>
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={goToNext}
-          className="absolute right-2 top-1/2 -translate-y-1/2 z-20 bg-background/80 hover:bg-background border border-border shadow-md"
-        >
-          <ChevronRight className="h-4 w-4" />
-        </Button> */}
-
         {/* Carousel Content */}
         <div className="relative h-32 md:h-36">
           {data.map((item, index) => (
@@ -93,7 +75,7 @@ export default function CausesCarousel() {
                   />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <h3 className="text-primary text-lg md:text-xl lg:text-2xl font-extrabold text-foreground mb-2 leading-tight">
+                  <h3 className="text-gray-500 text-lg md:text-xl lg:text-2xl font-bold mb-2 leading-tight">
                     {item.heading}
                   </h3>
                   <p className="text-sm md:text-base text-muted-foreground leading-relaxed">
@@ -106,7 +88,7 @@ export default function CausesCarousel() {
         </div>
 
         {/* Pagination Dots */}
-        <div className="flex justify-center items-center gap-2 mt-6">
+        <div className="flex justify-end items-center gap-2 mt-6">
           {data.map((_, index) => (
             <button
               key={index}

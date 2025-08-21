@@ -10,8 +10,11 @@ import TopicsList from "@/components/TopicsList";
 import PopularPosts from "@/components/PopularPosts";
 import ProfileNavbar from "@/components/profile/ProfileNavbar";
 import CausesCarousel from "@/components/CausesCarousel";
+import { useState } from "react";
 
 export default function HomePage() {
+  const [showMobileFooter, setShowMobileFooter] = useState(true);
+
   const topi: any = [
     {
       id: "1",
@@ -164,23 +167,15 @@ export default function HomePage() {
               }
             />
           </div>
-
           {/* Main Message */}
           <div className="p-4 md:p-0 md:mb-6">
-            <div className="bg-gradient-to-br from-primary/10 via-primary/5 to-background p-6 md:p-8 rounded-2xl text-center shadow-lg border border-primary/20 relative overflow-hidden">
-              {/* Background decoration */}
-              {/* <div className="absolute inset-0 bg-gradient-to-r from-primary/5 to-transparent opacity-50"></div> */}
-              {/* <div className="absolute top-0 right-0 w-32 h-32 bg-primary/10 rounded-full -translate-y-16 translate-x-16"></div> */}
-              {/* <div className="absolute bottom-0 left-0 w-24 h-24 bg-primary/5 rounded-full translate-y-12 -translate-x-12"></div> */}
-
+            <div className="bg-gradient-to-br from-gray-100 via-gray-50 to-background p-6 md:p-8 rounded-2xl text-center shadow-lg border border-gray-200 relative overflow-hidden">
               {/* Content */}
               <div className="relative ">
-                <h1 className="text-primary text-xl md:text-2xl lg:text-3xl font-extrabold text-foreground mb-4 leading-tight max-w-3xl mx-auto">
+                <h1 className="text-gray-500 text-xl md:text-2xl lg:text-3xl font-bold text-foreground mb-4 leading-tight max-w-3xl mx-auto">
                   THE EASIEST WAY TO GIVE TO EVERYTHING YOU CARE ABOUT, AT ONCE.
                 </h1>
-                {/* <p className="text-muted-foreground text-sm md:text-base mb-6 max-w-2xl mx-auto">
-                  Join thousands of people making a difference in causes that matter to them
-                </p> */}
+
                 <Link to="/donation">
                   <Button className="bg-black hover:bg-primary/90 text-primary-foreground px-8 py-3 rounded-full text-base font-semibold transition-all duration-200 transform hover:scale-105 shadow-lg hover:shadow-xl">
                     Start Giving
@@ -189,16 +184,13 @@ export default function HomePage() {
               </div>
             </div>
           </div>
-
           {/* Causes Carousel */}
           <div className="p-4 md:p-0 md:mb-6">
             <CausesCarousel />
           </div>
-
           {/* <div className="p-4 md:p-0">
             <TopicsList topics={topi} />
           </div> */}
-
           {/* Causes and CRWDs near you Section */}
           <div className="px-4 mt-8 md:px-0 md:mt-8">
             <h2 className="text-lg font-semibold mb-4">
@@ -252,7 +244,6 @@ export default function HomePage() {
               </Link>
             </div>
           </div>
-
           {/* Categories Section */}
           <div className="px-4 mt-8 md:px-0 md:mt-10">
             <h2 className="text-lg font-semibold mb-4">Explore Categories</h2>
@@ -271,7 +262,6 @@ export default function HomePage() {
               </div>
             </div>
           </div>
-
           {/* Suggested CRWDs Section */}
           <div className="px-4 mt-8 md:px-0 md:mt-10">
             <div className="flex justify-between items-center mb-4">
@@ -314,12 +304,36 @@ export default function HomePage() {
                       </div>
 
                       {/* Button at the bottom */}
-                      <Button className="bg-primary text-white text-xs py-2 px-4 rounded-lg hover:bg-primary/90 transition-colors">
+                      <Button className="bg-green-600 text-white text-xs py-2 px-4 rounded-lg hover:bg-green-700 transition-colors">
                         Join the CRWD
                       </Button>
                     </div>
                   </Link>
                 ))}
+              </div>
+            </div>
+          </div>
+          {/* Why CRWDs Section */}
+
+          {/* Why CRWDs Section */}
+          <div className="px-4 mt-8 md:px-0 md:mt-10">
+            <div className="bg-gradient-to-br from-gray-100 via-gray-50 to-background p-6 md:p-8 rounded-2xl border border-gray-200 shadow-lg">
+              <div className="text-center mb-6">
+                <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-2">
+                  Why CRWDs?
+                </h2>
+                <h4 className="text-lg md:text-xl font-semibold text-gray-500 mb-4">
+                  Giving should be simple
+                </h4>
+              </div>
+
+              <div className="text-center">
+                <p className="text-muted-foreground mb-4 max-w-2xl mx-auto">
+                  CRWDs are groups of people who share a common cause or
+                  interest. They are a great way to connect with like-minded
+                  individuals and support a cause you care about, all in one
+                  simple platform.
+                </p>
               </div>
             </div>
           </div>
@@ -374,7 +388,6 @@ export default function HomePage() {
               </Link>
             </div>
           </div>
-
           <div className="mr-auto  ">
             <PopularPosts />
           </div>
@@ -418,6 +431,57 @@ export default function HomePage() {
             </CardContent>
           </Card>
         </div>
+
+        {/* mobile app footer */}
+        {showMobileFooter && (
+          <div className="fixed bottom-30 left-0 right-0 mx-2 md:hidden z-50">
+            <div className="bg-white p-4 rounded-3xl shadow-2xl border border-white/30 backdrop-blur-md relative overflow-hidden">
+              <div className="flex items-center gap-4 relative z-10">
+                {/* App Icon with glow effect */}
+                <div className="relative">
+                  <div className="w-18 h-18 rounded-2xl flex items-center justify-center  p-2">
+                    <img
+                      src="/logo3.png"
+                      alt="CRWD app"
+                      className="w-14 h-14"
+                      style={{ objectFit: "contain" }}
+                    />
+                  </div>
+                </div>
+
+                {/* Content */}
+                <div className="flex-1">
+                  <p className=" leading-tight font-semibold">
+                    Easily manage all your donations at once
+                  </p>
+                  <Button className="bg-black hover:bg-black/90 text-white text-sm font-bold py-3 px-6 rounded-full border-0 mt-2">
+                    Get the App
+                  </Button>
+                  <button
+                    onClick={() => setShowMobileFooter(false)}
+                    className="w-10 h-10 cursor-pointer bg-white/20 rounded-full absolute top-0 right-0 hover:bg-white/30 transition-all duration-200 hover:scale-110 border border-white/30"
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="18"
+                      height="18"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2.5"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      className="text-black"
+                    >
+                      <line x1="18" y1="6" x2="6" y2="18" />
+                      <line x1="6" y1="6" x2="18" y2="18" />
+                    </svg>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

@@ -63,6 +63,9 @@ export default function CreateCRWDPage() {
               value={name}
               onChange={(e) => setName(e.target.value)}
             />
+            <p className="text-xs text-gray-500">
+              Keep it short & memorable (&lt;40 characters)
+            </p>
           </div>
 
           {/* Description */}
@@ -72,10 +75,13 @@ export default function CreateCRWDPage() {
             </label>
             <textarea
               className="bg-gray-50 w-full h-20 rounded-lg p-3 text-sm border border-gray-200 resize-none focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              placeholder="What is the purpose of your CRWD"
+              placeholder='What brings this group together? e.g., "We support shelters & meals programs in ATL."'
               value={desc}
               onChange={(e) => setDesc(e.target.value)}
             />
+            <p className="text-xs text-gray-500">
+              A quick one-liner works best (&lt;160 characters)
+            </p>
           </div>
 
           {/* Causes Selection */}
