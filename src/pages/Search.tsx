@@ -147,7 +147,7 @@ export default function SearchPage() {
             </div>
 
             {/* Filter Chip */}
-            <div className="mb-6 px-4">
+            <div className=" px-4">
               <Badge
                 variant="secondary"
                 className="bg-muted/50 hover:bg-muted text-foreground rounded-md px-4 py-2 whitespace-nowrap"
@@ -157,9 +157,9 @@ export default function SearchPage() {
             </div>
 
             {/* Suggested Causes Section */}
-            <div className="px-4 mx-4 my-8 md:px-0 md:my-10">
+            <div className="px-4 mx-4 my-4 md:px-0 md:my-5">
               <h2 className="text-lg font-semibold mb-4">Find Your Cause</h2>
-              <div className="space-y-5">
+              <div className="">
                 {suggestedCauses.map((cause, index) => (
                   <Link to="/cause" key={index} className="block">
                     <div className="flex items-center justify-between p-4 rounded-lg hover:bg-muted/50 cursor-pointer transition-colors">
@@ -171,13 +171,13 @@ export default function SearchPage() {
                             className="w-full h-full object-cover"
                           />
                         </div>
-                        <div className="min-w-0 flex-1">
+                        <div className="min-w-0  flex-1">
                           <div
                             className={`${
                               cause.type === "CRWD"
                                 ? "bg-green-100"
                                 : "bg-blue-100"
-                            } px-3 py-1 rounded-sm w-fit`}
+                            } px-3 py-1 rounded-sm w-fit mb-1`}
                           >
                             <p
                               className={`${
