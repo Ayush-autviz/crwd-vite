@@ -95,16 +95,19 @@ export default function HomePage() {
       name: "The Red Cross",
       description: "An health organization that helps people in need",
       image: "/redcross.png",
+      type: "NonProfit",
     },
     {
       name: "St. Judes",
       description: "The leading children's health organization",
       image: "/grocery.jpg",
+      type: "NonProfit",
     },
     {
       name: "Women's Healthcare of At...",
       description: "We are Atlanta's #1 healthcare organization",
       image: "/redcross.png",
+      type: "NonProfit",
     },
   ];
 
@@ -143,29 +146,30 @@ export default function HomePage() {
         <div className="md:col-span-8">
           {/* Search Input */}
           <div className="hidden md:block p-4 md:p-0 md:mb-6">
-            <Input
-              type="search"
-              placeholder="Texas flooding"
-              className="bg-muted/50 border-none"
-              //@ts-ignore
-              prefix={
+            <div className="relative">
+              <Input
+                type="search"
+                placeholder="Texas flooding"
+                className="bg-muted/50 border-none pr-10"
+              />
+              <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
-                  width="24"
-                  height="24"
+                  width="20"
+                  height="20"
                   viewBox="0 0 24 24"
                   fill="none"
                   stroke="currentColor"
                   strokeWidth="2"
                   strokeLinecap="round"
                   strokeLinejoin="round"
-                  className="h-4 w-4 text-muted-foreground"
+                  className="h-5 w-5 text-muted-foreground"
                 >
                   <circle cx="11" cy="11" r="8" />
                   <path d="m21 21-4.3-4.3" />
                 </svg>
-              }
-            />
+              </div>
+            </div>
           </div>
           {/* Main Message */}
           <div className="p-4 md:p-0 md:mb-6">
@@ -184,18 +188,205 @@ export default function HomePage() {
               </div>
             </div>
           </div>
+
           {/* Causes Carousel */}
           <div className="p-4 md:p-0 md:mb-6">
             <CausesCarousel />
           </div>
+
           {/* <div className="p-4 md:p-0">
             <TopicsList topics={topi} />
           </div> */}
+
+          {/* Suggested CRWDs Section */}
+          <div className="px-4 mt-8 md:px-0 md:mt-10">
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-lg font-semibold">
+                Discover giving in action
+              </h2>
+              <Link to="/create-crwd">
+                <Button variant="link" className="text-primary p-0 h-auto">
+                  Create a CRWD
+                </Button>
+              </Link>
+            </div>
+            <div className="overflow-x-auto pb-2">
+              <div className="flex gap-4 w-max">
+                {suggestedCRWDs.map((crwd, index) => (
+                  <Link to="/groupcrwd" key={index} className="block">
+                    <div className="flex flex-col items-center gap-3 p-4 rounded-lg hover:bg-gray-100 cursor-pointer transition-colors bg-gray-50 min-w-[200px]">
+                      {/* Image on top */}
+                      <div className="w-16 h-16 rounded-full overflow-hidden">
+                        <img
+                          src={crwd.image}
+                          alt={crwd.name}
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+
+                      {/* Text content below image */}
+                      <div className="text-center">
+                        <h3 className="font-medium text-sm mb-1">
+                          {crwd.name}
+                        </h3>
+                        <p className="text-xs text-muted-foreground mb-1">
+                          {crwd.members}
+                        </p>
+                        <p className="text-xs text-muted-foreground w-36 leading-relaxed">
+                          {crwd.description.length > 21
+                            ? `${crwd.description.slice(0, 21)}..`
+                            : crwd.description}
+                        </p>
+                      </div>
+
+                      {/* <div className="bg-green-100 px-3 py-1 rounded-sm flex items-center justify-center">
+                        <p className="text-green-600 text-xs font-semibold">
+                          CRWD
+                        </p>
+                      </div> */}
+
+                      {/* Button at the bottom */}
+                      <Button className="bg-green-600 text-white text-xs py-2 px-4 rounded-lg hover:bg-green-700 transition-colors">
+                        Learn More
+                      </Button>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Categories Section */}
+          <div className="px-4 mt-8 md:px-0 md:mt-10">
+            <h2 className="text-lg font-semibold mb-4">Explore Categories</h2>
+            <div className="overflow-x-auto pb-2">
+              <div className="flex space-x-2 min-w-max">
+                {categories.map((category, index) => (
+                  <Link to={`/search`} key={index}>
+                    <Badge
+                      variant="secondary"
+                      className="bg-muted/50 hover:bg-muted text-foreground rounded-md px-4 py-2 whitespace-nowrap"
+                    >
+                      {category}
+                    </Badge>
+                  </Link>
+                ))}
+              </div>
+            </div>
+            <div className="flex justify-end mt-4">
+              <Link to="/search">
+                <Button
+                  variant="link"
+                  className="text-primary flex items-center"
+                >
+                  Discover More <ChevronRight className="h-4 w-4 ml-1" />
+                </Button>
+              </Link>
+            </div>
+          </div>
+
+          {/* Suggested Causes Section */}
+          <div className="px-4 mt-8 md:px-0 md:mt-10">
+            <h2 className="text-lg font-semibold mb-4">Find Your Cause</h2>
+            <div className="space-y-5">
+              {suggestedCauses.map((cause, index) => (
+                <Link to="/cause" key={index} className="block">
+                  <div className="flex items-center justify-between p-4 rounded-lg hover:bg-muted/50 cursor-pointer transition-colors">
+                    <div className="flex items-center gap-3 flex-1 min-w-0 mr-4">
+                      <div className="w-10 h-10 rounded-full overflow-hidden flex-shrink-0">
+                        <img
+                          src={cause.image}
+                          alt={cause.name}
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <div
+                          className={`${
+                            cause.type === "CRWD"
+                              ? "bg-green-100"
+                              : "bg-blue-100"
+                          } px-3 py-1 rounded-sm w-fit`}
+                        >
+                          <p
+                            className={`${
+                              cause.type === "CRWD"
+                                ? "text-green-600"
+                                : "text-blue-600"
+                            } text-xs font-semibold`}
+                          >
+                            {cause.type}
+                          </p>
+                        </div>
+                        <h3 className="font-medium text-sm mb-1">
+                          {cause.name}
+                        </h3>
+                        <p className="text-xs text-muted-foreground leading-relaxed line-clamp-2 max-w-[200px]">
+                          {cause.description}
+                        </p>
+                      </div>
+                    </div>
+                    {cause.type === "NonProfit" && (
+                      <div className="flex flex-col items-center gap-2">
+                        <Button className="bg-primary text-white text-xs py-2 px-3 rounded-lg hover:bg-primary/90 transition-colors">
+                          Donate Now
+                        </Button>
+                        <Button
+                          variant="link"
+                          className="text-primary text-xs p-0 h-auto"
+                        >
+                          Visit Profile
+                        </Button>
+                      </div>
+                    )}
+                    {cause.type === "CRWD" && (
+                      <div className="flex flex-col items-center gap-2">
+                        <Button className="bg-green-600 text-white text-xs py-2 px-4 rounded-lg hover:bg-green-700 transition-colors">
+                          Join CRWD
+                        </Button>
+                      </div>
+                    )}
+                  </div>
+                </Link>
+              ))}
+            </div>
+            <div className="flex justify-end mt-4">
+              <Link to="/search">
+                <Button
+                  variant="link"
+                  className="text-primary flex items-center"
+                >
+                  Discover More <ChevronRight className="h-4 w-4 ml-1" />
+                </Button>
+              </Link>
+            </div>
+          </div>
+
+          {/* Why CRWDs Section */}
+          <div className="px-4 my-8 md:px-0 md:my-10">
+            <div className="bg-gradient-to-br from-gray-100 via-gray-50 to-background p-6 md:p-8 rounded-2xl border border-gray-200 shadow-lg">
+              <div className="text-center mb-6">
+                <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-2">
+                  Why CRWDs?
+                </h2>
+                <h4 className="text-lg md:text-xl font-semibold text-gray-500 mb-4">
+                  Giving should be simple
+                </h4>
+              </div>
+
+              <div className="text-center">
+                <p className="text-muted-foreground mb-4 max-w-2xl mx-auto">
+                  On CRWD, one donation supports all the causes you care about.
+                  You're not just donating, you're joining others who care about
+                  the same things, creating bigger impact together.
+                </p>
+              </div>
+            </div>
+          </div>
+
           {/* Causes and CRWDs near you Section */}
           <div className="px-4 mt-8 md:px-0 md:mt-8">
-            <h2 className="text-lg font-semibold mb-4">
-              Local Causes and CRWDs
-            </h2>
+            <h2 className="text-lg font-semibold mb-4">Causes near you</h2>
             <div className="space-y-3">
               {nearbyCauses.map((cause, index) => (
                 <Link
@@ -244,150 +435,7 @@ export default function HomePage() {
               </Link>
             </div>
           </div>
-          {/* Categories Section */}
-          <div className="px-4 mt-8 md:px-0 md:mt-10">
-            <h2 className="text-lg font-semibold mb-4">Explore Categories</h2>
-            <div className="overflow-x-auto pb-2">
-              <div className="flex space-x-2 min-w-max">
-                {categories.map((category, index) => (
-                  <Link to={`/search`} key={index}>
-                    <Badge
-                      variant="secondary"
-                      className="bg-muted/50 hover:bg-muted text-foreground rounded-md px-4 py-2 whitespace-nowrap"
-                    >
-                      {category}
-                    </Badge>
-                  </Link>
-                ))}
-              </div>
-            </div>
-          </div>
-          {/* Suggested CRWDs Section */}
-          <div className="px-4 mt-8 md:px-0 md:mt-10">
-            <div className="flex justify-between items-center mb-4">
-              <h2 className="text-lg font-semibold">
-                Discover giving in action
-              </h2>
-              <Link to="/create-crwd">
-                <Button variant="link" className="text-primary p-0 h-auto">
-                  Create a CRWD
-                </Button>
-              </Link>
-            </div>
-            <div className="overflow-x-auto pb-2">
-              <div className="flex gap-4 w-max">
-                {suggestedCRWDs.map((crwd, index) => (
-                  <Link to="/groupcrwd" key={index} className="block">
-                    <div className="flex flex-col items-center gap-3 p-4 rounded-lg hover:bg-muted/100 cursor-pointer transition-colors bg-muted/50 min-w-[200px]">
-                      {/* Image on top */}
-                      <div className="w-16 h-16 rounded-full overflow-hidden">
-                        <img
-                          src={crwd.image}
-                          alt={crwd.name}
-                          className="w-full h-full object-cover"
-                        />
-                      </div>
 
-                      {/* Text content below image */}
-                      <div className="text-center">
-                        <h3 className="font-medium text-sm mb-1">
-                          {crwd.name}
-                        </h3>
-                        <p className="text-xs text-muted-foreground mb-1">
-                          {crwd.members}
-                        </p>
-                        <p className="text-xs text-muted-foreground w-36 leading-relaxed">
-                          {crwd.description.length > 21
-                            ? `${crwd.description.slice(0, 21)}..`
-                            : crwd.description}
-                        </p>
-                      </div>
-
-                      {/* Button at the bottom */}
-                      <Button className="bg-green-600 text-white text-xs py-2 px-4 rounded-lg hover:bg-green-700 transition-colors">
-                        Join the CRWD
-                      </Button>
-                    </div>
-                  </Link>
-                ))}
-              </div>
-            </div>
-          </div>
-          {/* Why CRWDs Section */}
-
-          {/* Why CRWDs Section */}
-          <div className="px-4 mt-8 md:px-0 md:mt-10">
-            <div className="bg-gradient-to-br from-gray-100 via-gray-50 to-background p-6 md:p-8 rounded-2xl border border-gray-200 shadow-lg">
-              <div className="text-center mb-6">
-                <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-2">
-                  Why CRWDs?
-                </h2>
-                <h4 className="text-lg md:text-xl font-semibold text-gray-500 mb-4">
-                  Giving should be simple
-                </h4>
-              </div>
-
-              <div className="text-center">
-                <p className="text-muted-foreground mb-4 max-w-2xl mx-auto">
-                  CRWDs are groups of people who share a common cause or
-                  interest. They are a great way to connect with like-minded
-                  individuals and support a cause you care about, all in one
-                  simple platform.
-                </p>
-              </div>
-            </div>
-          </div>
-
-          {/* Suggested Causes Section */}
-          <div className="px-4 mt-8 md:px-0 md:mt-10">
-            <h2 className="text-lg font-semibold mb-4">Suggested Causes</h2>
-            <div className="space-y-5">
-              {suggestedCauses.map((cause, index) => (
-                <Link to="/cause" key={index} className="block">
-                  <div className="flex items-center justify-between p-4 rounded-lg hover:bg-muted/50 cursor-pointer transition-colors">
-                    <div className="flex items-center gap-3 flex-1 min-w-0 mr-4">
-                      <div className="w-10 h-10 rounded-full overflow-hidden flex-shrink-0">
-                        <img
-                          src={cause.image}
-                          alt={cause.name}
-                          className="w-full h-full object-cover"
-                        />
-                      </div>
-                      <div className="min-w-0 flex-1">
-                        <h3 className="font-medium text-sm mb-1">
-                          {cause.name}
-                        </h3>
-                        <p className="text-xs text-muted-foreground leading-relaxed line-clamp-2 max-w-[200px]">
-                          {cause.description}
-                        </p>
-                      </div>
-                    </div>
-                    <div className="flex flex-col items-center gap-2">
-                      <Button className="bg-primary text-white text-xs py-2 px-3 rounded-lg hover:bg-primary/90 transition-colors">
-                        Donate Now
-                      </Button>
-                      <Button
-                        variant="link"
-                        className="text-primary text-xs p-0 h-auto"
-                      >
-                        Visit Profile
-                      </Button>
-                    </div>
-                  </div>
-                </Link>
-              ))}
-            </div>
-            <div className="flex justify-end mt-4">
-              <Link to="/search">
-                <Button
-                  variant="link"
-                  className="text-primary flex items-center"
-                >
-                  Discover More <ChevronRight className="h-4 w-4 ml-1" />
-                </Button>
-              </Link>
-            </div>
-          </div>
           <div className="mr-auto  ">
             <PopularPosts />
           </div>

@@ -34,7 +34,7 @@ export const PopularPosts = ({ related = false }: { related?: boolean }) => {
   return (
     <div className="w-full p-4 md:p-0">
       <h2 className="text-lg font-semibold mb-4">
-        {related ? "Related Posts" : "Popular Posts"}
+        {related ? "Related Posts" : "Recent Posts to CRWDs"}
       </h2>
       <div className="space-y-4">
         {allPosts.map((post) => (
