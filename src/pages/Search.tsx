@@ -67,7 +67,7 @@ const featuredOrganizations = [
 const suggestedCauses = [
   {
     name: "The Red Cross",
-    type: "Cause",
+    type: "NonProfit",
     description: "An health organization that helps people in need",
     image: "/redcross.png",
   },
@@ -77,12 +77,12 @@ const suggestedCauses = [
     description: "The leading children's health organization",
     image: "/grocery.jpg",
   },
-  {
-    name: "Women's Healthcare of At...",
-    type: "Cause",
-    description: "We are Atlanta's #1 health care organization",
-    image: "/redcross.png",
-  },
+  // {
+  //   name: "Women's Healthcare of At...",
+  //   type: "Cause",
+  //   description: "We are Atlanta's #1 health care organization",
+  //   image: "/redcross.png",
+  // },
 ];
 
 const categories = [

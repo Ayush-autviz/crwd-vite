@@ -150,9 +150,9 @@ export default function HomePage() {
               <Input
                 type="search"
                 placeholder="Texas flooding"
-                className="bg-muted/50 border-none pr-10"
+                className="bg-muted/50 border-none pl-10"
               />
-              <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+              <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   width="20"
