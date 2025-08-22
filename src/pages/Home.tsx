@@ -367,7 +367,7 @@ export default function HomePage() {
             <div className="bg-gradient-to-br from-gray-100 via-gray-50 to-background p-6 md:p-8 rounded-2xl border border-gray-200 shadow-lg">
               <div className="text-center mb-6">
                 <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-2">
-                  Why CRWDs?
+                  Why CRWD?
                 </h2>
                 <h4 className="text-lg md:text-xl font-semibold text-gray-500 mb-4">
                   Giving should be simple
