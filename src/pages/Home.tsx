@@ -351,7 +351,7 @@ export default function HomePage() {
               ))}
             </div>
             <div className="flex justify-end mt-4">
-              <Link to="/search">
+              <Link to="/search" state={{ discover: true }}>
                 <Button
                   variant="link"
                   className="text-primary flex items-center"
