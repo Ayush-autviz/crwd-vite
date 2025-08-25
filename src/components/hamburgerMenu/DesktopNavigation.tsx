@@ -38,7 +38,7 @@ const DesktopNavigation: React.FC = () => (
 
       {/* Footer Links - Outside ScrollArea */}
       <div className="border-t">
-        <div className="flex gap-4 p-4">
+        <div className="flex justify-center gap-4 p-4">
           <Link
             to="/settings/privacy"
             className="text-xs text-primary hover:underline"
@@ -51,8 +51,10 @@ const DesktopNavigation: React.FC = () => (
           >
             Terms of Service
           </Link>
-          <p className="text-xs text-muted-foreground">CRWD @2025</p>
         </div>
+        <p className="text-xs text-muted-foreground text-center mb-2">
+          CRWD @2025
+        </p>
       </div>
     </div>
   </ScrollArea>

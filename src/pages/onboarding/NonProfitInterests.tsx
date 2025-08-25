@@ -157,10 +157,10 @@ export default function NonProfitInterests() {
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_1px_1px,rgba(0,0,0,0.02)_1px,transparent_0)] [background-size:20px_20px]"></div>
 
       {/* Main Content */}
-      <div className="relative z-10 flex items-center justify-center p-4 md:p-8 min-h-screen">
+      <div className="relative z-10 flex items-center justify-center p-4 min-h-screen">
         <div className="w-full max-w-2xl">
           <Card className="border border-gray-200 shadow-sm bg-white">
-            <CardContent className="p-4 md:p-8 space-y-4 md:space-y-6">
+            <CardContent className="p-4 md:p-8 space-y-4">
               {/* Step Indicator */}
               <div className="flex items-center justify-center space-x-2">
                 <div className="flex items-center space-x-2">
@@ -172,7 +172,7 @@ export default function NonProfitInterests() {
 
               {/* Heading */}
               <div className="text-center space-y-2">
-                <h1 className="text-xl md:text-2xl font-semibold text-gray-900">
+                <h1 className="text-2xl font-bold text-gray-900">
                   Find causes that fit you
                 </h1>
                 <p className="text-gray-600 text-sm">

@@ -1,15 +1,27 @@
 "use client";
 import React, { useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useSearchParams } from "react-router-dom";
 import ProfileNavbar from "@/components/profile/ProfileNavbar";
 import MembersList from "@/components/members/MembersList";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 
 const causes = [
-  { name: "Red Cross", avatar: "https://randomuser.me/api/portraits/men/32.jpg", impact: "Donated $500" },
-  { name: "Food for All", avatar: "https://randomuser.me/api/portraits/women/44.jpg", impact: "Volunteered 20h" },
-  { name: "Hope Foundation", avatar: "https://randomuser.me/api/portraits/men/65.jpg", impact: "Shared 10 posts" },
+  {
+    name: "Red Cross",
+    avatar: "https://randomuser.me/api/portraits/men/32.jpg",
+    impact: "Donated $500",
+  },
+  {
+    name: "Food for All",
+    avatar: "https://randomuser.me/api/portraits/women/44.jpg",
+    impact: "Volunteered 20h",
+  },
+  {
+    name: "Hope Foundation",
+    avatar: "https://randomuser.me/api/portraits/men/65.jpg",
+    impact: "Shared 10 posts",
+  },
 ];
 const following = [
   { name: "Jane Doe", username: "janedoe", connected: true },
@@ -22,8 +34,16 @@ const followers = [
   { name: "Sam Yellow", username: "samyellow", connected: false },
 ];
 const crwds = [
-  { name: "Feed the Hungry", avatar: "https://randomuser.me/api/portraits/men/32.jpg", role: "Admin" },
-  { name: "Clean Water Project", avatar: "https://randomuser.me/api/portraits/women/28.jpg", role: "Member" },
+  {
+    name: "Feed the Hungry",
+    avatar: "https://randomuser.me/api/portraits/men/32.jpg",
+    role: "Admin",
+  },
+  {
+    name: "Clean Water Project",
+    avatar: "https://randomuser.me/api/portraits/women/28.jpg",
+    role: "Member",
+  },
 ];
 
 const tabs = [
@@ -35,19 +55,23 @@ const tabs = [
 
 export default function ProfileStatistics() {
   const { id } = useParams<{ id: string }>();
-  const [activeTab, setActiveTab] = useState("causes");
+  const [searchParams] = useSearchParams();
+  const tab = searchParams.get("tab") || "causes";
+  const [activeTab, setActiveTab] = useState(tab);
   const [causesSearch, setCausesSearch] = useState("");
   const [crwdsSearch, setCrwdsSearch] = useState("");
 
   // Filter functions
-  const filteredCauses = causes.filter(cause =>
-    cause.name.toLowerCase().includes(causesSearch.toLowerCase()) ||
-    cause.impact.toLowerCase().includes(causesSearch.toLowerCase())
+  const filteredCauses = causes.filter(
+    (cause) =>
+      cause.name.toLowerCase().includes(causesSearch.toLowerCase()) ||
+      cause.impact.toLowerCase().includes(causesSearch.toLowerCase())
   );
 
-  const filteredCrwds = crwds.filter(crwd =>
-    crwd.name.toLowerCase().includes(crwdsSearch.toLowerCase()) ||
-    crwd.role.toLowerCase().includes(crwdsSearch.toLowerCase())
+  const filteredCrwds = crwds.filter(
+    (crwd) =>
+      crwd.name.toLowerCase().includes(crwdsSearch.toLowerCase()) ||
+      crwd.role.toLowerCase().includes(crwdsSearch.toLowerCase())
   );
 
   return (
@@ -60,7 +84,11 @@ export default function ProfileStatistics() {
             <Button
               key={tab.value}
               variant="ghost"
-              className={`flex-1 py-4 px-1 text-center rounded-none border-b py-6 cursor-pointer hover:text-blue-500 hover:bg-blue-50 ${activeTab === tab.value ? 'border-primary text-primary' : 'border-transparent text-muted-foreground '}`}
+              className={`flex-1 py-4 px-1 text-center rounded-none border-b py-6 cursor-pointer hover:text-blue-500 hover:bg-blue-50 ${
+                activeTab === tab.value
+                  ? "border-primary text-primary"
+                  : "border-transparent text-muted-foreground "
+              }`}
               onClick={() => setActiveTab(tab.value)}
             >
               <span>{tab.label}</span>
@@ -70,54 +98,56 @@ export default function ProfileStatistics() {
         {/* Tab Content */}
         {activeTab === "causes" && (
           <>
-              {filteredCauses.map((cause) => (
-                <div key={cause.name} className="flex items-center justify-between py-3">
-                  <div className="flex items-center">
-                    <Avatar className="h-10 w-10 mr-3">
-                      <AvatarImage src={cause.avatar} alt={cause.name} />
-                      <AvatarFallback>{cause.name[0]}</AvatarFallback>
-                    </Avatar>
-                    <div>
-                      <p className="font-medium">{cause.name}</p>
-                      {/* <p className="text-sm text-muted-foreground">{cause.impact}</p> */}
-                    </div>
+            {filteredCauses.map((cause) => (
+              <div
+                key={cause.name}
+                className="flex items-center justify-between py-3"
+              >
+                <div className="flex items-center">
+                  <Avatar className="h-10 w-10 mr-3">
+                    <AvatarImage src={cause.avatar} alt={cause.name} />
+                    <AvatarFallback>{cause.name[0]}</AvatarFallback>
+                  </Avatar>
+                  <div>
+                    <p className="font-medium">{cause.name}</p>
+                    {/* <p className="text-sm text-muted-foreground">{cause.impact}</p> */}
                   </div>
                 </div>
-              ))}
+              </div>
+            ))}
           </>
         )}
-        {activeTab === "following" && (
-          <MembersList members={following} />
-        )}
-        {activeTab === "followers" && (
-          <MembersList members={followers} />
-        )}
+        {activeTab === "following" && <MembersList members={following} />}
+        {activeTab === "followers" && <MembersList members={followers} />}
         {activeTab === "crwds" && (
           <>
-              {filteredCrwds.map((crwd) => (
-                <div key={crwd.name} className="flex items-center justify-between py-3">
-                  <div className="flex items-center">
-                    <Avatar className="h-10 w-10 mr-3">
-                      <AvatarImage src={crwd.avatar} alt={crwd.name} />
-                      <AvatarFallback>{crwd.name[0]}</AvatarFallback>
-                    </Avatar>
-                    <div>
-                      <p className="font-medium">{crwd.name}</p>
-                      <p className="text-sm text-muted-foreground">{crwd.role}</p>
-                    </div>
+            {filteredCrwds.map((crwd) => (
+              <div
+                key={crwd.name}
+                className="flex items-center justify-between py-3"
+              >
+                <div className="flex items-center">
+                  <Avatar className="h-10 w-10 mr-3">
+                    <AvatarImage src={crwd.avatar} alt={crwd.name} />
+                    <AvatarFallback>{crwd.name[0]}</AvatarFallback>
+                  </Avatar>
+                  <div>
+                    <p className="font-medium">{crwd.name}</p>
+                    <p className="text-sm text-muted-foreground">{crwd.role}</p>
                   </div>
-                  <Button
-                    variant="outline"
-                    className="border-0 text-sm mr-2 cursor-pointer hover:text-blue-500 bg-[#F0F2FB] text-[#4367FF]"
-                    size="sm"
-                  >
-                    View
-                  </Button>
                 </div>
-              ))}
+                <Button
+                  variant="outline"
+                  className="border-0 text-sm mr-2 cursor-pointer hover:text-blue-500 bg-[#F0F2FB] text-[#4367FF]"
+                  size="sm"
+                >
+                  View
+                </Button>
+              </div>
+            ))}
           </>
         )}
       </div>
     </main>
   );
-} 
+}

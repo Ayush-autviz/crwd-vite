@@ -1,26 +1,37 @@
-import React from 'react';
-import { Plus, MoreHorizontal, Heart, MessageCircle, Share2, MessageSquare } from 'lucide-react';
-import ProfileActivity from '../profile/ProfileActivity';
-import { profileActivity } from '@/lib/profile/profileActivity';
-import EmptyState from '../ui/EmptyState';
+import React, { useState } from "react";
+import {
+  Plus,
+  MoreHorizontal,
+  Heart,
+  MessageCircle,
+  Share2,
+  MessageSquare,
+  X,
+} from "lucide-react";
+import ProfileActivity from "../profile/ProfileActivity";
+import { profileActivity } from "@/lib/profile/profileActivity";
+import EmptyState from "../ui/EmptyState";
+import { Button } from "../ui/button";
+import ReactConfetti from "react-confetti";
 
 const updates = [
   {
-    user: 'Chad',
-    avatar: 'https://randomuser.me/api/portraits/men/32.jpg',
-    time: '17h',
-    text: 'The quick, brown fox jumps over a lazy dog. DJs flock by when MTV ax quiz prog. Junk MTV quiz graced by fox whelps. Bawds jog, flick quartz, vex nymphs. Waltz, bad nymph, for quick jigs vex!',
-    image: '',
+    user: "Chad",
+    avatar: "https://randomuser.me/api/portraits/men/32.jpg",
+    time: "17h",
+    text: "The quick, brown fox jumps over a lazy dog. DJs flock by when MTV ax quiz prog. Junk MTV quiz graced by fox whelps. Bawds jog, flick quartz, vex nymphs. Waltz, bad nymph, for quick jigs vex!",
+    image: "",
     likes: 2,
     comments: 0,
     shares: 3,
   },
   {
-    user: 'Chad',
-    avatar: 'https://randomuser.me/api/portraits/men/32.jpg',
-    time: '17h',
-    text: 'The quick, brown fox jumps over a lazy dog. DJs flock by when MTV ax quiz prog. Junk',
-    image: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=400&q=80',
+    user: "Chad",
+    avatar: "https://randomuser.me/api/portraits/men/32.jpg",
+    time: "17h",
+    text: "The quick, brown fox jumps over a lazy dog. DJs flock by when MTV ax quiz prog. Junk",
+    image:
+      "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=400&q=80",
     likes: 2,
     comments: 0,
     shares: 3,
@@ -32,9 +43,9 @@ interface GroupCrwdUpdatesProps {
   showEmpty?: boolean;
 }
 
-const GroupCrwdUpdates: React.FC<GroupCrwdUpdatesProps> = ({ 
-  posts = profileActivity, 
-  showEmpty = false 
+const GroupCrwdUpdates: React.FC<GroupCrwdUpdatesProps> = ({
+  posts = profileActivity,
+  showEmpty = false,
 }) => {
   // Show empty state if showEmpty is true or if posts array is empty
   const shouldShowEmpty = showEmpty || posts.length === 0;
@@ -45,7 +56,7 @@ const GroupCrwdUpdates: React.FC<GroupCrwdUpdatesProps> = ({
         <span className="font-semibold text-base">4 Updates</span>
         <button className="bg-blue-100 text-blue-600 rounded-full p-1"><Plus size={18} /></button>
       </div> */}
-      
+
       {shouldShowEmpty ? (
         <EmptyState
           icon={<MessageSquare size={48} />}
@@ -62,4 +73,4 @@ const GroupCrwdUpdates: React.FC<GroupCrwdUpdatesProps> = ({
   );
 };
 
-export default GroupCrwdUpdates; 
+export default GroupCrwdUpdates;

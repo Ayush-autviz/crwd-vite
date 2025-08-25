@@ -499,7 +499,7 @@ export default function HomePage() {
 
                 {/* Content */}
                 <div className="flex-1">
-                  <p className="text-sm sm:text-lg leading-tight font-semibold">
+                  <p className="text-xs sm:text-lg leading-tight font-semibold">
                     Easily manage all your donations at once
                   </p>
                   <Button className="bg-black hover:bg-black/90 text-white text-sm font-bold py-3 px-6 rounded-full border-0 mt-2">

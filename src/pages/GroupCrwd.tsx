@@ -1,22 +1,56 @@
-import React, { useState } from 'react';
-import GroupCrwdHeader from '../components/groupcrwd/GroupCrwdHeader';
-import GroupCrwdSuggested from '../components/groupcrwd/GroupCrwdSuggested';
-import GroupCrwdUpdates from '../components/groupcrwd/GroupCrwdUpdates';
-import GroupCrwdEvent from '../components/groupcrwd/GroupCrwdEvent';
-import GroupCrwdBottomBar from '../components/groupcrwd/GroupCrwdBottomBar';
-import ProfileNavbar from '@/components/profile/ProfileNavbar';
-import { Card, CardContent } from '@/components/ui/card';
-import { Link } from 'react-router-dom';
-import { Button } from '@/components/ui/button';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Toast } from '@/components/ui/toast';
-import { SharePost } from '@/components/ui/SharePost';
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import React, { useState } from "react";
+import GroupCrwdHeader from "../components/groupcrwd/GroupCrwdHeader";
+import GroupCrwdSuggested from "../components/groupcrwd/GroupCrwdSuggested";
+import GroupCrwdUpdates from "../components/groupcrwd/GroupCrwdUpdates";
+import GroupCrwdEvent from "../components/groupcrwd/GroupCrwdEvent";
+import GroupCrwdBottomBar from "../components/groupcrwd/GroupCrwdBottomBar";
+import ProfileNavbar from "@/components/profile/ProfileNavbar";
+import { Card, CardContent } from "@/components/ui/card";
+import { Link } from "react-router-dom";
+import { Button } from "@/components/ui/button";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Toast } from "@/components/ui/toast";
+import { SharePost } from "@/components/ui/SharePost";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { X } from "lucide-react";
+import ReactConfetti from "react-confetti";
 
 export default function GroupCrwdPage() {
   const [hasJoined, setHasJoined] = useState(false);
   const [showToast, setShowToast] = useState(false);
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
+  const [showJoinModal, setShowJoinModal] = useState(false);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
+
+  const [windowDimensions, setWindowDimensions] = useState({
+    width: window.innerWidth,
+    height: window.innerHeight,
+  });
+
+  // const handleJoinClick = () => {
+  //   setShowJoinModal(true);
+  // };
+
+  const handleCloseModal = () => {
+    setShowJoinModal(false);
+  };
+
+  const handleJoinConfirm = () => {
+    setHasJoined(true);
+    setShowJoinModal(false);
+    setShowSuccessModal(true);
+  };
+
+  const handleCloseSuccessModal = () => {
+    setShowSuccessModal(false);
+  };
 
   const handleJoin = () => {
     if (hasJoined) {
@@ -24,7 +58,8 @@ export default function GroupCrwdPage() {
       setShowConfirmDialog(true);
     } else {
       // If not joined, join directly
-      setHasJoined(true);
+      setShowJoinModal(true);
+      // setHasJoined(true);
       setShowToast(true);
     }
   };
@@ -38,18 +73,142 @@ export default function GroupCrwdPage() {
   return (
     // <div>
     <>
-      <ProfileNavbar title='Group Crwd' />
+      <ProfileNavbar title="Group Crwd" />
       {/* <SharePost url={window.location.href} title="Feed the hungry - CRWD" description="Join us in supporting families experiencing food insecurity in the greater Atlanta area." /> */}
       <div className="py-6 grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-3 space-y-6">
-
           {/* <ProfileNavbar title='Group Crwd' /> */}
-          <GroupCrwdHeader hasJoined={hasJoined} onJoin={handleJoin}  id='' />
+          <GroupCrwdHeader hasJoined={hasJoined} onJoin={handleJoin} id="" />
           <GroupCrwdSuggested />
           <GroupCrwdUpdates showEmpty={true} />
           {/* <GroupCrwdEvent /> */}
           {!hasJoined && <GroupCrwdBottomBar onJoin={handleJoin} />}
-          <div className='h-45 md:hidden'/>
+          <div className="h-45 md:hidden" />
+
+          {showJoinModal && (
+            <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+              <div className="bg-white rounded-lg max-w-md w-full mx-4 p-6 relative">
+                {/* Close Button */}
+                <button
+                  onClick={handleCloseModal}
+                  className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors"
+                >
+                  <X size={24} />
+                </button>
+
+                {/* Modal Content */}
+                <div className="text-center">
+                  {/* <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <MessageSquare size={32} className="text-blue-600" />
+              </div> */}
+
+                  <h2 className="text-2xl font-bold text-gray-900 mb-2">
+                    Join "Save the Trees Atlanta"?
+                  </h2>
+
+                  <p className="text-gray-600 mb-6">
+                    This CRWD includes 3 nonprofits.
+                  </p>
+
+                  <div className="flex items-center justify-center gap-3">
+                    <Button onClick={handleCloseModal} variant="outline">
+                      Learn More
+                    </Button>
+                    <Button className="px-10" onClick={handleJoinConfirm}>
+                      Join
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {showSuccessModal && (
+            <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+              <ReactConfetti
+                width={windowDimensions.width}
+                height={windowDimensions.height}
+                recycle={false}
+                numberOfPieces={200}
+              />
+              <div className="bg-white rounded-lg max-w-md w-full mx-4 p-6 relative">
+                {/* Close Button */}
+                <button
+                  onClick={handleCloseSuccessModal}
+                  className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors"
+                >
+                  <X size={24} />
+                </button>
+
+                {/* Modal Content */}
+                <div className="text-center">
+                  <h2 className="text-2xl font-bold text-gray-900 mb-2">
+                    You've joined Save the Trees Atlanta!
+                  </h2>
+
+                  <p className="text-gray-600 mb-4">
+                    Welcome to the community.
+                  </p>
+
+                  <p className="text-gray-600 mb-4">
+                    Here's what's inside your CRWD:
+                  </p>
+
+                  {/* Community Info Card */}
+                  <div className="bg-gray-50 border border-gray-200 rounded-lg p-4 mb-6">
+                    <div className="flex items-center gap-3">
+                      <div className="w-12 h-12 bg-teal-500 rounded-lg flex items-center justify-center">
+                        <span className="text-white text-sm font-semibold">
+                          🌳
+                        </span>
+                      </div>
+                      <div className="text-left">
+                        <h3 className="font-semibold text-gray-900">
+                          Save the Trees Atlanta
+                        </h3>
+                        <div className="flex items-center gap-2 mt-1">
+                          <div className="flex -space-x-2">
+                            <img
+                              src="https://randomuser.me/api/portraits/men/32.jpg"
+                              alt="avatar"
+                              className="w-6 h-6 rounded-full"
+                            />
+                            <img
+                              src="https://randomuser.me/api/portraits/men/30.jpg"
+                              alt="avatar"
+                              className="w-6 h-6 rounded-full"
+                            />
+                          </div>
+                          <span className="text-sm text-gray-600">
+                            44 members
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <p className="text-gray-600 mb-6">
+                    We've added 3 nonprofits from Save the Trees Atlanta to your
+                    donation box. You can edit or remove them any time.
+                  </p>
+
+                  <div className="flex flex-col gap-3">
+                    <Button onClick={handleCloseSuccessModal}>
+                      GO TO CRWD
+                    </Button>
+
+                    <Button
+                      onClick={handleCloseSuccessModal}
+                      variant="outline"
+                      className="w-full"
+                    >
+                      MANAGE DONATIONS
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
 
         {/* <div className="lg:col-span-1 space-y-6 px-4 pb-35">
@@ -178,10 +337,12 @@ export default function GroupCrwdPage() {
         </div> */}
       </div>
 
-      <Toast 
+      <Toast
         show={showToast}
         onHide={() => setShowToast(false)}
-        message={hasJoined ? "You have joined the group" : "You have left the group"}
+        message={
+          hasJoined ? "You have joined the group" : "You have left the group"
+        }
       />
 
       <Dialog open={showConfirmDialog} onOpenChange={setShowConfirmDialog}>
@@ -189,11 +350,15 @@ export default function GroupCrwdPage() {
           <DialogHeader>
             <DialogTitle>Leave Group</DialogTitle>
             <DialogDescription>
-              Are you sure you want to leave this group? You can always join back later.
+              Are you sure you want to leave this group? You can always join
+              back later.
             </DialogDescription>
           </DialogHeader>
           <DialogFooter className="flex gap-2 justify-end">
-            <Button variant="outline" onClick={() => setShowConfirmDialog(false)}>
+            <Button
+              variant="outline"
+              onClick={() => setShowConfirmDialog(false)}
+            >
               Cancel
             </Button>
             <Button variant="destructive" onClick={handleConfirmUnjoin}>

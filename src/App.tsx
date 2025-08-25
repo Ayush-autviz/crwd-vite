@@ -47,11 +47,6 @@ import OnBoard from "./pages/onboarding/OnBoard";
 import ClaimProfile from "./pages/onboarding/ClaimProfile";
 import NonProfitInterests from "./pages/onboarding/NonProfitInterests";
 import CompleteOnboard from "./pages/onboarding/CompleteOnboard";
-import ChooseAmount from "./pages/onboardingDonation/ChooseAmount";
-import DonationWelcome from "./pages/onboardingDonation/DonationWelcome";
-import PaymentSetup from "./pages/onboardingDonation/PaymentSetup";
-import SelectCauses from "./pages/onboardingDonation/SelectCauses";
-import Success from "./pages/onboardingDonation/Success";
 
 function App() {
   return (
@@ -71,11 +66,6 @@ function App() {
             path="/non-profit-interests"
             element={<NonProfitInterests />}
           />
-          <Route path="/choose-amount" element={<ChooseAmount />} />
-          <Route path="/donation-welcome" element={<DonationWelcome />} />
-          <Route path="/payment-setup" element={<PaymentSetup />} />
-          <Route path="/select-causes" element={<SelectCauses />} />
-          <Route path="/success" element={<Success />} />
 
           {/* Main routes with layout */}
           <Route
