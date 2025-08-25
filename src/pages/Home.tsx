@@ -115,19 +115,19 @@ export default function HomePage() {
   const nearbyCauses = [
     {
       name: "The Red Cross",
-      type: "Cause",
+      type: "CRWD",
       description: "An health organization that helps people in need",
       image: "/redcross.png",
     },
     {
       name: "St. Judes",
-      type: "CRWD",
+      type: "NonProfit",
       description: "The leading children's health organization",
       image: "/grocery.jpg",
     },
     {
       name: "Women's Healthcare of At...",
-      type: "Cause",
+      type: "CRWD",
       description: "We are Atlanta's #1 healthcare organization",
       image: "/redcross.png",
     },
@@ -351,7 +351,7 @@ export default function HomePage() {
               ))}
             </div>
             <div className="flex justify-end mt-4">
-              <Link to="/search">
+              <Link to="/search" state={{ discover: true }}>
                 <Button
                   variant="link"
                   className="text-primary flex items-center"
@@ -367,7 +367,7 @@ export default function HomePage() {
             <div className="bg-gradient-to-br from-gray-100 via-gray-50 to-background p-6 md:p-8 rounded-2xl border border-gray-200 shadow-lg">
               <div className="text-center mb-6">
                 <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-2">
-                  Why CRWDs?
+                  Why CRWD?
                 </h2>
                 <h4 className="text-lg md:text-xl font-semibold text-gray-500 mb-4">
                   Giving should be simple
@@ -396,6 +396,8 @@ export default function HomePage() {
                 >
                   <div className="flex items-center justify-between p-3 rounded-lg hover:bg-muted/50 cursor-pointer transition-colors bg-card">
                     <div className="flex items-center gap-2 md:gap-3 flex-1 min-w-0 mr-2">
+                    
+                      
                       <Avatar className="h-10 w-10 md:h-12 md:w-12 rounded-full flex-shrink-0">
                         {cause.image && (
                           <img
@@ -406,20 +408,56 @@ export default function HomePage() {
                         )}
                       </Avatar>
                       <div className="min-w-0">
+                      
+                      <div
+                          className={`${
+                            cause.type === "CRWD"
+                              ? "bg-green-100"
+                              : "bg-blue-100"
+                          } px-3 py-1 rounded-sm w-fit`}
+                        >
+                          <p
+                            className={`${
+                              cause.type === "CRWD"
+                                ? "text-green-600"
+                                : "text-blue-600"
+                            } text-xs font-semibold`}
+                          >
+                            {cause.type}
+                          </p>
+                        </div>
+                      {/* <div className="min-w-0"> */}
                         <h3 className="font-medium text-sm truncate">
                           {cause.name}
                         </h3>
-                        <p className="text-xs text-muted-foreground truncate mb-1">
+                        {/* <p className="text-xs text-muted-foreground truncate mb-1">
                           {cause.type}
-                        </p>
+                        </p> */}
                         <p className="text-xs text-muted-foreground leading-relaxed line-clamp-2 max-w-[200px]">
                           {cause.description}
                         </p>
                       </div>
                     </div>
-                    <Button className="bg-primary text-white text-xs h-8 px-4 md:px-6 flex-shrink-0 cursor-pointer">
-                      Visit
-                    </Button>
+                    {cause.type === "NonProfit" && (
+                      <div className="flex flex-col items-center gap-2">
+                        <Button className="bg-primary text-white text-xs py-2 px-3 rounded-lg hover:bg-primary/90 transition-colors">
+                          Donate Now
+                        </Button>
+                        <Button
+                          variant="link"
+                          className="text-primary text-xs p-0 h-auto"
+                        >
+                          Visit Profile
+                        </Button>
+                      </div>
+                    )}
+                    {cause.type === "CRWD" && (
+                      <div className="flex flex-col items-center gap-2">
+                        <Button className="bg-green-600 text-white text-xs py-2 px-4 rounded-lg hover:bg-green-700 transition-colors">
+                          Join CRWD
+                        </Button>
+                      </div>
+                    )}
                   </div>
                 </Link>
               ))}

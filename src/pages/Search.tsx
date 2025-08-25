@@ -21,7 +21,7 @@ import {
   ChevronRight,
 } from "lucide-react";
 import ProfileNavbar from "@/components/profile/ProfileNavbar";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import PopularPosts from "@/components/PopularPosts";
 
 const recentSearches = [
@@ -64,26 +64,27 @@ const featuredOrganizations = [
   { name: "Teach for America", type: "Education", rating: 4.6 },
 ];
 
-const suggestedCauses = [
-  {
-    name: "The Red Cross",
-    type: "NonProfit",
-    description: "An health organization that helps people in need",
-    image: "/redcross.png",
-  },
-  {
-    name: "St. Judes",
-    type: "CRWD",
-    description: "The leading children's health organization",
-    image: "/grocery.jpg",
-  },
-  // {
-  //   name: "Women's Healthcare of At...",
-  //   type: "Cause",
-  //   description: "We are Atlanta's #1 health care organization",
-  //   image: "/redcross.png",
-  // },
-];
+  // Sample data for nearby causes
+  const nearbyCauses = [
+    {
+      name: "The Red Cross",
+      type: "CRWD",
+      description: "An health organization that helps people in need",
+      image: "/redcross.png",
+    },
+    {
+      name: "St. Judes",
+      type: "NonProfit",
+      description: "The leading children's health organization",
+      image: "/grocery.jpg",
+    },
+    {
+      name: "Women's Healthcare of At...",
+      type: "CRWD",
+      description: "We are Atlanta's #1 healthcare organization",
+      image: "/redcross.png",
+    },
+  ];
 
 const categories = [
   "Animal Welfare",
@@ -95,7 +96,31 @@ const categories = [
   "Homelessness",
 ];
 
+  // Sample data for suggested causes
+  const suggestedCauses = [
+    {
+      name: "The Red Cross",
+      description: "An health organization that helps people in need",
+      image: "/redcross.png",
+      type: "NonProfit",
+    },
+    {
+      name: "St. Judes",
+      description: "The leading children's health organization",
+      image: "/grocery.jpg",
+      type: "NonProfit",
+    },
+    {
+      name: "Women's Healthcare of At...",
+      description: "We are Atlanta's #1 healthcare organization",
+      image: "/redcross.png",
+      type: "NonProfit",
+    },
+  ];
+
 export default function SearchPage() {
+  const location = useLocation();
+  const discover = location.state?.discover;
   const [search, setSearch] = useState("");
   const [recentSearchesList, setRecentSearchesList] = useState(recentSearches);
   const [popularSearchesList, setPopularSearchesList] =
@@ -158,9 +183,9 @@ export default function SearchPage() {
 
             {/* Suggested Causes Section */}
             <div className="px-4 mx-4 my-4 md:px-0 md:my-5">
-              <h2 className="text-lg font-semibold mb-4">Find Your Cause</h2>
+              <h2 className="text-lg font-semibold mb-4">Causes near you</h2>
               <div className="">
-                {suggestedCauses.map((cause, index) => (
+                {nearbyCauses.map((cause, index) => (
                   <Link to="/cause" key={index} className="block">
                     <div className="flex items-center justify-between p-4 rounded-lg hover:bg-muted/50 cursor-pointer transition-colors">
                       <div className="flex items-center gap-3 flex-1 min-w-0 mr-4">
@@ -292,7 +317,7 @@ export default function SearchPage() {
   return (
     <div className="min-h-screen bg-white">
       <ProfileNavbar title="Search" showBackButton={false} />
-
+      {!discover ? (
       <div className="md:grid md:grid-cols-12 md:gap-4  ">
         {/* Main Content */}
         <div className="px-4 py-6 md:pl-4 md:col-span-8 ">
@@ -504,6 +529,107 @@ export default function SearchPage() {
           </Card>
         </div>
       </div>
+      ) : (
+      <div className="md:grid md:grid-cols-12 md:gap-4  ">
+        <div className="px-4 py-6 md:pl-4 md:col-span-8 ">
+         
+            <div className="px-4 mx-4 my-4 md:px-0 md:my-5">
+              {/* Search Input for discover mode */}
+              <div className="mb-8">
+                <div className="relative group w-full">
+                  <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400 group-focus-within:text-gray-600 transition-colors" />
+                  <Input
+                    placeholder="Search non-profits, CRWDs, or posts"
+                    className="bg-gray-100 rounded-[10px] border-none px-12 py-4 text-base placeholder:text-gray-400 w-full"
+                    style={{ paddingRight: search ? "3rem" : "1rem" }}
+                    value={search}
+                    onChange={(e) => setSearch(e.target.value)}
+                  />
+                  {search && (
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="absolute right-2 top-1/2 transform -translate-y-1/2 h-8 w-8 p-0 hover:bg-gray-100 rounded-full"
+                      onClick={() => setSearch("")}
+                    >
+                      <X className="w-4 h-4" />
+                    </Button>
+                  )}
+                </div>
+              </div>
+              
+              {/* Suggested Causes Section */}
+          <div className="px-4 mt-8 md:px-0 md:mt-10">
+            <h2 className="text-lg font-semibold mb-4">Find Your Cause</h2>
+            <div className="space-y-5">
+              {suggestedCauses.map((cause, index) => (
+                <Link to="/cause" key={index} className="block">
+                  <div className="flex items-center justify-between p-4 rounded-lg hover:bg-muted/50 cursor-pointer transition-colors">
+                    <div className="flex items-center gap-3 flex-1 min-w-0 mr-4">
+                      <div className="w-10 h-10 rounded-full overflow-hidden flex-shrink-0">
+                        <img
+                          src={cause.image}
+                          alt={cause.name}
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <div
+                          className={`${
+                            cause.type === "CRWD"
+                              ? "bg-green-100"
+                              : "bg-blue-100"
+                          } px-3 py-1 rounded-sm w-fit`}
+                        >
+                          <p
+                            className={`${
+                              cause.type === "CRWD"
+                                ? "text-green-600"
+                                : "text-blue-600"
+                            } text-xs font-semibold`}
+                          >
+                            {cause.type}
+                          </p>
+                        </div>
+                        <h3 className="font-medium text-sm mb-1">
+                          {cause.name}
+                        </h3>
+                        <p className="text-xs text-muted-foreground leading-relaxed line-clamp-2 max-w-[200px]">
+                          {cause.description}
+                        </p>
+                      </div>
+                    </div>
+                    {cause.type === "NonProfit" && (
+                      <div className="flex flex-col items-center gap-2">
+                        <Button className="bg-primary text-white text-xs py-2 px-3 rounded-lg hover:bg-primary/90 transition-colors">
+                          Donate Now
+                        </Button>
+                        <Button
+                          variant="link"
+                          className="text-primary text-xs p-0 h-auto"
+                        >
+                          Visit Profile
+                        </Button>
+                      </div>
+                    )}
+                    {cause.type === "CRWD" && (
+                      <div className="flex flex-col items-center gap-2">
+                        <Button className="bg-green-600 text-white text-xs py-2 px-4 rounded-lg hover:bg-green-700 transition-colors">
+                          Join CRWD
+                        </Button>
+                      </div>
+                    )}
+                  </div>
+                </Link>
+              ))}
+            </div>
+
+          </div>
+        
+        </div>
+        </div>
+        </div>
+      )}
 
       <div className="h-30 md:hidden" />
     </div>
