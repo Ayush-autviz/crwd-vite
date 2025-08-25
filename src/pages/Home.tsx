@@ -396,8 +396,6 @@ export default function HomePage() {
                 >
                   <div className="flex items-center justify-between p-3 rounded-lg hover:bg-muted/50 cursor-pointer transition-colors bg-card">
                     <div className="flex items-center gap-2 md:gap-3 flex-1 min-w-0 mr-2">
-                    
-                      
                       <Avatar className="h-10 w-10 md:h-12 md:w-12 rounded-full flex-shrink-0">
                         {cause.image && (
                           <img
@@ -408,8 +406,7 @@ export default function HomePage() {
                         )}
                       </Avatar>
                       <div className="min-w-0">
-                      
-                      <div
+                        <div
                           className={`${
                             cause.type === "CRWD"
                               ? "bg-green-100"
@@ -426,7 +423,7 @@ export default function HomePage() {
                             {cause.type}
                           </p>
                         </div>
-                      {/* <div className="min-w-0"> */}
+                        {/* <div className="min-w-0"> */}
                         <h3 className="font-medium text-sm truncate">
                           {cause.name}
                         </h3>
@@ -525,7 +522,7 @@ export default function HomePage() {
               <div className="flex items-center gap-4 relative z-10">
                 {/* App Icon with glow effect */}
                 <div className="relative">
-                  <div className="w-18 h-18 rounded-2xl flex items-center justify-center  p-2">
+                  <div className="w-18 h-18 rounded-2xl flex items-center justify-center p-2">
                     <img
                       src="/logo3.png"
                       alt="CRWD app"
@@ -537,7 +534,7 @@ export default function HomePage() {
 
                 {/* Content */}
                 <div className="flex-1">
-                  <p className="text-xs sm:text-lg leading-tight font-semibold">
+                  <p className="text-xs sm:text-lg leading-tight font-semibold w-3/4">
                     Easily manage all your donations at once
                   </p>
                   <Button className="bg-black hover:bg-black/90 text-white text-sm font-bold py-3 px-6 rounded-full border-0 mt-2">
