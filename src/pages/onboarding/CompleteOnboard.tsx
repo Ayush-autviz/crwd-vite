@@ -33,7 +33,7 @@ export default function CompleteOnboard() {
   }, []);
 
   const handleGoToDonationBox = () => {
-    navigate("/donation-welcome");
+    navigate("/donation");
   };
 
   const handleBrowseCrwd = () => {

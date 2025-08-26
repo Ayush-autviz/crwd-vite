@@ -6,6 +6,7 @@ import DonationBox2 from "./DonationBox2";
 import { DonationBox3 } from "./DonationBox3";
 import OneTimeDonation from "./OneTimeDonation";
 import { Checkout } from "./Checkout";
+import { Range } from "react-range";
 
 import DonationHeader from "./donation/DonationHeader";
 import StepIndicator from "./donation/StepIndicator";
@@ -183,43 +184,86 @@ const DonationBox = () => {
                       all of the organizations in your box.
                     </p>
 
-                    <div className="bg-blue-50 rounded-lg p-5 mb-4">
+                    <div className="bg-blue-50 rounded-lg p-5 mb-4 border border-blue-100">
                       <h3 className="text-base font-medium text-gray-800 mb-3">
                         Enter monthly donation
                       </h3>
 
-                      <div className="bg-white flex items-center rounded-lg border shadow-sm">
-                        <button
-                          onClick={decrementDonation}
-                          className="flex items-center justify-center w-12 h-12 rounded-l-lg hover:bg-gray-50 transition-colors"
-                        >
-                          <Minus size={18} />
-                        </button>
-                        <div className="flex-1 flex justify-center items-center h-12 px-4 border-x">
-                          <span className="text-blue-600 text-2xl font-bold relative">
-                            $
-                            <input
-                              type="text"
-                              value={inputValue}
-                              onChange={handleInputChange}
-                              onBlur={handleInputBlur}
-                              onFocus={handleInputFocus}
-                              className="bg-transparent w-20 text-center focus:outline-none"
-                              aria-label="Donation amount"
-                            />
-                          </span>
-                        </div>
-                        <button
-                          onClick={incrementDonation}
-                          className="flex items-center justify-center w-12 h-12 rounded-r-lg hover:bg-gray-50 transition-colors"
-                        >
-                          <Plus size={18} />
-                        </button>
-                      </div>
+                      <div className="space-y-6">
+                        {/* Slider Container */}
+                        <div className="relative">
+                          <div className="flex items-center justify-between mb-3">
+                            <span className="text-sm font-medium text-gray-600">
+                              $5
+                            </span>
+                            <span className="text-sm font-medium text-gray-600">
+                              $100
+                            </span>
+                          </div>
 
-                      <p className="text-xs text-gray-500 mt-2">
-                        Input amount over $5
-                      </p>
+                          {/* React Range Slider */}
+                          <div className="relative">
+                            <Range
+                              step={1}
+                              min={5}
+                              max={100}
+                              values={[donationAmount]}
+                              onChange={(values) => {
+                                const newAmount = values[0];
+                                setDonationAmount(newAmount);
+                                setInputValue(newAmount.toString());
+                              }}
+                              renderTrack={({ props, children }) => (
+                                <div
+                                  {...props}
+                                  className="h-3 w-full bg-gray-200 rounded-full"
+                                  style={{
+                                    ...props.style,
+                                  }}
+                                >
+                                  <div
+                                    className="h-3 bg-gradient-to-r from-blue-500 to-blue-600 rounded-full transition-all duration-300 ease-out"
+                                    style={{
+                                      width: `${Math.max(
+                                        0,
+                                        Math.min(
+                                          100,
+                                          ((donationAmount - 5) / 95) * 100
+                                        )
+                                      )}%`,
+                                    }}
+                                  />
+                                  {children}
+                                </div>
+                              )}
+                              renderThumb={({ props }) => (
+                                <div
+                                  {...props}
+                                  className="w-5 h-5 bg-blue-500 rounded-full shadow-md"
+                                  style={{
+                                    ...props.style,
+                                    cursor: "pointer", // 👈 change from "grab" to "pointer" or "default"
+                                  }}
+                                />
+                              )}
+                            />
+                          </div>
+
+                          {/* Current value indicator */}
+                          <div className="absolute -top-8 left-1/2 transform -translate-x-1/2"></div>
+                        </div>
+                        {/* Amount Display */}
+                        <div className="flex items-center justify-center">
+                          <div className="bg-white rounded-xl border-2 border-blue-200 px-8 py-4 shadow-lg">
+                            <span className="text-blue-600 text-lg font-bold">
+                              ${donationAmount}
+                            </span>
+                            <span className="text-gray-500 text-lg ml-2 font-medium">
+                              /month
+                            </span>
+                          </div>
+                        </div>
+                      </div>
                     </div>
 
                     {/* Security Message */}
