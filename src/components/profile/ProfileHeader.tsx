@@ -42,7 +42,7 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
         onHide={() => setToastState({ show: false, message: "" })}
       />
       {/* Top right buttons */}
-      <div className="flex justify-end gap-3 ">
+      {/* <div className="flex justify-end gap-3 ">
         <Button className="h-8 rounded-lg text-sm font-semibold bg-white text-gray-700 border border-gray-300 shadow-none hover:bg-gray-50 transition-none">
           <Upload className="w-2 h-2" />
         </Button>
@@ -65,11 +65,11 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
             Edit
           </Link>
         )}
-      </div>
+      </div> */}
       {/* Avatar and info */}
       <div className="flex items-center gap-4 mb-3">
         <ImageModal src={avatarUrl} alt={name}>
-          <Avatar className="w-14 h-14 rounded-lg object-contain cursor-pointer hover:opacity-80 transition-opacity">
+          <Avatar className="w-14 h-14 rounded-full object-contain cursor-pointer hover:opacity-80 transition-opacity">
             <AvatarImage src={avatarUrl} alt={name} />
           </Avatar>
         </ImageModal>
@@ -89,6 +89,7 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
           >
             {link}
           </a>
+          <span className="text-gray-500 text-xs">Active since 2023</span>
         </div>
       </div>
     </div>

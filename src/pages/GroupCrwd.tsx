@@ -21,6 +21,7 @@ import {
 } from "@/components/ui/dialog";
 import { Check, Share2, X } from "lucide-react";
 import ReactConfetti from "react-confetti";
+import PopularPosts from "@/components/PopularPosts";
 
 export default function GroupCrwdPage() {
   const [hasJoined, setHasJoined] = useState(false);
@@ -110,7 +111,10 @@ export default function GroupCrwdPage() {
           {/* <ProfileNavbar title='Group Crwd' /> */}
           <GroupCrwdHeader hasJoined={hasJoined} onJoin={handleJoin} id="" />
           <GroupCrwdSuggested />
-          <GroupCrwdUpdates showEmpty={true} />
+          {/* <div className="px-4">
+            <PopularPosts title="Activity" showLoadMore={false} />
+          </div> */}
+          <GroupCrwdUpdates showEmpty={false} />
           {/* <GroupCrwdEvent /> */}
           {/* {!hasJoined && <GroupCrwdBottomBar onJoin={handleJoin} />} */}
           <div className="h-24  md:hidden" />

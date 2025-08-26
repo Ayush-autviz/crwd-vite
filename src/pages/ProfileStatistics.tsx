@@ -53,6 +53,28 @@ const tabs = [
   { label: "CRWDs", value: "crwds" },
 ];
 
+// Sample data for suggested causes
+const suggestedCauses = [
+  {
+    name: "The Red Cross",
+    description: "An health organization that helps people in need",
+    image: "/redcross.png",
+    type: "Nonprofit",
+  },
+  {
+    name: "St. Judes",
+    description: "The leading children's health organization",
+    image: "/grocery.jpg",
+    type: "Nonprofit",
+  },
+  {
+    name: "Women's Healthcare of At...",
+    description: "We are Atlanta's #1 healthcare organization",
+    image: "/redcross.png",
+    type: "Nonprofit",
+  },
+];
+
 export default function ProfileStatistics() {
   const { id } = useParams<{ id: string }>();
   const [searchParams] = useSearchParams();
@@ -97,25 +119,64 @@ export default function ProfileStatistics() {
         </div>
         {/* Tab Content */}
         {activeTab === "causes" && (
-          <>
-            {filteredCauses.map((cause) => (
-              <div
-                key={cause.name}
-                className="flex items-center justify-between py-3"
-              >
-                <div className="flex items-center">
-                  <Avatar className="h-10 w-10 mr-3">
-                    <AvatarImage src={cause.avatar} alt={cause.name} />
-                    <AvatarFallback>{cause.name[0]}</AvatarFallback>
-                  </Avatar>
-                  <div>
-                    <p className="font-medium">{cause.name}</p>
-                    {/* <p className="text-sm text-muted-foreground">{cause.impact}</p> */}
+          <div className="">
+            {suggestedCauses.map((cause, index) => (
+              //  <Link to="/cause" key={index} className="block">
+              <div className="flex items-center justify-between p-2 rounded-lg hover:bg-muted/50 cursor-pointer transition-colors">
+                <div className="flex items-center gap-3 flex-1 min-w-0 mr-4">
+                  <div className="w-10 h-10 rounded-full overflow-hidden flex-shrink-0">
+                    <img
+                      src={cause.image}
+                      alt={cause.name}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <div
+                      className={`${
+                        cause.type === "CRWD" ? "bg-green-100" : "bg-blue-100"
+                      } px-3 py-1 rounded-sm w-fit`}
+                    >
+                      <p
+                        className={`${
+                          cause.type === "CRWD"
+                            ? "text-green-600"
+                            : "text-blue-600"
+                        } text-xs font-semibold`}
+                      >
+                        {cause.type}
+                      </p>
+                    </div>
+                    <h3 className="font-medium text-sm mb-1">{cause.name}</h3>
+                    <p className="text-xs text-muted-foreground leading-relaxed line-clamp-2 max-w-[200px]">
+                      {cause.description}
+                    </p>
                   </div>
                 </div>
+                {cause.type === "Nonprofit" && (
+                  <div className="flex flex-col items-center gap-2">
+                    <Button className="bg-primary text-white text-xs py-2 px-3 rounded-lg hover:bg-primary/90 transition-colors">
+                      Donate Now
+                    </Button>
+                    <Button
+                      variant="link"
+                      className="text-primary text-xs p-0 h-auto"
+                    >
+                      Visit Profile
+                    </Button>
+                  </div>
+                )}
+                {cause.type === "CRWD" && (
+                  <div className="flex flex-col items-center gap-2">
+                    <Button className="bg-green-600 text-white text-xs py-2 px-4 rounded-lg hover:bg-green-700 transition-colors">
+                      Join CRWD
+                    </Button>
+                  </div>
+                )}
               </div>
+              //  </Link>
             ))}
-          </>
+          </div>
         )}
         {activeTab === "following" && <MembersList members={following} />}
         {activeTab === "followers" && <MembersList members={followers} />}

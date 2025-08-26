@@ -6,7 +6,15 @@ import { Button } from "@/components/ui/button";
 import { Loader2, HelpCircle } from "lucide-react";
 import type { PostDetail } from "@/lib/types";
 
-export const PopularPosts = ({ related = false }: { related?: boolean }) => {
+export const PopularPosts = ({
+  related = false,
+  title = "Recent Posts to CRWDs",
+  showLoadMore = true,
+}: {
+  related?: boolean;
+  title?: string;
+  showLoadMore?: boolean;
+}) => {
   const [allPosts, setAllPosts] = useState<PostDetail[]>(popularPosts);
   const [isLoading, setIsLoading] = useState(false);
   const [loadCount, setLoadCount] = useState(0);
@@ -35,7 +43,7 @@ export const PopularPosts = ({ related = false }: { related?: boolean }) => {
     <div className="w-full p-4 md:p-0">
       <div className="flex items-center gap-2 mb-4">
         <h2 className="text-lg font-semibold">
-          {related ? "Related Posts" : "Recent Posts to CRWDs"}
+          {related ? "Related Posts" : title}
         </h2>
         <div className="group relative">
           <HelpCircle className="w-4 h-4 text-gray-500 cursor-pointer" />
@@ -52,23 +60,25 @@ export const PopularPosts = ({ related = false }: { related?: boolean }) => {
       </div>
 
       {/* Load More button at the end of all posts */}
-      <div className="flex justify-center mt-6 mb-8">
-        <Button
-          onClick={handleLoadMore}
-          disabled={isLoading}
-          variant="outline"
-          className="px-6 py-2"
-        >
-          {isLoading ? (
-            <>
-              <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-              Loading...
-            </>
-          ) : (
-            "Load More"
-          )}
-        </Button>
-      </div>
+      {showLoadMore && (
+        <div className="flex justify-center mt-6 mb-8">
+          <Button
+            onClick={handleLoadMore}
+            disabled={isLoading}
+            variant="outline"
+            className="px-6 py-2"
+          >
+            {isLoading ? (
+              <>
+                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                Loading...
+              </>
+            ) : (
+              "Load More"
+            )}
+          </Button>
+        </div>
+      )}
     </div>
   );
 };

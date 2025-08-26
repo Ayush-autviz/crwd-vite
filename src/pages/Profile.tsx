@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import ProfileHeader from "../components/profile/ProfileHeader";
 import ProfileBio from "../components/profile/ProfileBio";
 
@@ -10,7 +10,14 @@ import ProfileSidebar from "../components/profile/ProfileSidebar";
 import { profileActivity } from "../lib/profile/profileActivity";
 import ProfileStats from "../components/profile/ProfileStats";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Check, ChevronRight, Share } from "lucide-react";
+import {
+  ArrowRight,
+  Check,
+  ChevronRight,
+  Ellipsis,
+  Share,
+  Flag,
+} from "lucide-react";
 import { Link } from "react-router-dom";
 
 const interestsData = [
@@ -65,22 +72,89 @@ const InterestCard = ({
   );
 };
 
+const orgAvatars = [
+  {
+    name: "ASPCA",
+    image: "/ngo/aspca.jpg",
+  },
+  {
+    name: "CRI",
+    image: "/ngo/CRI.jpg",
+  },
+  {
+    name: "CureSearch",
+    image: "/ngo/cureSearch.png",
+  },
+  {
+    name: "Paws",
+    image: "/ngo/paws.jpeg",
+  },
+];
+
 export default function ProfilePage() {
+  const [showMenu, setShowMenu] = useState(false);
+  const menuRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+        setShowMenu(false);
+      }
+    };
+
+    if (showMenu) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [showMenu]);
+
   return (
     <div className="pb-16 ">
       <ProfileNavbar title="Me" showBackButton={false} />
 
-      {/* Sticky Follow Button - appears on scroll */}
+      <div className="flex items-center gap-4 justify-end pt-6 pb-2 px-4 sticky top-16 z-10 bg-white">
+        <div className="relative" ref={menuRef}>
+          <button
+            onClick={() => setShowMenu(!showMenu)}
+            className="p-2 cursor-pointer rounded-full transition-colors"
+          >
+            <Ellipsis className="w-6 h-6" strokeWidth={3} />
+          </button>
 
-      <div className="fixed bottom-24 md:bottom-5 left-0 right-0 z-50 px-4 py-3">
-        <div className="flex justify-center gap-3">
-          <Button className="bg-blue-500 text-white px-16 md:px-28 py-5 w-full md:w-auto">
-            Follow
-          </Button>
+          {showMenu && (
+            <div className="absolute right-0 top-10 bg-white border border-gray-200 rounded-md shadow-lg z-20 w-36">
+              <button
+                onClick={() => {
+                  setShowMenu(false);
+                  // Handle share profile
+                  console.log("Share profile");
+                }}
+                className="flex items-center gap-2 w-full px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+              >
+                <Share className="h-4 w-4" />
+                Share Profile
+              </button>
+              <button
+                onClick={() => {
+                  setShowMenu(false);
+                  // Handle report profile
+                  console.log("Report profile");
+                }}
+                className="flex items-center gap-2 w-full px-3 py-2 text-sm text-red-600 hover:bg-gray-50 transition-colors"
+              >
+                <Flag className="h-4 w-4" />
+                Report Profile
+              </button>
+            </div>
+          )}
         </div>
+        <Button>Follow</Button>
       </div>
 
-      <div className="md:grid md:grid-cols-12 md:gap-6 md:p-6">
+      <div className="md:grid md:grid-cols-12 md:gap-6 md:px-6 md:pt-2 md:pb-6">
         {/* Main Content */}
         <div className="md:col-span-8">
           <div className="flex flex-col space-y-4 px-4 md:px-0">
@@ -90,16 +164,14 @@ export default function ProfilePage() {
               location="Atlanta, GA"
               link="thisisaurl.com"
             />
-            <ProfileBio bio="This is a bio about Mya and how she likes to help others and give back to her community. She also loves ice cream." />
-
-            <div className="flex justify-center md:justify-start gap-4">
+            {/* <ProfileBio bio="This is a bio about Mya and how she likes to help others and give back to her community. She also loves ice cream." /> */}
+            {/* <div className="flex justify-center md:justify-start gap-4">
               <Button className="bg-blue-500 text-white px-10">Follow</Button>
               <Button variant="outline" className=" px-10">
                 <Share className="w-4 h-4" />
                 Share Profile
               </Button>
-            </div>
-
+            </div> */}
             <ProfileStats
               profileId="123"
               causes={10}
@@ -107,7 +179,6 @@ export default function ProfilePage() {
               followers={58}
               following={8}
             />
-
             {/* <ProfileInterests
               interests={[
                 "Environment",
@@ -116,12 +187,10 @@ export default function ProfilePage() {
                 "Healthcare",
               ]}
             /> */}
-
             {/* <div className="py-4">
               <ProfileRecentDonations />
             </div> */}
-
-            <div className="flex justify-between items-center">
+            <div className="flex justify-between items-center px-4">
               <h2 className="text-lg font-semibold">Recently Supported</h2>
               <Link
                 to="/interests"
@@ -131,14 +200,24 @@ export default function ProfilePage() {
                 <ChevronRight className="w-4 h-4" />
               </Link>
             </div>
-            <div className="grid grid-cols-2 gap-3 md:gap-4">
-              {interestsData.map((interest, index) => (
-                <div key={index} className="relative">
-                  <InterestCard interest={interest} />
+
+            <div className="flex items-center px-4 justify-start md:space-x-5 gap-3">
+              {orgAvatars.map((src, i) => (
+                <div className="flex flex-col items-center">
+                  <img
+                    key={i}
+                    src={src.image}
+                    alt="org"
+                    className="w-12 h-12 rounded-md   first:ml-0"
+                  />
+                  <p className="text-xs font-semibold  mt-1 text-gray-500">
+                    {src.name}
+                  </p>
                 </div>
               ))}
             </div>
 
+            <ProfileBio bio="This is a bio about Mya and how she likes to help others and give back to her community. She also loves ice cream." />
             <div className="py-4">
               <ProfileActivity
                 showLabel
