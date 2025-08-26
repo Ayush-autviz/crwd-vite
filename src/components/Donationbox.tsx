@@ -9,8 +9,7 @@ import { Checkout } from "./Checkout";
 
 import DonationHeader from "./donation/DonationHeader";
 import StepIndicator from "./donation/StepIndicator";
-import { Link } from 'react-router-dom';
-
+import { Link } from "react-router-dom";
 
 const DonationBox = () => {
   const [activeTab, setActiveTab] = useState<"setup" | "onetime">("setup");
@@ -43,7 +42,7 @@ const DonationBox = () => {
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     // Allow only numbers
-    const value = e.target.value.replace(/[^0-9]/g, '');
+    const value = e.target.value.replace(/[^0-9]/g, "");
     setInputValue(value);
   };
 
@@ -66,8 +65,8 @@ const DonationBox = () => {
   return (
     <div className="w-full h-full bg-white flex flex-col">
       {checkout ? (
-        <Checkout 
-          onBack={() => setCheckout(false)} 
+        <Checkout
+          onBack={() => setCheckout(false)}
           selectedOrganizations={selectedOrganizations}
           donationAmount={donationAmount}
         />
@@ -83,7 +82,6 @@ const DonationBox = () => {
           />
 
           {/* Step indicator for donation box setup */}
-
 
           {/* Tab Navigation */}
           <div className="mx-4 mt-4">
@@ -159,7 +157,19 @@ const DonationBox = () => {
                   <div className="bg-white rounded-xl mb-6 p-6 shadow-sm border border-gray-100">
                     <div className="flex items-center mb-4">
                       <div className="flex items-center justify-center w-10 h-10 rounded-full bg-blue-100 text-blue-600 mr-3">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          width="20"
+                          height="20"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        >
+                          <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
+                        </svg>
                       </div>
                       <h2 className="text-xl font-medium text-gray-800">
                         Welcome to your donation box
@@ -215,23 +225,59 @@ const DonationBox = () => {
                     {/* Security Message */}
                     <div className="flex items-center p-3 bg-gray-50 rounded-lg">
                       <div className="flex items-center justify-center w-6 h-6 rounded-full bg-green-100 text-green-600 mr-2">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          width="14"
+                          height="14"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        >
+                          <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+                          <polyline points="22 4 12 14.01 9 11.01" />
+                        </svg>
                       </div>
                       <p className="text-sm text-gray-600">
                         Your donation is protected and guaranteed.{" "}
-                        <Link to="/settings/about" className="text-blue-600 font-medium">Learn More</Link>
+                        <Link
+                          to="/settings/about"
+                          className="text-blue-600 font-medium"
+                        >
+                          Learn More
+                        </Link>
                       </p>
                     </div>
                   </div>
 
-                  <div className={`flex justify-between items-center ${isMobile ? "mb-20" : ""}`}>
+                  <div
+                    className={`flex justify-between items-center ${
+                      isMobile ? "mb-20" : ""
+                    }`}
+                  >
                     <p className="text-gray-600">Now let's add some causes</p>
                     <button
                       onClick={() => setStep(2)}
                       className="bg-green-400  text-black px-6 py-3 rounded-lg font-medium transition-colors flex items-center"
                     >
                       Next
-                      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="ml-2"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="18"
+                        height="18"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        className="ml-2"
+                      >
+                        <path d="M5 12h14" />
+                        <path d="m12 5 7 7-7 7" />
+                      </svg>
                     </button>
                   </div>
                 </div>
@@ -311,7 +357,9 @@ const DonationBox = () => {
                       </div>
                       <p className="text-xs text-gray-500">
                         Your donation is protected and guaranteed.{" "}
-                        <Link to="/settings/about" className="text-blue-500">Learn More</Link>
+                        <Link to="/settings/about" className="text-blue-500">
+                          Learn More
+                        </Link>
                       </p>
                     </div>
                   </div>

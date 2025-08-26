@@ -67,7 +67,89 @@ const GroupCrwdUpdates: React.FC<GroupCrwdUpdatesProps> = ({
           className="bg-white rounded-lg border border-gray-200"
         />
       ) : (
-        <ProfileActivity posts={posts} />
+        <div className="space-y-4">
+          <ProfileActivity posts={posts} />
+          <div className="lg:max-w-[600px]">
+            <div className="space-y-4">
+              {/* Member Action Post */}
+              <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-4">
+                <div className="flex items-start gap-3">
+                  <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
+                    <span className="text-blue-600 text-sm font-semibold">
+                      👤
+                    </span>
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 mb-1">
+                      <span className="font-semibold text-gray-900">@alex</span>
+                      <span className="text-blue-600 text-sm">
+                        cleanwaterfriends
+                      </span>
+                      <span className="text-gray-400 text-sm">2d</span>
+                    </div>
+                    <p className="text-gray-700 text-sm">
+                      @alex joined Clean Water Friends. 🌊
+                    </p>
+                  </div>
+                  <button className="text-gray-400 hover:text-gray-600 p-1">
+                    <span className="text-lg">⋯</span>
+                  </button>
+                </div>
+              </div>
+
+              {/* Donation Activity Post */}
+              <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-4">
+                <div className="flex items-start gap-3">
+                  <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0">
+                    <span className="text-green-600 text-sm font-semibold">
+                      💰
+                    </span>
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 mb-1">
+                      <span className="font-semibold text-gray-900">
+                        CRWD Updates
+                      </span>
+                      <span className="text-gray-400 text-sm">1d</span>
+                    </div>
+                    <p className="text-gray-700 text-sm">
+                      "Save the Trees Atlanta" has collectively made 10
+                      donations. 🌳
+                    </p>
+                  </div>
+                  <button className="text-gray-400 hover:text-gray-600 p-1">
+                    <span className="text-lg">⋯</span>
+                  </button>
+                </div>
+              </div>
+
+              {/* Milestone Post */}
+              <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-4">
+                <div className="flex items-start gap-3">
+                  <div className="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center flex-shrink-0">
+                    <span className="text-purple-600 text-sm font-semibold">
+                      🎯
+                    </span>
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 mb-1">
+                      <span className="font-semibold text-gray-900">
+                        CRWD Milestones
+                      </span>
+                      <span className="text-gray-400 text-sm">3d</span>
+                    </div>
+                    <p className="text-gray-700 text-sm">
+                      "Save the Trees Atlanta" reached 25 members! 🎉
+                    </p>
+                  </div>
+                  <button className="text-gray-400 hover:text-gray-600 p-1">
+                    <span className="text-lg">⋯</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );
