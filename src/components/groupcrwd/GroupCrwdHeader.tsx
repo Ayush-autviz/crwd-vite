@@ -40,56 +40,68 @@ const GroupCrwdHeader: React.FC<GroupCrwdHeaderProps> = ({
   const navigate = useNavigate();
   const [showShareModal, setShowShareModal] = useState(false);
   return (
-    <div className="bg-white  p-4 mx-2   mb-4 flex flex-col gap-4">
-      <div className="flex items-center gap-2 ml-auto">
-        {hasJoined && <Button variant="default">Donate</Button>}
-        <Button variant="outline" onClick={() => setShowShareModal(true)}>
-          <Share2 size={20} />
-        </Button>
-        <Button variant="outline">
-          <Bookmark size={20} />
-        </Button>
-        <Button
-          className="cursor-pointer transition-colors"
-          onClick={onJoin}
-          variant={hasJoined ? "outline" : "default"}
-        >
-          {hasJoined ? (
-            <>
-              <Check size={16} className="mr-1" />
-              Joined
-            </>
-          ) : (
-            "Join"
-          )}
-        </Button>
-      </div>
+    <div className="bg-white  p-4 mx-2   mb-4 flex flex-col gap-2">
+      {/* <div className="flex items-center gap-2 justify-between">
+        <div className="text-lg font-semibold text-green-700 bg-green-200 px-2 py-1 rounded-md">
+          CRWD
+        </div>
+        <div className="flex items-center gap-2">
+          {hasJoined && <Button variant="default">Donate</Button>}
+          <Button variant="outline" onClick={() => setShowShareModal(true)}>
+            <Share2 size={20} />
+          </Button>
+
+          <Button
+            className={`cursor-pointer transition-colors ${
+              hasJoined
+                ? "bg-gray-100 text-gray-500"
+                : "bg-green-600 text-white hover:bg-green-700"
+            }`}
+            onClick={onJoin}
+            variant={hasJoined ? "outline" : "default"}
+          >
+            {hasJoined ? (
+              <>
+                <Check size={16} className="mr-1" />
+                Joined
+              </>
+            ) : (
+              "Join CRWD"
+            )}
+          </Button>
+        </div>
+      </div> */}
       {/* Top Row */}
-      <div className="flex items-center justify-between ">
+      <div className="flex items-center justify-center md:justify-start">
         <div className="flex items-center gap-3">
           {/* <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Feed the hungry" className="w-12 h-12 rounded-lg object-cover" /> */}
           <div className="flex flex-col">
-            <span className="font-bold text-xl text-gray-700">
+            <span className="font-semibold text-xl text-gray-700 mt-2">
               Feed the hungry
             </span>
             {/* <span className="text-xs text-gray-500">supports</span> */}
           </div>
         </div>
       </div>
+
+      {/* Founder */}
+      <div className="flex items-center justify-center md:justify-start gap-2 text-xs text-gray-500 mt-1">
+        <img
+          src="https://randomuser.me/api/portraits/men/32.jpg"
+          alt="Founder"
+          className="w-14 h-14 rounded-full object-cover"
+        />
+        <span className=" text-sm text-gray-700">Founded by</span>
+        <span className="font-semibold text-gray-700 ">@ChadFofana1</span>
+        <Button variant="outline">
+          <Bookmark size={20} />
+        </Button>
+      </div>
+
       {/* Bio */}
       <div className="text-xl text-gray-700">
         families experiencing food insecurity in the greater Atlanta area. Join
         us in the cause to solve world hunger.
-      </div>
-      {/* Founder */}
-      <div className="flex items-center gap-1 text-xs text-gray-500 mt-1">
-        <img
-          src="https://randomuser.me/api/portraits/men/32.jpg"
-          alt="Founder"
-          className="w-5 h-5 rounded-full object-cover"
-        />
-        Founded by{" "}
-        <span className="font-semibold text-gray-700">@ChadFofana1</span>
       </div>
       {/* Stats */}
       <div className="grid grid-cols-3 text-center text-xs text-gray-700 font-semibold divide-x divide-gray-200 rounded-xl py-4">
@@ -137,7 +149,7 @@ const GroupCrwdHeader: React.FC<GroupCrwdHeaderProps> = ({
               key={i}
               src={src.image}
               alt="org"
-              className="w-10 h-10 rounded-md   first:ml-0"
+              className="w-12 h-12 rounded-md   first:ml-0"
             />
             <p className="text-xs font-semibold  mt-1 text-gray-500">
               {src.name}

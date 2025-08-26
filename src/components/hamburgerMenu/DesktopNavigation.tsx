@@ -5,7 +5,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import NavigationItems from "./NavigationItems";
 
 const DesktopNavigation: React.FC = () => (
-  <ScrollArea className="flex-1 overflow-y-auto">
+  <div className=" overflow-y-auto ">
     <div className="hidden md:flex flex-col h-screen w-72 border-r bg-background">
       {/* Scrollable Content - Profile and Navigation */}
       {/* Profile Section */}
@@ -53,11 +53,11 @@ const DesktopNavigation: React.FC = () => (
           </Link>
         </div>
         <p className="text-xs text-muted-foreground text-center mb-2">
-          CRWD @2025
+          CRWD ©2025
         </p>
       </div>
     </div>
-  </ScrollArea>
+  </div>
 );
 
 export default DesktopNavigation;

@@ -3,6 +3,21 @@
 
 @custom-variant dark (&:is(.dark *));
 
+@keyframes scroll {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-scroll {
+  display: flex;
+  width: max-content;
+  animation: scroll 10s linear infinite;
+}
+
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);

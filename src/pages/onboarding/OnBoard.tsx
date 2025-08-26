@@ -5,9 +5,11 @@ import { Card, CardContent } from "@/components/ui/card";
 
 const nonprofitLogos = [
   { name: "WWF", logo: "/ngo/aspca.jpg" },
-  { name: "Médecins Sans Frontières", logo: "/ngo/redCross.png" },
+  // { name: "Médecins Sans Frontières", logo: "/ngo/redCross.png" },
   { name: "Feeding America", logo: "/ngo/CRI.jpg" },
   { name: "Save the Children", logo: "/ngo/catAllies.jpeg" },
+  { name: "Paws", logo: "/ngo/paws.jpeg" },
+  { name: "Girl Code", logo: "/ngo/girlCode.png" },
 ];
 
 export default function OnBoard() {
@@ -71,19 +73,41 @@ export default function OnBoard() {
                   Discover nonprofits like these on CRWD
                 </h2>
 
-                <div className="flex justify-center space-x-6">
-                  {nonprofitLogos.map((org, index) => (
-                    <div key={index} className="text-center">
-                      <img
-                        src={org.logo}
-                        alt={org.name}
-                        className="w-12 h-12 rounded-full object-cover mx-auto mb-2"
-                      />
-                      <p className="text-xs text-gray-500 font-medium">
-                        {org.name}
-                      </p>
-                    </div>
-                  ))}
+                <div className="overflow-hidden">
+                  <div className="flex animate-scroll">
+                    {/* First set */}
+                    {nonprofitLogos.map((org, index) => (
+                      <div
+                        key={index}
+                        className="text-center flex-shrink-0 mx-3"
+                      >
+                        <img
+                          src={org.logo}
+                          alt={org.name}
+                          className="w-12 h-12 rounded-full object-cover mx-auto mb-2"
+                        />
+                        <p className="text-xs text-gray-500 font-medium w-12">
+                          {org.name}
+                        </p>
+                      </div>
+                    ))}
+                    {/* Duplicate set */}
+                    {nonprofitLogos.map((org, index) => (
+                      <div
+                        key={`dup-${index}`}
+                        className="text-center flex-shrink-0 mx-3"
+                      >
+                        <img
+                          src={org.logo}
+                          alt={org.name}
+                          className="w-12 h-12 rounded-full object-cover mx-auto mb-2"
+                        />
+                        <p className="text-xs text-gray-500 font-medium w-12">
+                          {org.name}
+                        </p>
+                      </div>
+                    ))}
+                  </div>
                 </div>
               </div>
 

@@ -71,7 +71,7 @@ const NavigationItems: React.FC<NavigationItemsProps> = ({
   showNewPostButton = false,
 }) => {
   return (
-    <div className={cn("flex flex-col  py-2", className)}>
+    <div className={cn("flex flex-col  py-2 overflow-auto", className)}>
       <h3 className="px-6 py-2 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
         Giving
       </h3>

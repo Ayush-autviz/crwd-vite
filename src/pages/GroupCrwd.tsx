@@ -19,7 +19,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { X } from "lucide-react";
+import { Check, Share2, X } from "lucide-react";
 import ReactConfetti from "react-confetti";
 
 export default function GroupCrwdPage() {
@@ -28,7 +28,7 @@ export default function GroupCrwdPage() {
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
   const [showJoinModal, setShowJoinModal] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
-
+  const [showShareModal, setShowShareModal] = useState(false);
   const [windowDimensions, setWindowDimensions] = useState({
     width: window.innerWidth,
     height: window.innerHeight,
@@ -60,7 +60,7 @@ export default function GroupCrwdPage() {
       // If not joined, join directly
       setShowJoinModal(true);
       // setHasJoined(true);
-      setShowToast(true);
+      // setShowToast(true);
     }
   };
 
@@ -74,16 +74,46 @@ export default function GroupCrwdPage() {
     // <div>
     <>
       <ProfileNavbar title="Group Crwd" />
+      <div className="flex items-center gap-2 justify-between pt-6 pb-2 px-4 sticky top-16 z-10 bg-white ">
+        <div className="text-lg font-semibold text-green-700 bg-green-200 px-2 py-1 rounded-md">
+          CRWD
+        </div>
+        <div className="flex items-center gap-2">
+          {hasJoined && <Button variant="default">Donate</Button>}
+          <Button variant="outline" onClick={() => setShowShareModal(true)}>
+            <Share2 size={20} />
+          </Button>
+
+          <Button
+            className={`cursor-pointer transition-colors ${
+              hasJoined
+                ? "bg-gray-100 text-gray-500"
+                : "bg-green-600 text-white hover:bg-green-700"
+            }`}
+            onClick={handleJoin}
+            variant={hasJoined ? "outline" : "default"}
+          >
+            {hasJoined ? (
+              <>
+                <Check size={16} className="mr-1" />
+                Joined
+              </>
+            ) : (
+              "Join CRWD"
+            )}
+          </Button>
+        </div>
+      </div>
       {/* <SharePost url={window.location.href} title="Feed the hungry - CRWD" description="Join us in supporting families experiencing food insecurity in the greater Atlanta area." /> */}
-      <div className="py-6 grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="pb-6 grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-3 space-y-6">
           {/* <ProfileNavbar title='Group Crwd' /> */}
           <GroupCrwdHeader hasJoined={hasJoined} onJoin={handleJoin} id="" />
           <GroupCrwdSuggested />
           <GroupCrwdUpdates showEmpty={true} />
           {/* <GroupCrwdEvent /> */}
-          {!hasJoined && <GroupCrwdBottomBar onJoin={handleJoin} />}
-          <div className="h-45 md:hidden" />
+          {/* {!hasJoined && <GroupCrwdBottomBar onJoin={handleJoin} />} */}
+          <div className="h-24  md:hidden" />
 
           {showJoinModal && (
             <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
@@ -367,6 +397,14 @@ export default function GroupCrwdPage() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      <SharePost
+        url={window.location.origin + `/groupcrwd/`}
+        title={`Feed the hungry - CRWD`}
+        description="Join us in supporting families experiencing food insecurity in the greater Atlanta area."
+        isOpen={showShareModal}
+        onClose={() => setShowShareModal(false)}
+      />
     </>
   );
 }

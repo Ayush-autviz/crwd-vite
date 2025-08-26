@@ -121,7 +121,7 @@ export default function NonProfitInterests() {
 
     return (
       <button
-        className={`p-2 md:p-3 w-full bg-white rounded-lg overflow-hidden border-2 transition-all duration-200 relative ${
+        className={`p-2 md:p-3 w-full aspect-square bg-white rounded-lg overflow-hidden border-2 transition-all duration-200 relative ${
           isSelected
             ? "border-blue-500 shadow-lg"
             : "border-gray-200 shadow-md hover:shadow-lg"
@@ -158,7 +158,7 @@ export default function NonProfitInterests() {
 
       {/* Main Content */}
       <div className="relative z-10 flex items-center justify-center p-4 min-h-screen">
-        <div className="w-full max-w-2xl">
+        <div className="w-full max-w-lg">
           <Card className="border border-gray-200 shadow-sm bg-white">
             <CardContent className="p-4 md:p-8 space-y-4">
               {/* Step Indicator */}

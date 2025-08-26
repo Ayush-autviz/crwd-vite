@@ -95,19 +95,19 @@ export default function HomePage() {
       name: "The Red Cross",
       description: "An health organization that helps people in need",
       image: "/redcross.png",
-      type: "NonProfit",
+      type: "Nonprofit",
     },
     {
       name: "St. Judes",
       description: "The leading children's health organization",
       image: "/grocery.jpg",
-      type: "NonProfit",
+      type: "Nonprofit",
     },
     {
       name: "Women's Healthcare of At...",
       description: "We are Atlanta's #1 healthcare organization",
       image: "/redcross.png",
-      type: "NonProfit",
+      type: "Nonprofit",
     },
   ];
 
@@ -121,7 +121,7 @@ export default function HomePage() {
     },
     {
       name: "St. Judes",
-      type: "NonProfit",
+      type: "Nonprofit",
       description: "The leading children's health organization",
       image: "/grocery.jpg",
     },
@@ -326,7 +326,7 @@ export default function HomePage() {
                         </p>
                       </div>
                     </div>
-                    {cause.type === "NonProfit" && (
+                    {cause.type === "Nonprofit" && (
                       <div className="flex flex-col items-center gap-2">
                         <Button className="bg-primary text-white text-xs py-2 px-3 rounded-lg hover:bg-primary/90 transition-colors">
                           Donate Now
