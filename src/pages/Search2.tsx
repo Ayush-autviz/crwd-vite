@@ -99,7 +99,7 @@ export default function Search2Page() {
           {/* Search Bar */}
           <div className="mb-6  md:mb-6 mt-4 px-4">
             <Input
-              placeholder="Texas flooding"
+              placeholder="Search non-profits, CRWDs, or posts"
               className="bg-muted/50 rounded-lg px-4 py-2 text-base border-none focus-visible:ring-1 focus-visible:ring-primary/50"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
