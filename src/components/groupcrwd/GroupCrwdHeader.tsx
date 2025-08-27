@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import { Share2, Bookmark, Check } from "lucide-react";
 import ProfileInterests from "../profile/ProfileInterests";
 import { Button } from "../ui/button";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { SharePost } from "../ui/SharePost";
 
 interface GroupCrwdHeaderProps {
@@ -76,7 +76,7 @@ const GroupCrwdHeader: React.FC<GroupCrwdHeaderProps> = ({
         <div className="flex items-center gap-3">
           {/* <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Feed the hungry" className="w-12 h-12 rounded-lg object-cover" /> */}
           <div className="flex flex-col">
-            <span className="font-semibold text-xl text-gray-700 mt-2">
+            <span className="font-semibold text-2xl text-gray-700 mt-2">
               Feed the hungry
             </span>
             {/* <span className="text-xs text-gray-500">supports</span> */}
@@ -107,10 +107,12 @@ const GroupCrwdHeader: React.FC<GroupCrwdHeaderProps> = ({
       <div className="grid grid-cols-3 text-center text-xs text-gray-700 font-semibold divide-x divide-gray-200 rounded-xl py-4">
         <div
           onClick={() => navigate(`/members?tab=Causes`)}
-          className="cursor-pointer flex-1 col-span-1"
+          className="cursor-pointer flex-1 col-span-1 "
         >
           <div className="text-base font-bold">10</div>
-          <div className="text-xs text-gray-500">Causes Supported</div>
+          <div className="text-xs text-gray-500 w-1/2 mx-auto">
+            Causes Supported
+          </div>
         </div>
         <div
           onClick={() => navigate(`/members`)}
@@ -124,7 +126,9 @@ const GroupCrwdHeader: React.FC<GroupCrwdHeaderProps> = ({
           className="cursor-pointer flex-1 col-span-1"
         >
           <div className="text-base font-bold">12</div>
-          <div className="text-xs text-gray-500">Collective Donations</div>
+          <div className="text-xs text-gray-500 w-1/2 mx-auto">
+            Collective Donations
+          </div>
         </div>
       </div>
       {/* Tags */}
@@ -144,17 +148,19 @@ const GroupCrwdHeader: React.FC<GroupCrwdHeaderProps> = ({
       {/* Orgs Avatars */}
       <div className="flex items-center justify-start md:space-x-5 mt-1 gap-3">
         {orgAvatars.map((src, i) => (
-          <div className="flex flex-col items-center">
-            <img
-              key={i}
-              src={src.image}
-              alt="org"
-              className="w-12 h-12 rounded-md   first:ml-0"
-            />
-            <p className="text-xs font-semibold  mt-1 text-gray-500">
-              {src.name}
-            </p>
-          </div>
+          <Link to={`/cause`}>
+            <div className="flex flex-col items-center">
+              <img
+                key={i}
+                src={src.image}
+                alt="org"
+                className="w-12 h-12 rounded-md   first:ml-0"
+              />
+              <p className="text-xs font-semibold  mt-1 text-gray-500">
+                {src.name}
+              </p>
+            </div>
+          </Link>
         ))}
       </div>
       {/* Supporting text */}

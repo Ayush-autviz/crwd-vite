@@ -67,7 +67,7 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
         )}
       </div> */}
       {/* Avatar and info */}
-      <div className="flex items-center gap-4 mb-3">
+      <div className="flex flex-col items-center gap-4 mb-3">
         <ImageModal src={avatarUrl} alt={name}>
           <Avatar className="w-14 h-14 rounded-full object-contain cursor-pointer hover:opacity-80 transition-opacity">
             <AvatarImage src={avatarUrl} alt={name} />
@@ -75,7 +75,7 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
         </ImageModal>
         <div className="font-bold text-lg leading-tight">My Name is {name}</div>
       </div>
-      <div className="flex-1">
+      <div className="flex-1 flex flex-col items-center">
         <div className="text-xs text-gray-500 flex items-center gap-2 mt-1">
           <span className="flex items-center gap-1">
             <MapPin className="w-4 h-4" />

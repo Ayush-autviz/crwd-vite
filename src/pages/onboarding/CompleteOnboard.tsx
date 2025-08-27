@@ -76,7 +76,7 @@ export default function CompleteOnboard() {
               {/* Welcome Message */}
               <div className="space-y-3">
                 <h2 className="text-2xl font-bold text-gray-900">
-                  Welcome to CRWD !
+                  Welcome to CRWD!
                 </h2>
                 <p className="text-gray-600 text-sm leading-relaxed">
                   Start giving now, or explore causes and CRWDs first.

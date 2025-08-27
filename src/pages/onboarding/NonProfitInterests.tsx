@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Check, Search } from "lucide-react";
+import { Check, Search, Loader2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
 
@@ -91,6 +91,7 @@ export default function NonProfitInterests() {
   const [selectedInterests, setSelectedInterests] = useState<number[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<string>("");
   const [searchQuery, setSearchQuery] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
   const handleInterestSelect = (interestId: number) => {
@@ -108,8 +109,13 @@ export default function NonProfitInterests() {
       return;
     }
 
-    // Navigate to completion screen
-    navigate("/complete-onboard");
+    setIsLoading(true);
+
+    // Show loader for 2 seconds then navigate
+    setTimeout(() => {
+      setIsLoading(false);
+      navigate("/complete-onboard");
+    }, 2000);
   };
 
   const InterestCard = ({
@@ -235,15 +241,22 @@ export default function NonProfitInterests() {
               {/* Continue Button */}
               <div className="pt-2 md:pt-4">
                 <button
-                  className={`w-full h-10 rounded-lg font-medium transition-colors duration-200 ${
+                  className={`w-full h-10 rounded-lg font-medium transition-colors duration-200 flex items-center justify-center ${
                     selectedInterests.length === 0
                       ? "bg-gray-300 text-gray-500 cursor-not-allowed"
                       : "bg-gray-900 hover:bg-gray-800 text-white"
                   }`}
                   onClick={handleContinue}
-                  disabled={selectedInterests.length === 0}
+                  disabled={selectedInterests.length === 0 || isLoading}
                 >
-                  Continue
+                  {isLoading ? (
+                    <>
+                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                      Loading...
+                    </>
+                  ) : (
+                    "Continue"
+                  )}
                 </button>
               </div>
             </CardContent>

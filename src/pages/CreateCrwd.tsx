@@ -12,6 +12,7 @@ import {
   Bell,
   MoreHorizontal,
   HelpCircle,
+  X,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import ProfileNavbar from "@/components/profile/ProfileNavbar";
@@ -39,6 +40,7 @@ export default function CreateCRWDPage() {
   const [selectedCauses, setSelectedCauses] = useState<string[]>([]);
   const [showConfetti, setShowConfetti] = useState(false);
   const [showShareModal, setShowShareModal] = useState(false);
+  const [toast, setToast] = useState<string | null>(null);
   const navigate = useNavigate();
 
   const handleCauseToggle = (causeName: string) => {
@@ -54,6 +56,24 @@ export default function CreateCRWDPage() {
   };
 
   const handleCreateCRWD = () => {
+    // Check fields from top to bottom
+    if (name.trim() === "") {
+      setToast("Please enter a name for your CRWD");
+      setTimeout(() => setToast(null), 4000);
+      return;
+    }
+    if (desc.trim() === "") {
+      setToast("Please enter a description for your CRWD");
+      setTimeout(() => setToast(null), 4000);
+      return;
+    }
+    if (selectedCauses.length === 0) {
+      setToast("Please select at least one cause");
+      setTimeout(() => setToast(null), 4000);
+      return;
+    }
+
+    // Proceed if no errors
     setStep(2);
     setShowConfetti(true);
     setTimeout(() => {
@@ -63,6 +83,21 @@ export default function CreateCRWDPage() {
 
   return (
     <div className="min-h-screen bg-background flex flex-col items-center">
+      {/* Toast Notification */}
+      {toast && (
+        <div className="fixed top-20 left-1/2 transform -translate-x-1/2 z-50">
+          <div className="bg-red-500 text-white px-4 py-3 rounded-2xl shadow-lg flex items-center justify-between min-w-[300px]">
+            <span className="text-sm font-medium">{toast}</span>
+            <button
+              onClick={() => setToast(null)}
+              className="ml-3 text-white hover:text-gray-300 transition-colors"
+            >
+              <X size={16} />
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* Header */}
       <ProfileNavbar title="Create a CRWD" />
 
@@ -106,7 +141,7 @@ export default function CreateCRWDPage() {
             <div className="flex flex-col gap-2">
               <div className="flex items-center gap-2">
                 <label className="font-semibold text-sm text-gray-700">
-                  Describe your CRWD
+                  What brings this group together?
                 </label>
 
                 <div className="group relative">
@@ -119,7 +154,7 @@ export default function CreateCRWDPage() {
               </div>
               <textarea
                 className="bg-gray-50 w-full h-20 rounded-lg p-3 text-sm border border-gray-200 resize-none focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                placeholder='What brings this group together? e.g., "We support shelters & meals programs in ATL."'
+                placeholder='e.g., "We support shelters & meals programs in ATL."'
                 value={desc}
                 onChange={(e) => setDesc(e.target.value)}
               />
@@ -260,11 +295,6 @@ export default function CreateCRWDPage() {
             {/* Action Buttons */}
             <div className="flex items-center justify-end gap-6 text-xs text-gray-500 pt-2">
               <Button
-                disabled={
-                  name.trim() === "" ||
-                  desc.trim() === "" ||
-                  selectedCauses.length === 0
-                }
                 className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg text-sm font-medium"
                 onClick={handleCreateCRWD}
               >

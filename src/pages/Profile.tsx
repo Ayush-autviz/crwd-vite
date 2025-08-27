@@ -201,14 +201,14 @@ export default function ProfilePage() {
               </Link>
             </div>
 
-            <div className="flex items-center px-4 justify-start md:space-x-5 gap-3">
+            <div className="flex items-center px-4 justify-between">
               {orgAvatars.map((src, i) => (
                 <div className="flex flex-col items-center">
                   <img
                     key={i}
                     src={src.image}
                     alt="org"
-                    className="w-12 h-12 rounded-md   first:ml-0"
+                    className="w-14 h-14 rounded-md   first:ml-0"
                   />
                   <p className="text-xs font-semibold  mt-1 text-gray-500">
                     {src.name}
@@ -220,7 +220,8 @@ export default function ProfilePage() {
             <ProfileBio bio="This is a bio about Mya and how she likes to help others and give back to her community. She also loves ice cream." />
             <div className="py-4">
               <ProfileActivity
-                showLabel
+                // showLabel
+                title="Recent Activity"
                 posts={profileActivity}
                 showLoadMore={true}
               />

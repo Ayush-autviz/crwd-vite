@@ -67,13 +67,11 @@ export function SharePost({
       >
         {/* Header */}
         <div className="text-center mb-6">
-          <h2 className="text-xl font-bold mb-2">
-            ✨ Bring friends to your CRWD!
-          </h2>
-          <p className="text-sm text-gray-600">
+          <h2 className="text-xl font-bold mb-2">Check out this nonprofit</h2>
+          {/* <p className="text-sm text-gray-600">
             CRWDs are more impactful with people you know. Invite friends to
             join and give alongside you.
-          </p>
+          </p> */}
         </div>
 
         {/* Primary Actions */}

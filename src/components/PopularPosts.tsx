@@ -55,7 +55,7 @@ export const PopularPosts = ({
       </div>
       <div className="space-y-4">
         {allPosts.map((post) => (
-          <ProfileActivity key={post.id} posts={[post]} />
+          <ProfileActivity title="" key={post.id} posts={[post]} />
         ))}
       </div>
 

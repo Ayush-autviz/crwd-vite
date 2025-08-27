@@ -74,11 +74,11 @@ const GroupCrwdUpdates: React.FC<GroupCrwdUpdatesProps> = ({
               {/* Member Action Post */}
               <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-4">
                 <div className="flex items-start gap-3">
-                  <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
-                    <span className="text-blue-600 text-sm font-semibold">
-                      👤
-                    </span>
-                  </div>
+                  <img
+                    src="https://randomuser.me/api/portraits/men/31.jpg"
+                    alt=""
+                    className="w-10 h-10 rounded-full object-cover"
+                  />
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-1">
                       <span className="font-semibold text-gray-900">@alex</span>
@@ -100,11 +100,6 @@ const GroupCrwdUpdates: React.FC<GroupCrwdUpdatesProps> = ({
               {/* Donation Activity Post */}
               <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-4">
                 <div className="flex items-start gap-3">
-                  <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0">
-                    <span className="text-green-600 text-sm font-semibold">
-                      💰
-                    </span>
-                  </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-1">
                       <span className="font-semibold text-gray-900">
@@ -126,11 +121,6 @@ const GroupCrwdUpdates: React.FC<GroupCrwdUpdatesProps> = ({
               {/* Milestone Post */}
               <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-4">
                 <div className="flex items-start gap-3">
-                  <div className="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center flex-shrink-0">
-                    <span className="text-purple-600 text-sm font-semibold">
-                      🎯
-                    </span>
-                  </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-1">
                       <span className="font-semibold text-gray-900">
