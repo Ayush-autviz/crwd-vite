@@ -181,7 +181,7 @@ export default function HomePage() {
                 </h1>
 
                 <Link to="/donation">
-                  <Button className="bg-black hover:bg-primary/90 text-primary-foreground px-8 py-3 rounded-full text-base font-semibold transition-all duration-200 transform hover:scale-105 shadow-lg hover:shadow-xl">
+                  <Button className="bg-black  text-primary-foreground px-8 py-3 rounded-full text-base font-semibold transition-all duration-200 transform hover:scale-105 shadow-lg hover:shadow-xl">
                     Start Giving
                   </Button>
                 </Link>
@@ -328,7 +328,7 @@ export default function HomePage() {
                     </div>
                     {cause.type === "Nonprofit" && (
                       <div className="flex flex-col items-center gap-2">
-                        <Button className="bg-primary text-white text-xs py-2 px-3 rounded-lg hover:bg-primary/90 transition-colors">
+                        <Button className=" text-white text-xs py-2 px-3 rounded-lg hover:bg-primary/90 transition-colors">
                           Donate Now
                         </Button>
                         <Button
@@ -437,7 +437,7 @@ export default function HomePage() {
                     </div>
                     {cause.type === "Nonprofit" && (
                       <div className="flex flex-col items-center gap-2">
-                        <Button className="bg-primary text-white text-xs py-2 px-3 rounded-lg hover:bg-primary/90 transition-colors">
+                        <Button className=" text-white text-xs py-2 px-3 rounded-lg hover:bg-primary/90 transition-colors">
                           Donate Now
                         </Button>
                         <Button

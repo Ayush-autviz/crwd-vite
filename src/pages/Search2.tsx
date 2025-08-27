@@ -141,7 +141,7 @@ export default function Search2Page() {
                       </div>
                     </div>
                     <div className="flex flex-col items-center gap-2">
-                      <Button className="bg-primary text-white text-xs py-2 px-3 rounded-lg hover:bg-primary/90 transition-colors">
+                      <Button className=" text-white text-xs py-2 px-3 rounded-lg hover:bg-primary/90 transition-colors">
                         Donate Now
                       </Button>
                       <Button

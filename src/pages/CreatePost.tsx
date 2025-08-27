@@ -412,7 +412,7 @@ export default function CreatePostPage() {
             <div className="mt-8 flex justify-end">
               <Button
                 variant="default"
-                className="w-full sm:w-auto rounded-lg px-6 py-2 text-sm font-medium bg-primary text-white"
+                className="w-full sm:w-auto rounded-lg px-6 py-2 text-sm font-medium text-white"
                 onClick={() => setStep(2)}
                 disabled={!canSubmitPost()}
               >
