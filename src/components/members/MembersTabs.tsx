@@ -101,7 +101,7 @@ const MembersTabs: React.FC<{ tab?: string }> = ({ tab = "Members" }) => {
                             className={`${
                               cause.type === "CRWD"
                                 ? "bg-green-100"
-                                : "bg-blue-100"
+                                : "bg-blue-50"
                             } px-3 py-1 rounded-sm w-fit`}
                           >
                             <p
@@ -232,7 +232,7 @@ const MembersTabs: React.FC<{ tab?: string }> = ({ tab = "Members" }) => {
                                   className={`${
                                     cause.type === "CRWD"
                                       ? "bg-green-100"
-                                      : "bg-blue-100"
+                                      : "bg-blue-50"
                                   } px-3 py-1 rounded-sm w-fit`}
                                 >
                                   <p

@@ -28,7 +28,7 @@ const CausePage: React.FC = () => {
           Nonprofit
         </div>
         <div className="flex-grow" />
-        <Button variant="outline" onClick={() => setShowShareModal(true)}>
+        <Button variant="secondary" onClick={() => setShowShareModal(true)}>
           {/* <Share2 size={20} /> */}
           Share
         </Button>

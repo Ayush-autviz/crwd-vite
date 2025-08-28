@@ -201,7 +201,7 @@ export default function SearchPage() {
                             className={`${
                               cause.type === "CRWD"
                                 ? "bg-green-100"
-                                : "bg-blue-100"
+                                : "bg-blue-50"
                             } px-3 py-1 rounded-sm w-fit mb-1`}
                           >
                             <p
@@ -577,7 +577,7 @@ export default function SearchPage() {
                               className={`${
                                 cause.type === "CRWD"
                                   ? "bg-green-100"
-                                  : "bg-blue-100"
+                                  : "bg-blue-50"
                               } px-3 py-1 rounded-sm w-fit`}
                             >
                               <p

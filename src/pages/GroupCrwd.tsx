@@ -81,7 +81,7 @@ export default function GroupCrwdPage() {
         </div>
         <div className="flex items-center gap-2">
           {hasJoined && <Button variant="default">Donate</Button>}
-          <Button variant="outline" onClick={() => setShowShareModal(true)}>
+          <Button variant="secondary" onClick={() => setShowShareModal(true)}>
             {/* <Share2 size={20} /> */}
             Share
           </Button>

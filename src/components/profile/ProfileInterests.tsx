@@ -15,7 +15,7 @@ const ProfileInterests: React.FC<ProfileInterestsProps> = ({ interests, title, c
       {interests.map((interest, idx) => (
         <Link
           key={idx}
-          to={`/search?q=${encodeURIComponent(interest)}`}
+          to={`/interests`}
         >
           <span className="w-fit bg-gray-100 text-gray-700 px-3 py-1 rounded-lg text-xs font-medium whitespace-nowrap break-keep cursor-pointer hover:bg-gray-200 transition-colors">
             {interest}

@@ -262,7 +262,7 @@ export default function HomePage() {
             <div className="overflow-x-auto pb-2">
               <div className="flex space-x-2 min-w-max">
                 {categories.map((category, index) => (
-                  <Link to={`/search`} key={index}>
+                  <Link to={`/interests`} key={index}>
                     <Badge
                       variant="secondary"
                       className="bg-muted/50 hover:bg-muted text-foreground rounded-md px-4 py-2 whitespace-nowrap"
@@ -305,7 +305,7 @@ export default function HomePage() {
                           className={`${
                             cause.type === "CRWD"
                               ? "bg-green-100"
-                              : "bg-blue-100"
+                              : "bg-blue-50"
                           } px-3 py-1 rounded-sm w-fit`}
                         >
                           <p

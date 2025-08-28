@@ -33,7 +33,7 @@ const orgs = [
 const suggestedCauses = [
   {
     name: "The Red Cross",
-    type: "Cause",
+    type: "Nonprofit",
     description: "An health organization that helps people in need",
     image: "/redcross.png",
   },
@@ -45,7 +45,7 @@ const suggestedCauses = [
   },
   {
     name: "Women's Healthcare of At...",
-    type: "Cause",
+    type: "Nonprofit",
     description: "We are Atlanta's #1 health care organization",
     image: "/redcross.png",
   },
@@ -132,6 +132,23 @@ export default function Search2Page() {
                         />
                       </div>
                       <div className="min-w-0 flex-1">
+                        <div
+                          className={`${
+                            cause.type === "CRWD"
+                              ? "bg-green-100"
+                              : "bg-blue-50"
+                          } px-3 py-1 rounded-sm w-fit`}
+                        >
+                          <p
+                            className={`${
+                              cause.type === "CRWD"
+                                ? "text-green-600"
+                                : "text-blue-600"
+                            } text-xs font-semibold`}
+                          >
+                            {cause.type}
+                          </p>
+                          </div>
                         <h3 className="font-medium text-sm mb-1">
                           {cause.name}
                         </h3>
@@ -140,6 +157,7 @@ export default function Search2Page() {
                         </p>
                       </div>
                     </div>
+                    {cause.type === "Nonprofit" && (
                     <div className="flex flex-col items-center gap-2">
                       <Button className=" text-white text-xs py-2 px-3 rounded-lg hover:bg-primary/90 transition-colors">
                         Donate Now
@@ -151,6 +169,14 @@ export default function Search2Page() {
                         Visit Profile
                       </Button>
                     </div>
+                    )}
+                    {cause.type === "CRWD" && (
+                      <div className="flex flex-col items-center gap-2">
+                        <Button className="bg-green-600 text-white text-xs py-2 px-4 rounded-lg hover:bg-green-700 transition-colors">
+                          Join CRWD
+                        </Button>
+                      </div>
+                    )}
                   </div>
                 </Link>
               ))}
