@@ -16,13 +16,13 @@ const DonationBox = () => {
   const [activeTab, setActiveTab] = useState<"setup" | "onetime">("setup");
   const [checkout, setCheckout] = useState(false);
   const [selectedOrganizations, setSelectedOrganizations] = useState<string[]>(
-    []
+    ["Hunger Initiative", "Clean Water Initiative"]
   );
 
-  const [donationAmount, setDonationAmount] = useState(7);
+  const [donationAmount, setDonationAmount] = useState(10);
   const [step, setStep] = useState(1);
   const [isEditing, setIsEditing] = useState(false);
-  const [inputValue, setInputValue] = useState("7");
+  const [inputValue, setInputValue] = useState("10");
 
   // const step = 2;
   const isMobile = useIsMobile();
@@ -59,6 +59,14 @@ const DonationBox = () => {
 
   const handleInputFocus = () => {
     setIsEditing(true);
+  };
+
+  const toggleOrganization = (orgName: string) => {
+    setSelectedOrganizations(prev => 
+      prev.includes(orgName) 
+        ? prev.filter(org => org !== orgName)
+        : [...prev, orgName]
+    );
   };
 
   console.log(selectedOrganizations, "ork");
@@ -151,189 +159,243 @@ const DonationBox = () => {
             <>
               {step === 1 ? (
                 <div className="flex-1 mt-4 mb-4 flex flex-col p-4">
-                  {/* Step indicator */}
-                  {/* <StepIndicator currentStep={1} /> */}
-
-                  {/* Info Card */}
-                  <div className="bg-white rounded-xl mb-6 p-6 shadow-sm border border-gray-100">
-                    <div className="flex items-center mb-4">
-                      <div className="flex items-center justify-center w-10 h-10 rounded-full bg-blue-100 text-blue-600 mr-3">
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          width="20"
-                          height="20"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          stroke="currentColor"
-                          strokeWidth="2"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        >
-                          <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
-                        </svg>
-                      </div>
-                      <h2 className="text-xl font-medium text-gray-800">
-                        Welcome to your donation box
-                      </h2>
-                    </div>
-
+                  {/* Set Monthly Donation Amount Section */}
+                  <div className="bg-blue-50 rounded-xl mb-6 p-6 shadow-sm border border-gray-100">
+                    <h2 className="text-xl font-bold text-gray-800 mb-3">
+                      Set monthly donation amount
+                    </h2>
                     <p className="text-gray-600 text-sm mb-6">
-                      Your donation box makes giving back easy! Just set your
-                      price and you can add as many of your favorite causes at
-                      any time. Your donation will be evenly distributed across
-                      all of the organizations in your box.
+                      Set one monthly amount and we'll split it across causes you're passionate about. You can edit at any time.
                     </p>
 
-                    <div className="bg-blue-50 rounded-lg p-5 mb-4 border border-blue-100">
-                      <h3 className="text-base font-medium text-gray-800 mb-3">
-                        Enter monthly donation
-                      </h3>
+                    {/* Amount Selector */}
+                    <div className="flex items-center justify-center mb-6">
+                      <button
+                        onClick={decrementDonation}
+                        className="flex items-center justify-center w-12 h-12 rounded-full bg-gray-50 hover:bg-gray-200 transition-colors"
+                      >
+                        <Minus size={20} className="text-gray-600" />
+                      </button>
+                      <div className="mx-6 text-center">
+                        <span className="text-blue-600 text-3xl font-bold">${donationAmount}</span>
+                        <span className="text-gray-500 text-lg ml-2">per month</span>
+                      </div>
+                      <button
+                        onClick={incrementDonation}
+                        className="flex items-center justify-center w-12 h-12 rounded-full bg-gray-50 hover:bg-gray-200 transition-colors"
+                      >
+                        <Plus size={20} className="text-gray-600" />
+                      </button>
+                    </div>
 
-                      <div className="space-y-6">
-                        {/* Slider Container */}
-                        <div className="relative">
-                          <div className="flex items-center justify-between mb-3">
-                            <span className="text-sm font-medium text-gray-600">
-                              $5
-                            </span>
-                            <span className="text-sm font-medium text-gray-600">
-                              $100
-                            </span>
-                          </div>
-
-                          {/* React Range Slider */}
-                          <div className="relative">
-                            <Range
-                              step={1}
-                              min={5}
-                              max={100}
-                              values={[donationAmount]}
-                              onChange={(values) => {
-                                const newAmount = values[0];
-                                setDonationAmount(newAmount);
-                                setInputValue(newAmount.toString());
+                    {/* Slider for fine-tuning */}
+                    {/* <div className="relative mb-6">
+                      <div className="flex items-center justify-between mb-3">
+                        <span className="text-sm font-medium text-gray-600">$5</span>
+                        <span className="text-sm font-medium text-gray-600">$100</span>
+                      </div>
+                      <Range
+                        step={1}
+                        min={5}
+                        max={100}
+                        values={[donationAmount]}
+                        onChange={(values) => {
+                          const newAmount = values[0];
+                          setDonationAmount(newAmount);
+                          setInputValue(newAmount.toString());
+                        }}
+                        renderTrack={({ props, children }) => (
+                          <div
+                            {...props}
+                            className="h-2 w-full bg-gray-200 rounded-full"
+                            style={{
+                              ...props.style,
+                            }}
+                          >
+                            <div
+                              className="h-2 bg-blue-600 rounded-full transition-all duration-300 ease-out"
+                              style={{
+                                width: `${Math.max(
+                                  0,
+                                  Math.min(
+                                    100,
+                                    ((donationAmount - 5) / 95) * 100
+                                  )
+                                )}%`,
                               }}
-                              renderTrack={({ props, children }) => (
-                                <div
-                                  {...props}
-                                  className="h-3 w-full bg-gray-200 rounded-full"
-                                  style={{
-                                    ...props.style,
-                                  }}
-                                >
-                                  <div
-                                    className="h-3 bg-gradient-to-r from-blue-500 to-blue-600 rounded-full transition-all duration-300 ease-out"
-                                    style={{
-                                      width: `${Math.max(
-                                        0,
-                                        Math.min(
-                                          100,
-                                          ((donationAmount - 5) / 95) * 100
-                                        )
-                                      )}%`,
-                                    }}
-                                  />
-                                  {children}
-                                </div>
-                              )}
-                              renderThumb={({ props }) => (
-                                <div
-                                  {...props}
-                                  className="w-5 h-5 bg-blue-500 rounded-full shadow-md"
-                                  style={{
-                                    ...props.style,
-                                    cursor: "pointer", // 👈 change from "grab" to "pointer" or "default"
-                                  }}
-                                />
-                              )}
                             />
+                            {children}
                           </div>
+                        )}
+                        renderThumb={({ props }) => (
+                          <div
+                            {...props}
+                            className="w-5 h-5 bg-blue-600 rounded-full shadow-md"
+                            style={{
+                              ...props.style,
+                              cursor: "pointer",
+                            }}
+                          />
+                        )}
+                      />
+                    </div> */}
+                  </div>
 
-                          {/* Current value indicator */}
-                          <div className="absolute -top-8 left-1/2 transform -translate-x-1/2"></div>
+                  {/* Choose Organizations Section */}
+                  <div className="bg-white rounded-xl mb-6 p-6 shadow-sm border border-gray-100">
+                    <h2 className="text-xl font-bold text-gray-800 mb-4">
+                      Choose organizations to support
+                    </h2>
+                    
+                    {/* Organization List */}
+                    <div className="space-y-4">
+                      {/* Hunger Initiative */}
+                      <div 
+                        className="flex items-center p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors cursor-pointer"
+                        onClick={() => toggleOrganization("Hunger Initiative")}
+                      >
+                        <div className="w-12 h-12 rounded-full bg-orange-100 flex items-center justify-center mr-4">
+                          <span className="text-orange-600 font-semibold text-lg">H</span>
                         </div>
-                        {/* Amount Display */}
-                        <div className="flex items-center justify-center">
-                          <div className="bg-white rounded-xl border-2 border-blue-200 px-8 py-4 shadow-lg">
-                            <span className="text-blue-600 text-lg font-bold">
-                              ${donationAmount}
-                            </span>
-                            <span className="text-gray-500 text-lg ml-2 font-medium">
-                              /month
-                            </span>
+                        <div className="flex-1">
+                          <h3 className="font-semibold text-gray-800">Hunger Initiative</h3>
+                          <p className="text-sm text-gray-600">Fighting hunger in local communities</p>
+                        </div>
+                        <div className={`w-6 h-6 rounded-full flex items-center justify-center ${
+                          selectedOrganizations.includes("Hunger Initiative") 
+                            ? "bg-blue-600" 
+                            : "border-2 border-gray-300"
+                        }`}>
+                          {selectedOrganizations.includes("Hunger Initiative") && (
+                            <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+                              <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                            </svg>
+                          )}
+                        </div>
+                      </div>
+
+                      {/* Clean Water Initiative */}
+                      <div 
+                        className="flex items-center p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors cursor-pointer"
+                        onClick={() => toggleOrganization("Clean Water Initiative")}
+                      >
+                        <div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center mr-4">
+                          <span className="text-blue-600 font-semibold text-lg">C</span>
+                        </div>
+                        <div className="flex-1">
+                          <h3 className="font-semibold text-gray-800">Clean Water Initiative</h3>
+                          <p className="text-sm text-gray-600">Providing clean water access</p>
+                        </div>
+                        <div className={`w-6 h-6 rounded-full flex items-center justify-center ${
+                          selectedOrganizations.includes("Clean Water Initiative") 
+                            ? "bg-blue-600" 
+                            : "border-2 border-gray-300"
+                        }`}>
+                          {selectedOrganizations.includes("Clean Water Initiative") && (
+                            <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+                              <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                            </svg>
+                          )}
+                        </div>
+                      </div>
+
+                      {/* Education for All */}
+                      <div 
+                        className="flex items-center p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors cursor-pointer"
+                        onClick={() => toggleOrganization("Education for All")}
+                      >
+                        <div className="w-12 h-12 rounded-full bg-green-100 flex items-center justify-center mr-4">
+                          <span className="text-green-600 font-semibold text-lg">E</span>
+                        </div>
+                        <div className="flex-1">
+                          <h3 className="font-semibold text-gray-800">Education for All</h3>
+                          <p className="text-sm text-gray-600">Quality education access</p>
+                        </div>
+                        <div className={`w-6 h-6 rounded-full flex items-center justify-center ${
+                          selectedOrganizations.includes("Education for All") 
+                            ? "bg-blue-600" 
+                            : "border-2 border-gray-300"
+                        }`}>
+                          {selectedOrganizations.includes("Education for All") && (
+                            <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+                              <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                            </svg>
+                          )}
+                        </div>
+                      </div>
+
+                      {/* Related Section */}
+                      <div className="mt-6">
+                        <h3 className="font-semibold text-gray-800 mb-3">Related</h3>
+                        
+                        {/* Animal Rescue Network */}
+                        <div 
+                          className="flex items-center p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors cursor-pointer"
+                          onClick={() => toggleOrganization("Animal Rescue Network")}
+                        >
+                          <div className="w-12 h-12 rounded-full bg-purple-100 flex items-center justify-center mr-4">
+                            <span className="text-purple-600 font-semibold text-lg">A</span>
+                          </div>
+                          <div className="flex-1">
+                            <h3 className="font-semibold text-gray-800">Animal Rescue Network</h3>
+                            <p className="text-sm text-gray-600">Rescuing and caring for animals</p>
+                          </div>
+                          <div className={`w-6 h-6 rounded-full flex items-center justify-center ${
+                            selectedOrganizations.includes("Animal Rescue Network") 
+                              ? "bg-blue-600" 
+                              : "border-2 border-gray-300"
+                          }`}>
+                            {selectedOrganizations.includes("Animal Rescue Network") && (
+                              <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                              </svg>
+                            )}
                           </div>
                         </div>
                       </div>
                     </div>
+                  </div>
 
-                    {/* Security Message */}
-                    <div className="flex items-center p-3 bg-gray-50 rounded-lg">
-                      <div className="flex items-center justify-center w-6 h-6 rounded-full bg-green-100 text-green-600 mr-2">
+                  {/* Summary and Next Button */}
+                  <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100 mb-6">
+                    <div className="flex justify-between items-center">
+                      <div>
+                        <p className="text-lg font-semibold text-gray-800">${donationAmount} per month</p>
+                        <p className="text-sm text-gray-600">{selectedOrganizations.length} organizations selected</p>
+                      </div>
+                      <button
+                        onClick={() => setStep(2)}
+                        className="bg-blue-600 text-white px-8 py-3 rounded-lg font-medium transition-colors hover:bg-blue-700 flex items-center"
+                      >
+                        Next
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
-                          width="14"
-                          height="14"
+                          width="18"
+                          height="18"
                           viewBox="0 0 24 24"
                           fill="none"
                           stroke="currentColor"
                           strokeWidth="2"
                           strokeLinecap="round"
                           strokeLinejoin="round"
+                          className="ml-2"
                         >
-                          <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
-                          <polyline points="22 4 12 14.01 9 11.01" />
+                          <path d="M5 12h14" />
+                          <path d="m12 5 7 7-7 7" />
                         </svg>
-                      </div>
-                      <p className="text-sm text-gray-600">
-                        Your donation is protected and guaranteed.{" "}
-                        <Link
-                          to="/settings/about"
-                          className="text-blue-600 font-medium"
-                        >
-                          Learn More
-                        </Link>
-                      </p>
+                      </button>
                     </div>
                   </div>
-
-                  <div
-                    className={`flex justify-between items-center ${
-                      isMobile ? "mb-20" : ""
-                    }`}
-                  >
-                    <p className="text-gray-600">Now let's add some causes</p>
-                    <button
-                      onClick={() => setStep(2)}
-                      className="bg-green-400  text-black px-6 py-3 rounded-lg font-medium transition-colors flex items-center"
-                    >
-                      Next
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="18"
-                        height="18"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        className="ml-2"
-                      >
-                        <path d="M5 12h14" />
-                        <path d="m12 5 7 7-7 7" />
-                      </svg>
-                    </button>
-                  </div>
                 </div>
+              // ) : step === 2 ? (
+              //   //@ts-ignore
+              //   <DonationBox2
+              //     step={step}
+              //     selectedOrganizations={selectedOrganizations}
+              //     setSelectedOrganizations={setSelectedOrganizations}
+              //     setStep={setStep}
+              //   />
               ) : step === 2 ? (
-                //@ts-ignore
-                <DonationBox2
-                  step={step}
-                  selectedOrganizations={selectedOrganizations}
-                  setSelectedOrganizations={setSelectedOrganizations}
-                  setStep={setStep}
-                />
-              ) : step === 3 ? (
                 //@ts-ignore
                 <DonationBox3
                   setCheckout={setCheckout}
