@@ -217,14 +217,7 @@
 
 "use client";
 import { useState } from "react";
-import { Bookmark, Trash2, ChevronRight } from "lucide-react";
-import { Avatar } from "@/components/ui/avatar";
-import { AvatarImage } from "@/components/ui/avatar";
-import { AvatarFallback } from "@/components/ui/avatar";
 import { CROWDS, RECENTS, SUGGESTED } from "@/constants";
-import { Button } from "./ui/button";
-import { Link } from 'react-router-dom';
-import PaymentSection from "./PaymentSection";
 
 // Define Organization type locally
 type Organization = {
@@ -244,6 +237,7 @@ interface DonationSummaryProps {
   onRemoveOrganization?: (id: string) => void;
   onBookmarkOrganization?: (id: string) => void;
   setStep: (step: number) => void;
+  donationAmount: number;
 }
 
 export const DonationBox3 = ({
@@ -253,9 +247,9 @@ export const DonationBox3 = ({
   onRemoveOrganization,
   onBookmarkOrganization,
   setStep,
+  donationAmount,
 }: DonationSummaryProps) => {
   const [bookmarkedOrgs, setBookmarkedOrgs] = useState<string[]>([]);
-  const [donationAmount] = useState(7);
 
   const getOrganizationById = (orgId: string): Organization | undefined => {
     return [...CROWDS, ...RECENTS, ...SUGGESTED].find(
@@ -263,28 +257,47 @@ export const DonationBox3 = ({
     );
   };
 
-  const selectedOrgs = selectedOrganizations
-    .map((id) => getOrganizationById(id))
-    .filter((org): org is Organization => !!org);
+  const getOrganizationDescription = (orgName: string): string => {
+    // Try to find organization by name first
+    const org = [...CROWDS, ...RECENTS, ...SUGGESTED].find(
+      (org) => org.name === orgName
+    );
+
+    if (org && org.description) {
+      return org.description;
+    }
+
+    // Fallback descriptions for common organizations
+    const descriptions: { [key: string]: string } = {
+      "Hunger Initiative": "Fighting hunger in local communities",
+      "Clean Water Initiative": "Providing clean water access",
+      "Education for All": "Quality education access",
+      "Animal Rescue Network": "Rescuing and caring for animals",
+    };
+
+    return descriptions[orgName] || "Making a positive impact in the community";
+  };
 
   // Handle remove organization if not provided
-  const handleRemoveOrganization = (id: string) => {
+  const handleRemoveOrganization = (orgName: string) => {
     if (onRemoveOrganization) {
-      onRemoveOrganization(id);
+      onRemoveOrganization(orgName);
     } else {
       setSelectedOrganizations((prev: string[]) =>
-        prev.filter((orgId: string) => orgId !== id)
+        prev.filter((name: string) => name !== orgName)
       );
     }
   };
 
   // Handle bookmark organization if not provided
-  const handleBookmarkOrganization = (id: string) => {
+  const handleBookmarkOrganization = (orgName: string) => {
     if (onBookmarkOrganization) {
-      onBookmarkOrganization(id);
+      onBookmarkOrganization(orgName);
     } else {
       setBookmarkedOrgs((prev) =>
-        prev.includes(id) ? prev.filter(orgId => orgId !== id) : [...prev, id]
+        prev.includes(orgName)
+          ? prev.filter((name) => name !== orgName)
+          : [...prev, orgName]
       );
     }
   };
@@ -297,33 +310,60 @@ export const DonationBox3 = ({
           <h2 className="text-xl font-bold text-gray-800 mb-4">
             Selected Organizations
           </h2>
-          
+
           {/* Organization List */}
           <div className="space-y-4">
-            {selectedOrgs.map((org) => (
-              <div key={org.id} className="flex items-center p-4 border border-gray-200 rounded-lg">
+            {selectedOrganizations.map((orgName: string, index: number) => (
+              <div
+                key={`${orgName}-${index}`}
+                className="flex items-center p-4 border border-gray-200 rounded-lg"
+              >
                 <div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center mr-4">
-                  <span className="text-blue-600 font-semibold text-lg">{org.name.charAt(0)}</span>
+                  <span className="text-blue-600 font-semibold text-lg">
+                    {orgName.charAt(0)}
+                  </span>
                 </div>
                 <div className="flex-1">
-                  <h3 className="font-semibold text-gray-800">{org.name}</h3>
-                  <p className="text-sm text-gray-600">{org.description || "Providing clean water access"}</p>
+                  <h3 className="font-semibold text-gray-800">{orgName}</h3>
+                  <p className="text-sm text-gray-600">
+                    {getOrganizationDescription(orgName)}
+                  </p>
                 </div>
                 <div className="flex items-center gap-2">
-                  <button 
+                  <button
                     className="p-2 hover:bg-gray-100 rounded-full transition-colors"
-                    onClick={() => handleBookmarkOrganization(org.id)}
+                    onClick={() => handleBookmarkOrganization(orgName)}
                   >
-                    <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
+                    <svg
+                      className="w-5 h-5 text-gray-600"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"
+                      />
                     </svg>
                   </button>
-                  <button 
-                    onClick={() => handleRemoveOrganization(org.id)}
+                  <button
+                    onClick={() => handleRemoveOrganization(orgName)}
                     className="p-2 hover:bg-gray-100 rounded-full transition-colors"
                   >
-                    <svg className="w-5 h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                    <svg
+                      className="w-5 h-5 text-red-600"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                      />
                     </svg>
                   </button>
                 </div>
@@ -333,62 +373,92 @@ export const DonationBox3 = ({
         </div>
 
         {/* Distribution Details */}
-        <div className="bg-gray-100 rounded-xl mb-6 p-6">
-          <h3 className="text-lg font-semibold text-gray-800 mb-3">Distribution</h3>
+        <div className="bg-blue-50 rounded-xl mb-6 p-6">
+          <h3 className="text-lg font-semibold text-gray-800 mb-3">
+            Distribution
+          </h3>
           <p className="text-gray-600 text-sm mb-3">
-            Your ${donationAmount} becomes ${(donationAmount * 0.9).toFixed(2)} after fees, split evenly across causes. Your donation will be evenly distributed across all {selectedOrganizations.length} organizations.
+            Your ${donationAmount} becomes ${(donationAmount * 0.9).toFixed(2)}{" "}
+            after fees, split evenly across causes. Your donation will be evenly
+            distributed across all {selectedOrganizations.length} organizations.
           </p>
-          <div className="bg-blue-100 text-blue-800 px-3 py-2 rounded-lg">
-            <span className="font-semibold">Each organization receives: {Math.round(100 / selectedOrganizations.length)}%</span>
+          <div className="  text-blue-500 ">
+            <span className="font-semibold">
+              Each organization receives: $
+              {selectedOrganizations.length > 0
+                ? (donationAmount / selectedOrganizations.length).toFixed(2)
+                : "0.00"}{" "}
+              per month
+            </span>
           </div>
         </div>
 
         {/* Add More Button */}
-        <div className="mb-6">
+        {/* <div className="mb-6">
           <button className="w-full bg-gray-200 text-gray-800 py-3 rounded-lg font-medium transition-colors hover:bg-gray-300">
             Add More
           </button>
-        </div>
+        </div> */}
 
         {/* Payment Method Selection */}
-        <div className="bg-white rounded-xl mb-6 p-6 shadow-sm border border-gray-100">
-          <h3 className="text-lg font-semibold text-gray-800 mb-2">Select Payment Method</h3>
-          <p className="text-gray-600 text-sm mb-4">Choose a payment method to complete your donation.</p>
-          
+        {/* <div className="bg-white rounded-xl mb-6 p-6 shadow-sm border border-gray-100">
+          <h3 className="text-lg font-semibold text-gray-800 mb-2">
+            Select Payment Method
+          </h3>
+          <p className="text-gray-600 text-sm mb-4">
+            Choose a payment method to complete your donation.
+          </p>
+
           <div className="space-y-3">
-            {/* Apple Pay */}
+            
             <div className="flex items-center p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors cursor-pointer">
               <div className="w-8 h-8 bg-black rounded-lg flex items-center justify-center mr-3">
-                <svg className="w-5 h-5 text-white" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/>
+                <svg
+                  className="w-5 h-5 text-white"
+                  viewBox="0 0 24 24"
+                  fill="currentColor"
+                >
+                  <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z" />
                 </svg>
               </div>
               <span className="font-medium text-gray-800">Apple Pay</span>
             </div>
 
-            {/* Credit or Debit Card */}
+            
             <div className="flex items-center p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors cursor-pointer">
               <div className="w-8 h-8 bg-gray-100 rounded-lg flex items-center justify-center mr-3">
-                <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
+                <svg
+                  className="w-5 h-5 text-gray-600"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"
+                  />
                 </svg>
               </div>
-              <span className="font-medium text-gray-800">Credit or Debit Card</span>
+              <span className="font-medium text-gray-800">
+                Credit or Debit Card
+              </span>
             </div>
           </div>
-        </div>
+        </div> */}
 
         {/* Action Buttons */}
         <div className="space-y-3 mb-6">
-          <button 
+          <button
             onClick={() => setCheckout(true)}
             className="w-full bg-blue-600 text-white py-4 rounded-lg font-medium transition-colors hover:bg-blue-700"
           >
             Confirm your donation
           </button>
-          <button className="w-full bg-gray-200 text-black py-3 rounded-lg font-medium transition-colors hover:bg-gray-300">
+          {/* <button className="w-full bg-gray-200 text-black py-3 rounded-lg font-medium transition-colors hover:bg-gray-300">
             Not Now
-          </button>
+          </button> */}
         </div>
       </div>
 

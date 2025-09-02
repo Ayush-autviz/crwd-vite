@@ -1,27 +1,24 @@
 import { useState } from "react";
-import { Minus, Plus, X } from "lucide-react";
+import { Minus, Plus } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useIsMobile } from "@/hooks/use-mobile";
-import DonationBox2 from "./DonationBox2";
 import { DonationBox3 } from "./DonationBox3";
 import OneTimeDonation from "./OneTimeDonation";
 import { Checkout } from "./Checkout";
-import { Range } from "react-range";
 
 import DonationHeader from "./donation/DonationHeader";
-import StepIndicator from "./donation/StepIndicator";
 import { Link } from "react-router-dom";
 
 const DonationBox = () => {
   const [activeTab, setActiveTab] = useState<"setup" | "onetime">("setup");
   const [checkout, setCheckout] = useState(false);
-  const [selectedOrganizations, setSelectedOrganizations] = useState<string[]>(
-    ["Hunger Initiative", "Clean Water Initiative"]
-  );
+  const [selectedOrganizations, setSelectedOrganizations] = useState<string[]>([
+    "Hunger Initiative",
+    "Clean Water Initiative",
+  ]);
 
   const [donationAmount, setDonationAmount] = useState(10);
   const [step, setStep] = useState(1);
-  const [isEditing, setIsEditing] = useState(false);
   const [inputValue, setInputValue] = useState("10");
 
   // const step = 2;
@@ -48,7 +45,6 @@ const DonationBox = () => {
   };
 
   const handleInputBlur = () => {
-    setIsEditing(false);
     // Convert to number and ensure minimum value is 1
     const numValue = parseInt(inputValue) || 1;
     // Ensure minimum donation is $5
@@ -57,14 +53,10 @@ const DonationBox = () => {
     setInputValue(finalValue.toString());
   };
 
-  const handleInputFocus = () => {
-    setIsEditing(true);
-  };
-
   const toggleOrganization = (orgName: string) => {
-    setSelectedOrganizations(prev => 
-      prev.includes(orgName) 
-        ? prev.filter(org => org !== orgName)
+    setSelectedOrganizations((prev) =>
+      prev.includes(orgName)
+        ? prev.filter((org) => org !== orgName)
         : [...prev, orgName]
     );
   };
@@ -165,7 +157,8 @@ const DonationBox = () => {
                       Set monthly donation amount
                     </h2>
                     <p className="text-gray-600 text-sm mb-6">
-                      Set one monthly amount and we'll split it across causes you're passionate about. You can edit at any time.
+                      Set one monthly amount and we'll split it across causes
+                      you're passionate about. You can edit at any time.
                     </p>
 
                     {/* Amount Selector */}
@@ -177,8 +170,12 @@ const DonationBox = () => {
                         <Minus size={20} className="text-gray-600" />
                       </button>
                       <div className="mx-6 text-center">
-                        <span className="text-blue-600 text-3xl font-bold">${donationAmount}</span>
-                        <span className="text-gray-500 text-lg ml-2">per month</span>
+                        <span className="text-blue-600 text-3xl font-bold">
+                          ${donationAmount}
+                        </span>
+                        <span className="text-gray-500 text-lg ml-2">
+                          per month
+                        </span>
                       </div>
                       <button
                         onClick={incrementDonation}
@@ -246,79 +243,137 @@ const DonationBox = () => {
                     <h2 className="text-xl font-bold text-gray-800 mb-4">
                       Choose organizations to support
                     </h2>
-                    
+
                     {/* Organization List */}
                     <div className="space-y-4">
                       {/* Hunger Initiative */}
-                      <div 
+                      <div
                         className="flex items-center p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors cursor-pointer"
                         onClick={() => toggleOrganization("Hunger Initiative")}
                       >
                         <div className="w-12 h-12 rounded-full bg-orange-100 flex items-center justify-center mr-4">
-                          <span className="text-orange-600 font-semibold text-lg">H</span>
+                          <span className="text-orange-600 font-semibold text-lg">
+                            H
+                          </span>
                         </div>
                         <div className="flex-1">
-                          <h3 className="font-semibold text-gray-800">Hunger Initiative</h3>
-                          <p className="text-sm text-gray-600">Fighting hunger in local communities</p>
+                          <h3 className="font-semibold text-gray-800">
+                            Hunger Initiative
+                          </h3>
+                          <p className="text-sm text-gray-600">
+                            Fighting hunger in local communities
+                          </p>
                         </div>
-                        <div className={`w-6 h-6 rounded-full flex items-center justify-center ${
-                          selectedOrganizations.includes("Hunger Initiative") 
-                            ? "bg-blue-600" 
-                            : "border-2 border-gray-300"
-                        }`}>
-                          {selectedOrganizations.includes("Hunger Initiative") && (
-                            <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
-                              <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                        <div
+                          className={`w-6 h-6 rounded-full flex items-center justify-center ${
+                            selectedOrganizations.includes("Hunger Initiative")
+                              ? "bg-blue-600"
+                              : "border-2 border-gray-300"
+                          }`}
+                        >
+                          {selectedOrganizations.includes(
+                            "Hunger Initiative"
+                          ) && (
+                            <svg
+                              className="w-4 h-4 text-white"
+                              fill="currentColor"
+                              viewBox="0 0 20 20"
+                            >
+                              <path
+                                fillRule="evenodd"
+                                d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                                clipRule="evenodd"
+                              />
                             </svg>
                           )}
                         </div>
                       </div>
 
                       {/* Clean Water Initiative */}
-                      <div 
+                      <div
                         className="flex items-center p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors cursor-pointer"
-                        onClick={() => toggleOrganization("Clean Water Initiative")}
+                        onClick={() =>
+                          toggleOrganization("Clean Water Initiative")
+                        }
                       >
                         <div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center mr-4">
-                          <span className="text-blue-600 font-semibold text-lg">C</span>
+                          <span className="text-blue-600 font-semibold text-lg">
+                            C
+                          </span>
                         </div>
                         <div className="flex-1">
-                          <h3 className="font-semibold text-gray-800">Clean Water Initiative</h3>
-                          <p className="text-sm text-gray-600">Providing clean water access</p>
+                          <h3 className="font-semibold text-gray-800">
+                            Clean Water Initiative
+                          </h3>
+                          <p className="text-sm text-gray-600">
+                            Providing clean water access
+                          </p>
                         </div>
-                        <div className={`w-6 h-6 rounded-full flex items-center justify-center ${
-                          selectedOrganizations.includes("Clean Water Initiative") 
-                            ? "bg-blue-600" 
-                            : "border-2 border-gray-300"
-                        }`}>
-                          {selectedOrganizations.includes("Clean Water Initiative") && (
-                            <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
-                              <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                        <div
+                          className={`w-6 h-6 rounded-full flex items-center justify-center ${
+                            selectedOrganizations.includes(
+                              "Clean Water Initiative"
+                            )
+                              ? "bg-blue-600"
+                              : "border-2 border-gray-300"
+                          }`}
+                        >
+                          {selectedOrganizations.includes(
+                            "Clean Water Initiative"
+                          ) && (
+                            <svg
+                              className="w-4 h-4 text-white"
+                              fill="currentColor"
+                              viewBox="0 0 20 20"
+                            >
+                              <path
+                                fillRule="evenodd"
+                                d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                                clipRule="evenodd"
+                              />
                             </svg>
                           )}
                         </div>
                       </div>
 
                       {/* Education for All */}
-                      <div 
+                      <div
                         className="flex items-center p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors cursor-pointer"
                         onClick={() => toggleOrganization("Education for All")}
                       >
                         <div className="w-12 h-12 rounded-full bg-green-100 flex items-center justify-center mr-4">
-                          <span className="text-green-600 font-semibold text-lg">E</span>
+                          <span className="text-green-600 font-semibold text-lg">
+                            E
+                          </span>
                         </div>
                         <div className="flex-1">
-                          <h3 className="font-semibold text-gray-800">Education for All</h3>
-                          <p className="text-sm text-gray-600">Quality education access</p>
+                          <h3 className="font-semibold text-gray-800">
+                            Education for All
+                          </h3>
+                          <p className="text-sm text-gray-600">
+                            Quality education access
+                          </p>
                         </div>
-                        <div className={`w-6 h-6 rounded-full flex items-center justify-center ${
-                          selectedOrganizations.includes("Education for All") 
-                            ? "bg-blue-600" 
-                            : "border-2 border-gray-300"
-                        }`}>
-                          {selectedOrganizations.includes("Education for All") && (
-                            <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
-                              <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                        <div
+                          className={`w-6 h-6 rounded-full flex items-center justify-center ${
+                            selectedOrganizations.includes("Education for All")
+                              ? "bg-blue-600"
+                              : "border-2 border-gray-300"
+                          }`}
+                        >
+                          {selectedOrganizations.includes(
+                            "Education for All"
+                          ) && (
+                            <svg
+                              className="w-4 h-4 text-white"
+                              fill="currentColor"
+                              viewBox="0 0 20 20"
+                            >
+                              <path
+                                fillRule="evenodd"
+                                d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                                clipRule="evenodd"
+                              />
                             </svg>
                           )}
                         </div>
@@ -326,28 +381,52 @@ const DonationBox = () => {
 
                       {/* Related Section */}
                       <div className="mt-6">
-                        <h3 className="font-semibold text-gray-800 mb-3">Related</h3>
-                        
+                        <h3 className="font-semibold text-gray-800 mb-3">
+                          Related
+                        </h3>
+
                         {/* Animal Rescue Network */}
-                        <div 
+                        <div
                           className="flex items-center p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors cursor-pointer"
-                          onClick={() => toggleOrganization("Animal Rescue Network")}
+                          onClick={() =>
+                            toggleOrganization("Animal Rescue Network")
+                          }
                         >
                           <div className="w-12 h-12 rounded-full bg-purple-100 flex items-center justify-center mr-4">
-                            <span className="text-purple-600 font-semibold text-lg">A</span>
+                            <span className="text-purple-600 font-semibold text-lg">
+                              A
+                            </span>
                           </div>
                           <div className="flex-1">
-                            <h3 className="font-semibold text-gray-800">Animal Rescue Network</h3>
-                            <p className="text-sm text-gray-600">Rescuing and caring for animals</p>
+                            <h3 className="font-semibold text-gray-800">
+                              Animal Rescue Network
+                            </h3>
+                            <p className="text-sm text-gray-600">
+                              Rescuing and caring for animals
+                            </p>
                           </div>
-                          <div className={`w-6 h-6 rounded-full flex items-center justify-center ${
-                            selectedOrganizations.includes("Animal Rescue Network") 
-                              ? "bg-blue-600" 
-                              : "border-2 border-gray-300"
-                          }`}>
-                            {selectedOrganizations.includes("Animal Rescue Network") && (
-                              <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
-                                <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                          <div
+                            className={`w-6 h-6 rounded-full flex items-center justify-center ${
+                              selectedOrganizations.includes(
+                                "Animal Rescue Network"
+                              )
+                                ? "bg-blue-600"
+                                : "border-2 border-gray-300"
+                            }`}
+                          >
+                            {selectedOrganizations.includes(
+                              "Animal Rescue Network"
+                            ) && (
+                              <svg
+                                className="w-4 h-4 text-white"
+                                fill="currentColor"
+                                viewBox="0 0 20 20"
+                              >
+                                <path
+                                  fillRule="evenodd"
+                                  d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                                  clipRule="evenodd"
+                                />
                               </svg>
                             )}
                           </div>
@@ -360,8 +439,12 @@ const DonationBox = () => {
                   <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100 mb-6">
                     <div className="flex justify-between items-center">
                       <div>
-                        <p className="text-lg font-semibold text-gray-800">${donationAmount} per month</p>
-                        <p className="text-sm text-gray-600">{selectedOrganizations.length} organizations selected</p>
+                        <p className="text-lg font-semibold text-gray-800">
+                          ${donationAmount} per month
+                        </p>
+                        <p className="text-sm text-gray-600">
+                          {selectedOrganizations.length} organizations selected
+                        </p>
                       </div>
                       <button
                         onClick={() => setStep(2)}
@@ -387,7 +470,7 @@ const DonationBox = () => {
                     </div>
                   </div>
                 </div>
-              // ) : step === 2 ? (
+              ) : // ) : step === 2 ? (
               //   //@ts-ignore
               //   <DonationBox2
               //     step={step}
@@ -395,7 +478,7 @@ const DonationBox = () => {
               //     setSelectedOrganizations={setSelectedOrganizations}
               //     setStep={setStep}
               //   />
-              ) : step === 2 ? (
+              step === 2 ? (
                 //@ts-ignore
                 <DonationBox3
                   setCheckout={setCheckout}
@@ -403,6 +486,7 @@ const DonationBox = () => {
                   selectedOrganizations={selectedOrganizations}
                   setSelectedOrganizations={setSelectedOrganizations}
                   setStep={setStep}
+                  donationAmount={donationAmount}
                 />
               ) : (
                 <div className="flex-1 mx-4 mt-4 mb-4 flex flex-col">
@@ -441,7 +525,6 @@ const DonationBox = () => {
                               value={inputValue}
                               onChange={handleInputChange}
                               onBlur={handleInputBlur}
-                              onFocus={handleInputFocus}
                               className="bg-transparent w-16 text-center focus:outline-none"
                               aria-label="Donation amount"
                             />
