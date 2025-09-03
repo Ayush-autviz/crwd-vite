@@ -6,7 +6,6 @@ import {
   CreditCard,
   DollarSign,
   Trash2,
-  ChevronRight,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
@@ -37,6 +36,9 @@ const ManageDonationBox: React.FC<ManageDonationBoxProps> = ({
 }) => {
   const [editableAmount, setEditableAmount] = React.useState(amount);
   const [isEditingAmount, setIsEditingAmount] = React.useState(false);
+  const [isEditMode, setIsEditMode] = React.useState(false);
+  const [temporarilyRemovedCauses, setTemporarilyRemovedCauses] =
+    React.useState<string[]>([]);
 
   const incrementAmount = () => {
     setEditableAmount((prev) => prev + 1);
@@ -58,10 +60,34 @@ const ManageDonationBox: React.FC<ManageDonationBoxProps> = ({
   };
 
   const handleRemove = (id: string) => {
-    if (onRemove) {
-      onRemove(id);
-    }
+    // Temporarily remove the cause
+    setTemporarilyRemovedCauses((prev) => [...prev, id]);
   };
+
+  const handleEditCauses = () => {
+    if (isEditMode) {
+      // "Done Editing" clicked - restore temporarily removed causes
+      setTemporarilyRemovedCauses([]);
+    }
+    setIsEditMode(!isEditMode);
+  };
+
+  const handleSave = () => {
+    // Permanently remove the causes
+    temporarilyRemovedCauses.forEach((id) => {
+      if (onRemove) {
+        onRemove(id);
+      }
+    });
+    // Clear the temporarily removed causes
+    setTemporarilyRemovedCauses([]);
+    setIsEditMode(false);
+  };
+
+  // Filter out temporarily removed causes for display
+  const visibleCauses = causes.filter(
+    (cause) => !temporarilyRemovedCauses.includes(cause.id)
+  );
 
   return (
     <div className="w-full min-h-screen bg-white flex flex-col">
@@ -139,22 +165,13 @@ const ManageDonationBox: React.FC<ManageDonationBoxProps> = ({
           </div>
         </div>
       </div>
-      {/* Edit Causes Button */}
-      <div className="flex  mt-6 pb-4 px-8">
-        <Button
-          variant="outline"
-          className="rounded-full px-6 py-2 text-blue-700 border-blue-200 bg-blue-50 hover:bg-blue-100 font-semibold"
-        >
-          Edit Causes
-        </Button>
-      </div>
       {/* Causes List */}
-      <div className="flex-1 overflow-auto">
+      <div className="flex-1 mt-4 overflow-auto">
         <h2 className="text-base font-semibold text-gray-700 uppercase mb-4 tracking-wide px-8">
           CAUSES
         </h2>
         <div className="space-y-4 px-8">
-          {causes.map((org) => (
+          {visibleCauses.map((org) => (
             <div
               key={org.id}
               className="bg-white rounded-xl p-4 border border-blue-100 shadow-sm hover:shadow-md transition-shadow"
@@ -194,18 +211,20 @@ const ManageDonationBox: React.FC<ManageDonationBoxProps> = ({
                   )}
                 </div>
               </div>
-              <div className="flex justify-end mt-3">
-                <button
-                  className="text-xs text-gray-600 hover:text-red-500 flex items-center px-2 py-1 rounded-md bg-gray-50 hover:bg-gray-100 transition-colors"
-                  onClick={() => handleRemove(org.id)}
-                >
-                  <Trash2 size={12} className="mr-1" />
-                  Remove
-                </button>
-              </div>
+              {isEditMode && (
+                <div className="flex justify-end mt-3">
+                  <button
+                    className="text-xs text-gray-600 hover:text-red-500 flex items-center px-2 py-1 rounded-md bg-gray-50 hover:bg-gray-100 transition-colors"
+                    onClick={() => handleRemove(org.id)}
+                  >
+                    <Trash2 size={12} className="mr-1" />
+                    Remove
+                  </button>
+                </div>
+              )}
             </div>
           ))}
-          <p className="text-sm text-gray-500 text-left mt-4">
+          {/* <p className="text-sm text-gray-500 text-left mt-4">
             Add up to 45 more causes to this box
           </p>
           <div className="pt-2 pb-2 text-left">
@@ -215,7 +234,7 @@ const ManageDonationBox: React.FC<ManageDonationBoxProps> = ({
             >
               Discover more <ChevronRight size={16} />
             </Link>
-          </div>
+          </div> */}
         </div>
       </div>
 
@@ -224,7 +243,7 @@ const ManageDonationBox: React.FC<ManageDonationBoxProps> = ({
         <p className="text-sm text-gray-500 text-center">
           Your ${editableAmount} becomes ${(editableAmount * 0.9).toFixed(2)}{" "}
           after fees, split evenly across causes. Your donation will be evenly
-          distributed across all {causes.length} organizations.
+          distributed across all {visibleCauses.length} organizations.
         </p>
       </div>
 
@@ -246,9 +265,12 @@ const ManageDonationBox: React.FC<ManageDonationBoxProps> = ({
                 <div className="text-xs text-gray-500">12/25</div>
               </div>
             </div>
-            <button className="text-sm text-blue-600 hover:text-blue-700 font-medium">
+            <Link
+              to="/settings/payments"
+              className="text-sm text-blue-600 hover:text-blue-700 font-medium"
+            >
               Change
-            </button>
+            </Link>
           </div>
         </div>
       </div>
@@ -276,21 +298,41 @@ const ManageDonationBox: React.FC<ManageDonationBoxProps> = ({
         </div>
       </div>
 
-      <div className="text-xs text-gray-400 text-center pt-5 ml-auto px-4">
+      <div className=" text-gray-400  pt-5 text-center">
         Allocations will automatically adjust for 100% distribution
       </div>
 
-      {/* Footer */}
-      <div className="px-4 py-6 pb-30">
-        <div className="grid grid-cols-2 gap-2">
-          <button className="col-span-1 text-xs text-gray-400">
-            Deactivate donation box
-          </button>
-          <Button className="col-span-1 rounded-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-6 px-20 w-1/2 mx-auto">
-            Save
-          </Button>
-        </div>
+      {/* Edit Causes Button */}
+      <div className="flex  mt-6 pb-4 px-8">
+        <Button
+          variant="outline"
+          className="rounded-full px-6 py-2 text-blue-700 border-blue-200 bg-blue-50 hover:bg-blue-100 font-semibold"
+          onClick={handleEditCauses}
+        >
+          {isEditMode ? "Close" : "Edit Causes"}
+        </Button>
       </div>
+
+      {/* Footer */}
+      {isEditMode && (
+        <div className="px-4 py-6 pb-30">
+          <div className="grid grid-cols-2 gap-2">
+            {visibleCauses.length > 0 && (
+              <button className="col-span-1 text-xs text-gray-400">
+                Deactivate donation box
+              </button>
+            )}
+            <Button
+              className={`${
+                visibleCauses.length > 0 ? "col-span-1" : "col-span-2"
+              } rounded-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-6 px-20 w-1/2 mx-auto`}
+              onClick={handleSave}
+            >
+              Save
+            </Button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

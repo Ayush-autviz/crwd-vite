@@ -303,7 +303,7 @@ export const DonationBox3 = ({
   };
 
   return (
-    <div className="w-full h-full bg-white flex flex-col">
+    <div className="w-full h-full bg-white flex flex-col pb-24">
       <div className="flex-1 overflow-auto mt-2 mx-4">
         {/* Selected Organizations Section */}
         <div className="bg-white rounded-xl mb-6 p-6 shadow-sm border border-gray-100">
@@ -449,7 +449,7 @@ export const DonationBox3 = ({
         </div> */}
 
         {/* Action Buttons */}
-        <div className="space-y-3 mb-6">
+        <div className="space-y-3 mb-6 fixed md:bottom-0 bottom-24 w-calc(100%-16px) left-0 md:left-auto md:w-[calc(100%-320px)] right-0 mx-4">
           <button
             onClick={() => setCheckout(true)}
             className="w-full bg-blue-600 text-white py-4 rounded-lg font-medium transition-colors hover:bg-blue-700"

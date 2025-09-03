@@ -150,7 +150,7 @@ const DonationBox = () => {
           ) : (
             <>
               {step === 1 ? (
-                <div className="flex-1 mt-4 mb-4 flex flex-col p-4">
+                <div className="flex-1 mt-4 mb-48 flex flex-col p-4  md:mb-24">
                   {/* Set Monthly Donation Amount Section */}
                   <div className="bg-blue-50 rounded-xl mb-6 p-6 shadow-sm border border-gray-100">
                     <h2 className="text-xl font-bold text-gray-800 mb-3">
@@ -436,7 +436,7 @@ const DonationBox = () => {
                   </div>
 
                   {/* Summary and Next Button */}
-                  <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100 mb-6">
+                  <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100 mb-6 fixed md:bottom-0 bottom-24 w-calc(100%-16px) left-0 md:left-auto md:w-[calc(100%-320px)] right-0 mx-4">
                     <div className="flex justify-between items-center">
                       <div>
                         <p className="text-lg font-semibold text-gray-800">
