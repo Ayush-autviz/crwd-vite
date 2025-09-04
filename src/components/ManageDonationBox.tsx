@@ -90,7 +90,7 @@ const ManageDonationBox: React.FC<ManageDonationBoxProps> = ({
   );
 
   return (
-    <div className="w-full min-h-screen bg-white flex flex-col">
+    <div className="w-full min-h-screen bg-white flex flex-col pb-24">
       {/* Header */}
       <div className="bg-white border-b border-gray-200 h-16 p-4 flex items-center justify-between">
         <button

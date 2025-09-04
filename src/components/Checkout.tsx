@@ -230,13 +230,13 @@ export const Checkout = ({
               </Link>
             </p>
             <div className="flex gap-2">
-              <Button
-                variant="outline"
-                className="flex-1 text-blue-600 border-blue-200 bg-white hover:bg-blue-50"
-                onClick={() => setShowAddMoreCauses(!showAddMoreCauses)}
+              <Link
+                // variant="outline"
+                className="flex-1 text-center rounded-md border-1 border-gray-200 px-4 py-2 text-blue-600 border-blue-200 bg-white hover:bg-blue-50"   
+                to="/search"
               >
                 + Add More Causes
-              </Button>
+              </Link>
               {showAddMoreCauses && (
                 <Button
                   className="flex-1 bg-blue-600 hover:bg-blue-700 text-white"
