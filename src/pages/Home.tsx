@@ -143,7 +143,7 @@ export default function HomePage() {
       />
       <div className="md:grid md:grid-cols-12 md:gap-6 md:p-6">
         {/* Main Content - Takes full width on mobile, 8 columns on desktop */}
-        <div className="md:col-span-8">
+        <div className="md:col-span-12">
           {/* Search Input */}
           <div className="hidden md:block p-4 md:p-0 md:mb-6">
             <div className="relative">
@@ -477,7 +477,7 @@ export default function HomePage() {
         </div>
 
         {/* Sidebar - Only visible on desktop */}
-        <div className="hidden md:block md:col-span-4">
+        <div className="hidden  md:col-span-4">
           {/* <Card className="">
             <CardContent className="">
               <h2 className="text-xl font-bold mb-4">Popular Categories</h2>

@@ -1,10 +1,11 @@
-import { ArrowLeft, HelpCircle, Settings } from "lucide-react";
-import { useState } from "react";
+import { ArrowLeft, HelpCircle, Settings, X } from "lucide-react";
+import { useState, useEffect } from "react";
 
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import ManageDonationBox from "./ManageDonationBox";
 import { CROWDS, RECENTS, SUGGESTED } from "@/constants";
+import ReactConfetti from "react-confetti";
 
 interface DonationOverviewProps {
   donationAmount?: number;
@@ -20,6 +21,27 @@ export const Checkout = ({
   const [showManageDonationBox, setShowManageDonationBox] = useState(false);
   const [localSelectedOrgs, setLocalSelectedOrgs] = useState(selectedOrgIds);
   const [showAddMoreCauses, setShowAddMoreCauses] = useState(false);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [windowDimensions, setWindowDimensions] = useState({
+    width: window.innerWidth,
+    height: window.innerHeight,
+  });
+
+  // Show success modal when component mounts
+  useEffect(() => {
+    setShowSuccessModal(true);
+
+    // Update window dimensions on resize for confetti
+    const handleResize = () => {
+      setWindowDimensions({
+        width: window.innerWidth,
+        height: window.innerHeight,
+      });
+    };
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   // Get organization description by name (similar to DonationBox3)
   const getOrganizationDescription = (orgName: string): string => {
@@ -61,6 +83,10 @@ export const Checkout = ({
     // Here you would typically save the changes
     // For now, just hide the add more causes mode
     setShowAddMoreCauses(false);
+  };
+
+  const handleCloseSuccessModal = () => {
+    setShowSuccessModal(false);
   };
 
   // Calculate equal distribution percentage
@@ -231,8 +257,7 @@ export const Checkout = ({
             </p>
             <div className="flex gap-2">
               <Link
-                // variant="outline"
-                className="flex-1 text-center rounded-md border-1 border-gray-200 px-4 py-2 text-blue-600 border-blue-200 bg-white hover:bg-blue-50"   
+                className="flex-1 text-center rounded-md border border-blue-200 px-4 py-2 text-blue-600 bg-white hover:bg-blue-50"
                 to="/search"
               >
                 + Add More Causes
@@ -254,6 +279,76 @@ export const Checkout = ({
       {/* <PaymentSection amount={donationAmount} /> */}
 
       <div className="h-30 md:hidden" />
+
+      {/* Success Modal with Confetti */}
+      {showSuccessModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <ReactConfetti
+            width={windowDimensions.width}
+            height={windowDimensions.height}
+            recycle={false}
+            numberOfPieces={200}
+          />
+          <div className="bg-white rounded-lg max-w-md w-full mx-4 p-6 relative">
+            {/* Close Button */}
+            <button
+              onClick={handleCloseSuccessModal}
+              className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors"
+            >
+              <X size={24} />
+            </button>
+
+            {/* Modal Content */}
+            <div className="text-center">
+              <h2 className="text-2xl font-bold text-gray-900 mb-2">
+                Welcome to Checkout!
+              </h2>
+
+              <p className="text-gray-600 mb-4">
+                Here's your donation summary:
+              </p>
+
+              {/* Donation Summary Card */}
+              <div className="bg-gray-50 border border-gray-200 rounded-lg p-4 mb-6">
+                <div className="flex items-center gap-3">
+                  <div className="w-12 h-12 bg-blue-500 rounded-lg flex items-center justify-center">
+                    <span className="text-white text-sm font-semibold">💝</span>
+                  </div>
+                  <div className="text-left">
+                    <h3 className="font-semibold text-gray-900">
+                      Monthly Donation Box
+                    </h3>
+                    <div className="flex items-center gap-2 mt-1">
+                      <span className="text-sm text-gray-600">
+                        ${donationAmount}/month
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <p className="text-gray-600 mb-6">
+                Supporting {selectedOrganizations.length} nonprofits with your
+                monthly donation.
+              </p>
+
+              {/* <div className="flex flex-col gap-3">
+                <Button onClick={handleCloseSuccessModal} className="w-full">
+                  CONTINUE TO PAYMENT
+                </Button>
+
+                <Button
+                  onClick={handleCloseSuccessModal}
+                  variant="outline"
+                  className="w-full"
+                >
+                  MANAGE DONATIONS
+                </Button>
+              </div> */}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

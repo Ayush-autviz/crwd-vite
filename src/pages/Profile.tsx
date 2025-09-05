@@ -156,7 +156,7 @@ export default function ProfilePage() {
 
       <div className="md:grid md:grid-cols-12 md:gap-6 md:px-6 md:pt-2 md:pb-6">
         {/* Main Content */}
-        <div className="md:col-span-8">
+        <div className="md:col-span-12">
           <div className="flex flex-col space-y-4 px-4 md:px-0">
             <ProfileHeader
               avatarUrl="https://randomuser.me/api/portraits/women/44.jpg"
@@ -230,7 +230,7 @@ export default function ProfilePage() {
         </div>
 
         {/* Sidebar - Only visible on desktop */}
-        <div className="hidden md:block md:col-span-4">
+        <div className="hidden  md:col-span-4">
           <ProfileSidebar />
         </div>
       </div>
