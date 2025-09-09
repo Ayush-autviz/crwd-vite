@@ -229,7 +229,7 @@ export const Checkout = ({
         <div className="mx-8 mt-6 mb-6">
           <div className="border-2 border-gray-200 rounded-lg p-4 bg-blue-50">
             <p className="text-sm text-gray-700 mb-2">
-              Want to give together? Turn this into a CRWD
+              Want to give together? Turn this into a Giving Circle
             </p>
             <Link
               to="/create-crwd"
