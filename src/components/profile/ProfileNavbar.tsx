@@ -66,7 +66,7 @@ export default function ProfileNavbar({
           </div>
 
           {/* Search bar in the center */}
-          <div className="flex-1 mx-4">
+          {/* <div className="flex-1 mx-4">
             <div className="relative">
               <input
                 type="text"
@@ -89,7 +89,7 @@ export default function ProfileNavbar({
                 <path d="m21 21-4.3-4.3" />
               </svg>
             </div>
-          </div>
+          </div> */}
 
           {/* Action buttons on the right */}
           <div className="flex items-center gap-5">
@@ -110,12 +110,12 @@ export default function ProfileNavbar({
             <h1 className={cn("text-xl font-bold", titleClassName)}>{title}</h1>
           )}
           <div className="flex items-center space-x-4">
-            <Link to="/donation">
+            {/* <Link to="/donation">
               <Button variant="outline" className="flex items-center gap-2">
                 <Archive className="h-4 w-4" />
                 <span>Donation Box</span>
               </Button>
-            </Link>
+            </Link> */}
             {/* <Button variant="outline" className="flex items-center gap-2">
         <Bell className="h-4 w-4" />
         <span>Notifications</span>

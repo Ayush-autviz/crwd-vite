@@ -248,7 +248,7 @@ export default function CreatePostPage() {
               ) : (
                 <>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Post to a CRWD
+                    Post to a Giving Circle
                   </label>
                   <Select>
                     <SelectTrigger
@@ -256,7 +256,7 @@ export default function CreatePostPage() {
                       onClick={() => setStep(2)}
                     >
                       <SelectValue
-                        placeholder="Select a CRWD (required)"
+                        placeholder="Select a Giving Circle (required)"
                         className="truncate"
                       />
                     </SelectTrigger>

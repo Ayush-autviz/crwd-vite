@@ -1,5 +1,5 @@
 import React from 'react';
-import { Bookmark } from 'lucide-react';
+import { Bookmark, Heart } from 'lucide-react';
 
 interface SavedItemProps {
   avatar: string;
@@ -14,10 +14,10 @@ const SavedItem: React.FC<SavedItemProps> = ({ avatar, title, subtitle }) => (
       <span className="font-semibold text-sm text-gray-900 truncate">{title}</span>
       <span className="text-xs text-gray-500 truncate">{subtitle}</span>
     </div>
-    <Bookmark 
+    <Heart 
       size={18} 
       fill="currentColor" 
-      className="text-blue-500 flex-shrink-0 bookmark-icon hover:text-blue-600 transition-colors" 
+      className="text-red-500 flex-shrink-0 bookmark-icon hover:text-red-600 transition-colors" 
     />
   </div>
 );

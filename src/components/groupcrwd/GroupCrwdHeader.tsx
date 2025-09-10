@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { Share2, Bookmark, Check } from "lucide-react";
+import { Share2, Bookmark, Check, Heart } from "lucide-react";
 import ProfileInterests from "../profile/ProfileInterests";
 import { Button } from "../ui/button";
 import { Link, useNavigate } from "react-router-dom";
@@ -39,6 +39,7 @@ const GroupCrwdHeader: React.FC<GroupCrwdHeaderProps> = ({
 }) => {
   const navigate = useNavigate();
   const [showShareModal, setShowShareModal] = useState(false);
+  const [isLiked, setIsLiked] = useState(false);
   return (
     <div className="bg-white  p-4 mx-2   mb-4 flex flex-col gap-2">
       {/* <div className="flex items-center gap-2 justify-between">
@@ -93,9 +94,18 @@ const GroupCrwdHeader: React.FC<GroupCrwdHeaderProps> = ({
         />
         <span className=" text-sm text-gray-700">Founded by</span>
         <span className="font-semibold text-gray-700 ">@ChadFofana1</span>
-        <Button variant="outline">
+        {/* <Button variant="outline">
           <Bookmark size={20} />
-        </Button>
+        </Button> */}
+         <Heart
+            className={`
+              w-6 h-6
+              ${isLiked ? 'stroke-red-500 fill-red-500' : 'stroke-gray-500 fill-transparent'}
+              hover:stroke-red-500 hover:fill-red-500
+              cursor-pointer transition-colors duration-200
+            `}
+            onClick={() => setIsLiked(!isLiked)}
+          />
       </div>
 
       {/* Bio */}

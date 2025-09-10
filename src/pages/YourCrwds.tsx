@@ -11,7 +11,7 @@ const mockCrwds = [
   {
     id: 1,
     name: "Feed the Hungry",
-    description: "Solving world hunger a...",
+    description: "Solving world hunger and providing food to the needy. Solving world hunger and providing food to the needy. Solving world hunger and providing food to the needy.",
     avatar: "F"
   }
 ];
@@ -43,7 +43,7 @@ const YourCrwdsPage = () => {
             </div>
             <div onClick={() => navigate(`/groupcrwd`)} className="cursor-pointer flex-1 min-w-0">
               <div className="font-medium text-sm leading-tight">{crwd.name}</div>
-              <div className="text-xs text-gray-500 truncate max-w-[140px]">{crwd.description}</div>
+              <div className="text-xs text-gray-500 truncate max-w-[85%]">{crwd.description}</div>
             </div>
             <Link to={`/your-crwds/${crwd.id}`}>
               <button

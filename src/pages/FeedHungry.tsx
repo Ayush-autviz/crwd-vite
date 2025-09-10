@@ -77,7 +77,8 @@ export default function FeedHungry() {
                 Share
               </Button>
               <Button variant="outline" size="sm">
-                <Bookmark className="h-4 w-4 mr-1" />
+                {/* <Bookmark className="h-4 w-4 mr-1" /> */}
+                <Heart className="h-4 w-4 mr-1" />
                 Save
               </Button>
               <Button size="sm" className="bg-[#4367FF] hover:bg-[#4367FF] hover:opacity-85">
@@ -206,7 +207,8 @@ export default function FeedHungry() {
                       size="sm"
                       className="flex items-center gap-2"
                     >
-                      <Bookmark className="h-4 w-4" />
+                      {/* <Bookmark className="h-4 w-4" /> */}
+                      <Heart className="h-4 w-4" />
                       <span>Save</span>
                     </Button>
                     <Button

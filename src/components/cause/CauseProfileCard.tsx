@@ -24,6 +24,7 @@ const CauseProfileCard: React.FC<CauseProfileCardProps> = ({
   onLearnMoreClick,
 }) => {
   const [showShareModal, setShowShareModal] = useState(false);
+  const [isLiked, setIsLiked] = useState(false);
 
   return (
     <div className="bg-white px-3 py-4 mx-3 mb-2 flex flex-col space-y-4">
@@ -56,9 +57,21 @@ const CauseProfileCard: React.FC<CauseProfileCardProps> = ({
             in 6 CRWDS · 162 donations
           </span>
         </div>
-        <Button variant="outline">
-          <Bookmark className="w-4 h-4" />
-        </Button>
+        {/* <Button variant="outline"> */}
+          {/* <Heart className="w-4 h-4 fill-red-500" /> */}
+          {/* <button className="border-1 border-gray-500 rounded-md h-9 px-3 py-2"> */}
+          <Heart
+            className={`
+              w-6 h-6
+              ${isLiked ? 'stroke-red-500 fill-red-500' : 'stroke-gray-500 fill-transparent'}
+              hover:stroke-red-500 hover:fill-red-500
+              cursor-pointer transition-colors duration-200
+            `}
+            onClick={() => setIsLiked(!isLiked)}
+          />
+          {/* </button> */}
+        {/* </Button> */}
+        
       </div>
       {/* Bio */}
       <div className="text-lg text-gray-700">

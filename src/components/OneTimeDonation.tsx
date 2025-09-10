@@ -1,5 +1,5 @@
 // import Image from "next/image"; - replaced with regular img tags
-import { Minus, Plus, Bookmark, ChevronRight, Trash2 } from "lucide-react";
+import { Minus, Plus, Bookmark, ChevronRight, Trash2, Heart } from "lucide-react";
 import { Link } from 'react-router-dom';
 import { Button } from "./ui/button";
 import { CROWDS, RECENTS, SUGGESTED } from "@/constants";
@@ -104,10 +104,11 @@ export default function OneTimeDonation({
                         </div>
                       </div>
                       <button
-                        className={`${bookmarkedOrgs.includes(org.id) ? 'text-blue-500' : 'text-gray-400'} hover:text-blue-500 transition-colors`}
+                        className={`${bookmarkedOrgs.includes(org.id) ? 'text-red-500' : 'text-gray-400'} hover:text-red-500 transition-colors`}
                         onClick={() => handleBookmarkOrganization(org.id)}
                       >
-                        <Bookmark size={20} />
+                        {/* <Bookmark size={20} /> */}
+                        <Heart size={20} />
                       </button>
                     </div>
                     <div className="flex justify-end mt-3">

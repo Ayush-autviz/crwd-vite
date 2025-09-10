@@ -76,16 +76,65 @@ const nonProfitInterests = [
   // })),
 ];
 
+// const categories = [
+//   "Health",
+//   "Education",
+//   "Environment",
+//   "Arts",
+//   "Animals",
+//   "Poverty",
+//   "Veterans",
+//   "Children",
+// ];
+
 const categories = [
-  "Health",
-  "Education",
-  "Environment",
-  "Arts",
-  "Animals",
-  "Poverty",
-  "Veterans",
-  "Children",
+  {
+    name: "All",
+    text: "#000000",
+    background: "#f5f5f5",
+  },
+  {
+    name: "Health",
+    text: "#D62828",
+    background: "#FFE5E5",
+  },
+  {
+    name: "Education",
+    text: "#FFB84D",
+    background: "#FFF3E0",
+  },
+  {
+    name: "Environment",
+    text: "#6A994E",
+    background: "#E8F4E4",
+  },
+  {
+    name: "Arts",
+    text: "#FF6B6B",
+    background: "#FFECEC",
+  },
+  {
+    name: "Animals",
+    text: "#E36414",
+    background: "#FFE9DC",
+  },
+  {
+    name: "Poverty", // mapped to Relief
+    text: "#F94144",
+    background: "#FFE3E3",
+  },
+  {
+    name: "Veterans", // mapped to Society
+    text: "#577590",
+    background: "#EAF0F5",
+  },
+  {
+    name: "Children", // mapped to Youth
+    text: "#4CC9F0",
+    background: "#E0F7FF",
+  },
 ];
+
 
 export default function NonProfitInterests() {
   const [selectedInterests, setSelectedInterests] = useState<number[]>([]);
@@ -202,19 +251,27 @@ export default function NonProfitInterests() {
               <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
                 {categories.map((category) => (
                   <button
-                    key={category}
+                    key={category.name}
                     onClick={() =>
                       setSelectedCategory(
-                        selectedCategory === category ? "" : category
+                        selectedCategory === category.name ? "" : category.name
                       )
                     }
                     className={`px-3 md:px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-colors duration-200 flex-shrink-0 ${
-                      selectedCategory === category
-                        ? "bg-gray-800 text-white"
-                        : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+                      selectedCategory === category.name
+                        ? "text-white"
+                        : "text-gray-700 hover:bg-gray-100"
                     }`}
+                    style={{
+                      backgroundColor: selectedCategory === category.name 
+                        ? category.text 
+                        : category.background,
+                      color: selectedCategory === category.name 
+                        ? "white" 
+                        : category.text
+                    }}
                   >
-                    {category}
+                    {category.name}
                   </button>
                 ))}
               </div>

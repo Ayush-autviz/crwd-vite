@@ -11,13 +11,14 @@ import {
   Shuffle,
   Info,
   HelpCircle,
+  Heart,
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 const menuItems = [
   { icon: <Plus size={20} />, label: 'Create a CRWD', href: '#' },
   { icon: <Users size={20} />, label: 'Your CRWDs', href: '#' },
-  { icon: <Bookmark size={20} />, label: 'Saved', href: '#' },
+  { icon: <Heart size={20} />, label: 'Saved', href: '#' },
   { icon: <Search size={20} />, label: 'Explore', href: '#' },
   { icon: <Archive size={20} />, label: 'Donation box', href: '#' },
   { icon: <Bell size={20} />, label: 'Notifications', href: '#' },

@@ -10,6 +10,8 @@ import {
   Info,
   HelpCircle,
   Settings,
+  Heart,
+  Book,
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { cn } from "@/lib/utils";
@@ -27,7 +29,7 @@ export const menuGroups = [
     heading: "Discover",
     items: [
       { icon: <Search size={20} />, label: "Explore", href: "/search" },
-      { icon: <Bookmark size={20} />, label: "Saved", href: "/saved" },
+      { icon: <Heart size={20} />, label: "Saved", href: "/saved" },
     ],
   },
   {
@@ -49,6 +51,7 @@ export const menuGroups = [
     heading: "Support",
     items: [
       { icon: <Info size={20} />, label: "About", href: "/settings/about" },
+      { icon: <Book size={20} />, label: "Articles", href: "#" },
       { icon: <HelpCircle size={20} />, label: "Help", href: "/settings/help" },
       { icon: <Settings size={20} />, label: "Settings", href: "/settings" },
     ],
