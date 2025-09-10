@@ -71,7 +71,8 @@ export default function Layout({ children }: LayoutProps) {
       </div>
 
       {/* Mobile Bottom Navigation - Only show if NOT on auth pages */}
-      {!isAuthPage && (
+      {/* {!isAuthPage && ( */}
+      {false && (
         <nav className="fixed bottom-0 left-0 right-0 bg-card border-t flex justify-around py-3 mx-auto z-10 md:hidden bg-gray-50">
           <Link
             className="flex flex-col items-center h-auto py-2 px-0 flex-1 text-muted-foreground"

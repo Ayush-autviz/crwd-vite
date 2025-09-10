@@ -36,7 +36,7 @@ export default function SettingsAbout() {
                       <h3 className="font-medium text-blue-900">About Tax Deductibility</h3>
                     </a>
                     <a href="#what-are-crwds" className="block p-4 bg-blue-50 rounded-lg hover:bg-blue-100 transition-colors">
-                      <h3 className="font-medium text-blue-900">What Are CRWDs?</h3>
+                      <h3 className="font-medium text-blue-900">What Are Giving Circles?</h3>
                     </a>
                     <a href="#why-crwd" className="block p-4 bg-blue-50 rounded-lg hover:bg-blue-100 transition-colors">
                       <h3 className="font-medium text-blue-900">Why CRWD</h3>
@@ -119,7 +119,7 @@ export default function SettingsAbout() {
 
                 {/* What Are CRWDs Section */}
                 <section id="what-are-crwds" className="mb-12">
-                  <h2 className="text-2xl font-semibold mb-4">What Are CRWDs?</h2>
+                  <h2 className="text-2xl font-semibold mb-4">What Are Giving Circles?</h2>
                   <p className="text-gray-600 mb-4">
                     CRWDs are curated collections of nonprofits tied to a shared cause or identity.
                   </p>

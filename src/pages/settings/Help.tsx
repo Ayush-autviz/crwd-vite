@@ -40,7 +40,7 @@ export default function SettingsHelp() {
       answer: "To create a CRWD, go to 'Your CRWDs' and click 'Create New CRWD'. Choose a cause, write a description, and invite friends to join your community."
     },
     {
-      question: "Can I leave a CRWD?",
+      question: "Can I leave a Giving Circle?",
       answer: "Yes, you can leave any CRWD at any time by going to the CRWD page and selecting 'Leave CRWD' from the menu."
     },
     {

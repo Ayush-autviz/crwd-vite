@@ -86,15 +86,28 @@ const nearbyCauses = [
   },
 ];
 
+// const categories = [
+//   "Animal Welfare",
+//   "Environment",
+//   "Food Insecurity",
+//   "Education",
+//   "Healthcare",
+//   "Social Justice",
+//   "Homelessness",
+// ];
+
 const categories = [
-  "Animal Welfare",
-  "Environment",
-  "Food Insecurity",
-  "Education",
-  "Healthcare",
-  "Social Justice",
-  "Homelessness",
+  { name: "Animal Welfare", text: "#E36414", background: "#FFE9DC" }, // Animals
+  { name: "Environment", text: "#6A994E", background: "#E8F4E4" },
+  { name: "Food Insecurity", text: "#FF9F1C", background: "#FFF0D9" }, // Food
+  { name: "Education", text: "#FFB84D", background: "#FFF3E0" },
+  { name: "Healthcare", text: "#D62828", background: "#FFE5E5" }, // Health
+  { name: "Social Justice", text: "#780000", background: "#FFDADA" }, // Rights
+  { name: "Homelessness", text: "#8D6E63", background: "#F5E9E3" }, // Housing
 ];
+
+
+
 
 // Sample data for suggested causes
 const suggestedCauses = [
@@ -118,10 +131,42 @@ const suggestedCauses = [
   },
 ];
 
+const discoverCategories = [
+  { name: "All", text: "#000000", background: "#f5f5f5" },
+  { name: "Animal Welfare", text: "#E36414", background: "#FFE9DC" },
+  { name: "Arts", text: "#FF6B6B", background: "#FFECEC" },
+  { name: "Community", text: "#06D6A0", background: "#D6FAF0" },
+  { name: "Education", text: "#FFB84D", background: "#FFF3E0" },
+  { name: "Environment", text: "#6A994E", background: "#E8F4E4" },
+  { name: "Food Insecurity", text: "#FF9F1C", background: "#FFF0D9" },
+  { name: "General", text: "#ADB5BD", background: "#F3F4F6" },
+  { name: "Global", text: "#48CAE4", background: "#D7F0FB" },
+  { name: "Healthcare", text: "#D62828", background: "#FFE5E5" },
+  { name: "Housing", text: "#8D6E63", background: "#F5E9E3" },
+  { name: "Jobs", text: "#6C757D", background: "#ECEFF1" },
+  { name: "Legal", text: "#FFBE0B", background: "#FFF7D6" },
+  { name: "Membership", text: "#5E6472", background: "#EBEDF1" },
+  { name: "Mental", text: "#9D4EDD", background: "#F3E8FA" },
+  { name: "Philanthropy", text: "#FF006E", background: "#FFE0ED" },
+  { name: "Public", text: "#2A9D8F", background: "#D6F4F1" },
+  { name: "Relief", text: "#F94144", background: "#FFE3E3" },
+  { name: "Religion", text: "#E9C46A", background: "#FFF7E0" },
+  { name: "Research", text: "#3A86FF", background: "#DDE8FF" },
+  { name: "Rights", text: "#780000", background: "#FFDADA" },
+  { name: "Science", text: "#023E8A", background: "#D7E3FF" },
+  { name: "Services", text: "#3F37C9", background: "#E2E0FA" },
+  { name: "Society", text: "#577590", background: "#EAF0F5" },
+  { name: "Sports", text: "#90BE6D", background: "#EBF6E2" },
+  { name: "Wellness", text: "#F28482", background: "#FFEAEA" },
+  { name: "Youth", text: "#4CC9F0", background: "#E0F7FF" },
+];
+
+
 export default function SearchPage() {
   const location = useLocation();
-  const discover = location.state?.discover;
+  const [discover, setDiscover] = useState(location.state?.discover);
   const [search, setSearch] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("All");
   const [recentSearchesList, setRecentSearchesList] = useState(recentSearches);
   const [popularSearchesList, setPopularSearchesList] =
     useState(popularSearches);
@@ -176,6 +221,7 @@ export default function SearchPage() {
               <Badge
                 variant="secondary"
                 className="bg-muted/50 hover:bg-muted text-foreground rounded-md px-4 py-2 whitespace-nowrap"
+                style={{ backgroundColor: "#FFE9DC", color: "#E36414" }}
               >
                 Animal Welfare
               </Badge>
@@ -272,18 +318,14 @@ export default function SearchPage() {
                 </h2>
                 <div className="overflow-x-auto pb-2">
                   <div className="flex flex-wrap gap-2">
-                    {[
-                      ...categories,
-                      "Education",
-                      "Healthcare",
-                      "Homelessness",
-                    ].map((category, index) => (
+                    {categories.map((category, index) => (
                       <Link to="/search" key={index}>
                         <Badge
                           variant="secondary"
                           className="bg-muted/50 hover:bg-muted text-foreground rounded-md px-4 py-2 whitespace-nowrap"
+                          style={{ backgroundColor: category.background, color: category.text }}
                         >
-                          {category}
+                          {category.name}
                         </Badge>
                       </Link>
                     ))}
@@ -530,100 +572,58 @@ export default function SearchPage() {
           </div>
         </div>
       ) : (
-        <div className="md:grid md:grid-cols-12 md:gap-4  ">
-          <div className="px-4 py-6 md:pl-4 md:col-span-8 ">
-            <div className="px-4 mx-4 my-4 md:px-0 md:my-5">
-              {/* Search Input for discover mode */}
-              <div className="mb-8">
-                <div className="relative group w-full">
-                  <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400 group-focus-within:text-gray-600 transition-colors" />
-                  <Input
-                    placeholder="Search non-profits, CRWDs, or posts"
-                    className="bg-gray-100 rounded-[10px] border-none px-12 py-4 text-base placeholder:text-gray-400 w-full"
-                    style={{ paddingRight: search ? "3rem" : "1rem" }}
-                    value={search}
-                    onChange={(e) => setSearch(e.target.value)}
-                  />
-                  {search && (
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className="absolute right-2 top-1/2 transform -translate-y-1/2 h-8 w-8 p-0 hover:bg-gray-100 rounded-full"
-                      onClick={() => setSearch("")}
-                    >
-                      <X className="w-4 h-4" />
-                    </Button>
-                  )}
-                </div>
-              </div>
+        <div className="min-h-screen bg-gray-50">
+        
+          {/* Main Content */}
+          <div className="px-4 py-6">
+            {/* Title and Description */}
+            <div className="text-center mb-8">
+              <h1 className="text-3xl font-bold text-gray-900 mb-4">Discover Your Impact</h1>
+              <p className="text-gray-600 text-lg max-w-2xl mx-auto">
+                Find and support organizations that align with your passions. Your next favorite cause is just a click away.
+              </p>
+            </div>
 
-              {/* Suggested Causes Section */}
-              <div className="px-4 mt-8 md:px-0 md:mt-10">
-                <h2 className="text-lg font-semibold mb-4">Find Your Cause</h2>
-                <div className="space-y-5">
-                  {suggestedCauses.map((cause, index) => (
-                    <Link to="/cause" key={index} className="block">
-                      <div className="flex items-center justify-between p-4 rounded-lg hover:bg-muted/50 cursor-pointer transition-colors">
-                        <div className="flex items-center gap-3 flex-1 min-w-0 mr-4">
-                          <div className="w-10 h-10 rounded-full overflow-hidden flex-shrink-0">
-                            <img
-                              src={cause.image}
-                              alt={cause.name}
-                              className="w-full h-full object-cover"
-                            />
-                          </div>
-                          <div className="min-w-0 flex-1">
-                            <div
-                              className={`${
-                                cause.type === "CRWD"
-                                  ? "bg-green-100"
-                                  : "bg-blue-50"
-                              } px-3 py-1 rounded-sm w-fit`}
-                            >
-                              <p
-                                className={`${
-                                  cause.type === "CRWD"
-                                    ? "text-green-600"
-                                    : "text-blue-600"
-                                } text-xs font-semibold`}
-                              >
-                                {cause.type}
-                              </p>
-                            </div>
-                            <h3 className="font-medium text-sm mb-1">
-                              {cause.name}
-                            </h3>
-                            <p className="text-xs text-muted-foreground leading-relaxed line-clamp-2 max-w-[200px]">
-                              {cause.description}
-                            </p>
-                          </div>
-                        </div>
-                        {cause.type === "Nonprofit" && (
-                          <div className="flex flex-col items-center gap-2">
-                            <Button className=" text-white text-xs py-2 px-3 rounded-lg  transition-colors">
-                              Donate Now
-                            </Button>
-                            <Button
-                              variant="link"
-                              className="text-primary text-xs p-0 h-auto"
-                            >
-                              Visit Profile
-                            </Button>
-                          </div>
-                        )}
-                        {cause.type === "CRWD" && (
-                          <div className="flex flex-col items-center gap-2">
-                            <Button className="bg-green-600 text-white text-xs py-2 px-4 rounded-lg hover:bg-green-700 transition-colors">
-                              Join CRWD
-                            </Button>
-                          </div>
-                        )}
-                      </div>
-                    </Link>
-                  ))}
-                </div>
+            {/* Search Bar */}
+            <div className="mb-8">
+              <div className="relative max-w-2xl mx-auto" onClick={() => setDiscover(false)}>
+                <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+                <Input
+                  placeholder="Search for nonprofits or causes..."
+                  className="bg-white border-2 border-gray-200 rounded-full px-12 py-4 text-base placeholder:text-gray-400 w-full focus:border-blue-500 focus:ring-0"
+                  disabled={true}
+                />
               </div>
             </div>
+
+            {/* Category Filters */}
+            <div className="mb-8">
+              <div className="flex flex-wrap gap-2 w-[60%] mx-auto justify-center">
+                {discoverCategories.map((category) => (
+                  <button
+                    key={category.name}
+                    className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-colors duration-200 flex-shrink-0 ${
+                      selectedCategory === category.name
+                        ? "text-white"
+                        : "hover:opacity-80"
+                    }`}
+                    style={{
+                      backgroundColor: selectedCategory === category.name 
+                        ? category.text 
+                        : category.background,
+                      color: selectedCategory === category.name 
+                        ? "white" 
+                        : category.text
+                    }}
+                    onClick={() => setSelectedCategory(selectedCategory === category.name ? "" : category.name)}
+                  >
+                    {category.name}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+        
           </div>
         </div>
       )}
