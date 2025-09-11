@@ -9,6 +9,7 @@ import {
   InstapaperIcon,
   InstapaperShareButton,
 } from "react-share";
+import { MobileShareModal } from "./MobileShareModal";
 
 interface SharePostProps {
   url: string;
@@ -27,6 +28,18 @@ export function SharePost({
 }: SharePostProps) {
   const modalRef = useRef<HTMLDivElement>(null);
   const [copied, setCopied] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -38,14 +51,14 @@ export function SharePost({
       }
     };
 
-    if (isOpen) {
+    if (isOpen && !isMobile) {
       document.addEventListener("mousedown", handleClickOutside);
     }
 
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, [isOpen, onClose]);
+  }, [isOpen, onClose, isMobile]);
 
   const handleCopyLink = async () => {
     try {
@@ -59,8 +72,21 @@ export function SharePost({
 
   if (!isOpen) return null;
 
+  // Render mobile bottom sheet for mobile devices
+  if (isMobile) {
+    return (
+      <MobileShareModal
+        isOpen={isOpen}
+        onClose={onClose}
+        title={title}
+        message={description}
+        url={url}
+      />
+    );
+  }
+
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 hidden md:flex">
       <div
         ref={modalRef}
         className="bg-white rounded-xl p-6 max-w-md w-[90%] md:w-[400px] shadow-2xl"
