@@ -48,12 +48,12 @@ export default function CausesCarousel() {
 
   return (
     <>
-    {/* <div className="bg-gradient-to-br from-gray-100 via-gray-50 to-background p-5 md:p-6 rounded-2xl shadow-lg border border-gray-200 relative overflow-hidden"> */}
+      {/* <div className="bg-gradient-to-br from-gray-100 via-gray-50 to-background p-5 md:p-6 rounded-2xl shadow-lg border border-gray-200 relative overflow-hidden"> */}
       {/* Background decoration */}
       {/* <div className="absolute inset-0 bg-gradient-to-r from-primary/5 to-transparent opacity-50"></div> */}
 
       {/* Carousel Container */}
-      <div className="relative">
+      <div className="relative overflow-hidden">
         {/* Carousel Content */}
         <div className="relative h-32 md:h-36">
           {data.map((item, index) => (
@@ -66,7 +66,13 @@ export default function CausesCarousel() {
                   ? "opacity-0 -translate-x-full"
                   : "opacity-0 translate-x-full"
               }
-              ${index === 0 ? "bg-indigo-800" : index === 1 ? "bg-lime-700" : "bg-red-600"}
+              ${
+                index === 0
+                  ? "bg-indigo-800"
+                  : index === 1
+                  ? "bg-lime-700"
+                  : "bg-red-600"
+              }
               `}
             >
               <div className="flex items-center justify-between h-full gap-4 md:gap-6">
@@ -89,24 +95,23 @@ export default function CausesCarousel() {
             </div>
           ))}
         </div>
-        </div>
-        {/* </div> */}
+      </div>
+      {/* </div> */}
 
-
-        {/* Pagination Dots */}
-        <div className="flex justify-end items-center gap-2 mt-6 mr-6">
-          {data.map((_, index) => (
-            <button
-              key={index}
-              onClick={() => goToSlide(index)}
-              className={`w-2 h-2 rounded-full transition-all duration-200 ${
-                index === currentIndex
-                  ? "bg-primary w-6"
-                  : "bg-primary/30 hover:bg-primary/50"
-              }`}
-            />
-          ))}
-        </div>
+      {/* Pagination Dots */}
+      <div className="flex justify-end items-center gap-2 mt-6 mr-6">
+        {data.map((_, index) => (
+          <button
+            key={index}
+            onClick={() => goToSlide(index)}
+            className={`w-2 h-2 rounded-full transition-all duration-200 ${
+              index === currentIndex
+                ? "bg-primary w-6"
+                : "bg-primary/30 hover:bg-primary/50"
+            }`}
+          />
+        ))}
+      </div>
       {/* </div>
     </div> */}
     </>
