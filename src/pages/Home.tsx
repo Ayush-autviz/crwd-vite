@@ -223,7 +223,7 @@ export default function HomePage() {
         {/* Main Content - Takes full width on mobile, 8 columns on desktop */}
         <div className="md:col-span-12">
           {/* Search Input */}
-          <div className="hidden md:block p-4 md:p-0 md:mb-6">
+          {/* <div className="hidden md:block p-4 md:p-0 md:mb-6">
             <div className="relative">
               <Input
                 type="search"
@@ -248,7 +248,7 @@ export default function HomePage() {
                 </svg>
               </div>
             </div>
-          </div>
+          </div> */}
           {/* Main Message */}
           <div className="p-4 md:p-0 md:mb-6">
             <div className="bg-gradient-to-br from-gray-100 via-gray-50 to-background p-6 md:p-8 rounded-2xl text-center shadow-lg border border-gray-200 relative overflow-hidden">
