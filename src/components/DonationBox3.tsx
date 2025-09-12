@@ -1,242 +1,13 @@
-// "use client";
-// import { useState } from "react";
-// import { Bookmark, Trash2, ChevronRight } from "lucide-react";
-// import { Avatar } from "@/components/ui/avatar";
-// import { AvatarImage } from "@/components/ui/avatar";
-// import { AvatarFallback } from "@/components/ui/avatar";
-// import { CROWDS, RECENTS, SUGGESTED } from "@/constants";
-// import { Button } from "./ui/button";
-// import { Link } from 'react-router-dom';
-// import PaymentSection from "./PaymentSection";
-
-// // Define Organization type locally
-// type Organization = {
-//   id: string;
-//   name: string;
-//   imageUrl: string;
-//   color?: string;
-//   shortDesc?: string;
-//   description?: string;
-// };
-
-// interface DonationSummaryProps {
-//   selectedOrganizations: string[];
-//   setSelectedOrganizations: React.Dispatch<React.SetStateAction<string[]>>;
-//   step?: number;
-//   setCheckout: (value: boolean) => void;
-//   onRemoveOrganization?: (id: string) => void;
-//   onBookmarkOrganization?: (id: string) => void;
-//   setStep: (step: number) => void;
-// }
-
-// export const DonationBox3 = ({
-//   selectedOrganizations,
-//   setSelectedOrganizations,
-//   setCheckout,
-//   onRemoveOrganization,
-//   onBookmarkOrganization,
-//   setStep,
-// }: DonationSummaryProps) => {
-//   const [bookmarkedOrgs, setBookmarkedOrgs] = useState<string[]>([]);
-
-//   const getOrganizationById = (orgId: string): Organization | undefined => {
-//     return [...CROWDS, ...RECENTS, ...SUGGESTED].find(
-//       (org) => org.id === orgId
-//     );
-//   };
-
-//   const selectedOrgs = selectedOrganizations
-//     .map((id) => getOrganizationById(id))
-//     .filter((org): org is Organization => !!org);
-
-//   // Handle remove organization if not provided
-//   const handleRemoveOrganization = (id: string) => {
-//     if (onRemoveOrganization) {
-//       onRemoveOrganization(id);
-//     } else {
-//       setSelectedOrganizations((prev: string[]) =>
-//         prev.filter((orgId: string) => orgId !== id)
-//       );
-//     }
-//   };
-
-//   // Handle bookmark organization if not provided
-//   const handleBookmarkOrganization = (id: string) => {
-//     if (onBookmarkOrganization) {
-//       onBookmarkOrganization(id);
-//     } else {
-//       setBookmarkedOrgs((prev) =>
-//         prev.includes(id) ? prev.filter(orgId => orgId !== id) : [...prev, id]
-//       );
-//     }
-//   };
-
-//   return (
-//     <div className="p-4 mt-4 mb-4 rounded-lg">
-//       {/* Main container - flex column on mobile, flex row on larger screens */}
-//       <div className="flex flex-col md:flex-row md:gap-6 w-full">
-//         {/* Left column - Organizations section */}
-//         <div className="w-full md:w-3/5 mb-5 md:mb-0">
-//           <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 h-full">
-//             <div className="flex items-center mb-4">
-//               <h1 className="text-xl font-medium text-gray-800">
-//                 Your donation will support
-//               </h1>
-//             </div>
-
-//             {selectedOrgs.length > 0 ? (
-//               <div className="space-y-4 mb-4">
-//                 {selectedOrgs.map((org) => (
-//                   <div key={org.id} className="bg-white rounded-xl p-4 border border-blue-100 shadow-sm hover:shadow-md transition-shadow">
-//                     <div className="flex items-start justify-between">
-//                       <div className="flex gap-4">
-//                         <Avatar className="h-16 w-16 rounded-full overflow-hidden flex-shrink-0">
-//                           {org.imageUrl ? (
-//                             <AvatarImage src={org.imageUrl} alt={org.name} className="object-cover" />
-//                           ) : (
-//                             <AvatarFallback
-//                               className="rounded-full"
-//                               style={{ backgroundColor: org.color || "#E5E7EB" }}
-//                             >
-//                               {org.name.charAt(0)}
-//                             </AvatarFallback>
-//                           )}
-//                         </Avatar>
-//                         <div className="space-y-1">
-//                           <h3 className="font-medium text-gray-800">{org.name}</h3>
-//                           <p className="text-sm text-gray-600 line-clamp-2">
-//                             {org.description || "This is a non-profit mission statement that aligns with the company's goals and..."}
-//                           </p>
-//                         </div>
-//                       </div>
-//                       <button
-//                         className={`${bookmarkedOrgs.includes(org.id) ? 'text-blue-500' : 'text-gray-400'} hover:text-blue-500 transition-colors`}
-//                         onClick={() => handleBookmarkOrganization(org.id)}
-//                       >
-//                         <Bookmark size={20} />
-//                       </button>
-//                     </div>
-//                     <div className="flex justify-end mt-3">
-//                       <button
-//                         className="text-xs text-gray-600 hover:text-red-500 flex items-center px-2 py-1 rounded-md bg-gray-50 hover:bg-gray-100 transition-colors"
-//                         onClick={() => handleRemoveOrganization(org.id)}
-//                       >
-//                         <Trash2 size={12} className="mr-1" />
-//                         Remove
-//                       </button>
-//                     </div>
-//                   </div>
-//                 ))}
-
-//                 <div className="text-sm text-blue-600 rounded-lg">
-//                   <p className="font-medium text-blue-500">You can add up to 10 more causes to this donation</p>
-//                   <Link to="/search" className="flex items-center mt-1 text-sm text-blue-600">
-//                     <span>Discover More</span>
-//                     <ChevronRight size={16} className="ml-1" />
-//                   </Link>
-//                 </div>
-//               </div>
-//             ) : (
-//               <div className="bg-gray-50 rounded-lg p-4 text-center mb-4">
-//                 <p className="text-gray-500">No organizations selected</p>
-//                 <button
-//                   onClick={() => setStep(2)}
-//                   className="text-blue-600 text-sm font-medium mt-2 inline-block"
-//                 >
-//                   Go back to add causes
-//                 </button>
-//               </div>
-//             )}
-//           </div>
-//         </div>
-
-//         {/* Right column - Donation Summary and Checkout */}
-//         <div className="w-full md:w-2/5 space-y-5">
-//           {/* Donation summary section */}
-//           <div className="bg-blue-50 rounded-xl w-full p-6">
-//             <div className="flex items-center mb-4 rounded-lg">
-//               <h2 className="text-base font-medium text-gray-800">
-//                 Donation Summary
-//               </h2>
-//             </div>
-
-//             <div className="bg-white rounded-lg p-4 mb-4 border border-gray-100">
-//               <div className="flex justify-between items-center mb-3">
-//                 <span className="text-sm text-gray-600">Monthly donation</span>
-//                 <span className="text-lg font-bold text-blue-600">$7.00</span>
-//               </div>
-//               <div className="flex justify-between items-center mb-3">
-//                 <span className="text-sm text-gray-600">Number of causes</span>
-//                 <span className="text-sm font-medium text-gray-800">{selectedOrganizations.length}</span>
-//               </div>
-//               <div className="flex justify-between items-center pt-3 border-t border-gray-200">
-//                 <span className="text-sm font-medium text-gray-700">Per cause</span>
-//                 <span className="text-sm font-medium text-gray-800">
-//                   ${selectedOrganizations.length > 0
-//                     ? (7 / selectedOrganizations.length).toFixed(2)
-//                     : "0.00"}
-//                 </span>
-//               </div>
-//             </div>
-
-//             <div className="flex justify-between items-center p-3 border-b border-gray-200">
-//               <span className="text-sm font-medium text-gray-700">TOTAL:</span>
-//               <span className="text-lg font-bold text-blue-600">$7.00</span>
-//             </div>
-//           </div>
-
-//           {/* Security message */}
-//           <div className="flex items-center p-3 bg-gray-50 rounded-lg">
-//             <div className="flex items-center justify-center w-6 h-6 rounded-full bg-green-100 text-green-600 mr-2">
-//               <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-//             </div>
-//             <p className="text-sm text-gray-600">
-//               Your donation is protected and guaranteed.{" "}
-//               <Link to="/settings/about" className="text-blue-600 font-medium">
-//                 Learn More
-//               </Link>
-//             </p>
-//           </div>
-
-//           {/* Payment Section */}
-//           <PaymentSection setCheckout={setCheckout} amount={7} />
-
-//           {/* Back button */}
-//           <button
-//             onClick={() => setStep(2)}
-//             className="w-full text-blue-600 hover:text-blue-700 text-sm font-medium py-2"
-//           >
-//             ← Back to edit causes
-//           </button>
-//         </div>
-//       </div>
-//       <div className="h-20 md:hidden"></div>
-//     </div>
-//   );
-// };
-
 "use client";
 import { useState } from "react";
 import { CROWDS, RECENTS, SUGGESTED } from "@/constants";
 
-// Define Organization type locally
-type Organization = {
-  id: string;
-  name: string;
-  imageUrl: string;
-  color?: string;
-  shortDesc?: string;
-  description?: string;
-};
-
 interface DonationSummaryProps {
   selectedOrganizations: string[];
   setSelectedOrganizations: React.Dispatch<React.SetStateAction<string[]>>;
-  step?: number;
   setCheckout: (value: boolean) => void;
   onRemoveOrganization?: (id: string) => void;
   onBookmarkOrganization?: (id: string) => void;
-  setStep: (step: number) => void;
   donationAmount: number;
 }
 
@@ -246,16 +17,16 @@ export const DonationBox3 = ({
   setCheckout,
   onRemoveOrganization,
   onBookmarkOrganization,
-  setStep,
   donationAmount,
 }: DonationSummaryProps) => {
-  const [bookmarkedOrgs, setBookmarkedOrgs] = useState<string[]>([]);
-
-  const getOrganizationById = (orgId: string): Organization | undefined => {
-    return [...CROWDS, ...RECENTS, ...SUGGESTED].find(
-      (org) => org.id === orgId
-    );
-  };
+  const [selectedPaymentMethod, setSelectedPaymentMethod] =
+    useState<string>("");
+  const [showCardForm, setShowCardForm] = useState<boolean>(false);
+  const [cardDetails, setCardDetails] = useState({
+    cardNumber: "",
+    expiryDate: "",
+    cvv: "",
+  });
 
   const getOrganizationDescription = (orgName: string): string => {
     // Try to find organization by name first
@@ -263,7 +34,7 @@ export const DonationBox3 = ({
       (org) => org.name === orgName
     );
 
-    if (org && org.description) {
+    if (org?.description) {
       return org.description;
     }
 
@@ -293,13 +64,50 @@ export const DonationBox3 = ({
   const handleBookmarkOrganization = (orgName: string) => {
     if (onBookmarkOrganization) {
       onBookmarkOrganization(orgName);
-    } else {
-      setBookmarkedOrgs((prev) =>
-        prev.includes(orgName)
-          ? prev.filter((name) => name !== orgName)
-          : [...prev, orgName]
-      );
     }
+  };
+
+  // Handle payment method selection
+  const handlePaymentMethodSelect = (method: string) => {
+    setSelectedPaymentMethod(method);
+    if (method === "apple-pay") {
+      setShowCardForm(false);
+    } else if (method === "card") {
+      setShowCardForm(true);
+    }
+  };
+
+  // Handle card details input
+  const handleCardDetailsChange = (field: string, value: string) => {
+    setCardDetails((prev) => ({
+      ...prev,
+      [field]: value,
+    }));
+  };
+
+  // Format card number with spaces
+  const formatCardNumber = (value: string) => {
+    const v = value.replace(/\s+/g, "").replace(/\D/g, "");
+    const matches = v.match(/\d{4,16}/g);
+    const match = matches?.[0] || "";
+    const parts = [];
+    for (let i = 0, len = match.length; i < len; i += 4) {
+      parts.push(match.substring(i, i + 4));
+    }
+    if (parts.length) {
+      return parts.join(" ");
+    } else {
+      return v;
+    }
+  };
+
+  // Format expiry date
+  const formatExpiryDate = (value: string) => {
+    const v = value.replace(/\s+/g, "").replace(/\D/g, "");
+    if (v.length >= 2) {
+      return v.substring(0, 2) + "/" + v.substring(2, 4);
+    }
+    return v;
   };
 
   return (
@@ -410,7 +218,22 @@ export const DonationBox3 = ({
           </p>
 
           <div className="space-y-3">
-            <div className="flex items-center p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors cursor-pointer">
+            {/* Apple Pay Option */}
+            <button
+              type="button"
+              className={`w-full flex items-center p-4 border rounded-lg transition-all cursor-pointer ${
+                selectedPaymentMethod === "apple-pay"
+                  ? "border-blue-500 bg-blue-50 shadow-sm"
+                  : "border-gray-200 hover:bg-gray-50"
+              }`}
+              onClick={() => handlePaymentMethodSelect("apple-pay")}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                  e.preventDefault();
+                  handlePaymentMethodSelect("apple-pay");
+                }
+              }}
+            >
               <div className="w-8 h-8 bg-black rounded-lg flex items-center justify-center mr-3">
                 <svg
                   className="w-5 h-5 text-white"
@@ -421,9 +244,41 @@ export const DonationBox3 = ({
                 </svg>
               </div>
               <span className="font-medium text-gray-800">Apple Pay</span>
-            </div>
+              {selectedPaymentMethod === "apple-pay" && (
+                <div className="ml-auto">
+                  <div className="w-5 h-5 bg-blue-500 rounded-full flex items-center justify-center">
+                    <svg
+                      className="w-3 h-3 text-white"
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                        clipRule="evenodd"
+                      />
+                    </svg>
+                  </div>
+                </div>
+              )}
+            </button>
 
-            <div className="flex items-center p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors cursor-pointer">
+            {/* Credit/Debit Card Option */}
+            <button
+              type="button"
+              className={`w-full flex items-center p-4 border rounded-lg transition-all cursor-pointer ${
+                selectedPaymentMethod === "card"
+                  ? "border-blue-500 bg-blue-50 shadow-sm"
+                  : "border-gray-200 hover:bg-gray-50"
+              }`}
+              onClick={() => handlePaymentMethodSelect("card")}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                  e.preventDefault();
+                  handlePaymentMethodSelect("card");
+                }
+              }}
+            >
               <div className="w-8 h-8 bg-gray-100 rounded-lg flex items-center justify-center mr-3">
                 <svg
                   className="w-5 h-5 text-gray-600"
@@ -442,7 +297,99 @@ export const DonationBox3 = ({
               <span className="font-medium text-gray-800">
                 Credit or Debit Card
               </span>
-            </div>
+              {selectedPaymentMethod === "card" && (
+                <div className="ml-auto">
+                  <div className="w-5 h-5 bg-blue-500 rounded-full flex items-center justify-center">
+                    <svg
+                      className="w-3 h-3 text-white"
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                        clipRule="evenodd"
+                      />
+                    </svg>
+                  </div>
+                </div>
+              )}
+            </button>
+
+            {/* Card Details Form */}
+            {showCardForm && selectedPaymentMethod === "card" && (
+              <div className="mt-4 p-4  rounded-lg border border-gray-200">
+                <div className="space-y-4">
+                  {/* Card Number */}
+                  <div>
+                    <label
+                      htmlFor="cardNumber"
+                      className="block text-sm font-medium text-gray-700 mb-1"
+                    >
+                      Card Number
+                    </label>
+                    <input
+                      id="cardNumber"
+                      type="text"
+                      placeholder="1234 5678 9012 3456"
+                      value={cardDetails.cardNumber}
+                      onChange={(e) => {
+                        const formatted = formatCardNumber(e.target.value);
+                        handleCardDetailsChange("cardNumber", formatted);
+                      }}
+                      maxLength={19}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                    />
+                  </div>
+
+                  {/* Expiry Date and CVV */}
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label
+                        htmlFor="expiryDate"
+                        className="block text-sm font-medium text-gray-700 mb-1"
+                      >
+                        Expiry Date
+                      </label>
+                      <input
+                        id="expiryDate"
+                        type="text"
+                        placeholder="MM/YY"
+                        value={cardDetails.expiryDate}
+                        onChange={(e) => {
+                          const formatted = formatExpiryDate(e.target.value);
+                          handleCardDetailsChange("expiryDate", formatted);
+                        }}
+                        maxLength={5}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                      />
+                    </div>
+                    <div>
+                      <label
+                        htmlFor="cvv"
+                        className="block text-sm font-medium text-gray-700 mb-1"
+                      >
+                        CVV
+                      </label>
+                      <input
+                        id="cvv"
+                        type="text"
+                        placeholder="123"
+                        value={cardDetails.cvv}
+                        onChange={(e) => {
+                          const value = e.target.value.replace(/\D/g, "");
+                          if (value.length <= 4) {
+                            handleCardDetailsChange("cvv", value);
+                          }
+                        }}
+                        maxLength={4}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         </div>
 
@@ -450,9 +397,37 @@ export const DonationBox3 = ({
         <div className="space-y-3 mb-6 fixed bottom-0  w-calc(100%-16px) left-0 md:left-auto md:w-[calc(100%-320px)] right-0 mx-4">
           <button
             onClick={() => setCheckout(true)}
-            className="w-full bg-blue-600 text-white py-4 rounded-lg font-medium transition-colors hover:bg-blue-700"
+            disabled={
+              !selectedPaymentMethod ||
+              (selectedPaymentMethod === "card" &&
+                (!cardDetails.cardNumber ||
+                  !cardDetails.expiryDate ||
+                  !cardDetails.cvv))
+            }
+            className={`w-full py-4 rounded-lg font-medium transition-colors ${
+              !selectedPaymentMethod ||
+              (selectedPaymentMethod === "card" &&
+                (!cardDetails.cardNumber ||
+                  !cardDetails.expiryDate ||
+                  !cardDetails.cvv))
+                ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+                : "bg-blue-600 text-white hover:bg-blue-700"
+            }`}
           >
-            Confirm your donation
+            {(() => {
+              if (!selectedPaymentMethod) {
+                return "Select a payment method";
+              }
+              if (
+                selectedPaymentMethod === "card" &&
+                (!cardDetails.cardNumber ||
+                  !cardDetails.expiryDate ||
+                  !cardDetails.cvv)
+              ) {
+                return "Complete card details";
+              }
+              return "Confirm your donation";
+            })()}
           </button>
           {/* <button className="w-full bg-gray-200 text-black py-3 rounded-lg font-medium transition-colors hover:bg-gray-300">
             Not Now

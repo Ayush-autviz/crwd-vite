@@ -15,6 +15,7 @@ import ClaimCauseDialog from "./ClaimCauseDialog";
 import { Link } from "react-router-dom";
 import { Button } from "../ui/button";
 import { SharePost } from "../ui/SharePost";
+import { Badge } from "../ui/badge";
 
 interface CauseProfileCardProps {
   onLearnMoreClick?: () => void;
@@ -25,6 +26,24 @@ const CauseProfileCard: React.FC<CauseProfileCardProps> = ({
 }) => {
   const [showShareModal, setShowShareModal] = useState(false);
   const [isLiked, setIsLiked] = useState(false);
+
+  const categories = [
+    {
+      name: "Animals",
+      text: "#E36414", // Orange-Red
+      background: "#FFE1CC", // Soft warm orange tint
+    },
+    {
+      name: "Environment",
+      text: "#6A994E", // Olive Green
+      background: "#DFF0D6", // Fresh leafy green tint
+    },
+    {
+      name: "Food",
+      text: "#FF9F1C", // Carrot Orange
+      background: "#FFE6CC", // Gentle light orange tint
+    },
+  ];
 
   return (
     <div className="bg-white px-3 py-4 mx-3 mb-2 flex flex-col space-y-4">
@@ -90,10 +109,32 @@ const CauseProfileCard: React.FC<CauseProfileCardProps> = ({
         </div>
       </div>
       {/* Tags */}
-      <ProfileInterests
+      {/* <ProfileInterests
         interests={["Animal Welfare", "Environment", "Food Insecurity"]}
         className="px-0 border-none"
-      />
+      /> */}
+
+      {/* Categories Section */}
+
+      <div className="overflow-x-auto pb-2">
+        <div className="flex space-x-2 min-w-max">
+          {categories.map((category, index) => (
+            <Link to={`/interests`} key={index}>
+              <Badge
+                variant="secondary"
+                className="bg-muted/50 hover:bg-muted text-foreground rounded-md px-4 py-2 whitespace-nowrap"
+                style={{
+                  backgroundColor: category.background,
+                  color: category.text,
+                }}
+              >
+                {category.name}
+              </Badge>
+            </Link>
+          ))}
+        </div>
+      </div>
+
       {/* Verified Box */}
       <div className="bg-blue-50 rounded-xl p-6">
         <div className="flex items-center gap-2 mb-1">

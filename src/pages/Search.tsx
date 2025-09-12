@@ -106,9 +106,6 @@ const categories = [
   { name: "Homelessness", text: "#8D6E63", background: "#F5E9E3" }, // Housing
 ];
 
-
-
-
 // Sample data for suggested causes
 const suggestedCauses = [
   {
@@ -131,17 +128,47 @@ const suggestedCauses = [
   },
 ];
 
+// const discoverCategories = [
+//   { name: "All", text: "#000000", background: "#f5f5f5" },
+//   { name: "Animal Welfare", text: "#E36414", background: "#FFE9DC" },
+//   { name: "Arts", text: "#FF6B6B", background: "#FFECEC" },
+//   { name: "Community", text: "#06D6A0", background: "#D6FAF0" },
+//   { name: "Education", text: "#FFB84D", background: "#FFF3E0" },
+//   { name: "Environment", text: "#6A994E", background: "#E8F4E4" },
+//   { name: "Food Insecurity", text: "#FF9F1C", background: "#FFF0D9" },
+//   { name: "General", text: "#ADB5BD", background: "#F3F4F6" },
+//   { name: "Global", text: "#48CAE4", background: "#D7F0FB" },
+//   { name: "Healthcare", text: "#D62828", background: "#FFE5E5" },
+//   { name: "Housing", text: "#8D6E63", background: "#F5E9E3" },
+//   { name: "Jobs", text: "#6C757D", background: "#ECEFF1" },
+//   { name: "Legal", text: "#FFBE0B", background: "#FFF7D6" },
+//   { name: "Membership", text: "#5E6472", background: "#EBEDF1" },
+//   { name: "Mental", text: "#9D4EDD", background: "#F3E8FA" },
+//   { name: "Philanthropy", text: "#FF006E", background: "#FFE0ED" },
+//   { name: "Public", text: "#2A9D8F", background: "#D6F4F1" },
+//   { name: "Relief", text: "#F94144", background: "#FFE3E3" },
+//   { name: "Religion", text: "#E9C46A", background: "#FFF7E0" },
+//   { name: "Research", text: "#3A86FF", background: "#DDE8FF" },
+//   { name: "Rights", text: "#780000", background: "#FFDADA" },
+//   { name: "Science", text: "#023E8A", background: "#D7E3FF" },
+//   { name: "Services", text: "#3F37C9", background: "#E2E0FA" },
+//   { name: "Society", text: "#577590", background: "#EAF0F5" },
+//   { name: "Sports", text: "#90BE6D", background: "#EBF6E2" },
+//   { name: "Wellness", text: "#F28482", background: "#FFEAEA" },
+//   { name: "Youth", text: "#4CC9F0", background: "#E0F7FF" },
+// ];
+
 const discoverCategories = [
   { name: "All", text: "#000000", background: "#f5f5f5" },
-  { name: "Animal Welfare", text: "#E36414", background: "#FFE9DC" },
+  { name: "Animals", text: "#E36414", background: "#FFE9DC" },
   { name: "Arts", text: "#FF6B6B", background: "#FFECEC" },
   { name: "Community", text: "#06D6A0", background: "#D6FAF0" },
   { name: "Education", text: "#FFB84D", background: "#FFF3E0" },
   { name: "Environment", text: "#6A994E", background: "#E8F4E4" },
-  { name: "Food Insecurity", text: "#FF9F1C", background: "#FFF0D9" },
+  { name: "Food", text: "#FF9F1C", background: "#FFF0D9" },
   { name: "General", text: "#ADB5BD", background: "#F3F4F6" },
   { name: "Global", text: "#48CAE4", background: "#D7F0FB" },
-  { name: "Healthcare", text: "#D62828", background: "#FFE5E5" },
+  { name: "Health", text: "#D62828", background: "#FFE5E5" },
   { name: "Housing", text: "#8D6E63", background: "#F5E9E3" },
   { name: "Jobs", text: "#6C757D", background: "#ECEFF1" },
   { name: "Legal", text: "#FFBE0B", background: "#FFF7D6" },
@@ -160,7 +187,6 @@ const discoverCategories = [
   { name: "Wellness", text: "#F28482", background: "#FFEAEA" },
   { name: "Youth", text: "#4CC9F0", background: "#E0F7FF" },
 ];
-
 
 export default function SearchPage() {
   const location = useLocation();
@@ -323,7 +349,10 @@ export default function SearchPage() {
                         <Badge
                           variant="secondary"
                           className="bg-muted/50 hover:bg-muted text-foreground rounded-md px-4 py-2 whitespace-nowrap"
-                          style={{ backgroundColor: category.background, color: category.text }}
+                          style={{
+                            backgroundColor: category.background,
+                            color: category.text,
+                          }}
                         >
                           {category.name}
                         </Badge>
@@ -349,7 +378,7 @@ export default function SearchPage() {
               </CardContent>
             </Card>
           </div>
-          <div className="md:h-10 h-24" />
+          {/* <div className="md:h-10 h-24" /> */}
         </div>
       </div>
     );
@@ -572,21 +601,26 @@ export default function SearchPage() {
           </div>
         </div>
       ) : (
-        <div className="min-h-screen bg-gray-50">
-        
+        <div className="h-[100vh] bg-gray-50">
           {/* Main Content */}
           <div className="px-4 py-6">
             {/* Title and Description */}
             <div className="text-center mb-8">
-              <h1 className="text-3xl font-bold text-gray-900 mb-4">Discover Your Impact</h1>
+              <h1 className="text-3xl font-bold text-gray-900 mb-4">
+                Discover Your Impact
+              </h1>
               <p className="text-gray-600 text-lg max-w-2xl mx-auto">
-                Find and support organizations that align with your passions. Your next favorite cause is just a click away.
+                Find and support organizations that align with your passions.
+                Your next favorite cause is just a click away.
               </p>
             </div>
 
             {/* Search Bar */}
             <div className="mb-8">
-              <div className="relative max-w-2xl mx-auto" onClick={() => setDiscover(false)}>
+              <div
+                className="relative max-w-2xl mx-auto"
+                onClick={() => setDiscover(false)}
+              >
                 <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
                 <Input
                   placeholder="Search for nonprofits or causes..."
@@ -608,27 +642,31 @@ export default function SearchPage() {
                         : "hover:opacity-80"
                     }`}
                     style={{
-                      backgroundColor: selectedCategory === category.name 
-                        ? category.text 
-                        : category.background,
-                      color: selectedCategory === category.name 
-                        ? "white" 
-                        : category.text
+                      backgroundColor:
+                        selectedCategory === category.name
+                          ? category.text
+                          : category.background,
+                      color:
+                        selectedCategory === category.name
+                          ? "white"
+                          : category.text,
                     }}
-                    onClick={() => setSelectedCategory(selectedCategory === category.name ? "" : category.name)}
+                    onClick={() =>
+                      setSelectedCategory(
+                        selectedCategory === category.name ? "" : category.name
+                      )
+                    }
                   >
                     {category.name}
                   </button>
                 ))}
               </div>
             </div>
-
-        
           </div>
         </div>
       )}
 
-      <div className="h-30 md:hidden" />
+      {/* <div className="h-30 md:hidden" /> */}
     </div>
   );
 }

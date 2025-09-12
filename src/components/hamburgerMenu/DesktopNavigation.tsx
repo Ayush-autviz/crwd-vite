@@ -6,7 +6,7 @@ import NavigationItems from "./NavigationItems";
 
 const DesktopNavigation: React.FC = () => (
   <div className=" overflow-y-auto ">
-    <div className="hidden md:flex flex-col h-screen w-72 border-r bg-background">
+    <div className="">
       {/* Scrollable Content - Profile and Navigation */}
       {/* Profile Section */}
       <div className="flex items-center gap-3 p-4">
