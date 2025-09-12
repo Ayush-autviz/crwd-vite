@@ -169,7 +169,7 @@ export default function ProfileStatistics() {
                 {cause.type === "Circle" && (
                   <div className="flex flex-col items-center gap-2">
                     <Button className="bg-green-600 text-white text-xs py-2 px-4 rounded-lg hover:bg-green-700 transition-colors">
-                      Join Circle
+                      Learn More
                     </Button>
                   </div>
                 )}

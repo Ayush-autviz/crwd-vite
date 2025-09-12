@@ -97,7 +97,7 @@ const nearbyCauses = [
 // ];
 
 const categories = [
-  { name: "Animal Welfare", text: "#E36414", background: "#FFE9DC" }, // Animals
+  { name: "Animals", text: "#E36414", background: "#FFE9DC" }, // Animals
   { name: "Environment", text: "#6A994E", background: "#E8F4E4" },
   { name: "Food Insecurity", text: "#FF9F1C", background: "#FFF0D9" }, // Food
   { name: "Education", text: "#FFB84D", background: "#FFF3E0" },
@@ -249,7 +249,7 @@ export default function SearchPage() {
                 className="bg-muted/50 hover:bg-muted text-foreground rounded-md px-4 py-2 whitespace-nowrap"
                 style={{ backgroundColor: "#FFE9DC", color: "#E36414" }}
               >
-                Animal Welfare
+                Animals
               </Badge>
             </div>
 
@@ -310,7 +310,7 @@ export default function SearchPage() {
                       {cause.type === "Circle" && (
                         <div className="flex flex-col items-center gap-2">
                           <Button className="bg-green-600 text-white text-xs py-2 px-4 rounded-lg hover:bg-green-700 transition-colors">
-                            Join Circle
+                            Learn More
                           </Button>
                         </div>
                       )}

@@ -77,93 +77,6 @@ export default function HomePage() {
   ];
 
   // Sample data for categories
-  // const categories = [
-  //   "Animal Welfare",
-  //   "Environment",
-  //   "Food Insecurity",
-  //   "Food Insecurity",
-  //   "Environment",
-  //   "Education",
-  //   "Healthcare",
-  //   "Social Justice",
-  //   "Homelessness",
-  // ];
-
-  // const categories = [
-  //   {
-  //     name: "Animal Welfare",
-  //     text: "#E36414",
-  //     background: "#FFE9DC",
-  //   },
-  //   {
-  //     name: "Environment",
-  //     text: "#6A994E",
-  //     background: "#E8F4E4",
-  //   },
-  //   {
-  //     name: "Food Insecurity",
-  //     text: "#FF9F1C",
-  //     background: "#FFF2E0",
-  //   },
-  //   {
-  //     name: "Education",
-  //     text: "#FFB84D",
-  //     background: "#FFF3E0",
-  //   },
-  //   {
-  //     name: "Healthcare",
-  //     text: "#D62828",
-  //     background: "#FFE5E5",
-  //   },
-  //   {
-  //     name: "Social Justice",
-  //     text: "#780000", // picked Rights (Maroon)
-  //     background: "#F8E0E0",
-  //   },
-  //   {
-  //     name: "Homelessness",
-  //     text: "#8D6E63",
-  //     background: "#EFE6E3",
-  //   },
-  // ];
-
-  // const categories = [
-  //   {
-  //     name: "Animal Welfare",
-  //     text: "#E36414", // Orange-Red
-  //     background: "#FFE1CC", // Softer warm orange tint
-  //   },
-  //   {
-  //     name: "Environment",
-  //     text: "#6A994E", // Olive Green
-  //     background: "#DFF0D6", // Fresh leafy green tint
-  //   },
-  //   {
-  //     name: "Food Insecurity",
-  //     text: "#FF9F1C", // Carrot Orange
-  //     background: "#FFE6CC", // Light orange tint (not too pale)
-  //   },
-  //   {
-  //     name: "Education",
-  //     text: "#FFB84D", // Amber
-  //     background: "#FFEFD1", // Gentle amber tint
-  //   },
-  //   {
-  //     name: "Healthcare",
-  //     text: "#D62828", // Crimson
-  //     background: "#FFD6D6", // Soft rosy red tint
-  //   },
-  //   {
-  //     name: "Social Justice",
-  //     text: "#780000", // Maroon
-  //     background: "#F2C7C7", // Muted pinkish tint
-  //   },
-  //   {
-  //     name: "Homelessness",
-  //     text: "#8D6E63", // Brown
-  //     background: "#EADFD9", // Warm earthy beige tint
-  //   },
-  // ];
 
   const categories = [
     {
@@ -462,7 +375,7 @@ export default function HomePage() {
                     {cause.type === "Circle" && (
                       <div className="flex flex-col items-center gap-2">
                         <Button className="bg-green-600 text-white text-xs py-2 px-4 rounded-lg hover:bg-green-700 transition-colors">
-                          Join Circle
+                          Learn More
                         </Button>
                       </div>
                     )}
@@ -571,7 +484,7 @@ export default function HomePage() {
                     {cause.type === "Circle" && (
                       <div className="flex flex-col items-center gap-2">
                         <Button className="bg-green-600 text-white text-xs py-2 px-4 rounded-lg hover:bg-green-700 transition-colors">
-                          Join Circle
+                          Learn More
                         </Button>
                       </div>
                     )}

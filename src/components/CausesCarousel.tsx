@@ -18,7 +18,7 @@ const data = [
     image: "/grocery.jpg",
     heading: "Give Together",
     subHeading:
-      "Join Circles to give alongside others and see your shared impact.",
+      "Learn Mores to give alongside others and see your shared impact.",
   },
 ];
 

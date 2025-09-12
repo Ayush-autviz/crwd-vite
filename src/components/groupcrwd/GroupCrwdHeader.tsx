@@ -6,6 +6,7 @@ import ProfileInterests from "../profile/ProfileInterests";
 import { Button } from "../ui/button";
 import { Link, useNavigate } from "react-router-dom";
 import { SharePost } from "../ui/SharePost";
+import { Badge } from "../ui/badge";
 
 interface GroupCrwdHeaderProps {
   hasJoined: boolean;
@@ -29,6 +30,24 @@ const orgAvatars = [
   {
     name: "Paws",
     image: "/ngo/paws.jpeg",
+  },
+];
+
+const categories = [
+  {
+    name: "Animals",
+    text: "#E36414", // Orange-Red
+    background: "#FFE1CC", // Soft warm orange tint
+  },
+  {
+    name: "Environment",
+    text: "#6A994E", // Olive Green
+    background: "#DFF0D6", // Fresh leafy green tint
+  },
+  {
+    name: "Food",
+    text: "#FF9F1C", // Carrot Orange
+    background: "#FFE6CC", // Gentle light orange tint
   },
 ];
 
@@ -147,10 +166,29 @@ const GroupCrwdHeader: React.FC<GroupCrwdHeaderProps> = ({
       <span className="bg-gray-100 text-xs px-3 py-1 rounded-full">Environment</span>
       <span className="bg-gray-100 text-xs px-3 py-1 rounded-full">Food Insecurity</span>
     </div> */}
-      <ProfileInterests
+      {/* <ProfileInterests
         interests={["Animal Welfare", "Environment", "Food Insecurity"]}
         className="border-none"
-      />
+      /> */}
+
+<div className="overflow-x-auto pb-2">
+        <div className="flex space-x-2 min-w-max">
+          {categories.map((category, index) => (
+            <Link to={`/interests`} key={index}>
+              <Badge
+                variant="secondary"
+                className="bg-muted/50 hover:bg-muted text-foreground rounded-md px-4 py-2 whitespace-nowrap"
+                style={{
+                  backgroundColor: category.background,
+                  color: category.text,
+                }}
+              >
+                {category.name}
+              </Badge>
+            </Link>
+          ))}
+        </div>
+      </div>
 
       <div className="flex items-center justify-between">
         <p className="text-sm font-semibold text-gray-700">
