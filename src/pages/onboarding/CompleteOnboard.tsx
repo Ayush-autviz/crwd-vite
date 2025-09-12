@@ -6,31 +6,31 @@ import Confetti from "react-confetti";
 
 export default function CompleteOnboard() {
   const navigate = useNavigate();
-  const [showConfetti, setShowConfetti] = useState(false);
-  const [windowDimensions, setWindowDimensions] = useState({
-    width: window.innerWidth,
-    height: window.innerHeight,
-  });
+  // const [showConfetti, setShowConfetti] = useState(false);
+  // const [windowDimensions, setWindowDimensions] = useState({
+  //   width: window.innerWidth,
+  //   height: window.innerHeight,
+  // });
 
-  useEffect(() => {
-    // Show confetti after a short delay
-    const timer = setTimeout(() => setShowConfetti(true), 300);
+  // useEffect(() => {
+  //   // Show confetti after a short delay
+  //   const timer = setTimeout(() => setShowConfetti(true), 300);
 
-    // Handle window resize for responsive confetti
-    const handleResize = () => {
-      setWindowDimensions({
-        width: window.innerWidth,
-        height: window.innerHeight,
-      });
-    };
+  //   // Handle window resize for responsive confetti
+  //   const handleResize = () => {
+  //     setWindowDimensions({
+  //       width: window.innerWidth,
+  //       height: window.innerHeight,
+  //     });
+  //   };
 
-    window.addEventListener("resize", handleResize);
+  //   window.addEventListener("resize", handleResize);
 
-    return () => {
-      clearTimeout(timer);
-      window.removeEventListener("resize", handleResize);
-    };
-  }, []);
+  //   return () => {
+  //     clearTimeout(timer);
+  //     window.removeEventListener("resize", handleResize);
+  //   };
+  // }, []);
 
   const handleGoToDonationBox = () => {
     navigate("/donation");
@@ -46,7 +46,7 @@ export default function CompleteOnboard() {
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_1px_1px,rgba(0,0,0,0.02)_1px,transparent_0)] [background-size:20px_20px]"></div>
 
       {/* Confetti Overlay */}
-      {showConfetti && (
+      {/* {showConfetti && (
         <Confetti
           width={windowDimensions.width}
           height={windowDimensions.height}
@@ -55,7 +55,7 @@ export default function CompleteOnboard() {
           gravity={0.3}
           colors={["#EF4444", "#3B82F6", "#F59E0B", "#10B981", "#8B5CF6"]}
         />
-      )}
+      )} */}
 
       {/* Main Content */}
       <div className="relative z-10 flex items-center justify-center p-4 md:p-8 min-h-screen">
@@ -79,7 +79,7 @@ export default function CompleteOnboard() {
                   Welcome to CRWD!
                 </h2>
                 <p className="text-gray-600 text-sm leading-relaxed">
-                  Start giving now, or explore causes and CRWDs first.
+                  Start giving now, or explore causes and Circles first.
                 </p>
               </div>
 

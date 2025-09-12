@@ -77,7 +77,7 @@ export default function GroupCrwdPage() {
       <ProfileNavbar title="Group Crwd" />
       <div className="flex items-center gap-2 justify-between pt-6 pb-2 px-4 sticky top-16 z-10 bg-white ">
         <div className="text-lg font-semibold text-green-700 bg-green-200 px-2 py-1 rounded-md">
-          CRWD
+          Circle
         </div>
         <div className="flex items-center gap-2">
           {hasJoined && <Button variant="default">Donate</Button>}
@@ -101,7 +101,7 @@ export default function GroupCrwdPage() {
                 Joined
               </>
             ) : (
-              "Join CRWD"
+              "Join Circle"
             )}
           </Button>
         </div>
@@ -111,14 +111,14 @@ export default function GroupCrwdPage() {
         <div className="lg:col-span-3 space-y-6">
           {/* <ProfileNavbar title='Group Crwd' /> */}
           <GroupCrwdHeader hasJoined={hasJoined} onJoin={handleJoin} id="" />
-          <GroupCrwdSuggested />
           {/* <div className="px-4">
             <PopularPosts title="Activity" showLoadMore={false} />
-          </div> */}
+            </div> */}
           <GroupCrwdUpdates showEmpty={false} />
+          <GroupCrwdSuggested />
           {/* <GroupCrwdEvent /> */}
           {/* {!hasJoined && <GroupCrwdBottomBar onJoin={handleJoin} />} */}
-          <div className="h-24  md:hidden" />
+          {/* <div className="h-24  md:hidden" /> */}
 
           {showJoinModal && (
             <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
@@ -405,7 +405,7 @@ export default function GroupCrwdPage() {
 
       <SharePost
         url={window.location.origin + `/groupcrwd/`}
-        title={`Feed the hungry - CRWD`}
+        title={`Check out this Giving Circle`}
         description="Join us in supporting families experiencing food insecurity in the greater Atlanta area."
         isOpen={showShareModal}
         onClose={() => setShowShareModal(false)}

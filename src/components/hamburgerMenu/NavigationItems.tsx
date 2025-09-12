@@ -20,7 +20,11 @@ export const menuGroups = [
   {
     // heading: "Giving",
     items: [
-      { icon: <Users size={20} />, label: "Your Giving Circles", href: "/your-crwds" },
+      {
+        icon: <Users size={20} />,
+        label: "Your Giving Circles",
+        href: "/your-crwds",
+      },
 
       { icon: <Archive size={20} />, label: "Donation box", href: "/donation" },
     ],
@@ -29,7 +33,7 @@ export const menuGroups = [
     heading: "Discover",
     items: [
       { icon: <Search size={20} />, label: "Explore", href: "/search" },
-      { icon: <Heart size={20} />, label: "Saved", href: "/saved" },
+      { icon: <Heart size={20} />, label: "Favorites", href: "/saved" },
     ],
   },
   {

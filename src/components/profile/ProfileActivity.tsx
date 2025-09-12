@@ -12,6 +12,7 @@ interface ProfileActivityProps {
   showLoadMore?: boolean;
   imageUrl?: string;
   title?: string;
+  postButton?: boolean;
 }
 
 const ProfileActivity: React.FC<ProfileActivityProps> = ({
@@ -20,6 +21,7 @@ const ProfileActivity: React.FC<ProfileActivityProps> = ({
   showLoadMore = false,
   imageUrl,
   title = "Activity",
+  postButton = false,
 }) => {
   const [allPosts, setAllPosts] = useState<PostDetail[]>(posts);
   const [isLoading, setIsLoading] = useState(false);
@@ -38,10 +40,17 @@ const ProfileActivity: React.FC<ProfileActivityProps> = ({
 
   return (
     <div className="w-full">
-      {showLabel && (
-        <h2 className="text-lg font-semibold mb-4">Recent Activity</h2>
-      )}
-      {title && <h2 className="text-lg font-semibold mb-4">{title}</h2>}
+      <div className="flex items-center justify-between">
+        {showLabel && (
+          <h2 className="text-lg font-semibold mb-4">Recent Activity</h2>
+        )}
+        {title && <h2 className="text-lg font-semibold mb-4">{title}</h2>}
+        {postButton && (
+          <Button variant="outline" className="px-6 py-2 mb-4">
+            Post Something
+          </Button>
+        )}
+      </div>
       <div className="space-y-4">
         {allPosts.length > 0 &&
           allPosts.map((post, idx) => (

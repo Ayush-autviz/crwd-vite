@@ -49,7 +49,7 @@ const CausePage: React.FC = () => {
       {/* <CauseDonateBar /> */}
       <SharePost
         url={window.location.origin + `/groupcrwd/`}
-        title={`Feed the hungry - CRWD`}
+        title={`Check out this Nonprofit`}
         description="Join us in supporting families experiencing food insecurity in the greater Atlanta area."
         isOpen={showShareModal}
         onClose={() => setShowShareModal(false)}

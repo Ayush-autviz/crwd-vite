@@ -34,11 +34,11 @@ export function SharePost({
     const checkMobile = () => {
       setIsMobile(window.innerWidth < 768);
     };
-    
+
     checkMobile();
-    window.addEventListener('resize', checkMobile);
-    
-    return () => window.removeEventListener('resize', checkMobile);
+    window.addEventListener("resize", checkMobile);
+
+    return () => window.removeEventListener("resize", checkMobile);
   }, []);
 
   useEffect(() => {
@@ -93,7 +93,7 @@ export function SharePost({
       >
         {/* Header */}
         <div className="text-center mb-6">
-          <h2 className="text-xl font-bold mb-2">Check out this nonprofit</h2>
+          <h2 className="text-xl font-bold mb-2">{title}</h2>
           {/* <p className="text-sm text-gray-600">
             CRWDs are more impactful with people you know. Invite friends to
             join and give alongside you.

@@ -97,15 +97,19 @@ const GroupCrwdHeader: React.FC<GroupCrwdHeaderProps> = ({
         {/* <Button variant="outline">
           <Bookmark size={20} />
         </Button> */}
-         <Heart
-            className={`
+        <Heart
+          className={`
               w-6 h-6
-              ${isLiked ? 'stroke-red-500 fill-red-500' : 'stroke-gray-500 fill-transparent'}
+              ${
+                isLiked
+                  ? "stroke-red-500 fill-red-500"
+                  : "stroke-gray-500 fill-transparent"
+              }
               hover:stroke-red-500 hover:fill-red-500
               cursor-pointer transition-colors duration-200
             `}
-            onClick={() => setIsLiked(!isLiked)}
-          />
+          onClick={() => setIsLiked(!isLiked)}
+        />
       </div>
 
       {/* Bio */}
@@ -120,9 +124,7 @@ const GroupCrwdHeader: React.FC<GroupCrwdHeaderProps> = ({
           className="cursor-pointer flex-1 col-span-1 "
         >
           <div className="text-base font-bold">10</div>
-          <div className="text-xs text-gray-500 w-1/2 mx-auto">
-            Causes Supported
-          </div>
+          <div className="text-xs text-gray-500 w-1/2 mx-auto">Causes</div>
         </div>
         <div
           onClick={() => navigate(`/members`)}
@@ -136,9 +138,7 @@ const GroupCrwdHeader: React.FC<GroupCrwdHeaderProps> = ({
           className="cursor-pointer flex-1 col-span-1"
         >
           <div className="text-base font-bold">12</div>
-          <div className="text-xs text-gray-500 w-1/2 mx-auto">
-            Collective Donations
-          </div>
+          <div className="text-xs text-gray-500 w-1/2 mx-auto">Donations</div>
         </div>
       </div>
       {/* Tags */}
@@ -152,9 +152,17 @@ const GroupCrwdHeader: React.FC<GroupCrwdHeaderProps> = ({
         className="border-none"
       />
 
-      <p className="text-sm font-semibold text-gray-700">
-        Recently Supported Nonprofits
-      </p>
+      <div className="flex items-center justify-between">
+        <p className="text-sm font-semibold text-gray-700">
+          Recently Supported Nonprofits
+        </p>
+        <p
+          onClick={() => navigate(`/members`)}
+          className="text-blue-600 underline cursor-pointer"
+        >
+          See All
+        </p>
+      </div>
       {/* Orgs Avatars */}
       <div className="flex items-center justify-start md:space-x-5 mt-1 gap-3">
         {orgAvatars.map((src, i) => (
@@ -174,7 +182,7 @@ const GroupCrwdHeader: React.FC<GroupCrwdHeaderProps> = ({
         ))}
       </div>
       {/* Supporting text */}
-      <div className="text-xs text-gray-500 mt-1">
+      {/* <div className="text-xs text-gray-500 mt-1">
         Currently supporting{" "}
         <span className="font-semibold">10 Non Profits</span>: Grocery Spot,
         Food for Thought, Meals on Wheels, American Red Cross, & Pizza Hut…{" "}
@@ -184,7 +192,7 @@ const GroupCrwdHeader: React.FC<GroupCrwdHeaderProps> = ({
         >
           See All
         </span>
-      </div>
+      </div> */}
 
       <SharePost
         url={window.location.origin + `/groupcrwd/${id}`}

@@ -68,7 +68,7 @@ const GroupCrwdUpdates: React.FC<GroupCrwdUpdatesProps> = ({
         />
       ) : (
         <div className="space-y-4">
-          <ProfileActivity posts={posts} />
+          <ProfileActivity posts={posts} postButton={true} />
           <div className="lg:max-w-[600px]">
             <div className="space-y-4">
               {/* Member Action Post */}

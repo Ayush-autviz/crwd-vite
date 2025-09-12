@@ -6,7 +6,7 @@ const data = [
   {
     image: "/grocery.jpg",
     heading: "Pick your Causes",
-    subHeading: "Search or explore non-profits by category or local CRWDS.",
+    subHeading: "Search or explore nonprofits by category or local Circles.",
   },
   {
     image: "/grocery.jpg",
@@ -18,7 +18,7 @@ const data = [
     image: "/grocery.jpg",
     heading: "Give Together",
     subHeading:
-      "Join CRWDs to give alongside others and see your shared impact.",
+      "Join Circles to give alongside others and see your shared impact.",
   },
 ];
 

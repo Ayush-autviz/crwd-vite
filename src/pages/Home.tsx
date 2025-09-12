@@ -130,42 +130,40 @@ export default function HomePage() {
   const categories = [
     {
       name: "Animal Welfare",
-      text: "#E36414",      // Orange-Red
+      text: "#E36414", // Orange-Red
       background: "#FFE1CC", // Softer warm orange tint
     },
     {
       name: "Environment",
-      text: "#6A994E",      // Olive Green
+      text: "#6A994E", // Olive Green
       background: "#DFF0D6", // Fresh leafy green tint
     },
     {
       name: "Food Insecurity",
-      text: "#FF9F1C",      // Carrot Orange
+      text: "#FF9F1C", // Carrot Orange
       background: "#FFE6CC", // Light orange tint (not too pale)
     },
     {
       name: "Education",
-      text: "#FFB84D",      // Amber
+      text: "#FFB84D", // Amber
       background: "#FFEFD1", // Gentle amber tint
     },
     {
       name: "Healthcare",
-      text: "#D62828",      // Crimson
+      text: "#D62828", // Crimson
       background: "#FFD6D6", // Soft rosy red tint
     },
     {
       name: "Social Justice",
-      text: "#780000",      // Maroon
+      text: "#780000", // Maroon
       background: "#F2C7C7", // Muted pinkish tint
     },
     {
       name: "Homelessness",
-          text: "#8D6E63",      // Brown
-    background: "#EADFD9", // Warm earthy beige tint
-  },
-];
-  
-
+      text: "#8D6E63", // Brown
+      background: "#EADFD9", // Warm earthy beige tint
+    },
+  ];
 
   // Sample data for suggested causes
   const suggestedCauses = [
@@ -255,11 +253,13 @@ export default function HomePage() {
               {/* Content */}
               <div className="relative ">
                 <h1 className="text-gray-500 text-xl md:text-2xl lg:text-3xl font-bold text-foreground mb-4 leading-tight max-w-3xl mx-auto">
-                  THE EASIEST WAY TO GIVE TO EVERYTHING YOU CARE ABOUT, AT ONCE.
+                  THE EASIEST WAY TO{" "}
+                  <span className="text-green-600">GIVE</span> TO EVERYTHING YOU
+                  CARE ABOUT, AT ONCE.
                 </h1>
 
                 <Link to="/donation">
-                  <Button className="bg-black  text-primary-foreground px-8 py-3 rounded-full text-base font-semibold transition-all duration-200 transform hover:scale-105 shadow-lg hover:shadow-xl">
+                  <Button className="bg-[#0047FF] text-primary-foreground px-8 py-3 rounded-full text-base font-semibold ">
                     Start Giving
                   </Button>
                 </Link>
@@ -344,7 +344,10 @@ export default function HomePage() {
                     <Badge
                       variant="secondary"
                       className="bg-muted/50 hover:bg-muted text-foreground rounded-md px-4 py-2 whitespace-nowrap"
-                      style={{ backgroundColor: category.background, color: category.text }}
+                      style={{
+                        backgroundColor: category.background,
+                        color: category.text,
+                      }}
                     >
                       {category.name}
                     </Badge>
@@ -596,7 +599,7 @@ export default function HomePage() {
 
         {/* mobile app footer */}
         {showMobileFooter && (
-          <div className="fixed bottom-30 left-0 right-0 mx-2 md:hidden z-50">
+          <div className="fixed bottom-5 left-0 right-0 mx-2 md:hidden z-50">
             <div className="bg-white p-4 rounded-3xl shadow-2xl border border-white/30 backdrop-blur-md relative overflow-hidden">
               <div className="flex items-center gap-4 relative z-10">
                 {/* App Icon with glow effect */}
