@@ -244,7 +244,7 @@ export const Checkout = ({
         <div className="mx-8 mb-6">
           <div className="border border-gray-200 rounded-lg p-4 bg-gray-50">
             <p className="text-sm text-gray-500 mb-2">
-              Add up to 45 more causes to this box
+              Add up to 45 more causes to thi s box
             </p>
             <p className="text-xs text-gray-400 mb-2">
               Allocations will automatically adjust for 100% distribution
@@ -278,7 +278,7 @@ export const Checkout = ({
       {/* Payment Section */}
       {/* <PaymentSection amount={donationAmount} /> */}
 
-      <div className="h-30 md:hidden" />
+      {/* <div className="h-30 md:hidden" /> */}
 
       {/* Success Modal with Confetti */}
       {showSuccessModal && (

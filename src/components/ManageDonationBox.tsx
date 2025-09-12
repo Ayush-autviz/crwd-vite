@@ -90,7 +90,7 @@ const ManageDonationBox: React.FC<ManageDonationBoxProps> = ({
   );
 
   return (
-    <div className="w-full min-h-screen bg-white flex flex-col pb-24">
+    <div className="w-full min-h-screen bg-white flex flex-col ">
       {/* Header */}
       <div className="bg-white border-b border-gray-200 h-16 p-4 flex items-center justify-between">
         <button
@@ -315,7 +315,7 @@ const ManageDonationBox: React.FC<ManageDonationBoxProps> = ({
 
       {/* Footer */}
       {isEditMode && (
-        <div className="px-4 py-6 pb-30">
+        <div className="px-4 py-6 ">
           <div className="grid grid-cols-2 gap-2">
             {visibleCauses.length > 0 && (
               <button className="col-span-1 text-xs text-gray-400">
