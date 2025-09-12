@@ -401,7 +401,7 @@ export const DonationBox3 = ({
         </div> */}
 
         {/* Payment Method Selection */}
-        {/* <div className="bg-white rounded-xl mb-6 p-6 shadow-sm border border-gray-100">
+        <div className="bg-white rounded-xl mb-6 p-6 shadow-sm border border-gray-100">
           <h3 className="text-lg font-semibold text-gray-800 mb-2">
             Select Payment Method
           </h3>
@@ -410,7 +410,6 @@ export const DonationBox3 = ({
           </p>
 
           <div className="space-y-3">
-            
             <div className="flex items-center p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors cursor-pointer">
               <div className="w-8 h-8 bg-black rounded-lg flex items-center justify-center mr-3">
                 <svg
@@ -424,7 +423,6 @@ export const DonationBox3 = ({
               <span className="font-medium text-gray-800">Apple Pay</span>
             </div>
 
-            
             <div className="flex items-center p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors cursor-pointer">
               <div className="w-8 h-8 bg-gray-100 rounded-lg flex items-center justify-center mr-3">
                 <svg
@@ -446,7 +444,7 @@ export const DonationBox3 = ({
               </span>
             </div>
           </div>
-        </div> */}
+        </div>
 
         {/* Action Buttons */}
         <div className="space-y-3 mb-6 fixed bottom-0  w-calc(100%-16px) left-0 md:left-auto md:w-[calc(100%-320px)] right-0 mx-4">

@@ -157,7 +157,7 @@ export default function CreatePostPage() {
           <div className="relative">
             <Input
               type="search"
-              placeholder="Search for a CRWD"
+              placeholder="Search for a Giving Circle"
               className="bg-muted/50 rounded-lg px-3 py-2 w-full text-sm border-none focus-visible:ring-1 focus-visible:ring-primary/50"
             />
           </div>

@@ -123,6 +123,7 @@ const NavigationItems: React.FC<NavigationItemsProps> = ({
             <Link
               key={item.label}
               to={item.href}
+              state={item.label === "Explore" ? { discover: true } : {}}
               className={cn(
                 "flex items-center gap-4 px-6 py-2 text-sm font-medium hover:bg-muted/50 transition-colors",
                 linkClassName
