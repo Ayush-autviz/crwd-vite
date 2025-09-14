@@ -203,14 +203,13 @@ export default function HomePage() {
             <div className="bg-gradient-to-br from-gray-100 via-gray-50 to-background p-6 md:p-8 rounded-2xl text-center shadow-lg border border-gray-200 relative overflow-hidden">
               {/* Content */}
               <div className="relative ">
-                <h1 className="text-gray-500 text-xl md:text-2xl lg:text-3xl font-bold text-foreground mb-4 leading-tight max-w-3xl mx-auto">
-                  THE EASIEST WAY TO{" "}
-                  <span className="text-green-600">GIVE</span> TO EVERYTHING YOU
-                  CARE ABOUT, AT ONCE.
+                <h1 className="text-black text-xl md:text-2xl lg:text-3xl font-bold text-foreground mb-4 leading-tight max-w-3xl mx-auto">
+                  The easiest way to <i className="text-green-600">give </i>
+                  to everything you care about, at once.
                 </h1>
 
                 <Link to="/donation">
-                  <Button className="bg-[#0047FF] text-primary-foreground px-8 py-3 rounded-full text-base font-semibold ">
+                  <Button className="bg-[#0047FF] text-primary-foreground px-8 py-3 rounded-lg text-base font-semibold ">
                     Start Giving
                   </Button>
                 </Link>

@@ -18,9 +18,7 @@ const SavedItem: React.FC<SavedItemProps> = ({ avatar, title, subtitle }) => (
       <span className="font-semibold text-sm text-gray-900 truncate">
         {title}
       </span>
-      <span className="text-xs text-gray-500 truncate max-w-[90%]">
-        {subtitle}
-      </span>
+      <span className="text-xs text-gray-500   max-w-[90%]">{subtitle}</span>
     </div>
     <Heart
       size={18}
