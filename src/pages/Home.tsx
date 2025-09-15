@@ -200,16 +200,16 @@ export default function HomePage() {
           </div> */}
           {/* Main Message */}
           <div className="p-4 md:p-0 md:mb-6">
-            <div className="bg-gradient-to-br from-gray-100 via-gray-50 to-background p-6 md:p-8 rounded-2xl text-center shadow-lg border border-gray-200 relative overflow-hidden">
+            <div className=" p-6 md:p-8 rounded-2xl text-center  relative overflow-hidden">
               {/* Content */}
               <div className="relative ">
-                <h1 className="text-black text-xl md:text-2xl lg:text-3xl font-bold text-foreground mb-4 leading-tight max-w-3xl mx-auto">
+                <h1 className="text-black text-2xl lg:text-3xl font-bold text-foreground mb-4 leading-tight max-w-3xl mx-auto">
                   The easiest way to <i className="text-green-600">give </i>
                   to everything you care about, at once.
                 </h1>
 
                 <Link to="/donation">
-                  <Button className="bg-[#0047FF] text-primary-foreground px-8 py-3 rounded-lg text-base font-semibold ">
+                  <Button className="bg-[#0047FF] text-primary-foreground px-10 py-5 rounded-lg text-base font-semibold ">
                     Start Giving
                   </Button>
                 </Link>
