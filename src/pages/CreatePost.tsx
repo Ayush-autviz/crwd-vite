@@ -213,7 +213,7 @@ export default function CreatePostPage() {
             </div>
           </div>
         )}
-        <div className="h-20 md:hidden" />
+        {/* <div className="h-20 md:hidden" /> */}
       </div>
     );
   }
@@ -431,7 +431,7 @@ export default function CreatePostPage() {
         className="hidden"
       />
 
-      <div className="h-20 md:hidden" />
+      {/* <div className="h-20 md:hidden" /> */}
     </div>
   );
 }
