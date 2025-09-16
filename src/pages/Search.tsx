@@ -601,7 +601,7 @@ export default function SearchPage() {
           </div>
         </div>
       ) : (
-        <div className=" ">
+        <div className="pb-24 md:pb-0">
           {/* Main Content */}
           <div className="px-4 py-6">
             {/* Title and Description */}

@@ -72,7 +72,7 @@ export default function Layout({ children }: LayoutProps) {
 
       {/* Mobile Bottom Navigation - Only show if NOT on auth pages */}
       {!isAuthPage && (
-        <nav className="fixed bottom-0 left-0 right-0 bg-card border-t flex justify-around py-3 mx-auto z-10 md:hidden bg-gray-50">
+        <nav className="fixed bottom-0 left-0 right-0 bg-card border-t border-t-1 border-t-gray-500 flex justify-around py-3 mx-auto z-10 md:hidden bg-gray-50">
           <Link
             className="flex flex-col items-center h-auto py-2 px-0 flex-1 text-muted-foreground"
             to={"/"}
@@ -153,7 +153,7 @@ export default function Layout({ children }: LayoutProps) {
                     : "text-gray-500"
                 }`}
               >
-                Donation
+                My Giving
               </span>
             </Button>
           </Link>

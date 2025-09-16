@@ -146,7 +146,7 @@ export default function CreatePostPage() {
   // Step 2: Post to (CRWD selection)
   if (step === 2) {
     return (
-      <div className="min-h-screen flex flex-col bg-background">
+      <div className="min-h-screen flex flex-col bg-background pb-24 md:pb-0">
         <ProfileNavbar title="Add a post" />
         <div className="flex items-center p-4 ">
           <button onClick={() => setStep(1)} className="mr-2 flex  text-base">
@@ -220,7 +220,7 @@ export default function CreatePostPage() {
 
   // Step 1: Create post form
   return (
-    <div className="min-h-screen flex flex-col bg-gradient-to-b from-background to-muted/40 pb-16">
+    <div className="min-h-screen flex flex-col bg-gradient-to-b from-background to-muted/40 pb-24 md:pb-0">
       <ProfileNavbar title="Add a post" />
 
       <div className="flex-1 flex flex-col  p-4">
