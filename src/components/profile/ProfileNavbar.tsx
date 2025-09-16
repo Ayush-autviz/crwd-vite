@@ -44,9 +44,12 @@ export default function ProfileNavbar({
                 {/* <Archive strokeWidth={2} className="h-5 w-5 text-gray-700" /> */}
                 <Plus strokeWidth={2} className="h-5 w-5 text-gray-700" />
               </Link>
-              <div className="text-white bg-lime-700 px-2 py-1 font-medium rounded-md">
+              <Link
+                to="/circles"
+                className="text-white bg-lime-700 px-2 py-1 font-medium rounded-md"
+              >
                 Circles
-              </div>
+              </Link>
               <HamburgerMenu />
             </div>
           )}
@@ -102,9 +105,12 @@ export default function ProfileNavbar({
                 className="h-5 w-5 text-black hover:text-gray-700 transition-colors"
               />
             </Link>
-            <div className="text-white bg-lime-700 px-2 py-1 font-medium rounded-md">
+            <Link
+              to="/circles"
+              className="text-white bg-lime-700 px-2 py-1 font-medium rounded-md"
+            >
               Circles
-            </div>
+            </Link>
             <HamburgerMenu />
           </div>
         </header>

@@ -47,6 +47,7 @@ import OnBoard from "./pages/onboarding/OnBoard";
 import ClaimProfile from "./pages/onboarding/ClaimProfile";
 import NonProfitInterests from "./pages/onboarding/NonProfitInterests";
 import CompleteOnboard from "./pages/onboarding/CompleteOnboard";
+import Circles from "./pages/Circles";
 
 function App() {
   return (
@@ -125,6 +126,7 @@ function App() {
                   <Route path="/mobile-menu" element={<MobileMenu />} />
                   <Route path="/donation-test" element={<DonationTest />} />
                   <Route path="/user-profile" element={<UserProfile />} />
+                  <Route path="/circles" element={<Circles />} />
                 </Routes>
               </Layout>
             }
