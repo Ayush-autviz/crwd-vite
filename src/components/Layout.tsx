@@ -71,8 +71,7 @@ export default function Layout({ children }: LayoutProps) {
       </div>
 
       {/* Mobile Bottom Navigation - Only show if NOT on auth pages */}
-      {/* {!isAuthPage && ( */}
-      {false && (
+      {!isAuthPage && (
         <nav className="fixed bottom-0 left-0 right-0 bg-card border-t flex justify-around py-3 mx-auto z-10 md:hidden bg-gray-50">
           <Link
             className="flex flex-col items-center h-auto py-2 px-0 flex-1 text-muted-foreground"
@@ -101,7 +100,7 @@ export default function Layout({ children }: LayoutProps) {
               </span>
             </Button>
           </Link>
-          <Link
+          {/* <Link
             className="flex flex-col items-center h-auto py-2 px-0 flex-1 text-muted-foreground"
             to={"/search"}
           >
@@ -109,7 +108,6 @@ export default function Layout({ children }: LayoutProps) {
               variant="ghost"
               className="flex flex-col items-center h-auto py-2 px-0 flex-1 text-muted-foreground"
             >
-              {/* <Search className="h-5 w-5" color={location.pathname === '/search' ? 'black' : 'gray'} /> */}
               <img
                 src={
                   location.pathname === "/search"
@@ -129,7 +127,7 @@ export default function Layout({ children }: LayoutProps) {
                 Search
               </span>
             </Button>
-          </Link>
+          </Link> */}
           <Link
             className="flex flex-col items-center h-auto py-2 px-0 flex-1 text-muted-foreground"
             to={"/donation"}
@@ -159,7 +157,7 @@ export default function Layout({ children }: LayoutProps) {
               </span>
             </Button>
           </Link>
-          <Link
+          {/* <Link
             className="flex flex-col items-center h-auto py-2 px-0 flex-1 text-muted-foreground"
             to={"/notifications"}
           >
@@ -167,7 +165,6 @@ export default function Layout({ children }: LayoutProps) {
               variant="ghost"
               className="flex flex-col items-center h-auto py-2 px-0 flex-1 text-muted-foreground"
             >
-              {/* <Bell className="h-5 w-5" color={location.pathname === '/notifications' ? 'black' : 'gray'} /> */}
               <img
                 src={
                   location.pathname === "/notifications"
@@ -191,7 +188,7 @@ export default function Layout({ children }: LayoutProps) {
                 Activity
               </span>
             </Button>
-          </Link>
+          </Link> */}
           <Link
             className="flex flex-col items-center h-auto py-2 px-0 flex-1 text-muted-foreground"
             to={"/profile"}

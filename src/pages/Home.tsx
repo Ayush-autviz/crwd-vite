@@ -172,7 +172,7 @@ export default function HomePage() {
         {/* Main Content - Takes full width on mobile, 8 columns on desktop */}
         <div className="md:col-span-12">
           {/* Search Input */}
-          {/* <div className="hidden md:block p-4 md:p-0 md:mb-6">
+          <div className="hidden md:block p-4 md:p-0 md:mb-6">
             <div className="relative">
               <Input
                 type="search"
@@ -197,7 +197,7 @@ export default function HomePage() {
                 </svg>
               </div>
             </div>
-          </div> */}
+          </div>
           {/* Main Message */}
           <div className="p-4 md:p-0 md:mb-6">
             <div className=" p-6 md:p-8 rounded-2xl text-center  relative overflow-hidden">

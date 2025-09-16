@@ -386,7 +386,7 @@ export default function SearchPage() {
 
   // Original search page design when no search input
   return (
-    <div className="min-h-screen bg-white">
+    <div className={`min-h-screen ${discover ? "bg-gray-50" : "bg-white"}`}>
       <ProfileNavbar title="Search" showBackButton={false} />
       {!discover ? (
         <div className="md:grid md:grid-cols-12 md:gap-4  ">
@@ -601,7 +601,7 @@ export default function SearchPage() {
           </div>
         </div>
       ) : (
-        <div className="h-[100vh] bg-gray-50">
+        <div className=" ">
           {/* Main Content */}
           <div className="px-4 py-6">
             {/* Title and Description */}
@@ -632,7 +632,7 @@ export default function SearchPage() {
 
             {/* Category Filters */}
             <div className="mb-8">
-              <div className="flex flex-wrap gap-2 w-[60%] mx-auto justify-center">
+              <div className="flex flex-wrap gap-2 w-[70%] mx-auto justify-center">
                 {discoverCategories.map((category) => (
                   <button
                     key={category.name}

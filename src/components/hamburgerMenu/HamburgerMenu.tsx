@@ -1,6 +1,6 @@
 import React from "react";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { Menu as MenuIcon } from "lucide-react";
+import { Bell, Menu as MenuIcon } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import NavigationItems from "./NavigationItems";
@@ -8,30 +8,41 @@ import NavigationItems from "./NavigationItems";
 const HamburgerMenu: React.FC = () => (
   <div className="md:hidden">
     <Sheet>
-      <SheetTrigger asChild className="p-2">
-        <MenuIcon size={42} className="text-black" />
+      <SheetTrigger asChild>
+        <div className="p-2 relative">
+          <MenuIcon size={42} className="text-black" />
+          <div className="absolute top-1 right-1 h-3 w-3 bg-red-500 rounded-full"></div>
+        </div>
       </SheetTrigger>
       <SheetContent
         side="right"
         className="p-0 w-[90vw] max-w-[320px] border-l shadow-lg"
       >
         {/* Profile */}
-        <div className="flex items-center gap-3 p-4 border-b">
-          <Avatar className="h-12 w-12">
-            <AvatarImage
-              src="https://randomuser.me/api/portraits/women/44.jpg"
-              alt="Profile"
-            />
-            <AvatarFallback>MY</AvatarFallback>
-          </Avatar>
-          <div className="flex flex-col">
-            <span className="font-semibold text-sm">My Name is Mya</span>
-            <Link
-              to="/profile"
-              className="text-xs text-muted-foreground hover:text-primary"
-            >
-              Go to your profile
-            </Link>
+        <div className="flex justify-between p-4 ">
+          <div className="flex items-center gap-3 border-b">
+            <Avatar className="h-12 w-12">
+              <AvatarImage
+                src="https://randomuser.me/api/portraits/women/44.jpg"
+                alt="Profile"
+              />
+              <AvatarFallback>MY</AvatarFallback>
+            </Avatar>
+            <div className="flex flex-col">
+              <span className="font-semibold text-sm">My Name is Mya</span>
+              <Link
+                to="/profile"
+                className="text-xs text-muted-foreground hover:text-primary"
+              >
+                Go to your profile
+              </Link>
+            </div>
+          </div>
+          <div className="p-2 relative">
+            <Bell size={20} />
+            <div className="absolute top-0 -right-1 text-xs px-1 text-white bg-red-500 rounded-full">
+              5
+            </div>
           </div>
         </div>
 
