@@ -273,7 +273,7 @@ export const Checkout = ({
             </div>
           </div>
         </div>
-        <div className="h-24 md:hidden"></div>
+        {/* <div className="h-24 md:hidden"></div> */}
       </div>
 
       {/* Payment Section */}

@@ -601,7 +601,7 @@ export default function SearchPage() {
           </div>
         </div>
       ) : (
-        <div className="pb-24 md:pb-0">
+        <div className="">
           {/* Main Content */}
           <div className="px-4 py-6">
             {/* Title and Description */}
@@ -618,7 +618,7 @@ export default function SearchPage() {
             {/* Search Bar */}
             <div className="mb-8">
               <div
-                className="relative max-w-2xl mx-auto"
+                className="relative mx-auto"
                 onClick={() => setDiscover(false)}
               >
                 <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
@@ -632,7 +632,7 @@ export default function SearchPage() {
 
             {/* Category Filters */}
             <div className="mb-8">
-              <div className="flex flex-wrap gap-2 w-[70%] mx-auto justify-center">
+              <div className="flex flex-wrap gap-2 w-[80%] mx-auto justify-center">
                 {discoverCategories.map((category) => (
                   <button
                     key={category.name}

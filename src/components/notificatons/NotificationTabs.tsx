@@ -43,7 +43,7 @@ export default function NotificationTabs() {
         {activeTab === "notifications" && <RegularNotifications />}
         {activeTab === "community" && <CommunityUpdates />}
       </div>
-      <div className="h-30 md:hidden" />
+      <div className="h-10 md:hidden" />
     </div>
   );
 }

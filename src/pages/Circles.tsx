@@ -56,7 +56,7 @@ const Circles = () => {
   ];
 
   return (
-    <div className="pb-16 md:pb-0">
+    <div className="">
       <ProfileNavbar
         title="Circles"
         showMobileMenu={true}

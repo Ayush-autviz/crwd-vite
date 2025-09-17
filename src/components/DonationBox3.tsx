@@ -394,7 +394,7 @@ export const DonationBox3 = ({
         </div>
 
         {/* Action Buttons */}
-        <div className="space-y-3 mb-6 fixed bottom-24 md:bottom-0 w-calc(100%-16px) left-0 md:left-auto md:w-[calc(100%-320px)] right-0 mx-4">
+        <div className="space-y-3 mb-6 fixed bottom-0 w-calc(100%-16px) left-0 md:left-auto md:w-[calc(100%-320px)] right-0 mx-4">
           <button
             onClick={() => setCheckout(true)}
             disabled={
@@ -436,7 +436,7 @@ export const DonationBox3 = ({
       </div>
 
       {/* Spacer for mobile */}
-      <div className="h-24 md:hidden"></div>
+      {/* <div className="h-24 md:hidden"></div> */}
     </div>
   );
 };

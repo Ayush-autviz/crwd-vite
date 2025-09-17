@@ -333,7 +333,7 @@ const ManageDonationBox: React.FC<ManageDonationBoxProps> = ({
           </div>
         </div>
       )}
-      <div className="h-24 md:hidden"></div>
+      {/* <div className="h-24 md:hidden"></div> */}
     </div>
   );
 };

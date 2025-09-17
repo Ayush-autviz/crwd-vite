@@ -161,7 +161,7 @@ export default function HomePage() {
   ];
 
   return (
-    <div className="pb-16 md:pb-0">
+    <div className="">
       <ProfileNavbar
         title="Home"
         showMobileMenu={true}
