@@ -221,7 +221,7 @@ export default function SearchPage() {
             {/* Search Bar */}
             <div className="mb-8 px-4 py-6 md:pl-4">
               <div className="relative group w-full">
-                <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400 group-focus-within:text-gray-600 transition-colors z-10" />
+                <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400 group-focus-within:text-gray-600 transition-colors z-0" />
                 <Input
                   placeholder="Texas flooding"
                   className="bg-gray-100 rounded-[10px] border-none px-12 py-4 text-base placeholder:text-gray-400 w-full"
@@ -233,7 +233,7 @@ export default function SearchPage() {
                   <Button
                     variant="ghost"
                     size="sm"
-                    className="absolute right-2 top-1/2 transform -translate-y-1/2 h-8 w-8 p-0 hover:bg-gray-100 rounded-full z-20"
+                    className="absolute z-0 right-2 top-1/2 transform -translate-y-1/2 h-8 w-8 p-0 hover:bg-gray-100 rounded-full"
                     onClick={() => setSearch("")}
                   >
                     <X className="w-4 h-4" />
