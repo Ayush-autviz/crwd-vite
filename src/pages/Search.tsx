@@ -68,7 +68,7 @@ const featuredOrganizations = [
 const nearbyCauses = [
   {
     name: "The Red Cross",
-    type: "CRWD",
+    type: "Circle",
     description: "An health organization that helps people in need",
     image: "/redcross.png",
   },
@@ -80,7 +80,7 @@ const nearbyCauses = [
   },
   {
     name: "Women's Healthcare of At...",
-    type: "CRWD",
+    type: "Circle",
     description: "We are Atlanta's #1 healthcare organization",
     image: "/redcross.png",
   },
