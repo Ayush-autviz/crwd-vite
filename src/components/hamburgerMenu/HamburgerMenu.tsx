@@ -9,10 +9,7 @@ const HamburgerMenu: React.FC = () => (
   <div className="md:hidden">
     <Sheet>
       <SheetTrigger asChild>
-        <div className="p-2 relative">
-          <MenuIcon size={42} className="text-black" />
-          <div className="absolute top-1 right-1 h-3 w-3 bg-red-500 rounded-full"></div>
-        </div>
+        <MenuIcon size={32} className="text-black" />
       </SheetTrigger>
       <SheetContent
         side="right"

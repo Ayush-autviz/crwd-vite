@@ -62,8 +62,8 @@ export default function ProfileNavbar({
             <Link to="/">
               <img
                 src="/logo3.png"
-                width={80}
-                height={80}
+                width={70}
+                height={70}
                 alt="CRWD Logo"
                 className="object-contain"
               />
@@ -76,7 +76,7 @@ export default function ProfileNavbar({
               <input
                 type="text"
                 placeholder="Find nonprofits"
-                className="w-full bg-gray-100 rounded-lg px-4 py-2 pl-10 text-sm "
+                className="w-full bg-gray-100 rounded-lg px-4 py-1 pl-10 text-sm "
               />
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -106,9 +106,9 @@ export default function ProfileNavbar({
             </Link> */}
             <Link
               to="/circles"
-              className="text-white bg-lime-700 px-2 py-1 font-medium rounded-md"
+              className="text-white bg-red-600 px-2 text-sm py-1 rounded-md"
             >
-              Circles
+              Log In
             </Link>
             <HamburgerMenu />
           </div>
