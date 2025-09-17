@@ -159,7 +159,7 @@ const GroupCrwdSuggested: React.FC = () => (
     </div>
 
     <div className="flex justify-end mt-4">
-      <Link to="/search">
+      <Link to="/search" state={{ discover: true }}>
         <Button variant="link" className="text-primary flex items-center">
           Discover More <ChevronRight className="h-4 w-4 ml-1" />
         </Button>

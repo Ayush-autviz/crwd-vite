@@ -68,7 +68,7 @@ const Circles = () => {
         {/* Header Section */}
         <div className="p-6 text-center flex flex-col items-center">
           <Link to="/create-post" className="w-full flex justify-end">
-            <Button variant="outline" className="px-6 py-2">
+            <Button variant="outline" className="px-6 py-2 mb-2">
               Post Something
             </Button>
           </Link>

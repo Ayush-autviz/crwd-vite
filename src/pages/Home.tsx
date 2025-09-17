@@ -422,7 +422,7 @@ export default function HomePage() {
             <div className="space-y-3">
               {nearbyCauses.map((cause, index) => (
                 <Link
-                  to={cause.type === "Cause" ? "/cause" : "/groupcrwd"}
+                  to={cause.type === "Nonprofit" ? "/cause" : "/groupcrwd"}
                   key={index}
                   className="block"
                 >
