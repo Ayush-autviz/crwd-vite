@@ -102,7 +102,7 @@ const Circles = () => {
               }`}
             >
               <Users className="w-4 h-4" />
-              My Giving Circles (0)
+              My Circles (0)
             </button>
             <button
               onClick={() => setActiveTab("discover")}
@@ -127,7 +127,7 @@ const Circles = () => {
                 <Users className="w-12 h-12 text-muted-foreground" />
               </div>
               <h3 className="text-lg font-semibold text-foreground mb-2">
-                You haven't joined any crwds yet.
+                You haven't joined any giving circles yet.
               </h3>
               <p className="text-muted-foreground ">
                 Check out the Discover tab to find a giving circle!
