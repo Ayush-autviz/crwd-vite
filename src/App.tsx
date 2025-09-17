@@ -1,5 +1,11 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  useLocation,
+} from "react-router-dom";
 import { Toaster } from "sonner";
+import { useEffect } from "react";
 import Layout from "./components/Layout";
 import Home from "./pages/Home";
 import Login from "./pages/auth/Login";
@@ -49,9 +55,43 @@ import NonProfitInterests from "./pages/onboarding/NonProfitInterests";
 import CompleteOnboard from "./pages/onboarding/CompleteOnboard";
 import Circles from "./pages/Circles";
 
+// ScrollToTop component that works for all pages
+function ScrollToTop() {
+  const location = useLocation();
+
+  useEffect(() => {
+    const scrollToTop = () => {
+      window.scrollTo({
+        top: 0,
+        left: 0,
+        behavior: "instant",
+      });
+
+      // Also scroll document elements
+      if (document.documentElement) {
+        document.documentElement.scrollTop = 0;
+      }
+      if (document.body) {
+        document.body.scrollTop = 0;
+      }
+    };
+
+    // Execute immediately
+    scrollToTop();
+
+    // Execute after a small delay to ensure DOM is ready
+    const timeoutId = setTimeout(scrollToTop, 100);
+
+    return () => clearTimeout(timeoutId);
+  }, [location.pathname]); // Run every time the pathname changes
+
+  return null;
+}
+
 function App() {
   return (
     <Router>
+      <ScrollToTop />
       <div className="bg-background min-h-screen">
         <Routes>
           {/* Auth routes - no layout */}

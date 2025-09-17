@@ -283,14 +283,20 @@ export const Checkout = ({
 
       {/* Success Modal with Confetti */}
       {showSuccessModal && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+        <div
+          className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4"
+          onClick={handleCloseSuccessModal}
+        >
           <ReactConfetti
             width={windowDimensions.width}
             height={windowDimensions.height}
             recycle={false}
             numberOfPieces={200}
           />
-          <div className="bg-white rounded-lg max-w-md w-full mx-4 p-6 relative">
+          <div
+            className="bg-white rounded-lg max-w-md w-full mx-4 p-6 relative"
+            onClick={(e) => e.stopPropagation()}
+          >
             {/* Close Button */}
             <button
               onClick={handleCloseSuccessModal}

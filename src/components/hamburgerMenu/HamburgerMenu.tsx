@@ -17,7 +17,7 @@ const HamburgerMenu: React.FC = () => (
       >
         {/* Profile */}
         <div className="flex justify-between p-4 ">
-          <div className="flex items-center gap-3 border-b">
+          <div className="flex items-center gap-3">
             <Avatar className="h-12 w-12">
               <AvatarImage
                 src="https://randomuser.me/api/portraits/women/44.jpg"
@@ -36,7 +36,7 @@ const HamburgerMenu: React.FC = () => (
             </div>
           </div>
           <div className="p-2 relative">
-            <Bell size={20} />
+            <Bell size={22} />
             <div className="absolute top-0 -right-1 text-xs px-1 text-white bg-red-500 rounded-full">
               5
             </div>

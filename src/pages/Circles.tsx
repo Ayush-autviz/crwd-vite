@@ -63,15 +63,21 @@ const Circles = () => {
         showDesktopMenu={true}
         showBackButton={true}
       />
+
       <div className="h-full">
         {/* Header Section */}
         <div className="p-6 text-center flex flex-col items-center">
+          <Link to="/create-post" className="w-full flex justify-end">
+            <Button variant="outline" className="px-6 py-2">
+              Post Something
+            </Button>
+          </Link>
           <h1 className="text-3xl font-bold text-foreground mb-2">
             Your Giving Circles
           </h1>
           <p className="text-muted-foreground mb-4 max-w-lg mx-auto">
-            Amplify your impact by giving together. Join a crwd or start your
-            own.
+            Amplify your impact by giving together. Join a giving circle or
+            start your own.
           </p>
 
           {/* Create New Crwd Button */}
@@ -80,13 +86,13 @@ const Circles = () => {
             className=" flex items-center gap-2 justify-center w-fit bg-green-600 hover:bg-green-700 text-white px-4 py-2    rounded-lg text-base font-semibold shadow-lg"
           >
             <Plus className="" strokeWidth={3} />
-            <p> Create a New Crwd</p>
+            <p> Create a New Giving Circle</p>
           </Link>
         </div>
 
         {/* Tab Navigation */}
         <div className="px-6 mb-6">
-          <div className="flex border-b border-border">
+          <div className="flex  border-border justify-center">
             <button
               onClick={() => setActiveTab("my-crwds")}
               className={`flex items-center gap-2 px-4 py-3 text-sm font-medium border-b-2 transition-colors ${
@@ -96,7 +102,7 @@ const Circles = () => {
               }`}
             >
               <Users className="w-4 h-4" />
-              My Crwds (0)
+              My Giving Circles (0)
             </button>
             <button
               onClick={() => setActiveTab("discover")}
@@ -116,14 +122,14 @@ const Circles = () => {
         <div className="px-6">
           {activeTab === "my-crwds" ? (
             /* Empty State for My Crwds */
-            <div className="text-center pb-12">
+            <div className="text-center pb-6">
               <div className="w-24 h-24 mx-auto mb-6 bg-muted rounded-full flex items-center justify-center">
                 <Users className="w-12 h-12 text-muted-foreground" />
               </div>
               <h3 className="text-lg font-semibold text-foreground mb-2">
                 You haven't joined any crwds yet.
               </h3>
-              <p className="text-muted-foreground mb-6">
+              <p className="text-muted-foreground ">
                 Check out the Discover tab to find a giving circle!
               </p>
             </div>
@@ -159,9 +165,12 @@ const Circles = () => {
                     </div>
                   </div>
 
-                  <Button className="bg-green-600 hover:bg-green-700 text-white text-sm px-4 py-2 rounded-lg">
+                  <Link
+                    to="/groupcrwd"
+                    className="bg-green-600 hover:bg-green-700 text-white text-sm px-4 py-2 rounded-lg"
+                  >
                     Learn More
-                  </Button>
+                  </Link>
                 </div>
               ))}
             </div>

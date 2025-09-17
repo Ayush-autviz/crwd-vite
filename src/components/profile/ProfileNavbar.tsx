@@ -34,20 +34,17 @@ export default function ProfileNavbar({
           {/* Centered Logo */}
           <div className="flex-grow flex justify-center">
             <Link to="/">
-              <img src="/logo3.png" width={100} height={100} alt="CRWD Logo" />
+              <img src="/logo3.png" width={80} height={80} alt="CRWD Logo" />
             </Link>
           </div>
           {/* Archive icon and Hamburger Menu at right */}
           {!showBackButton && (
             <div className="absolute right-4 top-1/2 -translate-y-1/2 flex items-center gap-2">
-              {/* <Link to="/create-post">
-                <Plus strokeWidth={2} className="h-5 w-5 text-gray-700" />
-              </Link> */}
               <Link
-                to="/circles"
-                className="text-white bg-lime-700 px-2 py-1 font-medium rounded-md"
+                to="/claim-profile"
+                className="text-white bg-red-600 px-2 text-sm py-1 rounded-md"
               >
-                Circles
+                Log In
               </Link>
               <HamburgerMenu />
             </div>
@@ -98,12 +95,6 @@ export default function ProfileNavbar({
 
           {/* Action buttons on the right */}
           <div className="flex items-center gap-2">
-            {/* <Link to="/create-post">
-              <Plus
-                strokeWidth={2}
-                className="h-5 w-5 text-black hover:text-gray-700 transition-colors"
-              />
-            </Link> */}
             <Link
               to="/claim-profile"
               className="text-white bg-red-600 px-2 text-sm py-1 rounded-md"
