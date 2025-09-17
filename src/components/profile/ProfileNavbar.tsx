@@ -56,7 +56,7 @@ export default function ProfileNavbar({
       )}
 
       {showMobileMenu && title === "Home" && (
-        <header className="w-full flex items-center justify-between gap-2 px-5 py-4 border-b-2 border-gray-200 bg-gray-50 sticky top-0 z-10 md:hidden">
+        <header className="w-full flex items-center justify-between  px-2 py-4 border-b-2 border-gray-200 bg-gray-50 sticky top-0 z-10 md:hidden">
           {/* Logo on the left */}
           <div className="flex-shrink-0">
             <Link to="/">
@@ -71,12 +71,12 @@ export default function ProfileNavbar({
           </div>
 
           {/* Search bar in the center */}
-          <div className="flex-1 mx-4">
+          <div className="flex-1 mx-2">
             <div className="relative">
               <input
                 type="text"
                 placeholder="Find nonprofits"
-                className="w-full bg-gray-100 rounded-lg px-4 py-1 pl-10 text-sm "
+                className="w-full bg-gray-100 rounded-lg px-4 py-2 pl-10 text-xs "
               />
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -97,7 +97,7 @@ export default function ProfileNavbar({
           </div>
 
           {/* Action buttons on the right */}
-          <div className="flex items-center gap-5">
+          <div className="flex items-center gap-2">
             {/* <Link to="/create-post">
               <Plus
                 strokeWidth={2}
@@ -105,7 +105,7 @@ export default function ProfileNavbar({
               />
             </Link> */}
             <Link
-              to="/circles"
+              to="/claim-profile"
               className="text-white bg-red-600 px-2 text-sm py-1 rounded-md"
             >
               Log In

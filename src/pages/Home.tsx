@@ -208,7 +208,7 @@ export default function HomePage() {
                   to everything you care about, at once.
                 </h1>
 
-                <Link to="/donation">
+                <Link to="/onboarding">
                   <Button className="bg-[#0047FF] text-primary-foreground px-10 py-5 rounded-lg text-base font-semibold ">
                     Start Giving
                   </Button>
