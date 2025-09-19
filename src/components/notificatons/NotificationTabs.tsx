@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import RegularNotifications from "./RegularNotifications";
 import CommunityUpdates from "./CommunityUpdates";
 import { useLocation } from "react-router-dom";
@@ -11,6 +11,15 @@ export default function NotificationTabs() {
   const [activeTab, setActiveTab] = useState<"notifications" | "community">(
     tab ? tab : "community"
   );
+
+  // Listen for changes in location state to update the active tab
+  useEffect(() => {
+    if (location.state?.tab === "notifications") {
+      setActiveTab("notifications");
+    } else if (location.state?.tab === "community") {
+      setActiveTab("community");
+    }
+  }, [location.state?.tab]);
 
   return (
     <div className="w-full">

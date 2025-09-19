@@ -128,6 +128,8 @@ const NavigationItems: React.FC<NavigationItemsProps> = ({
                   ? { discover: true }
                   : item.label === "Notifications"
                   ? { tab: "notifications" }
+                  : item.label === "Community Updates"
+                  ? { tab: "community" }
                   : {}
               }
               className={cn(
