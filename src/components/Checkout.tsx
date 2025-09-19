@@ -1,4 +1,4 @@
-import { ArrowLeft, HelpCircle, Settings, X } from "lucide-react";
+import { ArrowLeft, ChevronLeft, HelpCircle, Settings, X } from "lucide-react";
 import { useState, useEffect } from "react";
 
 import { Button } from "@/components/ui/button";
@@ -127,14 +127,18 @@ export const Checkout = ({
   return (
     <div className="flex flex-col h-full bg-white min-h-screen p-0">
       {/* Header */}
-      <div className="bg-white border-b border-gray-200 p-4 h-16 flex items-center justify-between">
+      <div className="bg-white border-b border-gray-200 p-4 h-16 flex items-center">
         <button
-          onClick={onBack}
-          className="p-2 rounded-full hover:bg-gray-100 transition text-gray-600"
+          onClick={() => onBack()}
+          className="flex items-center justify-center h-8 w-8 rounded-full bg-gray-100 text-gray-700 hover:bg-gray-200 transition-colors mr-2 cursor-pointer"
+          aria-label="Go back"
         >
-          <ArrowLeft size={20} />
+          {/* <ArrowLeft size={20} /> */}
+          <ChevronLeft size={20} />
         </button>
-        <h1 className="font-semibold text-lg">Donation Box</h1>
+        <h1 className="text-xl font-bold text-gray-800 tracking-tight">
+          Donation Box
+        </h1>
         <div className="w-10"></div> {/* Empty div for alignment */}
       </div>
 

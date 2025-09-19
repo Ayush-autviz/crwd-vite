@@ -34,7 +34,8 @@ export default function ProfileNavbar({
                 className="flex items-center justify-center h-8 w-8 rounded-full bg-gray-100 text-gray-700 hover:bg-gray-200 transition-colors mr-2 cursor-pointer"
                 aria-label="Go back"
               >
-                <ArrowLeft size={18} />
+                {/* <ArrowLeft size={18} /> */}
+                <ChevronLeft size={18} />
               </button>
             )}
             {title && (

@@ -147,7 +147,7 @@ export default function CreatePostPage() {
   if (step === 2) {
     return (
       <div className="min-h-screen flex flex-col bg-background ">
-        <ProfileNavbar title="Add a post" />
+        <ProfileNavbar title="Create a Post" />
         <div className="flex items-center p-4 ">
           <button onClick={() => setStep(1)} className="mr-2 flex  text-base">
             <X />
@@ -221,7 +221,7 @@ export default function CreatePostPage() {
   // Step 1: Create post form
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-b from-background to-muted/40 ">
-      <ProfileNavbar title="Add a post" />
+      <ProfileNavbar title="Create a Post" />
 
       <div className="flex-1 flex flex-col  p-4">
         <div className="flex flex-col p-4">

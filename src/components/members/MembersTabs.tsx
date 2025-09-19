@@ -61,7 +61,7 @@ const MembersTabs: React.FC<{ tab?: string }> = ({ tab = "Members" }) => {
     <main className="pb-16 md:pb-0">
       {/* Mobile */}
       <div className="md:hidden">
-        <ProfileNavbar title="Feed the hungry" />
+        <ProfileNavbar title="Members" />
         <MembersTabNav
           activeTab={activeTab}
           setActiveTab={handleTabChange}
