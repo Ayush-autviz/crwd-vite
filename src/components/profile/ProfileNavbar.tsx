@@ -12,12 +12,14 @@ export default function ProfileNavbar({
   title,
   titleClassName,
   showBackButton = true,
+  showPostButton = false,
 }: {
   showMobileMenu?: boolean;
   showDesktopMenu?: boolean;
   title?: string;
   titleClassName?: string;
   showBackButton?: boolean;
+  showPostButton?: boolean;
 }) {
   const navigate = useNavigate();
   return (
@@ -43,6 +45,14 @@ export default function ProfileNavbar({
               </div>
             )}
           </div>
+
+          {showPostButton && (
+            <Link to="/create-post">
+              <Button variant="outline" className="px-4">
+                Post Something
+              </Button>
+            </Link>
+          )}
 
           {/* Center Section (optional logo) */}
           {/* <div className="absolute left-1/2 transform -translate-x-1/2">
