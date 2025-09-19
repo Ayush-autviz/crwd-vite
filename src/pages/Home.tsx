@@ -174,28 +174,31 @@ export default function HomePage() {
           {/* Search Input */}
           <div className="hidden md:block p-4 md:p-0 md:mb-6">
             <div className="relative">
-              <Input
-                type="search"
-                placeholder="Texas flooding"
-                className="bg-muted/50 border-none pl-10"
-              />
-              <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="20"
-                  height="20"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  className="h-5 w-5 text-muted-foreground"
-                >
-                  <circle cx="11" cy="11" r="8" />
-                  <path d="m21 21-4.3-4.3" />
-                </svg>
-              </div>
+              <Link to="/search">
+                <Input
+                  type="search"
+                  placeholder="Texas flooding"
+                  className="bg-muted/50 border-none pl-10"
+                  disabled={true}
+                />
+                <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="20"
+                    height="20"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    className="h-5 w-5 text-muted-foreground"
+                  >
+                    <circle cx="11" cy="11" r="8" />
+                    <path d="m21 21-4.3-4.3" />
+                  </svg>
+                </div>
+              </Link>
             </div>
           </div>
           {/* Main Message */}

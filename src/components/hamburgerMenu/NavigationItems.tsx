@@ -46,8 +46,8 @@ export const menuGroups = [
       },
       {
         icon: <Shuffle size={20} />,
-        label: "Transaction history",
-        href: "/transaction-history",
+        label: "Community Updates",
+        href: "/notifications",
       },
     ],
   },
@@ -123,7 +123,13 @@ const NavigationItems: React.FC<NavigationItemsProps> = ({
             <Link
               key={item.label}
               to={item.href}
-              state={item.label === "Explore" ? { discover: true } : {}}
+              state={
+                item.label === "Explore"
+                  ? { discover: true }
+                  : item.label === "Notifications"
+                  ? { tab: "notifications" }
+                  : {}
+              }
               className={cn(
                 "flex items-center gap-4 px-6 py-2 text-sm font-medium hover:bg-muted/50 transition-colors",
                 linkClassName

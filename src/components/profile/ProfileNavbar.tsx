@@ -87,7 +87,9 @@ export default function ProfileNavbar({
               <input
                 type="text"
                 placeholder="Find nonprofits"
-                className="w-full bg-gray-100 rounded-lg px-4 py-2 text-xs "
+                className="w-full bg-gray-100 rounded-lg px-4 py-2 text-xs cursor-pointer"
+                onClick={() => navigate("/search")}
+                readOnly
               />
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -99,7 +101,8 @@ export default function ProfileNavbar({
                 strokeWidth="2"
                 strokeLinecap="round"
                 strokeLinejoin="round"
-                className="absolute right-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-500"
+                className="absolute right-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-500 cursor-pointer"
+                onClick={() => navigate("/search")}
               >
                 <circle cx="11" cy="11" r="8" />
                 <path d="m21 21-4.3-4.3" />

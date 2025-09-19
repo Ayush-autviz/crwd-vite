@@ -29,15 +29,17 @@ const DonationHeader: React.FC<DonationHeaderProps> = ({
         </button>
       )}
 
-      {showCloseButton && !showBackButton && (
-        <Link
-          to="/"
-          className="flex items-center justify-center h-8 w-8 rounded-full bg-gray-100 text-gray-700 hover:bg-gray-200 transition-colors mr-2"
-        >
-          {/* <X size={18} /> */}
-          <ArrowLeft size={18} />
-        </Link>
-      )}
+      <div className="md:hidden">
+        {showCloseButton && !showBackButton && (
+          <Link
+            to="/"
+            className="flex items-center justify-center h-8 w-8 rounded-full bg-gray-100 text-gray-700 hover:bg-gray-200 transition-colors mr-2"
+          >
+            {/* <X size={18} /> */}
+            <ArrowLeft size={18} />
+          </Link>
+        )}
+      </div>
 
       <h1 className="text-xl font-bold text-gray-800 tracking-tight ml-2">
         {title}

@@ -26,6 +26,7 @@ export const DonationBox3 = ({
     cardNumber: "",
     expiryDate: "",
     cvv: "",
+    cardAddress: "",
   });
 
   const getOrganizationDescription = (orgName: string): string => {
@@ -386,6 +387,27 @@ export const DonationBox3 = ({
                         className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
                       />
                     </div>
+                  </div>
+
+                  {/* card address */}
+                  <div>
+                    <label
+                      htmlFor="cardAddress"
+                      className="block text-sm font-medium text-gray-700 mb-1"
+                    >
+                      Card Number
+                    </label>
+                    <input
+                      id="cardAddress"
+                      type="text"
+                      placeholder="Card Address"
+                      value={cardDetails.cardAddress}
+                      onChange={(e) => {
+                        handleCardDetailsChange("cardAddress", e.target.value);
+                      }}
+                      // maxLength={19}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                    />
                   </div>
                 </div>
               </div>

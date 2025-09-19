@@ -3,10 +3,13 @@
 import React, { useState } from "react";
 import RegularNotifications from "./RegularNotifications";
 import CommunityUpdates from "./CommunityUpdates";
+import { useLocation } from "react-router-dom";
 
 export default function NotificationTabs() {
+  const location = useLocation();
+  const [tab, setTab] = useState(location.state?.tab);
   const [activeTab, setActiveTab] = useState<"notifications" | "community">(
-    "community"
+    tab ? tab : "community"
   );
 
   return (
