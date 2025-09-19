@@ -113,7 +113,7 @@ export default function ProfilePage() {
 
   return (
     <div className="">
-      <ProfileNavbar title="Me" showBackButton={false} />
+      <ProfileNavbar title="Me" />
 
       <div className="flex items-center gap-4 justify-end pt-6 pb-2 px-4 sticky top-16 z-10 bg-white">
         <div className="relative" ref={menuRef}>

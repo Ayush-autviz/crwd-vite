@@ -99,7 +99,7 @@ export default function CreateCRWDPage() {
       )}
 
       {/* Header */}
-      <ProfileNavbar title="Create a CRWD" />
+      <ProfileNavbar title="Create a Giving Circle" />
 
       <div className="px-4 pt-2 pb-12 lg:max-w-[600px] gap-6 w-full">
         {step === 1 && (

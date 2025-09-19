@@ -35,7 +35,7 @@ export default function SavedPage() {
 
   return (
     <div className="min-h-screen bg-white">
-      <ProfileNavbar title="Saved" />
+      <ProfileNavbar title="Favorites" />
       <SavedList items={savedItems} onRemoveItem={handleRemoveItem} />
     </div>
   );

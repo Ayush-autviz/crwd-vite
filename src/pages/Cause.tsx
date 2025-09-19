@@ -22,7 +22,7 @@ const CausePage: React.FC = () => {
   return (
     <div className="min-h-screen md:h-full bg-white flex flex-col pb-28">
       {/* <CauseHeader /> */}
-      <ProfileNavbar title="Helping Humanity" />
+      <ProfileNavbar title="Nonprofit" />
       <div className="flex items-center gap-2 pt-6 pb-4 px-4 sticky top-16 z-10 bg-white">
         <div className="text-lg font-semibold text-blue-500 bg-blue-50 px-2 py-1 rounded-md">
           Nonprofit

@@ -213,7 +213,7 @@ export default function SearchPage() {
   if (search.trim()) {
     return (
       <div className="min-h-screen bg-background">
-        <ProfileNavbar title="Search" showBackButton={false} />
+        <ProfileNavbar title="Search" />
 
         <div className="md:grid md:grid-cols-12">
           {/* Main Content - Takes full width on mobile, 8 columns on desktop */}
@@ -387,7 +387,7 @@ export default function SearchPage() {
   // Original search page design when no search input
   return (
     <div className={`min-h-screen ${discover ? "bg-gray-50" : "bg-white"}`}>
-      <ProfileNavbar title="Search" showBackButton={false} />
+      <ProfileNavbar title="Search" />
       {!discover ? (
         <div className="md:grid md:grid-cols-12 md:gap-4  ">
           {/* Main Content */}

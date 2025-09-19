@@ -74,7 +74,7 @@ export default function GroupCrwdPage() {
   return (
     // <div>
     <>
-      <ProfileNavbar title="Group Crwd" />
+      <ProfileNavbar title="Group Circle" />
       <div className="flex items-center gap-2 justify-between pt-6 pb-2 px-4 sticky top-16 z-10 bg-white ">
         <div className="text-lg font-semibold text-green-700 bg-green-200 px-2 py-1 rounded-md">
           Circle

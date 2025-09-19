@@ -1,6 +1,6 @@
 import React from "react";
 import { Button } from "../ui/button";
-import { Archive, Bell, ChevronLeft, Plus } from "lucide-react";
+import { Archive, ArrowLeft, Bell, ChevronLeft, Plus } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import HamburgerMenu from "../hamburgerMenu/HamburgerMenu";
 import { cn } from "@/lib/utils";
@@ -23,32 +23,46 @@ export default function ProfileNavbar({
   return (
     <>
       {showMobileMenu && title !== "Home" && (
-        <header className="w-full flex items-center h-16 bg-gray-50 border-b sticky top-0 z-10 md:hidden">
-          {showBackButton && (
-            <ChevronLeft
-              onClick={() => navigate(-1)}
-              size={30}
-              className=" absolute left-4 top-1/2 -translate-y-1/2 text-gray-700 cursor-pointer hover:bg-gray-100 rounded-full p-1"
-            />
-          )}
-          {/* Centered Logo */}
-          <div className="flex-grow flex justify-center">
-            <Link to="/">
-              <img src="/logo3.png" width={80} height={80} alt="CRWD Logo" />
-            </Link>
-          </div>
-          {/* Archive icon and Hamburger Menu at right */}
-          {!showBackButton && (
-            <div className="absolute right-4 top-1/2 -translate-y-1/2 flex items-center gap-2">
-              <Link
-                to="/claim-profile"
-                className="text-white bg-red-600 px-2 text-sm py-1 rounded-md"
+        <header className="w-full flex items-center justify-between h-16 px-3 bg-gray-50 border-b sticky top-0 z-10 md:hidden">
+          {/* Left Section */}
+          <div className="flex items-center gap-3">
+            {showBackButton && (
+              <button
+                onClick={() => navigate(-1)}
+                className="flex items-center justify-center h-8 w-8 rounded-full bg-gray-100 text-gray-700 hover:bg-gray-200 transition-colors mr-2 cursor-pointer"
+                aria-label="Go back"
               >
-                Log In
-              </Link>
-              <HamburgerMenu />
-            </div>
-          )}
+                <ArrowLeft size={18} />
+              </button>
+            )}
+            {title && (
+              <div className="flex flex-col">
+                <h1 className="text-xl font-bold text-gray-800 tracking-tight">
+                  {title}
+                </h1>
+              </div>
+            )}
+          </div>
+
+          {/* Center Section (optional logo) */}
+          {/* <div className="absolute left-1/2 transform -translate-x-1/2">
+      <Link to="/">
+        <img src="/logo3.png" width={80} height={80} alt="CRWD Logo" />
+      </Link>
+    </div> */}
+
+          {/* Right Section */}
+          {/* {!showBackButton && (
+      <div className="flex items-center gap-2">
+        <Link
+          to="/claim-profile"
+          className="text-white bg-red-600 px-2 text-sm py-1 rounded-md"
+        >
+          Log In
+        </Link>
+        <HamburgerMenu />
+      </div>
+    )} */}
         </header>
       )}
 
