@@ -1,6 +1,14 @@
 "use client";
 import { useState } from "react";
 import { CROWDS, RECENTS, SUGGESTED } from "@/constants";
+import { Country, State, City } from "country-state-city";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 interface DonationSummaryProps {
   selectedOrganizations: string[];
@@ -26,8 +34,14 @@ export const DonationBox3 = ({
     cardNumber: "",
     expiryDate: "",
     cvv: "",
-    cardAddress: "",
+    zipCode: "",
+    state: "",
+    country: "",
   });
+
+  console.log(Country.getAllCountries());
+  console.log(State.getStatesOfCountry("US"));
+  console.log(City.getCitiesOfState("US", "NY"));
 
   const getOrganizationDescription = (orgName: string): string => {
     // Try to find organization by name first
@@ -389,23 +403,98 @@ export const DonationBox3 = ({
                     </div>
                   </div>
 
-                  {/* card address */}
+                  {/* Country and State */}
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label
+                        htmlFor="country"
+                        className="block text-sm font-medium text-gray-700 mb-1"
+                      >
+                        Country
+                      </label>
+                      <Select
+                        value={cardDetails.country}
+                        onValueChange={(value) => {
+                          handleCardDetailsChange("country", value);
+                          // Reset state when country changes
+                          handleCardDetailsChange("state", "");
+                        }}
+                      >
+                        <SelectTrigger className="w-full">
+                          <SelectValue placeholder="Select Country" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {Country.getAllCountries().map((country) => (
+                            <SelectItem
+                              key={country.isoCode}
+                              value={country.isoCode}
+                            >
+                              {country.name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div>
+                      <label
+                        htmlFor="state"
+                        className="block text-sm font-medium text-gray-700 mb-1"
+                      >
+                        State
+                      </label>
+                      <Select
+                        value={cardDetails.state}
+                        onValueChange={(value) =>
+                          handleCardDetailsChange("state", value)
+                        }
+                        disabled={!cardDetails.country}
+                      >
+                        <SelectTrigger className="w-full">
+                          <SelectValue
+                            placeholder={
+                              !cardDetails.country
+                                ? "Select Country first"
+                                : "Select State"
+                            }
+                          />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {cardDetails.country &&
+                            State.getStatesOfCountry(cardDetails.country).map(
+                              (state) => (
+                                <SelectItem
+                                  key={state.isoCode}
+                                  value={state.isoCode}
+                                >
+                                  {state.name}
+                                </SelectItem>
+                              )
+                            )}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+
+                  {/* Zip Code */}
                   <div>
                     <label
-                      htmlFor="cardAddress"
+                      htmlFor="zipCode"
                       className="block text-sm font-medium text-gray-700 mb-1"
                     >
-                      Card Number
+                      Zip Code
                     </label>
                     <input
-                      id="cardAddress"
+                      id="zipCode"
                       type="text"
-                      placeholder="Card Address"
-                      value={cardDetails.cardAddress}
+                      placeholder="12345"
+                      value={cardDetails.zipCode}
                       onChange={(e) => {
-                        handleCardDetailsChange("cardAddress", e.target.value);
+                        const value = e.target.value.replace(/\D/g, "");
+                        if (value.length <= 10) {
+                          handleCardDetailsChange("zipCode", value);
+                        }
                       }}
-                      // maxLength={19}
+                      maxLength={10}
                       className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
                     />
                   </div>
@@ -424,14 +513,20 @@ export const DonationBox3 = ({
               (selectedPaymentMethod === "card" &&
                 (!cardDetails.cardNumber ||
                   !cardDetails.expiryDate ||
-                  !cardDetails.cvv))
+                  !cardDetails.cvv ||
+                  !cardDetails.zipCode ||
+                  !cardDetails.state ||
+                  !cardDetails.country))
             }
             className={`w-full py-4 rounded-lg font-medium transition-colors ${
               !selectedPaymentMethod ||
               (selectedPaymentMethod === "card" &&
                 (!cardDetails.cardNumber ||
                   !cardDetails.expiryDate ||
-                  !cardDetails.cvv))
+                  !cardDetails.cvv ||
+                  !cardDetails.zipCode ||
+                  !cardDetails.state ||
+                  !cardDetails.country))
                 ? "bg-gray-300 text-gray-500 cursor-not-allowed"
                 : "bg-blue-600 text-white hover:bg-blue-700"
             }`}
@@ -444,7 +539,10 @@ export const DonationBox3 = ({
                 selectedPaymentMethod === "card" &&
                 (!cardDetails.cardNumber ||
                   !cardDetails.expiryDate ||
-                  !cardDetails.cvv)
+                  !cardDetails.cvv ||
+                  !cardDetails.zipCode ||
+                  !cardDetails.state ||
+                  !cardDetails.country)
               ) {
                 return "Complete card details";
               }
