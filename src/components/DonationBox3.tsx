@@ -39,10 +39,6 @@ export const DonationBox3 = ({
     country: "",
   });
 
-  console.log(Country.getAllCountries());
-  console.log(State.getStatesOfCountry("US"));
-  console.log(City.getCitiesOfState("US", "NY"));
-
   const getOrganizationDescription = (orgName: string): string => {
     // Try to find organization by name first
     const org = [...CROWDS, ...RECENTS, ...SUGGESTED].find(

@@ -6,7 +6,7 @@ import GroupCrwdEvent from "../components/groupcrwd/GroupCrwdEvent";
 import GroupCrwdBottomBar from "../components/groupcrwd/GroupCrwdBottomBar";
 import ProfileNavbar from "@/components/profile/ProfileNavbar";
 import { Card, CardContent } from "@/components/ui/card";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Toast } from "@/components/ui/toast";
@@ -34,7 +34,7 @@ export default function GroupCrwdPage() {
     width: window.innerWidth,
     height: window.innerHeight,
   });
-
+  const navigate = useNavigate();
   // const handleJoinClick = () => {
   //   setShowJoinModal(true);
   // };
@@ -80,7 +80,14 @@ export default function GroupCrwdPage() {
           Circle
         </div>
         <div className="flex items-center gap-2">
-          {hasJoined && <Button variant="default">Donate</Button>}
+          {hasJoined && (
+            <Button
+              onClick={() => navigate("/donation" + "/?tab=onetime")}
+              variant="default"
+            >
+              Donate
+            </Button>
+          )}
           <Button variant="secondary" onClick={() => setShowShareModal(true)}>
             {/* <Share2 size={20} /> */}
             Share
@@ -114,7 +121,7 @@ export default function GroupCrwdPage() {
           {/* <div className="px-4">
             <PopularPosts title="Activity" showLoadMore={false} />
             </div> */}
-          <GroupCrwdUpdates showEmpty={false} />
+          <GroupCrwdUpdates showEmpty={false} joined={hasJoined} />
           <GroupCrwdSuggested />
           {/* <GroupCrwdEvent /> */}
           {/* {!hasJoined && <GroupCrwdBottomBar onJoin={handleJoin} />} */}

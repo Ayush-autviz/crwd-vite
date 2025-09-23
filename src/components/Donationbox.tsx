@@ -9,8 +9,8 @@ import { Checkout } from "./Checkout";
 import DonationHeader from "./donation/DonationHeader";
 import { Link } from "react-router-dom";
 
-const DonationBox = () => {
-  const [activeTab, setActiveTab] = useState<"setup" | "onetime">("setup");
+const DonationBox = ({ tab = "setup" }: any) => {
+  const [activeTab, setActiveTab] = useState<"setup" | "onetime">(tab);
   const [checkout, setCheckout] = useState(false);
   const [selectedOrganizations, setSelectedOrganizations] = useState<string[]>([
     "Hunger Initiative",

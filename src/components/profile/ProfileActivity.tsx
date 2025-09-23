@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import type { PostDetail } from "@/lib/types";
 import ProfileActivityCard from "./ProfileActivityCard";
 import { morePostsToLoad } from "@/lib/profile/profileActivity";
@@ -25,7 +25,7 @@ const ProfileActivity: React.FC<ProfileActivityProps> = ({
 }) => {
   const [allPosts, setAllPosts] = useState<PostDetail[]>(posts);
   const [isLoading, setIsLoading] = useState(false);
-
+  const navigate = useNavigate();
   const handleLoadMore = async () => {
     setIsLoading(true);
 
@@ -46,7 +46,11 @@ const ProfileActivity: React.FC<ProfileActivityProps> = ({
         )}
         {title && <h2 className="text-lg font-semibold mb-4">{title}</h2>}
         {postButton && (
-          <Button variant="outline" className="px-6 py-2 mb-4">
+          <Button
+            onClick={() => navigate("/create-post")}
+            variant="outline"
+            className="px-6 py-2 mb-4"
+          >
             Post Something
           </Button>
         )}
