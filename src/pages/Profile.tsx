@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import ProfileHeader from "../components/profile/ProfileHeader";
 import ProfileBio from "../components/profile/ProfileBio";
+import Footer from "@/components/Footer";
 
 import ProfileInterests from "../components/profile/ProfileInterests";
 import ProfileActivity from "../components/profile/ProfileActivity";
@@ -233,6 +234,11 @@ export default function ProfilePage() {
         <div className="hidden  md:col-span-4">
           <ProfileSidebar />
         </div>
+      </div>
+
+      {/* Footer */}
+      <div className="">
+        <Footer />
       </div>
     </div>
   );

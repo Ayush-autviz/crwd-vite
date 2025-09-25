@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import Footer from "@/components/Footer";
 import {
   Clock,
   Zap,
@@ -667,6 +668,11 @@ export default function SearchPage() {
       )}
 
       {/* <div className="h-30 md:hidden" /> */}
+
+      {/* Footer */}
+      <div className="hidden md:block">
+        <Footer />
+      </div>
     </div>
   );
 }

@@ -10,6 +10,7 @@ import { profileActivity } from "../lib/profile/profileActivity";
 import ProfileStats from "../components/profile/ProfileStats";
 import { useLocation } from "react-router-dom";
 import ProfileRecentDonations from "../components/profile/ProfileRecentDonations";
+import Footer from "@/components/Footer";
 
 export default function ProfilePage() {
   const { imageUrl, name } = useLocation().state || { imageUrl: "", name: "" };
@@ -62,6 +63,11 @@ export default function ProfilePage() {
         <div className="hidden md:block md:col-span-4">
           <ProfileSidebar extraInfo={false} />
         </div>
+      </div>
+
+      {/* Footer */}
+      <div className="hidden md:block">
+        <Footer />
       </div>
     </div>
   );

@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import ProfileNavbar from "@/components/profile/ProfileNavbar";
 import { ArrowLeft } from "lucide-react";
 import { Link } from "react-router-dom";
+import Footer from "@/components/Footer";
 
 // Mock data for CRWDs
 const mockCrwds = [
@@ -65,6 +66,11 @@ const YourCrwdsPage = () => {
             </Link>
           </div>
         ))}
+      </div>
+
+      {/* Footer */}
+      <div className="hidden md:block">
+        <Footer />
       </div>
     </div>
   );

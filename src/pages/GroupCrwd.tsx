@@ -5,6 +5,7 @@ import GroupCrwdUpdates from "../components/groupcrwd/GroupCrwdUpdates";
 import GroupCrwdEvent from "../components/groupcrwd/GroupCrwdEvent";
 import GroupCrwdBottomBar from "../components/groupcrwd/GroupCrwdBottomBar";
 import ProfileNavbar from "@/components/profile/ProfileNavbar";
+import Footer from "@/components/Footer";
 import { Card, CardContent } from "@/components/ui/card";
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -417,6 +418,11 @@ export default function GroupCrwdPage() {
         isOpen={showShareModal}
         onClose={() => setShowShareModal(false)}
       />
+
+      {/* Footer */}
+      <div className="">
+        <Footer />
+      </div>
     </>
   );
 }

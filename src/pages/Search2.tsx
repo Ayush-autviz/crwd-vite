@@ -11,6 +11,7 @@ import PopularPosts from "@/components/PopularPosts";
 import { AvatarImage } from "@radix-ui/react-avatar";
 import { Link } from "react-router-dom";
 import ProfileNavbar from "@/components/profile/ProfileNavbar";
+import Footer from "@/components/Footer";
 
 const orgs = [
   {
@@ -148,7 +149,7 @@ export default function Search2Page() {
                           >
                             {cause.type}
                           </p>
-                          </div>
+                        </div>
                         <h3 className="font-medium text-sm mb-1">
                           {cause.name}
                         </h3>
@@ -158,17 +159,17 @@ export default function Search2Page() {
                       </div>
                     </div>
                     {cause.type === "Nonprofit" && (
-                    <div className="flex flex-col items-center gap-2">
-                      <Button className=" text-white text-xs py-2 px-3 rounded-lg hover:bg-primary/90 transition-colors">
-                        Donate Now
-                      </Button>
-                      <Button
-                        variant="link"
-                        className="text-primary text-xs p-0 h-auto"
-                      >
-                        Visit Profile
-                      </Button>
-                    </div>
+                      <div className="flex flex-col items-center gap-2">
+                        <Button className=" text-white text-xs py-2 px-3 rounded-lg hover:bg-primary/90 transition-colors">
+                          Donate Now
+                        </Button>
+                        <Button
+                          variant="link"
+                          className="text-primary text-xs p-0 h-auto"
+                        >
+                          Visit Profile
+                        </Button>
+                      </div>
                     )}
                     {cause.type === "Circle" && (
                       <div className="flex flex-col items-center gap-2">
@@ -238,6 +239,11 @@ export default function Search2Page() {
           </Card>
         </div>
         <div className="md:h-10 h-24" />
+      </div>
+
+      {/* Footer */}
+      <div className="hidden md:block">
+        <Footer />
       </div>
     </div>
   );

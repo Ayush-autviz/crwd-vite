@@ -1,5 +1,6 @@
 "use client";
 import DonationBox from "@/components/Donationbox";
+import Footer from "@/components/Footer";
 import React from "react";
 import { useSearchParams } from "react-router-dom";
 
@@ -11,6 +12,9 @@ export default function DonationPage() {
   return (
     <div>
       <DonationBox tab={tab || "setup"} />
+      <div className="hidden md:block">
+        <Footer />
+      </div>
     </div>
   );
 }

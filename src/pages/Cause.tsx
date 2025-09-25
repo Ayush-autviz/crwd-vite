@@ -7,6 +7,7 @@ import CauseAboutCard from "@/components/cause/CauseAboutCard";
 import CauseDonateBar from "@/components/cause/CauseDonateBar";
 import HighLights from "@/components/cause/highlight/HighLights";
 import ProfileNavbar from "@/components/profile/ProfileNavbar";
+import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { Share2 } from "lucide-react";
 import { Link } from "react-router-dom";
@@ -20,7 +21,7 @@ const CausePage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen md:h-full bg-white flex flex-col pb-28">
+    <div className="min-h-screen md:h-full bg-white flex flex-col ">
       {/* <CauseHeader /> */}
       <ProfileNavbar title="Nonprofit" />
       <div className="flex items-center gap-2 pt-6 pb-4 px-4 sticky top-16 z-10 bg-white">
@@ -54,6 +55,11 @@ const CausePage: React.FC = () => {
         isOpen={showShareModal}
         onClose={() => setShowShareModal(false)}
       />
+
+      {/* Footer */}
+      <div className="">
+        <Footer />
+      </div>
     </div>
   );
 };

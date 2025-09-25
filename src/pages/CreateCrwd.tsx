@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import Footer from "@/components/Footer";
 import {
   ChevronRight,
   Plus,
@@ -354,6 +355,11 @@ export default function CreateCRWDPage() {
           isOpen={showShareModal}
           onClose={() => setShowShareModal(false)}
         />
+      </div>
+
+      {/* Footer */}
+      <div className="hidden md:block">
+        <Footer />
       </div>
     </div>
   );

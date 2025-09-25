@@ -30,6 +30,7 @@ import { Link } from "react-router-dom";
 import HamburgerMenu from "@/components/hamburgerMenu/HamburgerMenu";
 import PopularPosts from "@/components/PopularPosts";
 import ProfileNavbar from "@/components/profile/ProfileNavbar";
+import Footer from "@/components/Footer";
 
 export default function FeedHungry() {
   const [activeTab, setActiveTab] = useState("home");
@@ -54,10 +55,7 @@ export default function FeedHungry() {
           <div className="flex justify-between items-start p-4">
             <div className="flex items-center">
               <Avatar className="h-10 w-10 mr-3">
-                <AvatarImage
-                  src="/grocery.jpg"
-                  alt="CRWD Logo"
-                />
+                <AvatarImage src="/grocery.jpg" alt="CRWD Logo" />
                 <AvatarFallback>FH</AvatarFallback>
               </Avatar>
               <div className="flex flex-col">
@@ -81,7 +79,10 @@ export default function FeedHungry() {
                 <Heart className="h-4 w-4 mr-1" />
                 Save
               </Button>
-              <Button size="sm" className="bg-[#4367FF] hover:bg-[#4367FF] hover:opacity-85">
+              <Button
+                size="sm"
+                className="bg-[#4367FF] hover:bg-[#4367FF] hover:opacity-85"
+              >
                 Join
               </Button>
             </div>
@@ -182,10 +183,7 @@ export default function FeedHungry() {
                 <div className="flex flex-col md:flex-row md:flex-wrap md:justify-between md:items-center mb-6 gap-4">
                   <div className="flex items-center">
                     <Avatar className="h-12 w-12 mr-3">
-                      <AvatarImage
-                        src="/grocery.jpg"
-                        alt="Founder"
-                      />
+                      <AvatarImage src="/grocery.jpg" alt="Founder" />
                       <AvatarFallback>CF</AvatarFallback>
                     </Avatar>
                     <div>
@@ -223,9 +221,10 @@ export default function FeedHungry() {
                 {/* Description */}
                 <div className="mb-6">
                   <p className="text-muted-foreground">
-                    A community dedicated to fighting hunger in our local area. We organize food drives,
-                    volunteer at soup kitchens, and support families in need. Join us in making a difference
-                    one meal at a time.
+                    A community dedicated to fighting hunger in our local area.
+                    We organize food drives, volunteer at soup kitchens, and
+                    support families in need. Join us in making a difference one
+                    meal at a time.
                   </p>
                 </div>
 
@@ -321,10 +320,7 @@ export default function FeedHungry() {
                 <div className="space-y-4">
                   <div className="flex items-start gap-3">
                     <Avatar className="h-8 w-8">
-                      <AvatarImage
-                        src="/grocery.jpg"
-                        alt="User"
-                      />
+                      <AvatarImage src="/grocery.jpg" alt="User" />
                       <AvatarFallback>SJ</AvatarFallback>
                     </Avatar>
                     <div>
@@ -339,15 +335,13 @@ export default function FeedHungry() {
                   </div>
                   <div className="flex items-start gap-3">
                     <Avatar className="h-8 w-8">
-                      <AvatarImage
-                        src="/grocery.jpg"
-                        alt="User"
-                      />
+                      <AvatarImage src="/grocery.jpg" alt="User" />
                       <AvatarFallback>MT</AvatarFallback>
                     </Avatar>
                     <div>
                       <p className="text-sm">
-                        <span className="font-medium">Mike T.</span> joined the CRWD
+                        <span className="font-medium">Mike T.</span> joined the
+                        CRWD
                       </p>
                       <p className="text-xs text-muted-foreground">
                         4 hours ago
@@ -356,15 +350,13 @@ export default function FeedHungry() {
                   </div>
                   <div className="flex items-start gap-3">
                     <Avatar className="h-8 w-8">
-                      <AvatarImage
-                        src="/grocery.jpg"
-                        alt="User"
-                      />
+                      <AvatarImage src="/grocery.jpg" alt="User" />
                       <AvatarFallback>AL</AvatarFallback>
                     </Avatar>
                     <div>
                       <p className="text-sm">
-                        <span className="font-medium">Anna L.</span> shared an update
+                        <span className="font-medium">Anna L.</span> shared an
+                        update
                       </p>
                       <p className="text-xs text-muted-foreground">
                         6 hours ago
@@ -376,6 +368,11 @@ export default function FeedHungry() {
             </Card>
           </div>
         </div>
+      </div>
+
+      {/* Footer */}
+      <div className="hidden md:block">
+        <Footer />
       </div>
     </div>
   );

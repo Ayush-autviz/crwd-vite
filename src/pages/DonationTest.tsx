@@ -1,13 +1,14 @@
-import React, { useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Badge } from '@/components/ui/badge';
-import { Heart, CreditCard, DollarSign, CheckCircle } from 'lucide-react';
-import ProfileNavbar from '@/components/profile/ProfileNavbar';
+import React, { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
+import { Heart, CreditCard, DollarSign, CheckCircle } from "lucide-react";
+import ProfileNavbar from "@/components/profile/ProfileNavbar";
+import Footer from "@/components/Footer";
 
 export default function DonationTest() {
-  const [amount, setAmount] = useState('');
+  const [amount, setAmount] = useState("");
   const [isProcessing, setIsProcessing] = useState(false);
   const [isComplete, setIsComplete] = useState(false);
 
@@ -19,14 +20,14 @@ export default function DonationTest() {
     setIsProcessing(true);
 
     // Simulate payment processing
-    await new Promise(resolve => setTimeout(resolve, 2000));
+    await new Promise((resolve) => setTimeout(resolve, 2000));
 
     setIsProcessing(false);
     setIsComplete(true);
   };
 
   const resetForm = () => {
-    setAmount('');
+    setAmount("");
     setIsComplete(false);
     setIsProcessing(false);
   };
@@ -68,12 +69,16 @@ export default function DonationTest() {
           <Card className="border-yellow-200 bg-yellow-50">
             <CardContent className="p-4">
               <div className="flex items-center gap-2">
-                <Badge variant="outline" className="bg-yellow-100 text-yellow-800 border-yellow-300">
+                <Badge
+                  variant="outline"
+                  className="bg-yellow-100 text-yellow-800 border-yellow-300"
+                >
                   TEST MODE
                 </Badge>
               </div>
               <p className="text-sm text-yellow-800 mt-2">
-                This is a test donation page. No real payments will be processed.
+                This is a test donation page. No real payments will be
+                processed.
               </p>
             </CardContent>
           </Card>
@@ -96,7 +101,9 @@ export default function DonationTest() {
                   {presetAmounts.map((preset) => (
                     <Button
                       key={preset}
-                      variant={amount === preset.toString() ? "default" : "outline"}
+                      variant={
+                        amount === preset.toString() ? "default" : "outline"
+                      }
                       onClick={() => setAmount(preset.toString())}
                       className="h-12"
                     >
@@ -135,8 +142,12 @@ export default function DonationTest() {
                     <div className="flex items-center gap-3">
                       <CreditCard className="w-5 h-5 text-blue-600" />
                       <div>
-                        <p className="font-medium text-blue-900">Test Credit Card</p>
-                        <p className="text-sm text-blue-700">**** **** **** 4242</p>
+                        <p className="font-medium text-blue-900">
+                          Test Credit Card
+                        </p>
+                        <p className="text-sm text-blue-700">
+                          **** **** **** 4242
+                        </p>
                       </div>
                     </div>
                   </CardContent>
@@ -155,17 +166,23 @@ export default function DonationTest() {
                     Processing...
                   </div>
                 ) : (
-                  `Donate $${amount || '0'}`
+                  `Donate $${amount || "0"}`
                 )}
               </Button>
 
               {/* Disclaimer */}
               <p className="text-xs text-gray-500 text-center">
-                This is a test environment. No actual charges will be made to your account.
+                This is a test environment. No actual charges will be made to
+                your account.
               </p>
             </CardContent>
           </Card>
         </div>
+      </div>
+
+      {/* Footer */}
+      <div className="hidden md:block">
+        <Footer />
       </div>
     </div>
   );

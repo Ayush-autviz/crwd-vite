@@ -1,20 +1,21 @@
 "use client";
-import React, { useRef } from 'react';
-import { useParams } from 'react-router-dom';
-import CauseHeader from '@/components/cause/CauseHeader';
-import CauseProfileCard from '@/components/cause/CauseProfileCard';
-import CauseRecentDonations from '@/components/cause/CauseRecentDonations';
-import CauseAboutCard from '@/components/cause/CauseAboutCard';
-import CauseDonateBar from '@/components/cause/CauseDonateBar';
-import HighLights from '@/components/cause/highlight/HighLights';
-import ProfileNavbar from '@/components/profile/ProfileNavbar';
+import React, { useRef } from "react";
+import { useParams } from "react-router-dom";
+import CauseHeader from "@/components/cause/CauseHeader";
+import CauseProfileCard from "@/components/cause/CauseProfileCard";
+import CauseRecentDonations from "@/components/cause/CauseRecentDonations";
+import CauseAboutCard from "@/components/cause/CauseAboutCard";
+import CauseDonateBar from "@/components/cause/CauseDonateBar";
+import HighLights from "@/components/cause/highlight/HighLights";
+import ProfileNavbar from "@/components/profile/ProfileNavbar";
+import Footer from "@/components/Footer";
 
 const CauseByIdPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const aboutCardRef = useRef<HTMLDivElement>(null);
 
   const scrollToAboutCard = () => {
-    aboutCardRef.current?.scrollIntoView({ behavior: 'smooth' });
+    aboutCardRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
   return (
@@ -29,8 +30,13 @@ const CauseByIdPage: React.FC = () => {
         </div>
       </div>
       <CauseDonateBar />
+
+      {/* Footer */}
+      <div className="hidden md:block">
+        <Footer />
+      </div>
     </div>
   );
 };
 
-export default CauseByIdPage; 
+export default CauseByIdPage;

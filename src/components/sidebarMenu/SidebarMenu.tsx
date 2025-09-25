@@ -1,18 +1,18 @@
-import React from 'react';
-import SidebarMenuProfile from './SidebarMenuProfile';
-import SidebarMenuItem from './SidebarMenuItem';
-import { Link } from 'react-router-dom';
+import React from "react";
+import SidebarMenuProfile from "./SidebarMenuProfile";
+import SidebarMenuItem from "./SidebarMenuItem";
+import { Link } from "react-router-dom";
 
 const menuItems = [
-  { icon: '➕', label: 'Create a CRWD', href: '#' },
-  { icon: '🧑‍🤝‍🧑', label: 'Your CRWDs', href: '#' },
-  { icon: '🔖', label: 'Saved', href: '#' },
-  { icon: '🔍', label: 'Explore', href: '#' },
-  { icon: '🗃️', label: 'Donation box', href: '#' },
-  { icon: '🔔', label: 'Notifications', href: '#' },
-  { icon: '🔀', label: 'Transaction history', href: '#' },
-  { icon: 'ℹ️', label: 'About', href: '#' },
-  { icon: '❓', label: 'Help', href: '#' },
+  { icon: "➕", label: "Create a CRWD", href: "#" },
+  { icon: "🧑‍🤝‍🧑", label: "Your CRWDs", href: "#" },
+  { icon: "🔖", label: "Saved", href: "#" },
+  { icon: "🔍", label: "Explore", href: "#" },
+  { icon: "🗃️", label: "Donation box", href: "#" },
+  { icon: "🔔", label: "Notifications", href: "#" },
+  { icon: "🔀", label: "Transaction history", href: "#" },
+  { icon: "ℹ️", label: "About", href: "#" },
+  { icon: "❓", label: "Help", href: "#" },
 ];
 
 const SidebarMenu: React.FC = () => (
@@ -31,4 +31,4 @@ const SidebarMenu: React.FC = () => (
   </div>
 );
 
-export default SidebarMenu; 
+export default SidebarMenu;

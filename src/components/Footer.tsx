@@ -14,7 +14,7 @@ const Footer = () => {
     {
       id: 1,
       name: "Instagram",
-      icon: "icons/instagram.png",
+      icon: "/icons/instagram.png",
       href: "https://instagram.com",
     },
     {
@@ -32,7 +32,7 @@ const Footer = () => {
   ];
 
   return (
-    <div className=" flex items-center justify-center md:-mx-6">
+    <div className=" flex items-center justify-center ">
       {/* Main Modal */}
       <div className="bg-black rounded-t-lg w-full relative">
         {/* Content Container */}
@@ -89,7 +89,7 @@ const Footer = () => {
 
         {/* Light Gray Footer Section */}
         <div className="bg-gray-300 px-8 py-4   ">
-          <div className="flex justify-between items-center text-xs text-gray-700 font-medium">
+          <div className="flex justify-evenly items-center text-xs text-gray-700 font-medium">
             <div className="text-center">
               <Link
                 to="/settings/terms"

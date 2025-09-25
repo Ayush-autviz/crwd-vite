@@ -1,17 +1,18 @@
-import React, { useRef } from 'react';
-import CauseHeader from '@/components/cause/CauseHeader';
-import CauseProfileCard from '@/components/cause/CauseProfileCard';
-import CauseRecentDonations from '@/components/cause/CauseRecentDonations';
-import CauseAboutCard from '@/components/cause/CauseAboutCard';
-import CauseDonateBar from '@/components/cause/CauseDonateBar';
-import HighLights from '@/components/cause/highlight/HighLights';
-import ProfileNavbar from '@/components/profile/ProfileNavbar';
+import React, { useRef } from "react";
+import CauseHeader from "@/components/cause/CauseHeader";
+import CauseProfileCard from "@/components/cause/CauseProfileCard";
+import CauseRecentDonations from "@/components/cause/CauseRecentDonations";
+import CauseAboutCard from "@/components/cause/CauseAboutCard";
+import CauseDonateBar from "@/components/cause/CauseDonateBar";
+import HighLights from "@/components/cause/highlight/HighLights";
+import ProfileNavbar from "@/components/profile/ProfileNavbar";
+import Footer from "@/components/Footer";
 
 const CauseDetailPage: React.FC = () => {
   const aboutCardRef = useRef<HTMLDivElement>(null);
 
   const scrollToAboutCard = () => {
-    aboutCardRef.current?.scrollIntoView({ behavior: 'smooth' });
+    aboutCardRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
   return (
@@ -26,6 +27,11 @@ const CauseDetailPage: React.FC = () => {
         </div>
       </div>
       <CauseDonateBar />
+
+      {/* Footer */}
+      <div className="hidden md:block">
+        <Footer />
+      </div>
     </div>
   );
 };

@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { useNavigate } from "react-router-dom";
 import { ImageIcon, Link, X } from "lucide-react";
 import ProfileNavbar from "@/components/profile/ProfileNavbar";
+import Footer from "@/components/Footer";
 import { Select, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Toast } from "@/components/ui/toast";
 
@@ -464,6 +465,11 @@ export default function CreatePostPage() {
       />
 
       {/* <div className="h-20 md:hidden" /> */}
+
+      {/* Footer */}
+      <div className="hidden md:block">
+        <Footer />
+      </div>
     </div>
   );
 }

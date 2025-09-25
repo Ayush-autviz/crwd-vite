@@ -5,6 +5,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import ProfileNavbar from "@/components/profile/ProfileNavbar";
 import { Link } from "react-router-dom";
+import Footer from "@/components/Footer";
 
 const Circles = () => {
   const [activeTab, setActiveTab] = useState<"my-crwds" | "discover">(
@@ -177,6 +178,11 @@ const Circles = () => {
             </div>
           )}
         </div>
+      </div>
+
+      {/* Footer */}
+      <div className="hidden md:block">
+        <Footer />
       </div>
     </div>
   );

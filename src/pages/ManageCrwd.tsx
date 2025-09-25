@@ -1,13 +1,29 @@
 "use client";
 import { useNavigate, useParams } from "react-router-dom";
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef } from "react";
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Edit2, Check, X, Camera, Trash2, ChevronRight, Plus, Minus, Search } from 'lucide-react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import {
+  Edit2,
+  Check,
+  X,
+  Camera,
+  Trash2,
+  ChevronRight,
+  Plus,
+  Minus,
+  Search,
+} from "lucide-react";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import ProfileNavbar from "@/components/profile/ProfileNavbar";
+import Footer from "@/components/Footer";
 import { Toast } from "@/components/ui/toast";
 import { Link } from "react-router-dom";
 import BackButton from "@/components/ui/BackButton";
@@ -20,71 +36,127 @@ type Cause = {
 
 // Add available causes data
 const allAvailableCauses: Cause[] = [
-  { name: "Save the Children", avatar: "https://randomuser.me/api/portraits/men/29.jpg" },
-  { name: "UNICEF", avatar: "https://randomuser.me/api/portraits/women/30.jpg" },
-  { name: "World Food Program", avatar: "https://randomuser.me/api/portraits/men/31.jpg" },
-  { name: "Doctors Without Borders", avatar: "https://randomuser.me/api/portraits/women/32.jpg" },
-  { name: "Habitat for Humanity", avatar: "https://randomuser.me/api/portraits/men/33.jpg" },
-  { name: "Ocean Cleanup", avatar: "https://randomuser.me/api/portraits/women/34.jpg" }
+  {
+    name: "Save the Children",
+    avatar: "https://randomuser.me/api/portraits/men/29.jpg",
+  },
+  {
+    name: "UNICEF",
+    avatar: "https://randomuser.me/api/portraits/women/30.jpg",
+  },
+  {
+    name: "World Food Program",
+    avatar: "https://randomuser.me/api/portraits/men/31.jpg",
+  },
+  {
+    name: "Doctors Without Borders",
+    avatar: "https://randomuser.me/api/portraits/women/32.jpg",
+  },
+  {
+    name: "Habitat for Humanity",
+    avatar: "https://randomuser.me/api/portraits/men/33.jpg",
+  },
+  {
+    name: "Ocean Cleanup",
+    avatar: "https://randomuser.me/api/portraits/women/34.jpg",
+  },
 ];
 
 const mockCrwd = {
   name: "Feed The Hungry",
   username: "Feedthehungry",
   bio: "This is a bio about feed the hungry. they are foodies on a mission to solve world hunger, one meal at a time.",
-  avatar: "https://randomuser.me/api/portraits/men/32.jpg"
+  avatar: "https://randomuser.me/api/portraits/men/32.jpg",
 };
 
 const currentlySupporting = [
-  { name: "Red Cross", avatar: "https://randomuser.me/api/portraits/men/32.jpg" },
-  { name: "St. Judes", avatar: "https://randomuser.me/api/portraits/women/44.jpg" },
-  { name: "Community First", avatar: "https://randomuser.me/api/portraits/men/65.jpg" },
-  { name: "Make a Wish", avatar: "https://randomuser.me/api/portraits/women/68.jpg" },
+  {
+    name: "Red Cross",
+    avatar: "https://randomuser.me/api/portraits/men/32.jpg",
+  },
+  {
+    name: "St. Judes",
+    avatar: "https://randomuser.me/api/portraits/women/44.jpg",
+  },
+  {
+    name: "Community First",
+    avatar: "https://randomuser.me/api/portraits/men/65.jpg",
+  },
+  {
+    name: "Make a Wish",
+    avatar: "https://randomuser.me/api/portraits/women/68.jpg",
+  },
   { name: "Planned", avatar: "https://randomuser.me/api/portraits/men/12.jpg" },
-  { name: "Made with Love", avatar: "https://randomuser.me/api/portraits/women/22.jpg" }
+  {
+    name: "Made with Love",
+    avatar: "https://randomuser.me/api/portraits/women/22.jpg",
+  },
 ];
 const previouslySupported = [
-  { name: "W.H. Initiative", avatar: "https://randomuser.me/api/portraits/men/23.jpg" },
-  { name: "Global Relief", avatar: "https://randomuser.me/api/portraits/women/24.jpg" },
-  { name: "Food for All", avatar: "https://randomuser.me/api/portraits/men/25.jpg" },
-  { name: "Hope Foundation", avatar: "https://randomuser.me/api/portraits/women/26.jpg" },
-  { name: "Shelter Now", avatar: "https://randomuser.me/api/portraits/men/27.jpg" },
-  { name: "Clean Water Project", avatar: "https://randomuser.me/api/portraits/women/28.jpg" },
+  {
+    name: "W.H. Initiative",
+    avatar: "https://randomuser.me/api/portraits/men/23.jpg",
+  },
+  {
+    name: "Global Relief",
+    avatar: "https://randomuser.me/api/portraits/women/24.jpg",
+  },
+  {
+    name: "Food for All",
+    avatar: "https://randomuser.me/api/portraits/men/25.jpg",
+  },
+  {
+    name: "Hope Foundation",
+    avatar: "https://randomuser.me/api/portraits/women/26.jpg",
+  },
+  {
+    name: "Shelter Now",
+    avatar: "https://randomuser.me/api/portraits/men/27.jpg",
+  },
+  {
+    name: "Clean Water Project",
+    avatar: "https://randomuser.me/api/portraits/women/28.jpg",
+  },
 ];
 
 export default function ManageCrwd() {
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
   const [editingField, setEditingField] = useState<string | null>(null);
-  const [currentModal, setCurrentModal] = useState<'current' | 'previous' | null>(null);
-  const [currentlySupportingList, setCurrentlySupportingList] = useState(currentlySupporting);
-  const [previouslySupportedList, setPreviouslySupportedList] = useState(previouslySupported);
-  const [toastState, setToastState] = useState({ show: false, message: '' });
+  const [currentModal, setCurrentModal] = useState<
+    "current" | "previous" | null
+  >(null);
+  const [currentlySupportingList, setCurrentlySupportingList] =
+    useState(currentlySupporting);
+  const [previouslySupportedList, setPreviouslySupportedList] =
+    useState(previouslySupported);
+  const [toastState, setToastState] = useState({ show: false, message: "" });
   const [formData, setFormData] = useState({
     name: mockCrwd.name,
     username: mockCrwd.username,
     bio: mockCrwd.bio,
-    avatarUrl: mockCrwd.avatar
+    avatarUrl: mockCrwd.avatar,
   });
   const [tempData, setTempData] = useState({
     name: mockCrwd.name,
     username: mockCrwd.username,
-    bio: mockCrwd.bio
+    bio: mockCrwd.bio,
   });
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [showAddCauses, setShowAddCauses] = useState(false);
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState("");
 
   // Filter available causes
-  const filteredCauses = allAvailableCauses.filter(cause => 
-    cause.name.toLowerCase().includes(searchQuery.toLowerCase()) &&
-    !currentlySupportingList.some(item => item.name === cause.name) &&
-    !previouslySupportedList.some(item => item.name === cause.name)
+  const filteredCauses = allAvailableCauses.filter(
+    (cause) =>
+      cause.name.toLowerCase().includes(searchQuery.toLowerCase()) &&
+      !currentlySupportingList.some((item) => item.name === cause.name) &&
+      !previouslySupportedList.some((item) => item.name === cause.name)
   );
 
   const handleAddNewCause = (cause: Cause) => {
-    if (!currentlySupportingList.some(item => item.name === cause.name)) {
-      setCurrentlySupportingList(prev => [...prev, cause]);
+    if (!currentlySupportingList.some((item) => item.name === cause.name)) {
+      setCurrentlySupportingList((prev) => [...prev, cause]);
       showToast(`Added ${cause.name} to currently supporting`);
     }
     setShowAddCauses(false);
@@ -92,32 +164,39 @@ export default function ManageCrwd() {
 
   const showToast = (message: string) => {
     setToastState({ show: true, message });
-    setTimeout(() => setToastState({ show: false, message: '' }), 1500);
+    setTimeout(() => setToastState({ show: false, message: "" }), 1500);
   };
 
   const handleEdit = (field: string) => {
     setEditingField(field);
-    setTempData(prev => ({ ...prev, [field]: formData[field as keyof typeof formData] }));
+    setTempData((prev) => ({
+      ...prev,
+      [field]: formData[field as keyof typeof formData],
+    }));
   };
 
   const handleSave = (field: string) => {
     const value = tempData[field as keyof typeof tempData];
 
     // Basic validation
-    if (field === 'name' && !value.trim()) {
+    if (field === "name" && !value.trim()) {
       return; // Don't save empty names
     }
 
-    if (field === 'username' && value.trim() && !value.trim().match(/^[a-zA-Z0-9_]+$/)) {
+    if (
+      field === "username" &&
+      value.trim() &&
+      !value.trim().match(/^[a-zA-Z0-9_]+$/)
+    ) {
       return; // Username should only contain letters, numbers, and underscores
     }
 
-    setFormData(prev => ({ ...prev, [field]: value }));
+    setFormData((prev) => ({ ...prev, [field]: value }));
     setEditingField(null);
 
     // Show success message
-    showToast('CRWD updated successfully!');
-    console.log('Saving CRWD data:', { ...formData, [field]: value });
+    showToast("CRWD updated successfully!");
+    console.log("Saving CRWD data:", { ...formData, [field]: value });
   };
 
   const handleCancel = () => {
@@ -125,7 +204,7 @@ export default function ManageCrwd() {
     setTempData({
       name: formData.name,
       username: formData.username,
-      bio: formData.bio
+      bio: formData.bio,
     });
   };
 
@@ -135,32 +214,45 @@ export default function ManageCrwd() {
       const reader = new FileReader();
       reader.onload = (e) => {
         const newAvatarUrl = e.target?.result as string;
-        setFormData(prev => ({ ...prev, avatarUrl: newAvatarUrl }));
-        showToast('CRWD picture updated!');
+        setFormData((prev) => ({ ...prev, avatarUrl: newAvatarUrl }));
+        showToast("CRWD picture updated!");
       };
       reader.readAsDataURL(file);
     }
   };
 
-  const handleRemoveFromCurrently = (org: typeof currentlySupporting[0]) => {
-    setCurrentlySupportingList(prev => prev.filter(item => item.name !== org.name));
-    setPreviouslySupportedList(prev => [...prev, org]);
+  const handleRemoveFromCurrently = (org: (typeof currentlySupporting)[0]) => {
+    setCurrentlySupportingList((prev) =>
+      prev.filter((item) => item.name !== org.name)
+    );
+    setPreviouslySupportedList((prev) => [...prev, org]);
     setCurrentModal(null);
     showToast(`Removed ${org.name} from currently supporting`);
   };
 
-  const handleAddToCurrent = (org: typeof previouslySupported[0]) => {
-    setPreviouslySupportedList(prev => prev.filter(item => item.name !== org.name));
-    setCurrentlySupportingList(prev => [...prev, org]);
+  const handleAddToCurrent = (org: (typeof previouslySupported)[0]) => {
+    setPreviouslySupportedList((prev) =>
+      prev.filter((item) => item.name !== org.name)
+    );
+    setCurrentlySupportingList((prev) => [...prev, org]);
     setCurrentModal(null);
     showToast(`Added ${org.name} to currently supporting`);
   };
 
-  const renderField = (field: string, label: string, value: string, isTextarea = false) => {
+  const renderField = (
+    field: string,
+    label: string,
+    value: string,
+    isTextarea = false
+  ) => {
     const isCurrentlyEditing = editingField === field;
 
     return (
-      <div className={`flex ${isTextarea ? 'items-start' : 'items-center'} px-4 py-4`}>
+      <div
+        className={`flex ${
+          isTextarea ? "items-start" : "items-center"
+        } px-4 py-4`}
+      >
         <div className="w-1/3 text-gray-700 font-medium">{label}</div>
         <div className="w-2/3 flex items-center gap-2 min-w-0">
           {isCurrentlyEditing ? (
@@ -168,11 +260,16 @@ export default function ManageCrwd() {
               {isTextarea ? (
                 <Textarea
                   value={tempData[field as keyof typeof tempData]}
-                  onChange={(e) => setTempData(prev => ({ ...prev, [field]: e.target.value }))}
+                  onChange={(e) =>
+                    setTempData((prev) => ({
+                      ...prev,
+                      [field]: e.target.value,
+                    }))
+                  }
                   onKeyDown={(e) => {
-                    if (e.key === 'Enter' && e.ctrlKey) {
+                    if (e.key === "Enter" && e.ctrlKey) {
                       handleSave(field);
-                    } else if (e.key === 'Escape') {
+                    } else if (e.key === "Escape") {
                       handleCancel();
                     }
                   }}
@@ -183,11 +280,16 @@ export default function ManageCrwd() {
               ) : (
                 <Input
                   value={tempData[field as keyof typeof tempData]}
-                  onChange={(e) => setTempData(prev => ({ ...prev, [field]: e.target.value }))}
+                  onChange={(e) =>
+                    setTempData((prev) => ({
+                      ...prev,
+                      [field]: e.target.value,
+                    }))
+                  }
                   onKeyDown={(e) => {
-                    if (e.key === 'Enter') {
+                    if (e.key === "Enter") {
                       handleSave(field);
-                    } else if (e.key === 'Escape') {
+                    } else if (e.key === "Escape") {
                       handleCancel();
                     }
                   }}
@@ -217,11 +319,11 @@ export default function ManageCrwd() {
             </div>
           ) : (
             <div className="flex-1 flex items-center justify-between min-w-0">
-              <div className={`text-gray-900 font-normal flex-1 min-w-0 ${
-                isTextarea
-                  ? 'whitespace-pre-line break-words'
-                  : 'truncate'
-              }`}>
+              <div
+                className={`text-gray-900 font-normal flex-1 min-w-0 ${
+                  isTextarea ? "whitespace-pre-line break-words" : "truncate"
+                }`}
+              >
                 {value || `No ${label.toLowerCase()} set`}
               </div>
               <Button
@@ -239,7 +341,11 @@ export default function ManageCrwd() {
     );
   };
 
-  const renderCauseSection = (title: string, causes: Cause[], isPrevious = false) => {
+  const renderCauseSection = (
+    title: string,
+    causes: Cause[],
+    isPrevious = false
+  ) => {
     return (
       <div className="bg-gray-50 rounded-lg p-4 mb-6">
         <div className="flex justify-between items-center mb-4">
@@ -247,7 +353,6 @@ export default function ManageCrwd() {
           <div className="flex items-center gap-2">
             {!isPrevious && (
               <div
-   
                 onClick={() => setShowAddCauses(true)}
                 className="h-8 w-8 p-0 justify-center items-center flex"
               >
@@ -255,9 +360,9 @@ export default function ManageCrwd() {
               </div>
             )}
             <div
-              
-            
-              onClick={() => setCurrentModal(isPrevious ? 'previous' : 'current')}
+              onClick={() =>
+                setCurrentModal(isPrevious ? "previous" : "current")
+              }
               className="h-8 w-8 p-0 justify-center items-center flex"
             >
               <ChevronRight size={16} />
@@ -269,13 +374,17 @@ export default function ManageCrwd() {
             <div
               key={index}
               className={`flex items-center gap-2 px-3 py-1 rounded-full ${
-                isPrevious ? 'bg-gray-100' : 'bg-white'
+                isPrevious ? "bg-gray-100" : "bg-white"
               } shadow-sm`}
             >
               <Avatar className="h-6 w-6">
                 <AvatarImage src={cause.avatar} alt={cause.name} />
               </Avatar>
-              <span className={`text-sm ${isPrevious ? 'text-gray-600' : 'text-gray-900'}`}>
+              <span
+                className={`text-sm ${
+                  isPrevious ? "text-gray-600" : "text-gray-900"
+                }`}
+              >
                 {cause.name}
               </span>
             </div>
@@ -314,7 +423,9 @@ export default function ManageCrwd() {
                     <Avatar className="h-10 w-10">
                       <AvatarImage src={cause.avatar} alt={cause.name} />
                     </Avatar>
-                    <span className="font-medium text-gray-900">{cause.name}</span>
+                    <span className="font-medium text-gray-900">
+                      {cause.name}
+                    </span>
                   </div>
                   <Button
                     size="sm"
@@ -327,7 +438,9 @@ export default function ManageCrwd() {
                 </div>
               ))}
               {filteredCauses.length === 0 && (
-                <p className="text-center text-gray-500 py-4">No causes found</p>
+                <p className="text-center text-gray-500 py-4">
+                  No causes found
+                </p>
               )}
             </div>
           </div>
@@ -338,10 +451,10 @@ export default function ManageCrwd() {
 
   return (
     <div className="w-full flex flex-col items-center justify-start space-y-6 min-h-screen">
-      <Toast 
+      <Toast
         show={toastState.show}
         message={toastState.message}
-        onHide={() => setToastState({ show: false, message: '' })}
+        onHide={() => setToastState({ show: false, message: "" })}
       />
       <ProfileNavbar title="Edit CRWD" titleClassName="text-2xl" />
       <div className="w-full">
@@ -365,8 +478,8 @@ export default function ManageCrwd() {
             <div className="flex flex-col items-center">
               <div className="relative">
                 <Avatar className="h-32 w-32 mb-4">
-                  <AvatarImage 
-                    src={formData.avatarUrl} 
+                  <AvatarImage
+                    src={formData.avatarUrl}
                     alt={formData.name}
                     className="object-cover"
                   />
@@ -380,38 +493,52 @@ export default function ManageCrwd() {
                   <Camera size={16} />
                 </Button>
               </div>
-              <h1 className="text-2xl font-bold text-gray-900">{formData.name}</h1>
+              <h1 className="text-2xl font-bold text-gray-900">
+                {formData.name}
+              </h1>
               <p className="text-gray-600">@{formData.username}</p>
             </div>
           </div>
 
           {/* Edit Fields Section */}
           <div className="divide-y divide-gray-200">
-            {renderField('name', 'Name', formData.name)}
-            {renderField('username', 'Username', formData.username)}
-            {renderField('bio', 'Bio', formData.bio, true)}
+            {renderField("name", "Name", formData.name)}
+            {renderField("username", "Username", formData.username)}
+            {renderField("bio", "Bio", formData.bio, true)}
           </div>
 
           {/* Currently Supporting Section */}
-          {renderCauseSection('Currently supporting', currentlySupportingList)}
+          {renderCauseSection("Currently supporting", currentlySupportingList)}
 
           {/* Previously Supported Section */}
-          {renderCauseSection('Previously Supported', previouslySupportedList, true)}
+          {renderCauseSection(
+            "Previously Supported",
+            previouslySupportedList,
+            true
+          )}
 
           {/* Modals */}
-          <Dialog open={currentModal === 'current'} onOpenChange={() => setCurrentModal(null)}>
+          <Dialog
+            open={currentModal === "current"}
+            onOpenChange={() => setCurrentModal(null)}
+          >
             <DialogContent className="sm:max-w-[425px]">
               <DialogHeader>
                 <DialogTitle>Manage Currently Supporting</DialogTitle>
               </DialogHeader>
               <div className="grid gap-3 py-4">
                 {currentlySupportingList.map((org, index) => (
-                  <div key={index} className="flex items-center justify-between p-2 bg-white rounded-lg border">
+                  <div
+                    key={index}
+                    className="flex items-center justify-between p-2 bg-white rounded-lg border"
+                  >
                     <div className="flex items-center">
                       <Avatar className="h-8 w-8 mr-3">
                         <AvatarImage src={org.avatar} alt={org.name} />
                       </Avatar>
-                      <span className="font-medium text-gray-900">{org.name}</span>
+                      <span className="font-medium text-gray-900">
+                        {org.name}
+                      </span>
                     </div>
                     <Button
                       size="sm"
@@ -427,19 +554,27 @@ export default function ManageCrwd() {
             </DialogContent>
           </Dialog>
 
-          <Dialog open={currentModal === 'previous'} onOpenChange={() => setCurrentModal(null)}>
+          <Dialog
+            open={currentModal === "previous"}
+            onOpenChange={() => setCurrentModal(null)}
+          >
             <DialogContent className="sm:max-w-[425px]">
               <DialogHeader>
                 <DialogTitle>Manage Previously Supported</DialogTitle>
               </DialogHeader>
               <div className="grid gap-3 py-4">
                 {previouslySupportedList.map((org, index) => (
-                  <div key={index} className="flex items-center justify-between p-2 bg-white rounded-lg border">
+                  <div
+                    key={index}
+                    className="flex items-center justify-between p-2 bg-white rounded-lg border"
+                  >
                     <div className="flex items-center">
                       <Avatar className="h-8 w-8 mr-3">
                         <AvatarImage src={org.avatar} alt={org.name} />
                       </Avatar>
-                      <span className="font-medium text-gray-900">{org.name}</span>
+                      <span className="font-medium text-gray-900">
+                        {org.name}
+                      </span>
                     </div>
                     <Button
                       size="sm"
@@ -476,7 +611,12 @@ export default function ManageCrwd() {
         </div>
       </div>
       {renderAddCausesModal()}
-      <div className="h-30 md:hidden"/>
+      <div className="h-30 md:hidden" />
+
+      {/* Footer */}
+      <div className="hidden md:block">
+        <Footer />
+      </div>
     </div>
   );
-} 
+}

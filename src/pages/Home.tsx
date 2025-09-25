@@ -535,7 +535,9 @@ export default function HomePage() {
           <div className="mr-auto  ">
             <PopularPosts />
           </div>
-          <Footer />
+          <div className="md:-mx-6">
+            <Footer />
+          </div>
         </div>
 
         {/* Sidebar - Only visible on desktop */}

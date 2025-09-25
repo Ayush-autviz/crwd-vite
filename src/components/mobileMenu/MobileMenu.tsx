@@ -1,6 +1,6 @@
-import React from 'react';
-import MobileMenuProfile from './MobileMenuProfile';
-import MobileMenuItem from './MobileMenuItem';
+import React from "react";
+import MobileMenuProfile from "./MobileMenuProfile";
+import MobileMenuItem from "./MobileMenuItem";
 import {
   Plus,
   Users,
@@ -12,19 +12,19 @@ import {
   Info,
   HelpCircle,
   Heart,
-} from 'lucide-react';
-import { Link } from 'react-router-dom';
+} from "lucide-react";
+import { Link } from "react-router-dom";
 
 const menuItems = [
-  { icon: <Plus size={20} />, label: 'Create a CRWD', href: '#' },
-  { icon: <Users size={20} />, label: 'Your CRWDs', href: '#' },
-  { icon: <Heart size={20} />, label: 'Saved', href: '#' },
-  { icon: <Search size={20} />, label: 'Explore', href: '#' },
-  { icon: <Archive size={20} />, label: 'Donation box', href: '#' },
-  { icon: <Bell size={20} />, label: 'Notifications', href: '#' },
-  { icon: <Shuffle size={20} />, label: 'Transaction history', href: '#' },
-  { icon: <Info size={20} />, label: 'About', href: '#' },
-  { icon: <HelpCircle size={20} />, label: 'Help', href: '#' },
+  { icon: <Plus size={20} />, label: "Create a CRWD", href: "#" },
+  { icon: <Users size={20} />, label: "Your CRWDs", href: "#" },
+  { icon: <Heart size={20} />, label: "Saved", href: "#" },
+  { icon: <Search size={20} />, label: "Explore", href: "#" },
+  { icon: <Archive size={20} />, label: "Donation box", href: "#" },
+  { icon: <Bell size={20} />, label: "Notifications", href: "#" },
+  { icon: <Shuffle size={20} />, label: "Transaction history", href: "#" },
+  { icon: <Info size={20} />, label: "About", href: "#" },
+  { icon: <HelpCircle size={20} />, label: "Help", href: "#" },
 ];
 
 const MobileMenu: React.FC = () => (
@@ -43,4 +43,4 @@ const MobileMenu: React.FC = () => (
   </div>
 );
 
-export default MobileMenu; 
+export default MobileMenu;
