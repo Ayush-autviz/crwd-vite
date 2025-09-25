@@ -4,6 +4,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Search } from "lucide-react";
+import { Toast } from "@/components/ui/toast";
 import type { Member } from "@/lib/types";
 
 interface MembersListProps {
@@ -12,11 +13,30 @@ interface MembersListProps {
 
 const MembersList: React.FC<MembersListProps> = ({ members }) => {
   const [search, setSearch] = useState("");
+  const [followStatus, setFollowStatus] = useState<{ [key: number]: boolean }>(
+    {}
+  );
+  const [showToast, setShowToast] = useState(false);
+  const [toastMessage, setToastMessage] = useState("");
+
   const filtered = members.filter(
     (m) =>
       m.name.toLowerCase().includes(search.toLowerCase()) ||
       m.username.toLowerCase().includes(search.toLowerCase())
   );
+
+  const handleFollowToggle = (index: number, member: Member) => {
+    const isCurrentlyFollowing = followStatus[index] ?? member.connected;
+    const newFollowStatus = !isCurrentlyFollowing;
+
+    setFollowStatus((prev) => ({
+      ...prev,
+      [index]: newFollowStatus,
+    }));
+
+    setToastMessage(newFollowStatus ? "Followed" : "Unfollowed");
+    setShowToast(true);
+  };
   return (
     <>
       <div className="relative mb-4 mt-1 px-4">
@@ -52,18 +72,25 @@ const MembersList: React.FC<MembersListProps> = ({ members }) => {
             </div>
             <Button
               variant="outline"
+              onClick={() => handleFollowToggle(index, member)}
               className={`border-0 text-sm mr-2 cursor-pointer hover:text-blue-500 ${
-                member.connected
+                followStatus[index] ?? member.connected
                   ? "bg-[#4367FF] text-white"
                   : "bg-[#F0F2FB] text-[#4367FF]"
               }`}
               size="sm"
             >
-              {member.connected ? "Following" : "Follow"}
+              {followStatus[index] ?? member.connected ? "Following" : "Follow"}
             </Button>
           </div>
         ))}
       </ScrollArea>
+      <Toast
+        message={toastMessage}
+        show={showToast}
+        onHide={() => setShowToast(false)}
+        duration={2000}
+      />
     </>
   );
 };

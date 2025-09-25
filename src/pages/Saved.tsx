@@ -1,7 +1,7 @@
-import React, { useState } from "react";
-import SavedHeader from "@/components/saved/SavedHeader";
+import { useState } from "react";
 import SavedList, { SavedData } from "@/components/saved/SavedList";
 import ProfileNavbar from "@/components/profile/ProfileNavbar";
+import { Toast } from "@/components/ui/toast";
 
 const initialSavedItems: SavedData[] = [
   {
@@ -28,15 +28,23 @@ const initialSavedItems: SavedData[] = [
 
 export default function SavedPage() {
   const [savedItems, setSavedItems] = useState<SavedData[]>(initialSavedItems);
+  const [showToast, setShowToast] = useState(false);
 
   const handleRemoveItem = (index: number) => {
     setSavedItems((prevItems) => prevItems.filter((_, i) => i !== index));
+    setShowToast(true);
   };
 
   return (
     <div className="min-h-screen bg-white">
       <ProfileNavbar title="Favorites" />
       <SavedList items={savedItems} onRemoveItem={handleRemoveItem} />
+      <Toast
+        message="Removed from Favorites"
+        show={showToast}
+        onHide={() => setShowToast(false)}
+        duration={2000}
+      />
     </div>
   );
 }

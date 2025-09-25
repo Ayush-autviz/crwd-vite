@@ -4,10 +4,10 @@ import React, { useState, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useNavigate } from "react-router-dom";
-import { Calendar, ImageIcon, Link, X } from "lucide-react";
+import { ImageIcon, Link, X } from "lucide-react";
 import ProfileNavbar from "@/components/profile/ProfileNavbar";
-import { Select, SelectTrigger } from "@/components/ui/select";
-import { SelectValue } from "@/components/ui/select";
+import { Select, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Toast } from "@/components/ui/toast";
 
 const CRWDS = [
   { name: "The Red Cross", status: "Joined", image: "/adidas.jpg" },
@@ -34,6 +34,7 @@ type CRWD = {
 export default function CreatePostPage() {
   const [step, setStep] = useState(1);
   const [selectedCRWD, setSelectedCRWD] = useState<CRWD | null>(null);
+  const [showToast, setShowToast] = useState(false);
   const navigate = useNavigate();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -143,6 +144,14 @@ export default function CreatePostPage() {
     }
   };
 
+  // Handle post creation
+  const handlePostCreation = () => {
+    if (canSubmitPost()) {
+      setShowToast(true);
+      setStep(2);
+    }
+  };
+
   // Step 2: Post to (CRWD selection)
   if (step === 2) {
     return (
@@ -197,8 +206,14 @@ export default function CreatePostPage() {
         </div>
         {/* Confirmation after selecting a CRWD */}
         {selectedCRWD && (
-          <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
-            <div className="bg-card rounded-xl shadow-lg p-8 flex flex-col items-center gap-4 max-w-sm mx-4">
+          <div
+            className="fixed inset-0 bg-black/40 flex items-center justify-center z-50"
+            onClick={() => setSelectedCRWD(null)}
+          >
+            <div
+              className="bg-card rounded-xl shadow-lg p-8 flex flex-col items-center gap-4 max-w-sm mx-4"
+              onClick={(e) => e.stopPropagation()}
+            >
               <div className="text-3xl">🎉</div>
               <div className="text-xl font-semibold text-center">
                 Your post has been created for{" "}
@@ -213,6 +228,15 @@ export default function CreatePostPage() {
             </div>
           </div>
         )}
+
+        {/* Toast notification */}
+        <Toast
+          message="Post created"
+          show={showToast}
+          onHide={() => setShowToast(false)}
+          duration={2000}
+        />
+
         {/* <div className="h-20 md:hidden" /> */}
       </div>
     );
@@ -413,7 +437,7 @@ export default function CreatePostPage() {
               <Button
                 variant="default"
                 className="w-full sm:w-auto rounded-lg px-6 py-2 text-sm font-medium text-white"
-                onClick={() => setStep(2)}
+                onClick={handlePostCreation}
                 disabled={!canSubmitPost()}
               >
                 Post
@@ -429,6 +453,14 @@ export default function CreatePostPage() {
         accept="image/*"
         onChange={handleImageSelect}
         className="hidden"
+      />
+
+      {/* Toast notification */}
+      <Toast
+        message="Post created"
+        show={showToast}
+        onHide={() => setShowToast(false)}
+        duration={2000}
       />
 
       {/* <div className="h-20 md:hidden" /> */}

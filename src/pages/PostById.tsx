@@ -356,7 +356,7 @@ export default function PostById() {
       <Toast
         show={showToast}
         onHide={() => setShowToast(false)}
-        message="Comment posted successfully"
+        message="Reply Added"
       />
 
       <Dialog open={showDialog} onOpenChange={setShowDialog}>

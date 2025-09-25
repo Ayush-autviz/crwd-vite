@@ -129,7 +129,10 @@ export default function ProfileNavbar({
             >
               Log In
             </Link>
-            <HamburgerMenu />
+            <div className="relative">
+              <HamburgerMenu />
+              <div className="absolute z-10 top-0 -right-1 w-2 h-2 bg-red-500 rounded-full"></div>
+            </div>
           </div>
         </header>
       )}

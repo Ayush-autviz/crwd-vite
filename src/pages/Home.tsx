@@ -11,6 +11,8 @@ import PopularPosts from "@/components/PopularPosts";
 import ProfileNavbar from "@/components/profile/ProfileNavbar";
 import CausesCarousel from "@/components/CausesCarousel";
 import { useState } from "react";
+import HomeBanner from "@/components/HomeBanner";
+import Footer from "@/components/Footer";
 
 export default function HomePage() {
   const [showMobileFooter, setShowMobileFooter] = useState(true);
@@ -168,7 +170,7 @@ export default function HomePage() {
         showDesktopMenu={true}
         showBackButton={false}
       />
-      <div className="md:grid md:grid-cols-12 md:gap-6 md:p-6">
+      <div className="md:grid md:grid-cols-12 md:gap-6 md:pt-6 md:px-6">
         {/* Main Content - Takes full width on mobile, 8 columns on desktop */}
         <div className="md:col-span-12">
           {/* Search Input */}
@@ -201,6 +203,28 @@ export default function HomePage() {
               </Link>
             </div>
           </div>
+
+          <div className="flex justify-center">
+            <div className="overflow-x-auto pb-2 flex mt-5 md:mt-0 px-4 scrollbar-none">
+              <div className="flex space-x-2 min-w-max">
+                {categories.map((category, index) => (
+                  <Link to={`/interests`} key={index}>
+                    <Badge
+                      variant="secondary"
+                      className="bg-muted/50 hover:bg-muted text-foreground rounded-md px-4 py-2 whitespace-nowrap"
+                      style={{
+                        backgroundColor: category.background,
+                        color: category.text,
+                      }}
+                    >
+                      {category.name}
+                    </Badge>
+                  </Link>
+                ))}
+              </div>
+            </div>
+          </div>
+
           {/* Main Message */}
           <div className="p-4 md:p-0 md:mb-6">
             <div className=" p-6 md:p-8 rounded-2xl text-center  relative overflow-hidden">
@@ -288,7 +312,7 @@ export default function HomePage() {
           </div>
 
           {/* Categories Section */}
-          <div className="px-4 mt-8 md:px-0 md:mt-10">
+          {/* <div className="px-4 mt-8 md:px-0 md:mt-10">
             <h2 className="text-lg font-semibold mb-4">Explore Categories</h2>
             <div className="overflow-x-auto pb-2">
               <div className="flex space-x-2 min-w-max">
@@ -318,7 +342,7 @@ export default function HomePage() {
                 </Button>
               </Link>
             </div>
-          </div>
+          </div> */}
 
           {/* Suggested Causes Section */}
           <div className="px-4 mt-8 md:px-0 md:mt-10">
@@ -416,6 +440,8 @@ export default function HomePage() {
                   the same things, creating bigger impact together.
                 </p>
               </div>
+
+              <HomeBanner />
             </div>
           </div>
 
@@ -509,6 +535,7 @@ export default function HomePage() {
           <div className="mr-auto  ">
             <PopularPosts />
           </div>
+          <Footer />
         </div>
 
         {/* Sidebar - Only visible on desktop */}
