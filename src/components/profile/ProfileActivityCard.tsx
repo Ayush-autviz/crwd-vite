@@ -1,21 +1,48 @@
-"use client"
-import { Heart, MessageCircle, Share2 } from 'lucide-react'
-import React, { useState, useEffect, useRef } from 'react'
-import { CardContent } from '../ui/card'
-import { Card } from '../ui/card'
-import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar'
-import { EllipsisIcon, Trash2, Flag } from 'lucide-react'
-import type { PostDetail } from '@/lib/types'
-import { cn } from '@/lib/utils'
-import { Link, useNavigate } from 'react-router-dom';
+"use client";
+import { Heart, MessageCircle, Share2 } from "lucide-react";
+import React, { useState, useEffect, useRef } from "react";
+import { CardContent } from "../ui/card";
+import { Card } from "../ui/card";
+import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
+import { EllipsisIcon, Trash2, Flag } from "lucide-react";
+import type { PostDetail } from "@/lib/types";
+import { cn } from "@/lib/utils";
+import { Link, useNavigate } from "react-router-dom";
 import { IoArrowRedoOutline } from "react-icons/io5";
-import { SharePost } from '../ui/SharePost'
+import { SharePost } from "../ui/SharePost";
+import { useFavorites } from "../../contexts/FavoritesContext";
+import { Toast } from "../ui/toast";
 
-export default function ProfileActivityCard({ post, className, showDelete = false, imageUrl }: { post: PostDetail, showDelete?: boolean, className?: string, imageUrl?: string }) {
+export default function ProfileActivityCard({
+  post,
+  className,
+  showDelete = false,
+  imageUrl,
+}: {
+  post: PostDetail;
+  showDelete?: boolean;
+  className?: string;
+  imageUrl?: string;
+}) {
   const [showMenu, setShowMenu] = useState(false);
   const [showShareModal, setShowShareModal] = useState(false);
+  const [showToast, setShowToast] = useState(false);
+  const [toastMessage, setToastMessage] = useState("");
   const menuRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
+  const { toggleFavorite, isFavorite } = useFavorites();
+
+  const handleFavoriteClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    const wasAdded = toggleFavorite(post.id);
+    if (wasAdded) {
+      setToastMessage("Added to favorites");
+    } else {
+      setToastMessage("Removed from favorites");
+    }
+    setShowToast(true);
+  };
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
@@ -24,33 +51,50 @@ export default function ProfileActivityCard({ post, className, showDelete = fals
     };
 
     if (showMenu) {
-      document.addEventListener('mousedown', handleClickOutside);
+      document.addEventListener("mousedown", handleClickOutside);
     }
 
     return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [showMenu]);
 
   return (
     <>
-      <Card key={post.id} className={cn("overflow-hidden border-0 shadow-sm lg:max-w-[600px] ", className)}>
+      <Card
+        key={post.id}
+        className={cn(
+          "overflow-hidden border-0 shadow-sm lg:max-w-[600px] ",
+          className
+        )}
+      >
         <CardContent className="">
           {/* <Link to={`/posts/${post.id}`} className='w-full'> */}
-            <div className="flex gap-3">
-              <div onClick={() => navigate(`/user-profile`, {state: {imageUrl: post.avatarUrl, name: post.username}})} className='cursor-pointer'>
+          <div className="flex gap-3">
+            <div
+              onClick={() =>
+                navigate(`/user-profile`, {
+                  state: { imageUrl: post.avatarUrl, name: post.username },
+                })
+              }
+              className="cursor-pointer"
+            >
               <Avatar className="h-10 w-10 flex-shrink-0">
-                <AvatarImage src={imageUrl ?? post.avatarUrl} alt={post.username} />
+                <AvatarImage
+                  src={imageUrl ?? post.avatarUrl}
+                  alt={post.username}
+                />
                 <AvatarFallback>{post.username.charAt(0)}</AvatarFallback>
               </Avatar>
-              </div>
-          <Link to={`/posts/${post.id}`} className='w-full'>
-
+            </div>
+            <Link to={`/posts/${post.id}`} className="w-full">
               <div className="flex-1 min-w-0">
                 <div className="flex items-center justify-between">
-                  <div className=''>
+                  <div className="">
                     <span className="font-medium text-sm">{post.username}</span>
-                    <span className="text-xs text-muted-foreground ml-2">• {post.time}</span>
+                    <span className="text-xs text-muted-foreground ml-2">
+                      • {post.time}
+                    </span>
                   </div>
                   <div className="relative" ref={menuRef}>
                     <button
@@ -73,7 +117,7 @@ export default function ProfileActivityCard({ post, className, showDelete = fals
                               e.stopPropagation();
                               setShowMenu(false);
                               // Handle delete post
-                              console.log('Delete post');
+                              console.log("Delete post");
                             }}
                             className="flex items-center gap-2 w-full px-3 py-2 text-sm text-red-600 hover:bg-gray-50 transition-colors"
                           >
@@ -99,7 +143,7 @@ export default function ProfileActivityCard({ post, className, showDelete = fals
                             e.stopPropagation();
                             setShowMenu(false);
                             // Handle report post
-                            console.log('Report post');
+                            console.log("Report post");
                           }}
                           className="flex items-center gap-2 w-full px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
                         >
@@ -110,8 +154,10 @@ export default function ProfileActivityCard({ post, className, showDelete = fals
                     )}
                   </div>
                 </div>
-                <Link to='/groupcrwd'>
-                  <div className="text-xs text-primary -mt-[2px] hover:underline">{post.org}</div>
+                <Link to="/groupcrwd">
+                  <div className="text-xs text-primary -mt-[2px] hover:underline">
+                    {post.org}
+                  </div>
                 </Link>
 
                 <div className="text-sm mt-2 mb-3 whitespace-pre-line leading-snug">
@@ -120,20 +166,31 @@ export default function ProfileActivityCard({ post, className, showDelete = fals
 
                 {post.imageUrl && (
                   <div className="w-full h-48 rounded-lg overflow-hidden mb-3">
-                    <img src={post.imageUrl} alt="Post" className="w-full h-full object-cover" />
+                    <img
+                      src={post.imageUrl}
+                      alt="Post"
+                      className="w-full h-full object-cover"
+                    />
                   </div>
                 )}
 
                 <div className="flex items-center gap-4 text-muted-foreground mt-2">
-                  <button className="flex items-center gap-1 hover:text-primary transition-colors">
-                    <Heart className="w-4 h-4" />
+                  <button
+                    onClick={handleFavoriteClick}
+                    className="flex items-center gap-1 hover:text-red-500 transition-colors"
+                  >
+                    <Heart
+                      className={`w-4 h-4 ${
+                        isFavorite(post.id) ? "fill-red-500 text-red-500" : ""
+                      }`}
+                    />
                     <span className="text-xs">{post.likes}</span>
                   </button>
                   <button className="flex items-center gap-1 hover:text-primary transition-colors">
                     <MessageCircle className="w-4 h-4" />
                     <span className="text-xs">{post.comments}</span>
                   </button>
-                  <button 
+                  <button
                     className="flex items-center gap-1 hover:text-primary transition-colors ml-auto"
                     onClick={(e) => {
                       e.preventDefault();
@@ -146,18 +203,26 @@ export default function ProfileActivityCard({ post, className, showDelete = fals
                   </button>
                 </div>
               </div>
-              </Link>
-            </div>
+            </Link>
+          </div>
           {/* </Link> */}
         </CardContent>
       </Card>
 
-      <SharePost 
+      <SharePost
         url={window.location.origin + `/posts/${post.id}`}
         title={`${post.username}'s post on ${post.org}`}
         description={post.text}
         isOpen={showShareModal}
         onClose={() => setShowShareModal(false)}
+      />
+
+      {/* Toast notification */}
+      <Toast
+        message={toastMessage}
+        show={showToast}
+        onHide={() => setShowToast(false)}
+        duration={2000}
       />
     </>
   );

@@ -66,7 +66,7 @@ const Circles = () => {
         showPostButton={true}
       />
 
-      <div className="h-full">
+      <div className="md:min-h-screen">
         {/* Header Section */}
         <div className="p-6 text-center flex flex-col items-center">
           {/* <Link to="/create-post" className="w-full flex justify-end">

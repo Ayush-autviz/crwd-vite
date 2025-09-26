@@ -6,7 +6,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import NavigationItems from "./NavigationItems";
 
 const HamburgerMenu: React.FC = () => (
-  <div className="md:hidden">
+  <div className="">
     <Sheet>
       <SheetTrigger asChild>
         <MenuIcon size={32} className="text-black" />

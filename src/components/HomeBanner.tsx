@@ -31,7 +31,7 @@ const HomeBanner = () => {
   return (
     <div className="py-4">
       <div className="max-w-7xl flex justify-center">
-        <div className="flex gap-6 overflow-x-auto scrollbar-none pb-4">
+        <div className="flex gap-6 overflow-x-auto pb-4">
           {cards.map((card) => (
             <div
               key={card.id}

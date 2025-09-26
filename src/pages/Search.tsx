@@ -224,7 +224,7 @@ export default function SearchPage() {
               <div className="relative group w-full">
                 <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400 group-focus-within:text-gray-600 transition-colors z-0" />
                 <Input
-                  placeholder="Texas flooding"
+                  placeholder="Find Nonprofits"
                   className="bg-gray-100 rounded-[10px] border-none px-12 py-4 text-base placeholder:text-gray-400 w-full"
                   style={{ paddingRight: search ? "3rem" : "1rem" }}
                   value={search}
@@ -381,6 +381,7 @@ export default function SearchPage() {
           </div>
           {/* <div className="md:h-10 h-24" /> */}
         </div>
+        <Footer />
       </div>
     );
   }
@@ -390,7 +391,7 @@ export default function SearchPage() {
     <div className={`min-h-screen ${discover ? "bg-gray-50" : "bg-white"}`}>
       <ProfileNavbar title="Search" />
       {!discover ? (
-        <div className="md:grid md:grid-cols-12 md:gap-4  ">
+        <div className="md:grid md:grid-cols-12 md:gap-4 md:min-h-screen">
           {/* Main Content */}
           <div className="px-4 py-6 md:pl-4 md:col-span-8 ">
             {/* Search Bar */}
@@ -398,7 +399,7 @@ export default function SearchPage() {
               <div className="relative group w-full">
                 <Search className="absolute left-4  top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400 group-focus-within:text-gray-600 transition-colors" />
                 <Input
-                  placeholder="Texas flooding"
+                  placeholder="Find Nonprofits"
                   className="bg-gray-100 rounded-[10px] border-none px-12 py-4 text-base  placeholder:text-gray-400 w-full"
                   style={{ paddingRight: search ? "3rem" : "1rem" }}
                   value={search}
@@ -602,7 +603,7 @@ export default function SearchPage() {
           </div>
         </div>
       ) : (
-        <div className="">
+        <div className="md:min-h-screen">
           {/* Main Content */}
           <div className="px-4 py-6">
             {/* Title and Description */}

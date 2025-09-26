@@ -81,41 +81,33 @@ export default function HomePage() {
   // Sample data for categories
 
   const categories = [
-    {
-      name: "Animals",
-      text: "#E36414", // Orange-Red
-      background: "#FFE1CC", // Softer warm orange tint
-    },
-    {
-      name: "Environment",
-      text: "#6A994E", // Olive Green
-      background: "#DFF0D6", // Fresh leafy green tint
-    },
-    {
-      name: "Food",
-      text: "#FF9F1C", // Carrot Orange
-      background: "#FFE6CC", // Light orange tint (not too pale)
-    },
-    {
-      name: "Education",
-      text: "#FFB84D", // Amber
-      background: "#FFEFD1", // Gentle amber tint
-    },
-    {
-      name: "Health",
-      text: "#D62828", // Crimson
-      background: "#FFD6D6", // Soft rosy red tint
-    },
-    {
-      name: "Rights",
-      text: "#780000", // Maroon
-      background: "#F2C7C7", // Muted pinkish tint
-    },
-    {
-      name: "Housing",
-      text: "#8D6E63", // Brown
-      background: "#EADFD9", // Warm earthy beige tint
-    },
+    { name: "All", text: "#000000", background: "#f5f5f5" },
+    { name: "Animals", text: "#E36414", background: "#FFE9DC" },
+    { name: "Arts", text: "#FF6B6B", background: "#FFECEC" },
+    { name: "Community", text: "#06D6A0", background: "#D6FAF0" },
+    { name: "Education", text: "#FFB84D", background: "#FFF3E0" },
+    { name: "Environment", text: "#6A994E", background: "#E8F4E4" },
+    { name: "Food", text: "#FF9F1C", background: "#FFF0D9" },
+    { name: "General", text: "#ADB5BD", background: "#F3F4F6" },
+    { name: "Global", text: "#48CAE4", background: "#D7F0FB" },
+    { name: "Health", text: "#D62828", background: "#FFE5E5" },
+    { name: "Housing", text: "#8D6E63", background: "#F5E9E3" },
+    { name: "Jobs", text: "#6C757D", background: "#ECEFF1" },
+    { name: "Legal", text: "#FFBE0B", background: "#FFF7D6" },
+    { name: "Membership", text: "#5E6472", background: "#EBEDF1" },
+    { name: "Mental", text: "#9D4EDD", background: "#F3E8FA" },
+    { name: "Philanthropy", text: "#FF006E", background: "#FFE0ED" },
+    { name: "Public", text: "#2A9D8F", background: "#D6F4F1" },
+    { name: "Relief", text: "#F94144", background: "#FFE3E3" },
+    { name: "Religion", text: "#E9C46A", background: "#FFF7E0" },
+    { name: "Research", text: "#3A86FF", background: "#DDE8FF" },
+    { name: "Rights", text: "#780000", background: "#FFDADA" },
+    { name: "Science", text: "#023E8A", background: "#D7E3FF" },
+    { name: "Services", text: "#3F37C9", background: "#E2E0FA" },
+    { name: "Society", text: "#577590", background: "#EAF0F5" },
+    { name: "Sports", text: "#90BE6D", background: "#EBF6E2" },
+    { name: "Wellness", text: "#F28482", background: "#FFEAEA" },
+    { name: "Youth", text: "#4CC9F0", background: "#E0F7FF" },
   ];
 
   // Sample data for suggested causes
@@ -174,7 +166,7 @@ export default function HomePage() {
         {/* Main Content - Takes full width on mobile, 8 columns on desktop */}
         <div className="md:col-span-12">
           {/* Search Input */}
-          <div className="hidden md:block p-4 md:p-0 md:mb-6">
+          {/* <div className="hidden md:block p-4 md:p-0 md:mb-6">
             <div className="relative">
               <Link to="/search">
                 <Input
@@ -202,9 +194,9 @@ export default function HomePage() {
                 </div>
               </Link>
             </div>
-          </div>
+          </div> */}
 
-          <div className="flex justify-center">
+          {/* <div className="flex justify-center">
             <div className="overflow-x-auto pb-2 flex mt-5 md:mt-0 px-4 scrollbar-none">
               <div className="flex space-x-2 min-w-max">
                 {categories.map((category, index) => (
@@ -223,7 +215,7 @@ export default function HomePage() {
                 ))}
               </div>
             </div>
-          </div>
+          </div> */}
 
           {/* Main Message */}
           <div className="p-4 md:p-0 md:mb-6">
@@ -245,7 +237,7 @@ export default function HomePage() {
           </div>
 
           {/* Causes Carousel */}
-          <div className="p-4 md:p-0 md:mb-6">
+          <div className="p-4 md:p-0 md:mb-6 flex justify-center">
             <CausesCarousel />
           </div>
 
@@ -312,7 +304,7 @@ export default function HomePage() {
           </div>
 
           {/* Categories Section */}
-          {/* <div className="px-4 mt-8 md:px-0 md:mt-10">
+          <div className="px-4 mt-8 md:px-0 md:mt-10">
             <h2 className="text-lg font-semibold mb-4">Explore Categories</h2>
             <div className="overflow-x-auto pb-2">
               <div className="flex space-x-2 min-w-max">
@@ -342,7 +334,7 @@ export default function HomePage() {
                 </Button>
               </Link>
             </div>
-          </div> */}
+          </div>
 
           {/* Suggested Causes Section */}
           <div className="px-4 mt-8 md:px-0 md:mt-10">

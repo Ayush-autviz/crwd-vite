@@ -20,6 +20,7 @@ import {
   Flag,
 } from "lucide-react";
 import { Link } from "react-router-dom";
+import { Toast } from "../components/ui/toast";
 
 const interestsData = [
   {
@@ -94,7 +95,20 @@ const orgAvatars = [
 
 export default function ProfilePage() {
   const [showMenu, setShowMenu] = useState(false);
+  const [showToast, setShowToast] = useState(false);
+  const [toastMessage, setToastMessage] = useState("");
+  const [isFollowing, setIsFollowing] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
+
+  const handleFollowClick = () => {
+    setIsFollowing(!isFollowing);
+    if (isFollowing) {
+      setToastMessage("Unfollowed");
+    } else {
+      setToastMessage("Followed");
+    }
+    setShowToast(true);
+  };
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -152,7 +166,12 @@ export default function ProfilePage() {
             </div>
           )}
         </div>
-        <Button>Follow</Button>
+        <Button
+          onClick={handleFollowClick}
+          variant={isFollowing ? "outline" : "default"}
+        >
+          {isFollowing ? "Following" : "Follow"}
+        </Button>
       </div>
 
       <div className="md:grid md:grid-cols-12 md:gap-6 md:px-6 md:pt-2 md:pb-6">
@@ -240,6 +259,14 @@ export default function ProfilePage() {
       <div className="">
         <Footer />
       </div>
+
+      {/* Toast notification */}
+      <Toast
+        message={toastMessage}
+        show={showToast}
+        onHide={() => setShowToast(false)}
+        duration={2000}
+      />
     </div>
   );
 }

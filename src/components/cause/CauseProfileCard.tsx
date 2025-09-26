@@ -1,21 +1,11 @@
 import React, { useState } from "react";
-import {
-  CheckCircle,
-  Users,
-  Heart,
-  Bookmark,
-  Upload,
-  Award,
-  ShieldCheck,
-  ChevronDown,
-  Share2,
-} from "lucide-react";
-import ProfileInterests from "../profile/ProfileInterests";
+import { CheckCircle, Heart, ShieldCheck } from "lucide-react";
 import ClaimCauseDialog from "./ClaimCauseDialog";
 import { Link } from "react-router-dom";
-import { Button } from "../ui/button";
 import { SharePost } from "../ui/SharePost";
 import { Badge } from "../ui/badge";
+import { useFavorites } from "../../contexts/FavoritesContext";
+import { Toast } from "../ui/toast";
 
 interface CauseProfileCardProps {
   onLearnMoreClick?: () => void;
@@ -25,7 +15,20 @@ const CauseProfileCard: React.FC<CauseProfileCardProps> = ({
   onLearnMoreClick,
 }) => {
   const [showShareModal, setShowShareModal] = useState(false);
-  const [isLiked, setIsLiked] = useState(false);
+  const [showToast, setShowToast] = useState(false);
+  const [toastMessage, setToastMessage] = useState("");
+  const { toggleFavorite, isFavorite } = useFavorites();
+  const causeId = "cause-helping-humanity"; // You can make this dynamic based on props
+
+  const handleFavoriteClick = () => {
+    const wasAdded = toggleFavorite(causeId);
+    if (wasAdded) {
+      setToastMessage("Added to favorites");
+    } else {
+      setToastMessage("Removed from favorites");
+    }
+    setShowToast(true);
+  };
 
   const categories = [
     {
@@ -83,14 +86,14 @@ const CauseProfileCard: React.FC<CauseProfileCardProps> = ({
           className={`
               w-6 h-6
               ${
-                isLiked
+                isFavorite(causeId)
                   ? "stroke-red-500 fill-red-500"
                   : "stroke-gray-500 fill-transparent"
               }
               hover:stroke-red-500 hover:fill-red-500
               cursor-pointer transition-colors duration-200
             `}
-          onClick={() => setIsLiked(!isLiked)}
+          onClick={handleFavoriteClick}
         />
         {/* </button> */}
         {/* </Button> */}
@@ -118,8 +121,8 @@ const CauseProfileCard: React.FC<CauseProfileCardProps> = ({
 
       <div className="overflow-x-auto pb-2">
         <div className="flex space-x-2 min-w-max">
-          {categories.map((category, index) => (
-            <Link to={`/interests`} key={index}>
+          {categories.map((category) => (
+            <Link to={`/interests`} key={category.name}>
               <Badge
                 variant="secondary"
                 className="bg-muted/50 hover:bg-muted text-foreground rounded-md px-4 py-2 whitespace-nowrap"
@@ -168,6 +171,14 @@ const CauseProfileCard: React.FC<CauseProfileCardProps> = ({
         description="Join us in supporting families experiencing food insecurity in the greater Atlanta area."
         isOpen={showShareModal}
         onClose={() => setShowShareModal(false)}
+      />
+
+      {/* Toast notification */}
+      <Toast
+        message={toastMessage}
+        show={showToast}
+        onHide={() => setShowToast(false)}
+        duration={2000}
       />
     </div>
   );

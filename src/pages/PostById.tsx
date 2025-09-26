@@ -274,7 +274,7 @@ export default function PostById() {
       <main className="flex-1">
         <ProfileActivityCard
           post={post}
-          className="rounded-none shadow-none border-b border-gray-200"
+          className="rounded-none shadow-none "
         />
 
         {/* Comments Section */}
@@ -327,7 +327,7 @@ export default function PostById() {
       </main>
 
       {/* Sticky Input Bar */}
-      <div className="fixed bottom-0 right-0 bg-white border-t px-4 py-3 flex items-center gap-2 w-full md:w-[calc(100%-288px)] ">
+      <div className="fixed bottom-0 right-0 bg-white border-t px-4 py-3 flex items-center gap-2 w-full ">
         <div className="flex items-center gap-2 flex-1 bg-gray-100 rounded-full px-4 py-2 relative">
           <img
             src="/view.png"

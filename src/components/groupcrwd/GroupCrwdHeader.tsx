@@ -1,12 +1,12 @@
 "use client";
 
 import React, { useState } from "react";
-import { Share2, Bookmark, Check, Heart } from "lucide-react";
-import ProfileInterests from "../profile/ProfileInterests";
-import { Button } from "../ui/button";
+import { Heart } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { SharePost } from "../ui/SharePost";
 import { Badge } from "../ui/badge";
+import { useFavorites } from "../../contexts/FavoritesContext";
+import { Toast } from "../ui/toast";
 
 interface GroupCrwdHeaderProps {
   hasJoined: boolean;
@@ -58,7 +58,20 @@ const GroupCrwdHeader: React.FC<GroupCrwdHeaderProps> = ({
 }) => {
   const navigate = useNavigate();
   const [showShareModal, setShowShareModal] = useState(false);
-  const [isLiked, setIsLiked] = useState(false);
+  const [showToast, setShowToast] = useState(false);
+  const [toastMessage, setToastMessage] = useState("");
+  const { toggleFavorite, isFavorite } = useFavorites();
+  const groupId = `group-${id}`; // Create unique ID for this group
+
+  const handleFavoriteClick = () => {
+    const wasAdded = toggleFavorite(groupId);
+    if (wasAdded) {
+      setToastMessage("Added to favorites");
+    } else {
+      setToastMessage("Removed from favorites");
+    }
+    setShowToast(true);
+  };
   return (
     <div className="bg-white  p-4 mx-2   mb-4 flex flex-col gap-2">
       {/* <div className="flex items-center gap-2 justify-between">
@@ -120,14 +133,14 @@ const GroupCrwdHeader: React.FC<GroupCrwdHeaderProps> = ({
           className={`
               w-6 h-6
               ${
-                isLiked
+                isFavorite(groupId)
                   ? "stroke-red-500 fill-red-500"
                   : "stroke-gray-500 fill-transparent"
               }
               hover:stroke-red-500 hover:fill-red-500
               cursor-pointer transition-colors duration-200
             `}
-          onClick={() => setIsLiked(!isLiked)}
+          onClick={handleFavoriteClick}
         />
       </div>
 
@@ -171,10 +184,10 @@ const GroupCrwdHeader: React.FC<GroupCrwdHeaderProps> = ({
         className="border-none"
       /> */}
 
-<div className="overflow-x-auto pb-2">
+      <div className="overflow-x-auto pb-2">
         <div className="flex space-x-2 min-w-max">
-          {categories.map((category, index) => (
-            <Link to={`/interests`} key={index}>
+          {categories.map((category) => (
+            <Link to={`/interests`} key={category.name}>
               <Badge
                 variant="secondary"
                 className="bg-muted/50 hover:bg-muted text-foreground rounded-md px-4 py-2 whitespace-nowrap"
@@ -203,11 +216,10 @@ const GroupCrwdHeader: React.FC<GroupCrwdHeaderProps> = ({
       </div>
       {/* Orgs Avatars */}
       <div className="flex items-center justify-start md:space-x-5 mt-1 gap-3">
-        {orgAvatars.map((src, i) => (
-          <Link to={`/cause`}>
+        {orgAvatars.map((src) => (
+          <Link to={`/cause`} key={src.name}>
             <div className="flex flex-col items-center">
               <img
-                key={i}
                 src={src.image}
                 alt="org"
                 className="w-12 h-12 rounded-md   first:ml-0"
@@ -238,6 +250,14 @@ const GroupCrwdHeader: React.FC<GroupCrwdHeaderProps> = ({
         description="Join us in supporting families experiencing food insecurity in the greater Atlanta area."
         isOpen={showShareModal}
         onClose={() => setShowShareModal(false)}
+      />
+
+      {/* Toast notification */}
+      <Toast
+        message={toastMessage}
+        show={showToast}
+        onHide={() => setShowToast(false)}
+        duration={2000}
       />
       {/* Donate Button */}
       {/* <button className="w-full bg-blue-600 text-white rounded-md py-4 font-semibold text-base mt-2 shadow-lg hover:bg-blue-700 transition">Donate</button> */}
