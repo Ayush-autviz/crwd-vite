@@ -237,7 +237,7 @@ export default function HomePage() {
           </div>
 
           {/* Causes Carousel */}
-          <div className="p-4 md:p-0 md:mb-6 flex justify-center">
+          <div className="p-4 md:p-0 md:mb-6 md:flex md:justify-center">
             <CausesCarousel />
           </div>
 
