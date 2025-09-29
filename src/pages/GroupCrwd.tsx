@@ -75,10 +75,10 @@ export default function GroupCrwdPage() {
   return (
     // <div>
     <>
-      <ProfileNavbar title="Group Circle" />
+      <ProfileNavbar title="Collective" />
       <div className="flex items-center gap-2 justify-between pt-6 pb-2 px-4 sticky top-16 z-10 bg-white ">
         <div className="text-lg font-semibold text-green-700 bg-green-200 px-2 py-1 rounded-md">
-          Circle
+          Collective
         </div>
         <div className="flex items-center gap-2">
           {hasJoined && (
@@ -109,7 +109,7 @@ export default function GroupCrwdPage() {
                 Joined
               </>
             ) : (
-              "Join Circle"
+              "Join This Collective"
             )}
           </Button>
         </div>
@@ -413,7 +413,7 @@ export default function GroupCrwdPage() {
 
       <SharePost
         url={window.location.origin + `/groupcrwd/`}
-        title={`Check out this Giving Circle`}
+        title={`Check out this CRWD Collective`}
         description="Join us in supporting families experiencing food insecurity in the greater Atlanta area."
         isOpen={showShareModal}
         onClose={() => setShowShareModal(false)}

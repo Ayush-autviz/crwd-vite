@@ -167,7 +167,7 @@ export default function CreatePostPage() {
           <div className="relative">
             <Input
               type="search"
-              placeholder="Search for a Giving Circle"
+              placeholder="Search for a CRWD Collective"
               className="bg-muted/50 rounded-lg px-3 py-2 w-full text-sm border-none focus-visible:ring-1 focus-visible:ring-primary/50"
             />
           </div>
@@ -273,7 +273,7 @@ export default function CreatePostPage() {
               ) : (
                 <>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Post to a Giving Circle
+                    Post to a CRWD Collective
                   </label>
                   <Select>
                     <SelectTrigger
@@ -281,7 +281,7 @@ export default function CreatePostPage() {
                       onClick={() => setStep(2)}
                     >
                       <SelectValue
-                        placeholder="Select a Giving Circle (required)"
+                        placeholder="Select a CRWD Collective (required)"
                         className="truncate"
                       />
                     </SelectTrigger>

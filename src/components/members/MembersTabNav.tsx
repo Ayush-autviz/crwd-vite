@@ -1,5 +1,5 @@
-import React from 'react';
-import { Button } from '@/components/ui/button';
+import React from "react";
+import { Button } from "@/components/ui/button";
 
 interface MembersTabNavProps {
   activeTab: string;
@@ -10,9 +10,9 @@ interface MembersTabNavProps {
 }
 
 const tabs = [
-  { label: 'Causes', value: 'Causes' },
-  { label: 'Members', value: 'Members' },
-  { label: 'Collective Donations', value: 'Collective Donations' },
+  { label: "Causes", value: "Causes" },
+  { label: "Community", value: "Members" },
+  { label: "Contributions", value: "Collective Donations" },
 ];
 
 const MembersTabNav: React.FC<MembersTabNavProps> = ({
@@ -20,25 +20,33 @@ const MembersTabNav: React.FC<MembersTabNavProps> = ({
   setActiveTab,
   causesCount = 1,
   membersCount = 58,
-  donationsCount = 34
+  donationsCount = 34,
 }) => (
   <div className="flex justify-around border-b px-4 mt-3">
-    {tabs.map(tab => (
+    {tabs.map((tab) => (
       <Button
         key={tab.value}
         variant="ghost"
-        className={`flex-1 py-4 px-1 text-center rounded-none border-b pb-7 ${activeTab === tab.value ? 'border-primary text-primary' : 'border-transparent text-muted-foreground'}`}
+        className={`flex-1 py-4 px-1 text-center rounded-none border-b pb-7 ${
+          activeTab === tab.value
+            ? "border-primary text-primary"
+            : "border-transparent text-muted-foreground"
+        }`}
         onClick={() => setActiveTab(tab.value)}
       >
         <div className="flex items-center gap-2">
-          <span className={`flex items-center justify-center rounded-full h-6 w-6 text-xs font-medium ${
-            activeTab === tab.value
-              ? 'bg-primary/20 text-primary'
-              : 'bg-gray-100 text-gray-700'
-          }`}>
-            {tab.value === 'Causes' ? causesCount :
-             tab.value === 'Members' ? membersCount :
-             donationsCount}
+          <span
+            className={`flex items-center justify-center rounded-full h-6 w-6 text-xs font-medium ${
+              activeTab === tab.value
+                ? "bg-primary/20 text-primary"
+                : "bg-gray-100 text-gray-700"
+            }`}
+          >
+            {tab.value === "Causes"
+              ? causesCount
+              : tab.value === "Members"
+              ? membersCount
+              : donationsCount}
           </span>
           <span>{tab.label}</span>
         </div>

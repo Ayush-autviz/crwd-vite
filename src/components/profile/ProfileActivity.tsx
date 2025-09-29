@@ -13,6 +13,7 @@ interface ProfileActivityProps {
   imageUrl?: string;
   title?: string;
   postButton?: boolean;
+  subheading?: boolean;
 }
 
 const ProfileActivity: React.FC<ProfileActivityProps> = ({
@@ -22,6 +23,7 @@ const ProfileActivity: React.FC<ProfileActivityProps> = ({
   imageUrl,
   title = "Activity",
   postButton = false,
+  subheading = false,
 }) => {
   const [allPosts, setAllPosts] = useState<PostDetail[]>(posts);
   const [isLoading, setIsLoading] = useState(false);
@@ -42,20 +44,25 @@ const ProfileActivity: React.FC<ProfileActivityProps> = ({
     <div className="w-full">
       <div className="flex items-center justify-between">
         {showLabel && (
-          <h2 className="text-lg font-semibold mb-4">Recent Activity</h2>
+          <h2 className="text-lg font-semibold">Recent Activity</h2>
         )}
-        {title && <h2 className="text-lg font-semibold mb-4">{title}</h2>}
+        {title && <h2 className="text-lg font-semibold">{title}</h2>}
         {postButton && (
           <Button
             onClick={() => navigate("/create-post")}
             variant="outline"
-            className="px-6 py-2 mb-4"
+            className="px-6 py-2 "
           >
-            Post Something
+            Start a Conversation
           </Button>
         )}
       </div>
-      <div className="space-y-4">
+      {subheading && (
+        <i className="text-xs text-gray-500">
+          Members share updates, questions and articles here.
+        </i>
+      )}
+      <div className="space-y-4 mt-4">
         {allPosts.length > 0 &&
           allPosts.map((post, idx) => (
             // <Link to={`/posts/${post.id}`}>

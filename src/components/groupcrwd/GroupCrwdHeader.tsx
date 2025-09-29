@@ -7,6 +7,7 @@ import { SharePost } from "../ui/SharePost";
 import { Badge } from "../ui/badge";
 import { useFavorites } from "../../contexts/FavoritesContext";
 import { Toast } from "../ui/toast";
+import { Link as LinkIcon } from "lucide-react";
 
 interface GroupCrwdHeaderProps {
   hasJoined: boolean;
@@ -163,14 +164,16 @@ const GroupCrwdHeader: React.FC<GroupCrwdHeaderProps> = ({
           className="cursor-pointer flex-1 col-span-1  "
         >
           <div className="text-base font-bold">58</div>
-          <div className="text-xs text-gray-500">Members</div>
+          <div className="text-xs text-gray-500">Community</div>
         </div>
         <div
           onClick={() => navigate(`/members?tab=Collective%20Donations`)}
           className="cursor-pointer flex-1 col-span-1"
         >
           <div className="text-base font-bold">12</div>
-          <div className="text-xs text-gray-500 w-1/2 mx-auto">Donations</div>
+          <div className="text-xs text-gray-500 w-1/2 mx-auto">
+            Contributions
+          </div>
         </div>
       </div>
       {/* Tags */}
@@ -204,16 +207,18 @@ const GroupCrwdHeader: React.FC<GroupCrwdHeaderProps> = ({
       </div>
 
       <div className="flex items-center justify-between">
-        <p className="text-sm font-semibold text-gray-700">
-          Recently Supported Nonprofits
-        </p>
-        <p
+        <p className=" font-semibold ">Recently Supported Nonprofits</p>
+        {/* <p
           onClick={() => navigate(`/members`)}
           className="text-blue-600 underline cursor-pointer"
         >
           See All
-        </p>
+        </p> */}
       </div>
+
+      <i className="text-xs text-gray-500">
+        Your donations here are split evenly across these nonprofits
+      </i>
       {/* Orgs Avatars */}
       <div className="flex items-center justify-start md:space-x-5 mt-1 gap-3">
         {orgAvatars.map((src) => (
@@ -230,6 +235,16 @@ const GroupCrwdHeader: React.FC<GroupCrwdHeaderProps> = ({
             </div>
           </Link>
         ))}
+      </div>
+
+      <div className="flex items-center gap-5 mt-2">
+        <LinkIcon size={16} />
+        <p
+          onClick={() => navigate(`/members`)}
+          className="text-blue-600 underline cursor-pointer"
+        >
+          See All
+        </p>
       </div>
       {/* Supporting text */}
       {/* <div className="text-xs text-gray-500 mt-1">

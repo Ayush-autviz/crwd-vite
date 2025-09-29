@@ -22,9 +22,10 @@ export const menuGroups = [
     items: [
       // {
       //   icon: <Users size={20} />,
-      //   label: "Your Giving Circles",
+      //   label: "Your CRWD Collectives",
       //   href: "/your-crwds",
       // },
+      { icon: <Plus size={20} />, label: "Create Post", href: "/create-post" },
 
       { icon: <Archive size={20} />, label: "Donation box", href: "/donation" },
     ],
@@ -96,7 +97,7 @@ const NavigationItems: React.FC<NavigationItemsProps> = ({
           )}
         >
           <Plus size={18} className={cn("text-primary", iconClassName)} />
-          <span>Giving Circles</span>
+          <span>CRWD Collectives</span>
         </Link>
       )}
       {showNewPostButton && (

@@ -19,7 +19,7 @@ const Circles = () => {
       name: "The Red Cross",
       description: "An health organization that helps people in need",
       image: "/redcross.png",
-      type: "Circle",
+      type: "Collective",
       members: 1250,
     },
     {
@@ -27,7 +27,7 @@ const Circles = () => {
       name: "St. Judes",
       description: "The leading children's health organization",
       image: "/grocery.jpg",
-      type: "Circle",
+      type: "Collective",
       members: 890,
     },
     {
@@ -35,7 +35,7 @@ const Circles = () => {
       name: "Women's Healthcare of At...",
       description: "We are Atlanta's #1 healthcare organization",
       image: "/redcross.png",
-      type: "Circle",
+      type: "Collective",
       members: 456,
     },
     {
@@ -43,7 +43,7 @@ const Circles = () => {
       name: "St. Judes",
       description: "The leading children's health organization",
       image: "/grocery.jpg",
-      type: "Circle",
+      type: "Collective",
       members: 890,
     },
     {
@@ -51,7 +51,7 @@ const Circles = () => {
       name: "Women's Healthcare of At...",
       description: "We are Atlanta's #1 healthcare organization",
       image: "/redcross.png",
-      type: "Circle",
+      type: "Collective",
       members: 456,
     },
   ];
@@ -59,11 +59,11 @@ const Circles = () => {
   return (
     <div className="">
       <ProfileNavbar
-        title="Circles"
+        title="Collectives"
         showMobileMenu={true}
         showDesktopMenu={true}
         showBackButton={true}
-        showPostButton={true}
+        showPostButton={false}
       />
 
       <div className="md:min-h-screen">
@@ -75,11 +75,11 @@ const Circles = () => {
             </Button>
           </Link> */}
           <h1 className="text-3xl font-bold text-foreground mb-2">
-            Your Giving Circles
+            Discover Collectives
           </h1>
           <p className="text-muted-foreground mb-4 max-w-lg mx-auto">
-            Amplify your impact by giving together. Join a giving circle or
-            start your own.
+            Join communities of people supporting causes together or start your
+            own.
           </p>
 
           {/* Create New Crwd Button */}
@@ -88,7 +88,7 @@ const Circles = () => {
             className=" flex items-center gap-2 justify-center w-fit bg-green-600 hover:bg-green-700 text-white px-4 py-2    rounded-lg text-base font-semibold shadow-lg"
           >
             <Plus className="" strokeWidth={3} />
-            <p> Create a New Giving Circle</p>
+            <p> Start a Collective</p>
           </Link>
         </div>
 
@@ -104,7 +104,7 @@ const Circles = () => {
               }`}
             >
               <Users className="w-4 h-4" />
-              My Circles (0)
+              My Collectives (0)
             </button>
             <button
               onClick={() => setActiveTab("discover")}
@@ -129,10 +129,12 @@ const Circles = () => {
                 <Users className="w-12 h-12 text-muted-foreground" />
               </div>
               <h3 className="text-lg font-semibold text-foreground mb-2">
-                You haven't joined any giving circles yet.
+                You're not in a Collective yet.
               </h3>
               <p className="text-muted-foreground ">
-                Check out the Discover tab to find a giving circle!
+                Collectives are communities built around causes. Join one to
+                instantly add its nonprofits to your Donation Box or start your
+                own.
               </p>
             </div>
           ) : (

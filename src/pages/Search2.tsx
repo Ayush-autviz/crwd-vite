@@ -135,14 +135,14 @@ export default function Search2Page() {
                       <div className="min-w-0 flex-1">
                         <div
                           className={`${
-                            cause.type === "Circle"
+                            cause.type === "Collective"
                               ? "bg-green-100"
                               : "bg-blue-50"
                           } px-3 py-1 rounded-sm w-fit`}
                         >
                           <p
                             className={`${
-                              cause.type === "Circle"
+                              cause.type === "Collective"
                                 ? "text-green-600"
                                 : "text-blue-600"
                             } text-xs font-semibold`}
@@ -171,7 +171,7 @@ export default function Search2Page() {
                         </Button>
                       </div>
                     )}
-                    {cause.type === "Circle" && (
+                    {cause.type === "Collective" && (
                       <div className="flex flex-col items-center gap-2">
                         <Button className="bg-green-600 text-white text-xs py-2 px-4 rounded-lg hover:bg-green-700 transition-colors">
                           Learn More

@@ -436,7 +436,7 @@ const DonationBox = ({ tab = "setup" }: any) => {
                   </div>
 
                   {/* Summary and Next Button */}
-                  <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100 mb-6 fixed bottom-0 w-calc(100%-16px) left-0 md:left-auto md:w-[calc(100%-320px)] right-0 mx-4">
+                  <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100 mb-6 fixed bottom-0 w-calc(100%-16px) left-0 right-0 mx-4">
                     <div className="flex justify-between items-center">
                       <div>
                         <p className="text-lg font-semibold text-gray-800">
