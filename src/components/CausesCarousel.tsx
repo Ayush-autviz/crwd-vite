@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 const data = [
   {
     image: "/grocery.jpg",
-    heading: "Choose Causes You Care About",
+    heading: "Choose Causes You Care About.",
     subHeading: "Add nonprofits you love in seconds.",
   },
   {
@@ -15,7 +15,7 @@ const data = [
   },
   {
     image: "/grocery.jpg",
-    heading: "Join or Start a Collective",
+    heading: "Join or Start a Collective.",
     subHeading: "Give together with friends, coworkers or your community.",
   },
 ];
