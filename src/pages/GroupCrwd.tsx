@@ -1,15 +1,11 @@
-import React, { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import GroupCrwdHeader from "../components/groupcrwd/GroupCrwdHeader";
 import GroupCrwdSuggested from "../components/groupcrwd/GroupCrwdSuggested";
 import GroupCrwdUpdates from "../components/groupcrwd/GroupCrwdUpdates";
-import GroupCrwdEvent from "../components/groupcrwd/GroupCrwdEvent";
-import GroupCrwdBottomBar from "../components/groupcrwd/GroupCrwdBottomBar";
 import ProfileNavbar from "@/components/profile/ProfileNavbar";
 import Footer from "@/components/Footer";
-import { Card, CardContent } from "@/components/ui/card";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Toast } from "@/components/ui/toast";
 import { SharePost } from "@/components/ui/SharePost";
 import {
@@ -20,9 +16,8 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Check, Share2, X } from "lucide-react";
+import { Check, X } from "lucide-react";
 import ReactConfetti from "react-confetti";
-import PopularPosts from "@/components/PopularPosts";
 
 export default function GroupCrwdPage() {
   const [hasJoined, setHasJoined] = useState(false);
@@ -31,11 +26,56 @@ export default function GroupCrwdPage() {
   const [showJoinModal, setShowJoinModal] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [showShareModal, setShowShareModal] = useState(false);
-  const [windowDimensions, setWindowDimensions] = useState({
+  const windowDimensions = {
     width: window.innerWidth,
     height: window.innerHeight,
-  });
+  };
   const navigate = useNavigate();
+
+  // Refs for modal outside click detection
+  const joinModalRef = useRef<HTMLDivElement>(null);
+  const successModalRef = useRef<HTMLDivElement>(null);
+
+  // Handle outside click for join modal
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        joinModalRef.current &&
+        !joinModalRef.current.contains(event.target as Node)
+      ) {
+        setShowJoinModal(false);
+      }
+    };
+
+    if (showJoinModal) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [showJoinModal]);
+
+  // Handle outside click for success modal
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        successModalRef.current &&
+        !successModalRef.current.contains(event.target as Node)
+      ) {
+        setShowSuccessModal(false);
+      }
+    };
+
+    if (showSuccessModal) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [showSuccessModal]);
+
   // const handleJoinClick = () => {
   //   setShowJoinModal(true);
   // };
@@ -130,7 +170,10 @@ export default function GroupCrwdPage() {
 
           {showJoinModal && (
             <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-              <div className="bg-white rounded-lg max-w-md w-full mx-4 p-6 relative">
+              <div
+                ref={joinModalRef}
+                className="bg-white rounded-lg max-w-md w-full mx-4 p-6 relative"
+              >
                 {/* Close Button */}
                 <button
                   onClick={handleCloseModal}
@@ -174,7 +217,10 @@ export default function GroupCrwdPage() {
                 recycle={false}
                 numberOfPieces={200}
               />
-              <div className="bg-white rounded-lg max-w-md w-full mx-4 p-6 relative">
+              <div
+                ref={successModalRef}
+                className="bg-white rounded-lg max-w-md w-full mx-4 p-6 relative"
+              >
                 {/* Close Button */}
                 <button
                   onClick={handleCloseSuccessModal}
