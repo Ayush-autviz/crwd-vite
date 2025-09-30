@@ -247,14 +247,15 @@ export default function HomePage() {
 
           {/* Suggested CRWDs Section */}
           <div className="px-4 mt-8 md:px-0 md:mt-10">
-            <div className="flex justify-between items-center mb-4">
+            <div className="flex gap-2 items-center mb-4">
               <h2 className="text-lg font-semibold">
                 Discover giving in action
               </h2>
               <Link to="/create-crwd">
-                <Button variant="link" className="text-primary p-0 h-auto">
+                {/* <Button variant="link" className="text-primary p-0 h-auto">
                   Create a CRWD Collective
-                </Button>
+                </Button> */}
+                <ChevronRight className="h-4 w-4 text-primary mt-1" />
               </Link>
             </div>
             <div className="overflow-x-auto pb-2">

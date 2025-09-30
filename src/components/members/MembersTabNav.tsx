@@ -11,7 +11,7 @@ interface MembersTabNavProps {
 
 const tabs = [
   { label: "Causes", value: "Causes" },
-  { label: "Community", value: "Members" },
+  { label: "Members", value: "Members" },
   { label: "Contributions", value: "Collective Donations" },
 ];
 

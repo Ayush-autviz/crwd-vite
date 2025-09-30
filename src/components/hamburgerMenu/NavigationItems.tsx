@@ -25,7 +25,7 @@ export const menuGroups = [
       //   label: "Your CRWD Collectives",
       //   href: "/your-crwds",
       // },
-      { icon: <Plus size={20} />, label: "Create Post", href: "/create-post" },
+      // { icon: <Plus size={20} />, label: "Create Post", href: "/create-post" },
 
       { icon: <Archive size={20} />, label: "Donation box", href: "/donation" },
     ],

@@ -164,7 +164,7 @@ const GroupCrwdHeader: React.FC<GroupCrwdHeaderProps> = ({
           className="cursor-pointer flex-1 col-span-1  "
         >
           <div className="text-base font-bold">58</div>
-          <div className="text-xs text-gray-500">Community</div>
+          <div className="text-xs text-gray-500">Members</div>
         </div>
         <div
           onClick={() => navigate(`/members?tab=Collective%20Donations`)}
@@ -238,7 +238,7 @@ const GroupCrwdHeader: React.FC<GroupCrwdHeaderProps> = ({
       </div>
 
       <div className="flex items-center gap-5 mt-2">
-        <LinkIcon size={16} />
+        {/* <LinkIcon size={16} /> */}
         <p
           onClick={() => navigate(`/members`)}
           className="text-blue-600 underline cursor-pointer"

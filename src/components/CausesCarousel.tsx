@@ -71,10 +71,10 @@ export default function CausesCarousel() {
               >
                 <div className="flex items-center justify-between h-full gap-4">
                   <div className="flex-1 min-w-0">
-                    <h3 className="text-center text-white text-2xl font-bold mb-2 leading-tight">
+                    <h3 className="text-center text-white text-lg font-semibold mb-2 leading-tight">
                       {item.heading}
                     </h3>
-                    <p className="text-md text-white font-medium text-center leading-relaxed">
+                    <p className="text-sm text-white font-medium text-center leading-relaxed">
                       {item.subHeading}
                     </p>
                   </div>
