@@ -12,12 +12,12 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { toast } from "sonner";
 import { Eye, EyeOff, Lock } from "lucide-react";
-import BackButton from "@/components/ui/BackButton";
+import { useMutation } from "@tanstack/react-query";
+import { changePassword } from "@/services/api/auth";
+import { Toast } from "@/components/ui/toast";
 
 export default function SettingsPassword() {
-  const [loading, setLoading] = useState(false);
   const [showPasswords, setShowPasswords] = useState({
     current: false,
     new: false,
@@ -34,6 +34,9 @@ export default function SettingsPassword() {
     confirmPassword: "",
   });
 
+  const [showToast, setShowToast] = useState(false);
+  const [toastMessage, setToastMessage] = useState("");
+
   const validatePassword = (password: string) => {
     if (password.length < 8)
       return "Password must be at least 8 characters long";
@@ -48,9 +51,38 @@ export default function SettingsPassword() {
     return "";
   };
 
+  // Change password mutation
+  const changePasswordMutation = useMutation({
+    mutationFn: changePassword,
+    onSuccess: (response) => {
+      console.log('Change password successful:', response)
+      setFormData({
+        currentPassword: "",
+        newPassword: "",
+        confirmPassword: "",
+      });
+      setErrors({
+        currentPassword: "",
+        newPassword: "",
+        confirmPassword: "",
+      });
+      setShowPasswords({
+        current: false,
+        new: false,
+        confirm: false,
+      });
+      setToastMessage("password updated successfully!")
+      setShowToast(true)
+    },
+    onError: (error: any) => {
+      console.error('Change password error:', error)
+      setToastMessage(`Failed to change password: ${error.response?.data?.message || error.message}`)
+      setShowToast(true)
+    },
+  })
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setLoading(true);
     setErrors({
       currentPassword: "",
       newPassword: "",
@@ -63,7 +95,6 @@ export default function SettingsPassword() {
         ...prev,
         currentPassword: "Current password is required",
       }));
-      setLoading(false);
       return;
     }
 
@@ -71,7 +102,6 @@ export default function SettingsPassword() {
     const newPasswordError = validatePassword(formData.newPassword);
     if (newPasswordError) {
       setErrors((prev) => ({ ...prev, newPassword: newPasswordError }));
-      setLoading(false);
       return;
     }
 
@@ -81,25 +111,13 @@ export default function SettingsPassword() {
         ...prev,
         confirmPassword: "Passwords do not match",
       }));
-      setLoading(false);
       return;
     }
 
-    try {
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-
-      toast.success("Password updated successfully");
-      setFormData({
-        currentPassword: "",
-        newPassword: "",
-        confirmPassword: "",
-      });
-    } catch (error) {
-      toast.error("Failed to update password. Please try again.");
-    } finally {
-      setLoading(false);
-    }
+    changePasswordMutation.mutate({
+      current_password: formData.currentPassword,
+      new_password: formData.newPassword,
+    });
   };
 
   const togglePasswordVisibility = (field: keyof typeof showPasswords) => {
@@ -108,6 +126,8 @@ export default function SettingsPassword() {
       [field]: !prev[field],
     }));
   };
+
+
 
   return (
     <div className="h-full flex flex-col">
@@ -244,10 +264,9 @@ export default function SettingsPassword() {
                 <div className="flex gap-2">
                   <Button
                     type="submit"
-                    // className="bg-primary hover:bg-primary/90"
-                    disabled={loading}
+                    disabled={changePasswordMutation.isPending}
                   >
-                    {loading ? "Updating..." : "Update Password"}
+                    {changePasswordMutation.isPending ? "Updating..." : "Update Password"}
                   </Button>
                   <Button
                     type="button"
@@ -274,6 +293,15 @@ export default function SettingsPassword() {
         </div>
       </div>
       <div className="h-20" />
+
+
+      {/* Toast notification */}
+      <Toast
+        message={toastMessage}
+        show={showToast}
+        onHide={() => setShowToast(false)}
+        duration={3000}
+      />
     </div>
   );
 }

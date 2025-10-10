@@ -1,7 +1,8 @@
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
-import React, { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
+import { useQuery } from "@tanstack/react-query";
+import { googleLogin } from "@/services/api/auth";
 
 const nonprofitLogos = [
   { name: "WWF", logo: "/ngo/aspca.jpg" },
@@ -13,18 +14,23 @@ const nonprofitLogos = [
 ];
 
 export default function OnBoard() {
-  const [isGoogleLoading, setIsGoogleLoading] = useState(false);
   const navigate = useNavigate();
 
+  const googleLoginQuery = useQuery({
+    queryKey: ['googleLogin'],
+    queryFn: googleLogin,
+    enabled: false, // Don't run automatically
+  });
+
   const handleGoogleLogin = async () => {
-    setIsGoogleLoading(true);
     try {
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      // toast.success("Google login successful!")
+      const result = await googleLoginQuery.refetch();
+      if (result.data) {
+        console.log('Google login successful:', result.data);
+        window.location.href = result.data.url;
+      }
     } catch (error) {
-      // toast.error("Google login failed")
-    } finally {
-      setIsGoogleLoading(false);
+      console.error('Google login failed:', error);
     }
   };
 
@@ -128,10 +134,10 @@ export default function OnBoard() {
                 type="button"
                 variant="outline"
                 onClick={handleGoogleLogin}
-                disabled={isGoogleLoading}
+                disabled={googleLoginQuery.isFetching}
                 className="w-full h-10 border-gray-300 hover:bg-gray-50 transition-colors"
               >
-                {isGoogleLoading ? (
+                {googleLoginQuery.isFetching ? (
                   <div className="w-4 h-4 border-2 border-gray-300 border-t-gray-600 rounded-full animate-spin mr-2"></div>
                 ) : (
                   <svg className="w-4 h-4 mr-2" viewBox="0 0 24 24">

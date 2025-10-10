@@ -7,36 +7,45 @@ import { Link } from "react-router-dom"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent } from "@/components/ui/card"
-import { toast } from "sonner"
 import { cn } from "@/lib/utils"
 import { useNavigate } from "react-router-dom"
+import { useMutation } from "@tanstack/react-query"
+import { forgotPassword } from "@/services/api/auth"
+import { Toast } from "@/components/ui/toast"
 
 const ForgotPasswordPage: React.FC = () => {
-  const [isLoading, setIsLoading] = useState(false)
   const [email, setEmail] = useState("")
+  const [showToast, setShowToast] = useState(false)
+  const [toastMessage, setToastMessage] = useState("")
   const navigate = useNavigate()
+
+  // Forgot password mutation
+  const forgotPasswordMutation = useMutation({
+    mutationFn: forgotPassword,
+    onSuccess: (response) => {
+      console.log('Forgot password successful:', response)
+      // Navigate to verify page with email
+      navigate("/verify", { state: { email } })
+    },
+    onError: (error: any) => {
+      console.error('Forgot password error:', error)
+      setToastMessage(`Failed to send reset code: ${error.response?.data?.message || error.message}`)
+      setShowToast(true)
+    },
+  })
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    setIsLoading(true)
-
-    try {
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1500))
-
-      // toast.success("Verification code sent!", {
-      //   description: "Check your email for the verification code.",
-      // })
-
-      // Navigate to verify page with email
-      navigate("/verify", { state: { email } })
-    } catch (error) {
-      // toast.error("Failed to send verification code", {
-      //   description: "Please try again later.",
-      // })
-    } finally {
-      setIsLoading(false)
+    
+    if (!email.trim()) {
+      setToastMessage("Please enter your email address")
+      setShowToast(true)
+      return
     }
+
+    forgotPasswordMutation.mutate({
+      email: email.trim(),
+    })
   }
 
   return (
@@ -97,14 +106,14 @@ const ForgotPasswordPage: React.FC = () => {
                 <div className="pt-2">
                   <Button
                     type="submit"
-                    disabled={isLoading || !email.trim()}
+                    disabled={forgotPasswordMutation.isPending || !email.trim()}
                     className={cn(
                       "w-full h-10 bg-gray-900 hover:bg-gray-800 text-white font-medium",
                       "transition-colors duration-200",
-                      (isLoading || !email.trim()) && "opacity-50 cursor-not-allowed",
+                      (forgotPasswordMutation.isPending || !email.trim()) && "opacity-50 cursor-not-allowed",
                     )}
                   >
-                    {isLoading ? (
+                    {forgotPasswordMutation.isPending ? (
                       <div className="flex items-center gap-2">
                         <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
                         Sending code...
@@ -132,6 +141,14 @@ const ForgotPasswordPage: React.FC = () => {
           </Card>
         </div>
       </div>
+
+      {/* Toast notification */}
+      <Toast
+        message={toastMessage}
+        show={showToast}
+        onHide={() => setShowToast(false)}
+        duration={3000}
+      />
     </div>
   )
 }

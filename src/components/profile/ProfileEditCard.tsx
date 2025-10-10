@@ -3,7 +3,7 @@ import { Avatar, AvatarImage } from '../ui/avatar';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
 import { Textarea } from '../ui/textarea';
-import { Edit2, Check, X, Camera } from 'lucide-react';
+import { Edit2, Check, X, Camera, Loader2 } from 'lucide-react';
 
 interface ProfileEditCardProps {
   avatarUrl: string;
@@ -11,7 +11,8 @@ interface ProfileEditCardProps {
   username: string;
   location: string;
   bio: string;
-  onSave?: (data: { name: string; username: string; location: string; bio: string; avatarUrl?: string }) => void;
+  onSave?: (field: string, value: string) => void;
+  loadingField?: string | null;
 }
 
 /**
@@ -32,7 +33,8 @@ const ProfileEditCard: React.FC<ProfileEditCardProps> = ({
   username,
   location,
   bio,
-  onSave
+  onSave,
+  loadingField = null
 }) => {
   const [editingField, setEditingField] = useState<string | null>(null);
   const [formData, setFormData] = useState({
@@ -70,12 +72,9 @@ const ProfileEditCard: React.FC<ProfileEditCardProps> = ({
     setFormData(prev => ({ ...prev, [field]: value }));
     setEditingField(null);
 
-    // Call onSave callback if provided
+    // Call onSave callback if provided - now passes field and value separately
     if (onSave) {
-      onSave({
-        ...formData,
-        [field]: value
-      });
+      onSave(field, value);
     }
   };
 
@@ -98,13 +97,7 @@ const ProfileEditCard: React.FC<ProfileEditCardProps> = ({
         setFormData(prev => ({ ...prev, avatarUrl: newAvatarUrl }));
 
         if (onSave) {
-          onSave({
-            name: formData.name,
-            username: formData.username,
-            location: formData.location,
-            bio: formData.bio,
-            avatarUrl: newAvatarUrl
-          });
+          onSave('avatarUrl', newAvatarUrl);
         }
       };
       reader.readAsDataURL(file);
@@ -113,6 +106,7 @@ const ProfileEditCard: React.FC<ProfileEditCardProps> = ({
 
   const renderField = (field: string, label: string, value: string, isTextarea = false) => {
     const isCurrentlyEditing = editingField === field;
+    const isFieldLoading = loadingField === field;
 
     return (
       <div className={`flex ${isTextarea ? 'items-start' : 'items-center'} px-4 py-4`}>
@@ -183,9 +177,14 @@ const ProfileEditCard: React.FC<ProfileEditCardProps> = ({
                 size="sm"
                 variant="ghost"
                 onClick={() => handleEdit(field)}
-                className="h-8 w-8 p-0 text-gray-500 hover:text-gray-700 hover:bg-gray-100"
+                disabled={isFieldLoading}
+                className="h-8 w-8 p-0 text-gray-500 hover:text-gray-700 hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                <Edit2 size={14} />
+                {isFieldLoading ? (
+                  <Loader2 size={14} className="animate-spin" />
+                ) : (
+                  <Edit2 size={14} />
+                )}
               </Button>
             </div>
           )}

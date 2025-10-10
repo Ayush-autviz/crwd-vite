@@ -2,20 +2,25 @@
 
 import type React from "react"
 import { useState } from "react"
-import { ArrowLeft, Eye, EyeOff } from "lucide-react"
-import { Link } from "react-router-dom"
+import { Eye, EyeOff } from "lucide-react"
+import { Link, useNavigate } from "react-router-dom"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent } from "@/components/ui/card"
 import { Checkbox } from "@/components/ui/checkbox"
-import { toast } from "sonner"
 import { cn } from "@/lib/utils"
+import { useMutation, useQuery } from "@tanstack/react-query"
+import { login, googleLogin } from "@/services/api/auth"
+import { useAuthStore } from "@/stores/store"
+import { Toast } from "@/components/ui/toast"
 
 const LoginPage: React.FC = () => {
+  const navigate = useNavigate()
+  const { setUser, setToken } = useAuthStore()
   const [showPassword, setShowPassword] = useState(false)
-  const [isLoading, setIsLoading] = useState(false)
-  const [isGoogleLoading, setIsGoogleLoading] = useState(false)
-  const [rememberMe, setRememberMe] = useState(false)
+  const [rememberMe] = useState(false)
+  const [showToast, setShowToast] = useState(false)
+  const [toastMessage, setToastMessage] = useState("")
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -29,33 +34,63 @@ const LoginPage: React.FC = () => {
     }))
   }
 
+  // Login mutation
+  const loginMutation = useMutation({
+    mutationFn: login,
+    onSuccess: (response) => {
+      console.log('Login successful:', response)
+      
+      // Store user data and token in the store
+      if (response.user) {
+        setUser(response.user)
+      }
+      if (response.access_token) {
+        setToken({ access_token: response.access_token, refresh_token: response.refresh_token })
+      }
+      
+      // Navigate to home page
+      navigate("/", {replace: true})
+    },
+    onError: (error: any) => {
+      console.error('Login error:', error)
+      setToastMessage(`Login failed: ${error.response?.data?.message || error.message}`)
+      setShowToast(true)
+    },
+  })
+
+  // Google login query
+  const googleLoginQuery = useQuery({
+    queryKey: ['googleLogin'],
+    queryFn: googleLogin,
+    enabled: false, // Don't run automatically
+  })
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    setIsLoading(true)
-
-    try {
-      await new Promise((resolve) => setTimeout(resolve, 1500))
-      // toast.success("Welcome back!", {
-      //   description: "You have been signed in successfully.",
-      // })
-    } catch (error) {
-      // toast.error("Invalid credentials", {
-      //   description: "Please check your email and password.",
-      // })
-    } finally {
-      setIsLoading(false)
+    
+    if (!formData.email.trim() || !formData.password.trim()) {
+      setToastMessage("Please enter both email and password")
+      setShowToast(true)
+      return
     }
+
+    loginMutation.mutate({
+      email: formData.email.trim(),
+      password: formData.password,
+    })
   }
 
   const handleGoogleLogin = async () => {
-    setIsGoogleLoading(true)
     try {
-      await new Promise((resolve) => setTimeout(resolve, 1000))
-      // toast.success("Google login successful!")
+      const result = await googleLoginQuery.refetch()
+      if (result.data) {
+        console.log('Google login successful:', result.data)
+        window.location.href = result.data.url
+      }
     } catch (error) {
-      // toast.error("Google login failed")
-    } finally {
-      setIsGoogleLoading(false)
+      console.error('Google login failed:', error)
+      setToastMessage("Google login failed. Please try again.")
+      setShowToast(true)
     }
   }
 
@@ -94,10 +129,10 @@ const LoginPage: React.FC = () => {
                 type="button"
                 variant="outline"
                 onClick={handleGoogleLogin}
-                disabled={isGoogleLoading}
+                disabled={googleLoginQuery.isFetching}
                 className="w-full h-11 border-gray-300 hover:bg-gray-50 transition-colors"
               >
-                {isGoogleLoading ? (
+                {googleLoginQuery.isFetching ? (
                   <div className="w-4 h-4 border-2 border-gray-300 border-t-gray-600 rounded-full animate-spin mr-2"></div>
                 ) : (
                   <svg className="w-4 h-4 mr-2" viewBox="0 0 24 24">
@@ -208,14 +243,14 @@ const LoginPage: React.FC = () => {
                 <div className="pt-2">
                   <Button
                     type="submit"
-                    disabled={isLoading}
+                    disabled={loginMutation.isPending}
                     className={cn(
                       "w-full h-10 bg-gray-900 hover:bg-gray-800 text-white font-medium",
                       "transition-colors duration-200",
-                      isLoading && "opacity-50 cursor-not-allowed",
+                      loginMutation.isPending && "opacity-50 cursor-not-allowed",
                     )}
                   >
-                    {isLoading ? (
+                    {loginMutation.isPending ? (
                       <div className="flex items-center gap-2">
                         <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
                         Signing in...
@@ -235,6 +270,14 @@ const LoginPage: React.FC = () => {
           </Card>
         </div>
       </div>
+
+      {/* Toast notification */}
+      <Toast
+        message={toastMessage}
+        show={showToast}
+        onHide={() => setShowToast(false)}
+        duration={3000}
+      />
     </div>
   )
 }

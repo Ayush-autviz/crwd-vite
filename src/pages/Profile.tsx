@@ -1,26 +1,26 @@
-import React, { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef } from "react";
 import ProfileHeader from "../components/profile/ProfileHeader";
 import ProfileBio from "../components/profile/ProfileBio";
 import Footer from "@/components/Footer";
 
-import ProfileInterests from "../components/profile/ProfileInterests";
 import ProfileActivity from "../components/profile/ProfileActivity";
-import ProfileRecentDonations from "../components/profile/ProfileRecentDonations";
 import ProfileNavbar from "../components/profile/ProfileNavbar";
 import ProfileSidebar from "../components/profile/ProfileSidebar";
 import { profileActivity } from "../lib/profile/profileActivity";
 import ProfileStats from "../components/profile/ProfileStats";
 import { Button } from "@/components/ui/button";
 import {
-  ArrowRight,
-  Check,
   ChevronRight,
   Ellipsis,
   Share,
   Flag,
+  Pencil,
+  Loader2,
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Toast } from "../components/ui/toast";
+import { useQuery } from "@tanstack/react-query";
+import { getProfile } from "@/services/api/auth";
 
 const interestsData = [
   {
@@ -100,6 +100,13 @@ export default function ProfilePage() {
   const [isFollowing, setIsFollowing] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
+  // Fetch profile data using React Query
+  const profileQuery = useQuery({
+    queryKey: ['profile'],
+    queryFn: getProfile,
+    enabled: true,
+  });
+
   const handleFollowClick = () => {
     setIsFollowing(!isFollowing);
     if (isFollowing) {
@@ -125,6 +132,49 @@ export default function ProfilePage() {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [showMenu]);
+
+  // Loading state
+  if (profileQuery.isLoading) {
+    return (
+      <div className="w-full flex flex-col items-center justify-center min-h-screen">
+        <div className="flex items-center gap-3 text-gray-600">
+          <Loader2 className="w-5 h-5 animate-spin" />
+          <span>Loading profile...</span>
+        </div>
+      </div>
+    );
+  }
+
+  // Error state
+  if (profileQuery.error) {
+    return (
+      <div className="w-full flex flex-col items-center justify-center min-h-screen">
+        <div className="text-center py-10">
+          <h2 className="text-xl font-semibold text-red-600 mb-2">
+            Error loading profile
+          </h2>
+          <p className="text-gray-600">
+            {(profileQuery.error as any)?.response?.data?.message || profileQuery.error.message}
+          </p>
+          <Button
+            onClick={() => profileQuery.refetch()}
+            className="mt-4 bg-gray-900 text-white hover:bg-gray-800"
+          >
+            Try Again
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
+  // Extract profile data
+  const profileData = profileQuery.data?.user || {};
+  const {
+    profile_picture = "https://randomuser.me/api/portraits/women/44.jpg",
+    full_name = "Mya",
+    location = "Atlanta, GA",
+    bio = "This is a bio about Mya and how she likes to help others and give back to her community. She also loves ice cream."
+  } = profileData;
 
   return (
     <div className="">
@@ -163,6 +213,16 @@ export default function ProfilePage() {
                 <Flag className="h-4 w-4" />
                 Report Profile
               </button>
+              <Link
+                to="/profile/edit"
+              >
+                <button onClick={() => {
+                  setShowMenu(false);
+                }} className="flex items-center gap-2 w-full px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors">
+                  <Pencil className="h-4 w-4" />
+                  Edit Profile
+                </button>
+              </Link>
             </div>
           )}
         </div>
@@ -179,9 +239,9 @@ export default function ProfilePage() {
         <div className="md:col-span-12">
           <div className="flex flex-col space-y-4 px-4 md:px-0">
             <ProfileHeader
-              avatarUrl="https://randomuser.me/api/portraits/women/44.jpg"
-              name="Mya"
-              location="Atlanta, GA"
+              avatarUrl={profile_picture}
+              name={full_name}
+              location={location}
               link="thisisaurl.com"
             />
             {/* <ProfileBio bio="This is a bio about Mya and how she likes to help others and give back to her community. She also loves ice cream." /> */}
@@ -237,7 +297,7 @@ export default function ProfilePage() {
               ))}
             </div>
 
-            <ProfileBio bio="This is a bio about Mya and how she likes to help others and give back to her community. She also loves ice cream." />
+            <ProfileBio bio={bio} />
             <div className="py-4">
               <ProfileActivity
                 // showLabel

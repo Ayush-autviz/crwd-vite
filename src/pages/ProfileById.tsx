@@ -1,102 +1,157 @@
-import React, { useState } from "react";
-import { useParams } from "react-router-dom";
 import ProfileEditCard from "@/components/profile/ProfileEditCard";
 import ProfileNavbar from "@/components/profile/ProfileNavbar";
-import { toast } from "sonner";
 import Footer from "@/components/Footer";
-
-// Sample profile data - in a real app this would come from an API
-const getProfileData = (id: string) => {
-  const profiles: Record<string, any> = {
-    "1": {
-      avatarUrl: "https://randomuser.me/api/portraits/women/44.jpg",
-      name: "My Name is Mya",
-      username: "myamakes_moves",
-      location: "Atlanta, GA",
-      bio: "This is a bio about Mya and how she likes to help others and give back to her community. She also loves ice cream.",
-    },
-    "2": {
-      avatarUrl: "https://randomuser.me/api/portraits/men/32.jpg",
-      name: "Chad Fofana",
-      username: "chadfofana1",
-      location: "New York, NY",
-      bio: "Community organizer passionate about social justice and helping those in need.",
-    },
-    mynameismya: {
-      avatarUrl: "https://randomuser.me/api/portraits/women/44.jpg",
-      name: "My Name is Mya",
-      username: "myamakes_moves",
-      location: "Atlanta, GA",
-      bio: "This is a bio about Mya and how she likes to help others and give back to her community. She also loves ice cream.",
-    },
-  };
-
-  return (
-    profiles[id] || {
-      avatarUrl: "https://randomuser.me/api/portraits/men/1.jpg",
-      name: `User ${id}`,
-      username: `user_${id}`,
-      location: "Unknown Location",
-      bio: "This user hasn't added a bio yet.",
-    }
-  );
-};
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { getProfile, updateProfile } from "@/services/api/auth";
+import { Loader2 } from "lucide-react";
+import { Toast } from "@/components/ui/toast";
+import { useState } from "react";
 
 export default function ProfileById() {
-  const { id } = useParams();
-  const [profileData, setProfileData] = useState(getProfileData(id || "1"));
+  // const { id } = useParams();
+  const [showToast, setShowToast] = useState(false);
+  const [toastMessage, setToastMessage] = useState("");
+  const [loadingField, setLoadingField] = useState<string | null>(null);
+  const queryClient = useQueryClient();
 
-  const handleSave = (data: {
-    name: string;
-    username: string;
-    location: string;
-    bio: string;
-    avatarUrl?: string;
-  }) => {
-    // Update the profile data
-    setProfileData((prev) => ({
-      ...prev,
-      ...data,
-    }));
+  // Fetch profile data using React Query
+  const profileQuery = useQuery({
+    queryKey: ['profile'],
+    queryFn: getProfile,
+    enabled: true, // Only run if id exists
+  });
 
-    // Show success message
-    toast.success("Profile updated successfully!");
+  // Update profile mutation
+  const updateProfileMutation = useMutation({
+    mutationFn: updateProfile,
+    onSuccess: (response) => {
+      console.log('Profile updated successfully:', response);
+      // Invalidate and refetch profile data
+      queryClient.invalidateQueries({ queryKey: ['profile'] });
+      setToastMessage("Profile updated successfully!");
+      setShowToast(true);
+      setLoadingField(null); // Clear loading field
+    },
+    onError: (error: any) => {
+      console.error('Profile update error:', error);
+      setToastMessage(`Failed to update profile: ${error.response?.data?.message || error.message}`);
+      setShowToast(true);
+      setLoadingField(null); // Clear loading field
+    },
+  });
 
-    // Here you would typically make an API call to save the data
-    console.log("Saving profile data:", data);
+  const handleSave = (field: string, value: string) => {
+    // Set loading field before making the request
+    setLoadingField(field);
+    
+    // Prepare data for API call - only send the changed field
+    let updateData: any = {};
+    
+    switch (field) {
+      case 'name':
+        updateData.full_name = value;
+        break;
+      case 'username':
+        updateData.username = value;
+        break;
+      case 'location':
+        updateData.location = value;
+        break;
+      case 'bio':
+        updateData.bio = value;
+        break;
+      case 'avatarUrl':
+        // Note: profile_picture handling might need special consideration for file uploads
+        // For now, we'll include it if it's a URL string
+        if (typeof value === 'string' && value.startsWith('http')) {
+          updateData.profile_picture = value;
+        }
+        break;
+      default:
+        console.warn('Unknown field:', field);
+        setLoadingField(null); // Clear loading field on error
+        return;
+    }
+
+    updateProfileMutation.mutate(updateData);
   };
 
-  if (!id) {
+  // if (!id) {
+  //   return (
+  //     <div className="w-full flex flex-col items-center justify-center min-h-screen">
+  //       <div className="text-center py-10">
+  //         <h2 className="text-xl font-semibold text-gray-900 mb-2">
+  //           Profile not found
+  //         </h2>
+  //         <p className="text-gray-600">Invalid profile ID.</p>
+  //       </div>
+  //     </div>
+  //   );
+  // }
+
+  // Loading state
+  if (profileQuery.isLoading) {
+    return (
+      <div className="w-full flex flex-col items-center justify-center min-h-screen">
+        <div className="flex items-center gap-3 text-gray-600">
+          <Loader2 className="w-5 h-5 animate-spin" />
+          <span>Loading profile...</span>
+        </div>
+      </div>
+    );
+  }
+
+  // Error state
+  if (profileQuery.error) {
     return (
       <div className="w-full flex flex-col items-center justify-center min-h-screen">
         <div className="text-center py-10">
           <h2 className="text-xl font-semibold text-gray-900 mb-2">
-            Profile not found
+            Failed to load profile
           </h2>
-          <p className="text-gray-600">Invalid profile ID.</p>
+          <p className="text-gray-600 mb-4">
+            {(profileQuery.error as any)?.response?.data?.message || profileQuery.error.message}
+          </p>
+          <button 
+            onClick={() => profileQuery.refetch()}
+            className="px-4 py-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition-colors"
+          >
+            Try Again
+          </button>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="w-full flex flex-col items-center justify-start space-y-6 min-h-screen">
+    <>
+    <div className="w-full flex flex-col items-center justify-start space-y-6 md:mb-48">
       <ProfileNavbar title="Edit Profile" titleClassName="text-2xl" />
       <div className="w-full">
         <ProfileEditCard
-          avatarUrl={profileData.avatarUrl}
-          name={profileData.name}
-          username={profileData.username}
-          location={profileData.location}
-          bio={profileData.bio}
+          avatarUrl={profileQuery.data.user.profile_picture}
+          name={profileQuery.data.user.full_name}
+          username={profileQuery.data.user.username}
+          location={profileQuery.data.user.location}
+          bio={profileQuery.data.user.bio}
           onSave={handleSave}
+          loadingField={loadingField}
         />
+      </div>
       </div>
 
       {/* Footer */}
       <div className="hidden md:block">
         <Footer />
       </div>
-    </div>
+
+      {/* Toast notification */}
+      <Toast
+        message={toastMessage}
+        show={showToast}
+        onHide={() => setShowToast(false)}
+        duration={3000}
+      />
+    </>
   );
 }

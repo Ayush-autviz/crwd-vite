@@ -54,6 +54,7 @@ import OnBoard from "./pages/onboarding/OnBoard";
 import ClaimProfile from "./pages/onboarding/ClaimProfile";
 import NonProfitInterests from "./pages/onboarding/NonProfitInterests";
 import CompleteOnboard from "./pages/onboarding/CompleteOnboard";
+import GoogleCallback from "./pages/auth/GoogleCallback";
 import Circles from "./pages/Circles";
 
 // ScrollToTop component that works for all pages
@@ -102,6 +103,7 @@ function App() {
             <Route path="/forgot-password" element={<ForgotPassword />} />
             <Route path="/interests" element={<Interests />} />
             <Route path="/verify" element={<Verify />} />
+            <Route path="/auth/google/callback" element={<GoogleCallback />} />
             <Route path="/onboarding" element={<OnBoard />} />
             <Route path="/complete-onboard" element={<CompleteOnboard />} />
             <Route path="/claim-profile" element={<ClaimProfile />} />
@@ -122,7 +124,8 @@ function App() {
                     <Route path="/donation" element={<Donation />} />
                     <Route path="/notifications" element={<Notifications />} />
                     <Route path="/profile" element={<Profile />} />
-                    <Route path="/profile/:id" element={<ProfileById />} />
+                    {/* <Route path="/profile/:id" element={<ProfileById />} /> */}
+                    <Route path="/profile/edit" element={<ProfileById />} />
                     <Route
                       path="/profile/:id/statistics"
                       element={<ProfileStatistics />}

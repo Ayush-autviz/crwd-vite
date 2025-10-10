@@ -2,23 +2,31 @@
 
 import type React from "react"
 import { useState, useRef, useEffect } from "react"
-import { ArrowLeft, Mail, RefreshCw } from "lucide-react"
+import { ArrowLeft, Mail, RefreshCw, Eye, EyeOff } from "lucide-react"
 import { Link, useLocation } from "react-router-dom"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
-import { toast } from "sonner"
 import { cn } from "@/lib/utils"
 import { useNavigate } from "react-router-dom"
+import { useMutation } from "@tanstack/react-query"
+import { resetPassword, forgotPassword } from "@/services/api/auth"
+import { Toast } from "@/components/ui/toast"
 
 const VerifyPage: React.FC = () => {
-  const [isLoading, setIsLoading] = useState(false)
-  const [isResending, setIsResending] = useState(false)
   const [code, setCode] = useState(["", "", "", "", "", ""])
   const [timeLeft, setTimeLeft] = useState(300) // 5 minutes
+  const [showNewPassword, setShowNewPassword] = useState(false)
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false)
+  const [newPassword, setNewPassword] = useState("")
+  const [confirmPassword, setConfirmPassword] = useState("")
+  const [showToast, setShowToast] = useState(false)
+  const [toastMessage, setToastMessage] = useState("")
   const inputRefs = useRef<(HTMLInputElement | null)[]>([])
   const navigate = useNavigate()
   const location = useLocation()
   const email = location.state?.email || "your email"
+  
+
 
   // Timer countdown
   useEffect(() => {
@@ -34,12 +42,53 @@ const VerifyPage: React.FC = () => {
     return `${mins}:${secs.toString().padStart(2, '0')}`
   }
 
+  // Reset password mutation
+  const resetPasswordMutation = useMutation({
+    mutationFn: resetPassword,
+    onSuccess: (response) => {
+      console.log('Reset password successful:', response)
+      navigate("/login")
+    },
+    onError: (error: any) => {
+      console.error('Reset password error:', error)
+      setToastMessage(`Password reset failed: ${error.response?.data?.message || error.message}`)
+      setShowToast(true)
+    },
+  })
+
+  // Resend code mutation
+  const resendCodeMutation = useMutation({
+    mutationFn: forgotPassword,
+    onSuccess: (response) => {
+      console.log('Resend code successful:', response)
+      setTimeLeft(300) // Reset timer
+      setCode(["", "", "", "", "", ""]) // Clear current code
+    },
+    onError: (error: any) => {
+      console.error('Resend code error:', error)
+      setToastMessage(`Failed to resend code: ${error.response?.data?.message || error.message}`)
+      setShowToast(true)
+    },
+  })
+
   const handleCodeChange = (index: number, value: string) => {
-    if (value.length > 1) return // Prevent multiple characters
+    console.log(`handleCodeChange - index: ${index}, value: "${value}"`)
+    
+    // Only allow numbers
+    if (!/^\d*$/.test(value)) {
+      console.log('Rejected non-numeric input:', value)
+      return
+    }
+    
+    if (value.length > 1) {
+      console.log('Rejected multi-character input:', value)
+      return // Prevent multiple characters
+    }
 
     const newCode = [...code]
     newCode[index] = value
     setCode(newCode)
+    console.log('Updated code:', newCode)
 
     // Auto-focus next input
     if (value && index < 5) {
@@ -48,15 +97,28 @@ const VerifyPage: React.FC = () => {
   }
 
   const handleKeyDown = (index: number, e: React.KeyboardEvent) => {
-    if (e.key === "Backspace" && !code[index] && index > 0) {
-      inputRefs.current[index - 1]?.focus()
+    // Allow backspace, delete, arrow keys, and numbers
+    if (e.key === "Backspace" || e.key === "Delete" || 
+        e.key.startsWith("Arrow") || /^\d$/.test(e.key)) {
+      
+      if (e.key === "Backspace" && !code[index] && index > 0) {
+        inputRefs.current[index - 1]?.focus()
+      }
+      return
     }
+    
+    // Prevent all other keys
+    e.preventDefault()
   }
 
   const handlePaste = (e: React.ClipboardEvent) => {
     e.preventDefault()
     const pastedData = e.clipboardData.getData("text").slice(0, 6)
-    const newCode = pastedData.split("").concat(Array(6).fill("")).slice(0, 6)
+    
+    // Only allow numbers in pasted data
+    const numericData = pastedData.replace(/\D/g, '').slice(0, 6)
+    
+    const newCode = numericData.split("").concat(Array(6).fill("")).slice(0, 6)
     setCode(newCode)
 
     // Focus the next empty input or the last one
@@ -70,53 +132,43 @@ const VerifyPage: React.FC = () => {
     const verificationCode = code.join("")
 
     if (verificationCode.length !== 6) {
-      // toast.error("Please enter the complete verification code")
+      setToastMessage("Please enter the complete verification code")
+      setShowToast(true)
       return
     }
 
-    setIsLoading(true)
-
-    try {
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1500))
-
-      // toast.success("Email verified successfully!", {
-      //   description: "Welcome to CRWD!",
-      // })
-
-      navigate("/interests")
-    } catch (error) {
-      // toast.error("Invalid verification code", {
-      //   description: "Please check your code and try again.",
-      // })
-    } finally {
-      setIsLoading(false)
+    if (!newPassword.trim()) {
+      setToastMessage("Please enter a new password")
+      setShowToast(true)
+      return
     }
+
+    if (newPassword.length < 6) {
+      setToastMessage("Password must be at least 6 characters")
+      setShowToast(true)
+      return
+    }
+
+    if (newPassword !== confirmPassword) {
+      setToastMessage("Passwords do not match")
+      setShowToast(true)
+      return
+    }
+
+    resetPasswordMutation.mutate({
+      email: email,
+      confirmation_code: verificationCode,
+      new_password: newPassword,
+    })
   }
 
   const handleResendCode = async () => {
-    setIsResending(true)
-
-    try {
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1000))
-
-      // toast.success("Verification code sent!", {
-      //   description: "Check your email for the new code.",
-      // })
-
-      setTimeLeft(300) // Reset timer
-      setCode(["", "", "", "", "", ""]) // Clear current code
-    } catch (error) {
-      // toast.error("Failed to resend code", {
-      //   description: "Please try again later.",
-      // })
-    } finally {
-      setIsResending(false)
-    }
+    resendCodeMutation.mutate({
+      email: email,
+    })
   }
 
-  const isCodeComplete = code.every(digit => digit !== "")
+  const isFormComplete = code.every(digit => digit !== "") && newPassword.trim() && confirmPassword.trim() && newPassword === confirmPassword
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -169,7 +221,9 @@ const VerifyPage: React.FC = () => {
                     {code.map((digit, index) => (
                       <input
                         key={index}
-                        ref={(el) => (inputRefs.current[index] = el)}
+                        ref={(el) => {
+                          inputRefs.current[index] = el
+                        }}
                         type="text"
                         inputMode="numeric"
                         pattern="[0-9]*"
@@ -178,6 +232,13 @@ const VerifyPage: React.FC = () => {
                         onChange={(e) => handleCodeChange(index, e.target.value)}
                         onKeyDown={(e) => handleKeyDown(index, e)}
                         onPaste={index === 0 ? handlePaste : undefined}
+                        onInput={(e) => {
+                          // Additional protection - ensure only numbers
+                          const target = e.target as HTMLInputElement
+                          if (!/^\d*$/.test(target.value)) {
+                            target.value = target.value.replace(/\D/g, '')
+                          }
+                        }}
                         className={cn(
                           "w-12 h-12 text-center text-lg font-semibold border rounded-lg",
                           "focus:outline-none focus:ring-2 focus:ring-gray-900/20 focus:border-gray-900",
@@ -189,23 +250,70 @@ const VerifyPage: React.FC = () => {
                   </div>
                 </div>
 
+                {/* New Password Fields */}
+                <div className="space-y-4">
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium text-gray-700">
+                      New Password
+                    </label>
+                    <div className="relative">
+                      <input
+                        type={showNewPassword ? "text" : "password"}
+                        placeholder="Enter new password"
+                        value={newPassword}
+                        onChange={(e) => setNewPassword(e.target.value)}
+                        className="w-full h-10 border border-gray-300 rounded-lg px-3 pr-10 bg-white text-gray-900 text-sm focus:outline-none focus:border-gray-400 focus:ring-1 focus:ring-gray-400 transition-colors"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowNewPassword(!showNewPassword)}
+                        className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600"
+                      >
+                        {showNewPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                      </button>
+                    </div>
+                  </div>
+
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium text-gray-700">
+                      Confirm New Password
+                    </label>
+                    <div className="relative">
+                      <input
+                        type={showConfirmPassword ? "text" : "password"}
+                        placeholder="Confirm new password"
+                        value={confirmPassword}
+                        onChange={(e) => setConfirmPassword(e.target.value)}
+                        className="w-full h-10 border border-gray-300 rounded-lg px-3 pr-10 bg-white text-gray-900 text-sm focus:outline-none focus:border-gray-400 focus:ring-1 focus:ring-gray-400 transition-colors"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                        className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600"
+                      >
+                        {showConfirmPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
                 <div className="pt-2">
                   <Button
                     type="submit"
-                    disabled={isLoading || !isCodeComplete}
+                    disabled={resetPasswordMutation.isPending || !isFormComplete}
                     className={cn(
                       "w-full h-10 bg-gray-900 hover:bg-gray-800 text-white font-medium",
                       "transition-colors duration-200",
-                      (isLoading || !isCodeComplete) && "opacity-50 cursor-not-allowed",
+                      (resetPasswordMutation.isPending || !isFormComplete) && "opacity-50 cursor-not-allowed",
                     )}
                   >
-                    {isLoading ? (
+                    {resetPasswordMutation.isPending ? (
                       <div className="flex items-center gap-2">
                         <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
-                        Verifying...
+                        Resetting password...
                       </div>
                     ) : (
-                      "Verify email"
+                      "Reset password"
                     )}
                   </Button>
                 </div>
@@ -226,10 +334,10 @@ const VerifyPage: React.FC = () => {
                     type="button"
                     variant="ghost"
                     onClick={handleResendCode}
-                    disabled={isResending}
+                    disabled={resendCodeMutation.isPending}
                     className="text-gray-900 hover:text-gray-700 hover:bg-gray-100 font-medium"
                   >
-                    {isResending ? (
+                    {resendCodeMutation.isPending ? (
                       <div className="flex items-center gap-2">
                         <RefreshCw className="h-4 w-4 animate-spin" />
                         Sending...
@@ -254,6 +362,14 @@ const VerifyPage: React.FC = () => {
           </Card>
         </div>
       </div>
+
+      {/* Toast notification */}
+      <Toast
+        message={toastMessage}
+        show={showToast}
+        onHide={() => setShowToast(false)}
+        duration={3000}
+      />
     </div>
   )
 }
