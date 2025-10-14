@@ -33,12 +33,12 @@ export const deleteComment = async (id: string) => {
 
 // Follow/Unfollow API endpoints
 export const followUser = async (followeeId: string) => {
-    const response = await axiosClient.post(`/social/follow/${followeeId}/`);
+    const response = await axiosClient.post(`/social/users/${followeeId}/follow/`);
     return response.data;
 };
 
 export const unfollowUser = async (followeeId: string) => {
-    const response = await axiosClient.delete(`/social/unfollow/${followeeId}/`);
+    const response = await axiosClient.delete(`/social/users/${followeeId}/unfollow/`);
     return response.data;
 };
 
@@ -119,5 +119,44 @@ export const getUserFollowers = async (userId: string) => {
 
 export const getUserFollowing = async (userId: string) => {
     const response = await axiosClient.get(`/social/users/${userId}/following/`);
+    return response.data;
+};
+
+// Cause Favorites API endpoints
+export const favoriteCause = async (causeId: string) => {
+    const response = await axiosClient.post(`/social/causes/${causeId}/favorite/`);
+    return response.data;
+};
+
+export const unfavoriteCause = async (causeId: string) => {
+    const response = await axiosClient.delete(`/social/causes/${causeId}/unfavorite/`);
+    return response.data;
+};
+
+export const bulkAddCauseFavorites = async (causeIds: string[]) => {
+    const response = await axiosClient.post('/social/causes/favorites/bulk-add/', {
+        cause_ids: causeIds
+    });
+    return response.data;
+};
+
+// Collective Favorites API endpoints
+export const favoriteCollective = async (collectiveId: string) => {
+    const response = await axiosClient.post(`/social/collectives/${collectiveId}/favorite/`);
+    return response.data;
+};
+
+export const unfavoriteCollective = async (collectiveId: string) => {
+    const response = await axiosClient.delete(`/social/collectives/${collectiveId}/unfavorite/`);
+    return response.data;
+};
+
+export const getFavoriteCauses = async () => {
+    const response = await axiosClient.get('/social/users/favorite-causes/');
+    return response.data;
+};
+
+export const getFavoriteCollectives = async () => {
+    const response = await axiosClient.get('/social/users/favorite-collectives/');
     return response.data;
 };

@@ -4,7 +4,7 @@ import GroupCrwdSuggested from "../components/groupcrwd/GroupCrwdSuggested";
 import GroupCrwdUpdates from "../components/groupcrwd/GroupCrwdUpdates";
 import ProfileNavbar from "@/components/profile/ProfileNavbar";
 import Footer from "@/components/Footer";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Toast } from "@/components/ui/toast";
 import { SharePost } from "@/components/ui/SharePost";
@@ -16,8 +16,10 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Check, X } from "lucide-react";
+import { Check, Loader2, X } from "lucide-react";
 import ReactConfetti from "react-confetti";
+import { getCollectiveById, joinCollective, leaveCollective } from "@/services/api/crwd";
+import { useMutation, useQuery } from "@tanstack/react-query";
 
 export default function GroupCrwdPage() {
   const [hasJoined, setHasJoined] = useState(false);
@@ -31,7 +33,46 @@ export default function GroupCrwdPage() {
     height: window.innerHeight,
   };
   const navigate = useNavigate();
+  const { crwdId } = useLocation().state;
 
+  console.log(crwdId);
+
+  const { data: crwdData, isLoading: isLoadingCrwd } = useQuery({
+    queryKey: ['crwd', crwdId],
+    queryFn: () => getCollectiveById(crwdId),
+  });
+
+  // join collective
+  const joinCollectiveMutation = useMutation({
+    mutationFn: joinCollective,
+    onSuccess: (response) => {
+      console.log('Join collective successful:', response);
+      setHasJoined(true);
+      setShowToast(true);
+      setShowJoinModal(false);
+      setShowSuccessModal(true);
+    },
+    onError: (error: any) => {
+      console.error('Join collective error:', error);
+      setShowToast(true);
+    },
+  });
+
+  // leave collective
+  const leaveCollectiveMutation = useMutation({
+    mutationFn: leaveCollective,
+    onSuccess: (response) => {
+      console.log('Leave collective successful:', response);
+      setHasJoined(false);
+      setShowToast(true);
+      setShowConfirmDialog(false);
+    },
+    onError: (error: any) => {
+      console.error('Leave collective error:', error);
+      setShowToast(true);
+    },
+  });
+  
   // Refs for modal outside click detection
   const joinModalRef = useRef<HTMLDivElement>(null);
   const successModalRef = useRef<HTMLDivElement>(null);
@@ -85,9 +126,10 @@ export default function GroupCrwdPage() {
   };
 
   const handleJoinConfirm = () => {
-    setHasJoined(true);
-    setShowJoinModal(false);
-    setShowSuccessModal(true);
+    joinCollectiveMutation.mutate(crwdId);
+    // setHasJoined(true);
+    // setShowJoinModal(false);
+    // setShowSuccessModal(true);
   };
 
   const handleCloseSuccessModal = () => {
@@ -107,15 +149,27 @@ export default function GroupCrwdPage() {
   };
 
   const handleConfirmUnjoin = () => {
-    setHasJoined(false);
-    setShowToast(true);
-    setShowConfirmDialog(false);
+    if (!leaveCollectiveMutation.isPending) {
+      leaveCollectiveMutation.mutate(crwdId);
+    }
   };
+
+  useEffect(() => {
+    if (crwdData?.is_joined !== undefined) {
+      setHasJoined(crwdData.is_joined);
+    }
+  }, [crwdData]);
 
   return (
     // <div>
     <>
       <ProfileNavbar title="Collective" />
+      {isLoadingCrwd ? (
+        <div className="flex items-center justify-center h-screen">
+          <Loader2 className="w-8 h-8 animate-spin" />
+        </div>
+      ) : (
+        <>
       <div className="flex items-center gap-2 justify-between pt-6 pb-2 px-4 sticky top-16 z-10 bg-white ">
         <div className="text-lg font-semibold text-green-700 bg-green-200 px-2 py-1 rounded-md">
           Collective
@@ -142,8 +196,19 @@ export default function GroupCrwdPage() {
             }`}
             onClick={handleJoin}
             variant={hasJoined ? "outline" : "default"}
+            disabled={joinCollectiveMutation.isPending || leaveCollectiveMutation.isPending}
           >
-            {hasJoined ? (
+            {joinCollectiveMutation.isPending ? (
+              <>
+                <Loader2 size={16} className="mr-1 animate-spin" />
+                Joining...
+              </>
+            ) : leaveCollectiveMutation.isPending ? (
+              <>
+                <Loader2 size={16} className="mr-1 animate-spin" />
+                Leaving...
+              </>
+            ) : hasJoined ? (
               <>
                 <Check size={16} className="mr-1" />
                 Joined
@@ -158,11 +223,11 @@ export default function GroupCrwdPage() {
       <div className="pb-6 grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-3 space-y-6">
           {/* <ProfileNavbar title='Group Crwd' /> */}
-          <GroupCrwdHeader hasJoined={hasJoined} onJoin={handleJoin} id="" />
+          <GroupCrwdHeader hasJoined={hasJoined} onJoin={handleJoin} id="" crwdData={crwdData} />
           {/* <div className="px-4">
             <PopularPosts title="Activity" showLoadMore={false} />
             </div> */}
-          <GroupCrwdUpdates showEmpty={false} joined={hasJoined} />
+          <GroupCrwdUpdates showEmpty={false} joined={hasJoined} collectiveData={crwdData} />
           <GroupCrwdSuggested />
           {/* <GroupCrwdEvent /> */}
           {/* {!hasJoined && <GroupCrwdBottomBar onJoin={handleJoin} />} */}
@@ -447,11 +512,23 @@ export default function GroupCrwdPage() {
             <Button
               variant="outline"
               onClick={() => setShowConfirmDialog(false)}
+              disabled={leaveCollectiveMutation.isPending}
             >
               Cancel
             </Button>
-            <Button variant="destructive" onClick={handleConfirmUnjoin}>
-              Leave Group
+            <Button 
+              variant="destructive" 
+              onClick={handleConfirmUnjoin}
+              disabled={leaveCollectiveMutation.isPending}
+            >
+              {leaveCollectiveMutation.isPending ? (
+                <>
+                  <Loader2 size={16} className="mr-1 animate-spin" />
+                  Leaving...
+                </>
+              ) : (
+                "Leave Group"
+              )}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -469,6 +546,8 @@ export default function GroupCrwdPage() {
       <div className="">
         <Footer />
       </div>
+      </>
+      )}
     </>
   );
 }

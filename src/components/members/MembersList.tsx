@@ -5,38 +5,86 @@ import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Search } from "lucide-react";
 import { Toast } from "@/components/ui/toast";
-import type { Member } from "@/lib/types";
+import { useAuthStore } from "@/stores/store";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { followUser, unfollowUser } from "@/services/api/social";
+import { Loader2 } from "lucide-react";
 
 interface MembersListProps {
-  members: Member[];
+  members: any[];
+  isLoading: boolean;
 }
 
-const MembersList: React.FC<MembersListProps> = ({ members }) => {
+const MembersList: React.FC<MembersListProps> = ({ members, isLoading }) => {
   const [search, setSearch] = useState("");
-  const [followStatus, setFollowStatus] = useState<{ [key: number]: boolean }>(
-    {}
-  );
+  // const [followStatus, setFollowStatus] = useState<{ [key: number]: boolean }>(
+  //   {}
+  // );
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
+  const { user } = useAuthStore();
+  const queryClient = useQueryClient();
+  
+ 
 
-  const filtered = members.filter(
-    (m) =>
-      m.name.toLowerCase().includes(search.toLowerCase()) ||
-      m.username.toLowerCase().includes(search.toLowerCase())
-  );
+  // const filtered = members?.filter(
+  //   (m) => m?.user && (
+  //     m.user.first_name?.toLowerCase().includes(search.toLowerCase()) ||
+  //     m.user.last_name?.toLowerCase().includes(search.toLowerCase()) ||
+  //     m.user.username?.toLowerCase().includes(search.toLowerCase())
+  //   )
+  // ) || [];
 
-  const handleFollowToggle = (index: number, member: Member) => {
-    const isCurrentlyFollowing = followStatus[index] ?? member.connected;
-    const newFollowStatus = !isCurrentlyFollowing;
+  const followUserMutation = useMutation({
+    mutationFn: followUser,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['members'] });
+      setToastMessage("Followed");
+      setShowToast(true);
+    },
+    onError: (error) => {
+      setToastMessage("Error following user");
+      setShowToast(true);
+      console.error('Error following user:', error);
+    },
+  });
 
-    setFollowStatus((prev) => ({
-      ...prev,
-      [index]: newFollowStatus,
-    }));
+  const unfollowUserMutation = useMutation({
+    mutationFn: unfollowUser,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['members'] });
+      setToastMessage("Unfollowed");
+      setShowToast(true);
+    },
+    onError: (error) => {
+      setToastMessage("Error unfollowing user");
+      setShowToast(true);
+      console.error('Error unfollowing user:', error);
+    },
+  });
 
-    setToastMessage(newFollowStatus ? "Followed" : "Unfollowed");
-    setShowToast(true);
+  // const handleFollowToggle = (index: number, member: any) => {
+    // const isCurrentlyFollowing = followStatus[index] ?? member?.user?.connected;
+    // const newFollowStatus = !isCurrentlyFollowing;
+
+    // setFollowStatus((prev) => ({
+    //   ...prev,
+    //   [index]: newFollowStatus,
+    // }));
+
+    // setToastMessage(newFollowStatus ? "Followed" : "Unfollowed");
+    // setShowToast(true);
+  // };
+
+  const handleFollowToggle = (userId: string, isFollowing: boolean) => {
+    if (isFollowing) {
+      unfollowUserMutation.mutate(userId);
+    } else {
+      followUserMutation.mutate(userId);
+    }
   };
+
+
   return (
     <>
       <div className="relative mb-4 mt-1 px-4">
@@ -50,40 +98,57 @@ const MembersList: React.FC<MembersListProps> = ({ members }) => {
         <Search className="absolute mt-1 left-10 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
       </div>
       <ScrollArea className="h-[70vh] no-scrollbar px-6">
-        {filtered.map((member, index) => (
-          <div key={index} className="flex items-center justify-between py-3">
-            <div className="flex items-center">
-              <Avatar className="h-10 w-10 mr-3">
-                <AvatarImage
-                  src={`/placeholder.svg?height=40&width=40`}
-                  alt={member.name}
-                />
-                <AvatarFallback>
-                  {member.name.split(" ")[0][0] +
-                    (member.name.split(" ")[1] || "")[0]}
-                </AvatarFallback>
-              </Avatar>
-              <div>
-                <p className="font-medium">{member.name}</p>
-                <p className="text-sm text-muted-foreground">
-                  @{member.username}
-                </p>
-              </div>
-            </div>
-            <Button
-              variant="outline"
-              onClick={() => handleFollowToggle(index, member)}
-              className={`border-0 text-sm mr-2 cursor-pointer hover:text-blue-500 ${
-                followStatus[index] ?? member.connected
-                  ? "bg-[#4367FF] text-white"
-                  : "bg-[#F0F2FB] text-[#4367FF]"
-              }`}
-              size="sm"
-            >
-              {followStatus[index] ?? member.connected ? "Following" : "Follow"}
-            </Button>
+        {isLoading ? (
+          <div className="flex items-center justify-center h-32 text-muted-foreground">
+            <Loader2 className="animate-spin" />
           </div>
-        ))}
+        ) : members.length === 0 ? (
+          <div className="flex items-center justify-center h-32 text-muted-foreground">
+            <p>No members found</p>
+          </div>
+        ) : (
+          members.map((member: any, index: number) => (
+            <div key={index} className="flex items-center justify-between py-3">
+              <div className="flex items-center">
+                <Avatar className="h-10 w-10 mr-3">
+                  <AvatarImage
+                    src={member?.user?.profile_picture || `/placeholder.svg?height=40&width=40`}
+                    alt={member?.user?.first_name + " " + member?.user?.last_name}
+                  />
+                  <AvatarFallback>
+                    {member?.user?.first_name?.charAt(0)?.toUpperCase() || ''}
+                    {member?.user?.last_name?.charAt(0)?.toUpperCase() || ''}
+                  </AvatarFallback>
+                </Avatar>
+                <div>
+                  <p className="font-medium">
+                    {member?.user?.first_name || ''} {member?.user?.last_name || ''}
+                  </p>
+                  <p className="text-sm text-muted-foreground">
+                    @{member?.user?.username || 'unknown'}
+                  </p>
+                  {/* <p className="text-xs text-muted-foreground">
+                    {member?.role_display || 'Member'} • Joined {member?.joined_at ? new Date(member.joined_at).toLocaleDateString() : 'Unknown'}
+                  </p> */}
+                </div>
+              </div>
+              {member?.user?.id !== user?.id &&  (
+              <Button
+                variant="outline"
+                onClick={() => handleFollowToggle(member?.user?.id, member.user.is_following)}
+                className={`border-0 text-sm mr-2 cursor-pointer hover:text-blue-500 ${member?.user?.is_following
+                    ? "bg-[#4367FF] text-white"
+                    : "bg-[#F0F2FB] text-[#4367FF]"
+                  }`}
+                size="sm"
+              >
+                {/* {followStatus[index] ?? member?.user?.connected ? "Following" : "Follow"} */}
+                {member?.user?.is_following ? "Following" : "Follow"}
+              </Button>
+              )}
+            </div>
+          ))
+        )}
       </ScrollArea>
       <Toast
         message={toastMessage}

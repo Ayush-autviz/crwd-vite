@@ -1,60 +1,40 @@
 import { useState } from "react";
-import { Plus, Users, Search } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Plus, Users, Search, Loader2, Heart } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import ProfileNavbar from "@/components/profile/ProfileNavbar";
 import { Link } from "react-router-dom";
 import Footer from "@/components/Footer";
+import { getCollectives, getJoinCollective } from "@/services/api/crwd";
+import { useQuery } from "@tanstack/react-query";
+import { getFavoriteCollectives } from "@/services/api/social";
 
 const Circles = () => {
   const [activeTab, setActiveTab] = useState<"my-crwds" | "discover">(
     "my-crwds"
   );
 
-  // Sample data for discover tab
-  const discoverCircles = [
-    {
-      id: 1,
-      name: "The Red Cross",
-      description: "An health organization that helps people in need",
-      image: "/redcross.png",
-      type: "Collective",
-      members: 1250,
-    },
-    {
-      id: 2,
-      name: "St. Judes",
-      description: "The leading children's health organization",
-      image: "/grocery.jpg",
-      type: "Collective",
-      members: 890,
-    },
-    {
-      id: 4,
-      name: "Women's Healthcare of At...",
-      description: "We are Atlanta's #1 healthcare organization",
-      image: "/redcross.png",
-      type: "Collective",
-      members: 456,
-    },
-    {
-      id: 5,
-      name: "St. Judes",
-      description: "The leading children's health organization",
-      image: "/grocery.jpg",
-      type: "Collective",
-      members: 890,
-    },
-    {
-      id: 3,
-      name: "Women's Healthcare of At...",
-      description: "We are Atlanta's #1 healthcare organization",
-      image: "/redcross.png",
-      type: "Collective",
-      members: 456,
-    },
-  ];
+  const { data: collectiveData } = useQuery({
+    queryKey: ['circles'],
+    queryFn: () => getCollectives(),
+    enabled: true,
+  });
+
+  const { data: joinCollectiveData, isLoading: isLoadingJoinCollective } = useQuery({
+    queryKey: ['join-collective'],
+    queryFn: () => getJoinCollective(),
+    enabled: true,
+  });
+
+  // favorrrite collectives
+  const { data: favoriteCollectives, isLoading: isLoadingFavoriteCollectives } = useQuery({
+    queryKey: ['favorite-collectives'],
+    queryFn: () => getFavoriteCollectives(),
+    enabled: true,
+  });
+
+
+
 
   return (
     <div className="">
@@ -104,7 +84,7 @@ const Circles = () => {
               }`}
             >
               <Users className="w-4 h-4" />
-              My Collectives (0)
+              My Collectives ({joinCollectiveData?.results?.length || 0 + favoriteCollectives?.results?.length || 0})
             </button>
             <button
               onClick={() => setActiveTab("discover")}
@@ -122,32 +102,163 @@ const Circles = () => {
 
         {/* Content Area */}
         <div className="px-6">
-          {activeTab === "my-crwds" ? (
-            /* Empty State for My Crwds */
-            <div className="text-center pb-6">
-              <div className="w-24 h-24 mx-auto mb-6 bg-muted rounded-full flex items-center justify-center">
-                <Users className="w-12 h-12 text-muted-foreground" />
+            {activeTab === "my-crwds" ? (
+              <div className="space-y-6 pb-16">
+                {/* Loading State */}
+                {(isLoadingJoinCollective || isLoadingFavoriteCollectives) ? (
+                  <div className="flex justify-center items-center mt-10">
+                    <Loader2 className="animate-spin" />
+                  </div>
+                ) : (
+                  <>
+                    {/* Joined Collectives Section */}
+                    <div>
+                      <h2 className="text-lg font-semibold text-foreground mb-4 flex items-center gap-2">
+                        <Users className="w-5 h-5" />
+                        Joined ({joinCollectiveData?.results?.length || 0})
+                      </h2>
+                      {joinCollectiveData?.results?.length > 0 ? (
+                        <div className="space-y-3">
+                          {joinCollectiveData.results.map((collective: any) => (
+                            <Link
+                              to="/groupcrwd"
+                              state={{ crwdId: collective.collective?.id }}
+                              key={collective.id}
+                              className="flex items-center justify-between p-4 rounded-lg border border-border bg-card hover:bg-muted/50 transition-colors"
+                            >
+                              <div className="flex items-center gap-3 flex-1 min-w-0">
+                                <Avatar className="h-12 w-12 rounded-full flex-shrink-0">
+                                  <AvatarImage src={collective?.collective?.created_by?.profile_picture} alt={collective.name} />
+                                  <AvatarFallback>{collective?.collective?.name.charAt(0)}</AvatarFallback>
+                                </Avatar>
+                                <div className="min-w-0 flex-1">
+                                  <div className="flex items-center gap-2 mb-1">
+                                    <Badge
+                                      variant="secondary"
+                                      className="bg-green-100 text-green-600 text-xs px-2 py-1"
+                                    >
+                                      Collective
+                                    </Badge>
+                                  </div>
+                                  <h3 className="font-semibold text-foreground mb-1 truncate">
+                                    {collective?.collective?.name}
+                                  </h3>
+                                  <p className="text-sm text-muted-foreground line-clamp-2">
+                                    {collective?.collective?.description}
+                                  </p>
+                                  {/* <p className="text-xs text-muted-foreground mt-1">
+                                    {collective?.collective?.member_count || 0} members
+                                  </p> */}
+                                </div>
+                              </div>
+                              <Link
+                                to="/groupcrwd"
+                                state={{ collectiveData: collective }}
+                                className="bg-green-600 hover:bg-green-700 text-white text-sm px-4 py-2 rounded-lg"
+                              >
+                                Learn More
+                              </Link>
+                            </Link>
+                          ))}
+                        </div>
+                      ) : (
+                        <div className="text-center py-8 bg-muted/30 rounded-lg">
+                          <Users className="w-12 h-12 text-muted-foreground mx-auto mb-3" />
+                          <p className="text-muted-foreground">No joined collectives yet</p>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Favorite Collectives Section */}
+                    <div>
+                      <h2 className="text-lg font-semibold text-foreground mb-4 flex items-center gap-2">
+                        <Heart className="w-5 h-5" />
+                        Favorites ({favoriteCollectives?.results?.length || 0})
+                      </h2>
+                      {favoriteCollectives?.results?.length > 0 ? (
+                        <div className="space-y-3">
+                          {favoriteCollectives?.results?.map((collective: any) => (
+                            <Link
+                              to="/groupcrwd"
+                              state={{ crwdId: collective.collective?.id }}
+                              key={collective.id}
+                              className="flex items-center justify-between p-4 rounded-lg border border-border bg-card hover:bg-muted/50 transition-colors"
+                            >
+                              <div className="flex items-center gap-3 flex-1 min-w-0">
+                                <Avatar className="h-12 w-12 rounded-full flex-shrink-0">
+                                  <AvatarImage src={collective?.collective?.created_by?.profile_picture} alt={collective.name} />
+                                  <AvatarFallback>{collective?.collective?.name.charAt(0)}</AvatarFallback>
+                                </Avatar>
+                                <div className="min-w-0 flex-1">
+                                  {/* <div className="flex items-center gap-2 mb-1">
+                                    <Badge
+                                      variant="secondary"
+                                      className="bg-red-100 text-red-600 text-xs px-2 py-1"
+                                    >
+                                      Favorite
+                                    </Badge>
+                                    {collective.is_joined && (
+                                      <Badge
+                                        variant="secondary"
+                                        className="bg-green-100 text-green-600 text-xs px-2 py-1"
+                                      >
+                                        Joined
+                                      </Badge>
+                                    )}
+                                  </div> */}
+                                  <div className="flex items-center gap-2 mb-1">
+                                    <Badge
+                                      variant="secondary"
+                                      className="bg-green-100 text-green-600 text-xs px-2 py-1"
+                                    >
+                                      Collective
+                                    </Badge>
+                                  </div>
+                                  <h3 className="font-semibold text-foreground mb-1 truncate">
+                                    {collective?.collective?.name}
+                                  </h3>
+                                  <p className="text-sm text-muted-foreground line-clamp-2">
+                                    {collective?.collective?.description}
+                                  </p>
+                                  {/* <p className="text-xs text-muted-foreground mt-1">
+                                    {collective.member_count || 0} members
+                                  </p> */}
+                                </div>
+                              </div>
+                              <Link
+                                to="/groupcrwd"
+                                state={{ collectiveData: collective }}
+                                className="bg-green-600 hover:bg-green-700 text-white text-sm px-4 py-2 rounded-lg"
+                              >
+                                Learn More
+                              </Link>
+                            </Link>
+                          ))}
+                        </div>
+                      ) : (
+                        <div className="text-center py-8 bg-muted/30 rounded-lg">
+                          <span className="text-4xl mb-3 block"><Heart className="w-12 h-12 text-muted-foreground mx-auto mb-3" /></span>
+                          <p className="text-muted-foreground">No favorite collectives yet</p>
+                        </div>
+                      )}
+                    </div>
+
+                  </>
+                )}
               </div>
-              <h3 className="text-lg font-semibold text-foreground mb-2">
-                You're not in a Collective yet.
-              </h3>
-              <p className="text-muted-foreground ">
-                Collectives are communities built around causes. Join one to
-                instantly add its nonprofits to your Donation Box or start your
-                own.
-              </p>
-            </div>
-          ) : (
+            ) : (
             /* Discover Tab Content */
             <div className="space-y-4 pb-16">
-              {discoverCircles.map((circle) => (
-                <div
+              {collectiveData?.results?.map((circle: any) => (
+                <Link
+                  to="/groupcrwd"
+                  state={{ crwdId: circle.id }}
                   key={circle.id}
                   className="flex items-center justify-between p-4 rounded-lg border border-border bg-card hover:bg-muted/50 transition-colors"
                 >
                   <div className="flex items-center gap-3 flex-1 min-w-0">
                     <Avatar className="h-12 w-12 rounded-full flex-shrink-0">
-                      <AvatarImage src={circle.image} alt={circle.name} />
+                      <AvatarImage src={circle.created_by.profile_picture} alt={circle.name} />
                       <AvatarFallback>{circle.name.charAt(0)}</AvatarFallback>
                     </Avatar>
 
@@ -157,7 +268,7 @@ const Circles = () => {
                           variant="secondary"
                           className="bg-green-100 text-green-600 text-xs px-2 py-1"
                         >
-                          {circle.type}
+                          collective
                         </Badge>
                       </div>
                       <h3 className="font-semibold text-foreground mb-1 truncate">
@@ -175,7 +286,7 @@ const Circles = () => {
                   >
                     Learn More
                   </Link>
-                </div>
+                </Link>
               ))}
             </div>
           )}

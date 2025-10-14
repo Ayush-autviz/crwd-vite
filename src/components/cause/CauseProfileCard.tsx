@@ -1,52 +1,96 @@
-import React, { useState } from "react";
-import { CheckCircle, Heart, ShieldCheck } from "lucide-react";
+import React, { useState, useEffect } from "react";
+import { CheckCircle, Heart, ShieldCheck, Loader2 } from "lucide-react";
 import ClaimCauseDialog from "./ClaimCauseDialog";
 import { Link } from "react-router-dom";
 import { SharePost } from "../ui/SharePost";
 import { Badge } from "../ui/badge";
-import { useFavorites } from "../../contexts/FavoritesContext";
 import { Toast } from "../ui/toast";
+import { categories } from "@/constants/categories";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { favoriteCause, unfavoriteCause } from "@/services/api/social";
 
 interface CauseProfileCardProps {
   onLearnMoreClick?: () => void;
+  causeData?: any;
 }
 
 const CauseProfileCard: React.FC<CauseProfileCardProps> = ({
   onLearnMoreClick,
+  causeData,
 }) => {
+  const queryClient = useQueryClient();
   const [showShareModal, setShowShareModal] = useState(false);
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
-  const { toggleFavorite, isFavorite } = useFavorites();
-  const causeId = "cause-helping-humanity"; // You can make this dynamic based on props
+  const [isFavorited, setIsFavorited] = useState(causeData?.is_favorited || false);
+  const causeId = causeData?.id;
+
+  // Favorite cause mutation
+  const favoriteMutation = useMutation({
+    mutationFn: favoriteCause,
+    onSuccess: () => {
+      setIsFavorited(true);
+      setToastMessage("Added to favorites");
+      setShowToast(true);
+      // Invalidate favorite causes query to refresh the saved page
+      queryClient.invalidateQueries({ queryKey: ['favoriteCauses'] });
+    },
+    onError: (error) => {
+      console.error('Error favoriting cause:', error);
+      setToastMessage("Failed to add to favorites");
+      setShowToast(true);
+    },
+  });
+
+  // Unfavorite cause mutation
+  const unfavoriteMutation = useMutation({
+    mutationFn: unfavoriteCause,
+    onSuccess: () => {
+      setIsFavorited(false);
+      setToastMessage("Removed from favorites");
+      setShowToast(true);
+      // Invalidate favorite causes query to refresh the saved page
+      queryClient.invalidateQueries({ queryKey: ['favoriteCauses'] });
+    },
+    onError: (error) => {
+      console.error('Error unfavoriting cause:', error);
+      setToastMessage("Failed to remove from favorites");
+      setShowToast(true);
+    },
+  });
 
   const handleFavoriteClick = () => {
-    const wasAdded = toggleFavorite(causeId);
-    if (wasAdded) {
-      setToastMessage("Added to favorites");
+    if (isFavorited) {
+      unfavoriteMutation.mutate(causeId);
     } else {
-      setToastMessage("Removed from favorites");
+      favoriteMutation.mutate(causeId);
     }
-    setShowToast(true);
   };
 
-  const categories = [
-    {
-      name: "Animals",
-      text: "#E36414", // Orange-Red
-      background: "#FFE1CC", // Soft warm orange tint
-    },
-    {
-      name: "Environment",
-      text: "#6A994E", // Olive Green
-      background: "#DFF0D6", // Fresh leafy green tint
-    },
-    {
-      name: "Food",
-      text: "#FF9F1C", // Carrot Orange
-      background: "#FFE6CC", // Gentle light orange tint
-    },
-  ];
+  // Update favorite state when causeData changes
+  useEffect(() => {
+    setIsFavorited(causeData?.is_favorited || false);
+  }, [causeData?.is_favorited]);
+
+  // const categories = [
+  //   {
+  //     name: "Animals",
+  //     text: "#E36414", // Orange-Red
+  //     background: "#FFE1CC", // Soft warm orange tint
+  //   },
+  //   {
+  //     name: "Environment",
+  //     text: "#6A994E", // Olive Green
+  //     background: "#DFF0D6", // Fresh leafy green tint
+  //   },
+  //   {
+  //     name: "Food",
+  //     text: "#FF9F1C", // Carrot Orange
+  //     background: "#FFE6CC", // Gentle light orange tint
+  //   },
+  // ];
+
+  const category = categories.find((category) => category.id === causeData?.category);
 
   return (
     <div className="bg-white px-3 py-4 mx-3 mb-2 flex flex-col space-y-4">
@@ -73,35 +117,39 @@ const CauseProfileCard: React.FC<CauseProfileCardProps> = ({
         />
         <div className="flex flex-col ">
           <span className="font-semibold text-base text-gray-900">
-            Helping Humanity
+            {causeData?.name}
           </span>
           <span className="text-xs text-gray-500">
-            in 6 CRWDS · 162 donations
+            in {causeData?.collective_count} CRWDS · 162 donations
           </span>
         </div>
         {/* <Button variant="outline"> */}
         {/* <Heart className="w-4 h-4 fill-red-500" /> */}
         {/* <button className="border-1 border-gray-500 rounded-md h-9 px-3 py-2"> */}
-        <Heart
-          className={`
-              w-6 h-6
-              ${
-                isFavorite(causeId)
-                  ? "stroke-red-500 fill-red-500"
-                  : "stroke-gray-500 fill-transparent"
+        <div className="flex items-center gap-2">
+          <Heart
+            className={`
+                w-6 h-6
+                ${isFavorited
+                ? "stroke-red-500 fill-red-500"
+                : "stroke-gray-500 fill-transparent"
               }
-              hover:stroke-red-500 hover:fill-red-500
-              cursor-pointer transition-colors duration-200
-            `}
-          onClick={handleFavoriteClick}
-        />
+                hover:stroke-red-500 hover:fill-red-500
+                cursor-pointer transition-colors duration-200
+                ${(favoriteMutation.isPending || unfavoriteMutation.isPending) ? 'opacity-50 cursor-not-allowed' : ''}
+              `}
+            onClick={handleFavoriteClick}
+          />
+          {(favoriteMutation.isPending || unfavoriteMutation.isPending) && (
+            <Loader2 className="w-4 h-4 animate-spin text-gray-500" />
+          )}
+        </div>
         {/* </button> */}
         {/* </Button> */}
       </div>
       {/* Bio */}
       <div className="text-lg text-gray-700">
-        This is a bio about Non Profit and how they give back to their community
-        so that users can learn about how their money is supporting others…
+      {causeData?.mission}
         <div className="mt-2">
           <button
             onClick={onLearnMoreClick}
@@ -121,20 +169,20 @@ const CauseProfileCard: React.FC<CauseProfileCardProps> = ({
 
       <div className="overflow-x-auto pb-2">
         <div className="flex space-x-2 min-w-max">
-          {categories.map((category) => (
-            <Link to={`/interests`} key={category.name}>
+          {/* {categories.map((category) => (
+            <Link to={`/interests`} key={category.name}> */}
               <Badge
                 variant="secondary"
                 className="bg-muted/50 hover:bg-muted text-foreground rounded-md px-4 py-2 whitespace-nowrap"
                 style={{
-                  backgroundColor: category.background,
-                  color: category.text,
+                  backgroundColor: category?.background,
+                  color: category?.text,
                 }}
               >
-                {category.name}
+                {category?.name}
               </Badge>
-            </Link>
-          ))}
+            {/* </Link>
+          ))} */}
         </div>
       </div>
 
@@ -146,9 +194,9 @@ const CauseProfileCard: React.FC<CauseProfileCardProps> = ({
             Verified US Non Profit
           </span>
         </div>
-        <div className="text-sm text-gray-700">Tax ID Number: 10125-3129</div>
+        <div className="text-sm text-gray-700">Tax ID Number: {causeData?.tax_id_number}</div>
         <div className="text-sm text-gray-700 mb-1">
-          Address: 123 Main Street. USA 10010
+          Address: {causeData?.street}, {causeData?.city}, {causeData?.state}
         </div>
         {/* <a to="#" className="text-sm text-blue-600 underline">Claim this non-profit?</a> */}
         <ClaimCauseDialog />

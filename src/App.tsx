@@ -3,11 +3,13 @@ import {
   Routes,
   Route,
   useLocation,
+  useNavigate,
 } from "react-router-dom";
 import { Toaster } from "sonner";
 import { useEffect } from "react";
 import Layout from "./components/Layout";
 import { FavoritesProvider } from "./contexts/FavoritesContext";
+import { useAuthStore } from "./stores/store";
 import Home from "./pages/Home";
 import Login from "./pages/auth/Login";
 import Signup from "./pages/auth/Signup";
@@ -90,27 +92,49 @@ function ScrollToTop() {
   return null;
 }
 
+// Component to handle auth route navigation
+function AuthRouteHandler() {
+  const { token } = useAuthStore();
+  const navigate = useNavigate();
+  
+  // If user has a token, navigate to home
+  useEffect(() => {
+    if (token?.access_token) {
+      navigate("/");
+    }
+  }, []);
+  
+  return null;
+}
+
 function App() {
+  const { token } = useAuthStore();
+  
   return (
     <Router>
       <ScrollToTop />
       <FavoritesProvider>
         <div className="bg-background min-h-screen">
+          {/* <AuthRouteHandler /> */}
           <Routes>
-            {/* Auth routes - no layout */}
-            <Route path="/login" element={<Login />} />
-            <Route path="/signup" element={<Signup />} />
-            <Route path="/forgot-password" element={<ForgotPassword />} />
-            <Route path="/interests" element={<Interests />} />
-            <Route path="/verify" element={<Verify />} />
-            <Route path="/auth/google/callback" element={<GoogleCallback />} />
-            <Route path="/onboarding" element={<OnBoard />} />
-            <Route path="/complete-onboard" element={<CompleteOnboard />} />
-            <Route path="/claim-profile" element={<ClaimProfile />} />
-            <Route
-              path="/non-profit-interests"
-              element={<NonProfitInterests />}
-            />
+            {/* Auth routes - only render if no token */}
+            {!token?.access_token && (
+              <>
+                <Route path="/login" element={<Login />} />
+                <Route path="/signup" element={<Signup />} />
+                <Route path="/forgot-password" element={<ForgotPassword />} />
+                <Route path="/interests" element={<Interests />} />
+                <Route path="/verify" element={<Verify />} />
+                <Route path="/auth/google/callback" element={<GoogleCallback />} />
+                <Route path="/onboarding" element={<OnBoard />} />
+                <Route path="/complete-onboard" element={<CompleteOnboard />} />
+                <Route path="/claim-profile" element={<ClaimProfile />} />
+                {/* <Route
+                  path="/non-profit-interests"
+                  element={<NonProfitInterests />}
+                /> */}
+              </>
+            )}
 
             {/* Main routes with layout */}
             <Route
@@ -123,6 +147,10 @@ function App() {
                     <Route path="/search2" element={<Search2 />} />
                     <Route path="/donation" element={<Donation />} />
                     <Route path="/notifications" element={<Notifications />} />
+                    <Route
+                  path="/non-profit-interests"
+                  element={<NonProfitInterests />}
+                />
                     <Route path="/profile" element={<Profile />} />
                     {/* <Route path="/profile/:id" element={<ProfileById />} /> */}
                     <Route path="/profile/edit" element={<ProfileById />} />

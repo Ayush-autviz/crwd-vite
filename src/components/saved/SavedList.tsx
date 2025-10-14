@@ -13,9 +13,15 @@ import {
 import { Button } from '@/components/ui/button';
 
 export interface SavedData {
+  id?: number;
   avatar: string;
   title: string;
   subtitle: string;
+  type?: 'nonprofit' | 'collective';
+  causeId?: number;
+  collectiveId?: number;
+  createdAt?: string;
+  isJoined?: boolean;
 }
 
 interface SavedListProps {
@@ -35,7 +41,13 @@ const SavedList: React.FC<SavedListProps> = ({ items, onRemoveItem }) => {
       setItemToRemove({ index, title: items[index].title });
       setShowConfirmDialog(true);
     } else {
-      navigate(`/cause`);
+      // Navigate based on item type
+      const item = items[index];
+      if (item.type === 'collective') {
+        navigate(`/groupcrwd`, { state: { crwdId: item.collectiveId || item.id } });
+      } else {
+        navigate(`/cause`, { state: { causeId: item.causeId || item.id } });
+      }
     }
   };
 

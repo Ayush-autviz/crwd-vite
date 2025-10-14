@@ -11,6 +11,8 @@ import { Link } from "react-router-dom";
 import { Button } from "../ui/button";
 import { ChevronRight, Search } from "lucide-react";
 import { Avatar } from "../ui/avatar";
+import { getCollectiveMembers } from "@/services/api/crwd";
+import { useQuery } from "@tanstack/react-query";
 
 const members = [
   { name: "Chad F.", username: "chad", connected: true },
@@ -25,7 +27,7 @@ const members = [
   { name: "Max Fields", username: "maxf", connected: false },
 ];
 
-const MembersTabs: React.FC<{ tab?: string }> = ({ tab = "Members" }) => {
+const MembersTabs: React.FC<{ tab?: string, collectiveData?: any }> = ({ tab = "Members", collectiveData }) => {
   const [search, setSearch] = useState("");
   const [activeTab, setActiveTab] = useState(tab);
   const [showRecentDonations, setShowRecentDonations] = useState(false);
@@ -36,6 +38,17 @@ const MembersTabs: React.FC<{ tab?: string }> = ({ tab = "Members" }) => {
       setShowRecentDonations(false);
     }
   };
+
+  // get members from collectiveData
+  const { data: membersData, isLoading: isMembersLoading } = useQuery({
+    queryKey: ['members', collectiveData?.id],
+    queryFn: () => getCollectiveMembers(collectiveData?.id),
+    enabled: !!collectiveData?.id,
+  });
+
+  console.log(membersData);
+
+  
   const suggestedCauses = [
     {
       name: "The Red Cross",
@@ -57,6 +70,8 @@ const MembersTabs: React.FC<{ tab?: string }> = ({ tab = "Members" }) => {
     },
   ];
 
+  console.log(collectiveData);
+
   return (
     <main className="pb-16 md:pb-0">
       {/* Mobile */}
@@ -65,8 +80,8 @@ const MembersTabs: React.FC<{ tab?: string }> = ({ tab = "Members" }) => {
         <MembersTabNav
           activeTab={activeTab}
           setActiveTab={handleTabChange}
-          causesCount={1}
-          membersCount={members.length}
+          causesCount={collectiveData?.causes?.length ?? 0}
+          membersCount={collectiveData?.member_count ?? 0}
           donationsCount={34}
         />
         <div className=" py-2 mt-2">
@@ -85,13 +100,13 @@ const MembersTabs: React.FC<{ tab?: string }> = ({ tab = "Members" }) => {
                 <Search className="absolute left-8 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               </div>
               <div className="space-y-3">
-                {suggestedCauses.map((cause, index) => (
+                {collectiveData?.causes?.map((cause: any, index: number) => (
                   <Link to="/cause" key={index} className="block">
                     <div className="flex items-center justify-between p-2 rounded-lg hover:bg-muted/50 cursor-pointer transition-colors">
                       <div className="flex items-center gap-3 flex-1 min-w-0 mr-4">
                         <div className="w-10 h-10 rounded-full overflow-hidden flex-shrink-0">
                           <img
-                            src={cause.image}
+                            src={cause.cause.image}
                             alt={cause.name}
                             className="w-full h-full object-cover"
                           />
@@ -99,30 +114,29 @@ const MembersTabs: React.FC<{ tab?: string }> = ({ tab = "Members" }) => {
                         <div className="min-w-0 flex-1">
                           <div
                             className={`${
-                              cause.type === "Collective"
-                                ? "bg-green-100"
-                                : "bg-blue-50"
+                              
+                              
+                                "bg-blue-50"
                             } px-3 py-1 rounded-sm w-fit`}
                           >
                             <p
                               className={`${
-                                cause.type === "Collective"
-                                  ? "text-green-600"
-                                  : "text-blue-600"
+                             
+                                  "text-blue-600"
                               } text-xs font-semibold`}
                             >
-                              {cause.type}
+                              Nonprofit
                             </p>
                           </div>
                           <h3 className="font-medium text-sm mb-1">
-                            {cause.name}
+                            {cause.cause.name}
                           </h3>
-                          <p className="text-xs text-muted-foreground leading-relaxed line-clamp-2 max-w-[200px]">
-                            {cause.description}
+                          <p className="text-xs text-muted-foreground leading-relaxed line-clamp-2 max-w-[80%]">
+                            {cause.cause.description}
                           </p>
                         </div>
                       </div>
-                      {cause.type === "Nonprofit" && (
+                    
                         <div className="flex flex-col items-center gap-2">
                           <Button className=" text-white text-xs py-2 px-3 rounded-lg  transition-colors">
                             Donate Now
@@ -134,14 +148,7 @@ const MembersTabs: React.FC<{ tab?: string }> = ({ tab = "Members" }) => {
                             Visit Profile
                           </Button>
                         </div>
-                      )}
-                      {cause.type === "Collective" && (
-                        <div className="flex flex-col items-center gap-2">
-                          <Button className="bg-green-600 text-white text-xs py-2 px-4 rounded-lg hover:bg-green-700 transition-colors">
-                            Learn More
-                          </Button>
-                        </div>
-                      )}
+                      
                     </div>
                   </Link>
                 ))}
@@ -155,7 +162,7 @@ const MembersTabs: React.FC<{ tab?: string }> = ({ tab = "Members" }) => {
             </div> */}
             </div>
           )}
-          {activeTab === "Members" && <MembersList members={members} />}
+          {activeTab === "Members" && <MembersList members={membersData?.results ?? []} isLoading={isMembersLoading} />}
           {activeTab === "Collective Donations" &&
             (showRecentDonations ? (
               <RecentDonationsList
@@ -173,19 +180,19 @@ const MembersTabs: React.FC<{ tab?: string }> = ({ tab = "Members" }) => {
       </div>
       {/* Desktop */}
       <div className="hidden md:block">
-        <ProfileNavbar title="Feed the hungry" />
+        <ProfileNavbar title={'Members'} />
         <div className="p-6 grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Left Column */}
+          {/* Left Column */} 
           <div className="lg:col-span-2 space-y-6">
             <Card>
               <CardContent>
                 <div className="flex flex-col md:flex-row md:justify-between md:items-center mb-6 gap-4">
                   <div className="flex items-center">
                     <div className="h-12 w-12 rounded-full bg-muted flex items-center justify-center mr-3">
-                      <span className="text-lg font-bold text-primary">FH</span>
+                      <span className="text-lg font-bold text-primary">{collectiveData?.name.charAt(0)}</span>
                     </div>
                     <div>
-                      <p className="font-medium">Feed the hungry</p>
+                      <p className="font-medium">{collectiveData?.name}</p>
                       <p className="text-primary">Members</p>
                     </div>
                   </div>
@@ -196,8 +203,8 @@ const MembersTabs: React.FC<{ tab?: string }> = ({ tab = "Members" }) => {
                 <MembersTabNav
                   activeTab={activeTab}
                   setActiveTab={handleTabChange}
-                  causesCount={1}
-                  membersCount={members.length}
+                  causesCount={collectiveData?.causes?.length ?? 0}
+                  membersCount={collectiveData?.member_count ?? 0}
                   donationsCount={34}
                 />
                 {activeTab === "Causes" && (
@@ -216,7 +223,7 @@ const MembersTabs: React.FC<{ tab?: string }> = ({ tab = "Members" }) => {
                       <Search className="absolute left-10 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                     </div> */}
                     <div className="space-y-3">
-                      {suggestedCauses.map((cause, index) => (
+                      {collectiveData?.causes?.map((cause: any, index: number) => (
                         <Link to="/cause" key={index} className="block">
                           <div className="flex items-center justify-between p-2 rounded-lg hover:bg-muted/50 cursor-pointer transition-colors">
                             <div className="flex items-center gap-3 flex-1 min-w-0 mr-4">
@@ -224,36 +231,35 @@ const MembersTabs: React.FC<{ tab?: string }> = ({ tab = "Members" }) => {
                                 <img
                                   src={cause.image}
                                   alt={cause.name}
-                                  className="w-full h-full object-cover"
+                                  className="w-full h-full object-cover"  
                                 />
                               </div>
                               <div className="min-w-0 flex-1">
-                                <div
-                                  className={`${
-                                    cause.type === "Collective"
-                                      ? "bg-green-100"
-                                      : "bg-blue-50"
-                                  } px-3 py-1 rounded-sm w-fit`}
-                                >
-                                  <p
-                                    className={`${
-                                      cause.type === "Collective"
-                                        ? "text-green-600"
-                                        : "text-blue-600"
-                                    } text-xs font-semibold`}
-                                  >
-                                    {cause.type}
-                                  </p>
-                                </div>
+                              <div
+                            className={`${
+                              
+                              
+                                "bg-blue-50"
+                            } px-3 py-1 rounded-sm w-fit`}
+                          >
+                            <p
+                              className={`${
+                             
+                                  "text-blue-600"
+                              } text-xs font-semibold`}
+                            >
+                              Nonprofit
+                            </p>
+                          </div>
                                 <h3 className="font-medium text-sm mb-1">
-                                  {cause.name}
+                                  {cause.cause.name}
                                 </h3>
-                                <p className="text-xs text-muted-foreground leading-relaxed line-clamp-2 max-w-[200px]">
-                                  {cause.description}
+                                <p className="text-xs text-muted-foreground leading-relaxed line-clamp-2 max-w-[80%]">
+                                  {cause.cause.description}
                                 </p>
                               </div>
                             </div>
-                            {cause.type === "Nonprofit" && (
+                            
                               <div className="flex flex-col items-center gap-2">
                                 <Button className=" text-white text-xs py-2 px-3 rounded-lg  transition-colors">
                                   Donate Now
@@ -265,14 +271,7 @@ const MembersTabs: React.FC<{ tab?: string }> = ({ tab = "Members" }) => {
                                   Visit Profile
                                 </Button>
                               </div>
-                            )}
-                            {cause.type === "Collective" && (
-                              <div className="flex flex-col items-center gap-2">
-                                <Button className="bg-green-600 text-white text-xs py-2 px-4 rounded-lg hover:bg-green-700 transition-colors">
-                                  Learn More
-                                </Button>
-                              </div>
-                            )}
+                           
                           </div>
                         </Link>
                       ))}
@@ -286,7 +285,7 @@ const MembersTabs: React.FC<{ tab?: string }> = ({ tab = "Members" }) => {
                     </div> */}
                   </div>
                 )}
-                {activeTab === "Members" && <MembersList members={members} />}
+                {activeTab === "Members" && <MembersList members={membersData?.results ?? []} isLoading={isMembersLoading} />}
                 {activeTab === "Collective Donations" && (
                   <CollectiveDonationsSummary
                     onSeeRecentDonations={() => {}}
@@ -304,9 +303,9 @@ const MembersTabs: React.FC<{ tab?: string }> = ({ tab = "Members" }) => {
               activeTab={activeTab}
               count={
                 activeTab === "Members"
-                  ? members.length
-                  : activeTab === "Cause"
-                  ? 1
+                  ? collectiveData?.member_count ?? 0
+                  : activeTab === "Causes"
+                  ? collectiveData?.causes?.length ?? 0
                   : 43
               }
             />

@@ -1,4 +1,4 @@
-import { ChevronRight } from "lucide-react";
+import { ChevronRight, Loader2 } from "lucide-react";
 import { Link } from "react-router-dom";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -13,124 +13,47 @@ import CausesCarousel from "@/components/CausesCarousel";
 import { useState } from "react";
 import HomeBanner from "@/components/HomeBanner";
 import Footer from "@/components/Footer";
+import { useQuery } from "@tanstack/react-query";
+import { getCauses, getCausesByLocation, getCollectives } from "@/services/api/crwd";
+import { useGeolocated } from "react-geolocated";
+import { categories } from "@/constants/categories";
 
 export default function HomePage() {
   const [showMobileFooter, setShowMobileFooter] = useState(true);
 
-  const topi: any = [
-    {
-      id: "1",
-      name: "NFT Funding",
-      posts: 34,
-      avatars: ["1", "2", "3"],
-    },
-    {
-      id: "2",
-      name: "Harvard",
-      posts: 126,
-      avatars: ["4", "5", "6", "7"],
-    },
-    {
-      id: "3",
-      name: "#givingtuesday",
-      posts: 156,
-      avatars: ["8", "9", "10", "11"],
-    },
-  ];
+  const { coords, isGeolocationAvailable, isGeolocationEnabled } =
+  useGeolocated({
+      positionOptions: {
+          enableHighAccuracy: false,
+      },
+      userDecisionTimeout: 5000,
+  });
+  console.log(coords, 'coords');
 
-  // Sample data for suggested CRWDs
-  const suggestedCRWDs = [
-    {
-      name: "Grocery Spot",
-      members: "303 Members",
-      description: "Community lunches every Saturday",
-      image: "/grocery.jpg",
-    },
-    {
-      name: "Food for Thought",
-      members: "78 Members",
-      description: "Solving world hunger. One meal at a time.",
-      image: "/grocery.jpg",
-    },
-    {
-      name: "Food for Thought",
-      members: "78 Members",
-      description: "Solving world hunger. One meal at a time.",
-      image: "/grocery.jpg",
-    },
-    {
-      name: "Grocery Spot",
-      members: "303 Members",
-      description: "Community lunches every Saturday",
-      image: "/grocery.jpg",
-    },
-    {
-      name: "Food for Thought",
-      members: "78 Members",
-      description: "Solving world hunger. One meal at a time.",
-      image: "/grocery.jpg",
-    },
-    {
-      name: "Food for Thought",
-      members: "78 Members",
-      description: "Solving world hunger. One meal at a time.",
-      image: "/grocery.jpg",
-    },
-  ];
+  // Fetch collectives data using React Query
+  const {data: collectives, isLoading: collectivesLoading} = useQuery({
+    queryKey: ['collectives'],
+    queryFn: getCollectives,
+    enabled: true,
+  });
 
-  // Sample data for categories
+    // Fetch nonprofitts data using React Query
+    const {data: nonprofitts, isLoading: nonprofittsLoading} = useQuery({
+      queryKey: ['nonprofitts'],
+      queryFn: getCauses,
+      enabled: true,
+    });
 
-  const categories = [
-    { name: "All", text: "#000000", background: "#f5f5f5" },
-    { name: "Animals", text: "#E36414", background: "#FFE9DC" },
-    { name: "Arts", text: "#FF6B6B", background: "#FFECEC" },
-    { name: "Community", text: "#06D6A0", background: "#D6FAF0" },
-    { name: "Education", text: "#FFB84D", background: "#FFF3E0" },
-    { name: "Environment", text: "#6A994E", background: "#E8F4E4" },
-    { name: "Food", text: "#FF9F1C", background: "#FFF0D9" },
-    { name: "General", text: "#ADB5BD", background: "#F3F4F6" },
-    { name: "Global", text: "#48CAE4", background: "#D7F0FB" },
-    { name: "Health", text: "#D62828", background: "#FFE5E5" },
-    { name: "Housing", text: "#8D6E63", background: "#F5E9E3" },
-    { name: "Jobs", text: "#6C757D", background: "#ECEFF1" },
-    { name: "Legal", text: "#FFBE0B", background: "#FFF7D6" },
-    { name: "Membership", text: "#5E6472", background: "#EBEDF1" },
-    { name: "Mental", text: "#9D4EDD", background: "#F3E8FA" },
-    { name: "Philanthropy", text: "#FF006E", background: "#FFE0ED" },
-    { name: "Public", text: "#2A9D8F", background: "#D6F4F1" },
-    { name: "Relief", text: "#F94144", background: "#FFE3E3" },
-    { name: "Religion", text: "#E9C46A", background: "#FFF7E0" },
-    { name: "Research", text: "#3A86FF", background: "#DDE8FF" },
-    { name: "Rights", text: "#780000", background: "#FFDADA" },
-    { name: "Science", text: "#023E8A", background: "#D7E3FF" },
-    { name: "Services", text: "#3F37C9", background: "#E2E0FA" },
-    { name: "Society", text: "#577590", background: "#EAF0F5" },
-    { name: "Sports", text: "#90BE6D", background: "#EBF6E2" },
-    { name: "Wellness", text: "#F28482", background: "#FFEAEA" },
-    { name: "Youth", text: "#4CC9F0", background: "#E0F7FF" },
-  ];
+    const {data: causesByLocation, isLoading: causesByLocationLoading} = useQuery({
+      queryKey: ['causesByLocation'],
+      queryFn: () => getCausesByLocation(coords?.latitude, coords?.longitude),
+      enabled: !!coords,
+    });
+    
+    console.log('causesByLocation', causesByLocation);
+    
 
-  // Sample data for suggested causes
-  const suggestedCauses = [
-    {
-      name: "The Red Cross",
-      description: "An health organization that helps people in need",
-      image: "/redcross.png",
-      type: "Nonprofit",
-    },
-    {
-      name: "St. Judes",
-      description: "The leading children's health organization",
-      image: "/grocery.jpg",
-      type: "Nonprofit",
-    },
-    {
-      name: "Women's Healthcare of At...",
-      description: "We are Atlanta's #1 healthcare organization",
-      image: "/redcross.png",
-      type: "Nonprofit",
-    },
-  ];
+
 
   // Sample data for nearby causes
   const nearbyCauses = [
@@ -222,7 +145,7 @@ export default function HomePage() {
             <div className=" p-6 md:p-8 rounded-2xl text-center  relative overflow-hidden">
               {/* Content */}
               <div className="relative ">
-                <h1 className="text-black text-2xl lg:text-3xl font-bold text-foreground mb-4 leading-tight max-w-3xl mx-auto">
+                <h1 className="text-black text-2xl lg:text-3xl font-bold mb-4 leading-tight max-w-3xl mx-auto">
                   The easiest way to <i className="text-green-600">give </i>
                   to everything you care about, at once.
                 </h1>
@@ -258,16 +181,21 @@ export default function HomePage() {
                 <ChevronRight className="h-4 w-4 text-primary mt-1" />
               </Link>
             </div>
+            {collectivesLoading ? (
+                  <div className="flex items-center justify-center">
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                  </div>
+                ) : (
             <div className="overflow-x-auto pb-2">
               <div className="flex gap-4 w-max">
-                {suggestedCRWDs.map((crwd, index) => (
-                  <Link to="/groupcrwd" key={index} className="block">
+                {collectives?.results?.map((crwd: any, index: number) => (
+                  <Link to="/groupcrwd" state={{ crwdId: crwd.id }} key={index} className="block">
                     <div className="flex flex-col items-center gap-3 p-4 rounded-lg hover:bg-gray-100 cursor-pointer transition-colors bg-gray-50 min-w-[200px]">
                       {/* Image on top */}
                       <div className="w-16 h-16 rounded-full overflow-hidden">
                         <img
-                          src={crwd.image}
-                          alt={crwd.name}
+                          src={crwd.created_by.profile_picture}
+                          alt={''}
                           className="w-full h-full object-cover"
                         />
                       </div>
@@ -278,7 +206,7 @@ export default function HomePage() {
                           {crwd.name}
                         </h3>
                         <p className="text-xs text-muted-foreground mb-1">
-                          {crwd.members}
+                          {crwd.member_count}
                         </p>
                         <p className="text-xs text-muted-foreground w-36 leading-relaxed">
                           {crwd.description.length > 21
@@ -301,7 +229,7 @@ export default function HomePage() {
                   </Link>
                 ))}
               </div>
-            </div>
+            </div>)}
           </div>
 
           {/* Categories Section */}
@@ -341,8 +269,13 @@ export default function HomePage() {
           <div className="px-4 mt-8 md:px-0 md:mt-10">
             <h2 className="text-lg font-semibold mb-4">Find Your Cause</h2>
             <div className="space-y-5">
-              {suggestedCauses.map((cause, index) => (
-                <Link to="/cause" key={index} className="block">
+              {nonprofittsLoading ? (
+                <div className="flex items-center justify-center">
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                </div>
+              ) : (
+                nonprofitts?.results?.slice(0, 3).map((cause: any, index: number) => (
+                <Link to="/cause" state={{ causeId: cause.id }} key={index} className="block">
                   <div className="flex items-center justify-between p-4 rounded-lg hover:bg-muted/50 cursor-pointer transition-colors">
                     <div className="flex items-center gap-3 flex-1 min-w-0 mr-4">
                       <div className="w-10 h-10 rounded-full overflow-hidden flex-shrink-0">
@@ -355,30 +288,33 @@ export default function HomePage() {
                       <div className="min-w-0 flex-1">
                         <div
                           className={`${
-                            cause.type === "Collective"
-                              ? "bg-green-100"
-                              : "bg-blue-50"
+                            // cause.type === "Collective"
+                            //   ? "bg-green-100"
+                            //   : 
+                              "bg-blue-50"
                           } px-3 py-1 rounded-sm w-fit`}
                         >
                           <p
                             className={`${
-                              cause.type === "Collective"
-                                ? "text-green-600"
-                                : "text-blue-600"
+                              // cause.type === "Collective"
+                              //   ? "text-green-600"
+                              //   : 
+                                "text-blue-600"
                             } text-xs font-semibold`}
                           >
-                            {cause.type}
+                            {/* {cause.type} */}
+                            Nonprofit
                           </p>
                         </div>
                         <h3 className="font-medium text-sm mb-1">
                           {cause.name}
                         </h3>
                         <p className="text-xs text-muted-foreground leading-relaxed line-clamp-2 max-w-[200px]">
-                          {cause.description}
+                          {cause.mission}
                         </p>
                       </div>
                     </div>
-                    {cause.type === "Nonprofit" && (
+                    {/* {cause.type === "Nonprofit" && ( */}
                       <div className="flex flex-col items-center gap-2">
                         <Button className=" text-white text-xs py-2 px-3 rounded-lg hover:bg-primary/90 transition-colors">
                           Donate Now
@@ -390,17 +326,17 @@ export default function HomePage() {
                           Visit Profile
                         </Button>
                       </div>
-                    )}
-                    {cause.type === "Collective" && (
+                    {/* )} */}
+                    {/* {cause.type === "Collective" && (
                       <div className="flex flex-col items-center gap-2">
                         <Button className="bg-green-600 text-white text-xs py-2 px-4 rounded-lg hover:bg-green-700 transition-colors">
                           Learn More
                         </Button>
                       </div>
-                    )}
+                    )} */}
                   </div>
                 </Link>
-              ))}
+              )))} 
             </div>
             <div className="flex justify-end mt-4">
               <Link to="/search" state={{ discover: true }}>

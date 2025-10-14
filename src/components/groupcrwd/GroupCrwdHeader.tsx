@@ -1,78 +1,117 @@
 "use client";
 
-import React, { useState } from "react";
-import { Heart } from "lucide-react";
+import React, { useEffect, useState } from "react";
+import { Heart, Loader2 } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { SharePost } from "../ui/SharePost";
 import { Badge } from "../ui/badge";
-import { useFavorites } from "../../contexts/FavoritesContext";
 import { Toast } from "../ui/toast";
-import { Link as LinkIcon } from "lucide-react";
+import { categories } from "@/constants/categories";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { favoriteCollective, unfavoriteCollective } from "@/services/api/social";
 
 interface GroupCrwdHeaderProps {
   hasJoined: boolean;
   onJoin: () => void;
   id: string;
+  crwdData: any;
 }
 
-const orgAvatars = [
-  {
-    name: "ASPCA",
-    image: "/ngo/aspca.jpg",
-  },
-  {
-    name: "CRI",
-    image: "/ngo/CRI.jpg",
-  },
-  {
-    name: "CureSearch",
-    image: "/ngo/cureSearch.png",
-  },
-  {
-    name: "Paws",
-    image: "/ngo/paws.jpeg",
-  },
-];
 
-const categories = [
-  {
-    name: "Animals",
-    text: "#E36414", // Orange-Red
-    background: "#FFE1CC", // Soft warm orange tint
-  },
-  {
-    name: "Environment",
-    text: "#6A994E", // Olive Green
-    background: "#DFF0D6", // Fresh leafy green tint
-  },
-  {
-    name: "Food",
-    text: "#FF9F1C", // Carrot Orange
-    background: "#FFE6CC", // Gentle light orange tint
-  },
-];
+// const categories = [
+//   {
+//     name: "Animals",
+//     text: "#E36414", // Orange-Red
+//     background: "#FFE1CC", // Soft warm orange tint
+//   },
+//   {
+//     name: "Environment",
+//     text: "#6A994E", // Olive Green
+//     background: "#DFF0D6", // Fresh leafy green tint
+//   },
+//   {
+//     name: "Food",
+//     text: "#FF9F1C", // Carrot Orange
+//     background: "#FFE6CC", // Gentle light orange tint
+//   },
+// ];
 
 const GroupCrwdHeader: React.FC<GroupCrwdHeaderProps> = ({
-  hasJoined,
-  onJoin,
+  hasJoined: _hasJoined,
+  onJoin: _onJoin,
   id,
+  crwdData,
 }) => {
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const [showShareModal, setShowShareModal] = useState(false);
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
-  const { toggleFavorite, isFavorite } = useFavorites();
-  const groupId = `group-${id}`; // Create unique ID for this group
+  const [localCategories, setLocalCategories] = useState<any[]>([]);
+  const [isFavorited, setIsFavorited] = useState(crwdData?.is_favorited || false);
+
+  console.log(crwdData);
+
+  // Favorite collective mutation
+  const favoriteMutation = useMutation({
+    mutationFn: favoriteCollective,
+    onSuccess: () => {
+      setIsFavorited(true);
+      setToastMessage("Added to favorites");
+      setShowToast(true);
+      // Invalidate favorite collectives query to refresh the saved page
+      queryClient.invalidateQueries({ queryKey: ['favoriteCollectives'] });
+    },
+    onError: (error) => {
+      console.error('Error favoriting collective:', error);
+      setToastMessage("Failed to add to favorites");
+      setShowToast(true);
+    },
+  });
+
+  // Unfavorite collective mutation
+  const unfavoriteMutation = useMutation({
+    mutationFn: unfavoriteCollective,
+    onSuccess: () => {
+      setIsFavorited(false);
+      setToastMessage("Removed from favorites");
+      setShowToast(true);
+      // Invalidate favorite collectives query to refresh the saved page
+      queryClient.invalidateQueries({ queryKey: ['favoriteCollectives'] });
+    },
+    onError: (error) => {
+      console.error('Error unfavoriting collective:', error);
+      setToastMessage("Failed to remove from favorites");
+      setShowToast(true);
+    },
+  });
 
   const handleFavoriteClick = () => {
-    const wasAdded = toggleFavorite(groupId);
-    if (wasAdded) {
-      setToastMessage("Added to favorites");
+    if (isFavorited) {
+      unfavoriteMutation.mutate(id);
     } else {
-      setToastMessage("Removed from favorites");
+      favoriteMutation.mutate(crwdData?.id);
     }
-    setShowToast(true);
   };
+
+  // Update favorite state when crwdData changes
+  useEffect(() => {
+    setIsFavorited(crwdData?.is_favorited || false);
+  }, [crwdData?.is_favorited]);
+
+  useEffect(() => {
+  if (crwdData?.causes && Array.isArray(crwdData.causes)) {
+    crwdData.causes.forEach((item: any) => {
+      if (item.cause?.category) {
+        setLocalCategories([...localCategories, item.cause.category]);
+      }
+    });
+  }
+}, [crwdData])
+
+console.log(localCategories);
+
+
   return (
     <div className="bg-white  p-4 mx-2   mb-4 flex flex-col gap-2">
       {/* <div className="flex items-center gap-2 justify-between">
@@ -111,7 +150,7 @@ const GroupCrwdHeader: React.FC<GroupCrwdHeaderProps> = ({
           {/* <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Feed the hungry" className="w-12 h-12 rounded-lg object-cover" /> */}
           <div className="flex flex-col">
             <span className="font-semibold text-2xl text-gray-700 mt-2">
-              Feed the hungry
+              {crwdData?.name ?? ''}
             </span>
             {/* <span className="text-xs text-gray-500">supports</span> */}
           </div>
@@ -126,51 +165,53 @@ const GroupCrwdHeader: React.FC<GroupCrwdHeaderProps> = ({
           className="w-14 h-14 rounded-full object-cover"
         />
         <span className=" text-sm text-gray-700">Founded by</span>
-        <span className="font-semibold text-gray-700 ">@ChadFofana1</span>
+        <span className="font-semibold text-gray-700 ">@{crwdData?.created_by?.username ?? ''}</span>
         {/* <Button variant="outline">
           <Bookmark size={20} />
         </Button> */}
         <Heart
           className={`
               w-6 h-6
-              ${
-                isFavorite(groupId)
-                  ? "stroke-red-500 fill-red-500"
-                  : "stroke-gray-500 fill-transparent"
-              }
+              ${isFavorited
+              ? "stroke-red-500 fill-red-500"
+              : "stroke-gray-500 fill-transparent"
+            }
               hover:stroke-red-500 hover:fill-red-500
               cursor-pointer transition-colors duration-200
+              ${(favoriteMutation.isPending || unfavoriteMutation.isPending) ? 'opacity-50 cursor-not-allowed' : ''}
             `}
           onClick={handleFavoriteClick}
         />
+        {(favoriteMutation.isPending || unfavoriteMutation.isPending) && (
+          <Loader2 className="w-4 h-4 animate-spin text-gray-500" />
+        )}
       </div>
 
       {/* Bio */}
       <div className="text-xl text-gray-700">
-        families experiencing food insecurity in the greater Atlanta area. Join
-        us in the cause to solve world hunger.
+        {crwdData?.description ?? ''}
       </div>
       {/* Stats */}
       <div className="grid grid-cols-3 text-center text-xs text-gray-700 font-semibold divide-x divide-gray-200 rounded-xl py-4">
         <div
-          onClick={() => navigate(`/members?tab=Causes`)}
+          onClick={() => navigate(`/members?tab=Causes`, { state: { collectiveData: crwdData } })}
           className="cursor-pointer flex-1 col-span-1 "
         >
-          <div className="text-base font-bold">10</div>
+          <div className="text-base font-bold">{crwdData?.causes?.length ?? 0}</div>
           <div className="text-xs text-gray-500 w-1/2 mx-auto">Causes</div>
         </div>
         <div
-          onClick={() => navigate(`/members`)}
+          onClick={() => navigate(`/members`, { state: { collectiveData: crwdData } })}
           className="cursor-pointer flex-1 col-span-1  "
         >
-          <div className="text-base font-bold">58</div>
+          <div className="text-base font-bold">{crwdData?.member_count ?? 0}</div>
           <div className="text-xs text-gray-500">Members</div>
         </div>
         <div
-          onClick={() => navigate(`/members?tab=Collective%20Donations`)}
+          onClick={() => navigate(`/members?tab=Collective%20Donations`, { state: { collectiveData: crwdData } })}
           className="cursor-pointer flex-1 col-span-1"
         >
-          <div className="text-base font-bold">12</div>
+          <div className="text-base font-bold">{crwdData?.total_donation_count}</div>
           <div className="text-xs text-gray-500 w-1/2 mx-auto">
             Contributions
           </div>
@@ -190,7 +231,8 @@ const GroupCrwdHeader: React.FC<GroupCrwdHeaderProps> = ({
       <div className="overflow-x-auto pb-2">
         <div className="flex space-x-2 min-w-max">
           {categories.map((category) => (
-            <Link to={`/interests`} key={category.name}>
+            // <Link to={`/interests`} key={category.name}>
+            localCategories.includes(category.id) && (
               <Badge
                 variant="secondary"
                 className="bg-muted/50 hover:bg-muted text-foreground rounded-md px-4 py-2 whitespace-nowrap"
@@ -201,8 +243,8 @@ const GroupCrwdHeader: React.FC<GroupCrwdHeaderProps> = ({
               >
                 {category.name}
               </Badge>
-            </Link>
-          ))}
+            // </Link>
+          )))}
         </div>
       </div>
 
@@ -221,16 +263,16 @@ const GroupCrwdHeader: React.FC<GroupCrwdHeaderProps> = ({
       </i>
       {/* Orgs Avatars */}
       <div className="flex items-center justify-start md:space-x-5 mt-1 gap-3">
-        {orgAvatars.map((src) => (
+        {crwdData?.causes?.map((src: any) => (
           <Link to={`/cause`} key={src.name}>
             <div className="flex flex-col items-center">
               <img
-                src={src.image}
+                src={src.cause.image}
                 alt="org"
                 className="w-12 h-12 rounded-md   first:ml-0"
               />
               <p className="text-xs font-semibold  mt-1 text-gray-500">
-                {src.name}
+                {src.cause.name}
               </p>
             </div>
           </Link>
@@ -240,7 +282,7 @@ const GroupCrwdHeader: React.FC<GroupCrwdHeaderProps> = ({
       <div className="flex items-center gap-5 mt-2">
         {/* <LinkIcon size={16} /> */}
         <p
-          onClick={() => navigate(`/members`)}
+          onClick={() => navigate(`/members?tab=Causes`, { state: { collectiveData: crwdData } })}
           className="text-blue-600 underline cursor-pointer"
         >
           See All

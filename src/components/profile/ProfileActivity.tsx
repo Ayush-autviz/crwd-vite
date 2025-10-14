@@ -14,6 +14,7 @@ interface ProfileActivityProps {
   title?: string;
   postButton?: boolean;
   subheading?: boolean;
+  collectiveData?: any;
 }
 
 const ProfileActivity: React.FC<ProfileActivityProps> = ({
@@ -24,6 +25,7 @@ const ProfileActivity: React.FC<ProfileActivityProps> = ({
   title = "Activity",
   postButton = false,
   subheading = false,
+  collectiveData,
 }) => {
   const [allPosts, setAllPosts] = useState<PostDetail[]>(posts);
   const [isLoading, setIsLoading] = useState(false);
@@ -49,7 +51,7 @@ const ProfileActivity: React.FC<ProfileActivityProps> = ({
         {title && <h2 className="text-lg font-semibold">{title}</h2>}
         {postButton && (
           <Button
-            onClick={() => navigate("/create-post")}
+            onClick={() => navigate("/create-post", { state: { collectiveData } })}
             variant="outline"
             className="px-6 py-2 "
           >

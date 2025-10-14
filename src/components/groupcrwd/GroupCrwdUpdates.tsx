@@ -42,12 +42,14 @@ interface GroupCrwdUpdatesProps {
   posts?: any[];
   showEmpty?: boolean;
   joined?: boolean;
+  collectiveData?: any;
 }
 
 const GroupCrwdUpdates: React.FC<GroupCrwdUpdatesProps> = ({
   posts = profileActivity,
   showEmpty = false,
   joined = false,
+  collectiveData,
 }) => {
   // Show empty state if showEmpty is true or if posts array is empty
   const shouldShowEmpty = showEmpty || posts.length === 0;
@@ -75,6 +77,7 @@ const GroupCrwdUpdates: React.FC<GroupCrwdUpdatesProps> = ({
             subheading={true}
             posts={posts}
             postButton={joined}
+            collectiveData={collectiveData}
           />
           <div className="lg:max-w-[600px]">
             <div className="space-y-4">

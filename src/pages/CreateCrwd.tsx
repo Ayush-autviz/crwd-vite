@@ -1,34 +1,30 @@
 "use client";
 
-import React, { useState } from "react";
-import { Input } from "@/components/ui/input";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import Footer from "@/components/Footer";
 import {
   ChevronRight,
-  Plus,
-  Minus,
-  Bell,
-  MoreHorizontal,
   HelpCircle,
+  Loader2,
+  Search,
   X,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import ProfileNavbar from "@/components/profile/ProfileNavbar";
 import { Link } from "react-router-dom";
-import BackButton from "@/components/ui/BackButton";
 import Confetti from "react-confetti";
 import { SharePost } from "@/components/ui/SharePost";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { createCollective, getCausesBySearch } from "@/services/api/crwd";
+import { getFavoriteCauses } from "@/services/api/social";
 
-const recents = [
-  { name: "St. Judes", image: "/grocery.jpg" },
-  { name: "Community first", image: "/maz.jpg" },
-  { name: "Make a Wish", image: "/mclaren.jpg" },
-  { name: "Planned", image: "/por.jpg" },
-  { name: "Made with love", image: "/tesla.jpg" },
-];
+// const recents = [
+//   { name: "St. Judes", image: "/grocery.jpg" },
+//   { name: "Community first", image: "/maz.jpg" },
+//   { name: "Make a Wish", image: "/mclaren.jpg" },
+//   { name: "Planned", image: "/por.jpg" },
+//   { name: "Made with love", image: "/tesla.jpg" },
+// ];
 const suggested = [
   { name: "Win together", image: "/adidas.jpg" },
   { name: "Hope for all", image: "/starbucks.jpg" },
@@ -42,18 +38,71 @@ export default function CreateCRWDPage() {
   const [showConfetti, setShowConfetti] = useState(false);
   const [showShareModal, setShowShareModal] = useState(false);
   const [toast, setToast] = useState<string | null>(null);
+  const [createdCollective, setCreatedCollective] = useState<any>(null);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [searchTrigger, setSearchTrigger] = useState(0);
   const navigate = useNavigate();
 
-  const handleCauseToggle = (causeName: string) => {
-    console.log("Toggling cause:", causeName);
+
+    // Get causes with search and category filtering
+    const { data: causesData, isLoading: isCausesLoading } = useQuery({
+      queryKey: ['causes', searchTrigger],
+      queryFn: () => {
+        return getCausesBySearch(searchQuery, '', 1);
+      },
+      enabled: true,
+    });
+
+  // Create collective mutation
+  const createCollectiveMutation = useMutation({
+    mutationFn: createCollective,
+    onSuccess: (response) => {
+      console.log('Create collective successful:', response);
+      setCreatedCollective(response);
+      setStep(2);
+      setShowConfetti(true);
+      setTimeout(() => {
+        setShowConfetti(false);
+      }, 4000);
+    },
+    onError: (error: any) => {
+      console.error('Create collective error:', error);
+      const errorMessage = error.response?.data?.message || error.message || 'Failed to create collective';
+      setToast(errorMessage);
+      setTimeout(() => setToast(null), 4000);
+    },
+  });
+
+  // get favorite causes
+  const { data: favoriteCauses, isLoading: isLoadingFavoriteCauses } = useQuery({
+    queryKey: ['favoriteCauses'],
+    queryFn: () => getFavoriteCauses(),
+    enabled: true,
+  });
+
+  const handleCauseToggle = (causeId: string) => {
+    console.log("Toggling cause:", causeId);
     console.log("Current selected causes:", selectedCauses);
     setSelectedCauses((prev) => {
-      const newSelection = prev.includes(causeName)
-        ? prev.filter((cause) => cause !== causeName)
-        : [...prev, causeName];
+      const newSelection = prev.includes(causeId)
+        ? prev.filter((cause) => cause !== causeId)
+        : [...prev, causeId];
       console.log("New selection:", newSelection);
       return newSelection;
     });
+  };
+
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchQuery(e.target.value);
+    // Don't trigger API call on every keystroke
+  };
+
+  const handleSearchSubmit = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      // Trigger API call with search query selectedCauses
+      setSelectedCauses([]);
+      setSearchTrigger(prev => prev + 1);
+    }
   };
 
   const handleCreateCRWD = () => {
@@ -74,12 +123,12 @@ export default function CreateCRWDPage() {
       return;
     }
 
-    // Proceed if no errors
-    setStep(2);
-    setShowConfetti(true);
-    setTimeout(() => {
-      setShowConfetti(false);
-    }, 4000);
+    // Create collective via API
+    createCollectiveMutation.mutate({
+      name: name.trim(),
+      description: desc.trim(),
+      cause_ids: selectedCauses, // Assuming the API expects cause names or IDs
+    });
   };
 
   return (
@@ -171,15 +220,26 @@ export default function CreateCRWDPage() {
                   <div className="font-semibold text-xs text-blue-600 mb-3">
                     Select from your causes (if any)
                   </div>
-                  {recents.map((cause) => (
+
+                {
+                isLoadingFavoriteCauses ? (
+                  <div className="flex items-center justify-center">
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                  </div>
+                ) : favoriteCauses.results.length === 0 ? (
+                 <div className="flex flex-col gap-2">
+                  <p className="text-sm text-gray-500">No causes found</p>
+                 </div>
+                ) : (    
+                favoriteCauses?.results?.map((cause: any) => (
                     <div
-                      key={cause.name}
-                      className={`flex items-center gap-3 py-3 px-2 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer ${
-                        selectedCauses.includes(cause.name)
+                      key={cause.cause.id}
+                      className={`flex items-center gap-3 py-3 px-2 mb-1 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer ${
+                        selectedCauses.includes(cause.cause.id)
                           ? "border-2 border-blue-500 bg-blue-50"
                           : "border-2 border-transparent"
                       }`}
-                      onClick={() => handleCauseToggle(cause.name)}
+                      onClick={() => handleCauseToggle(cause.cause.id)}
                     >
                       <img
                         src={cause.image}
@@ -188,10 +248,10 @@ export default function CreateCRWDPage() {
                       />
                       <div className="flex-1">
                         <div className="font-semibold text-sm text-gray-900">
-                          {cause.name}
+                          {cause.cause.name}
                         </div>
                         <div className="text-xs text-gray-500">
-                          Supporting {cause.name.toLowerCase()} initiatives
+                          {cause.cause.mission}
                         </div>
                       </div>
                       <div className="relative">
@@ -204,12 +264,12 @@ export default function CreateCRWDPage() {
                         />
                         <div
                           className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all ${
-                            selectedCauses.includes(cause.name)
+                            selectedCauses.includes(cause.cause.id)
                               ? "bg-blue-600 border-blue-600"
                               : "border-gray-300 bg-white"
                           }`}
                         >
-                          {selectedCauses.includes(cause.name) && (
+                          {selectedCauses.includes(cause.cause.id) && (
                             <svg
                               className="w-4 h-4 text-white"
                               fill="currentColor"
@@ -225,19 +285,40 @@ export default function CreateCRWDPage() {
                         </div>
                       </div>
                     </div>
-                  ))}
+                  )))}
                   <div className="font-semibold text-xs text-blue-600 mt-4 mb-3">
                     Suggested Causes
                   </div>
-                  {suggested.map((cause) => (
+                  {/* Search Bar */}
+                  <div className="relative">
+                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                    <input
+                      type="text"
+                      placeholder="Search causes or nonprofits (press Enter to search)"
+                      value={searchQuery}
+                      onChange={handleSearchChange}
+                      onKeyDown={handleSearchSubmit}
+                      className="w-full h-10 pl-10 pr-4 bg-gray-100 border-0 rounded-lg text-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-gray-300 transition-all duration-200"
+                    />
+                  </div>
+                  {isCausesLoading ? (
+                    <div className="flex items-center justify-center mt-4">
+                      <Loader2 className="w-4 h-4 animate-spin" /> 
+                    </div>
+                  ) : causesData?.results?.length === 0 ? (
+                    <div className="flex justify-center mt-4">
+                      <p className="text-sm text-gray-500">No causes found</p>
+                    </div>
+                  ) : (
+                  causesData?.results?.map((cause: any) => (
                     <div
                       key={cause.name}
-                      className={`flex items-center gap-3 py-3 px-2 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer ${
-                        selectedCauses.includes(cause.name)
+                      className={`flex items-center gap-3 py-3 px-2 my-1 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer ${
+                        selectedCauses.includes(cause.id)
                           ? "border-2 border-blue-500 bg-blue-50"
                           : "border-2 border-transparent"
                       }`}
-                      onClick={() => handleCauseToggle(cause.name)}
+                      onClick={() => handleCauseToggle(cause.id)}
                     >
                       <img
                         src={cause.image}
@@ -255,19 +336,19 @@ export default function CreateCRWDPage() {
                       <div className="relative">
                         <input
                           type="checkbox"
-                          checked={selectedCauses.includes(cause.name)}
-                          onChange={() => handleCauseToggle(cause.name)}
+                          checked={selectedCauses.includes(cause.id)}
+                          onChange={() => handleCauseToggle(cause.id)}
                           className="sr-only"
                           id={`cause-${cause.name}`}
                         />
                         <div
                           className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all ${
-                            selectedCauses.includes(cause.name)
+                            selectedCauses.includes(cause.id)
                               ? "bg-blue-600 border-blue-600"
                               : "border-gray-300 bg-white"
                           }`}
                         >
-                          {selectedCauses.includes(cause.name) && (
+                          {selectedCauses.includes(cause.id) && (
                             <svg
                               className="w-4 h-4 text-white"
                               fill="currentColor"
@@ -282,25 +363,26 @@ export default function CreateCRWDPage() {
                         </div>
                       </div>
                     </div>
-                  ))}
-                  <div className="flex justify-end mt-3">
+                  )))}
+                  {/* <div className="flex justify-end mt-3">
                     <Link
                       to="/search"
                       className="text-xs text-blue-600 flex items-center hover:underline"
                     >
                       Discover more <ChevronRight className="h-3 w-3 ml-1" />
                     </Link>
-                  </div>
+                  </div> */}
                 </div>
               </div>
 
               {/* Action Buttons */}
               <div className="flex items-center justify-end gap-6 text-xs text-gray-500 pt-2">
                 <Button
-                  className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg text-sm font-medium"
+                  className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg text-sm font-medium disabled:opacity-50"
                   onClick={handleCreateCRWD}
+                  disabled={createCollectiveMutation.isPending}
                 >
-                  Create CRWD
+                  {createCollectiveMutation.isPending ? "Creating..." : "Create CRWD"}
                 </Button>
               </div>
             </div>
@@ -316,6 +398,16 @@ export default function CreateCRWDPage() {
                 <h2 className="text-xl font-bold text-center mb-6">
                   You've started a CRWD!
                 </h2>
+                {createdCollective && (
+                  <div className="text-center mb-4">
+                    <p className="text-sm text-gray-600 mb-2">
+                      <strong>{createdCollective.name}</strong> has been created successfully!
+                    </p>
+                    <p className="text-xs text-gray-500">
+                      {createdCollective.description}
+                    </p>
+                  </div>
+                )}
                 <div className="flex flex-col gap-2">
                   <Button
                     className="w-full"
@@ -357,10 +449,6 @@ export default function CreateCRWDPage() {
             onClose={() => setShowShareModal(false)}
           />
         </div>
-      </div>
-      {/* Footer */}
-      <div className="hidden md:block">
-        <Footer />
       </div>
     </>
   );
