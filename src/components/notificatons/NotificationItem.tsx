@@ -234,7 +234,7 @@ const NotificationItem: React.FC<NotificationItemProps> = ({
 
       {/* Like Notification */}
       {type === "like" && (
-        <Link to={`/posts/1`} className="block hover:bg-gray-50 transition-colors">
+        <Link to={`/post/1`} className="block hover:bg-gray-50 transition-colors">
           <div className="flex gap-3 border-t border-gray-200 py-5 px-4">
             <Link to={`/profile/${username}`} className="col-span-1 flex h-11 w-11 rounded-full justify-center items-start">
               <img
@@ -258,7 +258,7 @@ const NotificationItem: React.FC<NotificationItemProps> = ({
 
       {/* Comment Notification */}
       {type === "comment" && (
-        <Link to={`/posts/1`} className="block hover:bg-gray-50 transition-colors">
+        <Link to={`/post/1`} className="block hover:bg-gray-50 transition-colors">
           <div className="flex gap-3 border-t border-gray-200 py-5 px-4">
             <Link to={`/profile/${username}`} className="col-span-1 flex h-11 w-11 rounded-full justify-center items-start">
               <img
@@ -353,7 +353,7 @@ const NotificationItem: React.FC<NotificationItemProps> = ({
       {type === "event_attend" && (
         <Link to={`/profile`} className="block hover:bg-gray-50 transition-colors">
           <div className="flex gap-3 border-t border-gray-200 py-5 px-4">
-            <Link to={`/posts/1`} className="col-span-1 flex h-11 w-11 rounded-full justify-center items-start">
+            <Link to={`/post/1`} className="col-span-1 flex h-11 w-11 rounded-full justify-center items-start">
               <img
                 src={avatarUrl}
                 alt={username}

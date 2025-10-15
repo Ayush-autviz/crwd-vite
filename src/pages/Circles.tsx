@@ -84,7 +84,7 @@ const Circles = () => {
               }`}
             >
               <Users className="w-4 h-4" />
-              My Collectives ({joinCollectiveData?.results?.length || 0 + favoriteCollectives?.results?.length || 0})
+              My Collectives ({joinCollectiveData?.results?.length + favoriteCollectives?.results?.length})
             </button>
             <button
               onClick={() => setActiveTab("discover")}

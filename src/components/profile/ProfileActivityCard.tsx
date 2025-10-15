@@ -10,8 +10,10 @@ import { cn } from "@/lib/utils";
 import { Link, useNavigate } from "react-router-dom";
 import { IoArrowRedoOutline } from "react-icons/io5";
 import { SharePost } from "../ui/SharePost";
-import { useFavorites } from "../../contexts/FavoritesContext";
 import { Toast } from "../ui/toast";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { likePost, unlikePost } from "@/services/api/social";
+import { Loader2 } from "lucide-react";
 
 export default function ProfileActivityCard({
   post,
@@ -28,21 +30,56 @@ export default function ProfileActivityCard({
   const [showShareModal, setShowShareModal] = useState(false);
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
+  const [isLiked, setIsLiked] = useState(post.isLiked || false);
+  const [likesCount, setLikesCount] = useState(post.likes || 0);
   const menuRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
-  const { toggleFavorite, isFavorite } = useFavorites();
+  const queryClient = useQueryClient();
 
-  const handleFavoriteClick = (e: React.MouseEvent) => {
+  // Like/Unlike mutations
+  const likeMutation = useMutation({
+    mutationFn: () => likePost(post.id.toString()),
+    onSuccess: () => {
+      setIsLiked(true);
+      setLikesCount(prev => prev + 1);
+      setToastMessage("Post liked!");
+      setShowToast(true);
+      queryClient.invalidateQueries({ queryKey: ['posts'] });
+    },
+    onError: (error) => {
+      console.error('Error liking post:', error);
+      setToastMessage("Failed to like post");
+      setShowToast(true);
+    },
+  });
+
+  const unlikeMutation = useMutation({
+    mutationFn: () => unlikePost(post.id.toString()),
+    onSuccess: () => {
+      setIsLiked(false);
+      setLikesCount(prev => Math.max(0, prev - 1));
+      setToastMessage("Post unliked!");
+      setShowToast(true);
+      queryClient.invalidateQueries({ queryKey: ['posts'] });
+    },
+    onError: (error) => {
+      console.error('Error unliking post:', error);
+      setToastMessage("Failed to unlike post");
+      setShowToast(true);
+    },
+  });
+
+  const handleLikeClick = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    const wasAdded = toggleFavorite(post.id);
-    if (wasAdded) {
-      setToastMessage("Added to favorites");
+    
+    if (isLiked) {
+      unlikeMutation.mutate();
     } else {
-      setToastMessage("Removed from favorites");
+      likeMutation.mutate();
     }
-    setShowToast(true);
   };
+
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
@@ -58,6 +95,9 @@ export default function ProfileActivityCard({
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [showMenu]);
+
+
+  console.log('postaxss in card' , post);    
 
   return (
     <>
@@ -87,7 +127,7 @@ export default function ProfileActivityCard({
                 <AvatarFallback>{post.username.charAt(0)}</AvatarFallback>
               </Avatar>
             </div>
-            <Link to={`/posts/${post.id}`} className="w-full">
+            <Link to={`/post/${post.id}`} className="w-full">
               <div className="flex-1 min-w-0">
                 <div className="flex items-center justify-between">
                   <div className="">
@@ -154,7 +194,7 @@ export default function ProfileActivityCard({
                     )}
                   </div>
                 </div>
-                <Link to="/groupcrwd">
+                <Link to={'/groupcrwd'} state={{ crwdId: post.orgUrl }} >
                   <div className="text-xs text-primary -mt-[2px] hover:underline">
                     {post.org}
                   </div>
@@ -176,15 +216,20 @@ export default function ProfileActivityCard({
 
                 <div className="flex items-center gap-4 text-muted-foreground mt-2">
                   <button
-                    onClick={handleFavoriteClick}
-                    className="flex items-center gap-1 hover:text-red-500 transition-colors"
+                    onClick={handleLikeClick}
+                    disabled={likeMutation.isPending || unlikeMutation.isPending}
+                    className="flex items-center gap-1 hover:text-red-500 transition-colors disabled:opacity-50"
                   >
-                    <Heart
-                      className={`w-4 h-4 ${
-                        isFavorite(post.id) ? "fill-red-500 text-red-500" : ""
-                      }`}
-                    />
-                    <span className="text-xs">{post.likes}</span>
+                    {likeMutation.isPending || unlikeMutation.isPending ? (
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                    ) : (
+                      <Heart
+                        className={`w-4 h-4 ${
+                          isLiked ? "fill-red-500 text-red-500" : ""
+                        }`}
+                      />
+                    )}
+                    <span className="text-xs">{likesCount}</span>
                   </button>
                   <button className="flex items-center gap-1 hover:text-primary transition-colors">
                     <MessageCircle className="w-4 h-4" />
@@ -210,9 +255,9 @@ export default function ProfileActivityCard({
       </Card>
 
       <SharePost
-        url={window.location.origin + `/posts/${post.id}`}
-        title={`${post.username}'s post on ${post.org}`}
-        description={post.text}
+        url={window.location.origin + `/post/${post.id}`}
+        title={`${post.username} shared a post in ${post.org}`}
+        description={post.text || `Check out this post from ${post.username} in the ${post.org} collective.`}
         isOpen={showShareModal}
         onClose={() => setShowShareModal(false)}
       />

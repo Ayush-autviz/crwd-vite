@@ -3,48 +3,27 @@
 import React, { useState, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { useNavigate } from "react-router-dom";
-import { ImageIcon, Link, X } from "lucide-react";
+import { useNavigate, useLocation } from "react-router-dom";
+import { ImageIcon, Link, X, Loader2 } from "lucide-react";
 import ProfileNavbar from "@/components/profile/ProfileNavbar";
 import Footer from "@/components/Footer";
-import { Select, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Toast } from "@/components/ui/toast";
+import { useMutation } from "@tanstack/react-query";
+import { createPost } from "@/services/api/social";
 
-const CRWDS = [
-  { name: "The Red Cross", status: "Joined", image: "/adidas.jpg" },
-  { name: "St. Judes", status: "Saved", image: "/benz.jpg" },
-  {
-    name: "Women's Healthcare of At…",
-    status: "Recently visited",
-    image: "/maz.jpg",
-  },
-  {
-    name: "Children's Healthcare",
-    status: "Recently visited",
-    image: "/hy.jpg",
-  },
-  { name: "Make a Wish", status: "Recently visited", image: "/starbucks.jpg" },
-];
-
-type CRWD = {
-  name: string;
-  status: string;
-  image: string;
-};
 
 export default function CreatePostPage() {
-  const [step, setStep] = useState(1);
-  const [selectedCRWD, setSelectedCRWD] = useState<CRWD | null>(null);
-  const [showToast, setShowToast] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
   const fileInputRef = useRef<HTMLInputElement>(null);
+  
+  // Get collective_id from location state
+  const collectiveData = location.state?.collectiveData;
+  
+  const [showToast, setShowToast] = useState(false);
+  const [toastMessage, setToastMessage] = useState("");
 
   const [form, setForm] = useState({
-    title: "",
-    day: "",
-    time: "",
-    place: "",
-    caption: "",
     content: "",
     url: "",
   });
@@ -60,6 +39,25 @@ export default function CreatePostPage() {
 
   // Track URL validation
   const [urlError, setUrlError] = useState<string | null>(null);
+
+  // Create post mutation
+  const createPostMutation = useMutation({
+    mutationFn: createPost,
+    onSuccess: (response) => {
+      console.log('Post created successfully:', response);
+      setToastMessage("Post created successfully!");
+      setShowToast(true);
+      // Navigate back to the collective page or home
+      setTimeout(() => {
+        navigate(-1); // Go back to previous page
+      }, 1500);
+    },
+    onError: (error: any) => {
+      console.error('Error creating post:', error);
+      setToastMessage("Failed to create post. Please try again.");
+      setShowToast(true);
+    },
+  });
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -111,11 +109,6 @@ export default function CreatePostPage() {
     setForm((prev) => ({
       ...prev,
       url: "",
-      title: "",
-      day: "",
-      time: "",
-      place: "",
-      caption: "",
     }));
 
     // Reset image selection
@@ -131,7 +124,7 @@ export default function CreatePostPage() {
 
   // Check if post can be submitted
   const canSubmitPost = () => {
-    if (!selectedCRWD || !form.content.trim()) return false;
+    if (!collectiveData || !form.content.trim()) return false;
 
     switch (postType) {
       case "link":
@@ -139,111 +132,54 @@ export default function CreatePostPage() {
       case "image":
         return selectedImage !== null;
       case "event":
-        return form.title.trim();
+        return true; // Event posts just need content
       default:
         return false;
     }
   };
 
-  // Handle post creation
-  const handlePostCreation = () => {
-    if (canSubmitPost()) {
-      setShowToast(true);
-      setStep(2);
+  // Handle form submission
+  const handleSubmitPost = () => {
+    if (!canSubmitPost() || createPostMutation.isPending) return;
+
+    const formData = new FormData();
+    formData.append('collective_id', collectiveData.id.toString());
+    formData.append('content', form.content);
+
+    console.log(selectedImage);
+    
+
+    // Add media file if it's an image post
+    if (postType === "image" && selectedImage) {
+      formData.append('media_file', selectedImage);
     }
+
+    createPostMutation.mutate(formData);
   };
 
-  // Step 2: Post to (CRWD selection)
-  if (step === 2) {
+  // Check if collective_id is provided
+  if (!collectiveData) {
     return (
-      <div className="min-h-screen flex flex-col bg-background ">
+      <div className="min-h-screen flex flex-col bg-background">
         <ProfileNavbar title="Create a Post" />
-        <div className="flex items-center p-4 ">
-          <button onClick={() => setStep(1)} className="mr-2 flex  text-base">
-            <X />
-          </button>
-        </div>
-        <div className="px-4 pb-4">
-          <div className="relative">
-            <Input
-              type="search"
-              placeholder="Search for a CRWD Collective"
-              className="bg-muted/50 rounded-lg px-3 py-2 w-full text-sm border-none focus-visible:ring-1 focus-visible:ring-primary/50"
-            />
+        <div className="flex items-center justify-center flex-1">
+          <div className="text-center">
+            <div className="text-lg font-semibold text-gray-700 mb-2">
+              No Collective Selected
+            </div>
+            <div className="text-sm text-gray-500 mb-4">
+              Please select a collective to create a post.
+            </div>
+            <Button onClick={() => navigate(-1)}>
+              Go Back
+            </Button>
           </div>
         </div>
-        <div className="flex-1 overflow-y-auto">
-          {CRWDS.map((crwd) => (
-            <div
-              key={crwd.name}
-              className="flex items-center gap-4 px-4 py-3 hover:bg-muted/50 cursor-pointer border-b transition-colors"
-              onClick={() => {
-                setSelectedCRWD(crwd);
-                setStep(1); // Return to step 1 after selecting a CRWD
-              }}
-            >
-              <div className="w-12 h-12 rounded-full overflow-hidden">
-                <img
-                  src={crwd.image}
-                  alt={crwd.name}
-                  width={48}
-                  height={48}
-                  className="w-full h-full object-cover"
-                />
-              </div>
-              <div>
-                <div className="font-medium text-base">{crwd.name}</div>
-                <div className="text-muted-foreground text-sm">
-                  {crwd.status}
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-        <div className="flex justify-center p-4">
-          <Button variant="outline" className="w-40">
-            See More
-          </Button>
-        </div>
-        {/* Confirmation after selecting a CRWD */}
-        {selectedCRWD && (
-          <div
-            className="fixed inset-0 bg-black/40 flex items-center justify-center z-50"
-            onClick={() => setSelectedCRWD(null)}
-          >
-            <div
-              className="bg-card rounded-xl shadow-lg p-8 flex flex-col items-center gap-4 max-w-sm mx-4"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <div className="text-3xl">🎉</div>
-              <div className="text-xl font-semibold text-center">
-                Your post has been created for{" "}
-                <span className="text-primary font-bold">
-                  {selectedCRWD.name}
-                </span>
-                !
-              </div>
-              <Button className="w-full mt-2" onClick={() => navigate("/")}>
-                Go to Home
-              </Button>
-            </div>
-          </div>
-        )}
-
-        {/* Toast notification */}
-        <Toast
-          message="Post created"
-          show={showToast}
-          onHide={() => setShowToast(false)}
-          duration={2000}
-        />
-
-        {/* <div className="h-20 md:hidden" /> */}
       </div>
     );
   }
 
-  // Step 1: Create post form
+  // Main create post form
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-b from-background to-muted/40 ">
       <ProfileNavbar title="Create a Post" />
@@ -252,55 +188,14 @@ export default function CreatePostPage() {
         <div className="flex flex-col p-4">
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 sm:gap-0">
             <div className="w-full">
-              {selectedCRWD ? (
-                <div
-                  className="flex items-center gap-3 w-full sm:w-3/4 md:w-1/2 rounded-lg py-2 cursor-pointer"
-                  // onClick={() => setStep(2)}
-                >
-                  <div className="w-8 h-8 rounded-full overflow-hidden">
-                    <img
-                      src={selectedCRWD.image}
-                      alt={selectedCRWD.name}
-                      width={32}
-                      height={32}
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
-                  <span className="text-sm font-medium italic text-gray-500">
-                    Posting to {selectedCRWD.name}
-                  </span>
-                </div>
-              ) : (
-                <>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Post to a CRWD Collective
-                  </label>
-                  <Select>
-                    <SelectTrigger
-                      className="w-full sm:w-3/4 md:w-1/2 rounded-lg border px-4 py-2 text-left shadow-none border-none bg-gray-100"
-                      onClick={() => setStep(2)}
-                    >
-                      <SelectValue
-                        placeholder="Select a CRWD Collective (required)"
-                        className="truncate"
-                      />
-                    </SelectTrigger>
-                  </Select>
-                </>
-              )}
+              <div className="text-sm font-medium text-gray-700 mb-2">
+                Creating post for {collectiveData.name}
+              </div>
             </div>
-
-            {/* <Button
-              variant="outline"
-              className="rounded-lg px-6 py-2 text-sm font-medium mt-2 sm:mt-0"
-              onClick={() => setStep(2)}
-              disabled={!canSubmitPost()}
-            >
-              Post
-            </Button> */}
           </div>
+          
           <div className="flex-1">
-            {selectedCRWD && postType ? (
+            {postType ? (
               <div className="mt-6">
                 {/* Title/Content Input - Always shown for all post types */}
                 <div className="mb-6">
@@ -372,8 +267,8 @@ export default function CreatePostPage() {
                   </div>
                 )}
               </div>
-            ) : selectedCRWD && !postType ? (
-              <div className="flex flex-col items-center justify-center  mt-10 px-1">
+            ) : (
+              <div className="flex flex-col items-center justify-center mt-10 px-1">
                 <div className="text-gray-400 text-center">
                   <div className="text-lg mb-2">
                     Select a post type below to get started
@@ -382,24 +277,6 @@ export default function CreatePostPage() {
                     Choose from link, photo, or event
                   </div>
                 </div>
-              </div>
-            ) : (
-              <div className="flex flex-col items-start justify-start mt-10 px-1">
-                {/* <div className="text-xl text-gray-400 font-light mb-3">
-                  Start Typing
-                </div> */}
-                <div className="w-full">
-                  <textarea
-                    name="content"
-                    value={form.content}
-                    onChange={handleInputChange}
-                    placeholder="What's on your mind?"
-                    className="w-full min-h-[200px] p-4 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 resize-none"
-                  />
-                </div>
-                {/* <div className="text-gray-400 italic text-sm mt-2">
-                  You can share an announcement, picture, event, link, etc.
-                </div> */}
               </div>
             )}
 
@@ -438,10 +315,17 @@ export default function CreatePostPage() {
               <Button
                 variant="default"
                 className="w-full sm:w-auto rounded-lg px-6 py-2 text-sm font-medium text-white"
-                onClick={handlePostCreation}
-                disabled={!canSubmitPost()}
+                onClick={handleSubmitPost}
+                disabled={!canSubmitPost() || createPostMutation.isPending}
               >
-                Post
+                {createPostMutation.isPending ? (
+                  <>
+                    <Loader2 size={16} className="mr-2 animate-spin" />
+                    Creating...
+                  </>
+                ) : (
+                  "Create Post"
+                )}
               </Button>
             </div>
           </div>
@@ -458,7 +342,7 @@ export default function CreatePostPage() {
 
       {/* Toast notification */}
       <Toast
-        message="Post created"
+        message={toastMessage}
         show={showToast}
         onHide={() => setShowToast(false)}
         duration={2000}

@@ -40,7 +40,10 @@ const ProfileActivity: React.FC<ProfileActivityProps> = ({
     setAllPosts((prevPosts) => [...prevPosts, ...morePostsToLoad]);
 
     setIsLoading(false);
-  };
+  };    
+
+  console.log('allPostsaxss', allPosts);
+  console.log('postsaxss', posts);
 
   return (
     <div className="w-full">
@@ -66,7 +69,7 @@ const ProfileActivity: React.FC<ProfileActivityProps> = ({
       )}
       <div className="space-y-4 mt-4">
         {allPosts.length > 0 &&
-          allPosts.map((post, idx) => (
+          allPosts.map((post, index) => (
             // <Link to={`/posts/${post.id}`}>
             <ProfileActivityCard
               imageUrl={imageUrl}

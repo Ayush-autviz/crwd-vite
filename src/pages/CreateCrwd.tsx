@@ -310,7 +310,7 @@ export default function CreateCRWDPage() {
                       <p className="text-sm text-gray-500">No causes found</p>
                     </div>
                   ) : (
-                  causesData?.results?.map((cause: any) => (
+                  causesData?.results?.slice(0, 10).map((cause: any) => (
                     <div
                       key={cause.name}
                       className={`flex items-center gap-3 py-3 px-2 my-1 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer ${

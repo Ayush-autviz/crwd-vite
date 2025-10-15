@@ -25,7 +25,7 @@ const GroupCrwdEvent: React.FC = () => {
 
   return (
     <>
-      <Link to="/posts/1">
+      <Link to="/post/1">
         <div className="px-4 pt-2  lg:max-w-[630px] gap-6">
           <div className="bg-white rounded-xl shadow-sm p-6 flex flex-col gap-2">
             <div className="flex items-center justify-between">

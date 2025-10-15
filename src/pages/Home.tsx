@@ -1,12 +1,10 @@
 import { ChevronRight, Loader2 } from "lucide-react";
 import { Link } from "react-router-dom";
 
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Avatar } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import TopicsList from "@/components/TopicsList";
 import PopularPosts from "@/components/PopularPosts";
 import ProfileNavbar from "@/components/profile/ProfileNavbar";
 import CausesCarousel from "@/components/CausesCarousel";
@@ -17,18 +15,18 @@ import { useQuery } from "@tanstack/react-query";
 import { getCauses, getCausesByLocation, getCollectives } from "@/services/api/crwd";
 import { useGeolocated } from "react-geolocated";
 import { categories } from "@/constants/categories";
+import { getPosts } from "@/services/api/social";
 
 export default function HomePage() {
   const [showMobileFooter, setShowMobileFooter] = useState(true);
 
-  const { coords, isGeolocationAvailable, isGeolocationEnabled } =
-  useGeolocated({
+  const { coords } = useGeolocated({
       positionOptions: {
           enableHighAccuracy: false,
       },
       userDecisionTimeout: 5000,
   });
-  console.log(coords, 'coords');
+  
 
   // Fetch collectives data using React Query
   const {data: collectives, isLoading: collectivesLoading} = useQuery({
@@ -44,16 +42,20 @@ export default function HomePage() {
       enabled: true,
     });
 
-    const {data: causesByLocation, isLoading: causesByLocationLoading} = useQuery({
+    const {data: causesByLocation} = useQuery({
       queryKey: ['causesByLocation'],
-      queryFn: () => getCausesByLocation(coords?.latitude, coords?.longitude),
+      queryFn: () => getCausesByLocation(coords?.latitude || 0, coords?.longitude || 0),
       enabled: !!coords,
     });
-    
-    console.log('causesByLocation', causesByLocation);
-    
 
+    // posts
 
+    const {data: posts, isLoading: postsLoading} = useQuery({
+      queryKey: ['posts'],
+      queryFn: getPosts,
+      enabled: true,
+    });
+  console.log('postsaxss', posts);
 
   // Sample data for nearby causes
   const nearbyCauses = [
@@ -462,9 +464,9 @@ export default function HomePage() {
           </div>
 
           <div className="mr-auto  ">
-            <PopularPosts />
+            <PopularPosts posts={posts} isLoading={postsLoading} />
           </div>
-          <div className="md:-mx-6">
+          <div className="md:-mx-6">    
             <Footer />
           </div>
         </div>

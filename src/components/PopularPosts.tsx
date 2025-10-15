@@ -1,43 +1,38 @@
-import React, { useState } from "react";
-import { popularPosts } from "@/lib/profile/profileActivity";
+import { useState } from "react";
 import ProfileActivity from "./profile/ProfileActivity";
-import { morePostsToLoad } from "@/lib/profile/profileActivity";
 import { Button } from "@/components/ui/button";
 import { Loader2, HelpCircle } from "lucide-react";
-import type { PostDetail } from "@/lib/types";
 
 export const PopularPosts = ({
   related = false,
   title = "Recent Posts to Collectives",
   showLoadMore = true,
+  posts,
+  isLoading = false,
 }: {
   related?: boolean;
   title?: string;
   showLoadMore?: boolean;
+  posts?: any;
+  isLoading?: boolean;
 }) => {
-  const [allPosts, setAllPosts] = useState<PostDetail[]>(popularPosts);
-  const [isLoading, setIsLoading] = useState(false);
-  const [loadCount, setLoadCount] = useState(0);
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
 
   const handleLoadMore = async () => {
-    setIsLoading(true);
+    setIsLoadingMore(true);
 
     // Simulate loading delay
     await new Promise((resolve) => setTimeout(resolve, 1500));
 
-    // Create new posts with unique IDs to avoid conflicts
-    const newPosts: PostDetail[] = morePostsToLoad.map((post) => ({
-      ...post,
-      id: post.id + loadCount * 100, // Make IDs unique across loads
-      imageUrl: post.imageUrl || "", // Ensure imageUrl is always a string
-    }));
+    // Note: This would create new posts and append them to existing ones
+    // For now, we're just simulating the load more functionality
 
-    // Append new posts to existing ones
-    setAllPosts((prevPosts) => [...prevPosts, ...newPosts]);
-    setLoadCount((prev) => prev + 1);
-
-    setIsLoading(false);
+    setIsLoadingMore(false);
   };
+
+
+  console.log(posts?.results);
+  
 
   return (
     <div className="w-full p-4 md:p-0">
@@ -53,22 +48,53 @@ export const PopularPosts = ({
           </div>
         </div>
       </div>
-      <div className="space-y-4">
-        {allPosts.map((post) => (
-          <ProfileActivity title="" key={post.id} posts={[post]} />
-        ))}
-      </div>
+      {isLoading ? (
+        <div className="flex justify-center items-center py-8">
+          <Loader2 className="w-6 h-6 animate-spin" />
+          <span className="ml-2">Loading posts...</span>
+        </div>
+      ) : (
+        <div className="space-y-4">
+          {posts?.results.length > 0 ? (
+            posts.results.map((post: any) => {
+              // Transform API response to match PostDetail interface
+              const transformedPost = {
+                id: post.id,
+                avatarUrl: post.user?.profile_picture || '/placeholder.svg',
+                username: post.user?.username || post.user?.full_name || 'Unknown User',
+                time: new Date(post.created_at).toLocaleDateString(),
+                org: post.collective?.name || 'Unknown Collective',
+                orgUrl: post.collective?.id,
+                text: post.content || '',
+                imageUrl: post.media || undefined,
+                likes: post.likes_count || 0,
+                comments: post.comments_count || 0,
+                shares: 0, // API doesn't provide shares count
+                isLiked: post.is_liked === true, // Ensure boolean conversion
+              };
+              
+              return (
+                <ProfileActivity title="" key={post.id} posts={[transformedPost]} />
+              );
+            })
+          ) : (
+            <div className="text-center py-8 text-muted-foreground">
+              No posts available yet
+            </div>
+          )}
+        </div>
+      )}
 
       {/* Load More button at the end of all posts */}
-      {showLoadMore && (
+      {posts?.next && (
         <div className="flex justify-center mt-6 mb-8">
           <Button
             onClick={handleLoadMore}
-            disabled={isLoading}
+            disabled={isLoadingMore}
             variant="outline"
             className="px-6 py-2"
           >
-            {isLoading ? (
+            {isLoadingMore ? (
               <>
                 <Loader2 className="w-4 h-4 mr-2 animate-spin" />
                 Loading...

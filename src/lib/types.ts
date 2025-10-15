@@ -19,6 +19,7 @@ export interface PostDetail {
   likes: number;
   comments: number;
   shares: number;
+  isLiked?: boolean;
 }
 
 export type UserType = {

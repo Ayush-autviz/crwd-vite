@@ -197,7 +197,7 @@ function App() {
                     <Route path="/groupcrwd/:id" element={<GroupCrwdById />} />
                     <Route path="/members" element={<Members />} />
                     <Route path="/posts" element={<Posts />} />
-                    <Route path="/posts/:id" element={<PostById />} />
+                    <Route path="/post/:id" element={<PostById />} />
                     <Route path="/menu" element={<Menu />} />
                     <Route path="/mobile-menu" element={<MobileMenu />} />
                     <Route path="/donation-test" element={<DonationTest />} />
