@@ -160,3 +160,21 @@ export const getFavoriteCollectives = async () => {
     const response = await axiosClient.get('/social/users/favorite-collectives/');
     return response.data;
 };
+
+// Get User Profile by ID
+export const getUserProfileById = async (userId: string) => {
+    const response = await axiosClient.get(`/social/users/${userId}/profile/`);
+    return response.data;
+};
+
+// Follow User by ID
+export const followUserById = async (followeeId: string) => {
+    const response = await axiosClient.post(`/social/users/${followeeId}/follow/`);
+    return response.data;
+};
+
+// Unfollow User by ID
+export const unfollowUserById = async (followeeId: string) => {
+    const response = await axiosClient.delete(`/social/users/${followeeId}/unfollow/`);
+    return response.data;
+};

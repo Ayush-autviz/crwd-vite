@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import type { PostDetail } from "@/lib/types";
 import ProfileActivityCard from "./ProfileActivityCard";
 import { morePostsToLoad } from "@/lib/profile/profileActivity";
@@ -15,6 +15,8 @@ interface ProfileActivityProps {
   postButton?: boolean;
   subheading?: boolean;
   collectiveData?: any;
+  isLoading?: boolean;
+  error?: any;
 }
 
 const ProfileActivity: React.FC<ProfileActivityProps> = ({
@@ -26,12 +28,14 @@ const ProfileActivity: React.FC<ProfileActivityProps> = ({
   postButton = false,
   subheading = false,
   collectiveData,
+  isLoading = false,
+  error = null,
 }) => {
   const [allPosts, setAllPosts] = useState<PostDetail[]>(posts);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
   const navigate = useNavigate();
   const handleLoadMore = async () => {
-    setIsLoading(true);
+    setIsLoadingMore(true);
 
     // Simulate loading delay
     await new Promise((resolve) => setTimeout(resolve, 1500));
@@ -39,11 +43,12 @@ const ProfileActivity: React.FC<ProfileActivityProps> = ({
     // Append new posts to the existing array
     setAllPosts((prevPosts) => [...prevPosts, ...morePostsToLoad]);
 
-    setIsLoading(false);
+    setIsLoadingMore(false);
   };    
 
-  console.log('allPostsaxss', allPosts);
-  console.log('postsaxss', posts);
+  useEffect(() => {
+    setAllPosts(posts);
+  }, [isLoading]);
 
   return (
     <div className="w-full">
@@ -68,8 +73,22 @@ const ProfileActivity: React.FC<ProfileActivityProps> = ({
         </i>
       )}
       <div className="space-y-4 mt-4">
-        {allPosts.length > 0 &&
-          allPosts.map((post, index) => (
+        {isLoading ? (
+          <div className="flex items-center justify-center py-8">
+            <div className="flex flex-col items-center gap-2">
+              <Loader2 className="w-6 h-6 animate-spin" />
+              <p className="text-sm text-gray-600">Loading posts...</p>
+            </div>
+          </div>
+        ) : error ? (
+          <div className="flex items-center justify-center py-8">
+            <div className="text-center">
+              <p className="text-red-600 mb-2">Failed to load posts</p>
+              <p className="text-sm text-gray-600">Please try again later</p>
+            </div>
+          </div>
+        ) : allPosts.length > 0 ? (
+          allPosts.map((post) => (
             // <Link to={`/posts/${post.id}`}>
             <ProfileActivityCard
               imageUrl={imageUrl}
@@ -77,7 +96,12 @@ const ProfileActivity: React.FC<ProfileActivityProps> = ({
               post={post}
             />
             // </Link>
-          ))}
+          ))
+        ) : (
+          <div className="flex items-center justify-center py-8">
+            <p className="text-gray-600">No posts available yet</p>
+          </div>
+        )}
       </div>
 
       {/* Load More button only appears when showLoadMore is true */}
@@ -85,11 +109,11 @@ const ProfileActivity: React.FC<ProfileActivityProps> = ({
         <div className="flex justify-center mt-6">
           <Button
             onClick={handleLoadMore}
-            disabled={isLoading}
+            disabled={isLoadingMore}
             variant="outline"
             className="px-6 py-2"
           >
-            {isLoading ? (
+            {isLoadingMore ? (
               <>
                 <Loader2 className="w-4 h-4 mr-2 animate-spin" />
                 Loading...

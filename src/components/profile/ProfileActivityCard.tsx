@@ -14,6 +14,7 @@ import { Toast } from "../ui/toast";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { likePost, unlikePost } from "@/services/api/social";
 import { Loader2 } from "lucide-react";
+import { useAuthStore } from "@/stores/store";
 
 export default function ProfileActivityCard({
   post,
@@ -35,6 +36,8 @@ export default function ProfileActivityCard({
   const menuRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+  const { user } = useAuthStore();
+  const isOwnPost = user?.id === post.userId;
 
   // Like/Unlike mutations
   const likeMutation = useMutation({
@@ -96,9 +99,6 @@ export default function ProfileActivityCard({
     };
   }, [showMenu]);
 
-
-  console.log('postaxss in card' , post);    
-
   return (
     <>
       <Card
@@ -119,7 +119,7 @@ export default function ProfileActivityCard({
               }
               className="cursor-pointer"
             > */}
-            <Link to={`/user-profile`} state={{ imageUrl: post.avatarUrl, name: post.username }}>
+            <Link to={isOwnPost ? `/profile` : `/user-profile/${post.userId}`}>
               <Avatar className="h-10 w-10 flex-shrink-0">
                 <AvatarImage
                   src={imageUrl ?? post.avatarUrl}

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Button } from "../ui/button";
-import { Avatar, AvatarImage } from "../ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { Locate, LocateIcon, Map, MapPin, Upload } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Toast } from "../ui/toast";
@@ -12,6 +12,7 @@ interface ProfileHeaderProps {
   location: string;
   link: string;
   follow?: boolean;
+  activeSince: string;
 }
 
 const ProfileHeader: React.FC<ProfileHeaderProps> = ({
@@ -20,6 +21,7 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
   location,
   link,
   follow = false,
+  activeSince,
 }) => {
   const [isFollowing, setIsFollowing] = useState(false);
   const [toastState, setToastState] = useState({ show: false, message: "" });
@@ -71,6 +73,7 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
         <ImageModal src={avatarUrl} alt={name}>
           <Avatar className="w-14 h-14 rounded-full object-contain cursor-pointer hover:opacity-80 transition-opacity">
             <AvatarImage src={avatarUrl} alt={name} />
+            <AvatarFallback>{name.split(' ').map(word => word[0]).join('').toUpperCase()}</AvatarFallback>
           </Avatar>
         </ImageModal>
         <div className="font-bold text-lg leading-tight">My Name is {name}</div>
@@ -89,7 +92,7 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
           >
             {link}
           </a>
-          <span className="text-gray-500 text-xs">Active since 2023</span>
+          <span className="text-gray-500 text-xs">Active since {new Date(activeSince).getFullYear()}</span>
         </div>
       </div>
     </div>

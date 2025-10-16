@@ -1,12 +1,11 @@
-import React, { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef } from "react";
 import ProfileHeader from "../components/profile/ProfileHeader";
 import ProfileBio from "../components/profile/ProfileBio";
 import ProfileActivity from "../components/profile/ProfileActivity";
 import ProfileNavbar from "../components/profile/ProfileNavbar";
 import ProfileSidebar from "../components/profile/ProfileSidebar";
-import { profileActivity } from "../lib/profile/profileActivity";
 import ProfileStats from "../components/profile/ProfileStats";
-import { useLocation } from "react-router-dom";
+import { useLocation, useParams } from "react-router-dom";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import {
@@ -18,6 +17,10 @@ import {
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Toast } from "../components/ui/toast";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { getUserProfileById, followUserById, unfollowUserById } from "@/services/api/social";
+import { useAuthStore } from "@/stores/store";
+
 
 const orgAvatars = [
   {
@@ -39,22 +42,79 @@ const orgAvatars = [
 ];
 
 export default function ProfilePage() {
-  const { imageUrl, name } = useLocation().state || { imageUrl: "", name: "" };
+  const { imageUrl } = useLocation().state || { imageUrl: "" };
+  const { userId } = useParams();
   const [showMenu, setShowMenu] = useState(false);
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
   const [isFollowing, setIsFollowing] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
+  const { user: currentUser } = useAuthStore();
+  const queryClient = useQueryClient();
+
+  // Check if viewing own profile
+  const isOwnProfile = currentUser?.id === userId;
+
+  // Fetch user profile
+  const { data: userProfile, isLoading, error } = useQuery({
+    queryKey: ['userProfile', userId],
+    queryFn: () => getUserProfileById(userId || ''),
+    enabled: !!userId,
+  });
+
+  // Follow user mutation
+  const followMutation = useMutation({
+    mutationFn: () => followUserById(userId || ''),
+    onSuccess: () => {
+      setIsFollowing(true);
+      setToastMessage("Followed successfully!");
+      setShowToast(true);
+      queryClient.invalidateQueries({ queryKey: ['userProfile', userId] });
+    },
+    onError: (error) => {
+      console.error('Error following user:', error);
+      setToastMessage("Failed to follow user");
+      setShowToast(true);
+    },
+  });
+
+  // Unfollow user mutation
+  const unfollowMutation = useMutation({
+    mutationFn: () => unfollowUserById(userId || ''),
+    onSuccess: () => {
+      setIsFollowing(false);
+      setToastMessage("Unfollowed successfully!");
+      setShowToast(true);
+      queryClient.invalidateQueries({ queryKey: ['userProfile', userId] });
+    },
+    onError: (error) => {
+      console.error('Error unfollowing user:', error);
+      setToastMessage("Failed to unfollow user");
+      setShowToast(true);
+    },
+  });
 
   const handleFollowClick = () => {
-    setIsFollowing(!isFollowing);
     if (isFollowing) {
-      setToastMessage("Unfollowed");
+      unfollowMutation.mutate();
     } else {
-      setToastMessage("Followed");
+      followMutation.mutate();
     }
-    setShowToast(true);
   };
+
+  // Initialize following state from API data
+  useEffect(() => {
+    if (userProfile) {
+      setIsFollowing(userProfile.is_following || false);
+    }
+  }, [userProfile]);
+
+  // Redirect to own profile if viewing own profile
+  useEffect(() => {
+    if (isOwnProfile) {
+      window.location.href = '/profile';
+    }
+  }, [isOwnProfile]);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -71,6 +131,37 @@ export default function ProfilePage() {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [showMenu]);
+  // Show loading state
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="flex flex-col items-center gap-4">
+          <Loader2 className="w-8 h-8 animate-spin" />
+          <p className="text-gray-600">Loading profile...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Show error state
+  if (error) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-center">
+          <p className="text-red-600 mb-4">Failed to load profile</p>
+          <Button onClick={() => window.location.reload()}>
+            Try Again
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
+  // Don't render if no user profile data
+  if (!userProfile) {
+    return null;
+  }
+
   return (
     <div className="">
       <ProfileNavbar title="Profile" />
@@ -114,8 +205,11 @@ export default function ProfilePage() {
         <Button
           onClick={handleFollowClick}
           variant={isFollowing ? "outline" : "default"}
+          disabled={followMutation.isPending || unfollowMutation.isPending}
         >
-          {isFollowing ? "Following" : "Follow"}
+          {followMutation.isPending || unfollowMutation.isPending ? (
+            <Loader2 className="w-4 h-4 animate-spin" />
+          ) : isFollowing ? "Following" : "Follow"}
         </Button>
       </div>
 
@@ -124,17 +218,18 @@ export default function ProfilePage() {
         <div className="md:col-span-12">
           <div className="flex flex-col space-y-4 px-4 md:px-0">
             <ProfileHeader
-              avatarUrl={imageUrl}
-              name={name}
-              location="Atlanta, GA"
+              avatarUrl={userProfile.profile_picture || imageUrl}
+              name={`${userProfile.first_name} ${userProfile.last_name}`}
+              location={userProfile.location || "Location not specified"}
+              activeSince={userProfile.date_joined || "Not specified"}
               link="thisisaurl.com"
             />
             <ProfileStats
-              profileId="123"
-              causes={10}
-              crwds={3}
-              followers={58}
-              following={8}
+              profileId={userProfile.id}
+              causes={userProfile.favorite_causes_count || 0}
+              crwds={userProfile.joined_collectives_count || 0}
+              followers={userProfile.followers_count || 0}
+              following={userProfile.following_count || 0}
             />
             
             <div className="flex justify-between items-center px-4">
@@ -163,12 +258,12 @@ export default function ProfilePage() {
               ))}
             </div>
 
-            <ProfileBio bio="This is a bio about Mya and how she likes to help others and give back to her community. She also loves ice cream." />
+            <ProfileBio bio={userProfile.bio || "No bio available"} />
             
             <div className="py-4">
               <ProfileActivity
                 title="Recent Activity"
-                posts={profileActivity}
+                posts={[]}
                 showLoadMore={true}
               />
             </div>

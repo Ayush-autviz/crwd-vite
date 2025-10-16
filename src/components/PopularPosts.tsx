@@ -62,6 +62,7 @@ export const PopularPosts = ({
                 id: post.id,
                 avatarUrl: post.user?.profile_picture || '/placeholder.svg',
                 username: post.user?.username || post.user?.full_name || 'Unknown User',
+                userId: post.user?.id,
                 time: new Date(post.created_at).toLocaleDateString(),
                 org: post.collective?.name || 'Unknown Collective',
                 orgUrl: post.collective?.id,

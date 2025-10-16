@@ -201,7 +201,7 @@ function App() {
                     <Route path="/menu" element={<Menu />} />
                     <Route path="/mobile-menu" element={<MobileMenu />} />
                     <Route path="/donation-test" element={<DonationTest />} />
-                    <Route path="/user-profile" element={<UserProfile />} />
+                    <Route path="/user-profile/:userId" element={<UserProfile />} />
                     <Route path="/circles" element={<Circles />} />
                   </Routes>
                 </Layout>

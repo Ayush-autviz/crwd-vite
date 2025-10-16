@@ -9,6 +9,7 @@ export type Organization = {
 
 export interface PostDetail {
   id: number;
+  userId: string;
   avatarUrl: string;
   username: string;
   time: string;

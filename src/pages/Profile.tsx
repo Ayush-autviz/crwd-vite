@@ -6,7 +6,6 @@ import Footer from "@/components/Footer";
 import ProfileActivity from "../components/profile/ProfileActivity";
 import ProfileNavbar from "../components/profile/ProfileNavbar";
 import ProfileSidebar from "../components/profile/ProfileSidebar";
-import { profileActivity } from "../lib/profile/profileActivity";
 import ProfileStats from "../components/profile/ProfileStats";
 import { Button } from "@/components/ui/button";
 import {
@@ -21,58 +20,9 @@ import { Link } from "react-router-dom";
 import { Toast } from "../components/ui/toast";
 import { useQuery } from "@tanstack/react-query";
 import { getProfile } from "@/services/api/auth";
+import { getPosts } from "@/services/api/social";
 
-const interestsData = [
-  {
-    id: 1,
-    name: "Shriners Children",
-    image:
-      "https://upload.wikimedia.org/wikipedia/en/thumb/9/9d/Shriners_Hospitals_for_Children_Logo.svg/500px-Shriners_Hospitals_for_Children_Logo.svg.png",
-    color: "#3B82F6",
-  },
-  {
-    id: 2,
-    name: "Change",
-    image:
-      "https://images.squarespace-cdn.com/content/v1/5fd7e20940f9b820fac1e013/d442cb1f-e175-4b8d-bc81-44102583a6a5/thumbnail-05.png",
-    color: "#EF4444",
-  },
-  {
-    id: 3,
-    name: "The Water Trust",
-    image:
-      "https://media.licdn.com/dms/image/v2/C4E0BAQEHqcfGhnH29g/company-logo_200_200/company-logo_200_200/0/1630573980553/the_water_trust_logo?e=2147483647&v=beta&t=fjyZGioRcUDheVZH_f8dxxSvR7840DFgAp6XrGwo8hw",
-    color: "#10B981",
-  },
-  {
-    id: 4,
-    name: "WWF",
-    image:
-      "https://i0.wp.com/acrossthegreen.com/wp-content/uploads/2021/03/75E8B176-DAFE-4956-ABC5-9F221ACB2094.png?fit=1020%2C680&ssl=1",
-    color: "#F59E0B",
-  },
-];
 
-const InterestCard = ({
-  interest,
-}: {
-  interest: (typeof interestsData)[0];
-}) => {
-  return (
-    <div className={`p-2 w-full bg-white rounded-lg overflow-hidden  `}>
-      <img
-        src={interest.image}
-        alt={interest.name}
-        className="w-4/5 h-12 md:h-16 mx-auto object-contain mb-2 md:mb-3"
-      />
-      <div className="p-1 md:p-2">
-        <h3 className="text-xs md:text-sm font-medium text-gray-800 text-center leading-tight">
-          {interest.name}
-        </h3>
-      </div>
-    </div>
-  );
-};
 
 const orgAvatars = [
   {
@@ -96,8 +46,6 @@ const orgAvatars = [
 export default function ProfilePage() {
   const [showMenu, setShowMenu] = useState(false);
   const [showToast, setShowToast] = useState(false);
-  const [toastMessage, setToastMessage] = useState("");
-  const [isFollowing, setIsFollowing] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
   // Fetch profile data using React Query
@@ -107,15 +55,15 @@ export default function ProfilePage() {
     enabled: true,
   });
 
-  const handleFollowClick = () => {
-    setIsFollowing(!isFollowing);
-    if (isFollowing) {
-      setToastMessage("Unfollowed");
-    } else {
-      setToastMessage("Followed");
-    }
-    setShowToast(true);
-  };
+  const profileData = profileQuery.data?.user || {};
+
+  // Fetch user posts
+  const postsQuery = useQuery({
+    queryKey: ['posts'],
+    queryFn: () => getPosts(profileData.id, ''),
+    enabled: !!profileData.id,
+  });
+
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -167,14 +115,28 @@ export default function ProfilePage() {
     );
   }
 
+  console.log('postsQuery', postsQuery?.data?.results);
+
   // Extract profile data
-  const profileData = profileQuery.data?.user || {};
-  const {
-    profile_picture = "https://randomuser.me/api/portraits/women/44.jpg",
-    full_name = "Mya",
-    location = "Atlanta, GA",
-    bio = "This is a bio about Mya and how she likes to help others and give back to her community. She also loves ice cream."
-  } = profileData;
+
+  // Transform posts data to match PostDetail interface
+  const userPosts = postsQuery?.data?.results?.map((post: any) => ({
+    id: post.id,
+    userId: post.user?.id,
+    avatarUrl: post.user?.profile_picture || '/placeholder.svg',
+    username: post.user?.username || post.user?.full_name || 'Unknown User',
+    time: new Date(post.created_at).toLocaleDateString(),
+    org: post.collective?.name || 'Unknown Collective',
+    orgUrl: post.collective?.id,
+    text: post.content || '',
+    imageUrl: post.media || undefined,
+    likes: post.likes_count || 0,
+    comments: post.comments_count || 0,
+    shares: 0, // API doesn't provide shares count
+    isLiked: post.is_liked || false,
+  })) || [];
+
+  console.log('userPosts', userPosts);
 
   return (
     <div className="">
@@ -239,10 +201,11 @@ export default function ProfilePage() {
         <div className="md:col-span-12">
           <div className="flex flex-col space-y-4 px-4 md:px-0">
             <ProfileHeader
-              avatarUrl={profile_picture}
-              name={full_name}
-              location={location}
-              link="thisisaurl.com"
+              avatarUrl={profileData.profile_picture}
+              name={profileData.full_name}
+              location={profileData.location}
+              link={profileData.username}
+              activeSince={profileData.date_joined}
             />
             {/* <ProfileBio bio="This is a bio about Mya and how she likes to help others and give back to her community. She also loves ice cream." /> */}
             {/* <div className="flex justify-center md:justify-start gap-4">
@@ -297,13 +260,15 @@ export default function ProfilePage() {
               ))}
             </div>
 
-            <ProfileBio bio={bio} />
+            <ProfileBio bio={profileData.bio} />
             <div className="py-4">
               <ProfileActivity
                 // showLabel
                 title="Recent Activity"
-                posts={profileActivity}
+                posts={userPosts}
                 showLoadMore={true}
+                isLoading={postsQuery.isLoading}
+                error={postsQuery.error}
               />
             </div>
           </div>
@@ -322,7 +287,7 @@ export default function ProfilePage() {
 
       {/* Toast notification */}
       <Toast
-        message={toastMessage}
+        message="Profile updated successfully!"
         show={showToast}
         onHide={() => setShowToast(false)}
         duration={2000}

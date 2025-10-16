@@ -2,6 +2,7 @@ export const profileActivity =[
     
         {
           id: 1,
+          userId: "1",
           avatarUrl: "https://randomuser.me/api/portraits/women/44.jpg",
           username: "mynameismya",
           time: "17h",
@@ -15,6 +16,7 @@ export const profileActivity =[
         },
         {
           id: 2,
+          userId: "1",
           avatarUrl: "https://randomuser.me/api/portraits/women/44.jpg",
           username: "mynameismya",
           time: "1d",
@@ -28,6 +30,7 @@ export const profileActivity =[
         },
         {
           id: 3,
+          userId: "1",
           avatarUrl: "https://randomuser.me/api/portraits/women/44.jpg",
           username: "mynameismya",
           time: "2d",
@@ -40,6 +43,7 @@ export const profileActivity =[
         },
         {
           id: 4,
+          userId: "1",
           avatarUrl: "https://randomuser.me/api/portraits/women/44.jpg",
           username: "mynameismya",
           time: "3d",
@@ -58,6 +62,7 @@ export const profileActivity =[
 export const popularPosts = [
 {
   id: 14,
+  userId: "1",
   avatarUrl: "https://randomuser.me/api/portraits/women/28.jpg",
   username: "sophiahope",
   time: "3h",
@@ -71,6 +76,7 @@ export const popularPosts = [
 },
 {
   id: 5,
+  userId: "1",
   avatarUrl: "https://randomuser.me/api/portraits/men/45.jpg",
   username: "johnnydoe",
   time: "4d",
@@ -84,6 +90,7 @@ export const popularPosts = [
 },
 {
   id: 6,
+  userId: "1",
   avatarUrl: "https://randomuser.me/api/portraits/women/55.jpg",
   username: "sarahsmiles",
   time: "5d",
@@ -97,6 +104,7 @@ export const popularPosts = [
 },
 {
   id: 7,
+  userId: "1",
   avatarUrl: "https://randomuser.me/api/portraits/men/54.jpg",
   username: "mikegreen",
   time: "6d",
@@ -110,6 +118,7 @@ export const popularPosts = [
 },
 {
   id: 8,
+  userId: "1",
   avatarUrl: "https://randomuser.me/api/portraits/women/60.jpg",
   username: "emilywrites",
   time: "1w",
@@ -126,6 +135,7 @@ export const popularPosts = [
 export const morePostsToLoad = [
 {
   id: 9,
+  userId: "1",
   avatarUrl: "https://randomuser.me/api/portraits/men/67.jpg",
   username: "alexcares",
   time: "1w",
@@ -139,6 +149,7 @@ export const morePostsToLoad = [
 },
 {
   id: 10,
+  userId: "1",
   avatarUrl: "https://randomuser.me/api/portraits/women/72.jpg",
   username: "jennyhope",
   time: "1w",
@@ -152,6 +163,7 @@ export const morePostsToLoad = [
 },
 {
   id: 11,
+  userId: "1",
   avatarUrl: "https://randomuser.me/api/portraits/men/43.jpg",
   username: "davidgives",
   time: "2w",
@@ -164,6 +176,7 @@ export const morePostsToLoad = [
 },
 {
   id: 12,
+  userId: "1",
   avatarUrl: "https://randomuser.me/api/portraits/women/38.jpg",
   username: "mariahelpss",
   time: "2w",
