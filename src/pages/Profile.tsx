@@ -226,12 +226,12 @@ export default function ProfilePage() {
             </div>
           )}
         </div>
-        <Button
+        {/* <Button
           onClick={handleFollowClick}
           variant={isFollowing ? "outline" : "default"}
         >
           {isFollowing ? "Following" : "Follow"}
-        </Button>
+        </Button> */}
       </div>
 
       <div className="md:grid md:grid-cols-12 md:gap-6 md:px-6 md:pt-2 md:pb-6">

@@ -52,10 +52,10 @@ export default function HomePage() {
 
     const {data: posts, isLoading: postsLoading} = useQuery({
       queryKey: ['posts'],
-      queryFn: getPosts,
+      queryFn: () => getPosts('', ''),
       enabled: true,
     });
-  console.log('postsaxss', posts);
+
 
   // Sample data for nearby causes
   const nearbyCauses = [

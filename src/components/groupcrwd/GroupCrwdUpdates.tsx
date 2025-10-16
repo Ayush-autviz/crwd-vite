@@ -1,48 +1,19 @@
-import React, { useState } from "react";
+import React from "react";
 import {
-  Plus,
-  MoreHorizontal,
-  Heart,
-  MessageCircle,
-  Share2,
   MessageSquare,
-  X,
+  Loader2,
 } from "lucide-react";
 import ProfileActivity from "../profile/ProfileActivity";
 import { profileActivity } from "@/lib/profile/profileActivity";
 import EmptyState from "../ui/EmptyState";
-import { Button } from "../ui/button";
-import ReactConfetti from "react-confetti";
-
-const updates = [
-  {
-    user: "Chad",
-    avatar: "https://randomuser.me/api/portraits/men/32.jpg",
-    time: "17h",
-    text: "The quick, brown fox jumps over a lazy dog. DJs flock by when MTV ax quiz prog. Junk MTV quiz graced by fox whelps. Bawds jog, flick quartz, vex nymphs. Waltz, bad nymph, for quick jigs vex!",
-    image: "",
-    likes: 2,
-    comments: 0,
-    shares: 3,
-  },
-  {
-    user: "Chad",
-    avatar: "https://randomuser.me/api/portraits/men/32.jpg",
-    time: "17h",
-    text: "The quick, brown fox jumps over a lazy dog. DJs flock by when MTV ax quiz prog. Junk",
-    image:
-      "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=400&q=80",
-    likes: 2,
-    comments: 0,
-    shares: 3,
-  },
-];
+import type { PostDetail } from "@/lib/types";
 
 interface GroupCrwdUpdatesProps {
   posts?: any[];
   showEmpty?: boolean;
   joined?: boolean;
   collectiveData?: any;
+  isLoading?: boolean;
 }
 
 const GroupCrwdUpdates: React.FC<GroupCrwdUpdatesProps> = ({
@@ -50,9 +21,26 @@ const GroupCrwdUpdates: React.FC<GroupCrwdUpdatesProps> = ({
   showEmpty = false,
   joined = false,
   collectiveData,
+  isLoading = false,
 }) => {
+  // Transform API posts to PostDetail format
+  const transformedPosts: PostDetail[] = posts?.map((post: any) => ({
+    id: post.id,
+    avatarUrl: post.user?.profile_picture || '/placeholder.svg',
+    username: post.user?.username || post.user?.full_name || 'Unknown User',
+    time: new Date(post.created_at).toLocaleDateString(),
+    org: post.collective?.name || 'Unknown Collective',
+    orgUrl: post.collective?.id,
+    text: post.content || '',
+    imageUrl: post.media || undefined,
+    likes: post.likes_count || 0,
+    comments: post.comments_count || 0,
+    shares: 0, // API doesn't provide shares count
+    isLiked: post.is_liked === true, // Ensure boolean conversion
+  })) || [];
+
   // Show empty state if showEmpty is true or if posts array is empty
-  const shouldShowEmpty = showEmpty || posts.length === 0;
+  const shouldShowEmpty = showEmpty || transformedPosts.length === 0;
 
   return (
     <div className="px-4 pt-2 pb-2">
@@ -61,7 +49,12 @@ const GroupCrwdUpdates: React.FC<GroupCrwdUpdatesProps> = ({
         <button className="bg-blue-100 text-blue-600 rounded-full p-1"><Plus size={18} /></button>
       </div> */}
 
-      {shouldShowEmpty ? (
+      {isLoading ? (
+        <div className="flex items-center justify-center py-8">
+          <Loader2 className="w-6 h-6 animate-spin mr-2" />
+          <span className="text-gray-600">Loading posts...</span>
+        </div>
+      ) : shouldShowEmpty ? (
         <EmptyState
           icon={<MessageSquare size={48} />}
           title="Be the first one to share"
@@ -75,7 +68,7 @@ const GroupCrwdUpdates: React.FC<GroupCrwdUpdatesProps> = ({
           <ProfileActivity
             title="Conversations"
             subheading={true}
-            posts={posts}
+            posts={transformedPosts}
             postButton={joined}
             collectiveData={collectiveData}
           />

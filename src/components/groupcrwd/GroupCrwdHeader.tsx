@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { Heart, Loader2 } from "lucide-react";
+import { Heart } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { SharePost } from "../ui/SharePost";
 import { Badge } from "../ui/badge";
@@ -48,9 +48,11 @@ const GroupCrwdHeader: React.FC<GroupCrwdHeaderProps> = ({
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
   const [localCategories, setLocalCategories] = useState<any[]>([]);
-  const [isFavorited, setIsFavorited] = useState(crwdData?.is_favorited || false);
+  const [isFavorited, setIsFavorited] = useState(crwdData?.is_favorite || false);
 
-  console.log(crwdData);
+  console.log('crwdData:', crwdData);
+  console.log('is_favorite from API:', crwdData?.is_favorite);
+  console.log('isFavorited state:', isFavorited);
 
   // Favorite collective mutation
   const favoriteMutation = useMutation({
@@ -96,20 +98,21 @@ const GroupCrwdHeader: React.FC<GroupCrwdHeaderProps> = ({
 
   // Update favorite state when crwdData changes
   useEffect(() => {
-    setIsFavorited(crwdData?.is_favorited || false);
-  }, [crwdData?.is_favorited]);
+    setIsFavorited(crwdData?.is_favorite || false);
+  }, [crwdData?.is_favorite]);
 
   useEffect(() => {
-  if (crwdData?.causes && Array.isArray(crwdData.causes)) {
-    crwdData.causes.forEach((item: any) => {
-      if (item.cause?.category) {
-        setLocalCategories([...localCategories, item.cause.category]);
-      }
-    });
-  }
-}, [crwdData])
+    if (crwdData?.causes && Array.isArray(crwdData.causes)) {
+      const categories = crwdData.causes
+        .map((item: any) => item.cause?.category)
+        .filter(Boolean) // Remove undefined values
+        .filter((value: any, index: number, self: any[]) => self.indexOf(value) === index); // Remove duplicates
+      setLocalCategories(categories);
+    }
+  }, [crwdData])
 
-console.log(localCategories);
+console.log('localCategories:', localCategories);
+console.log('crwdData.causes:', crwdData?.causes);
 
 
   return (
@@ -182,9 +185,9 @@ console.log(localCategories);
             `}
           onClick={handleFavoriteClick}
         />
-        {(favoriteMutation.isPending || unfavoriteMutation.isPending) && (
+        {/* {(favoriteMutation.isPending || unfavoriteMutation.isPending) && (
           <Loader2 className="w-4 h-4 animate-spin text-gray-500" />
-        )}
+        )} */}
       </div>
 
       {/* Bio */}
@@ -230,10 +233,11 @@ console.log(localCategories);
 
       <div className="overflow-x-auto pb-2">
         <div className="flex space-x-2 min-w-max">
-          {categories.map((category) => (
-            // <Link to={`/interests`} key={category.name}>
-            localCategories.includes(category.id) && (
+          {localCategories.map((categoryId) => {
+            const category = categories.find(cat => cat.id === categoryId);
+            return category ? (
               <Badge
+                key={categoryId}
                 variant="secondary"
                 className="bg-muted/50 hover:bg-muted text-foreground rounded-md px-4 py-2 whitespace-nowrap"
                 style={{
@@ -243,8 +247,8 @@ console.log(localCategories);
               >
                 {category.name}
               </Badge>
-            // </Link>
-          )))}
+            ) : null;
+          })}
         </div>
       </div>
 

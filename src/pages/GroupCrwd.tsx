@@ -20,6 +20,7 @@ import { Check, Loader2, X } from "lucide-react";
 import ReactConfetti from "react-confetti";
 import { getCollectiveById, joinCollective, leaveCollective } from "@/services/api/crwd";
 import { useMutation, useQuery } from "@tanstack/react-query";
+import { getPosts } from "@/services/api/social";
 
 export default function GroupCrwdPage() {
   const [hasJoined, setHasJoined] = useState(false);
@@ -41,6 +42,13 @@ export default function GroupCrwdPage() {
     queryKey: ['crwd', crwdId],
     queryFn: () => getCollectiveById(crwdId),
   });
+
+  const { data: posts, isLoading: isLoadingPosts } = useQuery({
+    queryKey: ['posts', crwdId],
+    queryFn: () => getPosts('', crwdId),
+  });
+
+  console.log('collective posts', posts);
 
   // join collective
   const joinCollectiveMutation = useMutation({
@@ -227,7 +235,13 @@ export default function GroupCrwdPage() {
           {/* <div className="px-4">
             <PopularPosts title="Activity" showLoadMore={false} />
             </div> */}
-          <GroupCrwdUpdates showEmpty={false} joined={hasJoined} collectiveData={crwdData} />
+          <GroupCrwdUpdates 
+            showEmpty={false} 
+            joined={hasJoined} 
+            collectiveData={crwdData}
+            posts={posts?.results || []}
+            isLoading={isLoadingPosts}
+          />
           <GroupCrwdSuggested />
           {/* <GroupCrwdEvent /> */}
           {/* {!hasJoined && <GroupCrwdBottomBar onJoin={handleJoin} />} */}

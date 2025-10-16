@@ -111,14 +111,15 @@ export default function ProfileActivityCard({
         <CardContent className="">
           {/* <Link to={`/posts/${post.id}`} className='w-full'> */}
           <div className="flex gap-3">
-            <div
+            {/* <div
               onClick={() =>
                 navigate(`/user-profile`, {
                   state: { imageUrl: post.avatarUrl, name: post.username },
                 })
               }
               className="cursor-pointer"
-            >
+            > */}
+            <Link to={`/user-profile`} state={{ imageUrl: post.avatarUrl, name: post.username }}>
               <Avatar className="h-10 w-10 flex-shrink-0">
                 <AvatarImage
                   src={imageUrl ?? post.avatarUrl}
@@ -126,7 +127,7 @@ export default function ProfileActivityCard({
                 />
                 <AvatarFallback>{post.username.charAt(0)}</AvatarFallback>
               </Avatar>
-            </div>
+            </Link>
             <Link to={`/post/${post.id}`} className="w-full">
               <div className="flex-1 min-w-0">
                 <div className="flex items-center justify-between">

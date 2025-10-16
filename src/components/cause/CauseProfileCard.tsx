@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { CheckCircle, Heart, ShieldCheck, Loader2 } from "lucide-react";
+import { CheckCircle, Heart, ShieldCheck } from "lucide-react";
 import ClaimCauseDialog from "./ClaimCauseDialog";
 import { Link } from "react-router-dom";
 import { SharePost } from "../ui/SharePost";
@@ -22,8 +22,13 @@ const CauseProfileCard: React.FC<CauseProfileCardProps> = ({
   const [showShareModal, setShowShareModal] = useState(false);
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
-  const [isFavorited, setIsFavorited] = useState(causeData?.is_favorited || false);
+  const [isFavorited, setIsFavorited] = useState(causeData?.is_favorite || false);
   const causeId = causeData?.id;
+
+  // Debug logging
+  console.log('causeData:', causeData);
+  console.log('is_favorite from API:', causeData?.is_favorite);
+  console.log('isFavorited state:', isFavorited);
 
   // Favorite cause mutation
   const favoriteMutation = useMutation({
@@ -69,8 +74,8 @@ const CauseProfileCard: React.FC<CauseProfileCardProps> = ({
 
   // Update favorite state when causeData changes
   useEffect(() => {
-    setIsFavorited(causeData?.is_favorited || false);
-  }, [causeData?.is_favorited]);
+    setIsFavorited(causeData?.is_favorite || false);
+  }, [causeData?.is_favorite]);
 
   // const categories = [
   //   {
@@ -140,9 +145,9 @@ const CauseProfileCard: React.FC<CauseProfileCardProps> = ({
               `}
             onClick={handleFavoriteClick}
           />
-          {(favoriteMutation.isPending || unfavoriteMutation.isPending) && (
+          {/* {(favoriteMutation.isPending || unfavoriteMutation.isPending) && (
             <Loader2 className="w-4 h-4 animate-spin text-gray-500" />
-          )}
+          )} */}
         </div>
         {/* </button> */}
         {/* </Button> */}
