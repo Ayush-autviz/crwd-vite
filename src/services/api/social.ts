@@ -31,6 +31,16 @@ export const deleteComment = async (id: string) => {
     return response.data;
 };
 
+export const getCommentReplies = async (commentId: string) => {
+    const response = await axiosClient.get(`/social/comments/${commentId}/replies/`);
+    return response.data;
+};
+
+export const createCommentReply = async (commentId: string, data: { content: string }) => {
+    const response = await axiosClient.post(`/social/comments/${commentId}/replies/`, data);
+    return response.data;
+};
+
 // Follow/Unfollow API endpoints
 export const followUser = async (followeeId: string) => {
     const response = await axiosClient.post(`/social/users/${followeeId}/follow/`);
@@ -95,7 +105,7 @@ export const getPostComments = async (postId: string) => {
     return response.data;
 };
 
-export const createPostComment = async (postId: string, data: any) => {
+export const createPostComment = async (postId: string, data: { content: string; parent_comment_id?: number }) => {
     const response = await axiosClient.post(`/social/posts/${postId}/comments/`, data);
     return response.data;
 };

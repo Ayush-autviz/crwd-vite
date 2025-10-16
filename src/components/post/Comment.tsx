@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { Heart, MessageCircle, MoreHorizontal } from 'lucide-react';
+import { MessageCircle } from 'lucide-react';
 import { Button } from '../ui/button';
-import { Avatar } from '../ui/avatar';
+import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 import { formatDistanceToNow } from 'date-fns';
 
 export interface CommentData {
@@ -12,11 +12,17 @@ export interface CommentData {
   timestamp: Date;
   likes: number;
   replies: CommentData[];
+  repliesCount?: number;
+  parentComment?: any;
 }
 
 interface CommentProps extends CommentData {
   onReply: (commentId: number, content: string) => void;
   onLike: (commentId: number) => void;
+  onToggleReplies?: (commentId: number) => void;
+  isExpanded?: boolean;
+  isLoadingReplies?: boolean;
+  showReplyButton?: boolean;
 }
 
 export const Comment: React.FC<CommentProps> = ({
@@ -25,14 +31,17 @@ export const Comment: React.FC<CommentProps> = ({
   avatarUrl,
   content,
   timestamp,
-  likes,
   replies,
+  repliesCount = 0,
   onReply,
   onLike,
+  onToggleReplies,
+  isExpanded = false,
+  isLoadingReplies = false,
+  showReplyButton = true,
 }) => {
   const [isReplying, setIsReplying] = useState(false);
   const [replyContent, setReplyContent] = useState('');
-  const [isLiked, setIsLiked] = useState(false);
 
   const handleReplySubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -43,16 +52,15 @@ export const Comment: React.FC<CommentProps> = ({
     }
   };
 
-  const handleLike = () => {
-    setIsLiked(!isLiked);
-    onLike(id);
-  };
 
   return (
     <div className="space-y-4">
       <div className="flex gap-3">
         <Avatar className="h-8 w-8">
-          <img src={avatarUrl} alt={username} className="rounded-full" />
+          <AvatarImage src={avatarUrl} alt={username} />
+          <AvatarFallback>
+            {username.charAt(0).toUpperCase()}
+          </AvatarFallback>
         </Avatar>
         <div className="flex-1">
           <div className="bg-muted p-3 rounded-lg">
@@ -68,20 +76,41 @@ export const Comment: React.FC<CommentProps> = ({
             <span className="text-muted-foreground">
               {formatDistanceToNow(timestamp, { addSuffix: true })}
             </span>
-            <button
+            {/* <button
               onClick={handleLike}
               className="flex items-center gap-1 text-muted-foreground hover:text-primary transition-colors"
             >
               <Heart className={`h-4 w-4 ${isLiked ? 'fill-primary text-primary' : ''}`} />
               {likes}
-            </button>
-            <button
-              onClick={() => setIsReplying(!isReplying)}
-              className="flex items-center gap-1 text-muted-foreground hover:text-primary transition-colors"
-            >
-              <MessageCircle className="h-4 w-4" />
-              Reply
-            </button>
+            </button> */}
+            {showReplyButton && (
+              <button
+                onClick={() => setIsReplying(!isReplying)}
+                className="flex items-center gap-1 text-muted-foreground hover:text-primary transition-colors"
+              >
+                <MessageCircle className="h-4 w-4" />
+                Reply
+              </button>
+            )}
+            {repliesCount > 0 && onToggleReplies && (
+              <button
+                onClick={() => onToggleReplies(id)}
+                disabled={isLoadingReplies}
+                className="flex items-center gap-1 text-muted-foreground hover:text-primary transition-colors disabled:opacity-50"
+              >
+                {isLoadingReplies ? (
+                  <>
+                    <div className="w-4 h-4 border-2 border-gray-300 border-t-primary rounded-full animate-spin" />
+                    Loading...
+                  </>
+                ) : (
+                  <>
+                    <MessageCircle className="h-4 w-4" />
+                    {isExpanded ? 'Hide' : 'View'} {repliesCount} {repliesCount === 1 ? 'reply' : 'replies'}
+                  </>
+                )}
+              </button>
+            )}
           </div>
 
           {isReplying && (
@@ -106,8 +135,8 @@ export const Comment: React.FC<CommentProps> = ({
         </div>
       </div>
 
-      {/* Render replies */}
-      {replies.length > 0 && (
+      {/* Render replies - only for main comments when expanded */}
+      {isExpanded && replies.length > 0 && (
         <div className="ml-10 space-y-4">
           {replies.map((reply) => (
             <Comment
@@ -115,6 +144,7 @@ export const Comment: React.FC<CommentProps> = ({
               {...reply}
               onReply={onReply}
               onLike={onLike}
+              showReplyButton={false} // Replies cannot have replies
             />
           ))}
         </div>

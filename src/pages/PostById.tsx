@@ -1,12 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import PostDetailHeader from "@/components/post/PostDetailHeader";
 import ProfileActivityCard from "@/components/profile/ProfileActivityCard";
 import { X, Loader2 } from "lucide-react";
 import ProfileNavbar from "@/components/profile/ProfileNavbar";
 import { Toast } from "@/components/ui/toast";
-import { useQuery } from "@tanstack/react-query";
-import { getPostById } from "@/services/api/social";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { getPostById, getPostComments, createPostComment, getCommentReplies } from "@/services/api/social";
 import type { PostDetail } from "@/lib/types";
 import {
   Dialog,
@@ -133,7 +132,10 @@ export default function PostById() {
   const { id } = useParams();
   const [inputValue, setInputValue] = useState("");
   const [showToast, setShowToast] = useState(false);
+  const [toastMessage, setToastMessage] = useState("Comment added successfully!");
   const [showDialog, setShowDialog] = useState(false);
+  const [expandedComments, setExpandedComments] = useState<Set<number>>(new Set());
+  const [loadingReplies, setLoadingReplies] = useState<Set<number>>(new Set());
   const navigate = useNavigate();
 
   // Fetch post data using API
@@ -146,6 +148,7 @@ export default function PostById() {
   // Transform API response to PostDetail format
   const post: PostDetail | undefined = postData ? {
     id: postData.id,
+    userId: postData.user?.id?.toString() || '',
     avatarUrl: postData.user?.profile_picture || '/placeholder.svg',
     username: postData.user?.username || postData.user?.full_name || 'Unknown User',
     time: new Date(postData.created_at).toLocaleDateString(),
@@ -159,84 +162,150 @@ export default function PostById() {
     isLiked: postData.is_liked || false,
   } : undefined;
 
-  // Initialize comments based on post ID
+  const queryClient = useQueryClient();
+
+  // Fetch comments for the post
+  const { data: commentsData, isLoading: isLoadingComments } = useQuery({
+    queryKey: ['postComments', id],
+    queryFn: () => getPostComments(id || ''),
+    enabled: !!id,
+  });
+
+  // Transform API comments to CommentData format
+  const apiComments = React.useMemo(() => {
+    if (!commentsData?.results) return [];
+    
+    return commentsData.results.map((comment: any) => ({
+      id: comment.id,
+      username: comment.user?.username || comment.user?.full_name || 'Unknown User',
+      avatarUrl: comment.user?.profile_picture || '/placeholder.svg',
+      content: comment.content,
+      timestamp: new Date(comment.created_at),
+      likes: 0,
+      replies: [],
+      repliesCount: comment.replies_count || 0,
+      parentComment: comment.parent_comment,
+    }));
+  }, [commentsData]);
+  
+
+  // Use API comments if available, otherwise fall back to mock comments
   const [comments, setComments] = useState<CommentData[]>(
-    defaultComments[parseInt(id || "0")] || []
+    apiComments.length > 0 ? apiComments : (defaultComments[parseInt(id || "0")] || [])
   );
+
+  // Update comments when API data changes
+  React.useEffect(() => {
+    if (apiComments.length > 0) {
+      setComments(apiComments);
+    } else {
+      const mockComments = defaultComments[parseInt(id || "0")] || [];
+      setComments(mockComments);
+    }
+  }, [apiComments, id]);
+
+  // Create comment mutation
+  const createCommentMutation = useMutation({
+    mutationFn: (data: { content: string }) => createPostComment(id || '', { content: data.content }), // No parent_comment_id for main comments
+    onSuccess: () => {
+      setInputValue("");
+      setToastMessage("Comment added successfully!");
+      setShowToast(true);
+      queryClient.invalidateQueries({ queryKey: ['postComments', id] });
+    },
+    onError: () => {
+      setToastMessage("Failed to add comment. Please try again.");
+      setShowToast(true);
+    },
+  });
 
   const handleAddComment = (content: string) => {
     if (content.trim()) {
-      const newComment: CommentData = {
-        id: Date.now(),
-        username: "current_user", // In a real app, this would come from auth context
-        avatarUrl: "/view.png", // In a real app, this would come from auth context
-        content: content,
-        timestamp: new Date(),
-        likes: 0,
-        replies: [],
-      };
-      setComments((prevComments) => [newComment, ...prevComments]);
-      setShowToast(true);
-      setInputValue("");
+      createCommentMutation.mutate({ content: content.trim() });
     }
   };
 
+  // Create reply mutation
+  const createReplyMutation = useMutation({
+    mutationFn: ({ commentId, data }: { commentId: number; data: { content: string } }) => 
+      createPostComment(id || '', { content: data.content, parent_comment_id: commentId }), // Use createPostComment with parent_comment_id
+    onSuccess: () => {
+      setToastMessage("Reply added successfully!");
+      setShowToast(true);
+      queryClient.invalidateQueries({ queryKey: ['postComments', id] });
+    },
+    onError: () => {
+      setToastMessage("Failed to add reply. Please try again.");
+      setShowToast(true);
+    },
+  });
+
   const handleReply = (commentId: number, content: string) => {
-    const newReply: CommentData = {
-      id: Date.now(),
-      username: "current_user", // In a real app, this would come from auth context
-      avatarUrl: "/view.png", // In a real app, this would come from auth context
-      content: content,
-      timestamp: new Date(),
-      likes: 0,
-      replies: [],
-    };
-
-    setComments((prevComments) => {
-      const addReplyToComment = (comments: CommentData[]): CommentData[] => {
-        return comments.map((comment) => {
-          if (comment.id === commentId) {
-            return {
-              ...comment,
-              replies: [...comment.replies, newReply],
-            };
-          }
-          if (comment.replies.length > 0) {
-            return {
-              ...comment,
-              replies: addReplyToComment(comment.replies),
-            };
-          }
-          return comment;
-        });
-      };
-
-      return addReplyToComment(prevComments);
-    });
+    if (content.trim()) {
+      createReplyMutation.mutate({ commentId, data: { content: content.trim() } });
+    }
   };
 
-  const handleLike = (commentId: number) => {
-    setComments((prevComments) => {
-      const updateCommentLikes = (comments: CommentData[]): CommentData[] => {
-        return comments.map((comment) => {
-          if (comment.id === commentId) {
-            return {
-              ...comment,
-              likes: comment.likes + 1,
-            };
-          }
-          if (comment.replies.length > 0) {
-            return {
-              ...comment,
-              replies: updateCommentLikes(comment.replies),
-            };
-          }
-          return comment;
-        });
-      };
+  const handleLike = (_commentId: number) => {
+    // For now, just show a toast - you can add like comment API later
+    setShowToast(true);
+  };
 
-      return updateCommentLikes(prevComments);
-    });
+  const fetchReplies = async (commentId: number) => {
+    setLoadingReplies(prev => new Set(prev).add(commentId));
+    try {
+      const repliesData = await getCommentReplies(commentId.toString());
+      const transformedReplies: CommentData[] = repliesData?.replies?.map((reply: any) => ({
+        id: reply.id,
+        username: reply.user?.username || reply.user?.full_name || 'Unknown User',
+        avatarUrl: reply.user?.profile_picture || '/placeholder.svg',
+        content: reply.content,
+        timestamp: new Date(reply.created_at),
+        likes: 0,
+        replies: [],
+        repliesCount: reply.replies_count || 0,
+        parentComment: reply.parent_comment,
+      })) || [];
+
+      setComments(prevComments => {
+        const updateCommentReplies = (comments: CommentData[]): CommentData[] => {
+          return comments.map(comment => {
+            if (comment.id === commentId) {
+              return {
+                ...comment,
+                replies: transformedReplies,
+              };
+            }
+            return comment;
+          });
+        };
+        return updateCommentReplies(prevComments);
+      });
+
+      setExpandedComments(prev => new Set(prev).add(commentId));
+    } catch (error) {
+      console.error('Error fetching replies:', error);
+      setToastMessage("Failed to load replies. Please try again.");
+      setShowToast(true);
+    } finally {
+      setLoadingReplies(prev => {
+        const newSet = new Set(prev);
+        newSet.delete(commentId);
+        return newSet;
+      });
+    }
+  };
+
+  const toggleReplies = (commentId: number) => {
+    if (expandedComments.has(commentId)) {
+      setExpandedComments(prev => {
+        const newSet = new Set(prev);
+        newSet.delete(commentId);
+        return newSet;
+      });
+    } else {
+      fetchReplies(commentId);
+    }
   };
 
   const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -328,8 +397,22 @@ export default function PostById() {
         />
 
         {/* Comments Section */}
-        <div className="px-4 py-6">
-          {comments.length === 0 ? (
+         <div className="px-4 py-6">
+           {isLoadingComments ? (
+             <div className="text-center py-8 px-4">
+               <div className="bg-gray-50 rounded-lg p-6 border border-gray-100">
+                 <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                   <Loader2 className="w-6 h-6 text-primary animate-spin" />
+                 </div>
+                 <h3 className="text-base font-medium text-gray-900 mb-2">
+                   Loading comments...
+                 </h3>
+                 <p className="text-sm text-gray-500">
+                   Please wait while we fetch the comments
+                 </p>
+               </div>
+             </div>
+           ) : comments.length === 0 ? (
             <div className="text-center py-8 px-4">
               <div className="bg-gray-50 rounded-lg p-6 border border-gray-100">
                 <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -366,6 +449,10 @@ export default function PostById() {
                   {...comment}
                   onReply={handleReply}
                   onLike={handleLike}
+                  onToggleReplies={toggleReplies}
+                  isExpanded={expandedComments.has(comment.id)}
+                  isLoadingReplies={loadingReplies.has(comment.id)}
+                  showReplyButton={!comment.parentComment} // Only main comments can have replies
                 />
               ))}
             </div>
@@ -390,23 +477,28 @@ export default function PostById() {
             onChange={(e) => setInputValue(e.target.value)}
             onKeyPress={handleKeyPress}
             placeholder="Join the conversation"
-            className="bg-transparent outline-none flex-1 text-sm text-gray-700 placeholder-gray-400 pr-6"
+            disabled={createCommentMutation.isPending}
+            className="bg-transparent outline-none flex-1 text-sm text-gray-700 placeholder-gray-400 pr-6 disabled:opacity-50"
           />
-          {inputValue && (
+          {createCommentMutation.isPending ? (
+            <div className="absolute right-3 p-1">
+              <Loader2 className="w-4 h-4 text-gray-500 animate-spin" />
+            </div>
+          ) : inputValue ? (
             <button
               onClick={() => setInputValue("")}
               className="absolute right-3 p-1 hover:bg-gray-200 rounded-full transition-colors"
             >
               <X className="w-4 h-4 text-gray-500" />
             </button>
-          )}
+          ) : null}
         </div>
       </div>
 
       <Toast
         show={showToast}
         onHide={() => setShowToast(false)}
-        message="Reply Added"
+        message={toastMessage}
       />
 
       <Dialog open={showDialog} onOpenChange={setShowDialog}>

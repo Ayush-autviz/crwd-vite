@@ -3,6 +3,8 @@ import { ChevronLeft } from "lucide-react";
 import HamburgerMenu from "../hamburgerMenu/HamburgerMenu";
 import { cn } from "@/lib/utils";
 import { Link, useNavigate } from "react-router-dom";
+import { useAuthStore } from "@/stores/store";
+
 
 interface ProfileNavbarProps {
   readonly showMobileMenu?: boolean;
@@ -22,6 +24,11 @@ export default function ProfileNavbar({
   showPostButton = false,
 }: ProfileNavbarProps) {
   const navigate = useNavigate();
+
+const {token} = useAuthStore();
+
+console.log(token, 'token in ProfileNavbar');
+  
   return (
     <>
       {showMobileMenu && title !== "Home" && (
@@ -107,12 +114,14 @@ export default function ProfileNavbar({
 
           {/* Action buttons on the right */}
           <div className="flex items-center gap-2">
+            {!token?.access_token && (
             <Link
               to="/claim-profile"
               className="text-white bg-red-600 px-2 text-sm py-1 rounded-md"
             >
               Log In
             </Link>
+            )}
             <div className="relative">
               <HamburgerMenu />
               <div className="absolute z-10 top-0 -right-1 w-2 h-2 bg-red-500 rounded-full"></div>
@@ -167,12 +176,14 @@ export default function ProfileNavbar({
 
           {/* Action buttons on the right */}
           <div className="flex items-center gap-2">
+            {!token?.access_token && (
             <Link
               to="/claim-profile"
               className="text-white bg-red-600 px-2 text-sm py-1 rounded-md"
             >
               Log In
             </Link>
+            )}
             <div className="relative">
               <HamburgerMenu />
               <div className="absolute z-10 top-0 -right-1 w-2 h-2 bg-red-500 rounded-full"></div>

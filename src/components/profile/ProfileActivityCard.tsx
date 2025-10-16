@@ -245,7 +245,7 @@ export default function ProfileActivityCard({
                     }}
                   >
                     <IoArrowRedoOutline className="w-4 h-4" />
-                    <span className="text-xs">{post.shares}</span>
+                    {/* <span className="text-xs">{post.shares}</span> */}
                   </button>
                 </div>
               </div>
