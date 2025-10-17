@@ -1,5 +1,8 @@
 import React from "react";
 import { Bookmark, Heart } from "lucide-react";
+import { Avatar } from "../ui/avatar";
+import { AvatarImage } from "../ui/avatar";
+import { AvatarFallback } from "../ui/avatar";
 
 interface SavedItemProps {
   avatar: string;
@@ -10,12 +13,18 @@ interface SavedItemProps {
 
 const SavedItem: React.FC<SavedItemProps> = ({ avatar, title, subtitle, type }) => (
   <div className="flex items-center gap-3 px-4 py-3">
-    <img
+    {/* <img
       src={avatar}
       alt={title}
       className="w-10 h-10 rounded-full object-cover"
-    />
-    <div className="flex flex-col flex-1 min-w-0">
+    /> */}
+    <Avatar className="w-10 h-10 rounded-full object-cover">
+      <AvatarImage src={avatar} />
+      <AvatarFallback>
+        {title.charAt(0).toUpperCase()}
+      </AvatarFallback>
+    </Avatar>
+      <div className="flex flex-col flex-1 min-w-0">
       <div className="flex items-center gap-2">
         <span className="font-semibold text-sm text-gray-900 truncate">
           {title}

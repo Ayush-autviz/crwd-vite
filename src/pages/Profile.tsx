@@ -19,8 +19,9 @@ import {
 import { Link } from "react-router-dom";
 import { Toast } from "../components/ui/toast";
 import { useQuery } from "@tanstack/react-query";
-import { getProfile } from "@/services/api/auth";
-import { getPosts } from "@/services/api/social";
+// import { getProfile } from "@/services/api/auth";
+import { getPosts, getUserProfileById } from "@/services/api/social";
+import { useAuthStore } from "@/stores/store";
 
 
 
@@ -47,21 +48,31 @@ export default function ProfilePage() {
   const [showMenu, setShowMenu] = useState(false);
   const [showToast, setShowToast] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
+  const { user: currentUser } = useAuthStore();
 
-  // Fetch profile data using React Query
-  const profileQuery = useQuery({
-    queryKey: ['profile'],
-    queryFn: getProfile,
-    enabled: true,
+  // // Fetch profile data using React Query
+  // const profileQuery = useQuery({
+  //   queryKey: ['profile'],
+  //   queryFn: getProfile,
+  //   enabled: true,
+  // });
+
+  // const profileData = profileQuery.data?.user || {};
+
+  // gett user profile data
+  const {data: profileData, isLoading: profileLoading, error: profileError, refetch: refetchProfile} = useQuery({
+    queryKey: ['userProfile', currentUser?.id],
+    queryFn: () => getUserProfileById(currentUser?.id || ''),
+    enabled: !!currentUser?.id,
   });
 
-  const profileData = profileQuery.data?.user || {};
+
 
   // Fetch user posts
   const postsQuery = useQuery({
-    queryKey: ['posts'],
-    queryFn: () => getPosts(profileData.id, ''),
-    enabled: !!profileData.id,
+    queryKey: ['posts', currentUser?.id],
+    queryFn: () => getPosts(currentUser?.id || '', ''),
+    enabled: !!currentUser?.id,
   });
 
 
@@ -81,8 +92,54 @@ export default function ProfilePage() {
     };
   }, [showMenu]);
 
+  if (!currentUser?.id) {
+    return (
+      <div className="w-full flex flex-col items-center justify-center min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
+        <div className="text-center max-w-md mx-auto p-8">
+          {/* Icon */}
+          <div className="w-20 h-20 mx-auto mb-6 bg-blue-100 rounded-full flex items-center justify-center">
+            <svg className="w-10 h-10 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+            </svg>
+          </div>
+          
+          {/* Title */}
+          <h2 className="text-2xl font-bold text-gray-900 mb-3">
+            Sign in to view your profile
+          </h2>
+          
+          {/* Description */}
+          <p className="text-gray-600 mb-8 leading-relaxed">
+            Sign in to view your profile, manage your causes, and connect with your community.
+          </p>
+          
+          {/* CTA Button */}
+          <Button 
+            size="lg" 
+            className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-lg font-medium transition-colors duration-200 shadow-lg hover:shadow-xl"
+          >
+            <Link to="/login" className="flex items-center gap-2">
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
+              </svg>
+              Sign In to Continue
+            </Link>
+          </Button>
+          
+          {/* Additional Info */}
+          <p className="text-sm text-gray-500 mt-6">
+            Don't have an account? 
+            <Link to="/claim-profile" className="text-blue-600 hover:text-blue-700 font-medium ml-1">
+              Create one here
+            </Link>
+          </p>
+        </div>
+      </div>
+    );
+  }
+
   // Loading state
-  if (profileQuery.isLoading) {
+  if (profileLoading) {
     return (
       <div className="w-full flex flex-col items-center justify-center min-h-screen">
         <div className="flex items-center gap-3 text-gray-600">
@@ -94,7 +151,7 @@ export default function ProfilePage() {
   }
 
   // Error state
-  if (profileQuery.error) {
+  if (profileError) {
     return (
       <div className="w-full flex flex-col items-center justify-center min-h-screen">
         <div className="text-center py-10">
@@ -102,10 +159,10 @@ export default function ProfilePage() {
             Error loading profile
           </h2>
           <p className="text-gray-600">
-            {(profileQuery.error as any)?.response?.data?.message || profileQuery.error.message}
+            {(profileError as any)?.response?.data?.message || profileError.message}
           </p>
           <Button
-            onClick={() => profileQuery.refetch()}
+            onClick={() => refetchProfile()}
             className="mt-4 bg-gray-900 text-white hover:bg-gray-800"
           >
             Try Again
@@ -115,9 +172,10 @@ export default function ProfilePage() {
     );
   }
 
-  console.log('postsQuery', postsQuery?.data?.results);
 
-  // Extract profile data
+  // Extract profile data and construct full name
+  const fullName = profileData ? `${profileData.first_name || ''} ${profileData.last_name || ''}`.trim() : '';
+  const activeSince = profileData?.date_joined ? new Date(profileData.date_joined).toLocaleDateString() : 'Not specified';
 
   // Transform posts data to match PostDetail interface
   const userPosts = postsQuery?.data?.results?.map((post: any) => ({
@@ -201,11 +259,11 @@ export default function ProfilePage() {
         <div className="md:col-span-12">
           <div className="flex flex-col space-y-4 px-4 md:px-0">
             <ProfileHeader
-              avatarUrl={profileData.profile_picture}
-              name={profileData.full_name}
-              location={profileData.location}
-              link={profileData.username}
-              activeSince={profileData.date_joined}
+              avatarUrl={profileData?.profile_picture || '/placeholder.svg'}
+              name={fullName}
+              location={profileData?.location || 'No location specified'}
+              link={profileData?.username || ''}
+              activeSince={activeSince}
             />
             {/* <ProfileBio bio="This is a bio about Mya and how she likes to help others and give back to her community. She also loves ice cream." /> */}
             {/* <div className="flex justify-center md:justify-start gap-4">
@@ -216,11 +274,11 @@ export default function ProfilePage() {
               </Button>
             </div> */}
             <ProfileStats
-              profileId="123"
-              causes={10}
-              crwds={3}
-              followers={58}
-              following={8}
+              profileId={profileData?.id?.toString() || ''}
+              causes={profileData?.favorite_causes_count || 0}
+              crwds={profileData?.joined_collectives_count || 0}
+              followers={profileData?.followers_count || 0}
+              following={profileData?.following_count || 0}
             />
             {/* <ProfileInterests
               interests={[
@@ -260,7 +318,7 @@ export default function ProfilePage() {
               ))}
             </div>
 
-            <ProfileBio bio={profileData.bio} />
+            <ProfileBio bio={profileData?.bio || 'No bio available'} />
             <div className="py-4">
               <ProfileActivity
                 // showLabel

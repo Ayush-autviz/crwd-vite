@@ -8,11 +8,14 @@ import Footer from "@/components/Footer";
 import { getCollectives, getJoinCollective } from "@/services/api/crwd";
 import { useQuery } from "@tanstack/react-query";
 import { getFavoriteCollectives } from "@/services/api/social";
+import { useAuthStore } from "@/stores/store";
 
 const Circles = () => {
   const [activeTab, setActiveTab] = useState<"my-crwds" | "discover">(
     "my-crwds"
   );
+
+  const { user: currentUser } = useAuthStore();
 
   const { data: collectiveData } = useQuery({
     queryKey: ['circles'],
@@ -64,7 +67,7 @@ const Circles = () => {
 
           {/* Create New Crwd Button */}
           <Link
-            to="/create-crwd"
+            to={currentUser?.id ? "/create-crwd" : "/login"}
             className=" flex items-center gap-2 justify-center w-fit bg-green-600 hover:bg-green-700 text-white px-4 py-2    rounded-lg text-base font-semibold shadow-lg"
           >
             <Plus className="" strokeWidth={3} />

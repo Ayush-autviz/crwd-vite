@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Heart, Loader2 } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { getFavoriteCauses, getFavoriteCollectives } from "@/services/api/social";
+import { useAuthStore } from "@/stores/store";
 
 // Sample data for nonprofits
 // const initialNonprofits: SavedData[] = [
@@ -57,6 +58,7 @@ export default function SavedPage() {
   const [nonprofits, setNonprofits] = useState<SavedData[]>([]);
   const [collectives, setCollectives] = useState<SavedData[]>([]);
   const [showToast, setShowToast] = useState(false);
+  const { user: currentUser } = useAuthStore();
 
   // favorrite nonprofits
   const { data: favoriteNonprofits, isLoading: isLoadingFavoriteNonprofits } = useQuery({
@@ -94,7 +96,7 @@ export default function SavedPage() {
 
         return {
           id: item.id,
-          avatar: "/redcross.png",
+          avatar: item.cause?.profile_picture,
           title: item.cause?.name || "Unknown Cause",
           subtitle: item.cause?.mission || "No description available",
           type: "nonprofit" as const,

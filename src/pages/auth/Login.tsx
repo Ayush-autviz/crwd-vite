@@ -115,7 +115,7 @@ const LoginPage: React.FC = () => {
                   <p className="text-gray-600 text-sm">
                     Don't have an account?{" "}
                     <Link
-                      to="/signup"
+                      to="/claim-profile"
                       className="text-gray-900 hover:text-gray-700 font-medium hover:underline transition-colors"
                     >
                       Sign up

@@ -20,7 +20,7 @@ import { useAuthStore } from "@/stores/store";
 
 export default function HomePage() {
   const [showMobileFooter, setShowMobileFooter] = useState(true);
-  const { token } = useAuthStore();
+  const { token, user: currentUser } = useAuthStore();
 
   const { coords } = useGeolocated({
       positionOptions: {
@@ -50,10 +50,8 @@ export default function HomePage() {
       enabled: !!coords,
     });
 
-    // posts
-
     const {data: posts, isLoading: postsLoading} = useQuery({
-      queryKey: ['posts'],
+      queryKey: ['posts', 'all'],
       queryFn: () => getPosts('', ''),
       enabled: true,
     });
@@ -179,12 +177,14 @@ export default function HomePage() {
               <h2 className="text-lg font-semibold">
                 Discover giving in action
               </h2>
+              {currentUser?.id && (
               <Link to="/create-crwd">
                 {/* <Button variant="link" className="text-primary p-0 h-auto">
                   Create a CRWD Collective
                 </Button> */}
                 <ChevronRight className="h-4 w-4 text-primary mt-1" />
               </Link>
+              )}
             </div>
             {collectivesLoading ? (
                   <div className="flex items-center justify-center">
@@ -194,7 +194,7 @@ export default function HomePage() {
             <div className="overflow-x-auto pb-2">
               <div className="flex gap-4 w-max">
                 {collectives?.results?.map((crwd: any, index: number) => (
-                  <Link to="/groupcrwd" state={{ crwdId: crwd.id }} key={index} className="block">
+                  <Link to={currentUser?.id ? "/groupcrwd" : "/login"} state={{ crwdId: crwd.id }} key={index} className="block">
                     <div className="flex flex-col items-center gap-3 p-4 rounded-lg hover:bg-gray-100 cursor-pointer transition-colors bg-gray-50 min-w-[200px]">
                       {/* Image on top */}
                       <div className="w-16 h-16 rounded-full overflow-hidden">
@@ -291,7 +291,7 @@ export default function HomePage() {
                 </div>
               ) : (
                 nonprofitts?.results?.slice(0, 3).map((cause: any, index: number) => (
-                <Link to="/cause" state={{ causeId: cause.id }} key={index} className="block">
+                <Link to={currentUser?.id ? "/cause" : "/login"} state={{ causeId: cause.id }} key={index} className="block">
                   <div className="flex items-center justify-between p-4 rounded-lg hover:bg-muted/50 cursor-pointer transition-colors">
                     <div className="flex items-center gap-3 flex-1 min-w-0 mr-4">
                       <div className="w-10 h-10 rounded-full overflow-hidden flex-shrink-0">
@@ -394,7 +394,27 @@ export default function HomePage() {
           <div className="px-4 mt-8 md:px-0 md:mt-8">
             <h2 className="text-lg font-semibold mb-4">Causes near you</h2>
             <div className="space-y-3">
-              {nearbyCauses.map((cause, index) => (
+              {!coords ? (
+                <div className="flex flex-col items-center justify-center py-8 px-4">
+                  {/* Location Icon */}
+                  <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mb-4">
+                    <svg className="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                    </svg>
+                  </div>
+                  <p className="text-gray-600 text-center mb-4 max-w-sm">
+                    Enable location services to see causes and organizations near you
+                  </p>
+              
+                </div>
+              ) :
+              nearbyCauses.length > 0 ? (
+                <div className="flex items-center justify-center py-8 px-4">
+                  <p className="text-muted-foreground"> No causes near you</p>
+                </div>
+              ) : 
+              nearbyCauses.map((cause, index) => (
                 <Link
                   to={cause.type === "Nonprofit" ? "/cause" : "/groupcrwd"}
                   key={index}

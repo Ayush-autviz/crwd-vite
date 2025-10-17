@@ -18,7 +18,7 @@ import {
 import { Link } from "react-router-dom";
 import { Toast } from "../components/ui/toast";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { getUserProfileById, followUserById, unfollowUserById } from "@/services/api/social";
+import { getUserProfileById, followUserById, unfollowUserById, getPosts } from "@/services/api/social";
 import { useAuthStore } from "@/stores/store";
 
 
@@ -59,6 +59,13 @@ export default function ProfilePage() {
   const { data: userProfile, isLoading, error } = useQuery({
     queryKey: ['userProfile', userId],
     queryFn: () => getUserProfileById(userId || ''),
+    enabled: !!userId,
+  });
+
+  // Fetch user posts
+  const postsQuery = useQuery({
+    queryKey: ['posts', userId],
+    queryFn: () => getPosts(userId || '', ''),
     enabled: !!userId,
   });
 
@@ -108,6 +115,23 @@ export default function ProfilePage() {
       setIsFollowing(userProfile.is_following || false);
     }
   }, [userProfile]);
+
+  // Transform posts data to match PostDetail interface
+  const userPosts = postsQuery?.data?.results?.map((post: any) => ({
+    id: post.id,
+    userId: post.user?.id,
+    avatarUrl: post.user?.profile_picture || '/placeholder.svg',
+    username: post.user?.username || post.user?.full_name || 'Unknown User',
+    time: new Date(post.created_at).toLocaleDateString(),
+    org: post.collective?.name || 'Unknown Collective',
+    orgUrl: post.collective?.id,
+    text: post.content || '',
+    imageUrl: post.media || undefined,
+    likes: post.likes_count || 0,
+    comments: post.comments_count || 0,
+    shares: 0, // API doesn't provide shares count
+    isLiked: post.is_liked || false,
+  })) || [];
 
   // Redirect to own profile if viewing own profile
   useEffect(() => {
@@ -263,8 +287,10 @@ export default function ProfilePage() {
             <div className="py-4">
               <ProfileActivity
                 title="Recent Activity"
-                posts={[]}
+                posts={userPosts}
                 showLoadMore={true}
+                isLoading={postsQuery.isLoading}
+                error={postsQuery.error}
               />
             </div>
           </div>
