@@ -3,6 +3,7 @@ import { Button } from './button';
 import { Link } from 'react-router-dom';
 
 interface EmptyStateProps {
+  collectiveData?: any;
   icon?: React.ReactNode;
   title: string;
   description: string;
@@ -13,6 +14,7 @@ interface EmptyStateProps {
 }
 
 const EmptyState: React.FC<EmptyStateProps> = ({
+  collectiveData,
   icon,
   title,
   description,
@@ -34,19 +36,14 @@ const EmptyState: React.FC<EmptyStateProps> = ({
       <p className="text-gray-500 mb-6 max-w-sm">
         {description}
       </p>
-      {(actionText && (actionLink || onAction)) && (
+      {(actionText && collectiveData) && (
         <div>
-          {actionLink ? (
-            <Link to={actionLink}>
+          {/* {actionLink ? ( */}
+            <Link to="/create-post" state={{ collectiveData: collectiveData }}>
               <Button className="bg-primary hover:bg-primary/90">
-                {actionText}
-              </Button>
-            </Link>
-          ) : (
-            <Button onClick={onAction} className="bg-primary hover:bg-primary/90">
               {actionText}
             </Button>
-          )}
+          </Link>
         </div>
       )}
     </div>

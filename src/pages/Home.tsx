@@ -56,6 +56,12 @@ export default function HomePage() {
       enabled: true,
     });
 
+    console.log(collectives, 'collectives');
+    console.log(nonprofitts, 'nonprofitts');
+    console.log(causesByLocation, 'causesByLocation');
+    console.log(posts, 'posts');
+
+
 
   // Sample data for nearby causes
   const nearbyCauses = [
@@ -191,6 +197,11 @@ export default function HomePage() {
                     <Loader2 className="h-4 w-4 animate-spin" />
                   </div>
                 ) : (
+                  collectives?.results?.length === 0 ? (
+                    <div className="flex items-center justify-center">
+                      <p className="text-muted-foreground"> No collectives found</p>
+                    </div>
+                  ) : (
             <div className="overflow-x-auto pb-2">
               <div className="flex gap-4 w-max">
                 {collectives?.results?.map((crwd: any, index: number) => (
@@ -241,7 +252,7 @@ export default function HomePage() {
                   </Link>
                 ))}
               </div>
-            </div>)}
+            </div>))}
           </div>
 
           {/* Categories Section */}
@@ -288,6 +299,10 @@ export default function HomePage() {
               {nonprofittsLoading ? (
                 <div className="flex items-center justify-center">
                   <Loader2 className="h-4 w-4 animate-spin" />
+                </div>
+              ) : nonprofitts?.results?.length === 0 ? (
+                <div className="flex items-center justify-center">
+                  <p className="text-muted-foreground"> No causes found</p>
                 </div>
               ) : (
                 nonprofitts?.results?.slice(0, 3).map((cause: any, index: number) => (
@@ -409,12 +424,12 @@ export default function HomePage() {
               
                 </div>
               ) :
-              nearbyCauses.length > 0 ? (
+              causesByLocation?.results?.length === 0 ? (
                 <div className="flex items-center justify-center py-8 px-4">
                   <p className="text-muted-foreground"> No causes near you</p>
                 </div>
               ) : 
-              nearbyCauses.map((cause, index) => (
+              causesByLocation?.results?.map((cause: any, index: number) => (
                 <Link
                   to={cause.type === "Nonprofit" ? "/cause" : "/groupcrwd"}
                   key={index}

@@ -60,8 +60,9 @@ const GroupCrwdUpdates: React.FC<GroupCrwdUpdatesProps> = ({
           title="Be the first one to share"
           description="Start the conversation by sharing an update with your group. Your post will help keep everyone engaged and informed."
           actionText="Create Post"
-          actionLink="/create-post"
+          // actionLink="/create-post"
           className="bg-white rounded-lg border border-gray-200"
+          collectiveData={collectiveData}
         />
       ) : (
         <div className="space-y-4">

@@ -26,6 +26,7 @@ export default function ProfileNavbar({
   const navigate = useNavigate();
 
 const {token} = useAuthStore();
+
   
   return (
     <>
@@ -114,7 +115,7 @@ const {token} = useAuthStore();
           <div className="flex items-center gap-2">
             {!token?.access_token && (
             <Link
-              to="/claim-profile"
+              to="/onboarding"
               className="text-white bg-red-600 px-2 text-sm py-1 rounded-md"
             >
               Log In
@@ -176,7 +177,7 @@ const {token} = useAuthStore();
           <div className="flex items-center gap-2">
             {!token?.access_token && (
             <Link
-              to="/claim-profile"
+              to="/onboarding"
               className="text-white bg-red-600 px-2 text-sm py-1 rounded-md"
             >
               Log In
