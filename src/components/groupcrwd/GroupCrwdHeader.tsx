@@ -9,6 +9,7 @@ import { Toast } from "../ui/toast";
 import { categories } from "@/constants/categories";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { favoriteCollective, unfavoriteCollective } from "@/services/api/social";
+import { Avatar, AvatarImage, AvatarFallback } from "../ui/avatar";
 
 interface GroupCrwdHeaderProps {
   hasJoined: boolean;
@@ -50,9 +51,6 @@ const GroupCrwdHeader: React.FC<GroupCrwdHeaderProps> = ({
   const [localCategories, setLocalCategories] = useState<any[]>([]);
   const [isFavorited, setIsFavorited] = useState(crwdData?.is_favorite || false);
 
-  console.log('crwdData:', crwdData);
-  console.log('is_favorite from API:', crwdData?.is_favorite);
-  console.log('isFavorited state:', isFavorited);
 
   // Favorite collective mutation
   const favoriteMutation = useMutation({
@@ -111,9 +109,6 @@ const GroupCrwdHeader: React.FC<GroupCrwdHeaderProps> = ({
     }
   }, [crwdData])
 
-console.log('localCategories:', localCategories);
-console.log('crwdData.causes:', crwdData?.causes);
-
 
   return (
     <div className="bg-white  p-4 mx-2   mb-4 flex flex-col gap-2">
@@ -162,11 +157,18 @@ console.log('crwdData.causes:', crwdData?.causes);
 
       {/* Founder */}
       <div className="flex items-center justify-center md:justify-start gap-2 text-xs text-gray-500 mt-1">
-        <img
+        {/* <img
           src="https://randomuser.me/api/portraits/men/32.jpg"
           alt="Founder"
           className="w-14 h-14 rounded-full object-cover"
-        />
+        /> */}
+        <Avatar className="h-12 w-12 rounded-full">
+          <AvatarImage src={crwdData?.created_by?.profile_picture} />
+          <AvatarFallback>
+            {crwdData?.created_by?.first_name.charAt(0).toUpperCase()}
+            {crwdData?.created_by?.last_name.charAt(0).toUpperCase()}
+          </AvatarFallback>
+        </Avatar>
         <span className=" text-sm text-gray-700">Founded by</span>
         <span className="font-semibold text-gray-700 ">@{crwdData?.created_by?.username ?? ''}</span>
         {/* <Button variant="outline">

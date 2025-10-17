@@ -1,7 +1,7 @@
 import { ChevronRight, Loader2 } from "lucide-react";
 import { Link } from "react-router-dom";
 
-import { Avatar } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -16,9 +16,11 @@ import { getCauses, getCausesByLocation, getCollectives } from "@/services/api/c
 import { useGeolocated } from "react-geolocated";
 import { categories } from "@/constants/categories";
 import { getPosts } from "@/services/api/social";
+import { useAuthStore } from "@/stores/store";
 
 export default function HomePage() {
   const [showMobileFooter, setShowMobileFooter] = useState(true);
+  const { token } = useAuthStore();
 
   const { coords } = useGeolocated({
       positionOptions: {
@@ -152,7 +154,8 @@ export default function HomePage() {
                   to everything you care about, at once.
                 </h1>
 
-                <Link to="/onboarding">
+                {/* <Link to="/onboarding"> */}
+                <Link to={token?.access_token ? '/donation' : 'onboarding'}>
                   <Button className="bg-[#0047FF] text-primary-foreground px-10 py-5 rounded-lg text-base font-semibold ">
                     Start Your Donation Box
                   </Button>
@@ -195,11 +198,18 @@ export default function HomePage() {
                     <div className="flex flex-col items-center gap-3 p-4 rounded-lg hover:bg-gray-100 cursor-pointer transition-colors bg-gray-50 min-w-[200px]">
                       {/* Image on top */}
                       <div className="w-16 h-16 rounded-full overflow-hidden">
-                        <img
+                        {/* <img
                           src={crwd.created_by.profile_picture}
                           alt={''}
                           className="w-full h-full object-cover"
-                        />
+                        /> */}
+                        <Avatar className="h-16 w-16 rounded-full">
+                          <AvatarImage src={crwd.created_by.profile_picture} />
+                          <AvatarFallback>
+                            {crwd.created_by.first_name.charAt(0).toUpperCase()}
+                            {crwd.created_by.last_name.charAt(0).toUpperCase()}
+                          </AvatarFallback>
+                        </Avatar>
                       </div>
 
                       {/* Text content below image */}
@@ -240,7 +250,11 @@ export default function HomePage() {
             <div className="overflow-x-auto pb-2">
               <div className="flex space-x-2 min-w-max">
                 {categories.map((category, index) => (
-                  <Link to={`/interests`} key={index}>
+                  <Link 
+                    to="/search" 
+                    state={{ categoryId: category.id, categoryName: category.name }}
+                    key={index}
+                  >
                     <Badge
                       variant="secondary"
                       className="bg-muted/50 hover:bg-muted text-foreground rounded-md px-4 py-2 whitespace-nowrap"

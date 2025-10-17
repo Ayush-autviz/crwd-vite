@@ -26,8 +26,6 @@ export default function ProfileNavbar({
   const navigate = useNavigate();
 
 const {token} = useAuthStore();
-
-console.log(token, 'token in ProfileNavbar');
   
   return (
     <>
