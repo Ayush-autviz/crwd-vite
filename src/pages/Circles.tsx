@@ -8,14 +8,12 @@ import Footer from "@/components/Footer";
 import { getCollectives, getJoinCollective } from "@/services/api/crwd";
 import { useQuery } from "@tanstack/react-query";
 import { getFavoriteCollectives } from "@/services/api/social";
-import { useAuthStore } from "@/stores/store";
 
 const Circles = () => {
   const [activeTab, setActiveTab] = useState<"my-crwds" | "discover">(
     "my-crwds"
   );
 
-  const { user: currentUser } = useAuthStore();
 
   const { data: collectiveData } = useQuery({
     queryKey: ['circles'],
@@ -36,6 +34,8 @@ const Circles = () => {
     enabled: true,
   });
 
+  
+  
 
 
 
@@ -67,7 +67,7 @@ const Circles = () => {
 
           {/* Create New Crwd Button */}
           <Link
-            to={currentUser?.id ? "/create-crwd" : "/login"}
+            to={`/create-crwd`}
             className=" flex items-center gap-2 justify-center w-fit bg-green-600 hover:bg-green-700 text-white px-4 py-2    rounded-lg text-base font-semibold shadow-lg"
           >
             <Plus className="" strokeWidth={3} />
@@ -124,8 +124,8 @@ const Circles = () => {
                         <div className="space-y-3">
                           {joinCollectiveData.results.map((collective: any) => (
                             <Link
-                              to="/groupcrwd"
-                              state={{ crwdId: collective.collective?.id }}
+                              to={`/groupcrwd/${collective.collective?.id}`}
+                              
                               key={collective.id}
                               className="flex items-center justify-between p-4 rounded-lg border border-border bg-card hover:bg-muted/50 transition-colors"
                             >
@@ -155,7 +155,7 @@ const Circles = () => {
                                 </div>
                               </div>
                               <Link
-                                to="/groupcrwd"
+                                to={`/groupcrwd/${collective.collective?.id}`}
                                 state={{ collectiveData: collective }}
                                 className="bg-green-600 hover:bg-green-700 text-white text-sm px-4 py-2 rounded-lg"
                               >
@@ -182,8 +182,7 @@ const Circles = () => {
                         <div className="space-y-3">
                           {favoriteCollectives?.results?.map((collective: any) => (
                             <Link
-                              to="/groupcrwd"
-                              state={{ crwdId: collective.collective?.id }}
+                              to="/groupcrwd/${collective.collective?.id}"
                               key={collective.id}
                               className="flex items-center justify-between p-4 rounded-lg border border-border bg-card hover:bg-muted/50 transition-colors"
                             >
@@ -229,7 +228,7 @@ const Circles = () => {
                                 </div>
                               </div>
                               <Link
-                                to="/groupcrwd"
+                                to={`/groupcrwd/${collective.collective?.id}`}
                                 state={{ collectiveData: collective }}
                                 className="bg-green-600 hover:bg-green-700 text-white text-sm px-4 py-2 rounded-lg"
                               >
@@ -254,8 +253,8 @@ const Circles = () => {
             <div className="space-y-4 pb-16">
               {collectiveData?.results?.map((circle: any) => (
                 <Link
-                  to="/groupcrwd"
-                  state={{ crwdId: circle.id }}
+                  to={`/groupcrwd/${circle.id}`}
+                  
                   key={circle.id}
                   className="flex items-center justify-between p-4 rounded-lg border border-border bg-card hover:bg-muted/50 transition-colors"
                 >
@@ -284,7 +283,7 @@ const Circles = () => {
                   </div>
 
                   <Link
-                    to="/groupcrwd"
+                    to={`/groupcrwd/${circle.id}`}
                     className="bg-green-600 hover:bg-green-700 text-white text-sm px-4 py-2 rounded-lg"
                   >
                     Learn More
