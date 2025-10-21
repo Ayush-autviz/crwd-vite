@@ -9,139 +9,6 @@ import { bulkAddCauseFavorites } from "@/services/api/social";
 import { Toast } from "@/components/ui/toast";
 
 
-// const interestsData = [
-//   {
-//     id: 1,
-//     name: "Shriners Children",
-//     image:
-//       "https://upload.wikimedia.org/wikipedia/en/thumb/9/9d/Shriners_Hospitals_for_Children_Logo.svg/500px-Shriners_Hospitals_for_Children_Logo.svg.png",
-//     color: "#3B82F6",
-//   },
-//   {
-//     id: 2,
-//     name: "Change",
-//     image:
-//       "https://images.squarespace-cdn.com/content/v1/5fd7e20940f9b820fac1e013/d442cb1f-e175-4b8d-bc81-44102583a6a5/thumbnail-05.png",
-//     color: "#EF4444",
-//   },
-//   {
-//     id: 3,
-//     name: "The Water Trust",
-//     image:
-//       "https://media.licdn.com/dms/image/v2/C4E0BAQEHqcfGhnH29g/company-logo_200_200/company-logo_200_200/0/1630573980553/the_water_trust_logo?e=2147483647&v=beta&t=fjyZGioRcUDheVZH_f8dxxSvR7840DFgAp6XrGwo8hw",
-//     color: "#10B981",
-//   },
-//   {
-//     id: 4,
-//     name: "WWF",
-//     image:
-//       "https://i0.wp.com/acrossthegreen.com/wp-content/uploads/2021/03/75E8B176-DAFE-4956-ABC5-9F221ACB2094.png?fit=1020%2C680&ssl=1",
-//     color: "#F59E0B",
-//   },
-//   {
-//     id: 5,
-//     name: "Wounded Warrior Project",
-//     image:
-//       "https://flooringresources.com/sites/default/files/styles/square_large/public/2022-01/1320-pps-wounded-warrior-classic.jpg?itok=4asRq76x",
-//     color: "#8B5CF6",
-//   },
-//   {
-//     id: 6,
-//     name: "Girls Who Code",
-//     image:
-//       "https://media.licdn.com/dms/image/v2/C4D0BAQEHUTYYyPFEhQ/company-logo_200_200/company-logo_200_200/0/1630509785189/girlswhocode_logo?e=2147483647&v=beta&t=eqyanOv949sDS3M_EnIq_wabT-1mN3uHQXVyB_FCTBI",
-//     color: "#F97316",
-//   },
-// ];
-
-// Create unique IDs for each interest by duplicating the data with different IDs
-// const nonProfitInterests = [
-//   ...interestsData.map((item, index) => ({
-//     ...item,
-//     id: item.id + index * 1000,
-//   })),
-//   // ...interestsData.map((item, index) => ({
-//   //   ...item,
-//   //   id: item.id + index * 1000 + 100,
-//   // })),
-//   // ...interestsData.map((item, index) => ({
-//   //   ...item,
-//   //   id: item.id + index * 1000 + 200,
-//   // })),
-//   // ...interestsData.map((item, index) => ({
-//   //   ...item,
-//   //   id: item.id + index * 1000 + 300,
-//   // })),
-//   // ...interestsData.map((item, index) => ({
-//   //   ...item,
-//   //   id: item.id + index * 1000 + 400,
-//   // })),
-//   // ...interestsData.map((item, index) => ({
-//   //   ...item,
-//   //   id: item.id + index * 1000 + 500,
-//   // })),
-// ];
-
-// const categories = [
-//   "Health",
-//   "Education",
-//   "Environment",
-//   "Arts",
-//   "Animals",
-//   "Poverty",
-//   "Veterans",
-//   "Children",
-// ];
-
-// const categories = [
-//   {
-//     name: "All",
-//     text: "#000000",
-//     background: "#f5f5f5",
-//   },
-//   {
-//     name: "Health",
-//     text: "#D62828",
-//     background: "#FFE5E5",
-//   },
-//   {
-//     name: "Education",
-//     text: "#FFB84D",
-//     background: "#FFF3E0",
-//   },
-//   {
-//     name: "Environment",
-//     text: "#6A994E",
-//     background: "#E8F4E4",
-//   },
-//   {
-//     name: "Arts",
-//     text: "#FF6B6B",
-//     background: "#FFECEC",
-//   },
-//   {
-//     name: "Animals",
-//     text: "#E36414",
-//     background: "#FFE9DC",
-//   },
-//   {
-//     name: "Poverty", // mapped to Relief
-//     text: "#F94144",
-//     background: "#FFE3E3",
-//   },
-//   {
-//     name: "Veterans", // mapped to Society
-//     text: "#577590",
-//     background: "#EAF0F5",
-//   },
-//   {
-//     name: "Children", // mapped to Youth
-//     text: "#4CC9F0",
-//     background: "#E0F7FF",
-//   },
-// ];
-
-
 export default function NonProfitInterests() {
   const [selectedInterests, setSelectedInterests] = useState<number[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<string>("");
@@ -194,19 +61,7 @@ export default function NonProfitInterests() {
     setAllCauses([]);
   }, [searchTrigger]);
 
-  // Transform API data to match the expected format
-  const apiCauses = causesData?.results || [];
-  // const transformedCauses = apiCauses.map((cause: any, index: number) => ({
-  //   id: cause.id || index + 10000, // Use API ID or fallback
-  //   name: cause.name || cause.title || 'Unknown Cause',
-  //   image: cause.image || cause.logo || '/redcross.png', // Fallback image
-  //   color: categories.find(cat => cat.id === cause.category)?.text || '#3B82F6',
-  //   description: cause.mission || '',
-  //   category: cause.category || '',
-  // }));
 
-  // Use API data if available, otherwise fallback to mock data
-  // const displayCauses = transformedCauses.length > 0 ? transformedCauses : nonProfitInterests;
 
   const handleInterestSelect = (interestId: number) => {
     setSelectedInterests((prev) => {
@@ -218,15 +73,7 @@ export default function NonProfitInterests() {
     });
   };
 
-  // const handleCategorySelect = (categoryName: string) => {
-  //   const category = categories.find(cat => cat.name === categoryName);
-  //   const categoryId = category?.id || "";
-  //   console.log(categoryId);
 
-  //   setSelectedCategory(selectedCategory === categoryName ? "" : categoryName);
-  //   // Trigger API call with new category
-  //   setSearchTrigger(prev => prev + 1);
-  // };
 
   const handleSearchSubmit = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') {
@@ -252,17 +99,6 @@ export default function NonProfitInterests() {
   };
 
   const handleContinue = () => {
-    // if (selectedInterests.length === 0) {
-    //   return;
-    // }
-
-    // setIsLoading(true);
-
-    // // Show loader for 2 seconds then navigate
-    // setTimeout(() => {
-    //   setIsLoading(false);
-    //   navigate("/complete-onboard");
-    // }, 2000);
 
     bulkAddCauseFavoritesMutation(selectedInterests.map(id => id.toString()));
   };

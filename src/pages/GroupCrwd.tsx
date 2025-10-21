@@ -4,7 +4,7 @@ import GroupCrwdSuggested from "../components/groupcrwd/GroupCrwdSuggested";
 import GroupCrwdUpdates from "../components/groupcrwd/GroupCrwdUpdates";
 import ProfileNavbar from "@/components/profile/ProfileNavbar";
 import Footer from "@/components/Footer";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Toast } from "@/components/ui/toast";
 import { SharePost } from "@/components/ui/SharePost";
@@ -35,12 +35,17 @@ export default function GroupCrwdPage() {
     height: window.innerHeight,
   };
   const navigate = useNavigate();
-  const { crwdId } = useLocation().state;
+  // const { crwdId } = useLocation().state;
+  const { crwdId } = useParams<{ crwdId: string }>();
   const { user: currentUser } = useAuthStore();
 
-  const { data: crwdData, isLoading: isLoadingCrwd } = useQuery({
+  console.log('crwdId', crwdId);
+
+  // All hooks must be called before any conditional returns
+  const { data: crwdData, isLoading: isLoadingCrwd, error: crwdError } = useQuery({
     queryKey: ['crwd', crwdId],
-    queryFn: () => getCollectiveById(crwdId),
+    queryFn: () => getCollectiveById(crwdId || ''),
+    enabled: !!crwdId,
   });
 
   const { data: posts, isLoading: isLoadingPosts } = useQuery({
@@ -125,6 +130,13 @@ export default function GroupCrwdPage() {
     };
   }, [showSuccessModal]);
 
+  // Update hasJoined state when crwdData changes
+  useEffect(() => {
+    if (crwdData?.is_joined !== undefined) {
+      setHasJoined(crwdData.is_joined);
+    }
+  }, [crwdData]);
+
   // const handleJoinClick = () => {
   //   setShowJoinModal(true);
   // };
@@ -134,7 +146,9 @@ export default function GroupCrwdPage() {
   };
 
   const handleJoinConfirm = () => {
-    joinCollectiveMutation.mutate(crwdId);
+    if (crwdId) {
+      joinCollectiveMutation.mutate(crwdId);
+    }
     // setHasJoined(true);
     // setShowJoinModal(false);
     // setShowSuccessModal(true);
@@ -157,7 +171,7 @@ export default function GroupCrwdPage() {
   };
 
   const handleConfirmUnjoin = () => {
-    if (!leaveCollectiveMutation.isPending) {
+    if (!leaveCollectiveMutation.isPending && crwdId) {
       leaveCollectiveMutation.mutate(crwdId);
     }
   };
@@ -207,12 +221,32 @@ export default function GroupCrwdPage() {
       </div>
     );
   }
+  
 
-  useEffect(() => {
-    if (crwdData?.is_joined !== undefined) {
-      setHasJoined(crwdData.is_joined);
-    }
-  }, [crwdData]);
+  // Error state
+  if (crwdError || !crwdData) {
+    return (
+      <div className="bg-white min-h-screen flex flex-col relative pb-16">
+        <ProfileNavbar title="Collective" />
+        <div className="flex-1 flex items-center justify-center">
+          <div className="text-center py-10">
+            <h2 className="text-xl font-semibold text-gray-900 mb-2">
+              Collective not found
+            </h2>
+            <p className="text-gray-600">
+              The collective you're looking for doesn't exist or has been removed.
+            </p>
+            <button
+              onClick={() => navigate('/')}
+              className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+            >
+              Go Back Home
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     // <div>

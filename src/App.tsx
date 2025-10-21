@@ -184,22 +184,22 @@ function App() {
                       element={<TransactionHistory />}
                     />
                     <Route path="/saved" element={<Saved />} />
-                    <Route path="/your-crwds" element={<YourCrwds />} />
-                    <Route path="/your-crwds/:id" element={<ManageCrwd />} />
+                    {/* <Route path="/your-crwds" element={<YourCrwds />} /> */}
+                    {/* <Route path="/your-crwds/:id" element={<ManageCrwd />} /> */}
                     <Route path="/create-crwd" element={<CreateCrwd />} />
                     <Route path="/create-post" element={<CreatePost />} />
-                    <Route path="/create-cause" element={<CreateCause />} />
-                    <Route path="/feed-hungry" element={<FeedHungry />} />
-                    <Route path="/cause" element={<Cause />} />
-                    <Route path="/cause-detail" element={<CauseDetail />} />
-                    <Route path="/cause/:id" element={<CauseById />} />
-                    <Route path="/groupcrwd" element={<GroupCrwd />} />
-                    <Route path="/groupcrwd/:id" element={<GroupCrwdById />} />
+                    {/* <Route path="/create-cause" element={<CreateCause />} /> */}
+                    {/* <Route path="/feed-hungry" element={<FeedHungry />} /> */}
+                    <Route path="/cause/:causeId" element={<Cause />} />
+                    {/* <Route path="/cause-detail" element={<CauseDetail />} /> */}
+                    {/* <Route path="/cause/:id" element={<CauseById />} /> */}
+                    <Route path="/groupcrwd/:crwdId" element={<GroupCrwd />} />
+                    {/* <Route path="/groupcrwd/:id" element={<GroupCrwdById />} /> */}
                     <Route path="/members" element={<Members />} />
                     <Route path="/posts" element={<Posts />} />
                     <Route path="/post/:id" element={<PostById />} />
-                    <Route path="/menu" element={<Menu />} />
-                    <Route path="/mobile-menu" element={<MobileMenu />} />
+                    {/* <Route path="/menu" element={<Menu />} /> */}
+                    {/* <Route path="/mobile-menu" element={<MobileMenu />} /> */}
                     <Route path="/donation-test" element={<DonationTest />} />
                     <Route path="/user-profile/:userId" element={<UserProfile />} />
                     <Route path="/circles" element={<Circles />} />

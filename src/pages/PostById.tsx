@@ -19,116 +19,6 @@ import { Button } from "@/components/ui/button";
 import { Comment, CommentData } from "@/components/post/Comment";
 import { useAuthStore } from "@/stores/store";
 
-// Default comments for specific posts
-const defaultComments: Record<number, CommentData[]> = {
-  // Post about food bank volunteering
-  2: [
-    {
-      id: 1,
-      username: "volunteer_123",
-      avatarUrl: "/view.png",
-      content:
-        "This is so inspiring! I'd love to join next time. When do you usually volunteer?",
-      timestamp: new Date(Date.now() - 3600000), // 1 hour ago
-      likes: 5,
-      replies: [
-        {
-          id: 2,
-          username: "mynameismya",
-          avatarUrl: "/view.png",
-          content:
-            "We're there every Saturday morning from 9 AM! Would love to have you join us 😊",
-          timestamp: new Date(Date.now() - 1800000), // 30 minutes ago
-          likes: 2,
-          replies: [],
-        },
-      ],
-    },
-  ],
-  // Post about animal shelter
-  4: [
-    {
-      id: 3,
-      username: "pet_lover",
-      avatarUrl: "/view.png",
-      content:
-        "Those puppies are absolutely adorable! 😍 Are they all available for adoption?",
-      timestamp: new Date(Date.now() - 86400000), // 1 day ago
-      likes: 8,
-      replies: [
-        {
-          id: 4,
-          username: "mynameismya",
-          avatarUrl: "/view.png",
-          content:
-            "Yes, they are! The shelter is open daily from 10 AM to 4 PM for visits.",
-          timestamp: new Date(Date.now() - 82800000), // 23 hours ago
-          likes: 3,
-          replies: [],
-        },
-      ],
-    },
-    {
-      id: 5,
-      username: "dog_trainer",
-      avatarUrl: "/view.png",
-      content:
-        "I'd be happy to offer a free training session for anyone who adopts! Just DM me.",
-      timestamp: new Date(Date.now() - 43200000), // 12 hours ago
-      likes: 15,
-      replies: [],
-    },
-  ],
-  // Post about clean water distribution
-  6: [
-    {
-      id: 6,
-      username: "water_activist",
-      avatarUrl: "/view.png",
-      content:
-        "This is amazing work! How can others get involved in future distributions?",
-      timestamp: new Date(Date.now() - 259200000), // 3 days ago
-      likes: 12,
-      replies: [
-        {
-          id: 7,
-          username: "sarahsmiles",
-          avatarUrl: "/view.png",
-          content:
-            "We're always looking for volunteers! Check our website for upcoming events or DM me for more info.",
-          timestamp: new Date(Date.now() - 172800000), // 2 days ago
-          likes: 6,
-          replies: [],
-        },
-      ],
-    },
-  ],
-  // Post about tree planting
-  7: [
-    {
-      id: 8,
-      username: "eco_warrior",
-      avatarUrl: "/view.png",
-      content:
-        "This is exactly what our city needs! Which areas did you focus on?",
-      timestamp: new Date(Date.now() - 432000000), // 5 days ago
-      likes: 9,
-      replies: [
-        {
-          id: 9,
-          username: "mikegreen",
-          avatarUrl: "/view.png",
-          content:
-            "We focused on the downtown area and local schools. Planning more locations for next month!",
-          timestamp: new Date(Date.now() - 345600000), // 4 days ago
-          likes: 4,
-          replies: [],
-        },
-      ],
-    },
-  ],
-};
-
 export default function PostById() {
   const { id } = useParams();
   const [inputValue, setInputValue] = useState("");
@@ -192,16 +82,13 @@ export default function PostById() {
 
   // Use API comments if available, otherwise fall back to mock comments
   const [comments, setComments] = useState<CommentData[]>(
-    apiComments.length > 0 ? apiComments : (defaultComments[parseInt(id || "0")] || [])
+    apiComments.length > 0 ? apiComments : []
   );
 
   // Update comments when API data changes
   React.useEffect(() => {
     if (apiComments.length > 0) {
       setComments(apiComments);
-    } else {
-      const mockComments = defaultComments[parseInt(id || "0")] || [];
-      setComments(mockComments);
     }
   }, [apiComments, id]);
 

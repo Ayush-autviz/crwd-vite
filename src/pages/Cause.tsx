@@ -8,7 +8,7 @@ import CauseAboutCard from "@/components/cause/CauseAboutCard";
 import ProfileNavbar from "@/components/profile/ProfileNavbar";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 import { SharePost } from "@/components/ui/SharePost";
 import { Loader2 } from "lucide-react";
 import { useAuthStore } from "@/stores/store";
@@ -16,16 +16,14 @@ import { useAuthStore } from "@/stores/store";
 const CausePage: React.FC = () => {
   const aboutCardRef = useRef<HTMLDivElement>(null);
   const [showShareModal, setShowShareModal] = useState(false);
-  const { causeId } = useLocation().state;
+  // const { causeId } = useLocation().state;
+  const { causeId } = useParams<{ causeId: string }>();
   const { user: currentUser } = useAuthStore();
-  
-  // For demo purposes, using a hardcoded cause ID. In real app, this would come from route params or props
-  // const causeId = "1"; // This should be dynamic based on your routing
-  
+  const navigate = useNavigate();
   // Fetch cause data using React Query
   const { data: causeData, isLoading: isLoadingCause, error: causeError } = useQuery({
     queryKey: ['cause', causeId],
-    queryFn: () => getCauseById(causeId),
+    queryFn: () => getCauseById(causeId || ''),
     enabled: !!causeId,
   });
 
@@ -90,13 +88,28 @@ const CausePage: React.FC = () => {
     );
   }
 
-  // Show error state
-  if (causeError) {
+
+  // Error state
+  if (causeError || !causeData) {
     return (
-      <div className="min-h-screen md:h-full bg-white flex items-center justify-center">
-        {/* <div className="flex items-center justify-center py-20"> */}
-          <div className="text-lg text-red-500">Failed to load cause details</div>
-        {/* </div> */}
+      <div className="bg-white min-h-screen flex flex-col relative pb-16">
+        <ProfileNavbar title="Post" />
+        <div className="flex-1 flex items-center justify-center">
+          <div className="text-center py-10">
+            <h2 className="text-xl font-semibold text-gray-900 mb-2">
+              Nonprofit not found
+            </h2>
+            <p className="text-gray-600">
+              The nonprofit you're looking for doesn't exist or has been removed.
+            </p>
+            <button
+              onClick={() => navigate('/')}
+              className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+            >
+              Go Back Home
+            </button>
+          </div>
+        </div>
       </div>
     );
   }
@@ -130,7 +143,7 @@ const CausePage: React.FC = () => {
       </div>
       {/* <CauseDonateBar /> */}
       <SharePost
-        url={window.location.origin + `/cause/`}
+        url={window.location.href}
         title={`Check out this Nonprofit: ${causeData?.name || 'Cause'}`}
         description={causeData?.description || "Join us in supporting this important cause."}
         isOpen={showShareModal}

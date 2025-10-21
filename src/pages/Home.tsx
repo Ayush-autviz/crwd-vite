@@ -205,7 +205,7 @@ export default function HomePage() {
             <div className="overflow-x-auto pb-2">
               <div className="flex gap-4 w-max">
                 {collectives?.results?.map((crwd: any, index: number) => (
-                  <Link to={currentUser?.id ? "/groupcrwd" : "/login"} state={{ crwdId: crwd.id }} key={index} className="block">
+                  <Link to={currentUser?.id ? `/groupcrwd/${crwd.id}` : "/login"} key={index} className="block">
                     <div className="flex flex-col items-center gap-3 p-4 rounded-lg hover:bg-gray-100 cursor-pointer transition-colors bg-gray-50 min-w-[200px]">
                       {/* Image on top */}
                       <div className="w-16 h-16 rounded-full overflow-hidden">
@@ -306,7 +306,7 @@ export default function HomePage() {
                 </div>
               ) : (
                 nonprofitts?.results?.slice(0, 3).map((cause: any, index: number) => (
-                <Link to={currentUser?.id ? "/cause" : "/login"} state={{ causeId: cause.id }} key={index} className="block">
+                <Link to={currentUser?.id ? `/cause/${cause.id}` : "/login"} key={index} className="block">
                   <div className="flex items-center justify-between p-4 rounded-lg hover:bg-muted/50 cursor-pointer transition-colors">
                     <div className="flex items-center gap-3 flex-1 min-w-0 mr-4">
                       <div className="w-10 h-10 rounded-full overflow-hidden flex-shrink-0">

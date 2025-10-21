@@ -6,6 +6,7 @@ import {
   ChevronRight,
   HelpCircle,
   Loader2,
+  Plus,
   Search,
   X,
 } from "lucide-react";
@@ -35,6 +36,7 @@ export default function CreateCRWDPage() {
   const [name, setName] = useState("");
   const [desc, setDesc] = useState("");
   const [selectedCauses, setSelectedCauses] = useState<string[]>([]);
+  const [collectiveData, setCollectiveData] = useState<any>(null);
   const [showConfetti, setShowConfetti] = useState(false);
   const [showShareModal, setShowShareModal] = useState(false);
   const [toast, setToast] = useState<string | null>(null);
@@ -217,8 +219,11 @@ export default function CreateCRWDPage() {
                   Choose one or more causes for your CRWD
                 </label>
                 <div className="bg-gray-50 border border-gray-200 rounded-lg p-3">
-                  <div className="font-semibold text-xs text-blue-600 mb-3">
-                    Select from your causes (if any)
+                  <div className="font-semibold text-xs text-blue-600 mb-3 flex items-center justify-between">
+                   <p className="text-sm text-gray-500">Select from your causes (if any)</p>
+                   <Link to="/non-profit-interests" className="text-xs text-blue-600 flex items-center hover:underline">
+                   <Plus className="w-4 h-4" />
+                   </Link>
                   </div>
 
                 {
@@ -227,7 +232,7 @@ export default function CreateCRWDPage() {
                     <Loader2 className="w-4 h-4 animate-spin" />
                   </div>
                 ) : favoriteCauses.results.length === 0 ? (
-                 <div className="flex flex-col gap-2">
+                 <div className="text-center mb-5">
                   <p className="text-sm text-gray-500">No causes found</p>
                  </div>
                 ) : (    
@@ -416,7 +421,7 @@ export default function CreateCRWDPage() {
                     Invite Friends
                   </Button>
                   <Button
-                    onClick={() => navigate("/groupcrwd")}
+                    onClick={() => navigate(`/groupcrwd/${createdCollective.id}`)}
                     variant="outline"
                     className="w-full"
                   >
@@ -442,7 +447,7 @@ export default function CreateCRWDPage() {
 
           {/* Share Modal */}
           <SharePost
-            url={window.location.href}
+            url={window.location.origin + `/groupcrwd/${createdCollective?.id}`}
             title={`Join my new CRWD: ${name}`}
             description={desc}
             isOpen={showShareModal}
