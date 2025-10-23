@@ -155,7 +155,7 @@ function App() {
                     {/* <Route path="/profile/:id" element={<ProfileById />} /> */}
                     <Route path="/profile/edit" element={<ProfileById />} />
                     <Route
-                      path="/profile/:id/statistics"
+                      path="/profile/statistics"
                       element={<ProfileStatistics />}
                     />
                     <Route path="/settings" element={<Settings />} />

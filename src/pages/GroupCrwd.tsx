@@ -176,6 +176,17 @@ export default function GroupCrwdPage() {
     }
   };
 
+   // Show loading state
+   if (isLoadingCrwd) {
+    return (
+      <div className="min-h-screen md:h-full bg-white flex items-center justify-center">
+        {/* <div className="flex items-center justify-center py-20"> */}
+         <Loader2 className="w-8 h-8 animate-spin" />
+        {/* </div> */}
+      </div>
+    );
+  }
+
   if (!currentUser?.id) {
     return (
       <div className="w-full flex flex-col items-center justify-center min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
@@ -252,12 +263,6 @@ export default function GroupCrwdPage() {
     // <div>
     <>
       <ProfileNavbar title="Collective" />
-      {isLoadingCrwd ? (
-        <div className="flex items-center justify-center h-screen">
-          <Loader2 className="w-8 h-8 animate-spin" />
-        </div>
-      ) : (
-        <>
       <div className="flex items-center gap-2 justify-between pt-6 pb-2 px-4 sticky top-16 z-10 bg-white ">
         <div className="text-lg font-semibold text-green-700 bg-green-200 px-2 py-1 rounded-md">
           Collective
@@ -641,7 +646,5 @@ export default function GroupCrwdPage() {
         <Footer />
       </div>
       </>
-      )}
-    </>
   );
 }

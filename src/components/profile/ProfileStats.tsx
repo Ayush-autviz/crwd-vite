@@ -20,7 +20,7 @@ const ProfileStats: React.FC<ProfileStatsProps> = ({
   const navigate = useNavigate();
 
   const goToStats = (activeTab: string) => {
-    navigate(`/profile/${profileId}/statistics?tab=${activeTab}`);
+    navigate(`/profile/statistics?tab=${activeTab}`);
   };
 
   return (

@@ -7,11 +7,12 @@ import { Edit2, Check, X, Camera, Loader2 } from 'lucide-react';
 
 interface ProfileEditCardProps {
   avatarUrl: string;
-  name: string;
+  firstName: string;
+  lastName: string;
   username: string;
   location: string;
   bio: string;
-  onSave?: (field: string, value: string) => void;
+  onSave?: (field: string, value: string | FormData) => void;
   loadingField?: string | null;
 }
 
@@ -29,7 +30,8 @@ interface ProfileEditCardProps {
 
 const ProfileEditCard: React.FC<ProfileEditCardProps> = ({
   avatarUrl,
-  name,
+  firstName,
+  lastName,
   username,
   location,
   bio,
@@ -38,19 +40,23 @@ const ProfileEditCard: React.FC<ProfileEditCardProps> = ({
 }) => {
   const [editingField, setEditingField] = useState<string | null>(null);
   const [formData, setFormData] = useState({
-    name,
+    firstName,
+    lastName,
     username,
     location,
     bio,
     avatarUrl
   });
   const [tempData, setTempData] = useState({
-    name,
+    firstName,
+    lastName,
     username,
     location,
     bio
   });
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  console.log('Form data:', formData);
 
   const handleEdit = (field: string) => {
     setEditingField(field);
@@ -61,7 +67,7 @@ const ProfileEditCard: React.FC<ProfileEditCardProps> = ({
     const value = tempData[field as keyof typeof tempData];
 
     // Basic validation
-    if (field === 'name' && !value.trim()) {
+    if ((field === 'firstName' || field === 'lastName') && !value.trim()) {
       return; // Don't save empty names
     }
 
@@ -81,7 +87,8 @@ const ProfileEditCard: React.FC<ProfileEditCardProps> = ({
   const handleCancel = () => {
     setEditingField(null);
     setTempData({
-      name: formData.name,
+      firstName: formData.firstName,
+      lastName: formData.lastName,
       username: formData.username,
       location: formData.location,
       bio: formData.bio
@@ -91,13 +98,31 @@ const ProfileEditCard: React.FC<ProfileEditCardProps> = ({
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
+      // Validate file type
+      if (!file.type.startsWith('image/')) {
+        alert('Please select a valid image file');
+        return;
+      }
+
+      // Validate file size (max 5MB)
+      if (file.size > 5 * 1024 * 1024) {
+        alert('Image size should be less than 5MB');
+        return;
+      }
+
       const reader = new FileReader();
       reader.onload = (e) => {
         const newAvatarUrl = e.target?.result as string;
         setFormData(prev => ({ ...prev, avatarUrl: newAvatarUrl }));
 
+        // Send the actual file to the API instead of base64 data URL
         if (onSave) {
-          onSave('avatarUrl', newAvatarUrl);
+          // Create FormData to send the file
+          const formData = new FormData();
+          formData.append('profile_picture', file);
+          
+          // Call onSave with the file instead of base64
+          onSave('profile_picture', formData as any);
         }
       };
       reader.readAsDataURL(file);
@@ -208,7 +233,7 @@ const ProfileEditCard: React.FC<ProfileEditCardProps> = ({
       <div className="flex flex-col items-center mb-6 px-4">
         <div className="relative">
           <Avatar className="w-16 h-16 mb-2">
-            <AvatarImage src={formData.avatarUrl} alt={formData.name} />
+            <AvatarImage src={formData.avatarUrl} alt={`${formData.firstName} ${formData.lastName}`} />
           </Avatar>
           <button
             onClick={() => fileInputRef.current?.click()}
@@ -227,7 +252,8 @@ const ProfileEditCard: React.FC<ProfileEditCardProps> = ({
 
       {/* Editable Fields */}
       <div className="divide-y divide-gray-300 border-b border-t overflow-hidden">
-        {renderField('name', 'Name', formData.name)}
+        {renderField('firstName', 'First Name', formData.firstName)}
+        {renderField('lastName', 'Last Name', formData.lastName)}
         {renderField('username', 'Username', formData.username)}
         {renderField('location', 'Location', formData.location)}
         {renderField('bio', 'Bio', formData.bio, true)}

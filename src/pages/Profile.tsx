@@ -175,7 +175,7 @@ export default function ProfilePage() {
 
   // Extract profile data and construct full name
   const fullName = profileData ? `${profileData.first_name || ''} ${profileData.last_name || ''}`.trim() : '';
-  const activeSince = profileData?.date_joined ? new Date(profileData.date_joined).toLocaleDateString() : 'Not specified';
+  const activeSince = profileData?.date_joined;
 
   // Transform posts data to match PostDetail interface
   const userPosts = postsQuery?.data?.results?.map((post: any) => ({

@@ -205,7 +205,7 @@ export default function HomePage() {
             <div className="overflow-x-auto pb-2">
               <div className="flex gap-4 w-max">
                 {collectives?.results?.map((crwd: any, index: number) => (
-                  <Link to={currentUser?.id ? `/groupcrwd/${crwd.id}` : "/login"} key={index} className="block">
+                  <Link to={`/groupcrwd/${crwd.id}`} key={index} className="block">
                     <div className="flex flex-col items-center gap-3 p-4 rounded-lg hover:bg-gray-100 cursor-pointer transition-colors bg-gray-50 min-w-[200px]">
                       {/* Image on top */}
                       <div className="w-16 h-16 rounded-full overflow-hidden">
@@ -306,7 +306,7 @@ export default function HomePage() {
                 </div>
               ) : (
                 nonprofitts?.results?.slice(0, 3).map((cause: any, index: number) => (
-                <Link to={currentUser?.id ? `/cause/${cause.id}` : "/login"} key={index} className="block">
+                <Link to={`/cause/${cause.id}`} key={index} className="block">
                   <div className="flex items-center justify-between p-4 rounded-lg hover:bg-muted/50 cursor-pointer transition-colors">
                     <div className="flex items-center gap-3 flex-1 min-w-0 mr-4">
                       <div className="w-10 h-10 rounded-full overflow-hidden flex-shrink-0">
@@ -431,37 +431,31 @@ export default function HomePage() {
               ) : 
               causesByLocation?.results?.map((cause: any, index: number) => (
                 <Link
-                  to={cause.type === "Nonprofit" ? "/cause" : "/groupcrwd"}
+                  to={`/cause/${cause.id}`}
                   key={index}
                   className="block"
                 >
                   <div className="flex items-center justify-between p-3 rounded-lg hover:bg-muted/50 cursor-pointer transition-colors bg-card">
                     <div className="flex items-center gap-2 md:gap-3 flex-1 min-w-0 mr-2">
                       <Avatar className="h-10 w-10 md:h-12 md:w-12 rounded-full flex-shrink-0">
-                        {cause.image && (
-                          <img
-                            src={cause.image}
-                            alt={cause.name}
-                            className="object-cover"
-                          />
-                        )}
+                       <AvatarImage src={cause.image} />
+                       <AvatarFallback>
+                        {cause.name.charAt(0).toUpperCase()}
+                       </AvatarFallback>
                       </Avatar>
                       <div className="min-w-0">
                         <div
                           className={`${
-                            cause.type === "Collective"
-                              ? "bg-green-100"
-                              : "bg-blue-100"
+                            
+                               "bg-blue-100"
                           } px-3 py-1 rounded-sm w-fit`}
                         >
                           <p
                             className={`${
-                              cause.type === "Collective"
-                                ? "text-green-600"
-                                : "text-blue-600"
+                              "text-blue-600"
                             } text-xs font-semibold`}
                           >
-                            {cause.type}
+                            Nonprofit
                           </p>
                         </div>
                         {/* <div className="min-w-0"> */}
@@ -476,7 +470,7 @@ export default function HomePage() {
                         </p>
                       </div>
                     </div>
-                    {cause.type === "Nonprofit" && (
+                    
                       <div className="flex flex-col items-center gap-2">
                         <Button className=" text-white text-xs py-2 px-3 rounded-lg hover:bg-primary/90 transition-colors">
                           Donate Now
@@ -488,14 +482,8 @@ export default function HomePage() {
                           Visit Profile
                         </Button>
                       </div>
-                    )}
-                    {cause.type === "Collective" && (
-                      <div className="flex flex-col items-center gap-2">
-                        <Button className="bg-green-600 text-white text-xs py-2 px-4 rounded-lg hover:bg-green-700 transition-colors">
-                          Learn More
-                        </Button>
-                      </div>
-                    )}
+                  
+                   
                   </div>
                 </Link>
               ))}

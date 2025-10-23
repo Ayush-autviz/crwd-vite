@@ -88,7 +88,7 @@ const GroupCrwdHeader: React.FC<GroupCrwdHeaderProps> = ({
 
   const handleFavoriteClick = () => {
     if (isFavorited) {
-      unfavoriteMutation.mutate(id);
+      unfavoriteMutation.mutate(crwdData?.id  );
     } else {
       favoriteMutation.mutate(crwdData?.id);
     }

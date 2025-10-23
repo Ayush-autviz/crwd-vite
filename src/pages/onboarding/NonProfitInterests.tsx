@@ -37,7 +37,9 @@ export default function NonProfitInterests() {
   const { mutate: bulkAddCauseFavoritesMutation } = useMutation({
     mutationFn: (causeIds: string[]) => bulkAddCauseFavorites(causeIds),
     onSuccess: () => {
-      navigate("/");
+      // navigate("/");
+      setShowToast(true);
+      setToastMessage("Causes added to favorites");
     },
     onError: () => {
       setShowToast(true);

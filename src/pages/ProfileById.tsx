@@ -21,6 +21,8 @@ export default function ProfileById() {
     enabled: true, // Only run if id exists
   });
 
+  console.log('Profile data:', profileQuery.data);
+
   // Update profile mutation
   const updateProfileMutation = useMutation({
     mutationFn: updateProfile,
@@ -40,7 +42,7 @@ export default function ProfileById() {
     },
   });
 
-  const handleSave = (field: string, value: string) => {
+  const handleSave = (field: string, value: string | FormData) => {
     // Set loading field before making the request
     setLoadingField(field);
     
@@ -48,8 +50,11 @@ export default function ProfileById() {
     let updateData: any = {};
     
     switch (field) {
-      case 'name':
-        updateData.full_name = value;
+      case 'firstName':
+        updateData.first_name = value;
+        break;
+      case 'lastName':
+        updateData.last_name = value;
         break;
       case 'username':
         updateData.username = value;
@@ -60,11 +65,11 @@ export default function ProfileById() {
       case 'bio':
         updateData.bio = value;
         break;
-      case 'avatarUrl':
-        // Note: profile_picture handling might need special consideration for file uploads
-        // For now, we'll include it if it's a URL string
-        if (typeof value === 'string' && value.startsWith('http')) {
-          updateData.profile_picture = value;
+      case 'profile_picture':
+        // Handle file upload with FormData
+        if (value instanceof FormData) {
+          updateProfileMutation.mutate(value);
+          return;
         }
         break;
       default:
@@ -129,11 +134,12 @@ export default function ProfileById() {
       <ProfileNavbar title="Edit Profile" titleClassName="text-2xl" />
       <div className="w-full">
         <ProfileEditCard
-          avatarUrl={profileQuery.data.user.profile_picture}
-          name={profileQuery.data.user.full_name}
-          username={profileQuery.data.user.username}
-          location={profileQuery.data.user.location}
-          bio={profileQuery.data.user.bio}
+          avatarUrl={profileQuery.data.user.profile_picture || ''}
+          firstName={profileQuery.data.user.first_name || ''}
+          lastName={profileQuery.data.user.last_name || ''}
+          username={profileQuery.data.user.username || ''}
+          location={profileQuery.data.user.location || ''}
+          bio={profileQuery.data.user.bio || ''}
           onSave={handleSave}
           loadingField={loadingField}
         />
