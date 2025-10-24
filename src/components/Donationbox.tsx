@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Minus, Plus } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -9,13 +9,21 @@ import { Checkout } from "./Checkout";
 import DonationHeader from "./donation/DonationHeader";
 import { Link } from "react-router-dom";
 
-const DonationBox = ({ tab = "setup" }: any) => {
-  const [activeTab, setActiveTab] = useState<"setup" | "onetime">(tab);
+interface DonationBoxProps {
+  tab?: string;
+  preselectedItem?: {
+    id: string;
+    type: 'cause' | 'collective';
+    data: any;
+  };
+  activeTab?: string;
+}
+
+const DonationBox = ({ tab = "setup", preselectedItem, activeTab }: DonationBoxProps) => {
+  const [activeTabState, setActiveTabState] = useState<"setup" | "onetime">(tab as "setup" | "onetime" || "setup");
   const [checkout, setCheckout] = useState(false);
-  const [selectedOrganizations, setSelectedOrganizations] = useState<string[]>([
-    "Hunger Initiative",
-    "Clean Water Initiative",
-  ]);
+  const [selectedOrganizations, setSelectedOrganizations] = useState<string[]>([]);
+  const [preselectedItemAdded, setPreselectedItemAdded] = useState(false);
 
   const [donationAmount, setDonationAmount] = useState(10);
   const [step, setStep] = useState(1);
@@ -23,6 +31,18 @@ const DonationBox = ({ tab = "setup" }: any) => {
 
   // const step = 2;
   const isMobile = useIsMobile();
+
+  // Handle preselected item from navigation
+  useEffect(() => {
+    if (preselectedItem && !preselectedItemAdded) {
+      console.log('Setting preselected item:', preselectedItem);
+      // Set the active tab to onetime if we have a preselected item
+      setActiveTabState("onetime");
+      // Add the preselected item to selected organizations
+      setSelectedOrganizations([preselectedItem.id]);
+      setPreselectedItemAdded(true);
+    }
+  }, [preselectedItem, preselectedItemAdded]);
 
   const incrementDonation = () => {
     const newAmount = donationAmount + 1;
@@ -90,19 +110,19 @@ const DonationBox = ({ tab = "setup" }: any) => {
               <button
                 className={cn(
                   "flex-1 py-4 text-sm font-medium transition-all relative",
-                  activeTab === "setup"
+                  activeTabState === "setup"
                     ? "text-white bg-blue-600"
                     : "text-gray-500 hover:text-gray-700 hover:bg-gray-50"
                 )}
                 onClick={() => {
-                  setActiveTab("setup");
+                  setActiveTabState("setup");
                   setStep(1);
                 }}
               >
                 <div className="flex items-center justify-center">
                   {/* <span className={cn(
                     "flex items-center justify-center w-5 h-5 rounded-full mr-2 text-xs",
-                    activeTab === "setup" ? "bg-blue-100 text-blue-600" : "bg-gray-100 text-gray-500"
+                    activeTabState === "setup" ? "bg-blue-100 text-blue-600" : "bg-gray-100 text-gray-500"
                   )}>
                     <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
                   </span> */}
@@ -115,16 +135,16 @@ const DonationBox = ({ tab = "setup" }: any) => {
               <button
                 className={cn(
                   "flex-1 py-4 text-sm font-medium transition-all relative",
-                  activeTab === "onetime"
+                  activeTabState === "onetime"
                     ? "text-white bg-blue-600"
                     : "text-gray-500 hover:text-gray-700 hover:bg-gray-50"
                 )}
-                onClick={() => setActiveTab("onetime")}
+                onClick={() => setActiveTabState("onetime")}
               >
                 <div className="flex items-center justify-center">
                   {/* <span className={cn(
                     "flex items-center justify-center w-5 h-5 rounded-full mr-2 text-xs",
-                    activeTab === "onetime" ? "bg-blue-100 text-blue-600" : "bg-gray-100 text-gray-500"
+                    activeTabState === "onetime" ? "bg-blue-100 text-blue-600" : "bg-gray-100 text-gray-500"
                   )}>
                     <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
                   </span> */}
@@ -139,12 +159,14 @@ const DonationBox = ({ tab = "setup" }: any) => {
 
           {/* Main Content */}
 
-          {activeTab === "onetime" ? (
+          {activeTabState === "onetime" ? (
             <>
               <OneTimeDonation
                 setCheckout={setCheckout}
                 selectedOrganizations={selectedOrganizations}
                 setSelectedOrganizations={setSelectedOrganizations}
+                preselectedItem={preselectedItem}
+                activeTab={activeTab}
               />
             </>
           ) : (

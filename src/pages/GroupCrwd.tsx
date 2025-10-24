@@ -270,7 +270,16 @@ export default function GroupCrwdPage() {
         <div className="flex items-center gap-2">
           {hasJoined && (
             <Button
-              onClick={() => navigate("/donation" + "/?tab=onetime")}
+              onClick={() => navigate('/donation', { 
+                state: { 
+                  preselectedItem: {
+                    id: crwdData?.id?.toString(),
+                    type: 'collective',
+                    data: crwdData
+                  },
+                  activeTab: 'collectives'
+                }
+              })}
               variant="default"
             >
               Donate

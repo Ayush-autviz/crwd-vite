@@ -8,7 +8,7 @@ import CauseAboutCard from "@/components/cause/CauseAboutCard";
 import ProfileNavbar from "@/components/profile/ProfileNavbar";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
-import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { SharePost } from "@/components/ui/SharePost";
 import { Loader2 } from "lucide-react";
 import { useAuthStore } from "@/stores/store";
@@ -128,9 +128,20 @@ const CausePage: React.FC = () => {
           Share
         </Button>
 
-        <Link to="/donation">
-          <Button>Donate</Button>
-        </Link>
+        <Button 
+          onClick={() => navigate('/donation', { 
+            state: { 
+              preselectedItem: {
+                id: causeData?.id?.toString(),
+                type: 'cause',
+                data: causeData
+              },
+              activeTab: 'nonprofits'
+            }
+          })}
+        >
+          Donate
+        </Button>
       </div>
 
       <div className="flex flex-col space-y-6 pt-4">

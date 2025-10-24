@@ -1,26 +1,64 @@
-// import Image from "next/image"; - replaced with regular img tags
-import { Minus, Plus, Bookmark, ChevronRight, Trash2, Heart } from "lucide-react";
+import { Minus, Plus } from "lucide-react";
 import { Link } from 'react-router-dom';
 import { Button } from "./ui/button";
-import { CROWDS, RECENTS, SUGGESTED } from "@/constants";
-import { useState } from "react";
-import PaymentSection from "./PaymentSection";
-import type { Organization } from "@/lib/types";
+import { useState, useEffect } from "react";
+import DonationCauseSelector from "./DonationCauseSelector";
+import { useMutation } from '@tanstack/react-query';
+import { createOneTimeDonation } from '@/services/api/donation';
 
 interface OneTimeDonationProps {
   setCheckout: (value: boolean) => void;
   selectedOrganizations: string[];
   setSelectedOrganizations: (value: string[]) => void;
+  preselectedItem?: {
+    id: string;
+    type: 'cause' | 'collective';
+    data: any;
+  };
+  activeTab?: string;
+}
+
+interface SelectedItem {
+  id: string;
+  type: 'cause' | 'collective';
+  data: any;
 }
 
 export default function OneTimeDonation({
   setCheckout,
   selectedOrganizations,
-  setSelectedOrganizations
+  setSelectedOrganizations,
+  preselectedItem,
+  activeTab
 }: OneTimeDonationProps) {
-  const [bookmarkedOrgs, setBookmarkedOrgs] = useState<string[]>([]);
+  const [bookmarkedItems, setBookmarkedItems] = useState<string[]>([]);
+  const [selectedItems, setSelectedItems] = useState<SelectedItem[]>([]);
   const [donationAmount, setDonationAmount] = useState(7);
   const [inputValue, setInputValue] = useState("7");
+  const [preselectedItemAdded, setPreselectedItemAdded] = useState(false);
+
+  // Handle preselected item from navigation
+  useEffect(() => {
+    if (preselectedItem && !preselectedItemAdded) {
+      console.log('OneTimeDonation: Setting preselected item:', preselectedItem);
+      setSelectedItems([preselectedItem]);
+      setSelectedOrganizations([preselectedItem.id]);
+      setPreselectedItemAdded(true);
+    }
+  }, [preselectedItem, setSelectedOrganizations, preselectedItemAdded]);
+
+  // One-time donation mutation
+  const oneTimeDonationMutation = useMutation({
+    mutationFn: createOneTimeDonation,
+    onSuccess: (response) => {
+      console.log('One-time donation response:', response);
+      // setCheckout(true);  
+      window.location.href = response.checkout_url;
+    },
+    onError: (error) => {
+      console.error('One-time donation error:', error);
+    },
+  });
 
   const incrementDonation = () => {
     const newAmount = donationAmount + 1;
@@ -51,21 +89,77 @@ export default function OneTimeDonation({
     setInputValue(finalValue.toString());
   };
 
-  const selectedOrgs = selectedOrganizations
-    .map((id) => {
-      const org = [...CROWDS, ...RECENTS, ...SUGGESTED].find((o) => o.id === id);
-      return org;
-    })
-    .filter((org): org is Organization => !!org);
-
-  const handleRemoveOrganization = (id: string) => {
-    setSelectedOrganizations(selectedOrganizations.filter((orgId) => orgId !== id));
+  const handleSelectItem = (item: SelectedItem) => {
+    // Check if item is already selected to prevent duplicates
+    const isAlreadySelected = selectedItems.some(selectedItem => 
+      selectedItem.id === item.id && selectedItem.type === item.type
+    );
+    
+    if (!isAlreadySelected) {
+      setSelectedItems((prev: SelectedItem[]) => [...prev, item]);
+      // Also update the legacy selectedOrganizations for backward compatibility
+      setSelectedOrganizations([...selectedOrganizations, item.id]);
+    }
   };
 
-  const handleBookmarkOrganization = (id: string) => {
-    setBookmarkedOrgs((prev) =>
-      prev.includes(id) ? prev.filter(orgId => orgId !== id) : [...prev, id]
+  const handleRemoveItem = (id: string) => {
+    setSelectedItems((prev: SelectedItem[]) => prev.filter(item => `${item.type}-${item.id}` !== id));
+    // Also update the legacy selectedOrganizations for backward compatibility
+    setSelectedOrganizations(selectedOrganizations.filter((orgId: string) => orgId !== id.split('-')[1]));
+  };
+
+  const handleClearAllItems = () => {
+    console.log('handleClearAllItems called');
+    console.log('Current selectedItems before clear:', selectedItems);
+    console.log('Current selectedOrganizations before clear:', selectedOrganizations);
+    
+    setSelectedItems([]);
+    setSelectedOrganizations([]);
+    
+    console.log('Items cleared');
+  };
+
+  const handleBookmarkItem = (id: string) => {
+    setBookmarkedItems((prev) =>
+      prev.includes(id) ? prev.filter(itemId => itemId !== id) : [...prev, id]
     );
+  };
+
+  const handleCheckout = () => {
+    // Prepare request body according to API specification
+    const causeIds: number[] = [];
+    let collectiveId = 0;
+
+    // Separate causes and collectives from selected items
+    selectedItems.forEach(item => {
+      if (item.type === 'cause') {
+        causeIds.push(parseInt(item.id));
+      } else if (item.type === 'collective') {
+        collectiveId = parseInt(item.id);
+      }
+    });
+
+    // Build request body - only include the relevant field based on what's selected
+    let requestBody: any = {
+      amount: donationAmount.toString(),
+    };
+
+    if (causeIds.length > 0) {
+      // If causes are selected, send cause_ids and set collective_id to 0
+      requestBody.cause_ids = causeIds;
+      // requestBody.collective_id = 0;
+    } else if (collectiveId > 0) {
+      // If a collective is selected, send collective_id and set cause_ids to [0]
+      requestBody.collective_id = collectiveId;
+      // requestBody.cause_ids = [0];
+    } else {
+      // Fallback if nothing is selected (shouldn't happen due to button disabled state)
+      requestBody.cause_ids = [0];
+      requestBody.collective_id = 0;
+    }
+
+    console.log('Sending one-time donation request:', requestBody);
+    oneTimeDonationMutation.mutate(requestBody);
   };
 
   return (
@@ -73,73 +167,17 @@ export default function OneTimeDonation({
       {/* Main container - flex column on mobile, flex row on larger screens */}
       <div className="flex flex-col md:flex-row md:gap-6 w-full">
         {/* Left column - Organizations section */}
-        <div className="w-full  mb-5 md:mb-0">
-          <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 h-full">
-            <div className="flex items-center mb-4">
-              <h1 className="text-xl font-medium text-gray-800">
-                Your donation will support
-              </h1>
-            </div>
-
-            {selectedOrgs.length > 0 ? (
-              <div className="space-y-4 mb-4">
-                {selectedOrgs.map((org) => (
-                  <div key={org.id} className="bg-white rounded-xl p-4 border border-blue-100 shadow-sm hover:shadow-md transition-shadow">
-                    <div className="flex items-start justify-between">
-                      <div className="flex gap-4">
-                        <div className="h-16 w-16 rounded-full overflow-hidden flex items-start mt-1">
-                          <img
-                            src={org.imageUrl || "/redcross.png"}
-                            alt={`${org.name} logo`}
-                            width={48}
-                            height={48}
-                            className="object-cover rounded-full overflow-hidden h-10 w-10"
-                          />
-                        </div>
-                        <div className="space-y-1">
-                          <h3 className="font-medium text-gray-800">{org.name}</h3>
-                          <p className="text-sm text-gray-600 line-clamp-2">
-                            {org.description || "This is a non-profit mission statement that aligns with the company's goals and..."}
-                          </p>
-                        </div>
-                      </div>
-                      <button
-                        className={`${bookmarkedOrgs.includes(org.id) ? 'text-red-500' : 'text-gray-400'} hover:text-red-500 transition-colors`}
-                        onClick={() => handleBookmarkOrganization(org.id)}
-                      >
-                        {/* <Bookmark size={20} /> */}
-                        <Heart size={20} />
-                      </button>
-                    </div>
-                    <div className="flex justify-end mt-3">
-                      <button
-                        className="text-xs text-gray-600 hover:text-red-500 flex items-center px-2 py-1 rounded-md bg-gray-50 hover:bg-gray-100 transition-colors"
-                        onClick={() => handleRemoveOrganization(org.id)}
-                      >
-                        <Trash2 size={12} className="mr-1" />
-                        Remove
-                      </button>
-                    </div>
-                  </div>
-                ))}
-
-                <div className="text-sm text-blue-600 rounded-lg">
-                  <p className="font-medium text-blue-600">You can add up to 10 more causes to this donation</p>
-                  <Link to="/search" className="flex items-center mt-1 text-sm text-blue-600">
-                    <span>Discover More</span>
-                    <ChevronRight className="h-4 w-4 ml-1" />
-                  </Link>
-                </div>
-              </div>
-            ) : (
-              <div className="bg-gray-50 rounded-lg p-4 text-center mb-4">
-                <p className="text-gray-500">No organizations selected</p>
-                <Link to="/search" className="text-blue-600 text-sm font-medium mt-2 inline-block">
-                  Add organizations
-                </Link>
-              </div>
-            )}
-          </div>
+        <div className="w-full mb-5 md:mb-0">
+          <DonationCauseSelector
+            selectedItems={selectedItems}
+            onSelectItem={handleSelectItem}
+            onRemoveItem={handleRemoveItem}
+            onClearAllItems={handleClearAllItems}
+            onBookmarkItem={handleBookmarkItem}
+            bookmarkedItems={bookmarkedItems}
+            preselectedItem={preselectedItem}
+            activeTab={activeTab}
+          />
         </div>
 
         {/* Right column - Donation amount and checkout */}
@@ -206,6 +244,15 @@ export default function OneTimeDonation({
           </div>
 
           {/* Checkout button */}
+          <div className="py-4 w-full">
+            <Button
+              onClick={handleCheckout}
+              disabled={oneTimeDonationMutation.isPending || selectedItems.length === 0}
+              className="bg-green-500 hover:bg-green-600 text-black w-full py-6 md:py-6 rounded-lg font-medium transition-colors flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {oneTimeDonationMutation.isPending ? 'Processing...' : 'Checkout'}
+            </Button>
+          </div>
           {/* <div className="py-4 w-full">
             <Button
               onClick={() => setCheckout(true)}
@@ -214,7 +261,7 @@ export default function OneTimeDonation({
               Complete Donation
             </Button>
           </div> */}
-          <PaymentSection setCheckout={setCheckout} amount={7} />
+          {/* <PaymentSection setCheckout={setCheckout} amount={7} /> */}
           <div className="h-10"></div>
         </div>
       </div>

@@ -48,6 +48,11 @@ export const getCollectives = async () => {
     return response.data;
 };
 
+export const getCollectivesBySearch = async (search?: string,) => {
+    const response = await axiosClient.get(`/crwd/collectives/?search=${search}`);
+    return response.data;
+};
+
 export const createCollective = async (data: any) => {
     const response = await axiosClient.post('/crwd/collectives/', data);
     return response.data;

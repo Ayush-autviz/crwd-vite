@@ -3,13 +3,20 @@ import DonationBox from "@/components/Donationbox";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { useAuthStore } from "@/stores/store";
-import React from "react";
-import { Link, useSearchParams } from "react-router-dom";
+import { Link, useSearchParams, useLocation } from "react-router-dom";
 
 export default function DonationPage() {
   const [searchParams] = useSearchParams();
+  const location = useLocation();
   const tab = searchParams.get("tab");
   console.log(tab, "tab");
+
+  // Get preselected item and active tab from navigation state
+  const preselectedItem = location.state?.preselectedItem;
+  const activeTab = location.state?.activeTab;
+  
+  console.log('Preselected item:', preselectedItem);
+  console.log('Active tab:', activeTab);
 
   const { user: currentUser } = useAuthStore();
 
@@ -61,7 +68,11 @@ export default function DonationPage() {
 
   return (
     <div>
-      <DonationBox tab={tab || "setup"} />
+      <DonationBox 
+        tab={tab || "setup"} 
+        preselectedItem={preselectedItem}
+        activeTab={activeTab}
+      />
       <div className="hidden md:block">
         <Footer />
       </div>
