@@ -31,7 +31,6 @@ export default function OneTimeDonation({
   preselectedItem,
   activeTab
 }: OneTimeDonationProps) {
-  const [bookmarkedItems, setBookmarkedItems] = useState<string[]>([]);
   const [selectedItems, setSelectedItems] = useState<SelectedItem[]>([]);
   const [donationAmount, setDonationAmount] = useState(7);
   const [inputValue, setInputValue] = useState("7");
@@ -119,12 +118,6 @@ export default function OneTimeDonation({
     console.log('Items cleared');
   };
 
-  const handleBookmarkItem = (id: string) => {
-    setBookmarkedItems((prev) =>
-      prev.includes(id) ? prev.filter(itemId => itemId !== id) : [...prev, id]
-    );
-  };
-
   const handleCheckout = () => {
     // Prepare request body according to API specification
     const causeIds: number[] = [];
@@ -173,8 +166,6 @@ export default function OneTimeDonation({
             onSelectItem={handleSelectItem}
             onRemoveItem={handleRemoveItem}
             onClearAllItems={handleClearAllItems}
-            onBookmarkItem={handleBookmarkItem}
-            bookmarkedItems={bookmarkedItems}
             preselectedItem={preselectedItem}
             activeTab={activeTab}
           />

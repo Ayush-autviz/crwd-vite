@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react';
-import { Search, Heart, Trash2 } from 'lucide-react';
+import { Search, Trash2 } from 'lucide-react';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Avatar, AvatarImage, AvatarFallback } from './ui/avatar';
 import { useQuery } from '@tanstack/react-query';
-import { getCausesBySearch, getCollectivesBySearch } from '@/services/api/crwd';
+import { getCausesBySearch, getCollectivesBySearch, getJoinCollective } from '@/services/api/crwd';
 
 interface Cause {
   id: number;
@@ -38,8 +38,6 @@ interface DonationCauseSelectorProps {
   onSelectItem: (item: { id: string; type: 'cause' | 'collective'; data: Cause | Collective }) => void;
   onRemoveItem: (id: string) => void;
   onClearAllItems: () => void;
-  onBookmarkItem: (id: string) => void;
-  bookmarkedItems: string[];
   preselectedItem?: {
     id: string;
     type: 'cause' | 'collective';
@@ -53,8 +51,6 @@ export default function DonationCauseSelector({
   onSelectItem,
   onRemoveItem,
   onClearAllItems,
-  onBookmarkItem,
-  bookmarkedItems,
   preselectedItem,
   activeTab,
 }: DonationCauseSelectorProps) {
@@ -93,10 +89,17 @@ export default function DonationCauseSelector({
   });
 
   // Fetch collectives with search - only when search button is clicked
-  const { data: collectivesData, isLoading: collectivesLoading } = useQuery({
+  const { data: collectivesData } = useQuery({
     queryKey: ['collectives', searchQuery],
     queryFn: () => getCollectivesBySearch(searchQuery || ''),
     enabled: selectedType === 'collective' && showSearchResults && searchQuery.length > 0,
+  });
+
+  // Fetch joined collectives - always fetch when collective tab is selected
+  const { data: joinedCollectivesData, isLoading: joinedCollectivesLoading } = useQuery({
+    queryKey: ['joinedCollectives'],
+    queryFn: () => getJoinCollective(),
+    enabled: selectedType === 'collective' && !showSearchResults,
   });
 
   // Fetch default causes (no search query)
@@ -106,15 +109,15 @@ export default function DonationCauseSelector({
     enabled: selectedType === 'cause' && !showSearchResults,
   });
 
-  // Fetch default collectives (no search query)
-  const { data: defaultCollectivesData, isLoading: defaultCollectivesLoading } = useQuery({
-    queryKey: ['defaultCollectives'],
-    queryFn: () => getCollectivesBySearch(''),
-    enabled: selectedType === 'collective' && !showSearchResults,
-  });
+  // Fetch default collectives (no search query) - removed, using joined collectives instead
+  // const { data: defaultCollectivesData, isLoading: defaultCollectivesLoading } = useQuery({
+  //   queryKey: ['defaultCollectives'],
+  //   queryFn: () => getCollectivesBySearch(''),
+  //   enabled: selectedType === 'collective' && !showSearchResults,
+  // });
 
   const causes = showSearchResults ? (causesData?.results || []) : (defaultCausesData?.results || []);
-  const collectives = showSearchResults ? (collectivesData?.results || []) : (defaultCollectivesData?.results || []);
+  const collectives = showSearchResults ? (collectivesData?.results || []) : (joinedCollectivesData?.data?.map((item: any) => item.collective) || []);
 
   // Filter out already selected items
   const filteredCauses = causes.filter((cause: Cause) => 
@@ -123,7 +126,7 @@ export default function DonationCauseSelector({
 
   const filteredCollectives = collectives.filter((collective: Collective) => 
     !selectedItems.some(item => item.id === collective.id.toString() && item.type === 'collective')
-  ).slice(0, 5);
+  );
 
   const handleSearch = () => {
     if (searchQuery.trim()) {
@@ -249,25 +252,38 @@ export default function DonationCauseSelector({
         </Button>
       </div>
 
-      {/* Search Section */}
-      <div className="space-y-4">
-        <div className="flex gap-2">
-          <Input
-            type="text"
-            placeholder={`Search ${selectedType === 'cause' ? 'nonprofits' : 'collectives'}...`}
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter' && searchQuery.trim()) {
-                handleSearch();
-              }
-            }}
-            className="flex-1"
-          />
-          <Button onClick={handleSearch} disabled={!searchQuery.trim()}>
-            <Search size={16} />
-          </Button>
+      {/* Search Section - Only show for causes */}
+      {selectedType === 'cause' && (
+        <div className="space-y-4">
+          <div className="flex gap-2">
+            <Input
+              type="text"
+              placeholder="Search nonprofits..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' && searchQuery.trim()) {
+                  handleSearch();
+                }
+              }}
+              className="flex-1"
+            />
+            <Button onClick={handleSearch} disabled={!searchQuery.trim()}>
+              <Search size={16} />
+            </Button>
+          </div>
         </div>
+      )}
+
+      {/* Joined Collectives Section - Only show for collectives */}
+      {selectedType === 'collective' && (
+        <div className="space-y-4">
+          <div className="text-center py-2">
+            <h3 className="font-medium text-gray-900">Your Joined Collectives</h3>
+            <p className="text-sm text-gray-500">Select from your joined collectives</p>
+          </div>
+        </div>
+      )}
 
         {/* Search Results */}
         {showSearchResults ? (
@@ -311,7 +327,7 @@ export default function DonationCauseSelector({
               </>
             ) : (
               <>
-                {collectivesLoading ? (
+                {joinedCollectivesLoading ? (
                   <div className="text-center py-4">
                     <p className="text-gray-500">Loading collectives...</p>
                   </div>
@@ -353,8 +369,8 @@ export default function DonationCauseSelector({
             )}
           </div>
         ) : (
-          /* Default Results */
-          <div className="space-y-3 max-h-64 overflow-y-auto">
+          // Default Results
+          <div className="space-y-3 max-h-64 mt-5 overflow-y-auto">
             {selectedType === 'cause' ? (
               <>
                 {defaultCausesLoading ? (
@@ -363,9 +379,7 @@ export default function DonationCauseSelector({
                   </div>
                 ) : filteredCauses.length > 0 ? (
                   <>
-                    <div className="text-sm text-gray-600 mb-2">
-                      <p className="font-medium">Popular Nonprofits</p>
-                    </div>
+                    
                     {filteredCauses.map((cause: Cause) => (
                       <div
                         key={cause.id}
@@ -399,15 +413,13 @@ export default function DonationCauseSelector({
               </>
             ) : (
               <>
-                {defaultCollectivesLoading ? (
+                {joinedCollectivesLoading ? (
                   <div className="text-center py-4">
                     <p className="text-gray-500">Loading collectives...</p>
                   </div>
                 ) : filteredCollectives.length > 0 ? (
                   <>
-                    <div className="text-sm text-gray-600 mb-2">
-                      <p className="font-medium">Popular Collectives</p>
-                    </div>
+                    
                     {filteredCollectives.map((collective: Collective) => (
                       <div
                         key={collective.id}
@@ -439,7 +451,8 @@ export default function DonationCauseSelector({
                   </>
                 ) : (
                   <div className="text-center py-4">
-                    <p className="text-gray-500">No collectives available</p>
+                    <p className="text-gray-500">No joined collectives found</p>
+                    <p className="text-sm text-gray-400 mt-1">Join some collectives to see them here</p>
                   </div>
                 )}
               </>
@@ -455,7 +468,6 @@ export default function DonationCauseSelector({
             <ChevronRight className="h-4 w-4 ml-1" />
           </Link>
         </div> */}
-      </div>
     </div>
   );
 }

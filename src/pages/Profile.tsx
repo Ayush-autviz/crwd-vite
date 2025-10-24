@@ -15,12 +15,14 @@ import {
   Flag,
   Pencil,
   Loader2,
+  LogOut,
 } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Toast } from "../components/ui/toast";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation } from "@tanstack/react-query";
 // import { getProfile } from "@/services/api/auth";
 import { getPosts, getUserProfileById } from "@/services/api/social";
+import { logout } from "@/services/api/auth";
 import { useAuthStore } from "@/stores/store";
 
 
@@ -47,8 +49,38 @@ const orgAvatars = [
 export default function ProfilePage() {
   const [showMenu, setShowMenu] = useState(false);
   const [showToast, setShowToast] = useState(false);
+  const [toastMessage, setToastMessage] = useState("");
   const menuRef = useRef<HTMLDivElement>(null);
-  const { user: currentUser } = useAuthStore();
+  const { user: currentUser, logout: logoutStore } = useAuthStore();
+  const navigate = useNavigate();
+
+  // Logout mutation
+  const logoutMutation = useMutation({
+    mutationFn: logout,
+    onSuccess: () => {
+      console.log('Logout successful');
+      // Clear auth store
+      logoutStore();
+      // Show success message
+      setToastMessage("Logged out successfully!");
+      setShowToast(true);
+      // Navigate to login page after a short delay
+      // setTimeout(() => {
+        navigate('/login', { replace: true });
+      // }, 1500);
+    },
+    onError: (error: any) => {
+      console.error('Logout error:', error);
+      setToastMessage(`Logout failed: ${error.response?.data?.message || error.message}`);
+      setShowToast(true);
+    },
+  });
+
+  const handleLogout = () => {
+    // if (window.confirm('Are you sure you want to logout?')) {
+      logoutMutation.mutate();
+    // }
+  };
 
   // // Fetch profile data using React Query
   // const profileQuery = useQuery({
@@ -243,6 +275,21 @@ export default function ProfilePage() {
                   Edit Profile
                 </button>
               </Link>
+              <button
+                onClick={() => {
+                  setShowMenu(false);
+                  handleLogout();
+                }}
+                disabled={logoutMutation.isPending}
+                className="flex items-center gap-2 w-full px-3 py-2 text-sm text-red-600 hover:bg-gray-50 transition-colors disabled:opacity-50"
+              >
+                {logoutMutation.isPending ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  <LogOut className="h-4 w-4" />
+                )}
+                {logoutMutation.isPending ? 'Logging out...' : 'Logout'}
+              </button>
             </div>
           )}
         </div>
@@ -345,10 +392,10 @@ export default function ProfilePage() {
 
       {/* Toast notification */}
       <Toast
-        message="Profile updated successfully!"
+        message={toastMessage}
         show={showToast}
         onHide={() => setShowToast(false)}
-        duration={2000}
+        duration={3000}
       />
     </div>
   );

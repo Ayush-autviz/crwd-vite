@@ -1,12 +1,15 @@
 import React, { useState, useRef } from "react";
-import { Check, Camera, X, Loader2 } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { Check, Camera, X, Loader2, Eye, EyeOff } from "lucide-react";
+import { useNavigate, Link } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { DatePicker } from "antd";
 import type { DatePickerProps } from "antd";
 import { useMutation } from "@tanstack/react-query";
 import { emailRegistration, emailVerification, resendEmailVerificationCode } from "@/services/api/auth";
 import { Toast } from "@/components/ui/toast";
+import { cn } from "@/lib/utils";
 
 export default function ClaimProfile() {
   const [formData, setFormData] = useState({
@@ -14,7 +17,7 @@ export default function ClaimProfile() {
     lastName: "",
     email: "",
     password: "",
-    dateOfBirth: null as Date | null,
+    // dateOfBirth: null as Date | null,
     profileImage: null as string | null,
     termsAccepted: false,
   });
@@ -23,6 +26,14 @@ export default function ClaimProfile() {
   const [otp, setOtp] = useState("");
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [passwordStrength, setPasswordStrength] = useState({
+    hasMinLength: false,
+    hasUppercase: false,
+    hasLowercase: false,
+    hasNumber: false,
+    hasSpecialChar: false,
+  });
   const fileInputRef = useRef<HTMLInputElement>(null);
   const navigate = useNavigate();
 
@@ -54,6 +65,27 @@ export default function ClaimProfile() {
     }
   };
 
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+
+    // Check password strength
+    if (name === "password") {
+      setPasswordStrength({
+        hasMinLength: value.length >= 8,
+        hasUppercase: /[A-Z]/.test(value),
+        hasLowercase: /[a-z]/.test(value),
+        hasNumber: /\d/.test(value),
+        hasSpecialChar: /[!@#$%^&*(),.?":{}|<>]/.test(value),
+      });
+    }
+  };
+
+  const isPasswordStrong = Object.values(passwordStrength).every(Boolean);
+
   // Form validation
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
@@ -74,13 +106,13 @@ export default function ClaimProfile() {
 
     if (!formData.password.trim()) {
       newErrors.password = "Password is required";
-    } else if (formData.password.length < 6) {
-      newErrors.password = "Password must be at least 6 characters";
+    } else if (!isPasswordStrong) {
+      newErrors.password = "Password must meet all requirements";
     }
 
-    if (!formData.dateOfBirth) {
-      newErrors.dateOfBirth = "Date of birth is required";
-    }
+    // if (!formData.dateOfBirth) {
+    //   newErrors.dateOfBirth = "Date of birth is required";
+    // }
 
     if (!formData.termsAccepted) {
       newErrors.terms = "You must agree to the Terms of Use and Privacy Policy";
@@ -101,8 +133,8 @@ export default function ClaimProfile() {
     formDataToSend.append('last_name', formData.lastName.trim());
     formDataToSend.append('email', formData.email.trim());
     formDataToSend.append('password', formData.password);
-    formDataToSend.append('date_of_birth', formData.dateOfBirth ? formData.dateOfBirth.toISOString().split('T')[0] : '');
-    
+    // formDataToSend.append('date_of_birth', formData.dateOfBirth ? formData.dateOfBirth.toISOString().split('T')[0] : '');
+
     // Add profile picture if available
     if (formData.profileImage) {
       // Convert base64 to blob for FormData
@@ -156,7 +188,7 @@ export default function ClaimProfile() {
       setToastMessage(`Registration failed: ${error.response?.data?.message || error.message}`);
       setShowToast(true);
     },
-  }); 
+  });
 
   const emailVerificationMutation = useMutation({
     mutationFn: emailVerification,
@@ -193,11 +225,11 @@ export default function ClaimProfile() {
         email: formData.email,
         confirmation_code: otp
       });
-  }
-  else {
-    setToastMessage("Please enter a valid verification code");
-    setShowToast(true);
-  }
+    }
+    else {
+      setToastMessage("Please enter a valid verification code");
+      setShowToast(true);
+    }
   }
 
   const handleResendEmailVerification = () => {
@@ -221,7 +253,7 @@ export default function ClaimProfile() {
       <div className="relative z-10 flex items-center justify-center p-4  min-h-screen">
         <div className="w-full max-w-md">
           <Card className="border border-gray-200 shadow-sm bg-white">
-            <CardContent className="p-4 space-y-4">
+            <CardContent className="px-4 space-y-4">
               {/* Step Indicator */}
               <div className="flex items-center justify-center space-x-2">
                 <div className="flex items-center space-x-2">
@@ -271,9 +303,9 @@ export default function ClaimProfile() {
                   <p className="text-sm font-medium text-gray-900">
                     Add a Photo
                   </p>
-                  
+
                 </div>
-                </div>
+              </div>
 
 
               {/* Form Fields */}
@@ -290,13 +322,12 @@ export default function ClaimProfile() {
                       setFormData(prev => ({ ...prev, firstName: e.target.value }));
                       clearError('firstName');
                     }}
-                    className={`w-full h-10 border rounded-lg px-3 bg-white text-gray-900 text-sm focus:outline-none focus:ring-1 transition-colors ${
-                      errors.firstName 
-                        ? 'border-red-500 focus:border-red-500 focus:ring-red-500' 
+                    className={`w-full h-10 border rounded-lg px-3 bg-white text-gray-900 text-sm focus:outline-none focus:ring-1 transition-colors ${errors.firstName
+                        ? 'border-red-500 focus:border-red-500 focus:ring-red-500'
                         : 'border-gray-300 focus:border-gray-400 focus:ring-gray-400'
-                    }`}
+                      }`}
                   />
-   
+
                 </div>
 
                 <div className="space-y-2">
@@ -311,13 +342,12 @@ export default function ClaimProfile() {
                       setFormData(prev => ({ ...prev, lastName: e.target.value }));
                       clearError('lastName');
                     }}
-                    className={`w-full h-10 border rounded-lg px-3 bg-white text-gray-900 text-sm focus:outline-none focus:ring-1 transition-colors ${
-                      errors.lastName 
-                        ? 'border-red-500 focus:border-red-500 focus:ring-red-500' 
+                    className={`w-full h-10 border rounded-lg px-3 bg-white text-gray-900 text-sm focus:outline-none focus:ring-1 transition-colors ${errors.lastName
+                        ? 'border-red-500 focus:border-red-500 focus:ring-red-500'
                         : 'border-gray-300 focus:border-gray-400 focus:ring-gray-400'
-                    }`}
+                      }`}
                   />
-               
+
                 </div>
 
                 <div className="space-y-2">
@@ -332,16 +362,15 @@ export default function ClaimProfile() {
                       setFormData(prev => ({ ...prev, email: e.target.value }));
                       clearError('email');
                     }}
-                    className={`w-full h-10 border rounded-lg px-3 bg-white text-gray-900 text-sm focus:outline-none focus:ring-1 transition-colors ${
-                      errors.email 
-                        ? 'border-red-500 focus:border-red-500 focus:ring-red-500' 
+                    className={`w-full h-10 border rounded-lg px-3 bg-white text-gray-900 text-sm focus:outline-none focus:ring-1 transition-colors ${errors.email
+                        ? 'border-red-500 focus:border-red-500 focus:ring-red-500'
                         : 'border-gray-300 focus:border-gray-400 focus:ring-gray-400'
-                    }`}
+                      }`}
                   />
-               
+
                 </div>
 
-                <div className="space-y-2">
+                {/* <div className="space-y-2">
                   <label className="text-sm font-medium text-gray-900">
                     Date of birth <span className="text-red-500">*</span>
                   </label>
@@ -352,40 +381,84 @@ export default function ClaimProfile() {
                     style={errors.dateOfBirth ? { border: '1px solid red' } : { border: '1px solid #e0e0e0' }}
                   />
                 
-                </div>
+                </div> */}
 
                 <div className="space-y-2">
                   <label className="text-sm font-medium text-gray-900">
                     Password <span className="text-red-500">*</span>
                   </label>
-                  <input
-                    type="password"
-                    placeholder="Enter your password"
-                    value={formData.password}
-                    onChange={(e) => {
-                      setFormData(prev => ({ ...prev, password: e.target.value }));
-                      clearError('password');
-                    }}
-                    className={`w-full h-10 border rounded-lg px-3 bg-white text-gray-900 text-sm focus:outline-none focus:ring-1 transition-colors ${
-                      errors.password 
-                        ? 'border-red-500 focus:border-red-500 focus:ring-red-500' 
-                        : 'border-gray-300 focus:border-gray-400 focus:ring-gray-400'
-                    }`}
-                  />
-    
+                  <div className="relative">
+                    <Input
+                      type={showPassword ? "text" : "password"}
+                      placeholder="Enter your password"
+                      value={formData.password}
+                      onChange={handleInputChange}
+                      name="password"
+                      className={cn(
+                        "h-10 border-gray-300 focus-visible:border-gray-900 focus-visible:ring-gray-900/10 pr-10",
+                        "transition-colors duration-200",
+                        errors.password && "border-red-500 focus-visible:border-red-500 focus-visible:ring-red-500"
+                      )}
+                    />
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="icon"
+                      className="absolute right-1 top-1 h-8 w-8 hover:bg-gray-100"
+                      onClick={() => setShowPassword(!showPassword)}
+                    >
+                      {showPassword ? (
+                        <EyeOff className="h-4 w-4 text-gray-500" />
+                      ) : (
+                        <Eye className="h-4 w-4 text-gray-500" />
+                      )}
+                    </Button>
+                  </div>
+
+                  {/* Password Strength Indicator */}
+                  {formData.password && (
+                    <div className="mt-2 space-y-2">
+                      <div className="text-xs text-gray-600">Password must contain:</div>
+                      <div className="grid grid-cols-1 gap-1 text-xs">
+                        <div className={cn("flex items-center gap-2", passwordStrength.hasMinLength ? "text-green-600" : "text-gray-400")}>
+                          <Check className={cn("h-3 w-3", passwordStrength.hasMinLength ? "text-green-600" : "text-gray-300")} />
+                          At least 8 characters
+                        </div>
+                        <div className={cn("flex items-center gap-2", passwordStrength.hasUppercase ? "text-green-600" : "text-gray-400")}>
+                          <Check className={cn("h-3 w-3", passwordStrength.hasUppercase ? "text-green-600" : "text-gray-300")} />
+                          One uppercase letter
+                        </div>
+                        <div className={cn("flex items-center gap-2", passwordStrength.hasLowercase ? "text-green-600" : "text-gray-400")}>
+                          <Check className={cn("h-3 w-3", passwordStrength.hasLowercase ? "text-green-600" : "text-gray-300")} />
+                          One lowercase letter
+                        </div>
+                        <div className={cn("flex items-center gap-2", passwordStrength.hasNumber ? "text-green-600" : "text-gray-400")}>
+                          <Check className={cn("h-3 w-3", passwordStrength.hasNumber ? "text-green-600" : "text-gray-300")} />
+                          One number
+                        </div>
+                        <div className={cn("flex items-center gap-2", passwordStrength.hasSpecialChar ? "text-green-600" : "text-gray-400")}>
+                          <Check className={cn("h-3 w-3", passwordStrength.hasSpecialChar ? "text-green-600" : "text-gray-300")} />
+                          One special character
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {errors.password && (
+                    <p className="text-red-500 text-xs mt-1">{errors.password}</p>
+                  )}
                 </div>
               </div>
 
               {/* Terms checkbox */}
               <div className="flex items-center gap-3 p-4">
                 <button
-                  className={`w-5 h-5 border-2 rounded-full transition-all flex-shrink-0 mt-0.5 ${
-                    formData.termsAccepted
+                  className={`w-5 h-5 border-2 rounded-full transition-all flex-shrink-0 mt-0.5 ${formData.termsAccepted
                       ? "border-gray-900 bg-gray-900"
                       : errors.terms
-                      ? "border-red-500 bg-white"
-                      : "border-gray-300 bg-white hover:border-gray-400"
-                  }`}
+                        ? "border-red-500 bg-white"
+                        : "border-gray-300 bg-white hover:border-gray-400"
+                    }`}
                   onClick={() => {
                     setFormData(prev => ({ ...prev, termsAccepted: !prev.termsAccepted }));
                     clearError('terms');
@@ -408,17 +481,16 @@ export default function ClaimProfile() {
                     </span>
                     . <span className="text-red-500">*</span>
                   </p>
-                
+
                 </div>
               </div>
 
               {/* Continue Button */}
               <button
-                className={`w-full h-10 font-medium text-white rounded-lg transition-colors flex items-center justify-center ${
-                  emailRegistrationMutation.isPending
+                className={`w-full h-10 font-medium text-white rounded-lg transition-colors flex items-center justify-center ${emailRegistrationMutation.isPending
                     ? 'bg-gray-600 cursor-not-allowed'
                     : 'bg-gray-900 hover:bg-gray-800'
-                }`}
+                  }`}
                 onClick={handleContinue}
                 disabled={emailRegistrationMutation.isPending}
               >
@@ -432,6 +504,17 @@ export default function ClaimProfile() {
                 )}
               </button>
 
+              <div className="w-full max-w-md mx-auto px-4">
+                <div className="text-center">
+                  <p className="text-sm text-gray-600 mb-4">
+                    Already have an account?
+                  </p>
+                  <Link to="/login">
+                    Sign In
+                  </Link>
+                </div>
+              </div>
+
               <input
                 ref={fileInputRef}
                 type="file"
@@ -443,6 +526,7 @@ export default function ClaimProfile() {
           </Card>
         </div>
       </div>
+
 
       {/* OTP Verification Modal */}
       {showOTPModal && (
@@ -478,11 +562,10 @@ export default function ClaimProfile() {
                 {/* Action Buttons */}
                 <div className="space-y-3">
                   <button
-                    className={`w-full h-10 font-medium text-white rounded-lg transition-colors flex items-center justify-center ${
-                      emailVerificationMutation.isPending
+                    className={`w-full h-10 font-medium text-white rounded-lg transition-colors flex items-center justify-center ${emailVerificationMutation.isPending
                         ? 'bg-gray-600 cursor-not-allowed'
                         : 'bg-gray-900 hover:bg-gray-800'
-                    }`}
+                      }`}
                     onClick={handleEmailVerification}
                     disabled={otp.length !== 6 || emailVerificationMutation.isPending}
                   >
@@ -495,11 +578,10 @@ export default function ClaimProfile() {
                       'Verify & Continue'
                     )}
                   </button>
-                  
+
                   <button
-                    className={`w-full h-10 border border-gray-300 hover:border-gray-400 text-gray-700 font-medium rounded-lg transition-colors flex items-center justify-center ${
-                      resendEmailVerificationMutation.isPending ? 'opacity-50 cursor-not-allowed' : ''
-                    }`}
+                    className={`w-full h-10 border border-gray-300 hover:border-gray-400 text-gray-700 font-medium rounded-lg transition-colors flex items-center justify-center ${resendEmailVerificationMutation.isPending ? 'opacity-50 cursor-not-allowed' : ''
+                      }`}
                     onClick={handleResendEmailVerification}
                     disabled={resendEmailVerificationMutation.isPending}
                   >
