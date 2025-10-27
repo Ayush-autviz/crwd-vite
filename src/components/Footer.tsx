@@ -2,12 +2,12 @@ import { Link } from "react-router-dom";
 
 const Footer = () => {
   const navigationLinks = [
-    { id: 1, text: "Find Nonprofits", href: "/nonprofits" },
-    { id: 2, text: "About", href: "/about" },
-    { id: 3, text: "What is a CRWD collective?", href: "/collective" },
-    { id: 4, text: "How it works", href: "/how-it-works" },
-    { id: 5, text: "FAQs", href: "/faq" },
-    { id: 6, text: "Blog", href: "/blog" },
+    { id: 1, text: "Find Nonprofits", href: "/search" },
+    // { id: 2, text: "About", href: "/about" },
+    { id: 3, text: "What is a CRWD collective?", href: "/articles" },
+    { id: 4, text: "How it works", href: "/about" },
+    { id: 5, text: "FAQs", href: "/settings/help" },
+    // { id: 6, text: "Blog", href: "/blog" },
   ];
 
   const socialMediaIcons = [
@@ -44,7 +44,7 @@ const Footer = () => {
                 {navigationLinks.map((link) => (
                   <Link
                     key={link.id}
-                    to={"/"}
+                    to={link.href}
                     className="block text-white text-lg hover:text-gray-300 transition-colors duration-200"
                   >
                     {link.text}

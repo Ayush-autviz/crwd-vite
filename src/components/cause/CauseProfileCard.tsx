@@ -8,6 +8,7 @@ import { Toast } from "../ui/toast";
 import { categories } from "@/constants/categories";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { favoriteCause, unfavoriteCause } from "@/services/api/social";
+import { useAuthStore } from "@/stores/store";
 
 interface CauseProfileCardProps {
   onLearnMoreClick?: () => void;
@@ -24,7 +25,7 @@ const CauseProfileCard: React.FC<CauseProfileCardProps> = ({
   const [toastMessage, setToastMessage] = useState("");
   const [isFavorited, setIsFavorited] = useState(causeData?.is_favorite || false);
   const causeId = causeData?.id;
-
+  const { user: currentUser } = useAuthStore();
   // Debug logging
   console.log('causeData:', causeData);
   console.log('is_favorite from API:', causeData?.is_favorite);
@@ -132,6 +133,7 @@ const CauseProfileCard: React.FC<CauseProfileCardProps> = ({
         {/* <Heart className="w-4 h-4 fill-red-500" /> */}
         {/* <button className="border-1 border-gray-500 rounded-md h-9 px-3 py-2"> */}
         <div className="flex items-center gap-2">
+          {currentUser?.id && (
           <Heart
             className={`
                 w-6 h-6
@@ -145,6 +147,7 @@ const CauseProfileCard: React.FC<CauseProfileCardProps> = ({
               `}
             onClick={handleFavoriteClick}
           />
+          )}
           {/* {(favoriteMutation.isPending || unfavoriteMutation.isPending) && (
             <Loader2 className="w-4 h-4 animate-spin text-gray-500" />
           )} */}
@@ -204,7 +207,7 @@ const CauseProfileCard: React.FC<CauseProfileCardProps> = ({
           Address: {causeData?.street}, {causeData?.city}, {causeData?.state}
         </div>
         {/* <a to="#" className="text-sm text-blue-600 underline">Claim this non-profit?</a> */}
-        <ClaimCauseDialog />
+        {/* <ClaimCauseDialog /> */}
       </div>
       {/* Guarantee Note */}
       <div className="flex items-center gap-1 text-sm ">

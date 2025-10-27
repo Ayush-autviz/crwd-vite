@@ -56,7 +56,7 @@ export const menuGroups = [
     heading: "Support",
     items: [
       { icon: <Info size={20} />, label: "About", href: "/settings/about" },
-      { icon: <Book size={20} />, label: "Articles", href: "#" },
+      { icon: <Book size={20} />, label: "Articles", href: "/articles" },
       { icon: <HelpCircle size={20} />, label: "Help", href: "/settings/help" },
       { icon: <Settings size={20} />, label: "Settings", href: "/settings" },
     ],

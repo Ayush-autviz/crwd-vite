@@ -10,6 +10,7 @@ import { categories } from "@/constants/categories";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { favoriteCollective, unfavoriteCollective } from "@/services/api/social";
 import { Avatar, AvatarImage, AvatarFallback } from "../ui/avatar";
+import { useAuthStore } from "@/stores/store";
 
 interface GroupCrwdHeaderProps {
   hasJoined: boolean;
@@ -50,6 +51,7 @@ const GroupCrwdHeader: React.FC<GroupCrwdHeaderProps> = ({
   const [toastMessage, setToastMessage] = useState("");
   const [localCategories, setLocalCategories] = useState<any[]>([]);
   const [isFavorited, setIsFavorited] = useState(crwdData?.is_favorite || false);
+  const { user: currentUser } = useAuthStore();
 
 
   // Favorite collective mutation
@@ -174,6 +176,7 @@ const GroupCrwdHeader: React.FC<GroupCrwdHeaderProps> = ({
         {/* <Button variant="outline">
           <Bookmark size={20} />
         </Button> */}
+        {currentUser?.id && (
         <Heart
           className={`
               w-6 h-6
@@ -187,6 +190,7 @@ const GroupCrwdHeader: React.FC<GroupCrwdHeaderProps> = ({
             `}
           onClick={handleFavoriteClick}
         />
+        )}
         {/* {(favoriteMutation.isPending || unfavoriteMutation.isPending) && (
           <Loader2 className="w-4 h-4 animate-spin text-gray-500" />
         )} */}

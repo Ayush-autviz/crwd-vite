@@ -58,6 +58,7 @@ import NonProfitInterests from "./pages/onboarding/NonProfitInterests";
 import CompleteOnboard from "./pages/onboarding/CompleteOnboard";
 import GoogleCallback from "./pages/auth/GoogleCallback";
 import Circles from "./pages/Circles";
+import Articles from "./pages/Articles";
 
 // ScrollToTop component that works for all pages
 function ScrollToTop() {
@@ -203,6 +204,7 @@ function App() {
                     <Route path="/donation-test" element={<DonationTest />} />
                     <Route path="/user-profile/:userId" element={<UserProfile />} />
                     <Route path="/circles" element={<Circles />} />
+                    <Route path="/articles" element={<Articles />} />
                   </Routes>
                 </Layout>
               }
