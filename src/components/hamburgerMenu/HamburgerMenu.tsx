@@ -4,8 +4,13 @@ import { Bell, Menu as MenuIcon } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import NavigationItems from "./NavigationItems";
+import { useAuthStore } from "@/stores/store";
 
-const HamburgerMenu: React.FC = () => (
+
+const HamburgerMenu: React.FC = () => {
+  
+  const { user: currentUser } = useAuthStore();
+  return (
   <div className="">
     <Sheet>
       <SheetTrigger asChild>
@@ -16,17 +21,19 @@ const HamburgerMenu: React.FC = () => (
         className="p-0 w-[90vw] max-w-[320px] border-l shadow-lg"
       >
         {/* Profile */}
+        {currentUser?.id && (
         <div className="flex justify-between p-4 ">
           <div className="flex items-center gap-3">
             <Avatar className="h-12 w-12">
               <AvatarImage
-                src="https://randomuser.me/api/portraits/women/44.jpg"
+                // src="https://randomuser.me/api/portraits/women/44.jpg"
+                src={currentUser?.profile_picture}
                 alt="Profile"
               />
               <AvatarFallback>MY</AvatarFallback>
             </Avatar>
             <div className="flex flex-col">
-              <span className="font-semibold text-sm">My Name is Mya</span>
+              <span className="font-semibold text-sm">My Name is {currentUser?.first_name}</span>
               <Link
                 to="/profile"
                 className="text-xs text-muted-foreground hover:text-primary"
@@ -42,7 +49,7 @@ const HamburgerMenu: React.FC = () => (
             </div>
           </div>
         </div>
-
+        )}
         {/* Menu List */}
         <NavigationItems />
 
@@ -62,6 +69,7 @@ const HamburgerMenu: React.FC = () => (
       </SheetContent>
     </Sheet>
   </div>
-);
+  );
+};
 
 export default HamburgerMenu;

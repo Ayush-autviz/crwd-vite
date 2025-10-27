@@ -24,7 +24,7 @@ const MembersList: React.FC<MembersListProps> = ({ members, isLoading }) => {
   const [toastMessage, setToastMessage] = useState("");
   const { user } = useAuthStore();
   const queryClient = useQueryClient();
-  
+  console.log('MembersList - members:', members);
  
 
   // const filtered = members?.filter(
@@ -38,7 +38,8 @@ const MembersList: React.FC<MembersListProps> = ({ members, isLoading }) => {
   const followUserMutation = useMutation({
     mutationFn: followUser,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['members'] });
+      queryClient.invalidateQueries({ queryKey: ['followers'] });
+      queryClient.invalidateQueries({ queryKey: ['following'] });
       setToastMessage("Followed");
       setShowToast(true);
     },
@@ -52,7 +53,8 @@ const MembersList: React.FC<MembersListProps> = ({ members, isLoading }) => {
   const unfollowUserMutation = useMutation({
     mutationFn: unfollowUser,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['members'] });
+      queryClient.invalidateQueries({ queryKey: ['followers'] });
+      queryClient.invalidateQueries({ queryKey: ['following'] });
       setToastMessage("Unfollowed");
       setShowToast(true);
     },
@@ -111,39 +113,31 @@ const MembersList: React.FC<MembersListProps> = ({ members, isLoading }) => {
             <div key={index} className="flex items-center justify-between py-3">
               <div className="flex items-center">
                 <Avatar className="h-10 w-10 mr-3">
-                  <AvatarImage
-                    src={member?.user?.profile_picture || `/placeholder.svg?height=40&width=40`}
-                    alt={member?.user?.first_name + " " + member?.user?.last_name}
-                  />
+                  <AvatarImage src={member?.avatar} />
                   <AvatarFallback>
-                    {member?.user?.first_name?.charAt(0)?.toUpperCase() || ''}
-                    {member?.user?.last_name?.charAt(0)?.toUpperCase() || ''}
+                    {member?.name?.charAt(0)?.toUpperCase() || ''}
                   </AvatarFallback>
                 </Avatar>
                 <div>
                   <p className="font-medium">
-                    {member?.user?.first_name || ''} {member?.user?.last_name || ''}
+                    {member?.name || ''}
                   </p>
                   <p className="text-sm text-muted-foreground">
-                    @{member?.user?.username || 'unknown'}
+                    @{member?.username || 'unknown'}
                   </p>
-                  {/* <p className="text-xs text-muted-foreground">
-                    {member?.role_display || 'Member'} • Joined {member?.joined_at ? new Date(member.joined_at).toLocaleDateString() : 'Unknown'}
-                  </p> */}
                 </div>
               </div>
-              {member?.user?.id !== user?.id &&  (
+              {member?.id !== user?.id &&  (
               <Button
                 variant="outline"
-                onClick={() => handleFollowToggle(member?.user?.id, member.user.is_following)}
-                className={`border-0 text-sm mr-2 cursor-pointer hover:text-blue-500 ${member?.user?.is_following
+                onClick={() => handleFollowToggle(member?.id?.toString(), member?.is_following)}
+                className={`border-0 text-sm mr-2 cursor-pointer hover:text-blue-500 ${member?.is_following
                     ? "bg-[#4367FF] text-white"
                     : "bg-[#F0F2FB] text-[#4367FF]"
                   }`}
                 size="sm"
               >
-                {/* {followStatus[index] ?? member?.user?.connected ? "Following" : "Follow"} */}
-                {member?.user?.is_following ? "Following" : "Follow"}
+                {member?.is_following ? "Following" : "Follow"}
               </Button>
               )}
             </div>

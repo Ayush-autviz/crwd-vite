@@ -1,6 +1,6 @@
 "use client";
 import { useState } from "react";
-import { useParams, useSearchParams, useNavigate } from "react-router-dom";
+import { useSearchParams, useNavigate } from "react-router-dom";
 import ProfileNavbar from "@/components/profile/ProfileNavbar";
 import MembersList from "@/components/members/MembersList";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
@@ -22,9 +22,9 @@ const tabs = [
 
 
 export default function ProfileStatistics() {
-  const { id } = useParams<{ id: string }>();
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
+  const userId = searchParams.get("userId");
   const tab = searchParams.get("tab") || "causes";
   const [activeTab, setActiveTab] = useState(tab);
   const { user } = useAuthStore();
@@ -38,36 +38,32 @@ export default function ProfileStatistics() {
     navigate(`/groupcrwd/${collectiveId}`);
   };
 
+  console.log('ProfileStatistics - userId:', userId);
+
   // API calls for real data
   const { data: followersData, isLoading: followersLoading } = useQuery({
-    queryKey: ['followers', id || user?.id],
-    queryFn: () => getUserFollowers(id || user?.id?.toString() || ''),
-    enabled: !!(id || user?.id),
+    queryKey: ['followers', userId || user?.id],
+    queryFn: () => getUserFollowers(userId || user?.id?.toString() || ''),
+    enabled: !!(userId || user?.id),
   });
 
   const { data: followingData, isLoading: followingLoading } = useQuery({
-    queryKey: ['following', id || user?.id],
-    queryFn: () => getUserFollowing(id || user?.id?.toString() || ''),
-    enabled: !!(id || user?.id),
+    queryKey: ['following', userId || user?.id],
+    queryFn: () => getUserFollowing(userId || user?.id?.toString() || ''),
+    enabled: !!(userId || user?.id),
   });
 
   const { data: causesData, isLoading: causesLoading } = useQuery({
-    queryKey: ['favoriteCauses', id || user?.id],
+    queryKey: ['favoriteCauses', userId || user?.id],
     queryFn: () => getFavoriteCauses(),
-    enabled: !!(id || user?.id),
+    enabled: !!(userId || user?.id),
   });
 
   const { data: collectivesData, isLoading: collectivesLoading } = useQuery({
-    queryKey: ['joinCollective', id || user?.id],
+    queryKey: ['joinCollective', userId || user?.id],
     queryFn: () => getJoinCollective(),
-    enabled: !!(id || user?.id),
+    enabled: !!(userId || user?.id),
   });
-
-  // Debug logging
-  console.log('ProfileStatistics - followersData:', followersData);
-  console.log('ProfileStatistics - followingData:', followingData);
-  console.log('ProfileStatistics - causesData:', causesData);
-  console.log('ProfileStatistics - collectivesData:', collectivesData);
 
   // Transform API data to match UI requirements
   const causes = causesData?.results?.map((item: any) => {
@@ -97,8 +93,8 @@ export default function ProfileStatistics() {
     };
   }) || [];
 
-  const following = followingData?.results?.map((user: any) => {
-    const userData = user.user || user;
+  const following = followingData?.following?.map((item: any) => {
+    const userData = item.followee || item.following || item.user || item;
     return {
       name: userData.first_name && userData.last_name 
         ? `${userData.first_name} ${userData.last_name}` 
@@ -107,11 +103,12 @@ export default function ProfileStatistics() {
       avatar: userData.profile_picture || userData.avatar || '',
       connected: userData.is_following || false,
       id: userData.id,
+      is_following: userData.is_following || false,
     };
   }) || [];
 
-  const followers = followersData?.results?.map((user: any) => {
-    const userData = user.user || user;
+  const followers = followersData?.followers?.map((item: any) => {
+    const userData = item.follower || item.user || item;
     return {
       name: userData.first_name && userData.last_name 
         ? `${userData.first_name} ${userData.last_name}` 
@@ -120,12 +117,14 @@ export default function ProfileStatistics() {
       avatar: userData.profile_picture || userData.avatar || '',
       connected: userData.is_following || false,
       id: userData.id,
+      is_following: userData.is_following || false,
     };
   }) || [];
 
   // Filter functions - using all data since search is not implemented yet
   const filteredCauses = causes;
   const filteredCrwds = crwds;
+
 
   return (
     <main className="pb-16 md:pb-0">
@@ -173,7 +172,7 @@ export default function ProfileStatistics() {
                         </p>
                       </div>
                       <h3 className="font-medium text-sm mb-1">{cause.name}</h3>
-                      <p className="text-xs text-muted-foreground leading-relaxed line-clamp-2 max-w-[200px]">
+                      <p className="text-xs text-muted-foreground leading-relaxed line-clamp-2 max-w-[90%]">
                         {cause.description}
                       </p>
 
@@ -217,54 +216,51 @@ export default function ProfileStatistics() {
           )
         )}
         {activeTab === "crwds" && (
-          <>
-            {collectivesLoading ? (
-              <div className="flex items-center justify-center py-8">
-                <Loader2 className="w-6 h-6 animate-spin mr-2" />
-                <span>Loading collectives...</span>
-              </div>
-            ) : filteredCrwds.length > 0 ? (
-              filteredCrwds.map((crwd: any) => (
-                <div
-                  key={crwd.id || crwd.name}
-                  className="flex items-center justify-between py-3"
-                >
-                  <div className="flex items-center">
-                    <Avatar className="h-10 w-10 mr-3">
-                      <AvatarImage src={crwd.avatar} alt={crwd.name} />
-                      <AvatarFallback>
-                        {crwd.name.charAt(0).toUpperCase()}
-                      </AvatarFallback>
-                    </Avatar>
-                    <div className="min-w-0 flex-1">
-                      <div className="bg-green-100 px-3 py-1 rounded-sm w-fit">
-                        <p className="text-green-600 text-xs font-semibold">
-                          Collective
-                        </p>
-                      </div>
-                      <h3 className="font-medium text-sm mb-1">{crwd.name}</h3>
-                      <p className="text-xs text-muted-foreground leading-relaxed line-clamp-2 max-w-[200px]">
-                        {crwd.description}
-                      </p>
+         <div className="">
+         {collectivesLoading ? (
+           <div className="flex items-center justify-center py-8">
+             <Loader2 className="w-6 h-6 animate-spin mr-2" />
+             <span>Loading collectives...</span>
+           </div>
+         ) : filteredCrwds.length > 0 ? (
+           filteredCrwds.map((crwd: any, index: number) => (
+             <div key={crwd.id || index} className="flex items-center justify-between p-2 rounded-lg hover:bg-muted/50 cursor-pointer transition-colors">
+               <div className="flex items-center gap-3 flex-1 min-w-0 mr-4">
+                 <Avatar className="w-10 h-10">
+                   <AvatarImage src={crwd.avatar} />
+                   <AvatarFallback>
+                     {crwd.name.charAt(0).toUpperCase()}
+                   </AvatarFallback>
+                 </Avatar>
+                 <div className="min-w-0 flex-1">
+                   <div className="bg-green-100 px-3 py-1 rounded-sm w-fit">
+                     <p className="text-green-600 text-xs font-semibold">
+                       Collective
+                     </p>
+                   </div>
+                   <h3 className="font-medium text-sm mb-1">{crwd.name}</h3>
+                   <p className="text-xs text-muted-foreground leading-relaxed line-clamp-2 max-w-[90%]">
+                     {crwd.description}
+                   </p>
 
-                    </div>
-                  </div>
-                   <div className="flex flex-col items-center gap-2">
-                     <Button 
-                       className="text-white text-xs py-2 px-3 rounded-lg transition-colors"
-                       onClick={() => handleCollectiveClick(crwd.id)}
-                     >
-                       View Details
-                     </Button>
-                   </div>  
                  </div>
-               ))
-             ) : (
-               <div className="flex items-center justify-center py-8">
-                 <span className="text-muted-foreground">No collectives found</span>
                </div>
-             )}
-          </>
+               <div className="flex flex-col items-center gap-2">
+                 <Button 
+                   className="text-white text-xs py-2 px-3 rounded-lg transition-colors"
+                   onClick={() => handleCollectiveClick(crwd.id)}
+                 >
+                   View Details
+                 </Button>
+               </div>
+             </div>
+           ))
+         ) : (
+           <div className="flex items-center justify-center py-8">
+             <span className="text-muted-foreground">No collectives found</span>
+           </div>
+         )}
+       </div>
         )}
       </div>
     </main>
