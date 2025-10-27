@@ -21,7 +21,6 @@ const HamburgerMenu: React.FC = () => {
         className="p-0 w-[90vw] max-w-[320px] border-l shadow-lg"
       >
         {/* Profile */}
-        {currentUser?.id && (
         <div className="flex justify-between p-4 ">
           <div className="flex items-center gap-3">
             <Avatar className="h-12 w-12">
@@ -30,8 +29,9 @@ const HamburgerMenu: React.FC = () => {
                 src={currentUser?.profile_picture}
                 alt="Profile"
               />
-              <AvatarFallback>MY</AvatarFallback>
+              <AvatarFallback>U</AvatarFallback>
             </Avatar>
+        {currentUser?.id ? (
             <div className="flex flex-col">
               <span className="font-semibold text-sm">My Name is {currentUser?.first_name}</span>
               <Link
@@ -41,15 +41,28 @@ const HamburgerMenu: React.FC = () => {
                 Go to your profile
               </Link>
             </div>
+            ):(
+              <div className="flex flex-col">
+                <span className="font-semibold text-sm">Guest</span>
+                <Link
+                  to="/login"
+                  className="text-xs text-muted-foreground hover:text-primary"
+                >
+                  Login
+                </Link>
+              </div>
+            )
+          }
           </div>
+          {currentUser?.id && (
           <div className="p-2 relative">
             <Bell size={22} />
             <div className="absolute top-0 -right-1 text-xs px-1 text-white bg-red-500 rounded-full">
               5
             </div>
           </div>
+          )}
         </div>
-        )}
         {/* Menu List */}
         <NavigationItems />
 

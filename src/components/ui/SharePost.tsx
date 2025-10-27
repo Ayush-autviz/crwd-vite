@@ -107,7 +107,7 @@ export function SharePost({
             className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3"
           >
             <Link className="w-4 h-4 mr-2" />
-            {copied ? "Copied!" : "Copy Invite Link"}
+            {copied ? "Copied!" : "Copy Link"}
           </Button>
 
           <Button

@@ -371,7 +371,8 @@ export default function ProfilePage() {
                 // showLabel
                 title="Recent Activity"
                 posts={userPosts}
-                showLoadMore={true}
+                showLoadMore={postsQuery.data?.next}
+                // onLoadMore={handleLoadMore}
                 isLoading={postsQuery.isLoading}
                 error={postsQuery.error}
               />

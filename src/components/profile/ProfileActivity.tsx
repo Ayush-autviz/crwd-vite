@@ -17,6 +17,7 @@ interface ProfileActivityProps {
   collectiveData?: any;
   isLoading?: boolean;
   error?: any;
+  onLoadMore?: () => void;
 }
 
 const ProfileActivity: React.FC<ProfileActivityProps> = ({
@@ -30,21 +31,22 @@ const ProfileActivity: React.FC<ProfileActivityProps> = ({
   collectiveData,
   isLoading = false,
   error = null,
+  onLoadMore,
 }) => {
   const [allPosts, setAllPosts] = useState<PostDetail[]>(posts);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const navigate = useNavigate();
-  const handleLoadMore = async () => {
-    setIsLoadingMore(true);
+  // const handleLoadMore = async () => {
+  //   setIsLoadingMore(true);
 
-    // Simulate loading delay
-    await new Promise((resolve) => setTimeout(resolve, 1500));
+  //   // Simulate loading delay
+  //   await new Promise((resolve) => setTimeout(resolve, 1500));
 
-    // Append new posts to the existing array
-    setAllPosts((prevPosts) => [...prevPosts, ...morePostsToLoad]);
+  //   // Append new posts to the existing array
+  //   setAllPosts((prevPosts) => [...prevPosts, ...morePostsToLoad]);
 
-    setIsLoadingMore(false);
-  };    
+  //   setIsLoadingMore(false);
+  // };    
 
   useEffect(() => {
     setAllPosts(posts);
@@ -108,19 +110,12 @@ const ProfileActivity: React.FC<ProfileActivityProps> = ({
       {showLoadMore && (
         <div className="flex justify-center mt-6">
           <Button
-            onClick={handleLoadMore}
-            disabled={isLoadingMore}
+            onClick={onLoadMore}
+            disabled={isLoading}
             variant="outline"
             className="px-6 py-2"
           >
-            {isLoadingMore ? (
-              <>
-                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                Loading...
-              </>
-            ) : (
-              "Load More"
-            )}
+            Load More
           </Button>
         </div>
       )}

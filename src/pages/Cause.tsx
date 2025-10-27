@@ -8,7 +8,7 @@ import CauseAboutCard from "@/components/cause/CauseAboutCard";
 import ProfileNavbar from "@/components/profile/ProfileNavbar";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { SharePost } from "@/components/ui/SharePost";
 import { Loader2 } from "lucide-react";
 import { useAuthStore } from "@/stores/store";
@@ -149,7 +149,7 @@ const CausePage: React.FC = () => {
       <div className="flex flex-col space-y-6 pt-4">
         <CauseProfileCard onLearnMoreClick={scrollToAboutCard} causeData={causeData} />
         {/* <HighLights /> */}
-        <CauseRecentDonations showEmpty={true} />
+        <CauseRecentDonations donations={causeData?.recent_donations} showEmpty={!causeData?.recent_donations || causeData.recent_donations.length === 0} />
         <div ref={aboutCardRef}>
           <CauseAboutCard causeData={causeData} />
         </div>

@@ -65,7 +65,7 @@ export default function ProfileById() {
       case 'bio':
         updateData.bio = value;
         break;
-      case 'profile_picture':
+      case 'profile_picture_file':
         // Handle file upload with FormData
         if (value instanceof FormData) {
           updateProfileMutation.mutate(value);

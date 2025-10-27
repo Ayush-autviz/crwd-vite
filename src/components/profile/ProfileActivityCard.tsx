@@ -75,11 +75,16 @@ export default function ProfileActivityCard({
   const handleLikeClick = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    
-    if (isLiked) {
-      unlikeMutation.mutate();
+
+    if (!user?.id) {
+     setToastMessage("Please login to like posts");
+     setShowToast(true);
     } else {
-      likeMutation.mutate();
+      if (isLiked) {
+        unlikeMutation.mutate();
+      } else {
+        likeMutation.mutate();
+      }
     }
   };
 

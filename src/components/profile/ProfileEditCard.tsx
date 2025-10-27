@@ -119,10 +119,10 @@ const ProfileEditCard: React.FC<ProfileEditCardProps> = ({
         if (onSave) {
           // Create FormData to send the file
           const formData = new FormData();
-          formData.append('profile_picture', file);
+          formData.append('profile_picture_file', file);
           
           // Call onSave with the file instead of base64
-          onSave('profile_picture', formData as any);
+          onSave('profile_picture_file', formData as any);
         }
       };
       reader.readAsDataURL(file);
