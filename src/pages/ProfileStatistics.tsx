@@ -38,8 +38,6 @@ export default function ProfileStatistics() {
     navigate(`/groupcrwd/${collectiveId}`);
   };
 
-  console.log('ProfileStatistics - userId:', userId);
-
   // API calls for real data
   const { data: followersData, isLoading: followersLoading } = useQuery({
     queryKey: ['followers', userId || user?.id],
@@ -61,7 +59,7 @@ export default function ProfileStatistics() {
 
   const { data: collectivesData, isLoading: collectivesLoading } = useQuery({
     queryKey: ['joinCollective', userId || user?.id],
-    queryFn: () => getJoinCollective(),
+    queryFn: () => getJoinCollective(userId || ''),
     enabled: !!(userId || user?.id),
   });
 
@@ -96,13 +94,21 @@ export default function ProfileStatistics() {
   const following = followingData?.following?.map((item: any) => {
     const userData = item.followee || item.following || item.user || item;
     return {
+      user: {
+        id: userData.id,
+        first_name: userData.first_name || '',
+        last_name: userData.last_name || '',
+        username: userData.username || 'unknown',
+        profile_picture: userData.profile_picture || userData.avatar || '',
+        is_following: userData.is_following || false,
+      },
+      id: item.id,
       name: userData.first_name && userData.last_name 
         ? `${userData.first_name} ${userData.last_name}` 
-        : userData.first_name || userData.name || 'Unknown User',
+        : userData.first_name || userData.full_name || userData.name || 'Unknown User',
       username: userData.username || 'unknown',
       avatar: userData.profile_picture || userData.avatar || '',
       connected: userData.is_following || false,
-      id: userData.id,
       is_following: userData.is_following || false,
     };
   }) || [];
@@ -110,16 +116,31 @@ export default function ProfileStatistics() {
   const followers = followersData?.followers?.map((item: any) => {
     const userData = item.follower || item.user || item;
     return {
+      user: {
+        id: userData.id,
+        first_name: userData.first_name || '',
+        last_name: userData.last_name || '',
+        username: userData.username || 'unknown',
+        profile_picture: userData.profile_picture || userData.avatar || '',
+        is_following: userData.is_following || false,
+      },
+      id: item.id,
       name: userData.first_name && userData.last_name 
         ? `${userData.first_name} ${userData.last_name}` 
-        : userData.first_name || userData.name || 'Unknown User',
+        : userData.first_name || userData.full_name || userData.name || 'Unknown User',
       username: userData.username || 'unknown',
       avatar: userData.profile_picture || userData.avatar || '',
       connected: userData.is_following || false,
-      id: userData.id,
       is_following: userData.is_following || false,
     };
   }) || [];
+
+  // Debug logging
+  console.log('ProfileStatistics - userId:', userId);
+  console.log('ProfileStatistics - followersData:', followersData);
+  console.log('ProfileStatistics - followingData:', followingData);
+  console.log('ProfileStatistics - followers:', followers);
+  console.log('ProfileStatistics - following:', following);
 
   // Filter functions - using all data since search is not implemented yet
   const filteredCauses = causes;

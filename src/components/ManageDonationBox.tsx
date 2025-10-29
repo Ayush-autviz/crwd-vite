@@ -160,13 +160,13 @@ const ManageDonationBox: React.FC<ManageDonationBoxProps> = ({
               <DollarSign size={22} className="mb-1" />
               <span className="text-xs">Edit amount</span>
             </button>
-            <Link
+            {/* <Link
               to="/settings/payments"
               className="flex flex-col items-center flex-1 bg-white/10 rounded-xl py-3 text-white hover:bg-white/20 transition"
             >
               <CreditCard size={22} className="mb-1" />
               <span className="text-xs">Edit payment</span>
-            </Link>
+            </Link> */}
           </div>
         </div>
       </div>
@@ -204,9 +204,9 @@ const ManageDonationBox: React.FC<ManageDonationBoxProps> = ({
                       <h3 className="font-semibold text-gray-900 text-base">
                         {org.name}
                       </h3>
-                      <span className="text-xs text-gray-500">
+                      {/* <span className="text-xs text-gray-500">
                         @{org.name.replace(/\s+/g, "").toLowerCase()}
-                      </span>
+                      </span> */}
                     </div>
                   </div>
                   {org.description && (
@@ -253,7 +253,7 @@ const ManageDonationBox: React.FC<ManageDonationBoxProps> = ({
       </div>
 
       {/* Payment Method Section */}
-      <div className="px-8 py-4">
+      {/* <div className="px-8 py-4">
         <h3 className="text-base font-semibold text-gray-700 uppercase mb-4 tracking-wide">
           PAYMENT METHOD
         </h3>
@@ -278,7 +278,7 @@ const ManageDonationBox: React.FC<ManageDonationBoxProps> = ({
             </Link>
           </div>
         </div>
-      </div>
+      </div> */}
 
       {/* Next Payment Section */}
       <div className="px-8 py-4">
@@ -303,12 +303,12 @@ const ManageDonationBox: React.FC<ManageDonationBoxProps> = ({
         </div>
       </div>
 
-      <div className=" text-gray-400  pt-5 text-center">
+      <div className=" text-gray-400 mb-5  pt-5 text-center">
         Allocations will automatically adjust for 100% distribution
       </div>
 
       {/* Edit Causes Button */}
-      <div className="flex  mt-6 pb-4 px-8">
+      {/* <div className="flex  mt-6 pb-4 px-8">
         <Button
           variant="outline"
           className="rounded-full px-6 py-2 text-blue-700 border-blue-200 bg-blue-50 hover:bg-blue-100 font-semibold"
@@ -316,7 +316,7 @@ const ManageDonationBox: React.FC<ManageDonationBoxProps> = ({
         >
           {isEditMode ? "Close" : "Edit Causes"}
         </Button>
-      </div>
+      </div> */}
 
       {/* Footer */}
       {isEditMode && (

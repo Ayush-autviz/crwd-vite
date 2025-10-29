@@ -26,14 +26,19 @@ const MembersList: React.FC<MembersListProps> = ({ members, isLoading }) => {
   const queryClient = useQueryClient();
   console.log('MembersList - members:', members);
  
-
-  // const filtered = members?.filter(
-  //   (m) => m?.user && (
-  //     m.user.first_name?.toLowerCase().includes(search.toLowerCase()) ||
-  //     m.user.last_name?.toLowerCase().includes(search.toLowerCase()) ||
-  //     m.user.username?.toLowerCase().includes(search.toLowerCase())
-  //   )
-  // ) || [];
+  // Filter members based on search query
+  const filtered = members?.filter(
+    (m) => {
+      if (!m?.user) return false;
+      const searchLower = search.toLowerCase();
+      return (
+        m.user.first_name?.toLowerCase().includes(searchLower) ||
+        m.user.last_name?.toLowerCase().includes(searchLower) ||
+        m.user.username?.toLowerCase().includes(searchLower) ||
+        m.user.email?.toLowerCase().includes(searchLower)
+      );
+    }
+  ) || members;
 
   const followUserMutation = useMutation({
     mutationFn: followUser,
@@ -104,44 +109,54 @@ const MembersList: React.FC<MembersListProps> = ({ members, isLoading }) => {
           <div className="flex items-center justify-center h-32 text-muted-foreground">
             <Loader2 className="animate-spin" />
           </div>
-        ) : members.length === 0 ? (
+        ) : filtered.length === 0 ? (
           <div className="flex items-center justify-center h-32 text-muted-foreground">
             <p>No members found</p>
           </div>
         ) : (
-          members.map((member: any, index: number) => (
-            <div key={index} className="flex items-center justify-between py-3">
-              <div className="flex items-center">
-                <Avatar className="h-10 w-10 mr-3">
-                  <AvatarImage src={member?.avatar} />
-                  <AvatarFallback>
-                    {member?.name?.charAt(0)?.toUpperCase() || ''}
-                  </AvatarFallback>
-                </Avatar>
-                <div>
-                  <p className="font-medium">
-                    {member?.name || ''}
-                  </p>
-                  <p className="text-sm text-muted-foreground">
-                    @{member?.username || 'unknown'}
-                  </p>
+          filtered.map((member: any, index: number) => {
+            const userData = member?.user;
+            const fullName = `${userData?.first_name || ''} ${userData?.last_name || ''}`.trim();
+            const userName = userData?.username || 'unknown';
+            const profilePic = userData?.profile_picture || '';
+            const isFollowing = userData?.is_following || false;
+            
+            return (
+              <div key={member?.id || index} className="flex items-center justify-between py-3">
+                <div className="flex items-center">
+                  <Avatar className="h-10 w-10 mr-3">
+                    <AvatarImage src={profilePic} />
+                    <AvatarFallback>
+                      {fullName?.charAt(0)?.toUpperCase() || userName?.charAt(0)?.toUpperCase() || ''}
+                    </AvatarFallback>
+                  </Avatar>
+                  <div>
+                    <p className="font-medium">
+                      {fullName || userName}
+                    </p>
+                    <p className="text-sm text-muted-foreground">
+                      @{userName}
+                    </p>
+                  </div>
                 </div>
+                {userData?.id !== user?.id && (
+                  <Button
+                    variant="outline"
+                    onClick={() => handleFollowToggle(userData?.id?.toString(), isFollowing)}
+                    className={`border-0 text-sm mr-2 cursor-pointer hover:text-blue-500 ${
+                      isFollowing
+                        ? "bg-[#4367FF] text-white"
+                        : "bg-[#F0F2FB] text-[#4367FF]"
+                    }`}
+                    size="sm"
+                    disabled={followUserMutation.isPending || unfollowUserMutation.isPending}
+                  >
+                    {isFollowing ? "Following" : "Follow"}
+                  </Button>
+                )}
               </div>
-              {member?.id !== user?.id &&  (
-              <Button
-                variant="outline"
-                onClick={() => handleFollowToggle(member?.id?.toString(), member?.is_following)}
-                className={`border-0 text-sm mr-2 cursor-pointer hover:text-blue-500 ${member?.is_following
-                    ? "bg-[#4367FF] text-white"
-                    : "bg-[#F0F2FB] text-[#4367FF]"
-                  }`}
-                size="sm"
-              >
-                {member?.is_following ? "Following" : "Follow"}
-              </Button>
-              )}
-            </div>
-          ))
+            );
+          })
         )}
       </ScrollArea>
       <Toast

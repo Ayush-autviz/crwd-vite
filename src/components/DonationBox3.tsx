@@ -1,7 +1,9 @@
 "use client";
 import { useState } from "react";
 import { CROWDS, RECENTS, SUGGESTED } from "@/constants";
-import { Country, State, City } from "country-state-city";
+import { Country, State } from "country-state-city";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { removeCauseFromBox, removeCollectiveFromBox, activateDonationBox } from "@/services/api/donation";
 import {
   Select,
   SelectContent,
@@ -9,6 +11,15 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
 
 interface DonationSummaryProps {
   selectedOrganizations: string[];
@@ -17,6 +28,7 @@ interface DonationSummaryProps {
   onRemoveOrganization?: (id: string) => void;
   onBookmarkOrganization?: (id: string) => void;
   donationAmount: number;
+  donationBox?: any;
 }
 
 export const DonationBox3 = ({
@@ -26,9 +38,78 @@ export const DonationBox3 = ({
   onRemoveOrganization,
   onBookmarkOrganization,
   donationAmount,
+  donationBox,
 }: DonationSummaryProps) => {
+  const queryClient = useQueryClient();
+
+  // State for confirmation modal
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [itemToDelete, setItemToDelete] = useState<{ id: string; name: string; type: 'cause' | 'collective' } | null>(null);
+
+  // Get manual causes and attributing collectives from donation box
+  const manualCauses = donationBox?.manual_causes || [];
+  const attributingCollectives = donationBox?.attributing_collectives || [];
+  const actualDonationAmount = parseFloat(donationBox?.monthly_amount || donationAmount.toString());
   const [selectedPaymentMethod, setSelectedPaymentMethod] =
     useState<string>("");
+
+  // Mutation to remove cause from box
+  const removeCauseMutation = useMutation({
+    mutationFn: (causeId: string) => removeCauseFromBox(causeId),
+    onSuccess: () => {
+      console.log('Cause removed successfully');
+      queryClient.invalidateQueries({ queryKey: ['donationBox'] });
+      setShowDeleteModal(false);
+      setItemToDelete(null);
+    },
+    onError: (error: any) => {
+      console.error('Error removing cause:', error);
+    },
+  });
+
+  // Mutation to remove collective from box
+  const removeCollectiveMutation = useMutation({
+    mutationFn: (collectiveId: string) => removeCollectiveFromBox(collectiveId),
+    onSuccess: () => {
+      console.log('Collective removed successfully');
+      queryClient.invalidateQueries({ queryKey: ['donationBox'] });
+      setShowDeleteModal(false);
+      setItemToDelete(null);
+    },
+    onError: (error: any) => {
+      console.error('Error removing collective:', error);
+    },
+  });
+
+  // Mutation to activate donation box
+  const activateBoxMutation = useMutation({
+    mutationFn: () => activateDonationBox(),
+    onSuccess: (response) => {
+      console.log('Donation box activated successfully');
+      // queryClient.invalidateQueries({ queryKey: ['donationBox'] });
+      // setCheckout(true);
+      window.location.href = response.checkout_url;
+    },
+    onError: (error: any) => {
+      console.error('Error activating donation box:', error);
+    },
+  });
+
+  // Handle delete confirmation
+  const handleDelete = () => {
+    if (itemToDelete) {
+      if (itemToDelete.type === 'cause') {
+        removeCauseMutation.mutate(itemToDelete.id);
+      } else {
+        removeCollectiveMutation.mutate(itemToDelete.id);
+      }
+    }
+  };
+
+  // Handle checkout button click
+  const handleCheckout = () => {
+    activateBoxMutation.mutate();
+  };
   const [showCardForm, setShowCardForm] = useState<boolean>(false);
   const [cardDetails, setCardDetails] = useState({
     cardNumber: "",
@@ -124,88 +205,138 @@ export const DonationBox3 = ({
   return (
     <div className="w-full h-full bg-white flex flex-col pb-24">
       <div className="flex-1 overflow-auto mt-2 mx-4">
-        {/* Selected Organizations Section */}
+        {/* Manual Causes Section */}
         <div className="bg-white rounded-xl mb-6 p-6 shadow-sm border border-gray-100">
           <h2 className="text-xl font-bold text-gray-800 mb-4">
-            Selected Organizations
+            Nonprofits
           </h2>
 
-          {/* Organization List */}
+          {/* Manual Causes List */}
           <div className="space-y-4">
-            {selectedOrganizations.map((orgName: string, index: number) => (
-              <div
-                key={`${orgName}-${index}`}
-                className="flex items-center p-4 border border-gray-200 rounded-lg"
-              >
-                <div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center mr-4">
-                  <span className="text-blue-600 font-semibold text-lg">
-                    {orgName.charAt(0)}
-                  </span>
-                </div>
-                <div className="flex-1">
-                  <h3 className="font-semibold text-gray-800">{orgName}</h3>
-                  <p className="text-sm text-gray-600">
-                    {getOrganizationDescription(orgName)}
-                  </p>
-                </div>
-                <div className="flex items-center gap-2">
-                  <button
-                    className="p-2 hover:bg-gray-100 rounded-full transition-colors"
-                    onClick={() => handleBookmarkOrganization(orgName)}
-                  >
-                    <svg
-                      className="w-5 h-5 text-gray-600"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
+            {manualCauses.length > 0 ? (
+              manualCauses.map((cause: any) => (
+                <div
+                  key={cause.id}
+                  className="flex items-center p-4 border border-gray-200 rounded-lg"
+                >
+                  <div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center mr-4">
+                    <span className="text-blue-600 font-semibold text-lg">
+                      {cause.name?.charAt(0) || 'C'}
+                    </span>
+                  </div>
+                  <div className="flex-1">
+                    <h3 className="font-semibold text-gray-800">{cause.name}</h3>
+                    <p className="text-sm text-gray-600">
+                      {cause.mission || 'Making a positive impact in the community'}
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <button
+                      className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+                      onClick={() => {
+                        setItemToDelete({ id: cause.id.toString(), name: cause.name, type: 'cause' });
+                        setShowDeleteModal(true);
+                      }}
                     >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"
-                      />
-                    </svg>
-                  </button>
-                  <button
-                    onClick={() => handleRemoveOrganization(orgName)}
-                    className="p-2 hover:bg-gray-100 rounded-full transition-colors"
-                  >
-                    <svg
-                      className="w-5 h-5 text-red-600"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-                      />
-                    </svg>
-                  </button>
+                      <svg
+                        className="w-5 h-5 text-red-600"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                        />
+                      </svg>
+                    </button>
+                  </div>
                 </div>
-              </div>
-            ))}
+              ))
+            ) : (
+              <p className="text-gray-500 text-center py-4">No manual causes added</p>
+            )}
+          </div>
+        </div>
+
+        {/* Attributing Collectives Section */}
+        <div className="bg-white rounded-xl mb-6 p-6 shadow-sm border border-gray-100">
+          <h2 className="text-xl font-bold text-gray-800 mb-4">
+            Collectives
+          </h2>
+
+          {/* Collectives List */}
+          <div className="space-y-4">
+            {attributingCollectives.length > 0 ? (
+              attributingCollectives.map((collective: any) => (
+                <div
+                  key={collective.id}
+                  className="flex items-center p-4 border border-gray-200 rounded-lg"
+                >
+                  <div className="w-12 h-12 rounded-full bg-purple-100 flex items-center justify-center mr-4">
+                    <span className="text-purple-600 font-semibold text-lg">
+                      {collective.name?.charAt(0) || 'C'}
+                    </span>
+                  </div>
+                  <div className="flex-1">
+                    <h3 className="font-semibold text-gray-800">{collective.name}</h3>
+                    <p className="text-sm text-gray-600">
+                      {collective.description || 'Community collective'}
+                    </p>
+                    {collective.creator && (
+                      <p className="text-xs text-gray-500 mt-1">
+                        Created by {collective.creator.first_name} {collective.creator.last_name}
+                      </p>
+                    )}
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <button
+                      className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+                      onClick={() => {
+                        setItemToDelete({ id: collective.id.toString(), name: collective.name, type: 'collective' });
+                        setShowDeleteModal(true);
+                      }}
+                    >
+                      <svg
+                        className="w-5 h-5 text-red-600"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                        />
+                      </svg>
+                    </button>
+                  </div>
+                </div>
+              ))
+            ) : (
+              <p className="text-gray-500 text-center py-4">No collectives attributed</p>
+            )}
           </div>
         </div>
 
         {/* Distribution Details */}
-        <div className="bg-blue-50 rounded-xl mb-6 p-6">
+        <div className="bg-blue-50 rounded-xl mb-10 p-6">
           <h3 className="text-lg font-semibold text-gray-800 mb-3">
             Distribution
           </h3>
           <p className="text-gray-600 text-sm mb-3">
-            Your ${donationAmount} becomes ${(donationAmount * 0.9).toFixed(2)}{" "}
+            Your ${actualDonationAmount} becomes ${(actualDonationAmount * 0.9).toFixed(2)}{" "}
             after fees, split evenly across causes. Your donation will be evenly
-            distributed across all {selectedOrganizations.length} organizations.
+            distributed across all {manualCauses.length} causes.
           </p>
           <div className="  text-blue-500 ">
             <span className="font-semibold">
-              Each organization receives: $
-              {selectedOrganizations.length > 0
-                ? (donationAmount / selectedOrganizations.length).toFixed(2)
+              Each cause receives: $
+              {manualCauses.length > 0
+                ? (actualDonationAmount / manualCauses.length).toFixed(2)
                 : "0.00"}{" "}
               per month
             </span>
@@ -220,7 +351,7 @@ export const DonationBox3 = ({
         </div> */}
 
         {/* Payment Method Selection */}
-        <div className="bg-white rounded-xl mb-6 p-6 shadow-sm border border-gray-100">
+        {/* <div className="bg-white rounded-xl mb-6 p-6 shadow-sm border border-gray-100">
           <h3 className="text-lg font-semibold text-gray-800 mb-2">
             Select Payment Method
           </h3>
@@ -229,7 +360,7 @@ export const DonationBox3 = ({
           </p>
 
           <div className="space-y-3">
-            {/* Apple Pay Option */}
+            
             <button
               type="button"
               className={`w-full flex items-center p-4 border rounded-lg transition-all cursor-pointer ${
@@ -274,7 +405,7 @@ export const DonationBox3 = ({
               )}
             </button>
 
-            {/* Credit/Debit Card Option */}
+            
             <button
               type="button"
               className={`w-full flex items-center p-4 border rounded-lg transition-all cursor-pointer ${
@@ -327,11 +458,11 @@ export const DonationBox3 = ({
               )}
             </button>
 
-            {/* Card Details Form */}
+            
             {showCardForm && selectedPaymentMethod === "card" && (
               <div className="mt-4 p-4  rounded-lg border border-gray-200">
                 <div className="space-y-4">
-                  {/* Card Number */}
+                  
                   <div>
                     <label
                       htmlFor="cardNumber"
@@ -353,7 +484,7 @@ export const DonationBox3 = ({
                     />
                   </div>
 
-                  {/* Expiry Date and CVV */}
+                  
                   <div className="grid grid-cols-2 gap-4">
                     <div>
                       <label
@@ -399,7 +530,7 @@ export const DonationBox3 = ({
                     </div>
                   </div>
 
-                  {/* Country and State */}
+                  
                   <div className="grid grid-cols-2 gap-4">
                     <div>
                       <label
@@ -412,7 +543,7 @@ export const DonationBox3 = ({
                         value={cardDetails.country}
                         onValueChange={(value) => {
                           handleCardDetailsChange("country", value);
-                          // Reset state when country changes
+                          
                           handleCardDetailsChange("state", "");
                         }}
                       >
@@ -471,7 +602,7 @@ export const DonationBox3 = ({
                     </div>
                   </div>
 
-                  {/* Zip Code */}
+                  
                   <div>
                     <label
                       htmlFor="zipCode"
@@ -498,11 +629,10 @@ export const DonationBox3 = ({
               </div>
             )}
           </div>
-        </div>
+        </div> */}
 
-        {/* Action Buttons */}
-        <div className="space-y-3 mb-6 fixed bottom-0 w-calc(100%-16px) left-0 right-0 mx-4">
-          {/*  md:left-auto md:w-[calc(100%-320px)] */}
+        
+        {/* <div className="space-y-3 mb-6 fixed bottom-0 w-calc(100%-16px) left-0 right-0 mx-4">
           <button
             onClick={() => setCheckout(true)}
             disabled={
@@ -546,14 +676,53 @@ export const DonationBox3 = ({
               return "Confirm your donation";
             })()}
           </button>
-          {/* <button className="w-full bg-gray-200 text-black py-3 rounded-lg font-medium transition-colors hover:bg-gray-300">
-            Not Now
-          </button> */}
-        </div>
+        </div> */}
+
+         {/* checkout button */}
+         <div className="space-y-1 mb-10 fixed bottom-0 w-calc(100%-16px) left-0 right-0 mx-4">
+           <Button 
+             className="w-full bg-green-500 hover:bg-green-600 text-white py-6 md:py-6 rounded-lg font-medium transition-colors flex items-center justify-center" 
+             onClick={handleCheckout}
+             disabled={activateBoxMutation.isPending}
+           >
+             {activateBoxMutation.isPending ? 'Activating...' : 'Checkout'}
+           </Button>
+         </div>
       </div>
 
       {/* Spacer for mobile */}
       {/* <div className="h-24 md:hidden"></div> */}
+
+      {/* Delete Confirmation Modal */}
+      <Dialog open={showDeleteModal} onOpenChange={setShowDeleteModal}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Confirm Removal</DialogTitle>
+            <DialogDescription>
+              Are you sure you want to remove {itemToDelete?.name} from your donation box? This action cannot be undone.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button 
+              variant="outline" 
+              onClick={() => {
+                setShowDeleteModal(false);
+                setItemToDelete(null);
+              }}
+              disabled={removeCauseMutation.isPending || removeCollectiveMutation.isPending}
+            >
+              Cancel
+            </Button>
+            <Button 
+              variant="destructive" 
+              onClick={handleDelete}
+              disabled={removeCauseMutation.isPending || removeCollectiveMutation.isPending}
+            >
+              {removeCauseMutation.isPending || removeCollectiveMutation.isPending ? 'Removing...' : 'Remove'}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

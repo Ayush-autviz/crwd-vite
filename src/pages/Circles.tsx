@@ -7,8 +7,10 @@ import { Link } from "react-router-dom";
 import Footer from "@/components/Footer";
 import { getCollectives, getJoinCollective } from "@/services/api/crwd";
 import { useQuery } from "@tanstack/react-query";
+import { useAuthStore } from "@/stores/store";
 
 const Circles = () => {
+  const { user: currentUser } = useAuthStore();
   const [activeTab, setActiveTab] = useState<"my-crwds" | "discover">(
     "my-crwds"
   );
@@ -22,7 +24,7 @@ const Circles = () => {
 
   const { data: joinCollectiveData, isLoading: isLoadingJoinCollective } = useQuery({
     queryKey: ['join-collective'],
-    queryFn: () => getJoinCollective(),
+    queryFn: () => getJoinCollective(currentUser?.id),
     enabled: true,
   });
 

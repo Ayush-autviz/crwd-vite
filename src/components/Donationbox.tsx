@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Minus, Plus } from "lucide-react";
+import { Minus, Plus, Search } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { DonationBox3 } from "./DonationBox3";
@@ -8,6 +8,12 @@ import { Checkout } from "./Checkout";
 
 import DonationHeader from "./donation/DonationHeader";
 import { Link } from "react-router-dom";
+import { useQuery, useMutation } from "@tanstack/react-query";
+import { getDonationBox, createDonationBox } from "@/services/api/donation";
+import { getCausesBySearch } from "@/services/api/crwd";
+import { getJoinCollective } from "@/services/api/crwd";
+import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
+import { useAuthStore } from "@/stores/store";
 
 interface DonationBoxProps {
   tab?: string;
@@ -24,13 +30,64 @@ const DonationBox = ({ tab = "setup", preselectedItem, activeTab }: DonationBoxP
   const [checkout, setCheckout] = useState(false);
   const [selectedOrganizations, setSelectedOrganizations] = useState<string[]>([]);
   const [preselectedItemAdded, setPreselectedItemAdded] = useState(false);
+  const { user: currentUser } = useAuthStore();
 
   const [donationAmount, setDonationAmount] = useState(10);
   const [step, setStep] = useState(1);
   const [inputValue, setInputValue] = useState("10");
+  
+  // Step 1 state
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedCauseIds, setSelectedCauseIds] = useState<number[]>([]);
+  const [selectedCollectiveIds, setSelectedCollectiveIds] = useState<number[]>([]);
 
-  // const step = 2;
   const isMobile = useIsMobile();
+
+  const { data: donationBox } = useQuery({
+    queryKey: ['donationBox'],
+    queryFn: () => getDonationBox(),
+  });
+
+  // Set step based on donation box existence
+  useEffect(() => {
+    if (donationBox && donationBox.id) {
+      if(donationBox.is_active) {
+        setCheckout(true);
+      }
+      setStep(2); // Show step 2 if donation box exists
+    } else {
+      setStep(1); // Show step 1 if no donation box
+    }
+  }, [donationBox]);
+
+  // Get causes with search
+  const { data: causesData, isLoading: causesLoading } = useQuery({
+    queryKey: ['causes', searchQuery],
+    queryFn: () => getCausesBySearch(searchQuery, '', 1),
+    enabled: true,
+  });
+
+  // Get joined collectives
+  const { data: joinedCollectivesData } = useQuery({
+    queryKey: ['joined-collectives'],
+    queryFn: () => getJoinCollective(currentUser?.id),
+    enabled: true,
+  });
+
+  // Create donation box mutation
+  const createBoxMutation = useMutation({
+    mutationFn: createDonationBox,
+    onSuccess: () => {
+      console.log('Donation box created successfully');
+      setStep(2);
+    },
+    onError: (error: any) => {
+      console.error('Error creating donation box:', error);
+    },
+  });
+
+  console.log(donationBox, "donationBox");
+
 
   // Handle preselected item from navigation
   useEffect(() => {
@@ -73,14 +130,6 @@ const DonationBox = ({ tab = "setup", preselectedItem, activeTab }: DonationBoxP
     setInputValue(finalValue.toString());
   };
 
-  const toggleOrganization = (orgName: string) => {
-    setSelectedOrganizations((prev) =>
-      prev.includes(orgName)
-        ? prev.filter((org) => org !== orgName)
-        : [...prev, orgName]
-    );
-  };
-
   console.log(selectedOrganizations, "ork");
 
   return (
@@ -90,6 +139,7 @@ const DonationBox = ({ tab = "setup", preselectedItem, activeTab }: DonationBoxP
           onBack={() => setCheckout(false)}
           selectedOrganizations={selectedOrganizations}
           donationAmount={donationAmount}
+          donationBox={donationBox}
         />
       ) : (
         <>
@@ -260,19 +310,127 @@ const DonationBox = ({ tab = "setup", preselectedItem, activeTab }: DonationBoxP
                     </div> */}
                   </div>
 
-                  {/* Choose Organizations Section */}
+                  {/* Choose Nonprofit to Support Section */}
                   <div className="bg-white rounded-xl mb-6 p-6 shadow-sm border border-gray-100">
                     <h2 className="text-xl font-bold text-gray-800 mb-4">
-                      Choose organizations to support
+                      Choose nonprofit to support
                     </h2>
+                    
+                    {/* Search Bar */}
+                    <div className="relative mb-4">
+                      <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+                      <input
+                        type="text"
+                        placeholder="Search nonprofits..."
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                        className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      />
+                    </div>
 
-                    {/* Organization List */}
-                    <div className="space-y-4">
-                      {/* Hunger Initiative */}
-                      <div
-                        className="flex items-center p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors cursor-pointer"
-                        onClick={() => toggleOrganization("Hunger Initiative")}
-                      >
+                    {/* Nonprofits List - Max 5 */}
+                    <div className="space-y-3">
+                      {causesLoading ? (
+                        <p className="text-gray-500 text-center">Loading...</p>
+                      ) : causesData?.results?.length > 0 ? (
+                        causesData.results.slice(0, 5).map((cause: any) => {
+                          const isSelected = selectedCauseIds.includes(cause.id);
+                          return (
+                            <div
+                              key={cause.id}
+                              className="flex items-center p-3 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors cursor-pointer"
+                              onClick={() => {
+                                if (isSelected) {
+                                  setSelectedCauseIds(selectedCauseIds.filter(id => id !== cause.id));
+                                } else {
+                                  setSelectedCauseIds([...selectedCauseIds, cause.id]);
+                                }
+                              }}
+                            >
+                              <div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center mr-3">
+                                {/* <img src={cause.logo || '/default-logo.png'} alt={cause.name} className="w-12 h-12 rounded-full object-cover" /> */}
+                                <Avatar className="w-12 h-12 rounded-full object-cover">
+                                  <AvatarImage src={cause.logo || '/default-logo.png'} />
+                                  <AvatarFallback>
+                                    {cause.name.charAt(0)}
+                                  </AvatarFallback>
+                                </Avatar>
+                              </div>
+                              <div className="flex-1">
+                                <h3 className="font-semibold text-gray-800">{cause.name}</h3>
+                                <p className="text-sm text-gray-600">{cause.description}</p>
+                              </div>
+                              <div className={`w-6 h-6 rounded-full flex items-center justify-center ${isSelected ? 'bg-blue-600' : 'border-2 border-gray-300'}`}>
+                                {isSelected && (
+                                  <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                                  </svg>
+                                )}
+                              </div>
+                            </div>
+                          );
+                        })
+                      ) : (
+                        <p className="text-gray-500 text-center">No nonprofits found</p>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Choose Collective to Support Section */}
+                  <div className="bg-white rounded-xl mb-6 p-6 shadow-sm border border-gray-100">
+                    <h2 className="text-xl font-bold text-gray-800 mb-4">
+                      Choose collective to support
+                    </h2>
+                    
+                    {/* Joined Collectives List */}
+                    <div className="space-y-3">
+                      {joinedCollectivesData?.data?.length > 0 ? (
+                        joinedCollectivesData.data.map((item: any) => {
+                          const collective = item.collective;
+                          const isSelected = selectedCollectiveIds.includes(collective.id);
+                          return (
+                            <div
+                              key={collective.id}
+                              className="flex items-center p-3 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors cursor-pointer"
+                              onClick={() => {
+                                if (isSelected) {
+                                  setSelectedCollectiveIds(selectedCollectiveIds.filter(id => id !== collective.id));
+                                } else {
+                                  setSelectedCollectiveIds([...selectedCollectiveIds, collective.id]);
+                                }
+                              }}
+                            >
+                              <div className="w-12 h-12 rounded-full bg-purple-100 flex items-center justify-center mr-3">
+                                {/* <img src={collective.cover_image || '/default-collective.png'} alt={collective.name} className="w-12 h-12 rounded-full object-cover" /> */}
+                                <Avatar className="w-12 h-12 rounded-full object-cover">
+                                  <AvatarImage src={collective.cover_image || '/default-collective.png'} />
+                                  <AvatarFallback>
+                                    {collective.name.charAt(0)}
+                                  </AvatarFallback>
+                                </Avatar>
+                              </div>
+                              <div className="flex-1">
+                                <h3 className="font-semibold text-gray-800">{collective.name}</h3>
+                                <p className="text-sm text-gray-600">{collective.description}</p>
+                              </div>
+                              <div className={`w-6 h-6 rounded-full flex items-center justify-center ${isSelected ? 'bg-blue-600' : 'border-2 border-gray-300'}`}>
+                                {isSelected && (
+                                  <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                                  </svg>
+                                )}
+                              </div>
+                            </div>
+                          );
+                        })
+                      ) : (
+                        <p className="text-gray-500 text-center">No joined collectives</p>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Old hardcoded organization list removed - now using API data above */}
+                  {/* <div className="space-y-4">
                         <div className="w-12 h-12 rounded-full bg-orange-100 flex items-center justify-center mr-4">
                           <span className="text-orange-600 font-semibold text-lg">
                             H
@@ -309,170 +467,44 @@ const DonationBox = ({ tab = "setup", preselectedItem, activeTab }: DonationBoxP
                             </svg>
                           )}
                         </div>
-                      </div>
+                      </div> */}
 
                       {/* Clean Water Initiative */}
-                      <div
-                        className="flex items-center p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors cursor-pointer"
-                        onClick={() =>
-                          toggleOrganization("Clean Water Initiative")
-                        }
-                      >
-                        <div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center mr-4">
-                          <span className="text-blue-600 font-semibold text-lg">
-                            C
-                          </span>
-                        </div>
-                        <div className="flex-1">
-                          <h3 className="font-semibold text-gray-800">
-                            Clean Water Initiative
-                          </h3>
-                          <p className="text-sm text-gray-600">
-                            Providing clean water access
-                          </p>
-                        </div>
-                        <div
-                          className={`w-6 h-6 rounded-full flex items-center justify-center ${
-                            selectedOrganizations.includes(
-                              "Clean Water Initiative"
-                            )
-                              ? "bg-blue-600"
-                              : "border-2 border-gray-300"
-                          }`}
-                        >
-                          {selectedOrganizations.includes(
-                            "Clean Water Initiative"
-                          ) && (
-                            <svg
-                              className="w-4 h-4 text-white"
-                              fill="currentColor"
-                              viewBox="0 0 20 20"
-                            >
-                              <path
-                                fillRule="evenodd"
-                                d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                                clipRule="evenodd"
-                              />
-                            </svg>
-                          )}
-                        </div>
-                      </div>
+                    
 
-                      {/* Education for All */}
-                      <div
-                        className="flex items-center p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors cursor-pointer"
-                        onClick={() => toggleOrganization("Education for All")}
-                      >
-                        <div className="w-12 h-12 rounded-full bg-green-100 flex items-center justify-center mr-4">
-                          <span className="text-green-600 font-semibold text-lg">
-                            E
-                          </span>
-                        </div>
-                        <div className="flex-1">
-                          <h3 className="font-semibold text-gray-800">
-                            Education for All
-                          </h3>
-                          <p className="text-sm text-gray-600">
-                            Quality education access
-                          </p>
-                        </div>
-                        <div
-                          className={`w-6 h-6 rounded-full flex items-center justify-center ${
-                            selectedOrganizations.includes("Education for All")
-                              ? "bg-blue-600"
-                              : "border-2 border-gray-300"
-                          }`}
-                        >
-                          {selectedOrganizations.includes(
-                            "Education for All"
-                          ) && (
-                            <svg
-                              className="w-4 h-4 text-white"
-                              fill="currentColor"
-                              viewBox="0 0 20 20"
-                            >
-                              <path
-                                fillRule="evenodd"
-                                d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                                clipRule="evenodd"
-                              />
-                            </svg>
-                          )}
-                        </div>
-                      </div>
+                     
 
-                      {/* Related Section */}
-                      <div className="mt-6">
-                        <h3 className="font-semibold text-gray-800 mb-3">
-                          Related
-                        </h3>
-
-                        {/* Animal Rescue Network */}
-                        <div
-                          className="flex items-center p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors cursor-pointer"
-                          onClick={() =>
-                            toggleOrganization("Animal Rescue Network")
-                          }
-                        >
-                          <div className="w-12 h-12 rounded-full bg-purple-100 flex items-center justify-center mr-4">
-                            <span className="text-purple-600 font-semibold text-lg">
-                              A
-                            </span>
-                          </div>
-                          <div className="flex-1">
-                            <h3 className="font-semibold text-gray-800">
-                              Animal Rescue Network
-                            </h3>
-                            <p className="text-sm text-gray-600">
-                              Rescuing and caring for animals
-                            </p>
-                          </div>
-                          <div
-                            className={`w-6 h-6 rounded-full flex items-center justify-center ${
-                              selectedOrganizations.includes(
-                                "Animal Rescue Network"
-                              )
-                                ? "bg-blue-600"
-                                : "border-2 border-gray-300"
-                            }`}
-                          >
-                            {selectedOrganizations.includes(
-                              "Animal Rescue Network"
-                            ) && (
-                              <svg
-                                className="w-4 h-4 text-white"
-                                fill="currentColor"
-                                viewBox="0 0 20 20"
-                              >
-                                <path
-                                  fillRule="evenodd"
-                                  d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                                  clipRule="evenodd"
-                                />
-                              </svg>
-                            )}
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
+                   
+                    {/* </div> */}
+                  {/* </div> */}
 
                   {/* Summary and Next Button */}
-                  <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100 mb-6 fixed bottom-0 w-calc(100%-16px) left-0 right-0 mx-4">
+                <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100 mb-6 fixed bottom-0 w-calc(100%-16px) left-0 right-0 mx-4">
                     <div className="flex justify-between items-center">
                       <div>
                         <p className="text-lg font-semibold text-gray-800">
                           ${donationAmount} per month
                         </p>
                         <p className="text-sm text-gray-600">
-                          {selectedOrganizations.length} organizations selected
+                          {selectedCauseIds.length} nonprofits, {selectedCollectiveIds.length} collectives
                         </p>
                       </div>
                       <button
-                        onClick={() => setStep(2)}
-                        className="bg-blue-600 text-white px-8 py-3 rounded-lg font-medium transition-colors hover:bg-blue-700 flex items-center"
+                        onClick={() => {
+                          // Call API to create donation box
+                          createBoxMutation.mutate({
+                            monthly_amount: donationAmount,
+                            cause_ids: selectedCauseIds,
+                            collective_ids: selectedCollectiveIds,
+                          });
+                        }}
+                        disabled={createBoxMutation.isPending || (selectedCauseIds.length === 0 && selectedCollectiveIds.length === 0)}
+                        className={cn(
+                          "text-white px-8 py-3 rounded-lg font-medium transition-colors flex items-center",
+                          createBoxMutation.isPending || (selectedCauseIds.length === 0 && selectedCollectiveIds.length === 0) ? "bg-gray-400 cursor-not-allowed" : "bg-blue-600 hover:bg-blue-700"
+                        )}
                       >
-                        Next
+                        {createBoxMutation.isPending ? 'Creating...' : 'Next'}
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
                           width="18"
@@ -494,23 +526,14 @@ const DonationBox = ({ tab = "setup", preselectedItem, activeTab }: DonationBoxP
 
                   {/* <div className="h-24 md:hidden"></div> */}
                 </div>
-              ) : // ) : step === 2 ? (
-              //   //@ts-ignore
-              //   <DonationBox2
-              //     step={step}
-              //     selectedOrganizations={selectedOrganizations}
-              //     setSelectedOrganizations={setSelectedOrganizations}
-              //     setStep={setStep}
-              //   />
-              step === 2 ? (
+              ) : step === 2 ? (
                 //@ts-ignore
                 <DonationBox3
                   setCheckout={setCheckout}
-                  step={step}
                   selectedOrganizations={selectedOrganizations}
                   setSelectedOrganizations={setSelectedOrganizations}
-                  setStep={setStep}
                   donationAmount={donationAmount}
+                  donationBox={donationBox}
                 />
               ) : (
                 <div className="flex-1 mx-4 mt-4 mb-4 flex flex-col">
@@ -590,7 +613,7 @@ const DonationBox = ({ tab = "setup", preselectedItem, activeTab }: DonationBoxP
                     </button>
                   </div>
                   {/* Donation Amount Selector */}
-                </div> // Optional default
+                </div>
               )}
             </>
           )}

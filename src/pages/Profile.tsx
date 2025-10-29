@@ -340,13 +340,13 @@ export default function ProfilePage() {
             </div> */}
             <div className="flex justify-between items-center px-4">
               <h2 className="text-lg font-semibold">Recently Supported</h2>
-              <Link
+              {/* <Link
                 to="/interests"
                 className="text-sm text-blue-500 underline flex items-center gap-1"
               >
                 More
                 <ChevronRight className="w-4 h-4" />
-              </Link>
+              </Link> */}
             </div>
 
             <div className="flex items-center px-4 justify-between">

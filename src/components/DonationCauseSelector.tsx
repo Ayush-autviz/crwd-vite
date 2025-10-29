@@ -5,6 +5,7 @@ import { Input } from './ui/input';
 import { Avatar, AvatarImage, AvatarFallback } from './ui/avatar';
 import { useQuery } from '@tanstack/react-query';
 import { getCausesBySearch, getCollectivesBySearch, getJoinCollective } from '@/services/api/crwd';
+import { useAuthStore } from '@/stores/store';
 
 interface Cause {
   id: number;
@@ -59,6 +60,7 @@ export default function DonationCauseSelector({
   const [showSearchResults, setShowSearchResults] = useState(false);
   const [preselectedItemAdded, setPreselectedItemAdded] = useState(false);
   const [userChangedTab, setUserChangedTab] = useState(false);
+  const { user: currentUser } = useAuthStore();
 
   // Handle preselected item and active tab from navigation
   useEffect(() => {
@@ -98,7 +100,7 @@ export default function DonationCauseSelector({
   // Fetch joined collectives - always fetch when collective tab is selected
   const { data: joinedCollectivesData, isLoading: joinedCollectivesLoading } = useQuery({
     queryKey: ['joinedCollectives'],
-    queryFn: () => getJoinCollective(),
+    queryFn: () => getJoinCollective(currentUser?.id),
     enabled: selectedType === 'collective' && !showSearchResults,
   });
 

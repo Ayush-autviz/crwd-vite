@@ -23,6 +23,7 @@ import {
 } from "lucide-react";
 import ProfileNavbar from "@/components/profile/ProfileNavbar";
 import { Link, useLocation } from "react-router-dom";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 const recentSearches = [
   "Atlanta animal shelters",
@@ -202,15 +203,21 @@ export default function SearchPage() {
                   </div>
                 ) : allCauses.length > 0 ? (
                   allCauses.map((cause, index) => (
-                    <Link to={`/cause?causeId=${cause.id}`} key={cause.id || index} className="block">
+                    <Link to={`/cause/${cause.id}`} key={cause.id || index} className="block">
                       <div className="flex items-center justify-between p-4 rounded-lg hover:bg-muted/50 cursor-pointer transition-colors">
                         <div className="flex items-center gap-3 flex-1 min-w-0 mr-4">
                           <div className="w-10 h-10 rounded-full overflow-hidden flex-shrink-0 bg-gray-100">
-                            <img
+                            {/* <img
                               src={cause.image || "/placeholder.svg"}
                               alt={cause.name}
                               className="w-full h-full object-cover"
-                            />
+                            /> */}
+                            <Avatar className="h-10 w-10 rounded-full">
+                              <AvatarImage src={cause.image} />
+                              <AvatarFallback>
+                                {cause.name.charAt(0).toUpperCase()}
+                              </AvatarFallback>
+                            </Avatar>
                           </div>
                           <div className="min-w-0 flex-1">
                             <div className="bg-blue-50 px-3 py-1 rounded-sm w-fit mb-1">

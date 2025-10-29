@@ -310,11 +310,17 @@ export default function HomePage() {
                   <div className="flex items-center justify-between p-4 rounded-lg hover:bg-muted/50 cursor-pointer transition-colors">
                     <div className="flex items-center gap-3 flex-1 min-w-0 mr-4">
                       <div className="w-10 h-10 rounded-full overflow-hidden flex-shrink-0">
-                        <img
+                        {/* <img
                           src={cause.image}
                           alt={cause.name}
                           className="w-full h-full object-cover"
-                        />
+                        /> */}
+                        <Avatar className="h-10 w-10 rounded-full">
+                          <AvatarImage src={cause.image} />
+                          <AvatarFallback>
+                            {cause.name.charAt(0).toUpperCase()}
+                          </AvatarFallback>
+                        </Avatar>
                       </div>
                       <div className="min-w-0 flex-1">
                         <div

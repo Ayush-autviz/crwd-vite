@@ -11,12 +11,14 @@ interface DonationOverviewProps {
   donationAmount?: number;
   onBack?: () => void;
   selectedOrganizations: string[];
+  donationBox?: any;
 }
 
 export const Checkout = ({
   donationAmount = 25,
   onBack = () => {},
   selectedOrganizations: selectedOrgIds,
+  donationBox,
 }: DonationOverviewProps) => {
   const [showManageDonationBox, setShowManageDonationBox] = useState(false);
   const [localSelectedOrgs, setLocalSelectedOrgs] = useState(selectedOrgIds);
@@ -26,6 +28,16 @@ export const Checkout = ({
     width: window.innerWidth,
     height: window.innerHeight,
   });
+
+  // Get manual causes and attributing collectives from donation box API
+  const manualCauses = donationBox?.manual_causes || [];
+  const attributingCollectives = donationBox?.attributing_collectives || [];
+  const actualDonationAmount = parseFloat(donationBox?.monthly_amount || donationAmount.toString());
+  
+  // Use API data if available, otherwise fall back to selectedOrganizations
+  const hasApiData = manualCauses.length > 0 || attributingCollectives.length > 0;
+  const totalCauses = manualCauses.length;
+  const totalCollectives = attributingCollectives.length;
 
   // Show success modal when component mounts
   useEffect(() => {
@@ -72,8 +84,8 @@ export const Checkout = ({
     return org?.color || "#4F46E5"; // Default color
   };
 
-  // Use organization names directly (like DonationBox3)
-  const selectedOrganizations = localSelectedOrgs;
+  // Use organization names directly (like DonationBox3) - fallback to local state if no API data
+  const selectedOrganizations = hasApiData ? [] : localSelectedOrgs;
 
   const handleRemoveOrganization = (orgName: string) => {
     setLocalSelectedOrgs((prev) => prev.filter((name) => name !== orgName));
@@ -90,22 +102,42 @@ export const Checkout = ({
   };
 
   // Calculate equal distribution percentage
+  const totalItems = hasApiData 
+    ? (totalCauses + totalCollectives)
+    : selectedOrganizations.length;
   const distributionPercentage =
-    selectedOrganizations.length > 0
-      ? Math.floor(100 / selectedOrganizations.length)
+    totalItems > 0
+      ? Math.floor(100 / totalItems)
       : 0;
 
   if (showManageDonationBox) {
-    // Convert organization names to Organization objects for ManageDonationBox
-    const causesAsObjects = selectedOrganizations.map(
-      (orgName: string, index: number) => ({
-        id: `${orgName}-${index}`,
-        name: orgName,
-        imageUrl: "",
-        color: getOrganizationColor(orgName),
-        description: getOrganizationDescription(orgName),
-      })
-    );
+    // Convert API data to Organization objects for ManageDonationBox
+    const causesAsObjects = hasApiData 
+      ? [
+          ...manualCauses.map((cause: any) => ({
+            id: `cause-${cause.id}`,
+            name: cause.name,
+            imageUrl: cause.logo || "",
+            color: "#4F46E5",
+            description: cause.mission || cause.description || "",
+          })),
+          ...attributingCollectives.map((collective: any) => ({
+            id: `collective-${collective.id}`,
+            name: collective.name,
+            imageUrl: collective.cover_image || "",
+            color: "#9333EA",
+            description: collective.description || "",
+          })),
+        ]
+      : selectedOrganizations.map(
+          (orgName: string, index: number) => ({
+            id: `${orgName}-${index}`,
+            name: orgName,
+            imageUrl: "",
+            color: getOrganizationColor(orgName),
+            description: getOrganizationDescription(orgName),
+          })
+        );
 
     // Create a wrapper function that converts ID back to organization name
     const handleRemoveFromManageBox = (id: string) => {
@@ -116,7 +148,7 @@ export const Checkout = ({
 
     return (
       <ManageDonationBox
-        amount={donationAmount}
+        amount={actualDonationAmount}
         causes={causesAsObjects}
         onBack={() => setShowManageDonationBox(false)}
         onRemove={handleRemoveFromManageBox}
@@ -145,7 +177,7 @@ export const Checkout = ({
       {/* Blue Card */}
       <div className="bg-blue-600 text-white p-5 pb-8 mx-4 mt-4 rounded-xl shadow-md mb-6">
         <div className="flex flex-col items-center mt-2">
-          <div className="text-5xl font-bold mb-1">${donationAmount}</div>
+          <div className="text-5xl font-bold mb-1">${actualDonationAmount}</div>
           <div className="text-base flex items-center gap-1">
             per month <HelpCircle size={16} />
           </div>
@@ -153,12 +185,12 @@ export const Checkout = ({
         <div className="flex mt-8 mb-2 divide-x divide-white/20">
           <div className="flex-1 text-center">
             <div className="text-2xl font-bold">
-              {selectedOrganizations.length}
+              {totalCauses}
             </div>
             <div className="text-sm">Causes</div>
           </div>
           <div className="flex-1 text-center">
-            <div className="text-2xl font-bold">2</div>
+            <div className="text-2xl font-bold">{totalCollectives}</div>
             <div className="text-sm">CRWDS</div>
           </div>
           <div className="flex-1 flex justify-center items-center pl-4">
@@ -190,44 +222,156 @@ export const Checkout = ({
 
       {/* CAUSES Section */}
       <div className="flex-1 overflow-auto">
-        <div className="flex items-center mb-4 px-8">
-          <h2 className="text-base font-semibold text-gray-700 uppercase tracking-wide">
-            CAUSES
-          </h2>
-          <HelpCircle size={16} className="ml-2 text-gray-500" />
-        </div>
-        <div className="space-y-2">
-          {selectedOrganizations.map((orgName: string, index: number) => (
-            <div
-              key={`${orgName}-${index}`}
-              className="flex gap-4 items-center bg-white px-8 py-4 border-b border-gray-200"
-            >
-              <div className="w-12 h-12 flex-shrink-0 rounded-lg overflow-hidden shadow">
-                <div
-                  className="w-full h-full flex items-center justify-center text-lg font-bold text-white"
-                  style={{ backgroundColor: getOrganizationColor(orgName) }}
-                >
-                  {orgName.charAt(0)}
-                </div>
-              </div>
-              <div className="flex-1">
-                <div className="flex justify-between items-start mb-1">
-                  <div>
-                    <h3 className="font-semibold text-gray-900 text-base">
-                      {orgName}
-                    </h3>
-                    <p className="text-xs text-gray-500 line-clamp-2 mt-1">
-                      {getOrganizationDescription(orgName)}
-                    </p>
-                  </div>
-                  <div className="text-blue-600 font-semibold text-sm">
-                    {distributionPercentage}%
-                  </div>
-                </div>
-              </div>
+        {/* Manual Causes from API */}
+        {manualCauses.length > 0 && (
+          <>
+            <div className="flex items-center mb-4 px-8">
+              <h2 className="text-base font-semibold text-gray-700 uppercase tracking-wide">
+                NONPROFITS
+              </h2>
+              {/* <HelpCircle size={16} className="ml-2 text-gray-500" /> */}
             </div>
-          ))}
-        </div>
+            <div className="space-y-2">
+              {manualCauses.map((cause: any, index: number) => (
+                <div
+                  key={`cause-${cause.id}-${index}`}
+                  className="flex gap-4 items-center bg-white px-8 py-4 border-b border-gray-200"
+                >
+                  <div className="w-12 h-12 flex-shrink-0 rounded-lg overflow-hidden shadow">
+                    {cause.logo ? (
+                      <img
+                        src={cause.logo}
+                        alt={cause.name}
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <div
+                        className="w-full h-full flex items-center justify-center text-lg font-bold text-white bg-blue-500"
+                      >
+                        {cause.name?.charAt(0) || 'C'}
+                      </div>
+                    )}
+                  </div>
+                  <div className="flex-1">
+                    <div className="flex justify-between items-start mb-1">
+                      <div>
+                        <h3 className="font-semibold text-gray-900 text-base">
+                          {cause.name}
+                        </h3>
+                        <p className="text-xs text-gray-500 line-clamp-2 mt-1">
+                          {cause.mission || cause.description || 'Making a positive impact in the community'}
+                        </p>
+                      </div>
+                      <div className="text-blue-600 font-semibold text-sm">
+                        {distributionPercentage}%
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </>
+        )}
+
+        {/* Collectives Section */}
+        {attributingCollectives.length > 0 && (
+          <>
+            <div className="flex items-center mb-4 px-8 mt-6">
+              <h2 className="text-base font-semibold text-gray-700 uppercase tracking-wide">
+                COLLECTIVES
+              </h2>
+              {/* <HelpCircle size={16} className="ml-2 text-gray-500" /> */}
+            </div>
+            <div className="space-y-2">
+              {attributingCollectives.map((collective: any, index: number) => (
+                <div
+                  key={`collective-${collective.id}-${index}`}
+                  className="flex gap-4 items-center bg-white px-8 py-4 border-b border-gray-200"
+                >
+                  <div className="w-12 h-12 flex-shrink-0 rounded-lg overflow-hidden shadow">
+                    {collective.cover_image ? (
+                      <img
+                        src={collective.cover_image}
+                        alt={collective.name}
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <div
+                        className="w-full h-full flex items-center justify-center text-lg font-bold text-white bg-purple-500"
+                      >
+                        {collective.name?.charAt(0) || 'C'}
+                      </div>
+                    )}
+                  </div>
+                  <div className="flex-1">
+                    <div className="flex justify-between items-start mb-1">
+                      <div>
+                        <h3 className="font-semibold text-gray-900 text-base">
+                          {collective.name}
+                        </h3>
+                        <p className="text-xs text-gray-500 line-clamp-2 mt-1">
+                          {collective.description || 'Community collective'}
+                        </p>
+                        {/* {collective.creator && (
+                          <p className="text-xs text-gray-400 mt-1">
+                            Created by {collective.creator.first_name} {collective.creator.last_name}
+                          </p>
+                        )} */}
+                      </div>
+                      <div className="text-blue-600 font-semibold text-sm">
+                        {distributionPercentage}%
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </>
+        )}
+
+        {/* Fallback to selectedOrganizations if no API data */}
+        {!hasApiData && selectedOrganizations.length > 0 && (
+          <>
+            <div className="flex items-center mb-4 px-8">
+              <h2 className="text-base font-semibold text-gray-700 uppercase tracking-wide">
+                CAUSES
+              </h2>
+              <HelpCircle size={16} className="ml-2 text-gray-500" />
+            </div>
+            <div className="space-y-2">
+              {selectedOrganizations.map((orgName: string, index: number) => (
+                <div
+                  key={`${orgName}-${index}`}
+                  className="flex gap-4 items-center bg-white px-8 py-4 border-b border-gray-200"
+                >
+                  <div className="w-12 h-12 flex-shrink-0 rounded-lg overflow-hidden shadow">
+                    <div
+                      className="w-full h-full flex items-center justify-center text-lg font-bold text-white"
+                      style={{ backgroundColor: getOrganizationColor(orgName) }}
+                    >
+                      {orgName.charAt(0)}
+                    </div>
+                  </div>
+                  <div className="flex-1">
+                    <div className="flex justify-between items-start mb-1">
+                      <div>
+                        <h3 className="font-semibold text-gray-900 text-base">
+                          {orgName}
+                        </h3>
+                        <p className="text-xs text-gray-500 line-clamp-2 mt-1">
+                          {getOrganizationDescription(orgName)}
+                        </p>
+                      </div>
+                      <div className="text-blue-600 font-semibold text-sm">
+                        {distributionPercentage}%
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </>
+        )}
 
         {/* Give Together Section */}
         <div className="mx-8 mt-6 mb-6">
@@ -329,9 +473,9 @@ export const Checkout = ({
                     <h3 className="font-semibold text-gray-900">
                       Monthly Donation Box
                     </h3>
-                    <div className="flex items-center gap-2 mt-1">
+                      <div className="flex items-center gap-2 mt-1">
                       <span className="text-sm text-gray-600">
-                        ${donationAmount}/month
+                        ${actualDonationAmount}/month
                       </span>
                     </div>
                   </div>
@@ -339,7 +483,7 @@ export const Checkout = ({
               </div>
 
               <p className="text-gray-600 mb-6">
-                Supporting {selectedOrganizations.length} nonprofits with your
+                Supporting {totalItems} {totalItems === 1 ? 'organization' : 'organizations'} with your
                 monthly donation.
               </p>
 

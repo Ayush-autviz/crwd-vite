@@ -105,8 +105,8 @@ export const joinCollective = async (id: string) => {
     return response.data;
 };
 
-export const getJoinCollective = async () => {
-    const response = await axiosClient.get(`/crwd/joined-collectives/`);
+export const getJoinCollective = async (id: string) => {
+    const response = await axiosClient.get(`/crwd/joined-collectives/?user_id=${id}`);
     return response.data;
 };
 

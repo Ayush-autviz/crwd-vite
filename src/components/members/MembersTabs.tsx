@@ -9,23 +9,10 @@ import { Card, CardContent } from "@/components/ui/card";
 import ProfileNavbar from "@/components/profile/ProfileNavbar";
 import { Link } from "react-router-dom";
 import { Button } from "../ui/button";
-import { ChevronRight, Search } from "lucide-react";
-import { Avatar } from "../ui/avatar";
+import { Search } from "lucide-react";
 import { getCollectiveMembers } from "@/services/api/crwd";
 import { useQuery } from "@tanstack/react-query";
-
-const members = [
-  { name: "Chad F.", username: "chad", connected: true },
-  { name: "Mia Cares", username: "miacares1", connected: false },
-  { name: "Conrad M.", username: "conradm1", connected: false },
-  { name: "Morgan Wallace", username: "moremorgan", connected: false },
-  { name: "Ashton Thomas", username: "ash_t2001", connected: false },
-  { name: "Marc Paul", username: "makinmymarc", connected: false },
-  { name: "Cara Cara", username: "carebear", connected: false },
-  { name: "Raquel Wells", username: "rawells", connected: false },
-  { name: "Bethany Burke", username: "bburke", connected: false },
-  { name: "Max Fields", username: "maxf", connected: false },
-];
+import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 
 const MembersTabs: React.FC<{ tab?: string, collectiveData?: any }> = ({ tab = "Members", collectiveData }) => {
   const [search, setSearch] = useState("");
@@ -47,29 +34,6 @@ const MembersTabs: React.FC<{ tab?: string, collectiveData?: any }> = ({ tab = "
   });
 
   console.log(membersData);
-
-  
-  const suggestedCauses = [
-    {
-      name: "The Red Cross",
-      description: "An health organization that...",
-      image: "/grocery.jpg",
-      type: "Nonprofit",
-    },
-    {
-      name: "St. Judes",
-      description: "The leading children's hea...",
-      image: "/grocery.jpg",
-      type: "Nonprofit",
-    },
-    {
-      name: "Women's Healthcare of At...",
-      description: "We are Atlanta's #1 healthca...",
-      image: "/grocery.jpg",
-      type: "Nonprofit",
-    },
-  ];
-
   console.log(collectiveData);
 
   return (
@@ -105,11 +69,17 @@ const MembersTabs: React.FC<{ tab?: string, collectiveData?: any }> = ({ tab = "
                     <div className="flex items-center justify-between p-2 rounded-lg hover:bg-muted/50 cursor-pointer transition-colors">
                       <div className="flex items-center gap-3 flex-1 min-w-0 mr-4">
                         <div className="w-10 h-10 rounded-full overflow-hidden flex-shrink-0">
-                          <img
+                          {/* <img
                             src={cause.cause.image}
                             alt={cause.name}
                             className="w-full h-full object-cover"
-                          />
+                          /> */}
+                          <Avatar className="w-10 h-10 rounded-full object-cover">
+                            <AvatarImage src={cause.cause.image} />
+                            <AvatarFallback>
+                              {cause.cause.name.charAt(0)}
+                            </AvatarFallback>
+                          </Avatar>
                         </div>
                         <div className="min-w-0 flex-1">
                           <div
@@ -228,11 +198,17 @@ const MembersTabs: React.FC<{ tab?: string, collectiveData?: any }> = ({ tab = "
                           <div className="flex items-center justify-between p-2 rounded-lg hover:bg-muted/50 cursor-pointer transition-colors">
                             <div className="flex items-center gap-3 flex-1 min-w-0 mr-4">
                               <div className="w-10 h-10 rounded-full overflow-hidden flex-shrink-0">
-                                <img
+                                {/* <img
                                   src={cause.image}
                                   alt={cause.name}
                                   className="w-full h-full object-cover"  
-                                />
+                                /> */}
+                                <Avatar className="w-10 h-10 rounded-full object-cover">
+                                  <AvatarImage src={cause.cause.image} />
+                                  <AvatarFallback>
+                                    {cause.cause.name.charAt(0)}
+                                  </AvatarFallback>
+                                </Avatar>
                               </div>
                               <div className="min-w-0 flex-1">
                               <div
