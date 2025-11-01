@@ -8,7 +8,7 @@ import { Checkout } from "./Checkout";
 
 import DonationHeader from "./donation/DonationHeader";
 import { Link } from "react-router-dom";
-import { useQuery, useMutation } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { getDonationBox, createDonationBox } from "@/services/api/donation";
 import { getCausesBySearch } from "@/services/api/crwd";
 import { getJoinCollective } from "@/services/api/crwd";
@@ -43,37 +43,41 @@ const DonationBox = ({ tab = "setup", preselectedItem, activeTab }: DonationBoxP
   const [selectedCollectiveIds, setSelectedCollectiveIds] = useState<number[]>([]);
 
   const isMobile = useIsMobile();
+  const queryClient = useQueryClient();
 
-  const { data: donationBox, isLoading: isLoadingDonationBox, isError: isErrorDonationBox } = useQuery({
+  // Get donation box - only when setup tab is active
+  const { data: donationBox, isLoading: isLoadingDonationBox } = useQuery({
     queryKey: ['donationBox'],
     queryFn: () => getDonationBox(),
-    enabled: true
+    enabled: activeTabState === "setup"
   });
 
-  // Set step based on donation box existence
+  // Set step based on donation box existence - only when setup tab is active
   useEffect(() => {
-    if (donationBox && donationBox.id) {
-      if(donationBox.is_active) {
-        setCheckout(true);
+    if (activeTabState === "setup") {
+      if (donationBox && donationBox.id) {
+        if(donationBox.is_active) {
+          setCheckout(true);
+        }
+        setStep(2); // Show step 2 if donation box exists
+      } else {
+        setStep(1); // Show step 1 if no donation box
       }
-      setStep(2); // Show step 2 if donation box exists
-    } else {
-      setStep(1); // Show step 1 if no donation box
     }
-  }, [donationBox]);
+  }, [donationBox, activeTabState]);
 
-  // Get causes with search
+  // Get causes with search - only when setup tab is active and on step 1
   const { data: causesData, isLoading: causesLoading } = useQuery({
     queryKey: ['causes', searchQuery],
     queryFn: () => getCausesBySearch(searchQuery, '', 1),
-    enabled: true,
+    enabled: activeTabState === "setup" && step === 1,
   });
 
-  // Get joined collectives
+  // Get joined collectives - only when setup tab is active and on step 1
   const { data: joinedCollectivesData } = useQuery({
     queryKey: ['joined-collectives'],
     queryFn: () => getJoinCollective(currentUser?.id),
-    enabled: true,
+    enabled: activeTabState === "setup" && step === 1,
   });
 
   // Create donation box mutation
@@ -81,6 +85,7 @@ const DonationBox = ({ tab = "setup", preselectedItem, activeTab }: DonationBoxP
     mutationFn: createDonationBox,
     onSuccess: () => {
       console.log('Donation box created successfully');
+      queryClient.invalidateQueries({ queryKey: ['donationBox'] });
       setStep(2);
     },
     onError: (error: any) => {
@@ -88,8 +93,7 @@ const DonationBox = ({ tab = "setup", preselectedItem, activeTab }: DonationBoxP
     },
   });
 
-  console.log(donationBox, "donationBox");
-
+  // Note: activateDonationBox is handled in DonationBox3 component (step 2)
 
   // Handle preselected item from navigation
   useEffect(() => {
@@ -134,7 +138,8 @@ const DonationBox = ({ tab = "setup", preselectedItem, activeTab }: DonationBoxP
 
   console.log(selectedOrganizations, "ork");
 
-  if (isLoadingDonationBox) {
+  // Show loading only when setup tab is active and loading donation box
+  if (activeTabState === "setup" && isLoadingDonationBox) {
     return <div className="w-full h-full bg-white flex flex-col">
       <ProfileNavbar title="Donation Box" />
       <div className="flex items-center justify-center min-h-screen">
@@ -145,6 +150,71 @@ const DonationBox = ({ tab = "setup", preselectedItem, activeTab }: DonationBoxP
 
   return (
     <div className="w-full h-full bg-white flex flex-col">
+      {/* Header with title and back/close button - Always Visible */}
+      <DonationHeader
+        title="Donation Box"
+        step={step}
+        showBackButton={checkout || (step > 1 && activeTabState !== "onetime")}
+        showCloseButton={!checkout && (step === 1 || activeTabState === "onetime")}
+        onBack={() => {
+          if (checkout) {
+            setCheckout(false);
+          } else {
+            setStep((s) => s - 1);
+          }
+        }}
+      />
+
+      {/* Tab Navigation - Always Visible */}
+      <div className="mx-4 mt-4">
+        <div className="flex rounded-xl overflow-hidden border bg-white shadow-sm">
+          <button
+            className={cn(
+              "flex-1 py-4 text-sm font-medium transition-all relative",
+              activeTabState === "setup"
+                ? "text-white bg-blue-600"
+                : "text-gray-500 hover:text-gray-700 hover:bg-gray-50"
+            )}
+            onClick={() => {
+              if (checkout) {
+                setCheckout(false);
+              }
+              setActiveTabState("setup");
+              setStep(1);
+            }}
+          >
+            <div className="flex items-center justify-center">
+              Set up donation box
+            </div>
+            {activeTabState === "setup" && (
+              <div className="absolute bottom-0 left-0 w-full h-0.5 bg-blue-600"></div>
+            )}
+          </button>
+          <button
+            className={cn(
+              "flex-1 py-4 text-sm font-medium transition-all relative",
+              activeTabState === "onetime"
+                ? "text-white bg-blue-600"
+                : "text-gray-500 hover:text-gray-700 hover:bg-gray-50"
+            )}
+            onClick={() => {
+              if (checkout) {
+                setCheckout(false);
+              }
+              setActiveTabState("onetime");
+            }}
+          >
+            <div className="flex items-center justify-center">
+              One-Time Donation
+            </div>
+            {activeTabState === "onetime" && (
+              <div className="absolute bottom-0 left-0 w-full h-0.5 bg-blue-600"></div>
+            )}
+          </button>
+        </div>
+      </div>
+
+      {/* Main Content */}
       {checkout ? (
         <Checkout
           onBack={() => setCheckout(false)}
@@ -154,72 +224,6 @@ const DonationBox = ({ tab = "setup", preselectedItem, activeTab }: DonationBoxP
         />
       ) : (
         <>
-          {/* Header with title and back/close button */}
-          <DonationHeader
-            title="Donation Box"
-            step={step}
-            // showBackButton={step > 1 && activeTab !== "onetime"}
-            showCloseButton={step === 1 || activeTab === "onetime"}
-            onBack={() => setStep((s) => s - 1)}
-          />
-
-          {/* Step indicator for donation box setup */}
-
-          {/* Tab Navigation */}
-          <div className="mx-4 mt-4">
-            <div className="flex rounded-xl overflow-hidden border bg-white shadow-sm">
-              <button
-                className={cn(
-                  "flex-1 py-4 text-sm font-medium transition-all relative",
-                  activeTabState === "setup"
-                    ? "text-white bg-blue-600"
-                    : "text-gray-500 hover:text-gray-700 hover:bg-gray-50"
-                )}
-                onClick={() => {
-                  setActiveTabState("setup");
-                  setStep(1);
-                }}
-              >
-                <div className="flex items-center justify-center">
-                  {/* <span className={cn(
-                    "flex items-center justify-center w-5 h-5 rounded-full mr-2 text-xs",
-                    activeTabState === "setup" ? "bg-blue-100 text-blue-600" : "bg-gray-100 text-gray-500"
-                  )}>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
-                  </span> */}
-                  Set up donation box
-                </div>
-                {activeTab === "setup" && (
-                  <div className="absolute bottom-0 left-0 w-full h-0.5 bg-blue-600"></div>
-                )}
-              </button>
-              <button
-                className={cn(
-                  "flex-1 py-4 text-sm font-medium transition-all relative",
-                  activeTabState === "onetime"
-                    ? "text-white bg-blue-600"
-                    : "text-gray-500 hover:text-gray-700 hover:bg-gray-50"
-                )}
-                onClick={() => setActiveTabState("onetime")}
-              >
-                <div className="flex items-center justify-center">
-                  {/* <span className={cn(
-                    "flex items-center justify-center w-5 h-5 rounded-full mr-2 text-xs",
-                    activeTabState === "onetime" ? "bg-blue-100 text-blue-600" : "bg-gray-100 text-gray-500"
-                  )}>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
-                  </span> */}
-                  One-Time Donation
-                </div>
-                {activeTab === "onetime" && (
-                  <div className="absolute bottom-0 left-0 w-full h-0.5 bg-blue-600"></div>
-                )}
-              </button>
-            </div>
-          </div>
-
-          {/* Main Content */}
-
           {activeTabState === "onetime" ? (
             <>
               <OneTimeDonation
@@ -630,10 +634,6 @@ const DonationBox = ({ tab = "setup", preselectedItem, activeTab }: DonationBoxP
           )}
         </>
       )}
-
-      {/* Header with close button */}
-
-      {/* Next Button Section */}
     </div>
   );
 };
