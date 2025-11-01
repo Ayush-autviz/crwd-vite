@@ -121,14 +121,14 @@ export default function OneTimeDonation({
   const handleCheckout = () => {
     // Prepare request body according to API specification
     const causeIds: number[] = [];
-    let collectiveId = 0;
+    let collectiveIds: number[] = [];
 
     // Separate causes and collectives from selected items
     selectedItems.forEach(item => {
       if (item.type === 'cause') {
         causeIds.push(parseInt(item.id));
       } else if (item.type === 'collective') {
-        collectiveId = parseInt(item.id);
+        collectiveIds.push(parseInt(item.id));
       }
     });
 
@@ -141,14 +141,14 @@ export default function OneTimeDonation({
       // If causes are selected, send cause_ids and set collective_id to 0
       requestBody.cause_ids = causeIds;
       // requestBody.collective_id = 0;
-    } else if (collectiveId > 0) {
+    } else if (collectiveIds.length > 0) {
       // If a collective is selected, send collective_id and set cause_ids to [0]
-      requestBody.collective_id = collectiveId;
+      requestBody.collective_ids = collectiveIds;
       // requestBody.cause_ids = [0];
     } else {
       // Fallback if nothing is selected (shouldn't happen due to button disabled state)
-      requestBody.cause_ids = [0];
-      requestBody.collective_id = 0;
+      requestBody.cause_ids = [];
+      requestBody.collective_ids = [];
     }
 
     console.log('Sending one-time donation request:', requestBody);
