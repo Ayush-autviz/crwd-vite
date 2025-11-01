@@ -143,7 +143,7 @@ const MembersTabs: React.FC<{ tab?: string, collectiveData?: any }> = ({ tab = "
                 onSeeRecentDonations={() => setShowRecentDonations(true)}
                 causesCount={3}
                 membersCount={59}
-                donationAmount={34}
+                donationAmount={collectiveData?.total_donated_amount || 0}
               />
             ))}
         </div>
@@ -175,7 +175,7 @@ const MembersTabs: React.FC<{ tab?: string, collectiveData?: any }> = ({ tab = "
                   setActiveTab={handleTabChange}
                   causesCount={collectiveData?.causes?.length ?? 0}
                   membersCount={collectiveData?.member_count ?? 0}
-                  donationsCount={34}
+                  // donationsCount={34}
                 />
                 {activeTab === "Causes" && (
                   // <div className="text-center text-muted-foreground mt-10">Cause details go here (1 Cause)</div>
@@ -267,7 +267,7 @@ const MembersTabs: React.FC<{ tab?: string, collectiveData?: any }> = ({ tab = "
                     onSeeRecentDonations={() => {}}
                     causesCount={3}
                     membersCount={59}
-                    donationAmount={34}
+                    donationAmount={collectiveData?.total_donated_amount || 0}
                   />
                 )}
               </CardContent>

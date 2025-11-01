@@ -137,6 +137,7 @@ export default function GroupCrwdPage() {
     if (crwdData?.is_joined !== undefined) {
       setHasJoined(crwdData.is_joined);
     }
+
   }, [crwdData]);
 
   // const handleJoinClick = () => {
@@ -292,7 +293,7 @@ export default function GroupCrwdPage() {
             Share
           </Button>
 
-          {   currentUser?.id && (
+          {(currentUser?.id && crwdData?.created_by?.id !== currentUser?.id) && (
           <Button
             className={`cursor-pointer transition-colors ${
               hasJoined

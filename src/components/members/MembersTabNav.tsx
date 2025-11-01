@@ -35,6 +35,7 @@ const MembersTabNav: React.FC<MembersTabNavProps> = ({
         onClick={() => setActiveTab(tab.value)}
       >
         <div className="flex items-center gap-2">
+          {tab.value !== "Collective Donations" && (
           <span
             className={`flex items-center justify-center rounded-full h-6 w-6 text-xs font-medium ${
               activeTab === tab.value
@@ -48,6 +49,7 @@ const MembersTabNav: React.FC<MembersTabNavProps> = ({
               ? membersCount
               : donationsCount}
           </span>
+          )}  
           <span>{tab.label}</span>
         </div>
       </Button>

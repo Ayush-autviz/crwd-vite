@@ -8,39 +8,59 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
-import BackButton from "@/components/ui/BackButton";
+import { createReportIssue } from "@/services/api/social";
+import { useMutation } from "@tanstack/react-query";
 
 export default function SettingsReport() {
-  const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     type: "",
     title: "",
     description: "",
     steps: "",
-    email: "",
   });
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-
-    try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
-
+  const reportIssueMutation = useMutation({
+    mutationFn: (data: {
+      title: string;
+      description: string;
+      issue_type: string;
+      status: string;
+      reproduce_steps: string;
+    }) => createReportIssue(data),
+    onSuccess: () => {
       toast.success("Your report has been submitted successfully. We'll review it shortly.");
       setFormData({
         type: "",
         title: "",
         description: "",
         steps: "",
-        email: "",
       });
-    } catch (error) {
+    },
+    onError: (error: any) => {
+      console.error('Error submitting report:', error);
       toast.error("Failed to submit report. Please try again.");
-    } finally {
-      setLoading(false);
+    },
+  });
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    // Validate required fields
+    if (!formData.type || !formData.title || !formData.description) {
+      toast.error("Please fill in all required fields.");
+      return;
     }
+
+    // Prepare payload according to API requirements
+    const payload = {
+      title: formData.title,
+      description: formData.description,
+      issue_type: formData.type,
+      status: "pending",
+      reproduce_steps: formData.steps || "",
+    };
+
+    reportIssueMutation.mutate(payload);
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -132,26 +152,13 @@ export default function SettingsReport() {
                   />
                 </div>
 
-                <div className="space-y-2">
-                  <Label htmlFor="email">Your Email</Label>
-                  <Input
-                    id="email"
-                    name="email"
-                    type="email"
-                    value={formData.email}
-                    onChange={handleChange}
-                    placeholder="We'll use this to follow up with you"
-                    required
-                  />
-                </div>
-
                 <div className="flex flex-col sm:flex-row gap-4 pt-4">
                   <Button
                     type="submit"
                     className="bg-blue-600 hover:bg-blue-700"
-                    disabled={loading}
+                    disabled={reportIssueMutation.isPending}
                   >
-                    {loading ? "Submitting..." : "Submit Report"}
+                    {reportIssueMutation.isPending ? "Submitting..." : "Submit Report"}
                   </Button>
                   <Button
                     type="button"
@@ -161,7 +168,6 @@ export default function SettingsReport() {
                       title: "",
                       description: "",
                       steps: "",
-                      email: "",
                     })}
                   >
                     Clear Form

@@ -26,6 +26,7 @@ const GroupCrwdUpdates: React.FC<GroupCrwdUpdatesProps> = ({
   // Transform API posts to PostDetail format
   const transformedPosts: PostDetail[] = posts?.map((post: any) => ({
     id: post.id,
+    userId: post.user?.id?.toString() || '', // Add userId for navigation, convert to string
     avatarUrl: post.user?.profile_picture || '/placeholder.svg',
     username: post.user?.username || post.user?.full_name || 'Unknown User',
     time: new Date(post.created_at).toLocaleDateString(),
