@@ -4,7 +4,6 @@ import {
   Plus,
   DollarSign,
   Trash2,
-  ChevronLeft,
   Search,
   X,
 } from "lucide-react";
@@ -20,7 +19,7 @@ import {
 } from "@/components/ui/dialog";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { getCausesBySearch, getJoinCollective } from "@/services/api/crwd";
-import { updateDonationBox } from "@/services/api/donation";
+import { updateDonationBox, cancelDonationBox } from "@/services/api/donation";
 import { useAuthStore } from "@/stores/store";
 import { cn } from "@/lib/utils";
 import { Avatar, AvatarImage, AvatarFallback } from "./ui/avatar";
@@ -42,6 +41,8 @@ interface ManageDonationBoxProps {
   causes: Organization[];
   onBack: () => void;
   onRemove?: (id: string) => void;
+  isActive?: boolean;
+  onCancelSuccess?: () => void;
 }
 
 const ManageDonationBox: React.FC<ManageDonationBoxProps> = ({
@@ -49,6 +50,8 @@ const ManageDonationBox: React.FC<ManageDonationBoxProps> = ({
   causes,
   onBack,
   onRemove,
+  isActive = true,
+  onCancelSuccess,
 }) => {
   const queryClient = useQueryClient();
   const { user: currentUser } = useAuthStore();
@@ -65,6 +68,7 @@ const ManageDonationBox: React.FC<ManageDonationBoxProps> = ({
   const [selectedCausesData, setSelectedCausesData] = useState<any[]>([]); // Store full data for selected causes
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [itemToDelete, setItemToDelete] = useState<{ id: number; name: string; type: 'cause' | 'collective'; isNewlySelected: boolean } | null>(null);
+  const [showCancelModal, setShowCancelModal] = useState(false);
 
   // Separate existing causes/collectives from new selections
   const existingCauses = causes.filter(c => c.type === 'cause' || !c.type);
@@ -119,6 +123,23 @@ const ManageDonationBox: React.FC<ManageDonationBoxProps> = ({
     },
     onError: (error: any) => {
       console.error('Error updating donation box:', error);
+    },
+  });
+
+  const cancelDonationBoxMutation = useMutation({
+    mutationFn: () => cancelDonationBox(),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['donationBox'] });
+      setShowCancelModal(false);
+      // Navigate to step 3 after successful cancellation
+      if (onCancelSuccess) {
+        onCancelSuccess();
+      } else {
+        onBack();
+      }
+    },
+    onError: (error: any) => {
+      console.error('Error canceling donation box:', error);
     },
   });
 
@@ -769,6 +790,20 @@ const ManageDonationBox: React.FC<ManageDonationBoxProps> = ({
             ? 'Updating...'
             : 'Update Donation'}
         </Button>
+        
+        {/* Deactivate Subscription Button - Only show if subscription is active */}
+        {isActive && (
+          <Button
+            onClick={() => setShowCancelModal(true)}
+            disabled={cancelDonationBoxMutation.isPending}
+            variant="outline"
+            className="w-full mt-4 border-red-300 text-red-600 hover:bg-red-50 hover:text-red-700 py-6 rounded-lg font-semibold"
+          >
+            {cancelDonationBoxMutation.isPending
+              ? 'Deactivating...'
+              : 'Deactivate Subscription'}
+          </Button>
+        )}
       </div>
 
       {/* Payment Method Section */}
@@ -882,6 +917,34 @@ const ManageDonationBox: React.FC<ManageDonationBoxProps> = ({
               onClick={handleConfirmDelete}
             >
               Remove
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Cancel Subscription Confirmation Modal */}
+      <Dialog open={showCancelModal} onOpenChange={setShowCancelModal}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Deactivate Subscription</DialogTitle>
+            <DialogDescription>
+              Are you sure you want to deactivate your donation box subscription? This will cancel all future monthly donations. You can reactivate it at any time.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button 
+              variant="outline" 
+              onClick={() => setShowCancelModal(false)}
+              disabled={cancelDonationBoxMutation.isPending}
+            >
+              Cancel
+            </Button>
+            <Button 
+              variant="destructive" 
+              onClick={() => cancelDonationBoxMutation.mutate()}
+              disabled={cancelDonationBoxMutation.isPending}
+            >
+              {cancelDonationBoxMutation.isPending ? 'Deactivating...' : 'Deactivate Subscription'}
             </Button>
           </DialogFooter>
         </DialogContent>

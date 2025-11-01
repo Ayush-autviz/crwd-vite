@@ -14,6 +14,8 @@ interface DonationOverviewProps {
   donationBox?: any;
   initialShowManage?: boolean;
   onCloseManage?: () => void;
+  onShowManage?: () => void;
+  onCancelSuccess?: () => void;
 }
 
 export const Checkout = ({
@@ -23,6 +25,8 @@ export const Checkout = ({
   donationBox,
   initialShowManage = false,
   onCloseManage,
+  onShowManage,
+  onCancelSuccess,
 }: DonationOverviewProps) => {
   const [showManageDonationBox, setShowManageDonationBox] = useState(initialShowManage);
   const [localSelectedOrgs, setLocalSelectedOrgs] = useState(selectedOrgIds);
@@ -162,6 +166,7 @@ export const Checkout = ({
       <ManageDonationBox
         amount={actualDonationAmount}
         causes={causesAsObjects}
+        isActive={donationBox?.is_active ?? true}
         onBack={() => {
           setShowManageDonationBox(false);
           if (onCloseManage) {
@@ -169,6 +174,7 @@ export const Checkout = ({
           }
         }}
         onRemove={handleRemoveFromManageBox}
+        onCancelSuccess={onCancelSuccess}
       />
     );
   }
@@ -211,7 +217,12 @@ export const Checkout = ({
           </div>
           <div className="flex-1 flex justify-center items-center pl-4">
             <Button
-              onClick={() => setShowManageDonationBox(true)}
+              onClick={() => {
+                setShowManageDonationBox(true);
+                if (onShowManage) {
+                  onShowManage();
+                }
+              }}
               size="sm"
               className="bg-blue-400/30 text-white hover:bg-blue-400/50 rounded-md px-4 py-2 flex items-center gap-1"
             >

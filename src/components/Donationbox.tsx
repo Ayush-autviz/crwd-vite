@@ -30,6 +30,7 @@ const DonationBox = ({ tab = "setup", preselectedItem, activeTab }: DonationBoxP
   const [activeTabState, setActiveTabState] = useState<"setup" | "onetime">(tab as "setup" | "onetime" || "setup");
   const [checkout, setCheckout] = useState(false);
   const [showManageDonationBox, setShowManageDonationBox] = useState(false);
+  const [manageDonationBoxOpenedFrom, setManageDonationBoxOpenedFrom] = useState<"checkout" | "step3" | null>(null);
   const [selectedOrganizations, setSelectedOrganizations] = useState<string[]>([]);
   const [preselectedItemAdded, setPreselectedItemAdded] = useState(false);
   const { user: currentUser } = useAuthStore();
@@ -160,7 +161,12 @@ const DonationBox = ({ tab = "setup", preselectedItem, activeTab }: DonationBoxP
         onBack={() => {
           if (showManageDonationBox) {
             setShowManageDonationBox(false);
-            setCheckout(false);
+            // If opened from step 3, go back to step 3 (exit checkout)
+            if (manageDonationBoxOpenedFrom === "step3") {
+              setCheckout(false);
+            }
+            // If opened from checkout, stay in checkout
+            setManageDonationBoxOpenedFrom(null);
           } else if (checkout) {
             setCheckout(false);
           } else {
@@ -229,7 +235,20 @@ const DonationBox = ({ tab = "setup", preselectedItem, activeTab }: DonationBoxP
           donationAmount={donationAmount}
           donationBox={donationBox}
           initialShowManage={showManageDonationBox}
-          onCloseManage={() => setShowManageDonationBox(false)}
+          onCloseManage={() => {
+            setShowManageDonationBox(false);
+            setManageDonationBoxOpenedFrom(null);
+          }}
+          onShowManage={() => {
+            setManageDonationBoxOpenedFrom("checkout");
+            setShowManageDonationBox(true);
+          }}
+          onCancelSuccess={() => {
+            setCheckout(false);
+            setStep(3);
+            setShowManageDonationBox(false);
+            setManageDonationBoxOpenedFrom(null);
+          }}
         />
       ) : (
         <>
@@ -564,6 +583,7 @@ const DonationBox = ({ tab = "setup", preselectedItem, activeTab }: DonationBoxP
                   donationAmount={donationAmount}
                   donationBox={donationBox}
                   onManageDonationBox={() => {
+                    setManageDonationBoxOpenedFrom("step3");
                     setCheckout(true);
                     setShowManageDonationBox(true);
                   }}
