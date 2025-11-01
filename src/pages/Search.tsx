@@ -88,7 +88,7 @@ export default function SearchPage() {
     queryFn: () => {
       return getCausesBySearch(searchQuery, selectedCategory === "All" || selectedCategory === "" ? '' : selectedCategory, currentPage);
     },
-    enabled: searchQuery.trim().length > 0 || (selectedCategory !== "All" && selectedCategory !== ""),
+    enabled: true, // Always enabled to fetch causes automatically on page load
     refetchOnMount: true,
     refetchOnWindowFocus: false,
   });
@@ -109,6 +109,14 @@ export default function SearchPage() {
     setCurrentPage(1);
     setAllCauses([]);
   }, [searchTrigger, selectedCategory]);
+
+  // Trigger initial search on mount if no category or search query is set
+  useEffect(() => {
+    if (!categoryId && !categoryName && !searchQuery && selectedCategory === "All") {
+      // Auto-trigger search on page load
+      setSearchTrigger(prev => prev + 1);
+    }
+  }, []);
 
   // Handle search input with Enter key
   const handleSearchKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -220,7 +228,7 @@ export default function SearchPage() {
                             /> */}
                             <Avatar className="h-10 w-10 rounded-full">
                               <AvatarImage src={cause.image} />
-                              <AvatarFallback>
+                              <AvatarFallback className="bg-blue-100 text-blue-600 font-semibold">
                                 {cause.name.charAt(0).toUpperCase()}
                               </AvatarFallback>
                             </Avatar>

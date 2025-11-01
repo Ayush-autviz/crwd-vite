@@ -236,7 +236,7 @@ export const DonationBox3 = ({
                 >
                   <div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center mr-4">
                     <span className="text-blue-600 font-semibold text-lg">
-                      {cause.name?.charAt(0) || 'C'}
+                      {cause.name?.charAt(0)?.toUpperCase() || 'C'}
                     </span>
                   </div>
                   <div className="flex-1">
@@ -290,9 +290,9 @@ export const DonationBox3 = ({
                   key={collective.id}
                   className="flex items-center p-4 border border-gray-200 rounded-lg"
                 >
-                  <div className="w-12 h-12 rounded-full bg-purple-100 flex items-center justify-center mr-4">
-                    <span className="text-purple-600 font-semibold text-lg">
-                      {collective.name?.charAt(0) || 'C'}
+                  <div className="w-12 h-12 rounded-full bg-green-100 flex items-center justify-center mr-4">
+                    <span className="text-green-600 font-semibold text-lg">
+                      {collective.name?.charAt(0)?.toUpperCase() || 'C'}
                     </span>
                   </div>
                   <div className="flex-1">

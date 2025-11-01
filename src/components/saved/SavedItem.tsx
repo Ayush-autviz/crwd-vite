@@ -20,7 +20,7 @@ const SavedItem: React.FC<SavedItemProps> = ({ avatar, title, subtitle, type }) 
     /> */}
     <Avatar className="w-10 h-10 rounded-full object-cover">
       <AvatarImage src={avatar} />
-      <AvatarFallback>
+      <AvatarFallback className={type === 'collective' ? 'bg-green-100 text-green-600 font-semibold' : 'bg-blue-100 text-blue-600 font-semibold'}>
         {title.charAt(0).toUpperCase()}
       </AvatarFallback>
     </Avatar>

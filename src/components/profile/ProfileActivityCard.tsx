@@ -183,7 +183,7 @@ export default function ProfileActivityCard({
                           <Share2 className="h-4 w-4" />
                           Share Post
                         </button>
-                        <button
+                        {/* <button
                           onClick={(e) => {
                             e.preventDefault();
                             e.stopPropagation();
@@ -195,7 +195,23 @@ export default function ProfileActivityCard({
                         >
                           <Flag className="h-4 w-4" />
                           Report Post
+                        </button> */}
+                        {/* delete post */}
+                        {isOwnPost && (
+                        <button
+                          onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            setShowMenu(false);
+                            // Handle delete post
+                            console.log("Delete post");
+                          }}
+                          className="flex items-center gap-2 w-full px-3 py-2 text-sm text-red-600 hover:bg-gray-50 transition-colors"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                          Delete Post
                         </button>
+                        )}
                       </div>
                     )}
                   </div>

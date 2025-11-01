@@ -551,7 +551,7 @@ const ManageDonationBox: React.FC<ManageDonationBoxProps> = ({
                           className="bg-white rounded-xl p-4 border border-blue-100 shadow-sm"
                         >
                           <div className="flex gap-4 items-center">
-                            <div className="w-12 h-12 flex-shrink-0 rounded-lg overflow-hidden shadow">
+                            <div className="w-12 h-12 flex-shrink-0 rounded-full overflow-hidden shadow">
                               {org.imageUrl ? (
                                 <img
                                   src={org.imageUrl}
@@ -560,9 +560,9 @@ const ManageDonationBox: React.FC<ManageDonationBoxProps> = ({
                                 />
                               ) : (
                                 <div
-                                  className="w-full h-full flex items-center justify-center text-lg font-bold text-white bg-blue-500"
+                                  className="w-full h-full flex items-center justify-center text-lg font-semibold text-blue-600 bg-blue-100"
                                 >
-                                  {org.name.charAt(0)}
+                                  {org.name.charAt(0).toUpperCase()}
                                 </div>
                               )}
                             </div>
@@ -653,8 +653,8 @@ const ManageDonationBox: React.FC<ManageDonationBoxProps> = ({
                         >
                           <Avatar className="w-12 h-12 rounded-full object-cover mr-3">
                             <AvatarImage src={cause.logo} />
-                            <AvatarFallback>
-                              {cause.name?.charAt(0) || 'C'}
+                            <AvatarFallback className="bg-blue-100 text-blue-600 font-semibold">
+                              {cause.name?.charAt(0)?.toUpperCase() || 'C'}
                             </AvatarFallback>
                           </Avatar>
                           <div className="flex-1">
@@ -698,8 +698,8 @@ const ManageDonationBox: React.FC<ManageDonationBoxProps> = ({
                         >
                           <Avatar className="w-12 h-12 rounded-full object-cover mr-3">
                             <AvatarImage src={cause.logo} />
-                            <AvatarFallback>
-                              {cause.name?.charAt(0) || 'C'}
+                            <AvatarFallback className="bg-blue-100 text-blue-600 font-semibold">
+                              {cause.name?.charAt(0)?.toUpperCase() || 'C'}
                             </AvatarFallback>
                           </Avatar>
                           <div className="flex-1">
@@ -742,7 +742,7 @@ const ManageDonationBox: React.FC<ManageDonationBoxProps> = ({
                           className="bg-white rounded-xl p-4 border border-blue-100 shadow-sm"
                         >
                           <div className="flex gap-4 items-center">
-                            <div className="w-12 h-12 flex-shrink-0 rounded-lg overflow-hidden shadow">
+                            <div className="w-12 h-12 flex-shrink-0 rounded-full overflow-hidden shadow">
                               {org.imageUrl ? (
                                 <img
                                   src={org.imageUrl}
@@ -751,9 +751,9 @@ const ManageDonationBox: React.FC<ManageDonationBoxProps> = ({
                                 />
                               ) : (
                                 <div
-                                  className="w-full h-full flex items-center justify-center text-lg font-bold text-white bg-purple-500"
+                                  className="w-full h-full flex items-center justify-center text-lg font-semibold text-green-600 bg-green-100"
                                 >
-                                  {org.name.charAt(0)}
+                                  {org.name.charAt(0).toUpperCase()}
                                 </div>
                               )}
                             </div>
@@ -802,8 +802,8 @@ const ManageDonationBox: React.FC<ManageDonationBoxProps> = ({
                       >
                         <Avatar className="w-12 h-12 rounded-full object-cover mr-3">
                           <AvatarImage src={collective.cover_image} />
-                          <AvatarFallback>
-                            {collective.name?.charAt(0) || 'C'}
+                          <AvatarFallback className="bg-green-100 text-green-600 font-semibold">
+                            {collective.name?.charAt(0)?.toUpperCase() || 'C'}
                           </AvatarFallback>
                         </Avatar>
                         <div className="flex-1">
