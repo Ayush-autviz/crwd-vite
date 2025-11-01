@@ -87,7 +87,7 @@ const Circles = () => {
               }`}
             >
               <Users className="w-4 h-4" />
-              My Collectives ({joinCollectiveData?.results?.length || 0})
+              My Collectives ({joinCollectiveData?.data?.length || 0})
             </button>
             <button
               onClick={() => setActiveTab("discover")}
@@ -192,7 +192,7 @@ const Circles = () => {
                           variant="secondary"
                           className="bg-green-100 text-green-600 text-xs px-2 py-1"
                         >
-                          collective
+                          Collective
                         </Badge>
                       </div>
                       <h3 className="font-semibold text-foreground mb-1 truncate">

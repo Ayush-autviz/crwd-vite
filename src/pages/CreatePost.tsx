@@ -274,7 +274,7 @@ export default function CreatePostPage() {
                     Select a post type below to get started
                   </div>
                   <div className="text-sm">
-                    Choose from link, photo, or event
+                    Choose from link, photo
                   </div>
                 </div>
               </div>

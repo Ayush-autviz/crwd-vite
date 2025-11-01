@@ -17,7 +17,7 @@ const tabs = [
   { label: "Causes", value: "causes" },
   { label: "Following", value: "following" },
   { label: "Followers", value: "followers" },
-  { label: "CRWDs", value: "crwds" },
+  { label: "Collectives", value: "crwds" },
 ];
 
 
@@ -134,13 +134,6 @@ export default function ProfileStatistics() {
       is_following: userData.is_following || false,
     };
   }) || [];
-
-  // Debug logging
-  console.log('ProfileStatistics - userId:', userId);
-  console.log('ProfileStatistics - followersData:', followersData);
-  console.log('ProfileStatistics - followingData:', followingData);
-  console.log('ProfileStatistics - followers:', followers);
-  console.log('ProfileStatistics - following:', following);
 
   // Filter functions - using all data since search is not implemented yet
   const filteredCauses = causes;

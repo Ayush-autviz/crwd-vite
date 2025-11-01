@@ -76,7 +76,7 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
             <AvatarFallback>{name.split(' ').map(word => word[0]).join('').toUpperCase()}</AvatarFallback>
           </Avatar>
         </ImageModal>
-        <div className="font-bold text-lg leading-tight">My Name is {name}</div>
+        <div className="font-bold text-lg leading-tight">{name}</div>
       </div>
       <div className="flex-1 flex flex-col items-center">
         <div className="text-xs text-gray-500 flex items-center gap-2 mt-1">

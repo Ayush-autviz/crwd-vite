@@ -364,11 +364,11 @@ export default function GroupCrwdPage() {
               </div> */}
 
                   <h2 className="text-2xl font-bold text-gray-900 mb-2">
-                    Join "Save the Trees Atlanta"?
+                    Join {crwdData?.name}?
                   </h2>
 
                   <p className="text-gray-600 mb-6">
-                    This CRWD includes 3 nonprofits.
+                    This CRWD includes {crwdData?.causes?.length} nonprofits.
                   </p>
 
                   <div className="flex items-center justify-center gap-3">
@@ -407,7 +407,7 @@ export default function GroupCrwdPage() {
                 {/* Modal Content */}
                 <div className="text-center">
                   <h2 className="text-2xl font-bold text-gray-900 mb-2">
-                    You've joined Save the Trees Atlanta!
+                    You've joined {crwdData?.name}!
                   </h2>
 
                   <p className="text-gray-600 mb-4">
@@ -428,7 +428,7 @@ export default function GroupCrwdPage() {
                       </div>
                       <div className="text-left">
                         <h3 className="font-semibold text-gray-900">
-                          Save the Trees Atlanta
+                          {crwdData?.name}
                         </h3>
                         <div className="flex items-center gap-2 mt-1">
                           <div className="flex -space-x-2">
@@ -444,25 +444,34 @@ export default function GroupCrwdPage() {
                             />
                           </div>
                           <span className="text-sm text-gray-600">
-                            44 members
+                            {crwdData?.member_count} members
                           </span>
                         </div>
                       </div>
                     </div>
                   </div>
 
-                  <p className="text-gray-600 mb-6">
+                  {/* <p className="text-gray-600 mb-6">
                     We've added 3 nonprofits from Save the Trees Atlanta to your
                     donation box. You can edit or remove them any time.
-                  </p>
+                  </p> */}
 
                   <div className="flex flex-col gap-3">
-                    <Button onClick={handleCloseSuccessModal}>
-                      GO TO CRWD
-                    </Button>
+                    {/* <Button onClick={handleCloseSuccessModal}>
+                      GO TO Collective
+                    </Button> */}
 
                     <Button
-                      onClick={handleCloseSuccessModal}
+                      onClick={() => navigate('/donation', { 
+                        state: { 
+                          preselectedItem: {
+                            id: crwdData?.id?.toString(),
+                            type: 'collective',
+                            data: crwdData
+                          },
+                          activeTab: 'collectives'
+                        }
+                      })}
                       variant="outline"
                       className="w-full"
                     >

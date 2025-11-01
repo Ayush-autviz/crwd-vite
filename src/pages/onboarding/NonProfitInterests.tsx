@@ -3,19 +3,19 @@ import { Check, Search, Loader2 } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
 import { categories } from "@/constants/categories";
-import { useQuery, useMutation } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { getCausesBySearch } from "@/services/api/crwd";
-import { bulkAddCauseFavorites } from "@/services/api/social";
+import { bulkAddCauseFavorites, getFavoriteCauses } from "@/services/api/social";
 import { Toast } from "@/components/ui/toast";
 import { Button } from "@/components/ui/button";
 import { useAuthStore } from "@/stores/store";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 
 
 export default function NonProfitInterests() {
   const [selectedInterests, setSelectedInterests] = useState<number[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<string>("");
   const [searchQuery, setSearchQuery] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
   const [searchTrigger, setSearchTrigger] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
   const [allCauses, setAllCauses] = useState<any[]>([]);
@@ -23,21 +23,32 @@ export default function NonProfitInterests() {
   const [toastMessage, setToastMessage] = useState("");
   const navigate = useNavigate();
   const { user: currentUser } = useAuthStore();
+  const queryClient = useQueryClient();
+
+  // Get favorite causes to exclude from results
+  const { data: favoriteCauses } = useQuery({
+    queryKey: ['favoriteCauses'],
+    queryFn: () => getFavoriteCauses(),
+    enabled: true,
+  });
 
   // Get causes with search and category filtering
-  const { data: causesData, isLoading: isCausesLoading, error } = useQuery({
-    queryKey: ['causes', selectedCategory, searchTrigger, currentPage],
+  const { data: causesData, isLoading: isCausesLoading } = useQuery({
+    queryKey: ['causes', selectedCategory, searchTrigger, currentPage, searchQuery],
     queryFn: () => {
-
       return getCausesBySearch(searchQuery, selectedCategory, currentPage);
     },
     enabled: true,
+    // Always fetch on mount to load initial causes
+    staleTime: 0,
   });
 
   const { mutate: bulkAddCauseFavoritesMutation } = useMutation({
     mutationFn: (causeIds: string[]) => bulkAddCauseFavorites(causeIds),
     onSuccess: () => {
-      // navigate("/");
+      // Invalidate favorite causes query so CreateCrwd shows updated favorites
+      queryClient.invalidateQueries({ queryKey: ['favoriteCauses'] });
+      navigate("/create-crwd");
       setShowToast(true);
       setToastMessage("Causes added to favorites");
     },
@@ -47,18 +58,34 @@ export default function NonProfitInterests() {
     },
   });
 
-  // Handle API response and accumulate results
+  // Handle API response and accumulate results, filtering out favorite causes
   React.useEffect(() => {
     if (causesData?.results) {
+      // Get favorite cause IDs to exclude from results
+      const favoriteCauseIds = new Set(
+        (favoriteCauses?.results || [])
+          .map((fav: any) => {
+            const id = fav.cause?.id;
+            return id ? String(id) : null;
+          })
+          .filter((id: any) => id !== null)
+      );
+
+      // Filter out favorite causes from search results
+      const filteredCauses = causesData.results.filter((cause: any) => {
+        const causeId = cause?.id ? String(cause.id) : null;
+        return causeId && !favoriteCauseIds.has(causeId);
+      });
+
       if (currentPage === 1) {
         // Reset causes for new search/category
-        setAllCauses(causesData.results);
+        setAllCauses(filteredCauses);
       } else {
         // Append new results for load more
-        setAllCauses(prev => [...prev, ...causesData.results]);
+        setAllCauses(prev => [...prev, ...filteredCauses]);
       }
     }
-  }, [causesData, currentPage]);
+  }, [causesData, currentPage, favoriteCauses]);
 
   // Reset page when search or category changes
   React.useEffect(() => {
@@ -66,7 +93,14 @@ export default function NonProfitInterests() {
     setAllCauses([]);
   }, [searchTrigger]);
 
-
+  // Ensure causes load on initial mount
+  React.useEffect(() => {
+    // Trigger initial load if we haven't triggered a search yet
+    // This ensures causes are loaded when navigating from CreateCrwd
+    if (searchTrigger === 0) {
+      setSearchTrigger(1);
+    }
+  }, []); // Run only on mount
 
   const handleInterestSelect = (interestId: number) => {
     setSelectedInterests((prev) => {
@@ -95,12 +129,6 @@ export default function NonProfitInterests() {
 
   const handleLoadMore = () => {
     setCurrentPage(prev => prev + 1);
-  };
-
-  const handleCategorySelect = (categoryName: string) => {
-    setSelectedCategory(selectedCategory === categoryName ? "" : categoryName);
-    // Trigger API call with new category
-    setSearchTrigger(prev => prev + 1);
   };
 
   const handleContinue = () => {
@@ -152,56 +180,12 @@ export default function NonProfitInterests() {
         </div>
       </div>
     );
-  }  if (!currentUser?.id) {
-    return (
-      <div className="w-full flex flex-col items-center justify-center min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
-        <div className="text-center max-w-md mx-auto p-8">
-          {/* Icon */}
-          <div className="w-20 h-20 mx-auto mb-6 bg-blue-100 rounded-full flex items-center justify-center">
-            <svg className="w-10 h-10 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-            </svg>
-          </div>
-          
-          {/* Title */}
-          <h2 className="text-2xl font-bold text-gray-900 mb-3">
-            Sign in to view this Nonprofit
-          </h2>
-          
-          {/* Description */}
-          <p className="text-gray-600 mb-8 leading-relaxed">
-            Sign in to view your profile, manage your causes, and connect with your community.
-          </p>
-          
-          {/* CTA Button */}
-          <Button 
-            size="lg" 
-            className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-lg font-medium transition-colors duration-200 shadow-lg hover:shadow-xl"
-          >
-            <Link to="/onboarding" className="flex items-center gap-2">
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
-              </svg>
-              Sign In to Continue
-            </Link>
-          </Button>
-          
-          {/* Additional Info */}
-          <p className="text-sm text-gray-500 mt-6">
-            Don't have an account? 
-            <Link to="/claim-profile" className="text-blue-600 hover:text-blue-700 font-medium ml-1">
-              Create one here
-            </Link>
-          </p>
-        </div>
-      </div>
-    );
   }
 
   const InterestCard = ({
     interest,
   }: {
-    interest: { id: number, image: string, name: string };
+    interest: { id: number, image?: string, logo?: string, name: string };
   }) => {
     const isSelected = selectedInterests.includes(interest.id);
 
@@ -213,11 +197,14 @@ export default function NonProfitInterests() {
           }`}
         onClick={() => handleInterestSelect(interest.id)}
       >
-        <img
-          src={interest.image}
-          alt={interest.name}
-          className="w-4/5 h-12 md:h-16 mx-auto object-contain mb-2 md:mb-3"
-        />
+        <div className="w-4/5 h-12 md:h-16 mx-auto mb-2 md:mb-3 flex items-center justify-center">
+          <Avatar className="w-full h-full rounded-lg">
+            <AvatarImage src={interest.image || interest.logo} alt={interest.name} className="object-contain rounded-lg" />
+            <AvatarFallback className="bg-blue-100 text-blue-600 text-lg md:text-xl font-semibold w-full h-full flex items-center justify-center rounded-lg">
+              {interest.name?.charAt(0)?.toUpperCase() || 'C'}
+            </AvatarFallback>
+          </Avatar>
+        </div>
         <div className="p-1 md:p-2">
           <h3 className="text-xs md:text-sm font-medium text-gray-800 text-center leading-tight">
             {interest.name}
@@ -355,16 +342,9 @@ export default function NonProfitInterests() {
                       : "bg-gray-900 hover:bg-gray-800 text-white"
                     }`}
                   onClick={handleContinue}
-                  disabled={selectedInterests.length === 0 || isLoading}
+                  disabled={selectedInterests.length === 0}
                 >
-                  {isLoading ? (
-                    <>
-                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                      Loading...
-                    </>
-                  ) : (
-                    "Continue"
-                  )}
+                  Continue
                 </button>
               </div>
             </CardContent>

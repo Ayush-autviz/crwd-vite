@@ -5,17 +5,15 @@ import ProfileActivity from "../components/profile/ProfileActivity";
 import ProfileNavbar from "../components/profile/ProfileNavbar";
 import ProfileSidebar from "../components/profile/ProfileSidebar";
 import ProfileStats from "../components/profile/ProfileStats";
-import { useLocation, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import {
-  ChevronRight,
   Ellipsis,
   Share,
   Flag,
   Loader2,
 } from "lucide-react";
-import { Link } from "react-router-dom";
 import { Toast } from "../components/ui/toast";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { getUserProfileById, followUserById, unfollowUserById, getPosts } from "@/services/api/social";
@@ -51,7 +49,7 @@ export default function ProfilePage() {
   const menuRef = useRef<HTMLDivElement>(null);
   const { user: currentUser } = useAuthStore();
   const queryClient = useQueryClient();
-
+  const navigate = useNavigate(); 
   // Check if viewing own profile
   const isOwnProfile = currentUser?.id === userId;
 
@@ -102,10 +100,28 @@ export default function ProfilePage() {
   });
 
   const handleFollowClick = () => {
+    if (!currentUser?.id) {
+      navigate('/onboarding');
+      return;
+    }
     if (isFollowing) {
       unfollowMutation.mutate();
     } else {
       followMutation.mutate();
+    }
+  };
+
+  const handleShareProfile = async () => {
+    try {
+      const profileUrl = `${window.location.origin}/user-profile/${userId}`;
+      await navigator.clipboard.writeText(profileUrl);
+      setToastMessage("Profile link copied to clipboard");
+      setShowToast(true);
+      setShowMenu(false);
+    } catch (err) {
+      console.error("Failed to copy profile link:", err);
+      setToastMessage("Failed to copy profile link");
+      setShowToast(true);
     }
   };
 
@@ -202,11 +218,7 @@ export default function ProfilePage() {
           {showMenu && (
             <div className="absolute right-0 top-10 bg-white border border-gray-200 rounded-md shadow-lg z-20 w-36">
               <button
-                onClick={() => {
-                  setShowMenu(false);
-                  // Handle share profile
-                  console.log("Share profile");
-                }}
+                onClick={handleShareProfile}
                 className="flex items-center gap-2 w-full px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
               >
                 <Share className="h-4 w-4" />
@@ -282,7 +294,7 @@ export default function ProfilePage() {
               ))}
             </div>
 
-            <ProfileBio bio={userProfile.bio || "No bio available"} />
+            <ProfileBio bio={userProfile.bio}/>
             
             <div className="py-4">
               <ProfileActivity

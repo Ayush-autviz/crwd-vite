@@ -89,16 +89,39 @@ export function MobileShareModal({
           window.open(shareUrl, "_blank");
           break;
         case "email":
-          shareUrl = `mailto:?subject=${encodeURIComponent(
-            title
-          )}&body=${encodeURIComponent(message + (url ? "\n\n" + url : ""))}`;
-          window.open(shareUrl);
+          {
+            const emailSubject = title || 'Check this out';
+            const emailBody = message ? `${message}\n\n${url}` : url;
+            // Open email in a new tab
+            shareUrl = `mailto:?subject=${encodeURIComponent(emailSubject)}&body=${encodeURIComponent(emailBody)}`;
+            window.open(shareUrl, '_blank');
+          }
           break;
         case "sms":
           shareUrl = `sms:?body=${encodeURIComponent(
             message + (url ? "\n" + url : "")
           )}`;
           window.open(shareUrl);
+          break;
+        case "instagram":
+          {
+            const shareText = title ? `${title}\n\n${url}` : (message ? `${message}\n\n${url}` : url);
+            // Open Instagram in a new window (popup) similar to Facebook
+            const instagramUrl = `https://www.instagram.com/create/details/?mediaType=PHOTO`;
+            window.open(instagramUrl, '_blank', 'width=600,height=700,scrollbars=yes,resizable=yes');
+            // Also copy to clipboard for convenience
+            await navigator.clipboard.writeText(shareText);
+          }
+          break;
+        case "tiktok":
+          {
+            const shareText = title ? `${title}\n\n${url}` : (message ? `${message}\n\n${url}` : url);
+            // Open TikTok in a new window (popup) similar to Facebook
+            const tiktokUrl = `https://www.tiktok.com/upload`;
+            window.open(tiktokUrl, '_blank', 'width=600,height=700,scrollbars=yes,resizable=yes');
+            // Also copy to clipboard for convenience
+            await navigator.clipboard.writeText(shareText);
+          }
           break;
         default:
           if (navigator.share) {
@@ -173,7 +196,10 @@ export function MobileShareModal({
             Share directly:
           </label>
           <div className="flex gap-3">
-            <button onClick={() => handleShare("facebook")}>
+            <button
+              onClick={() => handleShare("facebook")}
+              className="cursor-pointer hover:opacity-80 transition-opacity border-none bg-transparent p-0"
+            >
               <img
                 src="/socials/facebook.png"
                 alt="Facebook"
@@ -181,12 +207,27 @@ export function MobileShareModal({
               />
             </button>
 
-            <img
-              src="/socials/instagram.png"
-              alt="Instagram"
-              className="w-12 h-12"
-            />
-            <img src="/socials/tiktok.png" alt="TikTok" className="w-12 h-12" />
+            <button
+              onClick={() => handleShare("instagram")}
+              className="cursor-pointer hover:opacity-80 transition-opacity border-none bg-transparent p-0"
+            >
+              <img
+                src="/socials/instagram.png"
+                alt="Instagram"
+                className="w-12 h-12"
+              />
+            </button>
+
+            <button
+              onClick={() => handleShare("tiktok")}
+              className="cursor-pointer hover:opacity-80 transition-opacity border-none bg-transparent p-0"
+            >
+              <img
+                src="/socials/tiktok.png"
+                alt="TikTok"
+                className="w-12 h-12"
+              />
+            </button>
           </div>
         </div>
 

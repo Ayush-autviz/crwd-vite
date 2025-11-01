@@ -43,10 +43,10 @@ const SavedList: React.FC<SavedListProps> = ({ items, onRemoveItem }) => {
     } else {
       // Navigate based on item type
       const item = items[index];
-      if (item.type === 'collective') {
-        navigate(`/groupcrwd`, { state: { crwdId: item.collectiveId || item.id } });
-      } else {
-        navigate(`/cause`, { state: { causeId: item.causeId || item.id } });
+      if (item.type === 'collective' && (item.collectiveId || item.id)) {
+        navigate(`/groupcrwd/${item.collectiveId || item.id}`);
+      } else if (item.type === 'nonprofit' && (item.causeId || item.id)) {
+        navigate(`/cause/${item.causeId || item.id}`);
       }
     }
   };

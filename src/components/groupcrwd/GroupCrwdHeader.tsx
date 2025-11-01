@@ -172,7 +172,7 @@ const GroupCrwdHeader: React.FC<GroupCrwdHeaderProps> = ({
           </AvatarFallback>
         </Avatar>
         <span className=" text-sm text-gray-700">Founded by</span>
-        <span className="font-semibold text-gray-700 ">@{crwdData?.created_by?.username ?? ''}</span>
+        <span onClick={() => navigate(`/user-profile/${crwdData?.created_by?.id}`)} className="font-semibold text-gray-700 cursor-pointer hover:text-blue-600">@{crwdData?.created_by?.username ?? ''}</span>
         {/* <Button variant="outline">
           <Bookmark size={20} />
         </Button> */}
@@ -274,15 +274,16 @@ const GroupCrwdHeader: React.FC<GroupCrwdHeaderProps> = ({
       {/* Orgs Avatars */}
       <div className="flex items-center justify-start md:space-x-5 mt-1 gap-3">
         {crwdData?.causes?.map((src: any) => (
-          <Link to={`/cause`} key={src.name}>
+          <Link to={`/cause/${src.cause?.id || src.cause?.cause_id || ''}`} key={src.cause?.id || src.name}>
             <div className="flex flex-col items-center">
-              <img
-                src={src.cause.image}
-                alt="org"
-                className="w-12 h-12 rounded-md   first:ml-0"
-              />
+              <Avatar className="w-12 h-12 rounded-md">
+                <AvatarImage src={src.cause?.image || src.cause?.logo} alt={src.cause?.name || 'Nonprofit'} />
+                <AvatarFallback className="bg-blue-100 text-blue-600 text-sm font-semibold rounded-md">
+                  {src.cause?.name?.charAt(0)?.toUpperCase() || 'N'}
+                </AvatarFallback>
+              </Avatar>
               <p className="text-xs font-semibold  mt-1 text-gray-500">
-                {src.cause.name}
+                {src.cause?.name || src.name}
               </p>
             </div>
           </Link>

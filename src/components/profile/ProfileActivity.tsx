@@ -4,7 +4,8 @@ import type { PostDetail } from "@/lib/types";
 import ProfileActivityCard from "./ProfileActivityCard";
 import { morePostsToLoad } from "@/lib/profile/profileActivity";
 import { Button } from "@/components/ui/button";
-import { Loader2 } from "lucide-react";
+import { Loader2, MessageSquare } from "lucide-react";
+import EmptyState from "@/components/ui/EmptyState";
 
 interface ProfileActivityProps {
   posts: PostDetail[];
@@ -100,9 +101,12 @@ const ProfileActivity: React.FC<ProfileActivityProps> = ({
             // </Link>
           ))
         ) : (
-          <div className="flex items-center justify-center py-8">
-            <p className="text-gray-600">No posts available yet</p>
-          </div>
+          <EmptyState
+            icon={<MessageSquare size={48} />}
+            title="No posts yet"
+            description="This user hasn't shared any posts yet. Check back later to see their activity."
+            className="bg-white rounded-lg border border-gray-200"
+          />
         )}
       </div>
 

@@ -1,13 +1,8 @@
 import { useState, useRef, useEffect } from "react";
 import { Button } from "./button";
-import { X, Link, Mail, ChevronDown } from "lucide-react";
+import { Link, Mail, ChevronDown } from "lucide-react";
 import {
   FacebookShareButton,
-  // InstagramShareButton,
-  FacebookIcon,
-  // InstagramIcon,
-  InstapaperIcon,
-  InstapaperShareButton,
 } from "react-share";
 import { MobileShareModal } from "./MobileShareModal";
 
@@ -70,6 +65,42 @@ export function SharePost({
     }
   };
 
+  const handleInstagramShare = () => {
+    const shareText = title ? `${title}\n\n${url}` : url;
+    // Open Instagram in a new window (popup) similar to Facebook
+    // Instagram doesn't have a direct share API, so we open the create post page
+    const instagramUrl = `https://www.instagram.com/create/details/?mediaType=PHOTO`;
+    window.open(instagramUrl, '_blank', 'width=600,height=700,scrollbars=yes,resizable=yes');
+    
+    // Also copy to clipboard for convenience
+    navigator.clipboard.writeText(shareText).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    });
+  };
+
+  const handleTikTokShare = () => {
+    const shareText = title ? `${title}\n\n${url}` : url;
+    // Open TikTok in a new window (popup) similar to Facebook
+    // TikTok doesn't have a direct share API, so we open the upload page
+    const tiktokUrl = `https://www.tiktok.com/upload`;
+    window.open(tiktokUrl, '_blank', 'width=600,height=700,scrollbars=yes,resizable=yes');
+    
+    // Also copy to clipboard for convenience
+    navigator.clipboard.writeText(shareText).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    });
+  };
+
+  const handleEmailShare = () => {
+    const emailSubject = title || 'Check this out';
+    const emailBody = description ? `${description}\n\n${url}` : url;
+    // Open email in a new tab
+    const emailUrl = `mailto:?subject=${encodeURIComponent(emailSubject)}&body=${encodeURIComponent(emailBody)}`;
+    window.open(emailUrl, '_blank');
+  };
+
   if (!isOpen) return null;
 
   // Render mobile bottom sheet for mobile devices
@@ -86,7 +117,7 @@ export function SharePost({
   }
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 hidden md:flex">
+    <div className="fixed inset-0 bg-black/50 items-center justify-center z-50 hidden md:flex">
       <div
         ref={modalRef}
         className="bg-white rounded-xl p-6 max-w-md w-[90%] md:w-[400px] shadow-2xl"
@@ -112,6 +143,7 @@ export function SharePost({
 
           <Button
             variant="outline"
+            onClick={handleEmailShare}
             className="w-full py-3 border-gray-300 text-gray-900 hover:bg-gray-50"
           >
             <Mail className="w-4 h-4 mr-2" />
@@ -128,7 +160,7 @@ export function SharePost({
             <FacebookShareButton
               url={url}
               hashtag="#CRWD"
-              className="flex-shrink-0"
+              className="flex-shrink-0 cursor-pointer hover:opacity-80 transition-opacity"
             >
               <img
                 src="/socials/facebook.png"
@@ -137,13 +169,27 @@ export function SharePost({
               />
             </FacebookShareButton>
 
-            <img
-              src="/socials/instagram.png"
-              alt="Instagram"
-              className="w-12 h-12"
-            />
+            <button
+              onClick={handleInstagramShare}
+              className="flex-shrink-0 cursor-pointer hover:opacity-80 transition-opacity border-none bg-transparent p-0"
+            >
+              <img
+                src="/socials/instagram.png"
+                alt="Instagram"
+                className="w-12 h-12"
+              />
+            </button>
 
-            <img src="/socials/tiktok.png" alt="TikTok" className="w-12 h-12" />
+            <button
+              onClick={handleTikTokShare}
+              className="flex-shrink-0 cursor-pointer hover:opacity-80 transition-opacity border-none bg-transparent p-0"
+            >
+              <img
+                src="/socials/tiktok.png"
+                alt="TikTok"
+                className="w-12 h-12"
+              />
+            </button>
           </div>
         </div>
 

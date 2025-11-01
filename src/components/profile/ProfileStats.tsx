@@ -37,7 +37,7 @@ const ProfileStats: React.FC<ProfileStatsProps> = ({
         onClick={() => goToStats("crwds")}
       >
         <div className="font-bold text-lg">{crwds ?? 0}</div>
-        <div className="text-xs text-gray-500 flex items-center">CRWDs</div>
+        <div className="text-xs text-gray-500 flex items-center">Collectives</div>
       </div>
       <div
         className="flex-1 cursor-pointer hover:bg-gray-50 py-1 transition-colors flex flex-col items-center"
