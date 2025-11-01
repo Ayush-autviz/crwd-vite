@@ -1,4 +1,4 @@
-import { ChevronLeft, HelpCircle, Settings, X } from "lucide-react";
+import { HelpCircle, Settings, X } from "lucide-react";
 import { useState, useEffect } from "react";
 
 import { Button } from "@/components/ui/button";
@@ -12,6 +12,8 @@ interface DonationOverviewProps {
   onBack?: () => void;
   selectedOrganizations: string[];
   donationBox?: any;
+  initialShowManage?: boolean;
+  onCloseManage?: () => void;
 }
 
 export const Checkout = ({
@@ -19,8 +21,10 @@ export const Checkout = ({
   onBack = () => {},
   selectedOrganizations: selectedOrgIds,
   donationBox,
+  initialShowManage = false,
+  onCloseManage,
 }: DonationOverviewProps) => {
-  const [showManageDonationBox, setShowManageDonationBox] = useState(false);
+  const [showManageDonationBox, setShowManageDonationBox] = useState(initialShowManage);
   const [localSelectedOrgs, setLocalSelectedOrgs] = useState(selectedOrgIds);
   const [showAddMoreCauses, setShowAddMoreCauses] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
@@ -28,6 +32,11 @@ export const Checkout = ({
     width: window.innerWidth,
     height: window.innerHeight,
   });
+
+  // Update showManageDonationBox when initialShowManage changes
+  useEffect(() => {
+    setShowManageDonationBox(initialShowManage);
+  }, [initialShowManage]);
 
   // Get manual causes and attributing collectives from donation box API
   const manualCauses = donationBox?.manual_causes || [];
@@ -41,7 +50,7 @@ export const Checkout = ({
 
   // Show success modal when component mounts
   useEffect(() => {
-    setShowSuccessModal(true);
+    // setShowSuccessModal(true);
 
     // Update window dimensions on resize for confetti
     const handleResize = () => {
@@ -153,7 +162,12 @@ export const Checkout = ({
       <ManageDonationBox
         amount={actualDonationAmount}
         causes={causesAsObjects}
-        onBack={() => setShowManageDonationBox(false)}
+        onBack={() => {
+          setShowManageDonationBox(false);
+          if (onCloseManage) {
+            onCloseManage();
+          }
+        }}
         onRemove={handleRemoveFromManageBox}
       />
     );

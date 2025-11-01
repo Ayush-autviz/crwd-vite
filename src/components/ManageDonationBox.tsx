@@ -382,20 +382,20 @@ const ManageDonationBox: React.FC<ManageDonationBoxProps> = ({
   return (
     <div className="w-full min-h-screen bg-white flex flex-col ">
       {/* Header */}
-      <div className="bg-white border-b border-gray-200 h-16 p-4 flex items-center">
+      {/* <div className="bg-white border-b border-gray-200 h-16 p-4 flex items-center">
         <button
           onClick={() => onBack()}
           className="flex items-center justify-center h-8 w-8 rounded-full bg-gray-100 text-gray-700 hover:bg-gray-200 transition-colors mr-2 cursor-pointer"
           aria-label="Go back"
         >
-          {/* <ArrowLeft size={20} /> */}
+          
           <ChevronLeft size={20} />
         </button>
         <h1 className="text-xl font-bold text-gray-800 tracking-tight">
           Manage Donation Box
         </h1>
-        <div className="w-10"></div> {/* Empty div for alignment */}
-      </div>
+        <div className="w-10"></div>
+      </div> */}
 
       {/* Blue Card */}
       <div className="bg-blue-600 rounded-xl px-4 py-6 mx-4 mt-4 relative">

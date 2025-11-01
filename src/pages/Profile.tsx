@@ -9,7 +9,6 @@ import ProfileSidebar from "../components/profile/ProfileSidebar";
 import ProfileStats from "../components/profile/ProfileStats";
 import { Button } from "@/components/ui/button";
 import {
-  ChevronRight,
   Ellipsis,
   Share,
   Flag,
@@ -265,16 +264,6 @@ export default function ProfilePage() {
                 <Flag className="h-4 w-4" />
                 Report Profile
               </button>
-              <Link
-                to="/profile/edit"
-              >
-                <button onClick={() => {
-                  setShowMenu(false);
-                }} className="flex items-center gap-2 w-full px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors">
-                  <Pencil className="h-4 w-4" />
-                  Edit Profile
-                </button>
-              </Link>
               <button
                 onClick={() => {
                   setShowMenu(false);
@@ -293,12 +282,13 @@ export default function ProfilePage() {
             </div>
           )}
         </div>
-        {/* <Button
-          onClick={handleFollowClick}
-          variant={isFollowing ? "outline" : "default"}
+        <Button
+          onClick={() => navigate("/profile/edit")}
+          variant="outline"
         >
-          {isFollowing ? "Following" : "Follow"}
-        </Button> */}
+          {/* <Pencil className="w-4 h-4 mr-2" /> */}
+          Edit
+        </Button>
       </div>
 
       <div className="md:grid md:grid-cols-12 md:gap-6 md:px-6 md:pt-2 md:pb-6">
@@ -365,7 +355,7 @@ export default function ProfilePage() {
               ))}
             </div>
 
-            <ProfileBio bio={profileData?.bio || 'No bio available'} />
+            <ProfileBio bio={profileData?.bio} />
             <div className="py-4">
               <ProfileActivity
                 // showLabel

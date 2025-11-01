@@ -6,6 +6,7 @@ import { getProfile, updateProfile } from "@/services/api/auth";
 import { Loader2 } from "lucide-react";
 import { Toast } from "@/components/ui/toast";
 import { useState } from "react";
+import { useAuthStore } from "@/stores/store";
 
 export default function ProfileById() {
   // const { id } = useParams();
@@ -13,6 +14,7 @@ export default function ProfileById() {
   const [toastMessage, setToastMessage] = useState("");
   const [loadingField, setLoadingField] = useState<string | null>(null);
   const queryClient = useQueryClient();
+  const { setUser, user: currentUser } = useAuthStore();
 
   // Fetch profile data using React Query
   const profileQuery = useQuery({
@@ -29,6 +31,9 @@ export default function ProfileById() {
     onSuccess: (response) => {
       console.log('Profile updated successfully:', response);
       // Invalidate and refetch profile data
+      if (response.user.profile_picture) {
+        setUser({ ...currentUser, profile_picture: response.user.profile_picture });
+      }
       queryClient.invalidateQueries({ queryKey: ['profile'] });
       setToastMessage("Profile updated successfully!");
       setShowToast(true);

@@ -31,11 +31,11 @@ export const accountItems = [
 ];
 
 export const financialItems = [
-  {
-    label: "Payment Methods",
-    href: "/settings/payments",
-    icon: React.createElement(CreditCard, { className: "h-5 w-5" })
-  },
+  // {
+  //   label: "Payment Methods",
+  //   href: "/settings/payments",
+  //   icon: React.createElement(CreditCard, { className: "h-5 w-5" })
+  // },
   {
     label: "Transaction History",
     href: "/transaction-history",

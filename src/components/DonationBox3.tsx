@@ -1,7 +1,6 @@
 "use client";
 import { useState } from "react";
 import { CROWDS, RECENTS, SUGGESTED } from "@/constants";
-import { Country, State } from "country-state-city";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { removeCauseFromBox, removeCollectiveFromBox, activateDonationBox } from "@/services/api/donation";
 import {
@@ -29,6 +28,7 @@ interface DonationSummaryProps {
   onBookmarkOrganization?: (id: string) => void;
   donationAmount: number;
   donationBox?: any;
+  onManageDonationBox?: () => void;
 }
 
 export const DonationBox3 = ({
@@ -39,6 +39,7 @@ export const DonationBox3 = ({
   onBookmarkOrganization,
   donationAmount,
   donationBox,
+  onManageDonationBox,
 }: DonationSummaryProps) => {
   const queryClient = useQueryClient();
 
@@ -204,6 +205,20 @@ export const DonationBox3 = ({
 
   return (
     <div className="w-full h-full bg-white flex flex-col pb-24">
+      {/* Header with Manage Donation Box button */}
+      <div className="flex justify-end items-center px-4 pt-2 pb-2">
+        <Button
+          onClick={() => {
+            if (onManageDonationBox) {
+              onManageDonationBox();
+            }
+          }}
+          variant="outline"
+          className="text-sm"
+        >
+          Manage Donation Box
+        </Button>
+      </div>
       <div className="flex-1 overflow-auto mt-2 mx-4">
         {/* Manual Causes Section */}
         <div className="bg-white rounded-xl mb-6 p-6 shadow-sm border border-gray-100">
@@ -230,7 +245,7 @@ export const DonationBox3 = ({
                       {cause.mission || 'Making a positive impact in the community'}
                     </p>
                   </div>
-                  <div className="flex items-center gap-2">
+                  {/* <div className="flex items-center gap-2">
                     <button
                       className="p-2 hover:bg-gray-100 rounded-full transition-colors"
                       onClick={() => {
@@ -252,7 +267,7 @@ export const DonationBox3 = ({
                         />
                       </svg>
                     </button>
-                  </div>
+                  </div> */}
                 </div>
               ))
             ) : (
@@ -285,13 +300,13 @@ export const DonationBox3 = ({
                     <p className="text-sm text-gray-600">
                       {collective.description || 'Community collective'}
                     </p>
-                    {collective.creator && (
+                    {/* {collective.creator && (
                       <p className="text-xs text-gray-500 mt-1">
                         Created by {collective.creator.first_name} {collective.creator.last_name}
                       </p>
-                    )}
+                    )} */}
                   </div>
-                  <div className="flex items-center gap-2">
+                  {/* <div className="flex items-center gap-2">
                     <button
                       className="p-2 hover:bg-gray-100 rounded-full transition-colors"
                       onClick={() => {
@@ -313,7 +328,7 @@ export const DonationBox3 = ({
                         />
                       </svg>
                     </button>
-                  </div>
+                  </div> */}
                 </div>
               ))
             ) : (

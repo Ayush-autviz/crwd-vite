@@ -29,6 +29,7 @@ interface DonationBoxProps {
 const DonationBox = ({ tab = "setup", preselectedItem, activeTab }: DonationBoxProps) => {
   const [activeTabState, setActiveTabState] = useState<"setup" | "onetime">(tab as "setup" | "onetime" || "setup");
   const [checkout, setCheckout] = useState(false);
+  const [showManageDonationBox, setShowManageDonationBox] = useState(false);
   const [selectedOrganizations, setSelectedOrganizations] = useState<string[]>([]);
   const [preselectedItemAdded, setPreselectedItemAdded] = useState(false);
   const { user: currentUser } = useAuthStore();
@@ -114,7 +115,7 @@ const DonationBox = ({ tab = "setup", preselectedItem, activeTab }: DonationBoxP
   };
 
   const decrementDonation = () => {
-    if (donationAmount > 1) {
+    if (donationAmount > 5) {
       const newAmount = donationAmount - 1;
       setDonationAmount(newAmount);
       setInputValue(newAmount.toString());
@@ -152,12 +153,15 @@ const DonationBox = ({ tab = "setup", preselectedItem, activeTab }: DonationBoxP
     <div className="w-full h-full bg-white flex flex-col">
       {/* Header with title and back/close button - Always Visible */}
       <DonationHeader
-        title="Donation Box"
+        title={showManageDonationBox ? "Manage Donation Box" : "Donation Box"}
         step={step}
-        showBackButton={checkout || (step > 1 && activeTabState !== "onetime")}
-        showCloseButton={!checkout && (step === 1 || activeTabState === "onetime")}
+        showBackButton={showManageDonationBox}
+        showCloseButton={!checkout && !showManageDonationBox && (step === 1 || activeTabState === "onetime")}
         onBack={() => {
-          if (checkout) {
+          if (showManageDonationBox) {
+            setShowManageDonationBox(false);
+            setCheckout(false);
+          } else if (checkout) {
             setCheckout(false);
           } else {
             setStep((s) => s - 1);
@@ -217,10 +221,15 @@ const DonationBox = ({ tab = "setup", preselectedItem, activeTab }: DonationBoxP
       {/* Main Content */}
       {checkout ? (
         <Checkout
-          onBack={() => setCheckout(false)}
+          onBack={() => {
+            setCheckout(false);
+            setShowManageDonationBox(false);
+          }}
           selectedOrganizations={selectedOrganizations}
           donationAmount={donationAmount}
           donationBox={donationBox}
+          initialShowManage={showManageDonationBox}
+          onCloseManage={() => setShowManageDonationBox(false)}
         />
       ) : (
         <>
@@ -544,11 +553,20 @@ const DonationBox = ({ tab = "setup", preselectedItem, activeTab }: DonationBoxP
               ) : step === 2 ? (
                 //@ts-ignore
                 <DonationBox3
-                  setCheckout={setCheckout}
+                  setCheckout={(value: boolean) => {
+                    setCheckout(value);
+                    if (value) {
+                      setShowManageDonationBox(true);
+                    }
+                  }}
                   selectedOrganizations={selectedOrganizations}
                   setSelectedOrganizations={setSelectedOrganizations}
                   donationAmount={donationAmount}
                   donationBox={donationBox}
+                  onManageDonationBox={() => {
+                    setCheckout(true);
+                    setShowManageDonationBox(true);
+                  }}
                 />
               ) : (
                 <div className="flex-1 mx-4 mt-4 mb-4 flex flex-col">

@@ -46,6 +46,8 @@ export default function GroupCrwdPage() {
     queryKey: ['crwd', crwdId],
     queryFn: () => getCollectiveById(crwdId || ''),
     enabled: !!crwdId,
+    refetchOnMount: true, // Always refetch when component mounts to get fresh data
+    staleTime: 0, // Mark data as stale immediately to prevent stale cache
   });
 
   const { data: posts, isLoading: isLoadingPosts } = useQuery({

@@ -63,6 +63,8 @@ const GroupCrwdHeader: React.FC<GroupCrwdHeaderProps> = ({
       setShowToast(true);
       // Invalidate favorite collectives query to refresh the saved page
       queryClient.invalidateQueries({ queryKey: ['favoriteCollectives'] });
+      // Invalidate collective detail query to clear cache and force refresh on next visit
+      queryClient.invalidateQueries({ queryKey: ['crwd', id] });
     },
     onError: (error) => {
       console.error('Error favoriting collective:', error);
@@ -80,6 +82,8 @@ const GroupCrwdHeader: React.FC<GroupCrwdHeaderProps> = ({
       setShowToast(true);
       // Invalidate favorite collectives query to refresh the saved page
       queryClient.invalidateQueries({ queryKey: ['favoriteCollectives'] });
+      // Invalidate collective detail query to clear cache and force refresh on next visit
+      queryClient.invalidateQueries({ queryKey: ['crwd', id] });
     },
     onError: (error) => {
       console.error('Error unfavoriting collective:', error);
