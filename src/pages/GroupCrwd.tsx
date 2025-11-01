@@ -4,7 +4,7 @@ import GroupCrwdSuggested from "../components/groupcrwd/GroupCrwdSuggested";
 import GroupCrwdUpdates from "../components/groupcrwd/GroupCrwdUpdates";
 import ProfileNavbar from "@/components/profile/ProfileNavbar";
 import Footer from "@/components/Footer";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Toast } from "@/components/ui/toast";
 import { SharePost } from "@/components/ui/SharePost";
@@ -19,7 +19,7 @@ import {
 import { Check, Loader2, X } from "lucide-react";
 import ReactConfetti from "react-confetti";
 import { getCollectiveById, joinCollective, leaveCollective } from "@/services/api/crwd";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { getPosts } from "@/services/api/social";
 import { useAuthStore } from "@/stores/store";
 
@@ -38,6 +38,7 @@ export default function GroupCrwdPage() {
   // const { crwdId } = useLocation().state;
   const { crwdId } = useParams<{ crwdId: string }>();
   const { user: currentUser } = useAuthStore();
+  const queryClient = useQueryClient();
 
   console.log('crwdId', crwdId);
 
@@ -66,6 +67,8 @@ export default function GroupCrwdPage() {
       setShowToast(true);
       setShowJoinModal(false);
       setShowSuccessModal(true);
+      // Invalidate collective details query to refresh data
+      queryClient.invalidateQueries({ queryKey: ['crwd', crwdId] });
     },
     onError: (error: any) => {
       console.error('Join collective error:', error);

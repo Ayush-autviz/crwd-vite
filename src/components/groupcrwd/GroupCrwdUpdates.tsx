@@ -8,9 +8,7 @@ import ProfileActivity from "../profile/ProfileActivity";
 import { profileActivity } from "@/lib/profile/profileActivity";
 import EmptyState from "../ui/EmptyState";
 import type { PostDetail } from "@/lib/types";
-import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
-import { useQuery } from "@tanstack/react-query";
-import { getUserProfileById } from "@/services/api/social";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 
 interface GroupCrwdUpdatesProps {
   posts?: any[];
@@ -58,25 +56,46 @@ const GroupCrwdUpdates: React.FC<GroupCrwdUpdatesProps> = ({
     // Extract username from activity body (e.g., "@jake_long" -> "jake_long")
     const usernameMatch = activity.body?.match(/@(\w+)/);
     const username = usernameMatch ? usernameMatch[1] : null;
-    const userId = activity.data?.new_member_id;
     
-    // Fetch user profile for community type activities
-    const { data: userProfile } = useQuery({
-      queryKey: ['userProfile', userId],
-      queryFn: () => getUserProfileById(userId?.toString() || ''),
-      enabled: isCommunityType && !!userId,
-    });
+    // Try to get user ID from various possible fields in activity.data
+    const userId = 
+      activity.data?.new_member_id || 
+      activity.data?.user_id || 
+      activity.data?.donor_id || 
+      activity.data?.member_id ||
+      activity.data?.creator_id ||
+      null;
+    
+    // Removed automatic user profile fetching to prevent unnecessary API calls on mount
+    // User profiles will be fetched when user navigates to the profile page
 
     // Get initials for fallback
     const getInitials = () => {
-      if (userProfile?.username) {
-        return userProfile.username.charAt(0).toUpperCase();
-      }
       if (username) {
         return username.charAt(0).toUpperCase();
       }
-      return '?';
+      // Try to extract first letter from activity body if no username
+      const firstChar = activity.body?.charAt(0);
+      return firstChar ? firstChar.toUpperCase() : '?';
     };
+    
+    // Determine if we should show avatar (show for all activities with user info)
+    const shouldShowAvatar = !!userId || !!username;
+    
+    // Get profile link - use userId if available, otherwise use username
+    const getProfileLink = () => {
+      if (userId) {
+        return `/user-profile/${userId}`;
+      }
+      // If we only have username, try navigating with username (UserProfile page may handle it)
+      if (username) {
+        return `/user-profile/${username}`;
+      }
+      return '#';
+    };
+    
+    // Check if we should make username clickable (has userId or username)
+    const canNavigateToProfile = !!userId || !!username;
 
     return (
       <div
@@ -84,35 +103,39 @@ const GroupCrwdUpdates: React.FC<GroupCrwdUpdatesProps> = ({
         className="bg-white rounded-xl border border-gray-200 shadow-sm p-4"
       >
         <div className="flex items-start gap-3">
-          {/* Show avatar for community type (member actions) */}
-          {isCommunityType && userId && (
-            <Link to={`/user-profile/${userId}`}>
+          {/* Show avatar for all activity types when we have user info */}
+          {shouldShowAvatar ? (
+            canNavigateToProfile ? (
+              <Link to={getProfileLink()}>
+                <Avatar className="h-10 w-10">
+                  <AvatarFallback className="bg-gray-100 text-gray-600 font-semibold">
+                    {getInitials()}
+                  </AvatarFallback>
+                </Avatar>
+              </Link>
+            ) : (
               <Avatar className="h-10 w-10">
-                <AvatarImage
-                  src={userProfile?.profile_picture}
-                  alt={username || 'User'}
-                />
                 <AvatarFallback className="bg-gray-100 text-gray-600 font-semibold">
                   {getInitials()}
                 </AvatarFallback>
               </Avatar>
-            </Link>
-          )}
+            )
+          ) : null}
           
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 mb-1">
               {isCommunityType && (
                 <>
-                  {username && userId ? (
+                  {username ? (
                     <Link
-                      to={`/user-profile/${userId}`}
+                      to={getProfileLink()}
                       className="font-semibold text-gray-900 hover:text-blue-600 transition-colors"
                     >
                       @{username}
                     </Link>
                   ) : (
                     <span className="font-semibold text-gray-900">
-                      {username ? `@${username}` : '@member'}
+                      @member
                     </span>
                   )}
                   <span className="text-blue-600 text-sm">
@@ -121,14 +144,50 @@ const GroupCrwdUpdates: React.FC<GroupCrwdUpdatesProps> = ({
                 </>
               )}
               {isDonationType && (
-                <span className="font-semibold text-gray-900">
-                  CRWD Updates
-                </span>
+                <>
+                  {username ? (
+                    <Link
+                      to={getProfileLink()}
+                      className="font-semibold text-gray-900 hover:text-blue-600 transition-colors"
+                    >
+                      @{username}
+                    </Link>
+                  ) : (
+                    <span className="font-semibold text-gray-900">
+                      CRWD Updates
+                    </span>
+                  )}
+                </>
               )}
               {isMilestoneType && (
-                <span className="font-semibold text-gray-900">
-                  CRWD Milestones
-                </span>
+                <>
+                  {username ? (
+                    <>
+                      <Link
+                        to={getProfileLink()}
+                        className="font-semibold text-gray-900 hover:text-blue-600 transition-colors"
+                      >
+                        @{username}
+                      </Link>
+                      <span className="font-semibold text-gray-900">
+                        · CRWD Milestones
+                      </span>
+                    </>
+                  ) : (
+                    <span className="font-semibold text-gray-900">
+                      CRWD Milestones
+                    </span>
+                  )}
+                </>
+              )}
+              {/* Show username for other activity types if present */}
+              {!isCommunityType && !isDonationType && !isMilestoneType && username && (
+                <Link
+                  to={getProfileLink()}
+                  className="font-semibold text-gray-900 hover:text-blue-600 transition-colors"
+                >
+                  @{username}
+                </Link>
               )}
               <span className="text-gray-400 text-sm">
                 {activity.timestamp || 'Recently'}
@@ -154,17 +213,6 @@ const GroupCrwdUpdates: React.FC<GroupCrwdUpdatesProps> = ({
       </div> */}
 
       <div className="space-y-4">
-        {/* Recent Activities - Always shown */}
-        {recentActivities && recentActivities.length > 0 && (
-          <div className="lg:max-w-[600px]">
-            <div className="space-y-4">
-              {recentActivities.map((activity) => (
-                <ActivityItem key={activity.id} activity={activity} />
-              ))}
-            </div>
-          </div>
-        )}
-
         {/* Posts Section */}
         {isLoading ? (
           <div className="flex items-center justify-center py-8">
@@ -189,6 +237,17 @@ const GroupCrwdUpdates: React.FC<GroupCrwdUpdatesProps> = ({
             postButton={joined}
             collectiveData={collectiveData}
           />
+        )}
+
+        {/* Recent Activities - Always shown under posts */}
+        {recentActivities && recentActivities.length > 0 && (
+          <div className="lg:max-w-[600px]">
+            <div className="space-y-4">
+              {recentActivities.map((activity) => (
+                <ActivityItem key={activity.id} activity={activity} />
+              ))}
+            </div>
+          </div>
         )}
       </div>
     </div>
