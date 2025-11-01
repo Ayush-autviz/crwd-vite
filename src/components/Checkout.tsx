@@ -1,4 +1,4 @@
-import { ArrowLeft, ChevronLeft, HelpCircle, Settings, X } from "lucide-react";
+import { ChevronLeft, HelpCircle, Settings, X } from "lucide-react";
 import { useState, useEffect } from "react";
 
 import { Button } from "@/components/ui/button";
@@ -120,6 +120,7 @@ export const Checkout = ({
             imageUrl: cause.logo || "",
             color: "#4F46E5",
             description: cause.mission || cause.description || "",
+            type: 'cause' as const,
           })),
           ...attributingCollectives.map((collective: any) => ({
             id: `collective-${collective.id}`,
@@ -127,6 +128,7 @@ export const Checkout = ({
             imageUrl: collective.cover_image || "",
             color: "#9333EA",
             description: collective.description || "",
+            type: 'collective' as const,
           })),
         ]
       : selectedOrganizations.map(
@@ -136,6 +138,7 @@ export const Checkout = ({
             imageUrl: "",
             color: getOrganizationColor(orgName),
             description: getOrganizationDescription(orgName),
+            type: 'cause' as const,
           })
         );
 
@@ -160,14 +163,13 @@ export const Checkout = ({
     <div className="flex flex-col h-full bg-white min-h-screen p-0">
       {/* Header */}
       <div className="bg-white border-b border-gray-200 p-4 h-16 flex items-center">
-        <button
+        {/* <button
           onClick={() => onBack()}
           className="flex items-center justify-center h-8 w-8 rounded-full bg-gray-100 text-gray-700 hover:bg-gray-200 transition-colors mr-2 cursor-pointer"
           aria-label="Go back"
         >
-          {/* <ArrowLeft size={20} /> */}
           <ChevronLeft size={20} />
-        </button>
+        </button> */}
         <h1 className="text-xl font-bold text-gray-800 tracking-tight">
           Donation Box
         </h1>
@@ -389,7 +391,7 @@ export const Checkout = ({
         </div>
 
         {/* Add More Causes Section */}
-        <div className="mx-8 mb-6">
+        {/* <div className="mx-8 mb-6">
           <div className="border border-gray-200 rounded-lg p-4 bg-gray-50">
             <p className="text-sm text-gray-500 mb-2">
               Add up to 45 more causes to thi s box
@@ -420,7 +422,7 @@ export const Checkout = ({
               )}
             </div>
           </div>
-        </div>
+        </div> */}
         {/* <div className="h-24 md:hidden"></div> */}
       </div>
 

@@ -256,7 +256,7 @@ export const DonationBox3 = ({
                 </div>
               ))
             ) : (
-              <p className="text-gray-500 text-center py-4">No manual causes added</p>
+              <p className="text-gray-500 text-center py-4">No causes</p>
             )}
           </div>
         </div>
@@ -317,7 +317,7 @@ export const DonationBox3 = ({
                 </div>
               ))
             ) : (
-              <p className="text-gray-500 text-center py-4">No collectives attributed</p>
+              <p className="text-gray-500 text-center py-4">No collectives</p>
             )}
           </div>
         </div>
@@ -679,13 +679,13 @@ export const DonationBox3 = ({
         </div> */}
 
          {/* checkout button */}
-         <div className="space-y-1 mb-10 fixed bottom-0 w-calc(100%-16px) left-0 right-0 mx-4">
+         <div className="space-y-1  fixed bottom-12 md:bottom-32  w-calc(100%-16px) left-0 right-0 mx-4">
            <Button 
              className="w-full bg-green-500 hover:bg-green-600 text-white py-6 md:py-6 rounded-lg font-medium transition-colors flex items-center justify-center" 
              onClick={handleCheckout}
              disabled={activateBoxMutation.isPending}
            >
-             {activateBoxMutation.isPending ? 'Activating...' : 'Checkout'}
+             {activateBoxMutation.isPending ? 'Activating...' : 'Activate Donation Box'}
            </Button>
          </div>
       </div>

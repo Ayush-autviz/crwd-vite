@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Minus, Plus, Search } from "lucide-react";
+import { Loader2, Minus, Plus, Search } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { DonationBox3 } from "./DonationBox3";
@@ -14,6 +14,7 @@ import { getCausesBySearch } from "@/services/api/crwd";
 import { getJoinCollective } from "@/services/api/crwd";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { useAuthStore } from "@/stores/store";
+import ProfileNavbar from "./profile/ProfileNavbar";
 
 interface DonationBoxProps {
   tab?: string;
@@ -43,9 +44,10 @@ const DonationBox = ({ tab = "setup", preselectedItem, activeTab }: DonationBoxP
 
   const isMobile = useIsMobile();
 
-  const { data: donationBox } = useQuery({
+  const { data: donationBox, isLoading: isLoadingDonationBox, isError: isErrorDonationBox } = useQuery({
     queryKey: ['donationBox'],
     queryFn: () => getDonationBox(),
+    enabled: true
   });
 
   // Set step based on donation box existence
@@ -132,6 +134,15 @@ const DonationBox = ({ tab = "setup", preselectedItem, activeTab }: DonationBoxP
 
   console.log(selectedOrganizations, "ork");
 
+  if (isLoadingDonationBox) {
+    return <div className="w-full h-full bg-white flex flex-col">
+      <ProfileNavbar title="Donation Box" />
+      <div className="flex items-center justify-center min-h-screen">
+        <Loader2 className="w-8 h-8 animate-spin" />
+      </div>
+    </div>
+  }
+
   return (
     <div className="w-full h-full bg-white flex flex-col">
       {checkout ? (
@@ -147,7 +158,7 @@ const DonationBox = ({ tab = "setup", preselectedItem, activeTab }: DonationBoxP
           <DonationHeader
             title="Donation Box"
             step={step}
-            showBackButton={step > 1 && activeTab !== "onetime"}
+            // showBackButton={step > 1 && activeTab !== "onetime"}
             showCloseButton={step === 1 || activeTab === "onetime"}
             onBack={() => setStep((s) => s - 1)}
           />

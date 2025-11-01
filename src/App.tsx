@@ -59,6 +59,7 @@ import CompleteOnboard from "./pages/onboarding/CompleteOnboard";
 import GoogleCallback from "./pages/auth/GoogleCallback";
 import Circles from "./pages/Circles";
 import Articles from "./pages/Articles";
+import PaymentResult from "./pages/PaymentResult";
 
 // ScrollToTop component that works for all pages
 function ScrollToTop() {
@@ -184,6 +185,7 @@ function App() {
                       path="/transaction-history"
                       element={<TransactionHistory />}
                     />
+                    <Route path="/payment/result" element={<PaymentResult />} />
                     <Route path="/saved" element={<Saved />} />
                     {/* <Route path="/your-crwds" element={<YourCrwds />} /> */}
                     {/* <Route path="/your-crwds/:id" element={<ManageCrwd />} /> */}
