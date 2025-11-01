@@ -76,6 +76,7 @@ export default function PostById() {
       replies: [],
       repliesCount: comment.replies_count || 0,
       parentComment: comment.parent_comment,
+      userId: comment.user?.id, // Add user ID for delete functionality
     }));
   }, [commentsData]);
   
@@ -153,6 +154,7 @@ export default function PostById() {
         replies: [],
         repliesCount: reply.replies_count || 0,
         parentComment: reply.parent_comment,
+        userId: reply.user?.id, // Add user ID for delete functionality
       })) || [];
 
       setComments(prevComments => {
@@ -387,6 +389,26 @@ export default function PostById() {
                   isExpanded={expandedComments.has(comment.id)}
                   isLoadingReplies={loadingReplies.has(comment.id)}
                   showReplyButton={!comment.parentComment} // Only main comments can have replies
+                  onDelete={(commentId) => {
+                    // Remove comment or reply from local state
+                    setComments(prev => {
+                      // First, try to remove it as a main comment
+                      const filteredComments = prev.filter(c => c.id !== commentId);
+                      
+                      // If not found, it might be a reply - remove from parent comment's replies
+                      if (filteredComments.length === prev.length) {
+                        return prev.map(comment => ({
+                          ...comment,
+                          replies: comment.replies.filter(reply => reply.id !== commentId),
+                          repliesCount: comment.replies.filter(reply => reply.id !== commentId).length,
+                        }));
+                      }
+                      
+                      return filteredComments;
+                    });
+                    // Invalidate queries to refresh
+                    queryClient.invalidateQueries({ queryKey: ['postComments', id] });
+                  }}
                 />
               ))}
             </div>

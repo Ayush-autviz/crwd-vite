@@ -1,8 +1,19 @@
-import React, { useState } from 'react';
-import { MessageCircle } from 'lucide-react';
+import React, { useState, useEffect, useRef } from 'react';
+import { MessageCircle, EllipsisIcon, Trash2, Loader2 } from 'lucide-react';
 import { Button } from '../ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 import { formatDistanceToNow } from 'date-fns';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '../ui/dialog';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { deleteComment } from '@/services/api/social';
+import { useAuthStore } from '@/stores/store';
 
 export interface CommentData {
   id: number;
@@ -14,6 +25,7 @@ export interface CommentData {
   replies: CommentData[];
   repliesCount?: number;
   parentComment?: any;
+  userId?: string | number; // User ID to check if comment belongs to current user
 }
 
 interface CommentProps extends CommentData {
@@ -23,6 +35,7 @@ interface CommentProps extends CommentData {
   isExpanded?: boolean;
   isLoadingReplies?: boolean;
   showReplyButton?: boolean;
+  onDelete?: (commentId: number) => void; // Callback when comment is deleted
 }
 
 export const Comment: React.FC<CommentProps> = ({
@@ -39,9 +52,54 @@ export const Comment: React.FC<CommentProps> = ({
   isExpanded = false,
   isLoadingReplies = false,
   showReplyButton = true,
+  userId,
+  onDelete,
 }) => {
   const [isReplying, setIsReplying] = useState(false);
   const [replyContent, setReplyContent] = useState('');
+  const [showMenu, setShowMenu] = useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const menuRef = useRef<HTMLDivElement>(null);
+  const queryClient = useQueryClient();
+  const { user } = useAuthStore();
+  const isOwnComment = user?.id && userId && (user.id.toString() === userId.toString());
+
+  // Handle click outside to close menu
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+        setShowMenu(false);
+      }
+    };
+
+    if (showMenu) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [showMenu]);
+
+  // Delete comment mutation
+  const deleteCommentMutation = useMutation({
+    mutationFn: () => deleteComment(id.toString()),
+    onSuccess: () => {
+      setShowDeleteConfirm(false);
+      setShowMenu(false);
+      // Call onDelete callback if provided
+      if (onDelete) {
+        onDelete(id);
+      }
+      // Invalidate comments queries to refresh the list
+      queryClient.invalidateQueries({ queryKey: ['postComments'] });
+    },
+    onError: (error) => {
+      console.error('Error deleting comment:', error);
+      setShowDeleteConfirm(false);
+      setShowMenu(false);
+    },
+  });
 
   const handleReplySubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -66,9 +124,36 @@ export const Comment: React.FC<CommentProps> = ({
           <div className="bg-muted p-3 rounded-lg">
             <div className="flex items-center justify-between mb-1">
               <span className="font-medium text-sm">@{username}</span>
-              {/* <Button variant="ghost" size="icon" className="h-8 w-8">
-                <MoreHorizontal className="h-4 w-4" />
-              </Button> */}
+              {isOwnComment && (
+                <div className="relative" ref={menuRef}>
+                  <button
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      setShowMenu(!showMenu);
+                    }}
+                    className="p-1 rounded-full hover:bg-gray-100 transition-colors"
+                  >
+                    <EllipsisIcon className="h-4 w-4 text-muted-foreground cursor-pointer" />
+                  </button>
+                  {showMenu && (
+                    <div className="absolute right-0 top-8 bg-white border border-gray-200 rounded-md shadow-lg z-10 w-32">
+                      <button
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          setShowMenu(false);
+                          setShowDeleteConfirm(true);
+                        }}
+                        className="flex items-center gap-2 w-full px-3 py-2 text-sm text-red-600 hover:bg-gray-50 transition-colors"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                        Delete
+                      </button>
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
             <p className="text-sm">{content}</p>
           </div>
@@ -145,10 +230,48 @@ export const Comment: React.FC<CommentProps> = ({
               onReply={onReply}
               onLike={onLike}
               showReplyButton={false} // Replies cannot have replies
+              onDelete={onDelete} // Pass onDelete to replies as well
             />
           ))}
         </div>
       )}
+
+      {/* Delete Confirmation Dialog */}
+      <Dialog open={showDeleteConfirm} onOpenChange={setShowDeleteConfirm}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Delete Comment</DialogTitle>
+            <DialogDescription>
+              Are you sure you want to delete this comment? This action cannot be undone.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => setShowDeleteConfirm(false)}
+              disabled={deleteCommentMutation.isPending}
+            >
+              Cancel
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={() => {
+                deleteCommentMutation.mutate();
+              }}
+              disabled={deleteCommentMutation.isPending}
+            >
+              {deleteCommentMutation.isPending ? (
+                <>
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  Deleting...
+                </>
+              ) : (
+                "Delete"
+              )}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }; 

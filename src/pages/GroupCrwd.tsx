@@ -340,6 +340,7 @@ export default function GroupCrwdPage() {
             collectiveData={crwdData}
             posts={posts?.results || []}
             isLoading={isLoadingPosts}
+            recentActivities={crwdData?.recent_activities || []}
           />
           <GroupCrwdSuggested />
           {/* <GroupCrwdEvent /> */}

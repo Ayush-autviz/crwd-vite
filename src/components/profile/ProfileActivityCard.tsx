@@ -4,15 +4,24 @@ import React, { useState, useEffect, useRef } from "react";
 import { CardContent } from "../ui/card";
 import { Card } from "../ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
-import { EllipsisIcon, Trash2, Flag } from "lucide-react";
+import { EllipsisIcon, Trash2 } from "lucide-react";
 import type { PostDetail } from "@/lib/types";
 import { cn } from "@/lib/utils";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { IoArrowRedoOutline } from "react-icons/io5";
 import { SharePost } from "../ui/SharePost";
 import { Toast } from "../ui/toast";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "../ui/dialog";
+import { Button } from "../ui/button";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { likePost, unlikePost } from "@/services/api/social";
+import { likePost, unlikePost, deletePost } from "@/services/api/social";
 import { Loader2 } from "lucide-react";
 import { useAuthStore } from "@/stores/store";
 
@@ -31,10 +40,10 @@ export default function ProfileActivityCard({
   const [showShareModal, setShowShareModal] = useState(false);
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [isLiked, setIsLiked] = useState(post.isLiked || false);
   const [likesCount, setLikesCount] = useState(post.likes || 0);
   const menuRef = useRef<HTMLDivElement>(null);
-  const navigate = useNavigate();
   const queryClient = useQueryClient();
   const { user } = useAuthStore();
   const isOwnPost = user?.id === post.userId;
@@ -69,6 +78,27 @@ export default function ProfileActivityCard({
       console.error('Error unliking post:', error);
       setToastMessage("Failed to unlike post");
       setShowToast(true);
+    },
+  });
+
+  // Delete post mutation
+  const deletePostMutation = useMutation({
+    mutationFn: () => deletePost(post.id.toString()),
+    onSuccess: () => {
+      setToastMessage("Post deleted successfully!");
+      setShowToast(true);
+      setShowDeleteConfirm(false);
+      setShowMenu(false);
+      // Invalidate posts queries to refresh the list
+      queryClient.invalidateQueries({ queryKey: ['posts'] });
+      // If there's an onDelete callback, call it (for parent component to handle removal)
+      // For now, the query invalidation should handle the update
+    },
+    onError: (error) => {
+      console.error('Error deleting post:', error);
+      setToastMessage("Failed to delete post");
+      setShowToast(true);
+      setShowDeleteConfirm(false);
     },
   });
 
@@ -162,8 +192,7 @@ export default function ProfileActivityCard({
                               e.preventDefault();
                               e.stopPropagation();
                               setShowMenu(false);
-                              // Handle delete post
-                              console.log("Delete post");
+                              setShowDeleteConfirm(true);
                             }}
                             className="flex items-center gap-2 w-full px-3 py-2 text-sm text-red-600 hover:bg-gray-50 transition-colors"
                           >
@@ -203,8 +232,7 @@ export default function ProfileActivityCard({
                             e.preventDefault();
                             e.stopPropagation();
                             setShowMenu(false);
-                            // Handle delete post
-                            console.log("Delete post");
+                            setShowDeleteConfirm(true);
                           }}
                           className="flex items-center gap-2 w-full px-3 py-2 text-sm text-red-600 hover:bg-gray-50 transition-colors"
                         >
@@ -283,6 +311,43 @@ export default function ProfileActivityCard({
         isOpen={showShareModal}
         onClose={() => setShowShareModal(false)}
       />
+
+      {/* Delete Confirmation Dialog */}
+      <Dialog open={showDeleteConfirm} onOpenChange={setShowDeleteConfirm}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Delete Post</DialogTitle>
+            <DialogDescription>
+              Are you sure you want to delete this post? This action cannot be undone.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => setShowDeleteConfirm(false)}
+              disabled={deletePostMutation.isPending}
+            >
+              Cancel
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={() => {
+                deletePostMutation.mutate();
+              }}
+              disabled={deletePostMutation.isPending}
+            >
+              {deletePostMutation.isPending ? (
+                <>
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  Deleting...
+                </>
+              ) : (
+                "Delete"
+              )}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       {/* Toast notification */}
       <Toast

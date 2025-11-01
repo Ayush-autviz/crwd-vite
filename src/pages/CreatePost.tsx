@@ -24,6 +24,7 @@ export default function CreatePostPage() {
   const [toastMessage, setToastMessage] = useState("");
 
   const [form, setForm] = useState({
+    
     content: "",
     url: "",
   });
@@ -124,18 +125,21 @@ export default function CreatePostPage() {
 
   // Check if post can be submitted
   const canSubmitPost = () => {
-    if (!collectiveData || !form.content.trim()) return false;
-
-    switch (postType) {
-      case "link":
-        return form.url.trim() && validateUrl(form.url) && !urlError;
-      case "image":
-        return selectedImage !== null;
-      case "event":
-        return true; // Event posts just need content
-      default:
-        return false;
+    // Post can be submitted with just content (text-only post)
+    if (!form.content.trim()) return false;
+    
+    // If link type is selected, URL must be provided and valid
+    if (postType === "link") {
+      return form.url.trim() && validateUrl(form.url) && !urlError;
     }
+    
+    // If image type is selected, image must be provided
+    if (postType === "image") {
+      return selectedImage !== null;
+    }
+    
+    // Text-only post or event post (just needs content)
+    return true;
   };
 
   // Handle form submission
@@ -146,12 +150,14 @@ export default function CreatePostPage() {
     formData.append('collective_id', collectiveData.id.toString());
     formData.append('content', form.content);
 
-    console.log(selectedImage);
-    
-
     // Add media file if it's an image post
     if (postType === "image" && selectedImage) {
       formData.append('media_file', selectedImage);
+    }
+    
+    // Add media_url if URL is provided (for link posts or when URL is filled)
+    if (form.url.trim() && validateUrl(form.url)) {
+      formData.append('media_url', form.url);
     }
 
     createPostMutation.mutate(formData);
@@ -195,7 +201,7 @@ export default function CreatePostPage() {
           </div>
           
           <div className="flex-1">
-            {postType ? (
+            {/* {postType ? ( */}
               <div className="mt-6">
                 {/* Title/Content Input - Always shown for all post types */}
                 <div className="mb-6">
@@ -204,11 +210,8 @@ export default function CreatePostPage() {
                     value={form.content}
                     onChange={handleInputChange}
                     placeholder={
-                      postType === "link"
-                        ? "What's on your mind?"
-                        : postType === "image"
-                        ? "What's on your mind?"
-                        : "What's the name of your event?"
+                     "What's on your mind?"
+                     
                     }
                     className="w-full min-h-[100px] p-0 border-0 bg-transparent text-lg focus:outline-none resize-none placeholder:text-gray-400"
                   />
@@ -267,7 +270,7 @@ export default function CreatePostPage() {
                   </div>
                 )}
               </div>
-            ) : (
+            {/* ) : (
               <div className="flex flex-col items-center justify-center mt-10 px-1">
                 <div className="text-gray-400 text-center">
                   <div className="text-lg mb-2">
@@ -278,7 +281,7 @@ export default function CreatePostPage() {
                   </div>
                 </div>
               </div>
-            )}
+            )} */}
 
             {/* Post Type Icons - Always visible below textarea */}
             <div className="mt-6 px-2">
