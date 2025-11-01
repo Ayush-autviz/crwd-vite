@@ -69,22 +69,28 @@ export default function SearchPage() {
   const categoryId = location.state?.categoryId;
   const categoryName = location.state?.categoryName;
 
+  // Store initial category name from navigation state
+  const [initialCategoryName, setInitialCategoryName] = useState<string | undefined>(categoryName);
+
   // Set initial category from navigation state and trigger search
   useEffect(() => {
     if (categoryId && categoryName) {
       setSelectedCategory(categoryId);
       setSearchQuery(categoryName);
+      setInitialCategoryName(categoryName);
       setSearchTrigger(prev => prev + 1);
     }
   }, [categoryId, categoryName]);
 
   // Get causes with search and category filtering
   const { data: causesData, isLoading: isCausesLoading, error } = useQuery({
-    queryKey: ['causes', selectedCategory, searchTrigger, currentPage],
+    queryKey: ['causes', selectedCategory, searchQuery, searchTrigger, currentPage],
     queryFn: () => {
       return getCausesBySearch(searchQuery, selectedCategory === "All" || selectedCategory === "" ? '' : selectedCategory, currentPage);
     },
     enabled: searchQuery.trim().length > 0 || (selectedCategory !== "All" && selectedCategory !== ""),
+    refetchOnMount: true,
+    refetchOnWindowFocus: false,
   });
 
   // Handle API response and accumulate results
@@ -186,7 +192,7 @@ export default function SearchPage() {
               <h2 className="text-lg font-semibold mb-4">
                 {searchQuery ? `Search results for "${searchQuery}"` : 
                  (selectedCategory !== "All" && selectedCategory !== "") ? 
-                 `Causes in ${categoryName || discoverCategories.find(cat => cat.id === selectedCategory)?.name || selectedCategory}` : 
+                 `Causes in ${initialCategoryName || discoverCategories.find(cat => cat.id === selectedCategory)?.name || selectedCategory}` : 
                  "Causes near you"}
               </h2>
               <div className="">
@@ -252,7 +258,7 @@ export default function SearchPage() {
                     <p className="text-sm text-muted-foreground">
                       {searchQuery ? `No causes found for "${searchQuery}"` : 
                        (selectedCategory !== "All" && selectedCategory !== "") ? 
-                       `No causes found in ${categoryName || discoverCategories.find(cat => cat.id === selectedCategory)?.name || selectedCategory}` : 
+                       `No causes found in ${initialCategoryName || discoverCategories.find(cat => cat.id === selectedCategory)?.name || selectedCategory}` : 
                        "No causes available"}
                     </p>
                   </div>
@@ -416,6 +422,9 @@ export default function SearchPage() {
                       style={{ backgroundColor: category.background }}
                       onClick={() => {
                         setSelectedCategory(category.id);
+                        setSearchQuery(category.name);
+                        setInitialCategoryName(category.name);
+                        setSearchTrigger(prev => prev + 1);
                       }}
                     >
                       <div className="flex items-center gap-2">
@@ -488,6 +497,9 @@ export default function SearchPage() {
                     }}
                     onClick={() => {
                       setSelectedCategory(category.id);
+                      setSearchQuery(category.name);
+                      setInitialCategoryName(category.name);
+                      setSearchTrigger(prev => prev + 1);
                     }}
                   >
                     {category.name}
@@ -525,6 +537,9 @@ export default function SearchPage() {
                   style={{ backgroundColor: selectedCategory === "All" ? "#f5f5f5" : "#f5f5f5" }}
                     onClick={() => {
                       setSelectedCategory("All");
+                      setSearchQuery("");
+                      setInitialCategoryName(undefined);
+                      setSearchTrigger(prev => prev + 1);
                       setShowCategorySelector(false);
                     }}
                 >
@@ -545,6 +560,9 @@ export default function SearchPage() {
                       style={{ backgroundColor: category.background }}
                       onClick={() => {
                         setSelectedCategory(category.id);
+                        setSearchQuery(category.name);
+                        setInitialCategoryName(category.name);
+                        setSearchTrigger(prev => prev + 1);
                         setShowCategorySelector(false);
                       }}
                     >

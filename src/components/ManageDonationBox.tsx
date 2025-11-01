@@ -84,6 +84,13 @@ const ManageDonationBox: React.FC<ManageDonationBoxProps> = ({
     enabled: activeTab === 'nonprofits' && showSearchResults && searchQuery.length > 0,
   });
 
+  // Fetch default causes (5 causes) when nonprofits tab is active
+  const { data: defaultCausesData, isLoading: defaultCausesLoading } = useQuery({
+    queryKey: ['default-causes-manage'],
+    queryFn: () => getCausesBySearch('', '', 1),
+    enabled: activeTab === 'nonprofits' && !showSearchResults,
+  });
+
   // Fetch joined collectives
   const { data: joinedCollectivesData, isLoading: joinedCollectivesLoading } = useQuery({
     queryKey: ['joined-collectives-manage'],
@@ -394,6 +401,13 @@ const ManageDonationBox: React.FC<ManageDonationBoxProps> = ({
         .slice(0, 5)
     : [];
 
+  // Get default causes (max 5) when no search is active, excluding all selected ones
+  const defaultCauses = !showSearchResults && defaultCausesData?.results
+    ? defaultCausesData.results
+        .filter((cause: any) => !allSelectedCauseIds.includes(cause.id))
+        .slice(0, 5)
+    : [];
+
   // Get joined collectives, excluding all selected ones
   const joinedCollectives = joinedCollectivesData?.data?.map((item: any) => item.collective) || [];
   const availableCollectives = joinedCollectives.filter((collective: any) => 
@@ -609,15 +623,60 @@ const ManageDonationBox: React.FC<ManageDonationBoxProps> = ({
                   </button>
                 )}
               </div>
-              {searchQuery && (
+              {/* {searchQuery && (
                 <Button
                   onClick={handleSearch}
                   className="w-full bg-blue-600 hover:bg-blue-700 text-white mb-4"
                 >
                   Search
                 </Button>
-              )}
+              )} */}
             </div>
+
+            {/* Default Causes - Show when no search is active */}
+            {!showSearchResults && (
+              <div className="mb-6">
+                <h3 className="text-sm font-semibold text-gray-700 mb-3">
+                  Suggested Nonprofits
+                </h3>
+                {defaultCausesLoading ? (
+                  <p className="text-gray-500 text-center py-4">Loading...</p>
+                ) : defaultCauses.length > 0 ? (
+                  <div className="space-y-3">
+                    {defaultCauses.map((cause: any) => {
+                      const isSelected = selectedCauses.includes(cause.id);
+                      return (
+                        <div
+                          key={cause.id}
+                          className="flex items-center p-3 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors cursor-pointer"
+                          onClick={() => handleToggleCause(cause.id)}
+                        >
+                          <Avatar className="w-12 h-12 rounded-full object-cover mr-3">
+                            <AvatarImage src={cause.logo} />
+                            <AvatarFallback>
+                              {cause.name?.charAt(0) || 'C'}
+                            </AvatarFallback>
+                          </Avatar>
+                          <div className="flex-1">
+                            <h3 className="font-semibold text-gray-800">{cause.name}</h3>
+                            <p className="text-sm text-gray-600">{cause.mission || cause.description}</p>
+                          </div>
+                          <div className={`w-6 h-6 rounded-full flex items-center justify-center ${isSelected ? 'bg-blue-600' : 'border-2 border-gray-300'}`}>
+                            {isSelected && (
+                              <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                              </svg>
+                            )}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                ) : (
+                  <p className="text-gray-500 text-center py-4">No nonprofits available</p>
+                )}
+              </div>
+            )}
 
             {/* Search Results */}
             {showSearchResults && (

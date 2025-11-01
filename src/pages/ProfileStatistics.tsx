@@ -6,7 +6,7 @@ import MembersList from "@/components/members/MembersList";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { useQuery } from "@tanstack/react-query";
-import { getUserFollowers, getUserFollowing, getFavoriteCauses } from "@/services/api/social";
+import { getUserFollowers, getUserFollowing, getFavoriteCauses, getFavoriteCausesByUserId } from "@/services/api/social";
 import { getJoinCollective } from "@/services/api/crwd";
 import { useAuthStore } from "@/stores/store";
 import { Loader2 } from "lucide-react";
@@ -51,11 +51,19 @@ export default function ProfileStatistics() {
     enabled: !!(userId || user?.id),
   });
 
+  // const { data: causesData, isLoading: causesLoading } = useQuery({
+  //   queryKey: ['favoriteCauses', userId || user?.id],
+  //   queryFn: () => getFavoriteCauses(),
+  //   enabled: !!(userId || user?.id),
+  // });
+
   const { data: causesData, isLoading: causesLoading } = useQuery({
-    queryKey: ['favoriteCauses', userId || user?.id],
-    queryFn: () => getFavoriteCauses(),
+    queryKey: ['favoriteCausesByUserId', userId || user?.id],
+    queryFn: () => getFavoriteCausesByUserId(userId || user?.id?.toString() || ''),
     enabled: !!(userId || user?.id),
   });
+
+
 
   const { data: collectivesData, isLoading: collectivesLoading } = useQuery({
     queryKey: ['joinCollective', userId || user?.id],

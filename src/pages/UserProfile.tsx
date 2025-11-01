@@ -5,7 +5,7 @@ import ProfileActivity from "../components/profile/ProfileActivity";
 import ProfileNavbar from "../components/profile/ProfileNavbar";
 import ProfileSidebar from "../components/profile/ProfileSidebar";
 import ProfileStats from "../components/profile/ProfileStats";
-import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams, Link } from "react-router-dom";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import {
@@ -18,26 +18,7 @@ import { Toast } from "../components/ui/toast";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { getUserProfileById, followUserById, unfollowUserById, getPosts } from "@/services/api/social";
 import { useAuthStore } from "@/stores/store";
-
-
-const orgAvatars = [
-  {
-    name: "ASPCA",
-    image: "/ngo/aspca.jpg",
-  },
-  {
-    name: "CRI",
-    image: "/ngo/CRI.jpg",
-  },
-  {
-    name: "CureSearch",
-    image: "/ngo/cureSearch.png",
-  },
-  {
-    name: "Paws",
-    image: "/ngo/paws.jpeg",
-  },
-];
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 
 export default function ProfilePage() {
   const { imageUrl } = useLocation().state || { imageUrl: "" };
@@ -268,31 +249,40 @@ export default function ProfilePage() {
               following={userProfile.following_count || 0}
             />
             
-            <div className="flex justify-between items-center px-4">
-              <h2 className="text-lg font-semibold">Recently Supported</h2>
-              {/* <Link
-                to="/interests"
-                className="text-sm text-blue-500 underline flex items-center gap-1"
-              >
-                More
-                <ChevronRight className="w-4 h-4" />
-              </Link> */}
-            </div>
-
-            <div className="flex items-center px-4 justify-between">
-              {orgAvatars.map((src, i) => (
-                <div key={i} className="flex flex-col items-center">
-                  <img
-                    src={src.image}
-                    alt="org"
-                    className="w-14 h-14 rounded-md first:ml-0"
-                  />
-                  <p className="text-xs font-semibold mt-1 text-gray-500">
-                    {src.name}
-                  </p>
+            {userProfile.recently_supported_causes && userProfile.recently_supported_causes.length > 0 && (
+              <>
+                <div className="flex justify-between items-center px-4">
+                  <h2 className="text-lg font-semibold">Recently Supported</h2>
+                  {/* <Link
+                    to="/interests"
+                    className="text-sm text-blue-500 underline flex items-center gap-1"
+                  >
+                    More
+                    <ChevronRight className="w-4 h-4" />
+                  </Link> */}
                 </div>
-              ))}
-            </div>
+
+                <div className="flex items-center px-4 justify-between">
+                  {userProfile.recently_supported_causes.map((cause: any, i: number) => (
+                    <Link 
+                      key={cause.id || i} 
+                      to={`/cause/${cause.id}`}
+                      className="flex flex-col items-center"
+                    >
+                      <Avatar className="w-14 h-14 rounded-md">
+                        <AvatarImage src={cause.logo} alt={cause.name} />
+                        <AvatarFallback className="bg-blue-100 text-blue-600 text-sm font-semibold rounded-md">
+                          {cause.name?.charAt(0)?.toUpperCase() || 'N'}
+                        </AvatarFallback>
+                      </Avatar>
+                      <p className="text-xs font-semibold mt-1 text-gray-500 text-center">
+                        {cause.name}
+                      </p>
+                    </Link>
+                  ))}
+                </div>
+              </>
+            )}
 
             <ProfileBio bio={userProfile.bio}/>
             

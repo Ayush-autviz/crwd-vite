@@ -12,7 +12,6 @@ import {
   Ellipsis,
   Share,
   Flag,
-  Pencil,
   Loader2,
   LogOut,
 } from "lucide-react";
@@ -23,27 +22,7 @@ import { useQuery, useMutation } from "@tanstack/react-query";
 import { getPosts, getUserProfileById } from "@/services/api/social";
 import { logout } from "@/services/api/auth";
 import { useAuthStore } from "@/stores/store";
-
-
-
-const orgAvatars = [
-  {
-    name: "ASPCA",
-    image: "/ngo/aspca.jpg",
-  },
-  {
-    name: "CRI",
-    image: "/ngo/CRI.jpg",
-  },
-  {
-    name: "CureSearch",
-    image: "/ngo/cureSearch.png",
-  },
-  {
-    name: "Paws",
-    image: "/ngo/paws.jpeg",
-  },
-];
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 
 export default function ProfilePage() {
   const [showMenu, setShowMenu] = useState(false);
@@ -328,32 +307,40 @@ export default function ProfilePage() {
             {/* <div className="py-4">
               <ProfileRecentDonations />
             </div> */}
-            <div className="flex justify-between items-center px-4">
-              <h2 className="text-lg font-semibold">Recently Supported</h2>
-              {/* <Link
-                to="/interests"
-                className="text-sm text-blue-500 underline flex items-center gap-1"
-              >
-                More
-                <ChevronRight className="w-4 h-4" />
-              </Link> */}
-            </div>
-
-            <div className="flex items-center px-4 justify-between">
-              {orgAvatars.map((src, i) => (
-                <div className="flex flex-col items-center">
-                  <img
-                    key={i}
-                    src={src.image}
-                    alt="org"
-                    className="w-14 h-14 rounded-md   first:ml-0"
-                  />
-                  <p className="text-xs font-semibold  mt-1 text-gray-500">
-                    {src.name}
-                  </p>
+            {profileData?.recently_supported_causes && profileData.recently_supported_causes.length > 0 && (
+              <>
+                <div className="flex justify-between items-center px-4">
+                  <h2 className="text-lg font-semibold">Recently Supported</h2>
+                  {/* <Link
+                    to="/interests"
+                    className="text-sm text-blue-500 underline flex items-center gap-1"
+                  >
+                    More
+                    <ChevronRight className="w-4 h-4" />
+                  </Link> */}
                 </div>
-              ))}
-            </div>
+
+                <div className="flex items-center px-4 justify-between">
+                  {profileData.recently_supported_causes.map((cause: any, i: number) => (
+                    <Link 
+                      key={cause.id || i} 
+                      to={`/cause/${cause.id}`}
+                      className="flex flex-col items-center"
+                    >
+                      <Avatar className="w-14 h-14 rounded-md">
+                        <AvatarImage src={cause.logo} alt={cause.name} />
+                        <AvatarFallback className="bg-blue-100 text-blue-600 text-sm font-semibold rounded-md">
+                          {cause.name?.charAt(0)?.toUpperCase() || 'N'}
+                        </AvatarFallback>
+                      </Avatar>
+                      <p className="text-xs font-semibold mt-1 text-gray-500 text-center">
+                        {cause.name}
+                      </p>
+                    </Link>
+                  ))}
+                </div>
+              </>
+            )}
 
             <ProfileBio bio={profileData?.bio} />
             <div className="py-4">
