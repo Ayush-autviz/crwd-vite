@@ -55,8 +55,10 @@ export default function ProfilePage() {
 
   const handleLogout = () => {
     // if (window.confirm('Are you sure you want to logout?')) {
-      logoutMutation.mutate();
+      // logoutMutation.mutate();
     // }
+    logoutStore();
+    navigate('/', { replace: true });
   };
 
   // // Fetch profile data using React Query
