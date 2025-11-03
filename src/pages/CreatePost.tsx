@@ -10,12 +10,14 @@ import Footer from "@/components/Footer";
 import { Toast } from "@/components/ui/toast";
 import { useMutation } from "@tanstack/react-query";
 import { createPost } from "@/services/api/social";
+import { useAuthStore } from "@/stores/store";
 
 
 export default function CreatePostPage() {
   const navigate = useNavigate();
   const location = useLocation();
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const { user: currentUser } = useAuthStore();
   
   // Get collective_id from location state
   const collectiveData = location.state?.collectiveData;
@@ -162,6 +164,27 @@ export default function CreatePostPage() {
 
     createPostMutation.mutate(formData);
   };
+
+  if (!currentUser?.id) {
+    return (
+      <div className="min-h-screen flex flex-col bg-background">
+        <ProfileNavbar title="Create a Post" />
+        <div className="flex items-center justify-center flex-1">
+          <div className="text-center">
+            <div className="text-lg font-semibold text-gray-700 mb-2">
+              Sign in to create a post
+            </div>
+            <div className="text-sm text-gray-500 mb-4">
+              Sign in to create a post, manage your causes, and connect with your community.
+            </div>
+            <Button onClick={() => navigate('/login')}>
+              Sign in
+            </Button>
+          </div>
+        </div>
+      </div>
+    );
+  } 
 
   // Check if collective_id is provided
   if (!collectiveData) {
