@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import { MapPin, ChevronDown, ChevronUp } from "lucide-react";
 import { Link } from 'react-router-dom';
 import { categories } from "@/constants/categories";
+import { Avatar, AvatarImage, AvatarFallback } from "../ui/avatar";
 
 const CauseAboutCard: React.FC<{ causeData?: any }> = ({ causeData }) => {
   const [expanded, setExpanded] = useState(false);
@@ -17,11 +18,17 @@ const CauseAboutCard: React.FC<{ causeData?: any }> = ({ causeData }) => {
   return (
   <div className="bg-white  p-5 mx-3 mb-2 flex flex-col gap-3">
     <div className="flex items-center gap-3 ">
-      <img
+      {/* <img
         src="https://randomuser.me/api/portraits/men/32.jpg"
         alt="Helping humanity"
         className="w-12 h-12 rounded-lg object-cover"
-      />
+      /> */}
+      <Avatar className="w-12 h-12 rounded-full">
+        <AvatarImage src={causeData?.logo} />
+        <AvatarFallback style={{ backgroundColor: '#dbeafe' }} className="text-blue-600 font-semibold rounded-lg">
+          {causeData?.name?.charAt(0).toUpperCase()}
+        </AvatarFallback>
+      </Avatar>
       <span className="font-semibold text-base text-gray-900">
         {causeData?.name}
       </span>

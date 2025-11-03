@@ -9,6 +9,7 @@ import { categories } from "@/constants/categories";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { favoriteCause, unfavoriteCause } from "@/services/api/social";
 import { useAuthStore } from "@/stores/store";
+import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 
 interface CauseProfileCardProps {
   onLearnMoreClick?: () => void;
@@ -116,17 +117,23 @@ const CauseProfileCard: React.FC<CauseProfileCardProps> = ({
       </div> */}
       {/* Profile */}
       <div className="flex items-center gap-4">
-        <img
+        {/* <img
           src="https://randomuser.me/api/portraits/men/32.jpg"
           alt="Helping Humanity"
           className="w-14 h-14 rounded-lg object-cover"
-        />
+        /> */}
+        <Avatar className="w-14 h-14 rounded-full">
+          <AvatarImage src={causeData?.logo} />
+          <AvatarFallback style={{ backgroundColor: '#dbeafe' }} className="text-blue-600 font-semibold rounded-lg">
+            {causeData?.name?.charAt(0).toUpperCase()}
+          </AvatarFallback>
+        </Avatar>
         <div className="flex flex-col ">
           <span className="font-semibold text-base text-gray-900">
             {causeData?.name}
           </span>
           <span className="text-xs text-gray-500">
-            in {causeData?.collective_count} CRWDS · 162 donations
+            in {causeData?.collective_count} Collectives · {causeData?.donation_count} donations
           </span>
         </div>
         {/* <Button variant="outline"> */}
