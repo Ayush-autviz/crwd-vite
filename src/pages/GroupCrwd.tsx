@@ -345,7 +345,7 @@ export default function GroupCrwdPage() {
             isLoading={isLoadingPosts}
             recentActivities={crwdData?.recent_activities || []}
           />
-          <GroupCrwdSuggested />
+          <GroupCrwdSuggested collectiveId={crwdId} />
           {/* <GroupCrwdEvent /> */}
           {/* {!hasJoined && <GroupCrwdBottomBar onJoin={handleJoin} />} */}
           {/* <div className="h-24  md:hidden" /> */}

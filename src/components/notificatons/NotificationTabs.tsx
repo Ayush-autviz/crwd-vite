@@ -4,9 +4,10 @@ import { useEffect, useState } from "react";
 import RegularNotifications from "./RegularNotifications";
 import CommunityUpdates from "./CommunityUpdates";
 import { useLocation } from "react-router-dom";
-import { useQuery } from "@tanstack/react-query";
-import { getNotifications } from "@/services/api/notification";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { getNotifications, markAllNotificationsAsRead } from "@/services/api/notification";
 import { useAuthStore } from "@/stores/store";
+import { queryClient } from "@/lib/react-query/client";
 
 export default function NotificationTabs() {
   const location = useLocation();
@@ -20,6 +21,15 @@ export default function NotificationTabs() {
     queryKey: ['notifications'],
     queryFn: getNotifications,
     enabled: !!currentUser?.id,
+  });
+
+  const markAllNotificationsAsReadMutation = useMutation({
+    mutationFn: markAllNotificationsAsRead,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['notifications'] });
+      // Also invalidate unread count to refresh hamburger menu and profile navbar
+      queryClient.invalidateQueries({ queryKey: ['unreadCount'] });
+    },
   });
 
   // Listen for changes in location state to update the active tab
@@ -44,6 +54,10 @@ export default function NotificationTabs() {
   const hasUnreadNotifications = personalNotifications.some(
     (notification: any) => !notification.is_read
   ) || false;
+
+ useEffect(() => {
+  markAllNotificationsAsReadMutation.mutate();
+ }, []);
 
   return (
     <div className="w-full">

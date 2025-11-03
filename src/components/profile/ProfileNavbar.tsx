@@ -4,6 +4,8 @@ import HamburgerMenu from "../hamburgerMenu/HamburgerMenu";
 import { cn } from "@/lib/utils";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuthStore } from "@/stores/store";
+import { useQuery } from "@tanstack/react-query";
+import { getUnreadCount } from "@/services/api/notification";
 
 
 interface ProfileNavbarProps {
@@ -26,6 +28,12 @@ export default function ProfileNavbar({
   const navigate = useNavigate();
 
 const {token} = useAuthStore();
+
+  const { data: unreadCount } = useQuery({
+    queryKey: ['unreadCount'],
+    queryFn: getUnreadCount,
+    enabled: !!token?.access_token,
+  });
 
   
   return (
@@ -123,7 +131,9 @@ const {token} = useAuthStore();
             )}
             <div className="relative">
               <HamburgerMenu />
-              <div className="absolute z-10 top-0 -right-1 w-2 h-2 bg-red-500 rounded-full"></div>
+              {token?.access_token && unreadCount?.data > 0 && (
+                <div className="absolute z-10 top-0 -right-1 w-2 h-2 bg-red-500 rounded-full"></div>
+              )}
             </div>
           </div>
         </header>
@@ -185,7 +195,9 @@ const {token} = useAuthStore();
             )}
             <div className="relative">
               <HamburgerMenu />
-              <div className="absolute z-10 top-0 -right-1 w-2 h-2 bg-red-500 rounded-full"></div>
+              {token?.access_token && unreadCount?.data > 0 && (
+                <div className="absolute z-10 top-0 -right-1 w-2 h-2 bg-red-500 rounded-full"></div>
+              )}
             </div>
           </div>
         </header>

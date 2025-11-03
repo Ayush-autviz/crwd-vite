@@ -157,3 +157,9 @@ export const getUserCollectives = async () => {
     const response = await axiosClient.get('/crwd/user/collectives/');
     return response.data;
 };
+
+//  suggested crwd
+export const getSuggestedCrwds = async (id: any) => {
+    const response = await axiosClient.get(`/crwd/collectives/${id}/suggested/`);
+    return response.data;
+};

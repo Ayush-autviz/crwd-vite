@@ -5,11 +5,19 @@ import { Link } from "react-router-dom";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import NavigationItems from "./NavigationItems";
 import { useAuthStore } from "@/stores/store";
+import { useQuery } from "@tanstack/react-query";
+import { getUnreadCount } from "@/services/api/notification";
 
 
 const HamburgerMenu: React.FC = () => {
   
   const { user: currentUser } = useAuthStore();
+
+  const { data: unreadCount } = useQuery({
+    queryKey: ['unreadCount'],
+    queryFn: getUnreadCount,
+    enabled: !!currentUser?.id,
+  });
   return (
   <div className="">
     <Sheet>
@@ -54,11 +62,11 @@ const HamburgerMenu: React.FC = () => {
             )
           }
           </div>
-          {currentUser?.id && (
+          {currentUser?.id && unreadCount?.data > 0 && (
           <div className="p-2 relative">
             <Bell size={22} />
             <div className="absolute top-0 -right-1 text-xs px-1 text-white bg-red-500 rounded-full">
-              5
+              {unreadCount?.data}
             </div>
           </div>
           )}
