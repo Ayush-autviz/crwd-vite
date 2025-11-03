@@ -10,7 +10,7 @@ import ProfileNavbar from "@/components/profile/ProfileNavbar";
 import { Link } from "react-router-dom";
 import { Button } from "../ui/button";
 import { Search } from "lucide-react";
-import { getCollectiveMembers } from "@/services/api/crwd";
+import { getCollectiveDonationHistory, getCollectiveMembers } from "@/services/api/crwd";
 import { useQuery } from "@tanstack/react-query";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 
@@ -33,8 +33,13 @@ const MembersTabs: React.FC<{ tab?: string, collectiveData?: any }> = ({ tab = "
     enabled: !!collectiveData?.id,
   });
 
-  console.log(membersData);
-  console.log(collectiveData);
+  const { data: donationHistoryData, isLoading: isDonationHistoryLoading } = useQuery({
+    queryKey: ['donationHistory', collectiveData?.id],
+    queryFn: () => getCollectiveDonationHistory(collectiveData?.id),
+    enabled: !!collectiveData?.id,
+  });
+
+  console.log(donationHistoryData, 'donationHistoryData');
 
   return (
     <main className="pb-16 md:pb-0">
@@ -134,18 +139,25 @@ const MembersTabs: React.FC<{ tab?: string, collectiveData?: any }> = ({ tab = "
           )}
           {activeTab === "Members" && <MembersList members={membersData?.results ?? []} isLoading={isMembersLoading} />}
           {activeTab === "Collective Donations" &&
-            (showRecentDonations ? (
+           <RecentDonationsList
+           onBack={() => setShowRecentDonations(false)}
+           donationHistory={Array.isArray(donationHistoryData) ? donationHistoryData : (donationHistoryData?.results || [])}
+           isLoading={isDonationHistoryLoading}
+         />}
+             {/* (!showRecentDonations ? (
               <RecentDonationsList
-                onBack={() => setShowRecentDonations(false)}
+                 onBack={() => setShowRecentDonations(false)}
+                 donationHistory={Array.isArray(donationHistoryData) ? donationHistoryData : (donationHistoryData?.results || [])}
+                 isLoading={isDonationHistoryLoading}
               />
-            ) : (
-              <CollectiveDonationsSummary
-                onSeeRecentDonations={() => setShowRecentDonations(true)}
-                causesCount={3}
-                membersCount={59}
-                donationAmount={collectiveData?.total_donated_amount || 0}
-              />
-            ))}
+             ) : (
+               <CollectiveDonationsSummary
+                 onSeeRecentDonations={() => setShowRecentDonations(true)}
+                 causesCount={3}
+                 membersCount={59}
+                 donationAmount={collectiveData?.total_donated_amount || 0}
+               />
+             ))} */}
         </div>
       </div>
       {/* Desktop */}
@@ -262,14 +274,21 @@ const MembersTabs: React.FC<{ tab?: string, collectiveData?: any }> = ({ tab = "
                   </div>
                 )}
                 {activeTab === "Members" && <MembersList members={membersData?.results ?? []} isLoading={isMembersLoading} />}
-                {activeTab === "Collective Donations" && (
-                  <CollectiveDonationsSummary
-                    onSeeRecentDonations={() => {}}
-                    causesCount={3}
-                    membersCount={59}
-                    donationAmount={collectiveData?.total_donated_amount || 0}
-                  />
-                )}
+                {activeTab === "Collective Donations" &&
+                  (showRecentDonations ? (
+                    <RecentDonationsList
+                      onBack={() => setShowRecentDonations(false)}
+                      donationHistory={Array.isArray(donationHistoryData) ? donationHistoryData : (donationHistoryData?.results || [])}
+                      isLoading={isDonationHistoryLoading}
+                    />
+                  ) : (
+                    <CollectiveDonationsSummary
+                      onSeeRecentDonations={() => setShowRecentDonations(true)}
+                      causesCount={3}
+                      membersCount={59}
+                      donationAmount={collectiveData?.total_donated_amount || 0}
+                    />
+                  ))}
               </CardContent>
             </Card>
           </div>
