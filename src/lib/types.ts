@@ -14,7 +14,7 @@ export interface PostDetail {
   username: string;
   time: string;
   org: string;
-  orgUrl: string;
+  orgUrl?: string | number; // Collective ID for navigation (optional)
   text: string;
   imageUrl?: string;
   likes: number;

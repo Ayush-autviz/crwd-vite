@@ -244,11 +244,17 @@ export default function ProfileActivityCard({
                     )}
                   </div>
                 </div>
-                <Link to={'/groupcrwd'} state={{ crwdId: post.orgUrl }} >
-                  <div className="text-xs text-primary -mt-[2px] hover:underline">
+                {post.orgUrl ? (
+                  <Link to={`/groupcrwd/${post.orgUrl.toString()}`} onClick={(e) => e.stopPropagation()}>
+                    <div className="text-xs text-primary -mt-[2px] hover:underline cursor-pointer">
+                      {post.org}
+                    </div>
+                  </Link>
+                ) : (
+                  <div className="text-xs text-primary -mt-[2px]">
                     {post.org}
                   </div>
-                </Link>
+                )}
 
                 <div className="text-sm mt-2 mb-3 whitespace-pre-line leading-snug">
                   {post.text}

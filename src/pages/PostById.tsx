@@ -44,7 +44,7 @@ export default function PostById() {
     username: postData.user?.username || postData.user?.full_name || 'Unknown User',
     time: new Date(postData.created_at).toLocaleDateString(),
     org: postData.collective?.name || 'Unknown Collective',
-    orgUrl: `/groupcrwd?crwdId=${postData.collective?.id}`,
+    orgUrl: postData.collective?.id, // Collective ID for navigation
     text: postData.content || '',
     imageUrl: postData.media || undefined,
     likes: postData.likes_count || 0,
