@@ -48,8 +48,16 @@ const LoginPage: React.FC = () => {
         setToken({ access_token: response.access_token, refresh_token: response.refresh_token })
       }
       
-      // Navigate to home page
-      navigate("/", {replace: true})
+      // If last_login_at is null, navigate to nonprofit interests page (new user)
+      if (response.user && !response.user.last_login_at) {
+        navigate("/non-profit-interests", { 
+          state: { fromAuth: true },
+          replace: true 
+        })
+      } else {
+        // Navigate to home page for existing users
+        navigate("/", {replace: true})
+      }
     },
     onError: (error: any) => {
       console.error('Login error:', error)

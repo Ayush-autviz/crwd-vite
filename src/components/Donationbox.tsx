@@ -406,8 +406,8 @@ const DonationBox = ({ tab = "setup", preselectedItem, activeTab }: DonationBoxP
                                 {/* <img src={cause.logo || '/default-logo.png'} alt={cause.name} className="w-12 h-12 rounded-full object-cover" /> */}
                                 <Avatar className="w-12 h-12 rounded-full object-cover">
                                   <AvatarImage src={cause.logo || '/default-logo.png'} />
-                                  <AvatarFallback>
-                                    {cause.name.charAt(0)}
+                                  <AvatarFallback className="bg-blue-100 text-blue-600">
+                                    {cause.name.charAt(0).toUpperCase()}
                                   </AvatarFallback>
                                 </Avatar>
                               </div>
@@ -459,8 +459,8 @@ const DonationBox = ({ tab = "setup", preselectedItem, activeTab }: DonationBoxP
                                 {/* <img src={collective.cover_image || '/default-collective.png'} alt={collective.name} className="w-12 h-12 rounded-full object-cover" /> */}
                                 <Avatar className="w-12 h-12 rounded-full object-cover">
                                   <AvatarImage src={collective.cover_image || '/default-collective.png'} />
-                                  <AvatarFallback>
-                                    {collective.name.charAt(0)}
+                                  <AvatarFallback className="bg-green-100 text-green-600">
+                                    {collective.name.charAt(0).toUpperCase()}
                                   </AvatarFallback>
                                 </Avatar>
                               </div>

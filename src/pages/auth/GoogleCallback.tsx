@@ -37,9 +37,18 @@ export default function GoogleCallback() {
         setToken({access_token: googleCallbackQuery.data.access_token, refresh_token: googleCallbackQuery.data.refresh_token});
         setToastMessage("Google authentication successful!");
         setShowToast(true);
+        
+        // If last_login_at is null, navigate to nonprofit interests page (new user)
+        if (googleCallbackQuery.data.user && !googleCallbackQuery.data.user.last_login_at) {
+          navigate("/non-profit-interests", { 
+            state: { fromAuth: true },
+            replace: true 
+          });
+        } else {
+          // Navigate to home page for existing users
+          navigate("/", {replace: true});
+        }
       }
-      
-      navigate("/", {replace: true});
     }
 
     if (googleCallbackQuery.error) {

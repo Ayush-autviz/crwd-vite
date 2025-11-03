@@ -129,7 +129,7 @@ function App() {
                 <Route path="/verify" element={<Verify />} />
                 <Route path="/auth/google/callback" element={<GoogleCallback />} />
                 <Route path="/onboarding" element={<OnBoard />} />
-                <Route path="/complete-onboard" element={<CompleteOnboard />} />
+                {/* <Route path="/complete-onboard" element={<CompleteOnboard />} /> */}
                 <Route path="/claim-profile" element={<ClaimProfile />} />
                 {/* <Route
                   path="/non-profit-interests"
@@ -207,6 +207,8 @@ function App() {
                     <Route path="/user-profile/:userId" element={<UserProfile />} />
                     <Route path="/circles" element={<Circles />} />
                     <Route path="/articles" element={<Articles />} />
+                <Route path="/complete-onboard" element={<CompleteOnboard />} />
+
                   </Routes>
                 </Layout>
               }

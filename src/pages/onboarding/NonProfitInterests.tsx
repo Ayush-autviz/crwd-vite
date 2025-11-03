@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Check, Search, Loader2 } from "lucide-react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
 import { categories } from "@/constants/categories";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
@@ -22,8 +22,12 @@ export default function NonProfitInterests() {
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
   const navigate = useNavigate();
+  const location = useLocation();
   const { user: currentUser } = useAuthStore();
   const queryClient = useQueryClient();
+  
+  // Check if user came from auth flow
+  const fromAuth = location.state?.fromAuth || false;
 
   // Get favorite causes to exclude from results
   const { data: favoriteCauses } = useQuery({
@@ -48,7 +52,14 @@ export default function NonProfitInterests() {
     onSuccess: () => {
       // Invalidate favorite causes query so CreateCrwd shows updated favorites
       queryClient.invalidateQueries({ queryKey: ['favoriteCauses'] });
-      navigate("/create-crwd");
+      
+      // If user came from auth, navigate to complete onboarding, otherwise go to create-crwd
+      if (fromAuth) {
+        navigate("/complete-onboard");
+      } else {
+        navigate("/create-crwd");
+      }
+      
       setShowToast(true);
       setToastMessage("Causes added to favorites");
     },

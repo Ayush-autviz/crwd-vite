@@ -183,7 +183,7 @@ export default function DonationCauseSelector({
                       src={item.type === 'cause' ? (item.data as Cause).image : (item.data as Collective).created_by?.profile_picture || ''} 
                       alt={`${item.data.name} logo`} 
                     />
-                    <AvatarFallback>
+                    <AvatarFallback className={item.type === 'cause' ? 'bg-blue-100 text-blue-600' : 'bg-green-100 text-green-600'}>
                       {item.data.name.charAt(0).toUpperCase()}
                     </AvatarFallback>
                   </Avatar>
@@ -305,7 +305,7 @@ export default function DonationCauseSelector({
                     >
                       <Avatar className="h-8 w-8">
                         <AvatarImage src={cause.image} alt={cause.name} />
-                        <AvatarFallback>
+                        <AvatarFallback className="bg-blue-100 text-blue-600">
                           {cause.name.charAt(0).toUpperCase()}
                         </AvatarFallback>
                       </Avatar>
@@ -342,7 +342,7 @@ export default function DonationCauseSelector({
                     >
                       <Avatar className="h-8 w-8">
                         <AvatarImage src={collective.created_by?.profile_picture || ''} alt={collective.name} />
-                        <AvatarFallback>
+                        <AvatarFallback className="bg-green-100 text-green-600">
                           {collective.name.charAt(0).toUpperCase()}
                         </AvatarFallback>
                       </Avatar>
@@ -390,7 +390,7 @@ export default function DonationCauseSelector({
                       >
                         <Avatar className="h-8 w-8">
                           <AvatarImage src={cause.image} alt={cause.name} />
-                          <AvatarFallback>
+                          <AvatarFallback className="bg-blue-100 text-blue-600">
                             {cause.name.charAt(0).toUpperCase()}
                           </AvatarFallback>
                         </Avatar>
@@ -430,7 +430,7 @@ export default function DonationCauseSelector({
                       >
                         <Avatar className="h-8 w-8">
                           <AvatarImage src={collective.created_by?.profile_picture || ''} alt={collective.name} />
-                          <AvatarFallback>
+                          <AvatarFallback className="bg-green-100 text-green-600">
                             {collective.name.charAt(0).toUpperCase()}
                           </AvatarFallback>
                         </Avatar>
