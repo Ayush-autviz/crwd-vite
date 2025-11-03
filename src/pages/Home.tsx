@@ -229,7 +229,7 @@ export default function HomePage() {
                           {crwd.name}
                         </h3>
                         <p className="text-xs text-muted-foreground mb-1">
-                          {crwd.member_count}
+                          {crwd.member_count} members
                         </p>
                         <p className="text-xs text-muted-foreground w-36 leading-relaxed">
                           {crwd.description.length > 21

@@ -31,8 +31,17 @@ export default function NotificationTabs() {
     }
   }, [location.state?.tab]);
 
-  // Check if there are unread notifications for the red dot indicator
-  const hasUnreadNotifications = notificationsData?.results?.some(
+  // Filter notifications by type
+  const personalNotifications = (notificationsData?.results || []).filter(
+    (notification: any) => notification.type === "personal"
+  );
+
+  const communityNotifications = (notificationsData?.results || []).filter(
+    (notification: any) => notification.type === "community" || notification.type === "community_post"
+  );
+
+  // Check if there are unread personal notifications for the red dot indicator
+  const hasUnreadNotifications = personalNotifications.some(
     (notification: any) => !notification.is_read
   ) || false;
 
@@ -59,10 +68,10 @@ export default function NotificationTabs() {
               : "text-gray-500 hover:text-gray-700"
           }`}
         >
-          {/* Red dot notification indicator - show only if there are unread notifications */}
-          {hasUnreadNotifications && (
+          {/* Red dot notification indicator - show only if there are unread personal notifications */}
+          {/* {hasUnreadNotifications && (
             <div className="w-2 h-2 bg-red-500 rounded-full"></div>
-          )}
+          )} */}
           Notifications
         </button>
       </div>
@@ -71,11 +80,16 @@ export default function NotificationTabs() {
       <div className="w-full">
         {activeTab === "notifications" && (
           <RegularNotifications 
-            notifications={notificationsData?.results || []}
+            notifications={personalNotifications}
             isLoading={isLoadingNotifications}
           />
         )}
-        {activeTab === "community" && <CommunityUpdates />}
+        {activeTab === "community" && (
+          <CommunityUpdates 
+            notifications={communityNotifications}
+            isLoading={isLoadingNotifications}
+          />
+        )}
       </div>
       <div className="h-10 md:hidden" />
     </div>

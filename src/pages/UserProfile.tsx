@@ -262,24 +262,26 @@ export default function ProfilePage() {
                   </Link> */}
                 </div>
 
-                <div className="flex items-center px-4 justify-between">
-                  {userProfile.recently_supported_causes.map((cause: any, i: number) => (
-                    <Link 
-                      key={cause.id || i} 
-                      to={`/cause/${cause.id}`}
-                      className="flex flex-col items-center"
-                    >
-                      <Avatar className="w-14 h-14 rounded-md">
-                        <AvatarImage src={cause.logo} alt={cause.name} />
-                        <AvatarFallback className="bg-blue-100 text-blue-600 text-sm font-semibold rounded-md">
-                          {cause.name?.charAt(0)?.toUpperCase() || 'N'}
-                        </AvatarFallback>
-                      </Avatar>
-                      <p className="text-xs font-semibold mt-1 text-gray-500 text-center">
-                        {cause.name}
-                      </p>
-                    </Link>
-                  ))}
+                <div className="overflow-x-auto pb-2 -mx-4 px-4">
+                  <div className="flex items-center gap-4">
+                    {userProfile.recently_supported_causes.map((cause: any, i: number) => (
+                      <Link 
+                        key={cause.id || i} 
+                        to={`/cause/${cause.id}`}
+                        className="flex flex-col items-center flex-shrink-0 w-20"
+                      >
+                        <Avatar className="w-14 h-14 rounded-md">
+                          <AvatarImage src={cause.logo} alt={cause.name} />
+                          <AvatarFallback className="bg-blue-100 text-blue-600 text-sm font-semibold rounded-md">
+                            {cause.name?.charAt(0)?.toUpperCase() || 'N'}
+                          </AvatarFallback>
+                        </Avatar>
+                        <p className="text-xs font-semibold mt-1 text-gray-500 text-center line-clamp-2 w-full">
+                          {cause.name}
+                        </p>
+                      </Link>
+                    ))}
+                  </div>
                 </div>
               </>
             )}

@@ -29,7 +29,7 @@ const HamburgerMenu: React.FC = () => {
                 src={currentUser?.profile_picture}
                 alt="Profile"
               />
-              <AvatarFallback>{currentUser?.first_name ? currentUser?.first_name?.charAt(0) : 'U'}</AvatarFallback>
+              <AvatarFallback>{currentUser?.first_name ? currentUser?.first_name?.charAt(0).toUpperCase() : 'U'}</AvatarFallback>
             </Avatar>
         {currentUser?.id ? (
             <div className="flex flex-col">

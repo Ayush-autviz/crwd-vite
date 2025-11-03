@@ -126,7 +126,7 @@ const ManageDonationBox: React.FC<ManageDonationBoxProps> = ({
   const updateDonationBoxMutation = useMutation({
     mutationFn: (data: any) => updateDonationBox(data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['donationBox'] });
+      queryClient.invalidateQueries({ queryKey: ['donationBox', currentUser?.id] });
     },
     onError: (error: any) => {
       console.error('Error updating donation box:', error);
@@ -136,7 +136,7 @@ const ManageDonationBox: React.FC<ManageDonationBoxProps> = ({
   const cancelDonationBoxMutation = useMutation({
     mutationFn: () => cancelDonationBox(),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['donationBox'] });
+      queryClient.invalidateQueries({ queryKey: ['donationBox', currentUser?.id] });
       setShowCancelModal(false);
       // Navigate to step 3 after successful cancellation
       if (onCancelSuccess) {
@@ -310,7 +310,7 @@ const ManageDonationBox: React.FC<ManageDonationBoxProps> = ({
       setSelectedCausesData([]);
 
       // Refresh and go back
-      queryClient.invalidateQueries({ queryKey: ['donationBox'] });
+      queryClient.invalidateQueries({ queryKey: ['donationBox', currentUser?.id] });
       onBack();
     } catch (error) {
       console.error('Error updating donation box:', error);

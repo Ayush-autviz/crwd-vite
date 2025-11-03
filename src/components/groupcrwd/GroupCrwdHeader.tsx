@@ -263,7 +263,7 @@ const GroupCrwdHeader: React.FC<GroupCrwdHeaderProps> = ({
       </div>
 
       <div className="flex items-center justify-between">
-        <p className=" font-semibold ">Recently Supported Nonprofits</p>
+        <p className=" font-semibold ">Recently Supported</p>
         {/* <p
           onClick={() => navigate(`/members`)}
           className="text-blue-600 underline cursor-pointer"
@@ -276,22 +276,24 @@ const GroupCrwdHeader: React.FC<GroupCrwdHeaderProps> = ({
         Your donations here are split evenly across these nonprofits
       </i>
       {/* Orgs Avatars */}
-      <div className="flex items-center justify-start md:space-x-5 mt-1 gap-3">
-        {crwdData?.causes?.map((src: any) => (
-          <Link to={`/cause/${src.cause?.id || src.cause?.cause_id || ''}`} key={src.cause?.id || src.name}>
-            <div className="flex flex-col items-center">
-              <Avatar className="w-12 h-12 rounded-md">
-                <AvatarImage src={src.cause?.image || src.cause?.logo} alt={src.cause?.name || 'Nonprofit'} />
-                <AvatarFallback className="bg-blue-100 text-blue-600 text-sm font-semibold rounded-md">
-                  {src.cause?.name?.charAt(0)?.toUpperCase() || 'N'}
-                </AvatarFallback>
-              </Avatar>
-              <p className="text-xs font-semibold  mt-1 text-gray-500">
-                {src.cause?.name || src.name}
-              </p>
-            </div>
-          </Link>
-        ))}
+      <div className="overflow-x-auto pb-2 -mx-4 px-4">
+        <div className="flex items-center gap-4">
+          {crwdData?.causes?.map((src: any) => (
+            <Link to={`/cause/${src.cause?.id || src.cause?.cause_id || ''}`} key={src.cause?.id || src.name}>
+              <div className="flex flex-col items-center flex-shrink-0 w-20">
+                <Avatar className="w-12 h-12 rounded-md">
+                  <AvatarImage src={src.cause?.image || src.cause?.logo} alt={src.cause?.name || 'Nonprofit'} />
+                  <AvatarFallback className="bg-blue-100 text-blue-600 text-sm font-semibold rounded-md">
+                    {src.cause?.name?.charAt(0)?.toUpperCase() || 'N'}
+                  </AvatarFallback>
+                </Avatar>
+                <p className="text-xs font-semibold mt-1 text-gray-500 text-center line-clamp-2 w-full">
+                  {src.cause?.name || src.name}
+                </p>
+              </div>
+            </Link>
+          ))}
+        </div>
       </div>
 
       <div className="flex items-center gap-5 mt-2">

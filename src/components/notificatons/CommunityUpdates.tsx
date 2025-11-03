@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import { Card, CardContent } from "../ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { Heart, MessageCircle, EllipsisIcon } from "lucide-react";
@@ -7,93 +7,43 @@ import { Link } from "react-router-dom";
 import { AuthModal } from "../auth/AuthModal";
 import { useFavorites } from "../../contexts/FavoritesContext";
 import { Toast } from "../ui/toast";
+import { Loader2 } from "lucide-react";
 
-// Community Posts that will appear as full posts
-const communityPosts = [
-  // {
-  //   id: 1,
-  //   avatarUrl: 'https://randomuser.me/api/portraits/men/15.jpg',
-  //   username: 'conrad',
-  //   time: '19h',
-  //   org: null,
-  //   text: '@conrad joined Healthiswealth',
-  //   imageUrl: null,
-  //   likes: 0,
-  //   comments: 0,
-  //   shares: 0,
-  //   isJoin: true,
-  //   groupName: 'Healthiswealth'
-  // },
-  {
-    id: 2,
-    avatarUrl: "https://randomuser.me/api/portraits/women/32.jpg",
-    username: "mynameismya",
-    time: "17h",
-    org: "feedthehungry",
-    text: "The quick, brown fox jumps over a lazy dog. DJs flock by when MTV ax quiz prog. Junk MTV quiz graced by fox whelps. Bawds jog, flick quartz, vex nymphs. Waltz, bad nymph, for quick jigs vex!",
-    imageUrl: null,
-    likes: 2,
-    comments: 0,
-    shares: 3,
-  },
-  {
-    id: 3,
-    avatarUrl: "https://randomuser.me/api/portraits/men/15.jpg",
-    username: "conrad",
-    time: "4h",
-    org: null,
-    text: "donated to",
-    imageUrl: null,
-    likes: 0,
-    comments: 0,
-    shares: 0,
-    isDonation: true,
-    donatedTo: "The Red Cross",
-    organizationName: "The Red Cross",
-    organizationLogo: "/redcross.png",
-  },
-  {
-    id: 4,
-    avatarUrl: "https://randomuser.me/api/portraits/women/25.jpg",
-    username: "emma_321",
-    time: "1d",
-    org: "larelief",
-    text: "The quick, brown fox jumps over a lazy dog. DJs flock by when MTV ax quiz prog. Junk",
-    link: "www.thisisaurl.com",
-    imageUrl:
-      "https://images.unsplash.com/photo-1574870111867-089730e5a72b?auto=format&fit=crop&w=600&q=80",
-    likes: 2,
-    comments: 0,
-    shares: 3,
-    linkPreview: {
-      title: "The LA wildfires have depleted local resources",
-      description:
-        "The quick, brown fox jumps over a lazy dog. DJs flock by when MTV ax quiz prog. Junk",
-    },
-  },
-  {
-    id: 5,
-    avatarUrl: "https://randomuser.me/api/portraits/women/30.jpg",
-    username: "rachelwilson",
-    time: "3d",
-    org: "foodforall",
-    text: "Join us this saturday!",
-    imageUrl: null,
-    likes: 2,
-    comments: 0,
-    shares: 3,
-    isEvent: true,
-    eventDetails: {
-      date: "3/8/2025",
-      time: "7:00 am",
-      rsvp: "8",
-      maybe: "17",
-      place: "123 Main St. Somewhere, USA",
-    },
-  },
-];
+interface CommunityUpdatesProps {
+  notifications?: any[];
+  isLoading?: boolean;
+}
 
-const CommunityUpdates: React.FC = () => {
+// Helper function to format time ago
+const formatTimeAgo = (dateString: string): string => {
+  if (!dateString) return '';
+  
+  try {
+    const date = new Date(dateString);
+    const now = new Date();
+    const diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000);
+    
+    if (diffInSeconds < 60) {
+      return `${diffInSeconds}s`;
+    } else if (diffInSeconds < 3600) {
+      const minutes = Math.floor(diffInSeconds / 60);
+      return `${minutes}m`;
+    } else if (diffInSeconds < 86400) {
+      const hours = Math.floor(diffInSeconds / 3600);
+      return `${hours}h`;
+    } else {
+      const days = Math.floor(diffInSeconds / 86400);
+      return `${days}d`;
+    }
+  } catch {
+    return '';
+  }
+};
+
+const CommunityUpdates: React.FC<CommunityUpdatesProps> = ({ 
+  notifications = [], 
+  isLoading = false 
+}) => {
   const [open, setOpen] = useState(false);
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
@@ -117,6 +67,91 @@ const CommunityUpdates: React.FC = () => {
     return `${baseClass} ${favoriteClass}`;
   };
 
+  // Transform API notifications to match the post format
+  const transformedPosts = useMemo(() => {
+    if (!notifications || notifications.length === 0) return [];
+
+    return notifications
+      .filter((notification: any) => notification.type === "community" || notification.type === "community_post")
+      .map((notification: any) => {
+        // Extract username from body if it contains @username pattern
+        let username = '';
+        const usernameMatch = notification.body?.match(/@(\w+)/);
+        if (usernameMatch) {
+          username = usernameMatch[1];
+        } else {
+          username = notification.user?.username || notification.data?.creator_id || notification.data?.new_member_id || '';
+        }
+
+        // Extract collective name from body - patterns like "posted in Heart for you" or "joined n jnum"
+        let collectiveName = '';
+        if (notification.body) {
+          // Try pattern: "in [collective name]"
+          const inMatch = notification.body.match(/in (.+)$/);
+          if (inMatch) {
+            collectiveName = inMatch[1].trim();
+          }
+          // If no match, try extracting after "joined"
+          if (!collectiveName && notification.body.includes('joined')) {
+            const joinMatch = notification.body.match(/joined (.+)$/);
+            if (joinMatch) {
+              collectiveName = joinMatch[1].trim();
+            }
+          }
+        }
+
+        // Determine if it's a join notification
+        const isJoin = notification.type === "community" && notification.body?.includes("joined");
+        // Determine if it's a post notification
+        const isPost = notification.type === "community_post" || (notification.type === "community" && notification.body?.includes("posted"));
+
+        const post = {
+          id: notification.id,
+          avatarUrl: notification.user?.profile_picture || notification.data?.profile_picture || '',
+          username: username,
+          time: formatTimeAgo(notification.created_at || notification.updated_at),
+          org: collectiveName || null,
+          text: notification.body || notification.title || '',
+          imageUrl: null, // API doesn't provide image in notifications
+          likes: 0, // Not provided in notification API
+          comments: 0, // Not provided in notification API
+          shares: 0, // Not provided in notification API
+          isJoin: isJoin,
+          isPost: isPost,
+          groupName: collectiveName,
+          link: notification.data?.post_id ? `/post/${notification.data.post_id}` : undefined,
+          collectiveId: notification.data?.collective_id,
+        };
+
+        return post;
+      });
+  }, [notifications]);
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center py-12">
+        <Loader2 className="w-6 h-6 animate-spin text-gray-400" />
+        <span className="ml-2 text-sm text-gray-600">Loading community updates...</span>
+      </div>
+    );
+  }
+
+  if (transformedPosts.length === 0) {
+    return (
+      <div className="flex flex-col items-center justify-center py-16 px-4">
+        <div className="w-16 h-16 mx-auto mb-4 bg-gray-100 rounded-full flex items-center justify-center">
+          <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+          </svg>
+        </div>
+        <h3 className="text-lg font-semibold text-gray-900 mb-2">No community updates yet</h3>
+        <p className="text-sm text-gray-500 text-center max-w-sm">
+          When members of your collectives post updates or join, you'll see them here.
+        </p>
+      </div>
+    );
+  }
+
   return (
     <div className="w-full flex flex-col">
       {/* Auth Modal */}
@@ -124,17 +159,16 @@ const CommunityUpdates: React.FC = () => {
 
       {/* Community Posts */}
       <div className="space-y-0">
-        {communityPosts.map((post: any) => (
+        {transformedPosts.map((post: any) => (
           <Card
             key={post.id}
             className="overflow-hidden border-0 shadow-none rounded-none border-b border-gray-200 bg-white"
           >
             <CardContent className="">
-              {/* <Link to={`/posts/${post.id}`} className='w-full'> */}
               <div className="flex gap-3">
                 <Avatar className="h-10 w-10 flex-shrink-0">
                   <AvatarImage src={post.avatarUrl} alt={post.username} />
-                  <AvatarFallback>{post.username.charAt(0)}</AvatarFallback>
+                  <AvatarFallback>{post.username?.charAt(0).toUpperCase() || 'U'}</AvatarFallback>
                 </Avatar>
 
                 <div className="flex-1 min-w-0">
@@ -148,14 +182,21 @@ const CommunityUpdates: React.FC = () => {
                           • {post.time}
                         </span>
                       </div>
-                      <EllipsisIcon className="h-4 w-4 text-muted-foreground cursor-pointer" />
+                      {/* <EllipsisIcon className="h-4 w-4 text-muted-foreground cursor-pointer" /> */}
                     </div>
                   )}
 
                   {post.org && (
-                    <Link to={`/groupcrwd`}>
+                    <Link to={post.collectiveId ? `/groupcrwd/${post.collectiveId}` : `/groupcrwd`}>
                       <div className="text-xs text-blue-600 hover:underline cursor-pointer">
-                        {post.org}
+                        {typeof post.org === 'string' && post.org.startsWith('/') ? post.groupName : post.org}
+                      </div>
+                    </Link>
+                  )}
+                  {post.groupName && !post.org && (
+                    <Link to={post.collectiveId ? `/groupcrwd/${post.collectiveId}` : `/groupcrwd`}>
+                      <div className="text-xs text-blue-600 hover:underline cursor-pointer">
+                        {post.groupName}
                       </div>
                     </Link>
                   )}
@@ -184,12 +225,36 @@ const CommunityUpdates: React.FC = () => {
                       }
 
                       if (post.isJoin) {
+                        // Remove the duplicate collective name from text if it's already included
+                        let displayText = post.text || '';
+                        if (post.groupName && displayText.includes(post.groupName)) {
+                          // Remove the duplicate collective name from the end of the text
+                          const regex = new RegExp(`\\s*${post.groupName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\s*$`, 'i');
+                          displayText = displayText.replace(regex, '').trim();
+                        }
                         return (
                           <div className="flex items-center gap-2">
+                            <span>{displayText}</span>
+                            {post.groupName && (
+                              // <Link to={post.collectiveId ? `/groupcrwd/${post.collectiveId}` : `/groupcrwd`}>
+                                <span className="">
+                                  {post.groupName}
+                                </span>
+                              // </Link>
+                            )}
+                          </div>
+                        );
+                      }
+
+                      if (post.isPost && post.link) {
+                        // For posts, show "post" (underlined) instead of the full link
+                        return (
+                          <div>
                             <span>{post.text}</span>
-                            <span className="text-blue-600 ">
-                              {post.groupName}
-                            </span>
+                            {' '}
+                            <Link to={post.link}>
+                              <span className="text-blue-600 hover:underline">post</span>
+                            </Link>
                           </div>
                         );
                       }
@@ -275,7 +340,7 @@ const CommunityUpdates: React.FC = () => {
                     </div>
                   )}
 
-                  <div className="flex items-center gap-4 text-muted-foreground mt-2">
+                  {/* <div className="flex items-center gap-4 text-muted-foreground mt-2">
                     <button
                       onClick={() => handleFavoriteClick(post.id)}
                       className="flex items-center gap-1 hover:text-red-500 transition-colors"
@@ -291,10 +356,9 @@ const CommunityUpdates: React.FC = () => {
                       <IoArrowRedoOutline className="w-4 h-4" />
                       <span className="text-xs">{post.shares}</span>
                     </button>
-                  </div>
+                  </div> */}
                 </div>
               </div>
-              {/* </Link> */}
             </CardContent>
           </Card>
         ))}

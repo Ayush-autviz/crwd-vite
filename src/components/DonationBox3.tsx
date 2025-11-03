@@ -3,6 +3,7 @@ import { useState } from "react";
 import { CROWDS, RECENTS, SUGGESTED } from "@/constants";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { removeCauseFromBox, removeCollectiveFromBox, activateDonationBox } from "@/services/api/donation";
+import { useAuthStore } from "@/stores/store";
 import {
   Select,
   SelectContent,
@@ -42,6 +43,7 @@ export const DonationBox3 = ({
   onManageDonationBox,
 }: DonationSummaryProps) => {
   const queryClient = useQueryClient();
+  const { user: currentUser } = useAuthStore();
 
   // State for confirmation modal
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -59,7 +61,7 @@ export const DonationBox3 = ({
     mutationFn: (causeId: string) => removeCauseFromBox(causeId),
     onSuccess: () => {
       console.log('Cause removed successfully');
-      queryClient.invalidateQueries({ queryKey: ['donationBox'] });
+      queryClient.invalidateQueries({ queryKey: ['donationBox', currentUser?.id] });
       setShowDeleteModal(false);
       setItemToDelete(null);
     },
@@ -73,7 +75,7 @@ export const DonationBox3 = ({
     mutationFn: (collectiveId: string) => removeCollectiveFromBox(collectiveId),
     onSuccess: () => {
       console.log('Collective removed successfully');
-      queryClient.invalidateQueries({ queryKey: ['donationBox'] });
+      queryClient.invalidateQueries({ queryKey: ['donationBox', currentUser?.id] });
       setShowDeleteModal(false);
       setItemToDelete(null);
     },
@@ -206,19 +208,22 @@ export const DonationBox3 = ({
   return (
     <div className="w-full h-full bg-white flex flex-col pb-24">
       {/* Header with Manage Donation Box button */}
-      <div className="flex justify-end items-center px-4 pt-2 pb-2">
-        <Button
-          onClick={() => {
-            if (onManageDonationBox) {
-              onManageDonationBox();
-            }
-          }}
-          variant="outline"
-          className="text-sm"
-        >
-          Manage Donation Box
-        </Button>
-      </div>
+      {/* Only show button if donation box exists */}
+      {(donationBox?.id) && (
+        <div className="flex justify-end items-center px-4 pt-2 pb-2">
+          <Button
+            onClick={() => {
+              if (onManageDonationBox) {
+                onManageDonationBox();
+              }
+            }}
+            variant="outline"
+            className="text-sm"
+          >
+            Manage Donation Box
+          </Button>
+        </div>
+      )}
       <div className="flex-1 overflow-auto mt-2 mx-4">
         {/* Manual Causes Section */}
         <div className="bg-white rounded-xl mb-6 p-6 shadow-sm border border-gray-100">

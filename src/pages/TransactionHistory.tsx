@@ -109,9 +109,9 @@ const TransactionHistoryPage: React.FC = () => {
       }
       
       if (items.length > 0) {
-        return `1-time Donation to ${items.join(', ')}`;
+        return `One-time donation - ${items.join(', ')}`;
       } else {
-        return '1-time Donation';
+        return 'One-time donation';
       }
     }
   };

@@ -27,7 +27,9 @@ interface DonationBoxProps {
 }
 
 const DonationBox = ({ tab = "setup", preselectedItem, activeTab }: DonationBoxProps) => {
-  const [activeTabState, setActiveTabState] = useState<"setup" | "onetime">(tab as "setup" | "onetime" || "setup");
+  // Initialize activeTabState: if preselectedItem exists, default to "onetime", otherwise use tab prop
+  const initialTab = preselectedItem ? "onetime" : (tab as "setup" | "onetime" || "setup");
+  const [activeTabState, setActiveTabState] = useState<"setup" | "onetime">(initialTab);
   const [checkout, setCheckout] = useState(false);
   const [showManageDonationBox, setShowManageDonationBox] = useState(false);
   const [manageDonationBoxOpenedFrom, setManageDonationBoxOpenedFrom] = useState<"checkout" | "step3" | null>(null);
@@ -47,12 +49,20 @@ const DonationBox = ({ tab = "setup", preselectedItem, activeTab }: DonationBoxP
   const isMobile = useIsMobile();
   const queryClient = useQueryClient();
 
-  // Get donation box - only when setup tab is active
-  const { data: donationBox, isLoading: isLoadingDonationBox } = useQuery({
-    queryKey: ['donationBox'],
+  // Get donation box - include user ID in query key so cache is user-specific
+  const { data: donationBox, isLoading: isLoadingDonationBox, refetch: refetchDonationBox } = useQuery({
+    queryKey: ['donationBox', currentUser?.id],
     queryFn: () => getDonationBox(),
-    enabled: activeTabState === "setup"
+    enabled: !!currentUser?.id,
+    staleTime: 0, // Always consider data stale to refetch on mount
   });
+
+  // Refetch donation box when user changes
+  useEffect(() => {
+    if (currentUser?.id) {
+      refetchDonationBox();
+    }
+  }, [currentUser?.id, refetchDonationBox]);
 
   // Set step based on donation box existence - only when setup tab is active
   useEffect(() => {
@@ -87,7 +97,7 @@ const DonationBox = ({ tab = "setup", preselectedItem, activeTab }: DonationBoxP
     mutationFn: createDonationBox,
     onSuccess: () => {
       console.log('Donation box created successfully');
-      queryClient.invalidateQueries({ queryKey: ['donationBox'] });
+      queryClient.invalidateQueries({ queryKey: ['donationBox', currentUser?.id] });
       setStep(2);
     },
     onError: (error: any) => {
@@ -101,13 +111,15 @@ const DonationBox = ({ tab = "setup", preselectedItem, activeTab }: DonationBoxP
   useEffect(() => {
     if (preselectedItem && !preselectedItemAdded) {
       console.log('Setting preselected item:', preselectedItem);
-      // Set the active tab to onetime if we have a preselected item
-      setActiveTabState("onetime");
+      // Ensure active tab is onetime if we have a preselected item
+      if (activeTabState !== "onetime") {
+        setActiveTabState("onetime");
+      }
       // Add the preselected item to selected organizations
       setSelectedOrganizations([preselectedItem.id]);
       setPreselectedItemAdded(true);
     }
-  }, [preselectedItem, preselectedItemAdded]);
+  }, [preselectedItem, preselectedItemAdded, activeTabState]);
 
   const incrementDonation = () => {
     const newAmount = donationAmount + 1;
@@ -157,7 +169,7 @@ const DonationBox = ({ tab = "setup", preselectedItem, activeTab }: DonationBoxP
         title={showManageDonationBox ? "Manage Donation Box" : "Donation Box"}
         step={step}
         showBackButton={showManageDonationBox}
-        showCloseButton={!checkout && !showManageDonationBox && (step === 1 || activeTabState === "onetime")}
+        showCloseButton={!checkout && !showManageDonationBox && step === 1}
         onBack={() => {
           if (showManageDonationBox) {
             setShowManageDonationBox(false);

@@ -182,19 +182,19 @@ export const Checkout = ({
   return (
     <div className="flex flex-col h-full bg-white min-h-screen p-0">
       {/* Header */}
-      <div className="bg-white border-b border-gray-200 p-4 h-16 flex items-center">
-        {/* <button
+      {/* <div className="bg-white border-b border-gray-200 p-4 h-16 flex items-center">
+        <button
           onClick={() => onBack()}
           className="flex items-center justify-center h-8 w-8 rounded-full bg-gray-100 text-gray-700 hover:bg-gray-200 transition-colors mr-2 cursor-pointer"
           aria-label="Go back"
         >
           <ChevronLeft size={20} />
-        </button> */}
+        </button>
         <h1 className="text-xl font-bold text-gray-800 tracking-tight">
           Donation Box
         </h1>
-        <div className="w-10"></div> {/* Empty div for alignment */}
-      </div>
+        <div className="w-10"></div>
+      </div> */}
 
       {/* Blue Card */}
       <div className="bg-blue-600 text-white p-5 pb-8 mx-4 mt-4 rounded-xl shadow-md mb-6">

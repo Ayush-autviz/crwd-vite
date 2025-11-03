@@ -1,12 +1,14 @@
-import { ArrowRightLeft, Trophy, Users, AtSign } from "lucide-react";
+import { ArrowRightLeft, Trophy, Users } from "lucide-react";
 import React from "react";
 import { Link } from 'react-router-dom';
 import type { NotificationType } from '@/lib/types';
+import { useAuthStore } from '@/stores/store';
 
 interface NotificationItemProps {
   type: NotificationType;
   avatarUrl?: string;
   username?: string;
+  userId?: string | number;
   message: string;
   time: string;
   groupName?: string;
@@ -24,6 +26,7 @@ const NotificationItem: React.FC<NotificationItemProps> = ({
   type,
   avatarUrl,
   username,
+  userId,
   message,
   time,
   groupName,
@@ -36,22 +39,55 @@ const NotificationItem: React.FC<NotificationItemProps> = ({
   organizationName,
   onAccept,
 }) => {
+  const { user: currentUser } = useAuthStore();
+  
+  // Check if this is the current user's own profile
+  const isCurrentUser = currentUser?.id && (
+    (userId && currentUser.id.toString() === userId.toString()) || 
+    (username && currentUser.username === username)
+  );
+  
+  // Profile link - only navigate if it's not the current user
+  const profileLink = isCurrentUser ? undefined : (userId ? `/user-profile/${userId}` : username ? `/user-profile/${username}` : undefined);
+  
+  // Helper component to conditionally render Link or div for avatar
+  const ProfileAvatar = ({ className = "" }: { className?: string }) => {
+    const img = (
+      <img
+        src={avatarUrl}
+        alt={username}
+        className="w-11 h-11 rounded-full object-cover border-2 border-gray-100"
+      />
+    );
+    return profileLink ? (
+      <Link to={profileLink} className={className}>
+        {img}
+      </Link>
+    ) : (
+      <div className={className}>
+        {img}
+      </div>
+    );
+  };
+  
+  // Helper component to conditionally render Link or span for username
+  const ProfileUsername = ({ className = "" }: { className?: string }) => {
+    return profileLink ? (
+      <Link to={profileLink}>
+        <span className={className + " hover:underline cursor-pointer"}>@{username}</span>
+      </Link>
+    ) : (
+      <span className={className}>@{username}</span>
+    );
+  };
   return (
     <div className="w-full bg-white grid grid-cols-1 md:grid-cols-1 md:flex-row md:items-center  ">
       {type === "connect" && (
         <div className="flex gap-3  border-t border-gray-200 py-5 px-4  ">
-          <div className="col-span-1  flex h-11 w-11  rounded-full justify-center items-start">
-            <img
-              src={avatarUrl}
-              alt={username}
-              className="w-11 h-11 rounded-full object-cover border-2 border-gray-100"
-            />
-          </div>
+          <ProfileAvatar className="col-span-1  flex h-11 w-11  rounded-full justify-center items-start" />
           <div className="col-span-11  flex-1 flex flex-col gap-1">
             <div className="flex items-center gap-2">
-              <span className="font-semibold text-gray-900">
-                @{username}
-              </span>
+              <ProfileUsername className="font-semibold text-gray-900" />
               <span className="text-xs text-gray-400 ">• {time}</span>
             </div>
             <span className="text-gray-700 text-[0.98rem]">{message}</span>
@@ -81,20 +117,10 @@ const NotificationItem: React.FC<NotificationItemProps> = ({
       )}
       {type === "post" && (
         <div className="flex gap-3 border-t border-gray-200 py-5 px-4">
-          <Link to="/profile" className="col-span-1 flex h-11 w-11 rounded-full justify-center items-start">
-            <img
-              src={avatarUrl}
-              alt={username}
-              className="w-11 h-11 rounded-full object-cover border-2 border-gray-100"
-            />
-          </Link>
+          <ProfileAvatar className="col-span-1 flex h-11 w-11 rounded-full justify-center items-start" />
           <div className="col-span-11 flex-1 flex flex-col gap-1">
             <div className="flex items-center gap-2">
-              <Link to="/profile">
-                <span className="font-semibold text-gray-900 hover:underline cursor-pointer">
-                  @{username}
-                </span>
-              </Link>
+              <ProfileUsername className="font-semibold text-gray-900" />
               <span className="text-xs text-gray-400">• {time}</span>
             </div>
             {message && <span className="text-gray-700 text-[0.98rem]">{message}</span>}
@@ -136,20 +162,10 @@ const NotificationItem: React.FC<NotificationItemProps> = ({
       )}
       {type === "event" && (
         <div className="flex gap-3 border-t border-gray-200 py-5 px-4">
-          <Link to="/profile" className="col-span-1 flex h-11 w-11 rounded-full justify-center items-start">
-            <img
-              src={avatarUrl}
-              alt={username}
-              className="w-11 h-11 rounded-full object-cover border-2 border-gray-100"
-            />
-          </Link>
+          <ProfileAvatar className="col-span-1 flex h-11 w-11 rounded-full justify-center items-start" />
           <div className="col-span-11 flex-1 flex flex-col gap-1">
             <div className="flex items-center gap-2">
-              <Link to="/profile">
-                <span className="font-semibold text-gray-900 hover:underline cursor-pointer">
-                  @{username}
-                </span>
-              </Link>
+              <ProfileUsername className="font-semibold text-gray-900" />
               <span className="text-xs text-gray-400">• {time}</span>
             </div>
             {message && <span className="text-gray-700 text-[0.98rem]">{message}</span>}
@@ -184,16 +200,10 @@ const NotificationItem: React.FC<NotificationItemProps> = ({
       {type === "mention" && (
         <Link to={`/profile`} className="block hover:bg-gray-50 transition-colors">
           <div className="flex gap-3 border-t border-gray-200 py-5 px-4">
-            <div className="col-span-1 flex h-11 w-11 rounded-full justify-center items-start">
-              <img
-                src={avatarUrl}
-                alt={username}
-                className="w-11 h-11 rounded-full object-cover border-2 border-gray-100"
-              />
-            </div>
+            <ProfileAvatar className="col-span-1 flex h-11 w-11 rounded-full justify-center items-start" />
             <div className="col-span-11 flex-1 flex flex-col gap-1">
               <div className="flex items-center gap-2">
-                <span className="font-semibold text-gray-900">@{username}</span>
+                <ProfileUsername className="font-semibold text-gray-900" />
                 <span className="text-xs text-gray-400">• {time}</span>
               </div>
               <span className="text-gray-700 text-[0.98rem]">{message}</span>
@@ -205,29 +215,21 @@ const NotificationItem: React.FC<NotificationItemProps> = ({
       {/* Follow Notification */}
       {type === "follow" && (
         <div className="flex gap-3 border-t border-gray-200 py-5 px-4 hover:bg-gray-50 transition-colors">
-          <Link to={`/profile/`} className="col-span-1 flex h-11 w-11 rounded-full justify-center items-start">
-            <img
-              src={avatarUrl}
-              alt={username}
-              className="w-11 h-11 rounded-full object-cover border-2 border-gray-100"
-            />
-          </Link>
+          <ProfileAvatar className="col-span-1 flex h-11 w-11 rounded-full justify-center items-start" />
           <div className="col-span-11 flex-1 flex flex-col gap-1">
             <div className="flex items-center gap-2">
-              <Link to={`/profile/${username}`}>
-                <span className="font-semibold text-gray-900 hover:underline cursor-pointer">@{username}</span>
-              </Link>
+              <ProfileUsername className="font-semibold text-gray-900" />
               <span className="text-xs text-gray-400">• {time}</span>
             </div>
             <span className="text-gray-700 text-[0.98rem]">{message}</span>
-            <div className="flex gap-2 mt-2">
+            {/* <div className="flex gap-2 mt-2">
               <button
                 className="bg-blue-600 text-white rounded-lg px-6 py-1.5 font-medium text-sm hover:bg-blue-700 transition"
                 onClick={onAccept}
               >
                 Follow back
               </button>
-            </div>
+            </div> */}
           </div>
         </div>
       )}
@@ -236,18 +238,10 @@ const NotificationItem: React.FC<NotificationItemProps> = ({
       {type === "like" && (
         <Link to={`/post/1`} className="block hover:bg-gray-50 transition-colors">
           <div className="flex gap-3 border-t border-gray-200 py-5 px-4">
-            <Link to={`/profile/${username}`} className="col-span-1 flex h-11 w-11 rounded-full justify-center items-start">
-              <img
-                src={avatarUrl}
-                alt={username}
-                className="w-11 h-11 rounded-full object-cover border-2 border-gray-100"
-              />
-            </Link>
+            <ProfileAvatar className="col-span-1 flex h-11 w-11 rounded-full justify-center items-start" />
             <div className="col-span-11 flex-1 flex flex-col gap-1">
               <div className="flex items-center gap-2">
-                <Link to={`/profile/${username}`}>
-                  <span className="font-semibold text-gray-900 hover:underline cursor-pointer">@{username}</span>
-                </Link>
+                <ProfileUsername className="font-semibold text-gray-900" />
                 <span className="text-xs text-gray-400">• {time}</span>
               </div>
               <span className="text-gray-700 text-[0.98rem]">{message}</span>
@@ -260,18 +254,10 @@ const NotificationItem: React.FC<NotificationItemProps> = ({
       {type === "comment" && (
         <Link to={`/post/1`} className="block hover:bg-gray-50 transition-colors">
           <div className="flex gap-3 border-t border-gray-200 py-5 px-4">
-            <Link to={`/profile/${username}`} className="col-span-1 flex h-11 w-11 rounded-full justify-center items-start">
-              <img
-                src={avatarUrl}
-                alt={username}
-                className="w-11 h-11 rounded-full object-cover border-2 border-gray-100"
-              />
-            </Link>
+            <ProfileAvatar className="col-span-1 flex h-11 w-11 rounded-full justify-center items-start" />
             <div className="col-span-11 flex-1 flex flex-col gap-1">
               <div className="flex items-center gap-2">
-                <Link to={`/profile/${username}`}>
-                  <span className="font-semibold text-gray-900 hover:underline cursor-pointer">@{username}</span>
-                </Link>
+                <ProfileUsername className="font-semibold text-gray-900" />
                 <span className="text-xs text-gray-400">• {time}</span>
               </div>
               <span className="text-gray-700 text-[0.98rem]">{message}</span>
@@ -320,18 +306,10 @@ const NotificationItem: React.FC<NotificationItemProps> = ({
       {type === "crwd_join" && (
         <Link to={`/groupcrwd`} className="block hover:bg-gray-50 transition-colors">
           <div className="flex gap-3 border-t border-gray-200 py-5 px-4">
-            <Link to={`/profile/${username}`} className="col-span-1 flex h-11 w-11 rounded-full justify-center items-start">
-              <img
-                src={avatarUrl}
-                alt={username}
-                className="w-11 h-11 rounded-full object-cover border-2 border-gray-100"
-              />
-            </Link>
+            <ProfileAvatar className="col-span-1 flex h-11 w-11 rounded-full justify-center items-start" />
             <div className="col-span-11 flex-1 flex flex-col gap-1">
               <div className="flex items-center gap-2">
-                <Link to={`/profile`}>
-                  <span className="font-semibold text-gray-900 hover:underline cursor-pointer">@{username}</span>
-                </Link>
+                <ProfileUsername className="font-semibold text-gray-900" />
                 <span className="text-xs text-gray-400">• {time}</span>
               </div>
               <div className="flex items-center gap-1">
@@ -353,18 +331,10 @@ const NotificationItem: React.FC<NotificationItemProps> = ({
       {type === "event_attend" && (
         <Link to={`/profile`} className="block hover:bg-gray-50 transition-colors">
           <div className="flex gap-3 border-t border-gray-200 py-5 px-4">
-            <Link to={`/post/1`} className="col-span-1 flex h-11 w-11 rounded-full justify-center items-start">
-              <img
-                src={avatarUrl}
-                alt={username}
-                className="w-11 h-11 rounded-full object-cover border-2 border-gray-100"
-              />
-            </Link>
+            <ProfileAvatar className="col-span-1 flex h-11 w-11 rounded-full justify-center items-start" />
             <div className="col-span-11 flex-1 flex flex-col gap-1">
               <div className="flex items-center gap-2">
-                <Link to={`/profile/${username}`}>
-                  <span className="font-semibold text-gray-900 hover:underline cursor-pointer">@{username}</span>
-                </Link>
+                <ProfileUsername className="font-semibold text-gray-900" />
                 <span className="text-xs text-gray-400">• {time}</span>
               </div>
               <span className="text-gray-700 text-[0.98rem]">{message}</span>
@@ -377,18 +347,10 @@ const NotificationItem: React.FC<NotificationItemProps> = ({
       {type === "community_post" && (
         <Link to={`/groupcrwd`} className="block hover:bg-gray-50 transition-colors">
           <div className="flex gap-3 border-t border-gray-200 py-5 px-4">
-            <Link to={`/profile/${username}`} className="col-span-1 flex h-11 w-11 rounded-full justify-center items-start">
-              <img
-                src={avatarUrl}
-                alt={username}
-                className="w-11 h-11 rounded-full object-cover border-2 border-gray-100"
-              />
-            </Link>
+            <ProfileAvatar className="col-span-1 flex h-11 w-11 rounded-full justify-center items-start" />
             <div className="col-span-11 flex-1 flex flex-col gap-1">
               <div>
-                <Link to={`/profile/${username}`}>
-                  <span className="font-semibold text-gray-900 hover:underline cursor-pointer">@{username}</span>
-                </Link>
+                <ProfileUsername className="font-semibold text-gray-900" />
                 <span className="text-xs text-gray-400">• {time}</span>
               </div>
               <div className='flex items-center gap-2'>
@@ -414,18 +376,10 @@ const NotificationItem: React.FC<NotificationItemProps> = ({
       {type === "community_event" && (
         <Link to={`/profile`} className="block hover:bg-gray-50 transition-colors">
           <div className="flex gap-3 border-t border-gray-200 py-5 px-4">
-            <Link to={`/profile/${username}`} className="col-span-1 flex h-11 w-11 rounded-full justify-center items-start">
-              <img
-                src={avatarUrl}
-                alt={username}
-                className="w-11 h-11 rounded-full object-cover border-2 border-gray-100"
-              />
-            </Link>
+            <ProfileAvatar className="col-span-1 flex h-11 w-11 rounded-full justify-center items-start" />
             <div className="col-span-11 flex-1 flex flex-col gap-1">
               <div className="flex items-center gap-2">
-                <Link to={`/profile/${username}`}>
-                  <span className="font-semibold text-gray-900 hover:underline cursor-pointer">@{username}</span>
-                </Link>
+                <ProfileUsername className="font-semibold text-gray-900" />
                 <span className="text-xs text-gray-400">• {time}</span>
               </div>
               <span className="text-gray-700 text-[0.98rem]">{message}</span>
@@ -444,18 +398,10 @@ const NotificationItem: React.FC<NotificationItemProps> = ({
       {type === "community_donation" && (
         <Link to={`/profile`} className="block hover:bg-gray-50 transition-colors">
           <div className="flex gap-3 border-t border-gray-200 py-5 px-4">
-            <Link to={`/profile/${username}`} className="col-span-1 flex h-11 w-11 rounded-full justify-center items-start">
-              <img
-                src={avatarUrl}
-                alt={username}
-                className="w-11 h-11 rounded-full object-cover border-2 border-gray-100"
-              />
-            </Link>
+            <ProfileAvatar className="col-span-1 flex h-11 w-11 rounded-full justify-center items-start" />
             <div className="col-span-11 flex-1 flex flex-col gap-1">
               <div className="flex items-center gap-2">
-                <Link to={`/profile/${username}`}>
-                  <span className="font-semibold text-gray-900 hover:underline cursor-pointer">@{username}</span>
-                </Link>
+                <ProfileUsername className="font-semibold text-gray-900" />
                 <span className="text-xs text-gray-400">• {time}</span>
               </div>
               <span className="text-gray-700 text-[0.98rem]">{message}</span>
@@ -480,18 +426,10 @@ const NotificationItem: React.FC<NotificationItemProps> = ({
       {type === "community_interest" && (
         <Link to={`/profile`} className="block hover:bg-gray-50 transition-colors">
           <div className="flex gap-3 border-t border-gray-200 py-5 px-4">
-            <Link to={`/profile/${username}`} className="col-span-1 flex h-11 w-11 rounded-full justify-center items-start">
-              <img
-                src={avatarUrl}
-                alt={username}
-                className="w-11 h-11 rounded-full object-cover border-2 border-gray-100"
-              />
-            </Link>
+            <ProfileAvatar className="col-span-1 flex h-11 w-11 rounded-full justify-center items-start" />
             <div className="col-span-11 flex-1 flex flex-col gap-1">
               <div className="flex items-center gap-2">
-                <Link to={`/profile/${username}`}>
-                  <span className="font-semibold text-gray-900 hover:underline cursor-pointer">@{username}</span>
-                </Link>
+                <ProfileUsername className="font-semibold text-gray-900" />
                 <span className="text-xs text-gray-400">• {time}</span>
               </div>
               <span className="text-gray-700 text-[0.98rem]">{message}</span>
@@ -509,18 +447,10 @@ const NotificationItem: React.FC<NotificationItemProps> = ({
       {type === "community_join" && (
         <Link to={`/groupcrwd`} className="block hover:bg-gray-50 transition-colors">
           <div className="flex gap-3 border-t border-gray-200 py-5 px-4">
-            <Link to={`/profile/${username}`} className="col-span-1 flex h-11 w-11 rounded-full justify-center items-start">
-              <img
-                src={avatarUrl}
-                alt={username}
-                className="w-11 h-11 rounded-full object-cover border-2 border-gray-100"
-              />
-            </Link>
+            <ProfileAvatar className="col-span-1 flex h-11 w-11 rounded-full justify-center items-start" />
             <div className="col-span-11 flex-1 flex flex-col gap-1">
               <div className="flex items-center gap-2">
-                <Link to={`/profile`}>
-                  <span className="font-semibold text-gray-900 hover:underline cursor-pointer">@{username}</span>
-                </Link>
+                <ProfileUsername className="font-semibold text-gray-900" />
                 <Users className="h-4 w-4 text-blue-500" />
                 <span className="text-xs text-gray-400">• {time}</span>
               </div>

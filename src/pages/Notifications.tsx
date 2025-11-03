@@ -1,6 +1,5 @@
 import ProfileNavbar from "@/components/profile/ProfileNavbar";
 import Footer from "@/components/Footer";
-import React from "react";
 import NotificationTabs from "../components/notificatons/NotificationTabs";
 import { useAuthStore } from "@/stores/store";
 import { Button } from "@/components/ui/button";
@@ -55,10 +54,12 @@ export default function NotificationsPage() {
     );
   }
   return (
-    <section className="bg-white w-full ">
+    <section className="bg-white w-full flex flex-col min-h-screen">
       <ProfileNavbar title="Notifications" />
-      <NotificationTabs />
-      <div className="hidden md:block md:mt-10">
+      <div className="flex-1">
+        <NotificationTabs />
+      </div>
+      <div className="hidden md:block mt-auto">
         <Footer />
       </div>
     </section>
