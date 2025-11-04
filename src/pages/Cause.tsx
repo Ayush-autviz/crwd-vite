@@ -118,18 +118,19 @@ const CausePage: React.FC = () => {
     <div className="min-h-screen md:h-full bg-white flex flex-col ">
       {/* <CauseHeader /> */}
       <ProfileNavbar title={"Nonprofit"} />
-      <div className="flex items-center gap-2 pt-6 pb-4 px-4 sticky top-16 z-10 bg-white">
-        <div className="text-lg font-semibold text-blue-500 bg-blue-50 px-2 py-1 rounded-md">
+      <div className="flex items-center gap-2 pt-6 pb-4 px-2 sticky top-16 z-10 bg-white">
+        <div className="text-sm md:text-lg font-semibold text-blue-500 bg-blue-50 px-2 py-1 rounded-md">
           Nonprofit
         </div>
         <div className="flex-grow" />
-        <Button variant="secondary" onClick={() => setShowShareModal(true)}>
+        <Button className="h-8 text-sm px-2 md:h-9 md:text-lg md:px-4" variant="secondary" onClick={() => setShowShareModal(true)}>
           {/* <Share2 size={20} /> */}
           Share
         </Button>
 
         {currentUser?.id && (
         <Button 
+          className="h-8 text-sm px-2 md:h-9 md:text-lg md:px-4"
           onClick={() => navigate('/donation', { 
             state: { 
               preselectedItem: {

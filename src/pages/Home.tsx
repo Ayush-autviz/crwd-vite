@@ -17,6 +17,7 @@ import { useGeolocated } from "react-geolocated";
 import { categories } from "@/constants/categories";
 import { getPosts } from "@/services/api/social";
 import { useAuthStore } from "@/stores/store";
+import { getNonprofitColor } from "@/lib/getNonprofitColor";
 
 export default function HomePage() {
   const [showMobileFooter, setShowMobileFooter] = useState(true);
@@ -317,7 +318,13 @@ export default function HomePage() {
                         /> */}
                         <Avatar className="h-10 w-10 rounded-full">
                           <AvatarImage src={cause.image} />
-                          <AvatarFallback className="bg-blue-100 text-blue-600 font-semibold">
+                          <AvatarFallback 
+                            style={{ 
+                              backgroundColor: getNonprofitColor(cause.id).bgColor,
+                              color: getNonprofitColor(cause.id).textColor 
+                            }}
+                            className="font-semibold"
+                          >
                             {cause.name.charAt(0).toUpperCase()}
                           </AvatarFallback>
                         </Avatar>
@@ -445,7 +452,13 @@ export default function HomePage() {
                     <div className="flex items-center gap-2 md:gap-3 flex-1 min-w-0 mr-2">
                       <Avatar className="h-10 w-10 md:h-12 md:w-12 rounded-full flex-shrink-0">
                        <AvatarImage src={cause.image} />
-                       <AvatarFallback className="bg-blue-100 text-blue-600 font-semibold">
+                       <AvatarFallback 
+                         style={{ 
+                           backgroundColor: getNonprofitColor(cause.id).bgColor,
+                           color: getNonprofitColor(cause.id).textColor 
+                         }}
+                         className="font-semibold"
+                       >
                          {cause.name.charAt(0).toUpperCase()}
                        </AvatarFallback>
                       </Avatar>

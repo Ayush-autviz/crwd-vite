@@ -24,6 +24,7 @@ import {
 import ProfileNavbar from "@/components/profile/ProfileNavbar";
 import { Link, useLocation } from "react-router-dom";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { getNonprofitColor } from "@/lib/getNonprofitColor";
 
 const recentSearches = [
   "Atlanta animal shelters",
@@ -228,7 +229,13 @@ export default function SearchPage() {
                             /> */}
                             <Avatar className="h-10 w-10 rounded-full">
                               <AvatarImage src={cause.image} />
-                              <AvatarFallback className="bg-blue-100 text-blue-600 font-semibold">
+                              <AvatarFallback 
+                                style={{ 
+                                  backgroundColor: getNonprofitColor(cause.id).bgColor,
+                                  color: getNonprofitColor(cause.id).textColor 
+                                }}
+                                className="font-semibold"
+                              >
                                 {cause.name.charAt(0).toUpperCase()}
                               </AvatarFallback>
                             </Avatar>

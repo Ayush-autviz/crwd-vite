@@ -207,23 +207,6 @@ export const DonationBox3 = ({
 
   return (
     <div className="w-full h-full bg-white flex flex-col pb-24">
-      {/* Header with Manage Donation Box button */}
-      {/* Only show button if donation box exists */}
-      {(donationBox?.id) && (
-        <div className="flex justify-end items-center px-4 pt-2 pb-2">
-          <Button
-            onClick={() => {
-              if (onManageDonationBox) {
-                onManageDonationBox();
-              }
-            }}
-            variant="outline"
-            className="text-sm"
-          >
-            Manage Donation Box
-          </Button>
-        </div>
-      )}
       <div className="flex-1 overflow-auto mt-2 mx-4">
         {/* Manual Causes Section */}
         <div className="bg-white rounded-xl mb-6 p-6 shadow-sm border border-gray-100">
@@ -362,6 +345,23 @@ export const DonationBox3 = ({
             </span>
           </div>
         </div>
+
+        {/* Manage Donation Box Button - Only show if donation box exists */}
+        {(donationBox?.id) && (
+          <div className="mb-6">
+            <Button
+              onClick={() => {
+                if (onManageDonationBox) {
+                  onManageDonationBox();
+                }
+              }}
+              variant="outline"
+              className="w-full text-sm h-12"
+            >
+              Manage Donation Box
+            </Button>
+          </div>
+        )}
 
         {/* Add More Button */}
         {/* <div className="mb-6">

@@ -10,6 +10,7 @@ import { Toast } from "@/components/ui/toast";
 import { Button } from "@/components/ui/button";
 import { useAuthStore } from "@/stores/store";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import { getNonprofitColor } from "@/lib/getNonprofitColor";
 
 
 export default function NonProfitInterests() {
@@ -211,7 +212,13 @@ export default function NonProfitInterests() {
         <div className="w-4/5 h-12 md:h-16 mx-auto mb-2 md:mb-3 flex items-center justify-center">
           <Avatar className="w-full h-full rounded-lg">
             <AvatarImage src={interest.image || interest.logo} alt={interest.name} className="object-contain rounded-lg" />
-            <AvatarFallback className="bg-blue-100 text-blue-600 text-lg md:text-xl font-semibold w-full h-full flex items-center justify-center rounded-lg">
+            <AvatarFallback 
+              style={{ 
+                backgroundColor: getNonprofitColor(interest.id).bgColor,
+                color: getNonprofitColor(interest.id).textColor 
+              }}
+              className="text-lg md:text-xl font-semibold w-full h-full flex items-center justify-center rounded-lg"
+            >
               {interest.name?.charAt(0)?.toUpperCase() || 'C'}
             </AvatarFallback>
           </Avatar>

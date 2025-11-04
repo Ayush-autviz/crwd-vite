@@ -269,13 +269,14 @@ export default function GroupCrwdPage() {
     // <div>
     <>
       <ProfileNavbar title="Collective" />
-      <div className="flex items-center gap-2 justify-between pt-6 pb-2 px-4 sticky top-16 z-10 bg-white ">
-        <div className="text-lg font-semibold text-green-700 bg-green-200 px-2 py-1 rounded-md">
+      <div className="flex items-center gap-2 justify-between pt-6 pb-2 px-1 md:px-3 sticky top-16 z-10 bg-white ">
+        <div className="text-sm md:text-lg font-semibold text-green-700 bg-green-200 px-2 py-1 rounded-md">
           Collective
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1">
           {hasJoined && (
             <Button
+              className="h-8 text-sm px-2 md:h-9 md:text-lg md:px-4"
               onClick={() => navigate('/donation', { 
                 state: { 
                   preselectedItem: {
@@ -291,14 +292,15 @@ export default function GroupCrwdPage() {
               Donate
             </Button>
           )}
-          <Button variant="secondary" onClick={() => setShowShareModal(true)}>
+          <Button className="h-8 text-sm px-2 md:h-9 md:text-lg md:px-4" variant="secondary" onClick={() => setShowShareModal(true)}>
             {/* <Share2 size={20} /> */}
             Share
           </Button>
 
           {(currentUser?.id && crwdData?.created_by?.id !== currentUser?.id) && (
           <Button
-            className={`cursor-pointer transition-colors ${
+            className={`h-8 text-sm px-1 md:h-9 md:text-lg md:px-4
+              cursor-pointer transition-colors ${
               hasJoined
                 ? "bg-gray-100 text-gray-500"
                 : "bg-green-600 text-white hover:bg-green-700"
