@@ -5,7 +5,7 @@ import ProfileActivity from "../components/profile/ProfileActivity";
 import ProfileNavbar from "../components/profile/ProfileNavbar";
 import ProfileSidebar from "../components/profile/ProfileSidebar";
 import ProfileStats from "../components/profile/ProfileStats";
-import { useLocation, useNavigate, useParams, Link } from "react-router-dom";
+import { useLocation, useNavigate, useParams, Link, Navigate } from "react-router-dom";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import {
@@ -32,7 +32,7 @@ export default function ProfilePage() {
   const queryClient = useQueryClient();
   const navigate = useNavigate(); 
   // Check if viewing own profile
-  const isOwnProfile = currentUser?.id === userId;
+  const isOwnProfile = currentUser?.id == userId;
 
   // Fetch user profile
   const { data: userProfile, isLoading, error } = useQuery({
@@ -133,7 +133,7 @@ export default function ProfilePage() {
   // Redirect to own profile if viewing own profile
   useEffect(() => {
     if (isOwnProfile) {
-      window.location.href = '/profile';
+      navigate('/profile', { replace: true });
     }
   }, [isOwnProfile]);
 
@@ -152,6 +152,8 @@ export default function ProfilePage() {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [showMenu]);
+
+
   // Show loading state
   if (isLoading) {
     return (
