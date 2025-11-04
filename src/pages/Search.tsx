@@ -440,6 +440,10 @@ export default function SearchPage() {
                         setSearchQuery(category.name);
                         setInitialCategoryName(category.name);
                         setSearchTrigger(prev => prev + 1);
+                        // If in discover mode, exit discover mode and show search results
+                        if (discover) {
+                          setDiscover(false);
+                        }
                       }}
                     >
                       <div className="flex items-center gap-2">
@@ -515,6 +519,10 @@ export default function SearchPage() {
                       setSearchQuery(category.name);
                       setInitialCategoryName(category.name);
                       setSearchTrigger(prev => prev + 1);
+                      // If in discover mode, exit discover mode and show search results
+                      if (discover) {
+                        setDiscover(false);
+                      }
                     }}
                   >
                     {category.name}
@@ -579,6 +587,10 @@ export default function SearchPage() {
                         setInitialCategoryName(category.name);
                         setSearchTrigger(prev => prev + 1);
                         setShowCategorySelector(false);
+                        // If in discover mode, exit discover mode and show search results
+                        if (discover) {
+                          setDiscover(false);
+                        }
                       }}
                     >
                       <div className="flex items-center gap-3">
