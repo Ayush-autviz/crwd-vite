@@ -23,6 +23,7 @@ import { updateDonationBox, cancelDonationBox } from "@/services/api/donation";
 import { useAuthStore } from "@/stores/store";
 import { cn } from "@/lib/utils";
 import { Avatar, AvatarImage, AvatarFallback } from "./ui/avatar";
+import { Toast } from "./ui/toast";
 
 // Define Organization type locally to avoid import issues
 type Organization = {
@@ -69,6 +70,8 @@ const ManageDonationBox: React.FC<ManageDonationBoxProps> = ({
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [itemToDelete, setItemToDelete] = useState<{ id: number; name: string; type: 'cause' | 'collective'; isNewlySelected: boolean } | null>(null);
   const [showCancelModal, setShowCancelModal] = useState(false);
+  const [showToast, setShowToast] = useState(false);
+  const [toastMessage, setToastMessage] = useState("");
 
   // Separate existing causes/collectives from new selections
   const existingCauses = causes.filter(c => c.type === 'cause' || !c.type);
@@ -127,9 +130,13 @@ const ManageDonationBox: React.FC<ManageDonationBoxProps> = ({
     mutationFn: (data: any) => updateDonationBox(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['donationBox', currentUser?.id] });
+      setToastMessage('Donation box updated successfully!');
+      setShowToast(true);
     },
     onError: (error: any) => {
       console.error('Error updating donation box:', error);
+      setToastMessage('Failed to update donation box. Please try again.');
+      setShowToast(true);
     },
   });
 
@@ -287,6 +294,12 @@ const ManageDonationBox: React.FC<ManageDonationBoxProps> = ({
       const allCauseIds = [...remainingExistingCauseIds, ...selectedCauses];
       const allCollectiveIds = [...remainingExistingCollectiveIds, ...selectedCollectives];
 
+      // Validate that at least one nonprofit or collective exists
+      if (allCauseIds.length === 0 && allCollectiveIds.length === 0) {
+        alert('Please add at least one nonprofit or collective to your donation box.');
+        return;
+      }
+
       // Prepare payload with amount and all causes/collectives
       const payload: any = {
         monthly_amount: editableAmount,
@@ -309,9 +322,9 @@ const ManageDonationBox: React.FC<ManageDonationBoxProps> = ({
       setSelectedCollectives([]);
       setSelectedCausesData([]);
 
-      // Refresh and go back
+      // Refresh data but stay on the page (don't navigate away)
       queryClient.invalidateQueries({ queryKey: ['donationBox', currentUser?.id] });
-      onBack();
+      // Removed onBack() to stay on the ManageDonationBox page
     } catch (error) {
       console.error('Error updating donation box:', error);
       // You might want to show an error toast here
@@ -344,6 +357,27 @@ const ManageDonationBox: React.FC<ManageDonationBoxProps> = ({
   
   // Get all selected collective IDs (existing + newly selected)
   const allSelectedCollectiveIds = [...existingCollectiveIds, ...selectedCollectives];
+
+  // Calculate if there are any items (existing not removed + newly selected)
+  const remainingExistingCauseIdsForValidation = existingCauses
+    .filter(c => !temporarilyRemovedCauses.includes(c.id))
+    .map(c => {
+      const id = c.id.replace('cause-', '');
+      return parseInt(id);
+    })
+    .filter(id => !isNaN(id));
+
+  const remainingExistingCollectiveIdsForValidation = existingCollectives
+    .filter(c => !temporarilyRemovedCauses.includes(c.id))
+    .map(c => {
+      const id = c.id.replace('collective-', '');
+      return parseInt(id);
+    })
+    .filter(id => !isNaN(id));
+
+  const totalCauseIds = [...remainingExistingCauseIdsForValidation, ...selectedCauses];
+  const totalCollectiveIds = [...remainingExistingCollectiveIdsForValidation, ...selectedCollectives];
+  const hasNoItems = totalCauseIds.length === 0 && totalCollectiveIds.length === 0;
 
   // Create combined selected causes list for display (existing + newly selected from search results)
   const getSelectedCausesForDisplay = () => {
@@ -842,13 +876,21 @@ const ManageDonationBox: React.FC<ManageDonationBoxProps> = ({
       <div className="px-8 pb-6">
         <Button
           onClick={handleUpdateDonation}
-          disabled={updateDonationBoxMutation.isPending}
-          className="w-full bg-blue-600 hover:bg-blue-700 text-white py-6 rounded-lg font-semibold"
+          disabled={updateDonationBoxMutation.isPending || hasNoItems}
+          className="w-full bg-blue-600 hover:bg-blue-700 text-white py-6 rounded-lg font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {updateDonationBoxMutation.isPending
             ? 'Updating...'
             : 'Update Donation'}
         </Button>
+
+        {/* Toast notification */}
+        <Toast
+          message={toastMessage}
+          show={showToast}
+          onHide={() => setShowToast(false)}
+          duration={3000}
+        />
         
         {/* Deactivate Subscription Button - Only show if subscription is active */}
         {isActive && (

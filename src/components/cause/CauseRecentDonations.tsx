@@ -58,7 +58,7 @@ const CauseRecentDonations: React.FC<CauseRecentDonationsProps> = ({
     <div className="bg-white py-6">
       {/* Header */}
       <div className="flex items-center gap-2 px-6 mb-4">
-        <Sparkles className="w-5 h-5 text-green-600" />
+        {/* <Sparkles className="w-5 h-5 text-green-600" /> */}
         <h3 className="text-lg font-bold text-gray-900">Recent Donations</h3>
       </div>
       
@@ -85,16 +85,16 @@ const CauseRecentDonations: React.FC<CauseRecentDonationsProps> = ({
                 key={donation.id}
                 className="block"
               >
-                <div className="flex items-center justify-between p-4 rounded-xl bg-gradient-to-r from-gray-50 to-white hover:from-green-50 hover:to-white hover:shadow-md transition-all duration-200 border border-gray-100 hover:border-green-200 cursor-pointer group">
+                <div className="flex items-center justify-between p-4 rounded-xl cursor-pointer group">
                   <div className="flex items-center gap-3 flex-1 min-w-0">
-                    <Avatar className="w-12 h-12 ring-2 ring-green-100 group-hover:ring-green-300 transition-all">
+                    <Avatar className="w-12 h-12 ring-2 ring-green-100 ">
                       <AvatarImage src={donation.donor.profile_picture} />
                       <AvatarFallback className="bg-green-100 text-green-700 font-semibold">
                         {initials}
                       </AvatarFallback>
                     </Avatar>
                     <div className="flex flex-col min-w-0 flex-1">
-                      <span className="font-semibold text-base text-gray-900 truncate group-hover:text-green-700 transition-colors">
+                      <span className="font-semibold text-base text-gray-900 truncate ">
                         {donorName}
                       </span>
                       <span className="text-sm text-gray-500 truncate">
