@@ -55,9 +55,11 @@ export default function NotificationTabs() {
     (notification: any) => !notification.is_read
   ) || false;
 
- useEffect(() => {
-  markAllNotificationsAsReadMutation.mutate();
- }, []);
+  useEffect(() => {
+    if (currentUser?.id && notificationsData?.results?.length > 0) {
+      markAllNotificationsAsReadMutation.mutate();
+    }
+  }, [location.pathname]); 
 
   return (
     <div className="w-full">

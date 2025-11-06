@@ -57,34 +57,6 @@ export default function HomePage() {
       enabled: true,
     });
 
-    console.log(collectives, 'collectives');
-    console.log(nonprofitts, 'nonprofitts');
-    console.log(causesByLocation, 'causesByLocation');
-    console.log(posts, 'posts');
-
-
-
-  // Sample data for nearby causes
-  const nearbyCauses = [
-    {
-      name: "The Red Cross",
-      type: "Collective",
-      description: "An health organization that helps people in need",
-      image: "/redcross.png",
-    },
-    {
-      name: "St. Judes",
-      type: "Nonprofit",
-      description: "The leading children's health organization",
-      image: "/grocery.jpg",
-    },
-    {
-      name: "Women's Healthcare of At...",
-      type: "Collective",
-      description: "We are Atlanta's #1 healthcare organization",
-      image: "/redcross.png",
-    },
-  ];
 
   return (
     <div className="">
