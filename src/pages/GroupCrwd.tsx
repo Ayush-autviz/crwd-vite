@@ -22,6 +22,7 @@ import { getCollectiveById, joinCollective, leaveCollective } from "@/services/a
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { getPosts } from "@/services/api/social";
 import { useAuthStore } from "@/stores/store";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 
 export default function GroupCrwdPage() {
   const [hasJoined, setHasJoined] = useState(false);
@@ -377,7 +378,7 @@ export default function GroupCrwdPage() {
                   </h2>
 
                   <p className="text-gray-600 mb-6">
-                    This CRWD includes {crwdData?.causes?.length} nonprofits.
+                    This Collective includes {crwdData?.causes?.length} nonprofits.
                   </p>
 
                   <div className="flex items-center justify-center gap-3">
@@ -430,11 +431,14 @@ export default function GroupCrwdPage() {
                   {/* Community Info Card */}
                   <div className="bg-gray-50 border border-gray-200 rounded-lg p-4 mb-6">
                     <div className="flex items-center gap-3">
-                      <div className="w-12 h-12 bg-teal-500 rounded-lg flex items-center justify-center">
-                        <span className="text-white text-sm font-semibold">
-                          🌳
-                        </span>
-                      </div>
+                      <Avatar className="w-12 h-12 rounded-lg">
+                        <AvatarImage 
+                          src={crwdData?.cover_image || crwdData?.image || crwdData?.avatar || crwdData?.created_by?.profile_picture} 
+                        />
+                        <AvatarFallback className="bg-teal-500 text-white text-sm font-semibold rounded-lg">
+                          {crwdData?.name?.charAt(0)?.toUpperCase() || 'C'}
+                        </AvatarFallback>
+                      </Avatar>
                       <div className="text-left">
                         <h3 className="font-semibold text-gray-900">
                           {crwdData?.name}

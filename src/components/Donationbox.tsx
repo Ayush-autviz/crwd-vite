@@ -206,7 +206,7 @@ const DonationBox = ({ tab = "setup", preselectedItem, activeTab }: DonationBoxP
             }}
           >
             <div className="flex items-center justify-center">
-              Set up donation box
+              {donationBox?.id ? 'Donation Box' : 'Set up donation box'}
             </div>
             {activeTabState === "setup" && (
               <div className="absolute bottom-0 left-0 w-full h-0.5 bg-blue-600"></div>
