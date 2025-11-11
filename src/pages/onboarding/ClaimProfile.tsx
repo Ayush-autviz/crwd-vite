@@ -7,9 +7,10 @@ import { Input } from "@/components/ui/input";
 import { DatePicker } from "antd";
 import type { DatePickerProps } from "antd";
 import { useMutation } from "@tanstack/react-query";
-import { emailRegistration, emailVerification, resendEmailVerificationCode } from "@/services/api/auth";
+import { emailRegistration, emailVerification, resendEmailVerificationCode, login } from "@/services/api/auth";
 import { Toast } from "@/components/ui/toast";
 import { cn } from "@/lib/utils";
+import { useAuthStore } from "@/stores/store";
 
 export default function ClaimProfile() {
   const [formData, setFormData] = useState({
@@ -36,6 +37,7 @@ export default function ClaimProfile() {
   });
   const fileInputRef = useRef<HTMLInputElement>(null);
   const navigate = useNavigate();
+  const { setUser, setToken } = useAuthStore();
 
   const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -192,16 +194,63 @@ export default function ClaimProfile() {
 
   const emailVerificationMutation = useMutation({
     mutationFn: emailVerification,
-    onSuccess: (response) => {
+    onSuccess: async (response) => {
       setToastMessage("Email verified successfully!");
       setShowToast(true);
       console.log('email verified', response);
-      navigate("/login");
+      
+      // Automatically login after successful email verification
+      try {
+        const loginResponse = await loginMutation.mutateAsync({
+          email: formData.email.trim(),
+          password: formData.password,
+        });
+        
+        // Login mutation will handle navigation
+        console.log('Auto-login successful:', loginResponse);
+      } catch (loginError: any) {
+        console.error('Auto-login error:', loginError);
+        // If auto-login fails, navigate to login page
+        setToastMessage("Email verified! Please login to continue.");
+        setShowToast(true);
+        navigate("/login");
+      }
     },
     onError: (error: any) => {
       console.error('Email verification error:', error);
       setToastMessage(`Verification failed: ${error.response?.data?.message || error.message}`);
       setShowToast(true);
+    },
+  });
+
+  // Login mutation for auto-login after verification
+  const loginMutation = useMutation({
+    mutationFn: login,
+    onSuccess: (response) => {
+      console.log('Login successful:', response);
+      
+      // Store user data and token in the store
+      if (response.user) {
+        setUser(response.user);
+      }
+      if (response.access_token) {
+        setToken({ access_token: response.access_token, refresh_token: response.refresh_token });
+      }
+      
+      // If last_login_at is null, navigate to nonprofit interests page (new user)
+      if (response.user && !response.user.last_login_at) {
+        navigate("/non-profit-interests", { 
+          state: { fromAuth: true },
+          replace: true 
+        });
+      } else {
+        // Navigate to home page for existing users
+        navigate("/", { replace: true });
+      }
+    },
+    onError: (error: any) => {
+      console.error('Login error:', error);
+      // Error handling is done in emailVerificationMutation
     },
   });
 

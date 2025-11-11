@@ -7,6 +7,15 @@ export type Organization = {
   description?: string;
 };
 
+export interface PreviewDetails {
+  title: string | null;
+  description: string | null;
+  image: string | null;
+  site_name: string | null;
+  url: string;
+  domain: string;
+}
+
 export interface PostDetail {
   id: number;
   userId: string;
@@ -17,6 +26,7 @@ export interface PostDetail {
   orgUrl?: string | number; // Collective ID for navigation (optional)
   text: string;
   imageUrl?: string;
+  previewDetails?: PreviewDetails | null;
   likes: number;
   comments: number;
   shares: number;

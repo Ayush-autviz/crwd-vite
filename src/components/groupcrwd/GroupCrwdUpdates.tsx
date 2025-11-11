@@ -38,6 +38,7 @@ const GroupCrwdUpdates: React.FC<GroupCrwdUpdatesProps> = ({
     orgUrl: post.collective?.id,
     text: post.content || '',
     imageUrl: post.media || undefined,
+    previewDetails: post.preview_details || null,
     likes: post.likes_count || 0,
     comments: post.comments_count || 0,
     shares: 0, // API doesn't provide shares count

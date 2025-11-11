@@ -1,8 +1,6 @@
-import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import Confetti from "react-confetti";
 
 export default function CompleteOnboard() {
   const navigate = useNavigate();
@@ -33,11 +31,11 @@ export default function CompleteOnboard() {
   // }, []);
 
   const handleGoToDonationBox = () => {
-    navigate("/donation");
+    navigate("/donation", { replace: true });
   };
 
   const handleBrowseCrwd = () => {
-    navigate("/");
+    navigate("/", { replace: true });
   };
 
   return (
@@ -85,12 +83,12 @@ export default function CompleteOnboard() {
 
               {/* Action Buttons */}
               <div className="space-y-4 pt-4">
-                <Button
+                {/* <Button
                   onClick={handleGoToDonationBox}
                   className="w-full h-12 bg-blue-500 hover:bg-blue-700 text-white font-medium text-base rounded-lg transition-colors duration-200"
                 >
                   Go to Donation Box
-                </Button>
+                </Button> */}
 
                 <Button
                   variant="outline"

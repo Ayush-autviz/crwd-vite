@@ -47,6 +47,7 @@ export default function PostById() {
     orgUrl: postData.collective?.id, // Collective ID for navigation
     text: postData.content || '',
     imageUrl: postData.media || undefined,
+    previewDetails: postData.preview_details || null,
     likes: postData.likes_count || 0,
     comments: postData.comments_count || 0,
     shares: 0,

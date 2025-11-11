@@ -260,7 +260,50 @@ export default function ProfileActivityCard({
                   {post.text}
                 </div>
 
-                {post.imageUrl && (
+                {/* Show preview card if previewDetails exists, otherwise show image */}
+                {post.previewDetails ? (
+                  <a
+                    href={post.previewDetails.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={(e) => e.stopPropagation()}
+                    className="block w-full rounded-lg overflow-hidden mb-3 border border-gray-200 hover:border-gray-300 transition-colors cursor-pointer"
+                  >
+                    <div className="flex flex-col md:flex-row bg-white">
+                      {/* Preview Image */}
+                      {post.previewDetails.image && (
+                        <div className="w-full md:w-48 h-48 md:h-auto flex-shrink-0">
+                          <img
+                            src={post.previewDetails.image}
+                            alt={post.previewDetails.title || 'Link preview'}
+                            className="w-full h-full object-cover"
+                          />
+                        </div>
+                      )}
+                      {/* Preview Content */}
+                      <div className="flex-1 p-4">
+                        {post.previewDetails.site_name && (
+                          <div className="text-xs text-muted-foreground mb-1 uppercase tracking-wide">
+                            {post.previewDetails.site_name}
+                          </div>
+                        )}
+                        {post.previewDetails.title && (
+                          <h3 className="text-sm font-semibold text-foreground mb-2 line-clamp-2">
+                            {post.previewDetails.title}
+                          </h3>
+                        )}
+                        {post.previewDetails.description && (
+                          <p className="text-xs text-muted-foreground mb-2 line-clamp-2">
+                            {post.previewDetails.description}
+                          </p>
+                        )}
+                        <div className="text-xs text-muted-foreground truncate">
+                          {post.previewDetails.domain}
+                        </div>
+                      </div>
+                    </div>
+                  </a>
+                ) : post.imageUrl ? (
                   <div className="w-full h-48 rounded-lg overflow-hidden mb-3">
                     <img
                       src={post.imageUrl}
@@ -268,7 +311,7 @@ export default function ProfileActivityCard({
                       className="w-full h-full object-cover"
                     />
                   </div>
-                )}
+                ) : null}
 
                 <div className="flex items-center gap-4 text-muted-foreground mt-2">
                   <button
