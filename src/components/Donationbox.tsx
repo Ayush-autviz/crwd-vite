@@ -7,7 +7,7 @@ import OneTimeDonation from "./OneTimeDonation";
 import { Checkout } from "./Checkout";
 
 import DonationHeader from "./donation/DonationHeader";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { getDonationBox, createDonationBox } from "@/services/api/donation";
 import { getCausesBySearch } from "@/services/api/crwd";
@@ -31,11 +31,10 @@ const DonationBox = ({ tab = "setup", preselectedItem, activeTab }: DonationBoxP
   const initialTab = preselectedItem ? "onetime" : (tab as "setup" | "onetime" || "setup");
   const [activeTabState, setActiveTabState] = useState<"setup" | "onetime">(initialTab);
   const [checkout, setCheckout] = useState(false);
-  const [showManageDonationBox, setShowManageDonationBox] = useState(false);
-  const [manageDonationBoxOpenedFrom, setManageDonationBoxOpenedFrom] = useState<"checkout" | "step3" | null>(null);
   const [selectedOrganizations, setSelectedOrganizations] = useState<string[]>([]);
   const [preselectedItemAdded, setPreselectedItemAdded] = useState(false);
   const { user: currentUser } = useAuthStore();
+  const navigate = useNavigate();
 
   const [donationAmount, setDonationAmount] = useState(10);
   const [step, setStep] = useState(1);
@@ -166,20 +165,12 @@ const DonationBox = ({ tab = "setup", preselectedItem, activeTab }: DonationBoxP
     <div className="w-full h-full bg-white flex flex-col">
       {/* Header with title and back/close button - Always Visible */}
       <DonationHeader
-        title={showManageDonationBox ? "Manage Donation Box" : "Donation Box"}
+        title="Donation Box"
         step={step}
-        showBackButton={showManageDonationBox}
-        showCloseButton={!checkout && !showManageDonationBox && step === 1}
+        showBackButton={false}
+        showCloseButton={!checkout && step === 1}
         onBack={() => {
-          if (showManageDonationBox) {
-            setShowManageDonationBox(false);
-            // If opened from step 3, go back to step 3 (exit checkout)
-            if (manageDonationBoxOpenedFrom === "step3") {
-              setCheckout(false);
-            }
-            // If opened from checkout, stay in checkout
-            setManageDonationBoxOpenedFrom(null);
-          } else if (checkout) {
+          if (checkout) {
             setCheckout(false);
           } else {
             setStep((s) => s - 1);
@@ -241,25 +232,18 @@ const DonationBox = ({ tab = "setup", preselectedItem, activeTab }: DonationBoxP
         <Checkout
           onBack={() => {
             setCheckout(false);
-            setShowManageDonationBox(false);
           }}
           selectedOrganizations={selectedOrganizations}
           donationAmount={donationAmount}
           donationBox={donationBox}
-          initialShowManage={showManageDonationBox}
-          onCloseManage={() => {
-            setShowManageDonationBox(false);
-            setManageDonationBoxOpenedFrom(null);
-          }}
+          initialShowManage={false}
+          onCloseManage={() => {}}
           onShowManage={() => {
-            setManageDonationBoxOpenedFrom("checkout");
-            setShowManageDonationBox(true);
+            navigate("/donation/manage");
           }}
           onCancelSuccess={() => {
             setCheckout(false);
             setStep(3);
-            setShowManageDonationBox(false);
-            setManageDonationBoxOpenedFrom(null);
           }}
         />
       ) : (
@@ -586,18 +570,13 @@ const DonationBox = ({ tab = "setup", preselectedItem, activeTab }: DonationBoxP
                 <DonationBox3
                   setCheckout={(value: boolean) => {
                     setCheckout(value);
-                    if (value) {
-                      setShowManageDonationBox(true);
-                    }
                   }}
                   selectedOrganizations={selectedOrganizations}
                   setSelectedOrganizations={setSelectedOrganizations}
                   donationAmount={donationAmount}
                   donationBox={donationBox}
                   onManageDonationBox={() => {
-                    setManageDonationBoxOpenedFrom("step3");
-                    setCheckout(true);
-                    setShowManageDonationBox(true);
+                    navigate("/donation/manage");
                   }}
                 />
               ) : (

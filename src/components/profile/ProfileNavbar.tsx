@@ -14,6 +14,7 @@ interface ProfileNavbarProps {
   readonly title?: string;
   readonly titleClassName?: string;
   readonly showBackButton?: boolean;
+  readonly showDesktopBackButton?: boolean;
   readonly showPostButton?: boolean;
 }
 
@@ -23,6 +24,7 @@ export default function ProfileNavbar({
   title,
   titleClassName,
   showBackButton = true,
+  showDesktopBackButton = false,
   showPostButton = false,
 }: ProfileNavbarProps) {
   const navigate = useNavigate();
@@ -205,9 +207,20 @@ const {token} = useAuthStore();
 
       {showDesktopMenu && title !== "Home" && (
         <header className="w-full bg-card border-b hidden h-16 px-6 md:flex items-center justify-between z-10 sticky top-0">
-          {title && (
-            <h1 className={cn("text-xl font-bold", titleClassName)}>{title}</h1>
-          )}
+          <div className="flex items-center gap-3">
+            {showDesktopBackButton && (
+              <button
+                onClick={() => navigate(-1)}
+                className="flex items-center justify-center h-8 w-8 rounded-full bg-gray-100 text-gray-700 hover:bg-gray-200 transition-colors cursor-pointer"
+                aria-label="Go back"
+              >
+                <ChevronLeft size={18} />
+              </button>
+            )}
+            {title && (
+              <h1 className={cn("text-xl font-bold", titleClassName)}>{title}</h1>
+            )}
+          </div>
           <div className="flex items-center space-x-4">
             <div className="relative">
               <HamburgerMenu />

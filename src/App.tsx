@@ -19,6 +19,7 @@ import Verify from "./pages/auth/Verify";
 import Search from "./pages/Search";
 import Search2 from "./pages/Search2";
 import Donation from "./pages/Donation";
+import ManageDonationBox from "./pages/ManageDonationBox";
 import Notifications from "./pages/Notifications";
 import Profile from "./pages/Profile";
 import ProfileById from "./pages/ProfileById";
@@ -148,6 +149,7 @@ function App() {
                     <Route path="/search" element={<Search />} />
                     <Route path="/search2" element={<Search2 />} />
                     <Route path="/donation" element={<Donation />} />
+                    <Route path="/donation/manage" element={<ManageDonationBox />} />
                     <Route path="/notifications" element={<Notifications />} />
                     <Route
                   path="/non-profit-interests"
