@@ -19,6 +19,8 @@ interface ProfileActivityProps {
   isLoading?: boolean;
   error?: any;
   onLoadMore?: () => void;
+  hasMore?: boolean;
+  isLoadingMore?: boolean;
 }
 
 const ProfileActivity: React.FC<ProfileActivityProps> = ({
@@ -33,9 +35,10 @@ const ProfileActivity: React.FC<ProfileActivityProps> = ({
   isLoading = false,
   error = null,
   onLoadMore,
+  hasMore,
+  isLoadingMore = false,
 }) => {
   const [allPosts, setAllPosts] = useState<PostDetail[]>(posts);
-  const [isLoadingMore, setIsLoadingMore] = useState(false);
   const navigate = useNavigate();
   // const handleLoadMore = async () => {
   //   setIsLoadingMore(true);
@@ -110,16 +113,23 @@ const ProfileActivity: React.FC<ProfileActivityProps> = ({
         )}
       </div>
 
-      {/* Load More button only appears when showLoadMore is true */}
-      {showLoadMore && (
+      {/* Load More button only appears when showLoadMore is true and hasMore is true */}
+      {showLoadMore && (hasMore !== false) && onLoadMore && (
         <div className="flex justify-center mt-6">
           <Button
             onClick={onLoadMore}
-            disabled={isLoading}
+            disabled={isLoadingMore}
             variant="outline"
             className="px-6 py-2"
           >
-            Load More
+            {isLoadingMore ? (
+              <>
+                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                Loading...
+              </>
+            ) : (
+              "Load More"
+            )}
           </Button>
         </div>
       )}

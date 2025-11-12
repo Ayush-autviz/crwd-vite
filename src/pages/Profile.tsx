@@ -16,7 +16,7 @@ import {
 } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { Toast } from "../components/ui/toast";
-import { useQuery, useMutation } from "@tanstack/react-query";
+import { useQuery, useMutation, useInfiniteQuery } from "@tanstack/react-query";
 // import { getProfile } from "@/services/api/auth";
 import { getPosts, getUserProfileById } from "@/services/api/social";
 import { logout } from "@/services/api/auth";
@@ -79,12 +79,35 @@ export default function ProfilePage() {
 
 
 
-  // Fetch user posts
-  const postsQuery = useQuery({
+  // Fetch user posts with pagination
+  const {
+    data: postsData,
+    isLoading: postsLoading,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+  } = useInfiniteQuery({
     queryKey: ['posts', currentUser?.id],
-    queryFn: () => getPosts(currentUser?.id || '', ''),
+    queryFn: ({ pageParam = 1 }) => getPosts(currentUser?.id || '', '', pageParam),
+    getNextPageParam: (lastPage) => {
+      // Extract page number from next URL if available
+      if (lastPage.next) {
+        const url = new URL(lastPage.next);
+        const page = url.searchParams.get('page');
+        return page ? parseInt(page) : undefined;
+      }
+      return undefined;
+    },
+    initialPageParam: 1,
     enabled: !!currentUser?.id,
   });
+
+  // Flatten pages into a single array
+  const posts = postsData ? {
+    results: postsData.pages.flatMap(page => page.results || []),
+    next: postsData.pages[postsData.pages.length - 1]?.next || null,
+    count: postsData.pages[0]?.count || 0,
+  } : undefined;
 
 
   useEffect(() => {
@@ -189,7 +212,7 @@ export default function ProfilePage() {
   const activeSince = profileData?.date_joined;
 
   // Transform posts data to match PostDetail interface
-  const userPosts = postsQuery?.data?.results?.map((post: any) => ({
+  const userPosts = posts?.results?.map((post: any) => ({
     id: post.id,
     userId: post.user?.id,
     avatarUrl: post.user?.profile_picture || '/placeholder.svg',
@@ -352,10 +375,12 @@ export default function ProfilePage() {
                 // showLabel
                 title="Recent Activity"
                 posts={userPosts}
-                showLoadMore={postsQuery.data?.next}
-                // onLoadMore={handleLoadMore}
-                isLoading={postsQuery.isLoading}
-                error={postsQuery.error}
+                showLoadMore={true}
+                onLoadMore={() => fetchNextPage()}
+                hasMore={hasNextPage}
+                isLoadingMore={isFetchingNextPage}
+                isLoading={postsLoading}
+                error={null}
               />
             </div>
           </div>

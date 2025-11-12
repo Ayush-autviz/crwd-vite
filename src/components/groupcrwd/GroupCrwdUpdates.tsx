@@ -17,6 +17,9 @@ interface GroupCrwdUpdatesProps {
   collectiveData?: any;
   isLoading?: boolean;
   recentActivities?: any[];
+  onLoadMore?: () => void;
+  hasMore?: boolean;
+  isLoadingMore?: boolean;
 }
 
 const GroupCrwdUpdates: React.FC<GroupCrwdUpdatesProps> = ({
@@ -26,6 +29,9 @@ const GroupCrwdUpdates: React.FC<GroupCrwdUpdatesProps> = ({
   collectiveData,
   isLoading = false,
   recentActivities = [],
+  onLoadMore,
+  hasMore,
+  isLoadingMore,
 }) => {
   // Transform API posts to PostDetail format
   const transformedPosts: PostDetail[] = posts?.map((post: any) => ({
@@ -237,6 +243,9 @@ const GroupCrwdUpdates: React.FC<GroupCrwdUpdatesProps> = ({
             posts={transformedPosts}
             postButton={joined}
             collectiveData={collectiveData}
+            showLoadMore={hasMore || false}
+            onLoadMore={onLoadMore}
+            isLoading={isLoadingMore}
           />
         )}
 

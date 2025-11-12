@@ -11,7 +11,7 @@ import CausesCarousel from "@/components/CausesCarousel";
 import { useState } from "react";
 import HomeBanner from "@/components/HomeBanner";
 import Footer from "@/components/Footer";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useInfiniteQuery } from "@tanstack/react-query";
 import { getCauses, getCausesByLocation, getCollectives } from "@/services/api/crwd";
 import { useGeolocated } from "react-geolocated";
 import { categories } from "@/constants/categories";
@@ -51,11 +51,33 @@ export default function HomePage() {
       enabled: !!coords,
     });
 
-    const {data: posts, isLoading: postsLoading} = useQuery({
+    const {
+      data: postsData,
+      isLoading: postsLoading,
+      fetchNextPage,
+      hasNextPage,
+      isFetchingNextPage,
+    } = useInfiniteQuery({
       queryKey: ['posts', 'all'],
-      queryFn: () => getPosts('', ''),
-      enabled: true,
+      queryFn: ({ pageParam = 1 }) => getPosts('', '', pageParam),
+      getNextPageParam: (lastPage) => {
+        // Extract page number from next URL if available
+        if (lastPage.next) {
+          const url = new URL(lastPage.next);
+          const page = url.searchParams.get('page');
+          return page ? parseInt(page) : undefined;
+        }
+        return undefined;
+      },
+      initialPageParam: 1,
     });
+
+    // Flatten pages into a single array
+    const posts = postsData ? {
+      results: postsData.pages.flatMap(page => page.results || []),
+      next: postsData.pages[postsData.pages.length - 1]?.next || null,
+      count: postsData.pages[0]?.count || 0,
+    } : undefined;
 
 
   return (
@@ -492,7 +514,13 @@ export default function HomePage() {
           </div>
 
           <div className="mr-auto  ">
-            <PopularPosts posts={posts} isLoading={postsLoading} />
+            <PopularPosts 
+              posts={posts} 
+              isLoading={postsLoading} 
+              onLoadMore={() => fetchNextPage()}
+              hasMore={hasNextPage}
+              isLoadingMore={isFetchingNextPage}
+            />
           </div>
           <div className="md:-mx-6">    
             <Footer />

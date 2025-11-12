@@ -19,7 +19,7 @@ import {
 import { Check, Loader2, X } from "lucide-react";
 import ReactConfetti from "react-confetti";
 import { getCollectiveById, joinCollective, leaveCollective } from "@/services/api/crwd";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient, useInfiniteQuery } from "@tanstack/react-query";
 import { getPosts } from "@/services/api/social";
 import { useAuthStore } from "@/stores/store";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
@@ -52,10 +52,34 @@ export default function GroupCrwdPage() {
     staleTime: 0, // Mark data as stale immediately to prevent stale cache
   });
 
-  const { data: posts, isLoading: isLoadingPosts } = useQuery({
+  const {
+    data: postsData,
+    isLoading: isLoadingPosts,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+  } = useInfiniteQuery({
     queryKey: ['posts', crwdId],
-    queryFn: () => getPosts('', crwdId),
+    queryFn: ({ pageParam = 1 }) => getPosts('', crwdId, pageParam),
+    getNextPageParam: (lastPage) => {
+      // Extract page number from next URL if available
+      if (lastPage.next) {
+        const url = new URL(lastPage.next);
+        const page = url.searchParams.get('page');
+        return page ? parseInt(page) : undefined;
+      }
+      return undefined;
+    },
+    initialPageParam: 1,
+    enabled: !!crwdId,
   });
+
+  // Flatten pages into a single array
+  const posts = postsData ? {
+    results: postsData.pages.flatMap(page => page.results || []),
+    next: postsData.pages[postsData.pages.length - 1]?.next || null,
+    count: postsData.pages[0]?.count || 0,
+  } : undefined;
 
   console.log('collective posts', posts);
 
@@ -347,6 +371,9 @@ export default function GroupCrwdPage() {
             posts={posts?.results || []}
             isLoading={isLoadingPosts}
             recentActivities={crwdData?.recent_activities || []}
+            onLoadMore={() => fetchNextPage()}
+            hasMore={hasNextPage}
+            isLoadingMore={isFetchingNextPage}
           />
           <GroupCrwdSuggested collectiveId={crwdId} />
           {/* <GroupCrwdEvent /> */}

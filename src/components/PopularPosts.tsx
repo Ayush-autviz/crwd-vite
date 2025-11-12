@@ -9,25 +9,23 @@ export const PopularPosts = ({
   showLoadMore = true,
   posts,
   isLoading = false,
+  onLoadMore,
+  hasMore,
+  isLoadingMore,
 }: {
   related?: boolean;
   title?: string;
   showLoadMore?: boolean;
   posts?: any;
   isLoading?: boolean;
+  onLoadMore?: () => void;
+  hasMore?: boolean;
+  isLoadingMore?: boolean;
 }) => {
-  const [isLoadingMore, setIsLoadingMore] = useState(false);
-
-  const handleLoadMore = async () => {
-    setIsLoadingMore(true);
-
-    // Simulate loading delay
-    await new Promise((resolve) => setTimeout(resolve, 1500));
-
-    // Note: This would create new posts and append them to existing ones
-    // For now, we're just simulating the load more functionality
-
-    setIsLoadingMore(false);
+  const handleLoadMore = () => {
+    if (onLoadMore && !isLoadingMore) {
+      onLoadMore();
+    }
   };
 
 
@@ -88,7 +86,7 @@ export const PopularPosts = ({
       )}
 
       {/* Load More button at the end of all posts */}
-      {posts?.next && (
+      {showLoadMore && (hasMore || posts?.next) && (
         <div className="flex justify-center mt-6 mb-8">
           <Button
             onClick={handleLoadMore}

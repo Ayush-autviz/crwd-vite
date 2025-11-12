@@ -8,7 +8,7 @@ import { ImageIcon, Link, X, Loader2 } from "lucide-react";
 import ProfileNavbar from "@/components/profile/ProfileNavbar";
 import Footer from "@/components/Footer";
 import { Toast } from "@/components/ui/toast";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { createPost } from "@/services/api/social";
 import { useAuthStore } from "@/stores/store";
 
@@ -18,6 +18,7 @@ export default function CreatePostPage() {
   const location = useLocation();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { user: currentUser } = useAuthStore();
+  const queryClient = useQueryClient();
   
   // Get collective_id from location state
   const collectiveData = location.state?.collectiveData;
@@ -50,6 +51,15 @@ export default function CreatePostPage() {
       console.log('Post created successfully:', response);
       setToastMessage("Post created successfully!");
       setShowToast(true);
+      
+      // Invalidate posts queries to refresh the list
+      if (collectiveData?.id) {
+        // Invalidate posts for the specific collective
+        queryClient.invalidateQueries({ queryKey: ['posts', collectiveData.id.toString()] });
+      }
+      // Also invalidate all posts query to refresh home page and other places
+      queryClient.invalidateQueries({ queryKey: ['posts'] });
+      
       // Navigate back to the collective page or home
       setTimeout(() => {
         navigate(-1); // Go back to previous page
