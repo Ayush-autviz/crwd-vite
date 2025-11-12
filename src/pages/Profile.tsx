@@ -319,7 +319,7 @@ export default function ProfilePage() {
             </div> */}
             <ProfileStats
               profileId={profileData?.id?.toString() || ''}
-              causes={profileData?.favorite_causes_count || 0}
+              causes={profileData?.supported_causes_count || 0}
               crwds={profileData?.joined_collectives_count || 0}
               followers={profileData?.followers_count || 0}
               following={profileData?.following_count || 0}

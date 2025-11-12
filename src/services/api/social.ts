@@ -206,3 +206,15 @@ export const createReportIssue = async (data: any) => {
     const response = await axiosClient.post('/social/report-issue/', data);
     return response.data;
 };
+
+// support cause API endpoints
+export const getSupportCauses = async (userId: string) => {
+    const response = await axiosClient.get(`/social/users/supported-causes/?user_id=${userId}`);
+    return response.data;
+};
+
+export const getSupportedCausesByUserId = async (userId: string) => {
+    const response = await axiosClient.get(`/social/users/supported-causes/?user_id=${userId}`);
+    return response.data;
+};
+
