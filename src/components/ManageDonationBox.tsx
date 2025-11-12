@@ -6,6 +6,8 @@ import {
   Trash2,
   Search,
   X,
+  ChevronDown,
+  ChevronUp,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
@@ -18,7 +20,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { getCausesBySearch, getJoinCollective } from "@/services/api/crwd";
+import { getCausesBySearch, getJoinCollective, getCollectiveById } from "@/services/api/crwd";
 import { updateDonationBox, cancelDonationBox } from "@/services/api/donation";
 import { useAuthStore } from "@/stores/store";
 import { cn } from "@/lib/utils";
@@ -72,6 +74,9 @@ const ManageDonationBox: React.FC<ManageDonationBoxProps> = ({
   const [showCancelModal, setShowCancelModal] = useState(false);
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
+  const [expandedCollectives, setExpandedCollectives] = useState<Set<number>>(new Set());
+  const [collectiveDetails, setCollectiveDetails] = useState<Record<number, any>>({});
+  const [loadingCollectives, setLoadingCollectives] = useState<Set<number>>(new Set());
 
   // Separate existing causes/collectives from new selections
   const existingCauses = causes.filter(c => c.type === 'cause' || !c.type);
@@ -258,6 +263,36 @@ const ManageDonationBox: React.FC<ManageDonationBoxProps> = ({
       if (causeData) {
         setSelectedCauses((prev) => [...prev, causeId]);
         setSelectedCausesData((prev) => [...prev, causeData]);
+      }
+    }
+  };
+
+  const handleToggleCollectiveDropdown = async (collectiveId: number) => {
+    const isExpanded = expandedCollectives.has(collectiveId);
+    const newExpanded = new Set(expandedCollectives);
+    
+    if (isExpanded) {
+      newExpanded.delete(collectiveId);
+      setExpandedCollectives(newExpanded);
+    } else {
+      newExpanded.add(collectiveId);
+      setExpandedCollectives(newExpanded);
+      
+      // Fetch collective details if not already cached
+      if (!collectiveDetails[collectiveId]) {
+        setLoadingCollectives(prev => new Set(prev).add(collectiveId));
+        try {
+          const details = await getCollectiveById(collectiveId.toString());
+          setCollectiveDetails(prev => ({ ...prev, [collectiveId]: details }));
+        } catch (error) {
+          console.error('Error fetching collective details:', error);
+        } finally {
+          setLoadingCollectives(prev => {
+            const newSet = new Set(prev);
+            newSet.delete(collectiveId);
+            return newSet;
+          });
+        }
       }
     }
   };
@@ -770,45 +805,95 @@ const ManageDonationBox: React.FC<ManageDonationBoxProps> = ({
                   <div className="space-y-3">
                     {selectedCollectivesForDisplay.map((org) => {
                       const collectiveId = org.isNewlySelected ? (org as any).collectiveId : parseInt(org.id.replace('collective-', ''));
+                      const isExpanded = expandedCollectives.has(collectiveId);
+                      const details = collectiveDetails[collectiveId];
+                      const isLoading = loadingCollectives.has(collectiveId);
+                      
                       return (
-                        <div
-                          key={org.id}
-                          className="bg-white rounded-xl p-4 border border-blue-100 shadow-sm"
-                        >
-                          <div className="flex gap-4 items-center">
-                            <div className="w-12 h-12 flex-shrink-0 rounded-full overflow-hidden shadow">
-                              {org.imageUrl ? (
-                                <img
-                                  src={org.imageUrl}
-                                  alt={org.name}
-                                  className="w-full h-full object-cover"
-                                />
-                              ) : (
-                                <div
-                                  className="w-full h-full flex items-center justify-center text-lg font-semibold text-green-600 bg-green-100"
-                                >
-                                  {org.name.charAt(0).toUpperCase()}
+                        <div key={org.id}>
+                          <div className="bg-white rounded-xl p-4 border border-blue-100 shadow-sm">
+                            <div className="flex gap-4 items-center">
+                              <div
+                                className="flex-1 flex gap-4 items-center cursor-pointer"
+                                onClick={() => handleToggleCollectiveDropdown(collectiveId)}
+                              >
+                                <div className="w-12 h-12 flex-shrink-0 rounded-full overflow-hidden shadow">
+                                  {org.imageUrl ? (
+                                    <img
+                                      src={org.imageUrl}
+                                      alt={org.name}
+                                      className="w-full h-full object-cover"
+                                    />
+                                  ) : (
+                                    <div
+                                      className="w-full h-full flex items-center justify-center text-lg font-semibold text-green-600 bg-green-100"
+                                    >
+                                      {org.name.charAt(0).toUpperCase()}
+                                    </div>
+                                  )}
                                 </div>
-                              )}
+                                <div className="flex-1">
+                                  <h3 className="font-semibold text-gray-900 text-base">
+                                    {org.name}
+                                  </h3>
+                                  {org.description && (
+                                    <p className="text-xs text-gray-500 line-clamp-2 mt-1">
+                                      {org.description}
+                                    </p>
+                                  )}
+                                </div>
+                                <div className="ml-4">
+                                  {isLoading ? (
+                                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-green-600"></div>
+                                  ) : (
+                                    isExpanded ? (
+                                      <ChevronUp size={20} className="text-gray-500" />
+                                    ) : (
+                                      <ChevronDown size={20} className="text-gray-500" />
+                                    )
+                                  )}
+                                </div>
+                              </div>
+                              <button
+                                className="text-xs text-gray-600 hover:text-red-500 flex items-center px-2 py-1 rounded-md bg-gray-50 hover:bg-gray-100 transition-colors"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleDeselectCollective(collectiveId, org.isNewlySelected, org.name);
+                                }}
+                              >
+                                <Trash2 size={12} className="mr-1" />
+                                Remove
+                              </button>
                             </div>
-                            <div className="flex-1">
-                              <h3 className="font-semibold text-gray-900 text-base">
-                                {org.name}
-                              </h3>
-                              {org.description && (
-                                <p className="text-xs text-gray-500 line-clamp-2 mt-1">
-                                  {org.description}
-                                </p>
-                              )}
-                            </div>
-                            <button
-                              className="text-xs text-gray-600 hover:text-red-500 flex items-center px-2 py-1 rounded-md bg-gray-50 hover:bg-gray-100 transition-colors"
-                              onClick={() => handleDeselectCollective(collectiveId, org.isNewlySelected, org.name)}
-                            >
-                              <Trash2 size={12} className="mr-1" />
-                              Remove
-                            </button>
                           </div>
+                          {isExpanded && details && details.causes && details.causes.length > 0 && (
+                            <div className="bg-gray-50 p-4 border border-gray-200 rounded-lg mt-2 ml-4">
+                              <h4 className="text-sm font-semibold text-gray-800 mb-3">
+                                Nonprofits ({details.causes.length})
+                              </h4>
+                              <div className="space-y-3 pl-14">
+                                {details.causes.map((causeItem: any) => (
+                                  <div key={causeItem.id} className="flex items-center gap-3 py-2 border-b border-gray-200 last:border-b-0">
+                                    <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0">
+                                      <span className="text-blue-600 text-xs font-semibold">
+                                        {causeItem.cause?.name?.charAt(0).toUpperCase() || 'N'}
+                                      </span>
+                                    </div>
+                                    <div className="flex-1 min-w-0">
+                                      <h5 className="font-semibold text-gray-800 text-sm">
+                                        {causeItem.cause?.name}
+                                      </h5>
+                                      {causeItem.cause?.description && (
+                                        <p className="text-xs text-gray-600 line-clamp-2 mt-1">
+                                          {causeItem.cause.description}
+                                        </p>
+                                      )}
+                                    </div>
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                          )}
                         </div>
                       );
                     })}
@@ -828,29 +913,81 @@ const ManageDonationBox: React.FC<ManageDonationBoxProps> = ({
                 <div className="space-y-3">
                   {availableCollectives.map((collective: any) => {
                     const isSelected = selectedCollectives.includes(collective.id);
+                    const isExpanded = expandedCollectives.has(collective.id);
+                    const details = collectiveDetails[collective.id];
+                    const isLoading = loadingCollectives.has(collective.id);
+                    
                     return (
-                      <div
-                        key={collective.id}
-                        className="flex items-center p-3 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors cursor-pointer"
-                        onClick={() => handleToggleCollective(collective.id)}
-                      >
-                        <Avatar className="w-12 h-12 rounded-full object-cover mr-3">
-                          <AvatarImage src={collective.cover_image} />
-                          <AvatarFallback className="bg-green-100 text-green-600 font-semibold">
-                            {collective.name?.charAt(0)?.toUpperCase() || 'C'}
-                          </AvatarFallback>
-                        </Avatar>
-                        <div className="flex-1">
-                          <h3 className="font-semibold text-gray-800">{collective.name}</h3>
-                          <p className="text-sm text-gray-600">{collective.description || 'Community collective'}</p>
+                      <div key={collective.id}>
+                        <div className="flex items-center p-3 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
+                          <div
+                            className="flex-1 flex items-center cursor-pointer"
+                            onClick={() => handleToggleCollectiveDropdown(collective.id)}
+                          >
+                            <Avatar className="w-12 h-12 rounded-full object-cover mr-3">
+                              <AvatarImage src={collective.cover_image} />
+                              <AvatarFallback className="bg-green-100 text-green-600 font-semibold">
+                                {collective.name?.charAt(0)?.toUpperCase() || 'C'}
+                              </AvatarFallback>
+                            </Avatar>
+                            <div className="flex-1">
+                              <h3 className="font-semibold text-gray-800">{collective.name}</h3>
+                              <p className="text-sm text-gray-600">{collective.description || 'Community collective'}</p>
+                            </div>
+                            <div className="ml-4">
+                              {isLoading ? (
+                                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-green-600"></div>
+                              ) : (
+                                isExpanded ? (
+                                  <ChevronUp size={20} className="text-gray-500" />
+                                ) : (
+                                  <ChevronDown size={20} className="text-gray-500" />
+                                )
+                              )}
+                            </div>
+                          </div>
+                          <div
+                            className={`w-6 h-6 rounded-full flex items-center justify-center ml-4 cursor-pointer ${isSelected ? 'bg-blue-600' : 'border-2 border-gray-300'}`}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleToggleCollective(collective.id);
+                            }}
+                          >
+                            {isSelected && (
+                              <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                              </svg>
+                            )}
+                          </div>
                         </div>
-                        <div className={`w-6 h-6 rounded-full flex items-center justify-center ${isSelected ? 'bg-blue-600' : 'border-2 border-gray-300'}`}>
-                          {isSelected && (
-                            <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
-                              <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                            </svg>
-                          )}
-                        </div>
+                        {isExpanded && details && details.causes && details.causes.length > 0 && (
+                          <div className="bg-gray-50 p-4 border border-gray-200 rounded-lg mt-2 ml-4">
+                            <h4 className="text-sm font-semibold text-gray-800 mb-3">
+                              Nonprofits ({details.causes.length})
+                            </h4>
+                            <div className="space-y-3 pl-14">
+                              {details.causes.map((causeItem: any) => (
+                                <div key={causeItem.id} className="flex items-center gap-3 py-2 border-b border-gray-200 last:border-b-0">
+                                  <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0">
+                                    <span className="text-blue-600 text-xs font-semibold">
+                                      {causeItem.cause?.name?.charAt(0).toUpperCase() || 'N'}
+                                    </span>
+                                  </div>
+                                  <div className="flex-1 min-w-0">
+                                    <h5 className="font-semibold text-gray-800 text-sm">
+                                      {causeItem.cause?.name}
+                                    </h5>
+                                    {causeItem.cause?.description && (
+                                      <p className="text-xs text-gray-600 line-clamp-2 mt-1">
+                                        {causeItem.cause.description}
+                                      </p>
+                                    )}
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        )}
                       </div>
                     );
                   })}

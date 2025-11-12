@@ -1,4 +1,4 @@
-import { HelpCircle, Settings, X } from "lucide-react";
+import { HelpCircle, Settings, X, ChevronDown, ChevronUp } from "lucide-react";
 import { useState, useEffect } from "react";
 
 import { Button } from "@/components/ui/button";
@@ -6,6 +6,7 @@ import { Link } from "react-router-dom";
 import ManageDonationBox from "./ManageDonationBox";
 import { CROWDS, RECENTS, SUGGESTED } from "@/constants";
 import ReactConfetti from "react-confetti";
+import { getCollectiveById } from "@/services/api/crwd";
 
 interface DonationOverviewProps {
   donationAmount?: number;
@@ -32,6 +33,9 @@ export const Checkout = ({
   const [localSelectedOrgs, setLocalSelectedOrgs] = useState(selectedOrgIds);
   const [showAddMoreCauses, setShowAddMoreCauses] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [expandedCollectives, setExpandedCollectives] = useState<Set<number>>(new Set());
+  const [collectiveDetails, setCollectiveDetails] = useState<Record<number, any>>({});
+  const [loadingCollectives, setLoadingCollectives] = useState<Set<number>>(new Set());
   const [windowDimensions, setWindowDimensions] = useState({
     width: window.innerWidth,
     height: window.innerHeight,
@@ -67,6 +71,36 @@ export const Checkout = ({
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
+
+  const handleToggleCollectiveDropdown = async (collectiveId: number) => {
+    const isExpanded = expandedCollectives.has(collectiveId);
+    const newExpanded = new Set(expandedCollectives);
+    
+    if (isExpanded) {
+      newExpanded.delete(collectiveId);
+      setExpandedCollectives(newExpanded);
+    } else {
+      newExpanded.add(collectiveId);
+      setExpandedCollectives(newExpanded);
+      
+      // Fetch collective details if not already cached
+      if (!collectiveDetails[collectiveId]) {
+        setLoadingCollectives(prev => new Set(prev).add(collectiveId));
+        try {
+          const details = await getCollectiveById(collectiveId.toString());
+          setCollectiveDetails(prev => ({ ...prev, [collectiveId]: details }));
+        } catch (error) {
+          console.error('Error fetching collective details:', error);
+        } finally {
+          setLoadingCollectives(prev => {
+            const newSet = new Set(prev);
+            newSet.delete(collectiveId);
+            return newSet;
+          });
+        }
+      }
+    }
+  };
 
   // Get organization description by name (similar to DonationBox3)
   const getOrganizationDescription = (orgName: string): string => {
@@ -310,48 +344,90 @@ export const Checkout = ({
               {/* <HelpCircle size={16} className="ml-2 text-gray-500" /> */}
             </div>
             <div className="space-y-2">
-              {attributingCollectives.map((collective: any, index: number) => (
-                <div
-                  key={`collective-${collective.id}-${index}`}
-                  className="flex gap-4 items-center bg-white px-8 py-4 border-b border-gray-200"
-                >
-                  <div className="w-12 h-12 flex-shrink-0 rounded-lg overflow-hidden shadow">
-                    {collective.cover_image ? (
-                      <img
-                        src={collective.cover_image}
-                        alt={collective.name}
-                        className="w-full h-full object-cover"
-                      />
-                    ) : (
-                      <div
-                        className="w-full h-full flex items-center justify-center text-lg font-bold text-white bg-purple-500"
-                      >
-                        {collective.name?.charAt(0) || 'C'}
+              {attributingCollectives.map((collective: any, index: number) => {
+                const isExpanded = expandedCollectives.has(collective.id);
+                const details = collectiveDetails[collective.id];
+                const isLoading = loadingCollectives.has(collective.id);
+                
+                return (
+                  <div key={`collective-${collective.id}-${index}`}>
+                    <div
+                      className="flex gap-4 items-center bg-white px-8 py-4 border-b border-gray-200 cursor-pointer hover:bg-gray-50 transition-colors"
+                      onClick={() => handleToggleCollectiveDropdown(collective.id)}
+                    >
+                      <div className="w-12 h-12 flex-shrink-0 rounded-lg overflow-hidden shadow">
+                        {collective.cover_image ? (
+                          <img
+                            src={collective.cover_image}
+                            alt={collective.name}
+                            className="w-full h-full object-cover"
+                          />
+                        ) : (
+                          <div
+                            className="w-full h-full flex items-center justify-center text-lg font-bold text-white bg-purple-500"
+                          >
+                            {collective.name?.charAt(0) || 'C'}
+                          </div>
+                        )}
+                      </div>
+                      <div className="flex-1">
+                        <div className="flex justify-between items-start mb-1">
+                          <div>
+                            <h3 className="font-semibold text-gray-900 text-base">
+                              {collective.name}
+                            </h3>
+                            <p className="text-xs text-gray-500 line-clamp-2 mt-1">
+                              {collective.description || 'Community collective'}
+                            </p>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <div className="text-blue-600 font-semibold text-sm">
+                              {distributionPercentage}%
+                            </div>
+                            {isLoading ? (
+                              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600"></div>
+                            ) : (
+                              isExpanded ? (
+                                <ChevronUp size={20} className="text-gray-500" />
+                              ) : (
+                                <ChevronDown size={20} className="text-gray-500" />
+                              )
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    {isExpanded && details && details.causes && details.causes.length > 0 && (
+                      <div className="bg-gray-50 px-8 py-4 border-b border-gray-200">
+                        <h4 className="text-sm font-semibold text-gray-800 mb-3">
+                          Nonprofits ({details.causes.length})
+                        </h4>
+                        <div className="space-y-3 pl-14">
+                          {details.causes.map((causeItem: any) => (
+                            <div key={causeItem.id} className="flex items-center gap-3 py-2 border-b border-gray-200 last:border-b-0">
+                              <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0">
+                                <span className="text-blue-600 text-xs font-semibold">
+                                  {causeItem.cause?.name?.charAt(0).toUpperCase() || 'N'}
+                                </span>
+                              </div>
+                              <div className="flex-1 min-w-0">
+                                <h5 className="font-semibold text-gray-800 text-sm">
+                                  {causeItem.cause?.name}
+                                </h5>
+                                {causeItem.cause?.description && (
+                                  <p className="text-xs text-gray-600 line-clamp-2 mt-1">
+                                    {causeItem.cause.description}
+                                  </p>
+                                )}
+                              </div>
+                            </div>
+                          ))}
+                        </div>
                       </div>
                     )}
                   </div>
-                  <div className="flex-1">
-                    <div className="flex justify-between items-start mb-1">
-                      <div>
-                        <h3 className="font-semibold text-gray-900 text-base">
-                          {collective.name}
-                        </h3>
-                        <p className="text-xs text-gray-500 line-clamp-2 mt-1">
-                          {collective.description || 'Community collective'}
-                        </p>
-                        {/* {collective.creator && (
-                          <p className="text-xs text-gray-400 mt-1">
-                            Created by {collective.creator.first_name} {collective.creator.last_name}
-                          </p>
-                        )} */}
-                      </div>
-                      <div className="text-blue-600 font-semibold text-sm">
-                        {distributionPercentage}%
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </>
         )}

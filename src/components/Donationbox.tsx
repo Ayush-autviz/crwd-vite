@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Loader2, Minus, Plus, Search } from "lucide-react";
+import { Loader2, Minus, Plus, Search, ChevronDown, ChevronUp } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { DonationBox3 } from "./DonationBox3";
@@ -10,8 +10,7 @@ import DonationHeader from "./donation/DonationHeader";
 import { Link, useNavigate } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { getDonationBox, createDonationBox } from "@/services/api/donation";
-import { getCausesBySearch } from "@/services/api/crwd";
-import { getJoinCollective } from "@/services/api/crwd";
+import { getCausesBySearch, getJoinCollective, getCollectiveById } from "@/services/api/crwd";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { useAuthStore } from "@/stores/store";
 import ProfileNavbar from "./profile/ProfileNavbar";
@@ -44,6 +43,9 @@ const DonationBox = ({ tab = "setup", preselectedItem, activeTab }: DonationBoxP
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCauseIds, setSelectedCauseIds] = useState<number[]>([]);
   const [selectedCollectiveIds, setSelectedCollectiveIds] = useState<number[]>([]);
+  const [expandedCollectives, setExpandedCollectives] = useState<Set<number>>(new Set());
+  const [collectiveDetails, setCollectiveDetails] = useState<Record<number, any>>({});
+  const [loadingCollectives, setLoadingCollectives] = useState<Set<number>>(new Set());
 
   const isMobile = useIsMobile();
   const queryClient = useQueryClient();
@@ -147,6 +149,36 @@ const DonationBox = ({ tab = "setup", preselectedItem, activeTab }: DonationBoxP
     const finalValue = numValue < 5 ? 5 : numValue;
     setDonationAmount(finalValue);
     setInputValue(finalValue.toString());
+  };
+
+  const handleToggleCollectiveDropdown = async (collectiveId: number) => {
+    const isExpanded = expandedCollectives.has(collectiveId);
+    const newExpanded = new Set(expandedCollectives);
+    
+    if (isExpanded) {
+      newExpanded.delete(collectiveId);
+      setExpandedCollectives(newExpanded);
+    } else {
+      newExpanded.add(collectiveId);
+      setExpandedCollectives(newExpanded);
+      
+      // Fetch collective details if not already cached
+      if (!collectiveDetails[collectiveId]) {
+        setLoadingCollectives(prev => new Set(prev).add(collectiveId));
+        try {
+          const details = await getCollectiveById(collectiveId.toString());
+          setCollectiveDetails(prev => ({ ...prev, [collectiveId]: details }));
+        } catch (error) {
+          console.error('Error fetching collective details:', error);
+        } finally {
+          setLoadingCollectives(prev => {
+            const newSet = new Set(prev);
+            newSet.delete(collectiveId);
+            return newSet;
+          });
+        }
+      }
+    }
   };
 
   console.log(selectedOrganizations, "ork");
@@ -427,38 +459,87 @@ const DonationBox = ({ tab = "setup", preselectedItem, activeTab }: DonationBoxP
                         joinedCollectivesData.data.map((item: any) => {
                           const collective = item.collective;
                           const isSelected = selectedCollectiveIds.includes(collective.id);
+                          const isExpanded = expandedCollectives.has(collective.id);
+                          const details = collectiveDetails[collective.id];
+                          const isLoading = loadingCollectives.has(collective.id);
+                          
                           return (
-                            <div
-                              key={collective.id}
-                              className="flex items-center p-3 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors cursor-pointer"
-                              onClick={() => {
-                                if (isSelected) {
-                                  setSelectedCollectiveIds(selectedCollectiveIds.filter(id => id !== collective.id));
-                                } else {
-                                  setSelectedCollectiveIds([...selectedCollectiveIds, collective.id]);
-                                }
-                              }}
-                            >
-                              <div className="w-12 h-12 rounded-full bg-purple-100 flex items-center justify-center mr-3">
-                                {/* <img src={collective.cover_image || '/default-collective.png'} alt={collective.name} className="w-12 h-12 rounded-full object-cover" /> */}
-                                <Avatar className="w-12 h-12 rounded-full object-cover">
-                                  <AvatarImage src={collective.cover_image || '/default-collective.png'} />
-                                  <AvatarFallback className="bg-green-100 text-green-600">
-                                    {collective.name.charAt(0).toUpperCase()}
-                                  </AvatarFallback>
-                                </Avatar>
+                            <div key={collective.id}>
+                              <div className="flex items-center p-3 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
+                                <div
+                                  className="flex-1 flex items-center cursor-pointer"
+                                  onClick={() => handleToggleCollectiveDropdown(collective.id)}
+                                >
+                                  <div className="w-12 h-12 rounded-full bg-purple-100 flex items-center justify-center mr-3">
+                                    <Avatar className="w-12 h-12 rounded-full object-cover">
+                                      <AvatarImage src={collective.cover_image || '/default-collective.png'} />
+                                      <AvatarFallback className="bg-green-100 text-green-600">
+                                        {collective.name.charAt(0).toUpperCase()}
+                                      </AvatarFallback>
+                                    </Avatar>
+                                  </div>
+                                  <div className="flex-1">
+                                    <h3 className="font-semibold text-gray-800">{collective.name}</h3>
+                                    <p className="text-sm text-gray-600">{collective.description}</p>
+                                  </div>
+                                  <div className="ml-4">
+                                    {isLoading ? (
+                                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-green-600"></div>
+                                    ) : (
+                                      isExpanded ? (
+                                        <ChevronUp size={20} className="text-gray-500" />
+                                      ) : (
+                                        <ChevronDown size={20} className="text-gray-500" />
+                                      )
+                                    )}
+                                  </div>
+                                </div>
+                                <div
+                                  className={`w-6 h-6 rounded-full flex items-center justify-center ml-4 cursor-pointer ${isSelected ? 'bg-blue-600' : 'border-2 border-gray-300'}`}
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    if (isSelected) {
+                                      setSelectedCollectiveIds(selectedCollectiveIds.filter(id => id !== collective.id));
+                                    } else {
+                                      setSelectedCollectiveIds([...selectedCollectiveIds, collective.id]);
+                                    }
+                                  }}
+                                >
+                                  {isSelected && (
+                                    <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                                    </svg>
+                                  )}
+                                </div>
                               </div>
-                              <div className="flex-1">
-                                <h3 className="font-semibold text-gray-800">{collective.name}</h3>
-                                <p className="text-sm text-gray-600">{collective.description}</p>
-                              </div>
-                              <div className={`w-6 h-6 rounded-full flex items-center justify-center ${isSelected ? 'bg-blue-600' : 'border-2 border-gray-300'}`}>
-                                {isSelected && (
-                                  <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                                  </svg>
-                                )}
-                              </div>
+                              {isExpanded && details && details.causes && details.causes.length > 0 && (
+                                <div className="bg-gray-50 p-4 border border-gray-200 rounded-lg mt-2 ml-4">
+                                  <h4 className="text-sm font-semibold text-gray-800 mb-3">
+                                    Nonprofits ({details.causes.length})
+                                  </h4>
+                                  <div className="space-y-3 pl-14">
+                                    {details.causes.map((causeItem: any) => (
+                                      <div key={causeItem.id} className="flex items-center gap-3 py-2 border-b border-gray-200 last:border-b-0">
+                                        <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0">
+                                          <span className="text-blue-600 text-xs font-semibold">
+                                            {causeItem.cause?.name?.charAt(0).toUpperCase() || 'N'}
+                                          </span>
+                                        </div>
+                                        <div className="flex-1 min-w-0">
+                                          <h5 className="font-semibold text-gray-800 text-sm">
+                                            {causeItem.cause?.name}
+                                          </h5>
+                                          {causeItem.cause?.description && (
+                                            <p className="text-xs text-gray-600 line-clamp-2 mt-1">
+                                              {causeItem.cause.description}
+                                            </p>
+                                          )}
+                                        </div>
+                                      </div>
+                                    ))}
+                                  </div>
+                                </div>
+                              )}
                             </div>
                           );
                         })

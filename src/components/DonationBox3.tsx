@@ -4,6 +4,8 @@ import { CROWDS, RECENTS, SUGGESTED } from "@/constants";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { removeCauseFromBox, removeCollectiveFromBox, activateDonationBox } from "@/services/api/donation";
 import { useAuthStore } from "@/stores/store";
+import { getCollectiveById } from "@/services/api/crwd";
+import { ChevronDown, ChevronUp } from "lucide-react";
 import {
   Select,
   SelectContent,
@@ -48,6 +50,9 @@ export const DonationBox3 = ({
   // State for confirmation modal
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [itemToDelete, setItemToDelete] = useState<{ id: string; name: string; type: 'cause' | 'collective' } | null>(null);
+  const [expandedCollectives, setExpandedCollectives] = useState<Set<number>>(new Set());
+  const [collectiveDetails, setCollectiveDetails] = useState<Record<number, any>>({});
+  const [loadingCollectives, setLoadingCollectives] = useState<Set<number>>(new Set());
 
   // Get manual causes and attributing collectives from donation box
   const manualCauses = donationBox?.manual_causes || [];
@@ -83,6 +88,36 @@ export const DonationBox3 = ({
       console.error('Error removing collective:', error);
     },
   });
+
+  const handleToggleCollectiveDropdown = async (collectiveId: number) => {
+    const isExpanded = expandedCollectives.has(collectiveId);
+    const newExpanded = new Set(expandedCollectives);
+    
+    if (isExpanded) {
+      newExpanded.delete(collectiveId);
+      setExpandedCollectives(newExpanded);
+    } else {
+      newExpanded.add(collectiveId);
+      setExpandedCollectives(newExpanded);
+      
+      // Fetch collective details if not already cached
+      if (!collectiveDetails[collectiveId]) {
+        setLoadingCollectives(prev => new Set(prev).add(collectiveId));
+        try {
+          const details = await getCollectiveById(collectiveId.toString());
+          setCollectiveDetails(prev => ({ ...prev, [collectiveId]: details }));
+        } catch (error) {
+          console.error('Error fetching collective details:', error);
+        } finally {
+          setLoadingCollectives(prev => {
+            const newSet = new Set(prev);
+            newSet.delete(collectiveId);
+            return newSet;
+          });
+        }
+      }
+    }
+  };
 
   // Mutation to activate donation box
   const activateBoxMutation = useMutation({
@@ -273,52 +308,71 @@ export const DonationBox3 = ({
           {/* Collectives List */}
           <div className="space-y-4">
             {attributingCollectives.length > 0 ? (
-              attributingCollectives.map((collective: any) => (
-                <div
-                  key={collective.id}
-                  className="flex items-center p-4 border border-gray-200 rounded-lg"
-                >
-                  <div className="w-12 h-12 rounded-full bg-green-100 flex items-center justify-center mr-4">
-                    <span className="text-green-600 font-semibold text-lg">
-                      {collective.name?.charAt(0)?.toUpperCase() || 'C'}
-                    </span>
-                  </div>
-                  <div className="flex-1">
-                    <h3 className="font-semibold text-gray-800">{collective.name}</h3>
-                    <p className="text-sm text-gray-600">
-                      {collective.description || 'Community collective'}
-                    </p>
-                    {/* {collective.creator && (
-                      <p className="text-xs text-gray-500 mt-1">
-                        Created by {collective.creator.first_name} {collective.creator.last_name}
-                      </p>
-                    )} */}
-                  </div>
-                  {/* <div className="flex items-center gap-2">
-                    <button
-                      className="p-2 hover:bg-gray-100 rounded-full transition-colors"
-                      onClick={() => {
-                        setItemToDelete({ id: collective.id.toString(), name: collective.name, type: 'collective' });
-                        setShowDeleteModal(true);
-                      }}
+              attributingCollectives.map((collective: any) => {
+                const isExpanded = expandedCollectives.has(collective.id);
+                const details = collectiveDetails[collective.id];
+                const isLoading = loadingCollectives.has(collective.id);
+                
+                return (
+                  <div key={collective.id}>
+                    <div
+                      className="flex items-center p-4 border border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors"
+                      onClick={() => handleToggleCollectiveDropdown(collective.id)}
                     >
-                      <svg
-                        className="w-5 h-5 text-red-600"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-                        />
-                      </svg>
-                    </button>
-                  </div> */}
-                </div>
-              ))
+                      <div className="w-12 h-12 rounded-full bg-green-100 flex items-center justify-center mr-4">
+                        <span className="text-green-600 font-semibold text-lg">
+                          {collective.name?.charAt(0)?.toUpperCase() || 'C'}
+                        </span>
+                      </div>
+                      <div className="flex-1">
+                        <h3 className="font-semibold text-gray-800">{collective.name}</h3>
+                        <p className="text-sm text-gray-600">
+                          {collective.description || 'Community collective'}
+                        </p>
+                      </div>
+                      <div className="ml-4">
+                        {isLoading ? (
+                          <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-green-600"></div>
+                        ) : (
+                          isExpanded ? (
+                            <ChevronUp size={20} className="text-gray-500" />
+                          ) : (
+                            <ChevronDown size={20} className="text-gray-500" />
+                          )
+                        )}
+                      </div>
+                    </div>
+                    {isExpanded && details && details.causes && details.causes.length > 0 && (
+                      <div className="bg-gray-50 p-4 border border-gray-200 rounded-lg mt-2">
+                        <h4 className="text-sm font-semibold text-gray-800 mb-3">
+                          Nonprofits ({details.causes.length})
+                        </h4>
+                        <div className="space-y-3 pl-14">
+                          {details.causes.map((causeItem: any) => (
+                            <div key={causeItem.id} className="flex items-center gap-3 py-2 border-b border-gray-200 last:border-b-0">
+                              <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0">
+                                <span className="text-blue-600 text-xs font-semibold">
+                                  {causeItem.cause?.name?.charAt(0).toUpperCase() || 'N'}
+                                </span>
+                              </div>
+                              <div className="flex-1 min-w-0">
+                                <h5 className="font-semibold text-gray-800 text-sm">
+                                  {causeItem.cause?.name}
+                                </h5>
+                                {causeItem.cause?.description && (
+                                  <p className="text-xs text-gray-600 line-clamp-2 mt-1">
+                                    {causeItem.cause.description}
+                                  </p>
+                                )}
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                );
+              })
             ) : (
               <p className="text-gray-500 text-center py-4">No collectives</p>
             )}

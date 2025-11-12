@@ -67,6 +67,16 @@ const RegularNotifications: React.FC<RegularNotificationsProps> = ({
           notificationType = 'comment';
         }
 
+        // Extract user ID from notification data based on type
+        const userId = 
+          notification.data?.follower_id || 
+          notification.data?.liker_id ||
+          notification.data?.user_id || 
+          notification.data?.creator_id || 
+          notification.data?.donor_id ||
+          notification.user?.id ||
+          null;
+
         const baseNotification = {
           id: notification.id,
           type: notificationType as NotificationType,
@@ -74,10 +84,10 @@ const RegularNotifications: React.FC<RegularNotificationsProps> = ({
           time: formatTimeAgo(notification.created_at || notification.updated_at),
           avatarUrl: notification.user?.profile_picture || notification.data?.profile_picture || '',
           username: username,
-          userId: notification.data?.follower_id || notification.data?.user_id || notification.data?.creator_id || notification.user?.id,
+          userId: userId,
           link: notification.data?.post_id ? `/posts/${notification.data.post_id}` : 
                 notification.data?.collective_id ? `/groupcrwd/${notification.data.collective_id}` :
-                notification.data?.user_id ? `/user-profile/${notification.data.user_id}` : undefined,
+                userId ? `/user-profile/${userId}` : undefined,
         };
 
         return baseNotification;

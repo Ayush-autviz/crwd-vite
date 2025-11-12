@@ -7,6 +7,8 @@ interface MembersStatsCardProps {
 }
 
 const MembersStatsCard: React.FC<MembersStatsCardProps> = ({ activeTab, count }) => (
+  <>
+{count && (
   <div className="hidden md:block">
     <Card className="p-4">
       <CardContent className="p-0">
@@ -17,6 +19,8 @@ const MembersStatsCard: React.FC<MembersStatsCardProps> = ({ activeTab, count })
       </CardContent>
     </Card>
   </div>
+)}
+</>
 );
 
 export default MembersStatsCard; 

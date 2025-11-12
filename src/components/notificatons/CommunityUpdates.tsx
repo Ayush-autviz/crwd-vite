@@ -8,6 +8,7 @@ import { AuthModal } from "../auth/AuthModal";
 import { useFavorites } from "../../contexts/FavoritesContext";
 import { Toast } from "../ui/toast";
 import { Loader2 } from "lucide-react";
+import { useAuthStore } from "../../stores/store";
 
 interface CommunityUpdatesProps {
   notifications?: any[];
@@ -48,6 +49,7 @@ const CommunityUpdates: React.FC<CommunityUpdatesProps> = ({
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
   const { toggleFavorite, isFavorite } = useFavorites();
+  const { user: currentUser } = useAuthStore();
 
   const handleFavoriteClick = (postId: number) => {
     const wasAdded = toggleFavorite(`community-${postId}`);
@@ -100,15 +102,46 @@ const CommunityUpdates: React.FC<CommunityUpdatesProps> = ({
           }
         }
 
+        // Extract user ID from notification data based on type
+        const userId = 
+          notification.data?.new_member_id || 
+          notification.data?.creator_id || 
+          notification.data?.donor_id ||
+          notification.data?.liker_id ||
+          notification.data?.user_id ||
+          null;
+
         // Determine if it's a join notification
         const isJoin = notification.type === "community" && notification.body?.includes("joined");
         // Determine if it's a post notification
         const isPost = notification.type === "community_post" || (notification.type === "community" && notification.body?.includes("posted"));
 
+        // Check if this is the current user's own profile
+        const isCurrentUser = currentUser?.id && (
+          (userId && currentUser.id.toString() === userId.toString()) || 
+          (username && currentUser.username === username)
+        );
+
+        // Get profile link - use userId if available, otherwise use username
+        const getProfileLink = () => {
+          if (isCurrentUser) {
+            return '/profile';
+          }
+          if (userId) {
+            return `/user-profile/${userId}`;
+          }
+          if (username) {
+            return `/user-profile/${username}`;
+          }
+          return undefined;
+        };
+
         const post = {
           id: notification.id,
           avatarUrl: notification.user?.profile_picture || notification.data?.profile_picture || '',
           username: username,
+          userId: userId,
+          profileLink: getProfileLink(),
           time: formatTimeAgo(notification.created_at || notification.updated_at),
           org: collectiveName || null,
           text: notification.body || notification.title || '',
@@ -125,7 +158,7 @@ const CommunityUpdates: React.FC<CommunityUpdatesProps> = ({
 
         return post;
       });
-  }, [notifications]);
+  }, [notifications, currentUser]);
 
   if (isLoading) {
     return (
@@ -166,10 +199,19 @@ const CommunityUpdates: React.FC<CommunityUpdatesProps> = ({
           >
             <CardContent className="">
               <div className="flex gap-3">
-                <Avatar className="h-10 w-10 flex-shrink-0">
-                  <AvatarImage src={post.avatarUrl} alt={post.username} />
-                  <AvatarFallback>{post.username?.charAt(0).toUpperCase() || 'U'}</AvatarFallback>
-                </Avatar>
+                {post.profileLink ? (
+                  <Link to={post.profileLink}>
+                    <Avatar className="h-10 w-10 flex-shrink-0 cursor-pointer hover:opacity-80 transition-opacity">
+                      <AvatarImage src={post.avatarUrl} alt={post.username} />
+                      <AvatarFallback>{post.username?.charAt(0).toUpperCase() || 'U'}</AvatarFallback>
+                    </Avatar>
+                  </Link>
+                ) : (
+                  <Avatar className="h-10 w-10 flex-shrink-0">
+                    <AvatarImage src={post.avatarUrl} alt={post.username} />
+                    <AvatarFallback>{post.username?.charAt(0).toUpperCase() || 'U'}</AvatarFallback>
+                  </Avatar>
+                )}
 
                 <div className="flex-1 min-w-0">
                   {!post.isDonation && (

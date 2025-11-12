@@ -275,20 +275,22 @@ const MembersTabs: React.FC<{ tab?: string, collectiveData?: any }> = ({ tab = "
                 )}
                 {activeTab === "Members" && <MembersList members={membersData?.results ?? []} isLoading={isMembersLoading} />}
                 {activeTab === "Collective Donations" &&
-                  (showRecentDonations ? (
+                  // (showRecentDonations ? (
                     <RecentDonationsList
                       onBack={() => setShowRecentDonations(false)}
                       donationHistory={Array.isArray(donationHistoryData) ? donationHistoryData : (donationHistoryData?.results || [])}
                       isLoading={isDonationHistoryLoading}
                     />
-                  ) : (
-                    <CollectiveDonationsSummary
-                      onSeeRecentDonations={() => setShowRecentDonations(true)}
-                      causesCount={3}
-                      membersCount={59}
-                      donationAmount={collectiveData?.total_donated_amount || 0}
-                    />
-                  ))}
+                  // ) : (
+                  //   <CollectiveDonationsSummary
+                  //     onSeeRecentDonations={() => setShowRecentDonations(true)}
+                  //     causesCount={3}
+                  //     membersCount={59}
+                  //     donationAmount={collectiveData?.total_donated_amount || 0}
+                  //   />
+                  // )
+                  // )
+                  }
               </CardContent>
             </Card>
           </div>
@@ -301,7 +303,7 @@ const MembersTabs: React.FC<{ tab?: string, collectiveData?: any }> = ({ tab = "
                   ? collectiveData?.member_count ?? 0
                   : activeTab === "Causes"
                   ? collectiveData?.causes?.length ?? 0
-                  : 43
+                  : ''
               }
             />
           </div>
