@@ -22,6 +22,7 @@ import { getCollectiveById, joinCollective, leaveCollective } from "@/services/a
 import { useMutation, useQuery, useQueryClient, useInfiniteQuery } from "@tanstack/react-query";
 import { getPosts } from "@/services/api/social";
 import { useAuthStore } from "@/stores/store";
+import { getDonationBox, addCollectiveToDonation } from "@/services/api/donation";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 
 export default function GroupCrwdPage() {
@@ -86,14 +87,82 @@ export default function GroupCrwdPage() {
   // join collective
   const joinCollectiveMutation = useMutation({
     mutationFn: joinCollective,
-    onSuccess: (response) => {
+    onSuccess: async (response) => {
       console.log('Join collective successful:', response);
       setHasJoined(true);
       setShowToast(true);
       setShowJoinModal(false);
-      setShowSuccessModal(true);
-      // Invalidate collective details query to refresh data
+      
+      // Invalidate queries to refresh data
       queryClient.invalidateQueries({ queryKey: ['crwd', crwdId] });
+      // Invalidate all joined-collectives queries (with or without user ID)
+      queryClient.invalidateQueries({ queryKey: ['joined-collectives'] });
+      queryClient.invalidateQueries({ queryKey: ['joined-collectives', currentUser?.id] });
+      queryClient.invalidateQueries({ queryKey: ['joined-collectives-manage'] });
+      queryClient.invalidateQueries({ queryKey: ['joinedCollectives'] });
+      queryClient.invalidateQueries({ queryKey: ['donationBox', currentUser?.id] });
+      
+      // Check if donation box exists
+      try {
+        const donationBoxData = await getDonationBox();
+        
+        // If donation box doesn't exist or has no ID, redirect to setup
+        if (!donationBoxData || !donationBoxData.id) {
+          // Navigate to donation box setup tab with collective preselected
+          navigate('/donation?tab=setup', {
+            state: {
+              preselectedItem: {
+                id: crwdId,
+                type: 'collective',
+                data: crwdData
+              },
+              activeTab: 'collectives'
+            }
+          });
+        } else {
+          // Donation box exists, add collective to donation box
+          try {
+            if (!crwdId) {
+              throw new Error('Collective ID is missing');
+            }
+            await addCollectiveToDonation(crwdId);
+            console.log('Collective added to donation box successfully');
+            
+            // Invalidate and refetch donation box query to refresh data
+            await queryClient.invalidateQueries({ queryKey: ['donationBox', currentUser?.id] });
+            await queryClient.refetchQueries({ queryKey: ['donationBox', currentUser?.id] });
+            
+            // Navigate to donation box setup tab with collective preselected
+            navigate('/donation?tab=setup', {
+              state: {
+                preselectedItem: {
+                  id: crwdId,
+                  type: 'collective',
+                  data: crwdData
+                },
+                activeTab: 'collectives'
+              }
+            });
+          } catch (addError) {
+            console.error('Error adding collective to donation box:', addError);
+            // On error, still navigate to setup tab
+            navigate('/donation?tab=setup', {
+              state: {
+                preselectedItem: {
+                  id: crwdId,
+                  type: 'collective',
+                  data: crwdData
+                },
+                activeTab: 'collectives'
+              }
+            });
+          }
+        }
+      } catch (error) {
+        console.error('Error checking donation box:', error);
+        // On error, still show success modal
+        setShowSuccessModal(true);
+      }
     },
     onError: (error: any) => {
       console.error('Join collective error:', error);
@@ -104,11 +173,20 @@ export default function GroupCrwdPage() {
   // leave collective
   const leaveCollectiveMutation = useMutation({
     mutationFn: leaveCollective,
-    onSuccess: (response) => {
+    onSuccess: async (response) => {
       console.log('Leave collective successful:', response);
       setHasJoined(false);
       setShowToast(true);
       setShowConfirmDialog(false);
+      // Invalidate queries to refresh data
+      queryClient.invalidateQueries({ queryKey: ['crwd', crwdId] });
+      queryClient.invalidateQueries({ queryKey: ['joined-collectives'] });
+      queryClient.invalidateQueries({ queryKey: ['joined-collectives', currentUser?.id] });
+      queryClient.invalidateQueries({ queryKey: ['joined-collectives-manage'] });
+      queryClient.invalidateQueries({ queryKey: ['joinedCollectives'] });
+      // Invalidate and refetch donation box as leaving collective updates it
+      await queryClient.invalidateQueries({ queryKey: ['donationBox', currentUser?.id] });
+      await queryClient.refetchQueries({ queryKey: ['donationBox', currentUser?.id] });
     },
     onError: (error: any) => {
       console.error('Leave collective error:', error);

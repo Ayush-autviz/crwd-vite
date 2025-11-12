@@ -91,3 +91,8 @@ export const processDonationWebhook = async (data: any) => {
     const response = await axiosClient.post('/donations/webhook/', data);
     return response.data;
 };
+
+export const addCollectiveToDonation = async (collective_id: string) => {
+    const response = await axiosClient.post(`/donations/box/add-collective/${collective_id}/`);
+    return response.data;
+};

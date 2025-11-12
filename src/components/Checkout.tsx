@@ -281,6 +281,9 @@ export const Checkout = ({
         </div>
       </div> */}
 
+      {/* percentage distribution */}
+      <p className="text-gray-500 text-sm mx-8  mb-6">Donation amount is equally distributed across all the nonprofits</p>
+
       {/* CAUSES Section */}
       <div className="flex-1 overflow-auto">
         {/* Manual Causes from API */}
@@ -323,9 +326,9 @@ export const Checkout = ({
                           {cause.mission || cause.description || 'Making a positive impact in the community'}
                         </p>
                       </div>
-                      <div className="text-blue-600 font-semibold text-sm">
+                      {/* <div className="text-blue-600 font-semibold text-sm">
                         {distributionPercentage}%
-                      </div>
+                      </div> */}
                     </div>
                   </div>
                 </div>
@@ -381,9 +384,9 @@ export const Checkout = ({
                             </p>
                           </div>
                           <div className="flex items-center gap-2">
-                            <div className="text-blue-600 font-semibold text-sm">
+                            {/* <div className="text-blue-600 font-semibold text-sm">
                               {distributionPercentage}%
-                            </div>
+                            </div> */}
                             {isLoading ? (
                               <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600"></div>
                             ) : (

@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useLayoutEffect } from "react";
 import { Loader2, Minus, Plus, Search, ChevronDown, ChevronUp } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -26,9 +26,19 @@ interface DonationBoxProps {
 }
 
 const DonationBox = ({ tab = "setup", preselectedItem, activeTab }: DonationBoxProps) => {
-  // Initialize activeTabState: if preselectedItem exists, default to "onetime", otherwise use tab prop
-  const initialTab = preselectedItem ? "onetime" : (tab as "setup" | "onetime" || "setup");
+  // Initialize activeTabState: prioritize tab prop from URL, then check preselectedItem
+  // If tab is explicitly "setup", always use setup. Otherwise, if preselectedItem exists, use onetime
+  const initialTab = tab === "setup" ? "setup" : (preselectedItem ? "onetime" : (tab as "setup" | "onetime" || "setup"));
   const [activeTabState, setActiveTabState] = useState<"setup" | "onetime">(initialTab);
+  
+  // Update tab synchronously when prop changes (before paint)
+  useLayoutEffect(() => {
+    if (tab === "setup") {
+      setActiveTabState("setup");
+    } else if (tab === "onetime") {
+      setActiveTabState("onetime");
+    }
+  }, [tab]);
   const [checkout, setCheckout] = useState(false);
   const [selectedOrganizations, setSelectedOrganizations] = useState<string[]>([]);
   const [preselectedItemAdded, setPreselectedItemAdded] = useState(false);
@@ -111,16 +121,29 @@ const DonationBox = ({ tab = "setup", preselectedItem, activeTab }: DonationBoxP
   // Handle preselected item from navigation
   useEffect(() => {
     if (preselectedItem && !preselectedItemAdded) {
-      console.log('Setting preselected item:', preselectedItem);
-      // Ensure active tab is onetime if we have a preselected item
-      if (activeTabState !== "onetime") {
-        setActiveTabState("onetime");
+      console.log('Setting preselected item:', preselectedItem, 'Tab:', tab);
+      
+      // If tab is "setup" and preselectedItem is a collective, add to selectedCollectiveIds
+      if (tab === "setup" && preselectedItem.type === 'collective') {
+        // Stay on setup tab and add collective to selectedCollectiveIds
+        setActiveTabState("setup");
+        const collectiveId = parseInt(preselectedItem.id);
+        setSelectedCollectiveIds(prev => {
+          if (!prev.includes(collectiveId)) {
+            return [...prev, collectiveId];
+          }
+          return prev;
+        });
+      } else {
+        // For onetime tab or non-collective items, switch to onetime and add to selectedOrganizations
+        if (activeTabState !== "onetime") {
+          setActiveTabState("onetime");
+        }
+        setSelectedOrganizations([preselectedItem.id]);
       }
-      // Add the preselected item to selected organizations
-      setSelectedOrganizations([preselectedItem.id]);
       setPreselectedItemAdded(true);
     }
-  }, [preselectedItem, preselectedItemAdded, activeTabState]);
+  }, [preselectedItem, preselectedItemAdded, tab, activeTabState]);
 
   const incrementDonation = () => {
     const newAmount = donationAmount + 1;

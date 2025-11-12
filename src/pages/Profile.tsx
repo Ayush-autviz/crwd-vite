@@ -22,6 +22,8 @@ import { getPosts, getUserProfileById } from "@/services/api/social";
 import { logout } from "@/services/api/auth";
 import { useAuthStore } from "@/stores/store";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import { queryClient } from "@/lib/react-query/client";
+
 
 export default function ProfilePage() {
   const [showMenu, setShowMenu] = useState(false);
@@ -58,6 +60,7 @@ export default function ProfilePage() {
       // logoutMutation.mutate();
     // }
     logoutStore();
+    queryClient.clear()
     navigate('/', { replace: true });
   };
 
