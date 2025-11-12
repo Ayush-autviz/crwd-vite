@@ -1,5 +1,5 @@
 import { useState, useEffect, useLayoutEffect } from "react";
-import { Loader2, Minus, Plus, Search, ChevronDown, ChevronUp } from "lucide-react";
+import { Loader2, Minus, Plus, Search, ChevronDown, ChevronUp, Trash2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { DonationBox3 } from "./DonationBox3";
@@ -53,6 +53,8 @@ const DonationBox = ({ tab = "setup", preselectedItem, activeTab }: DonationBoxP
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCauseIds, setSelectedCauseIds] = useState<number[]>([]);
   const [selectedCollectiveIds, setSelectedCollectiveIds] = useState<number[]>([]);
+  const [selectedCausesData, setSelectedCausesData] = useState<any[]>([]);
+  const [selectedCollectivesData, setSelectedCollectivesData] = useState<any[]>([]);
   const [expandedCollectives, setExpandedCollectives] = useState<Set<number>>(new Set());
   const [collectiveDetails, setCollectiveDetails] = useState<Record<number, any>>({});
   const [loadingCollectives, setLoadingCollectives] = useState<Set<number>>(new Set());
@@ -134,6 +136,16 @@ const DonationBox = ({ tab = "setup", preselectedItem, activeTab }: DonationBoxP
           }
           return prev;
         });
+        // Also add to selectedCollectivesData so it shows in the UI
+        if (preselectedItem.data) {
+          setSelectedCollectivesData(prev => {
+            const exists = prev.some(c => c.id === collectiveId);
+            if (!exists) {
+              return [...prev, preselectedItem.data];
+            }
+            return prev;
+          });
+        }
       } else {
         // For onetime tab or non-collective items, switch to onetime and add to selectedOrganizations
         if (activeTabState !== "onetime") {
@@ -404,6 +416,83 @@ const DonationBox = ({ tab = "setup", preselectedItem, activeTab }: DonationBoxP
                     </div> */}
                   </div>
 
+                  {/* Selected Items Display */}
+                  {(selectedCauseIds.length > 0 || selectedCollectiveIds.length > 0) && (
+                    <div className="bg-white rounded-xl mb-6 p-6 shadow-sm border border-gray-100">
+                      <h2 className="text-xl font-bold text-gray-800 mb-4">Your selection</h2>
+                      
+                      {selectedCauseIds.length > 0 && (
+                        <div className="mb-4">
+                          <h3 className="text-sm font-semibold text-gray-700 mb-3">Nonprofits</h3>
+                          <div className="space-y-3">
+                            {selectedCausesData.map((cause: any) => (
+                              <div key={cause.id} className="flex items-center p-3 border border-gray-200 rounded-lg">
+                                <div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center mr-3">
+                                  <Avatar className="w-12 h-12 rounded-full object-cover">
+                                    <AvatarImage src={cause.logo || '/default-logo.png'} />
+                                    <AvatarFallback className="bg-blue-100 text-blue-600">
+                                      {cause.name?.charAt(0).toUpperCase() || 'N'}
+                                    </AvatarFallback>
+                                  </Avatar>
+                                </div>
+                                <div className="flex-1">
+                                  <h3 className="font-semibold text-gray-800">{cause.name}</h3>
+                                  {cause.description && (
+                                    <p className="text-sm text-gray-600 line-clamp-1">{cause.description}</p>
+                                  )}
+                                </div>
+                                <button
+                                  onClick={() => {
+                                    setSelectedCauseIds(selectedCauseIds.filter(id => id !== cause.id));
+                                    setSelectedCausesData(selectedCausesData.filter(c => c.id !== cause.id));
+                                  }}
+                                  className="p-2 text-red-500 hover:text-red-700 transition-colors"
+                                >
+                                  <Trash2 size={18} />
+                                </button>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+
+                      {selectedCollectiveIds.length > 0 && (
+                        <div>
+                          <h3 className="text-sm font-semibold text-gray-700 mb-3">Collectives</h3>
+                          <div className="space-y-3">
+                            {selectedCollectivesData.map((collective: any) => (
+                              <div key={collective.id} className="flex items-center p-3 border border-gray-200 rounded-lg">
+                                <div className="w-12 h-12 rounded-full bg-green-100 flex items-center justify-center mr-3">
+                                  <Avatar className="w-12 h-12 rounded-full object-cover">
+                                    <AvatarImage src={collective.cover_image || collective.image || '/default-collective.png'} />
+                                    <AvatarFallback className="bg-green-100 text-green-600">
+                                      {collective.name?.charAt(0).toUpperCase() || 'C'}
+                                    </AvatarFallback>
+                                  </Avatar>
+                                </div>
+                                <div className="flex-1">
+                                  <h3 className="font-semibold text-gray-800">{collective.name}</h3>
+                                  {collective.description && (
+                                    <p className="text-sm text-gray-600 line-clamp-1">{collective.description}</p>
+                                  )}
+                                </div>
+                                <button
+                                  onClick={() => {
+                                    setSelectedCollectiveIds(selectedCollectiveIds.filter(id => id !== collective.id));
+                                    setSelectedCollectivesData(selectedCollectivesData.filter(c => c.id !== collective.id));
+                                  }}
+                                  className="p-2 text-red-500 hover:text-red-700 transition-colors"
+                                >
+                                  <Trash2 size={18} />
+                                </button>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  )}
+
                   {/* Choose Nonprofit to Support Section */}
                   <div className="bg-white rounded-xl mb-6 p-6 shadow-sm border border-gray-100">
                     <h2 className="text-xl font-bold text-gray-800 mb-4">
@@ -436,8 +525,10 @@ const DonationBox = ({ tab = "setup", preselectedItem, activeTab }: DonationBoxP
                               onClick={() => {
                                 if (isSelected) {
                                   setSelectedCauseIds(selectedCauseIds.filter(id => id !== cause.id));
+                                  setSelectedCausesData(selectedCausesData.filter(c => c.id !== cause.id));
                                 } else {
                                   setSelectedCauseIds([...selectedCauseIds, cause.id]);
+                                  setSelectedCausesData([...selectedCausesData, cause]);
                                 }
                               }}
                             >
@@ -523,8 +614,10 @@ const DonationBox = ({ tab = "setup", preselectedItem, activeTab }: DonationBoxP
                                     e.stopPropagation();
                                     if (isSelected) {
                                       setSelectedCollectiveIds(selectedCollectiveIds.filter(id => id !== collective.id));
+                                      setSelectedCollectivesData(selectedCollectivesData.filter(c => c.id !== collective.id));
                                     } else {
                                       setSelectedCollectiveIds([...selectedCollectiveIds, collective.id]);
+                                      setSelectedCollectivesData([...selectedCollectivesData, collective]);
                                     }
                                   }}
                                 >
@@ -619,7 +712,7 @@ const DonationBox = ({ tab = "setup", preselectedItem, activeTab }: DonationBoxP
 
                    
                     {/* </div> */}
-                  {/* </div> */}
+                    {/* </div> */}
 
                   {/* Summary and Next Button */}
                 <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100 mb-6 fixed bottom-0 w-calc(100%-16px) left-0 right-0 mx-4">
