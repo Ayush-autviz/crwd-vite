@@ -121,42 +121,43 @@ export default function PaymentResult() {
                       asChild
                       className="w-full bg-green-600 hover:bg-green-700 text-white py-6 text-base font-semibold shadow-lg hover:shadow-xl transition-all"
                     >
-                      <Link to="/transaction-history" className="flex items-center justify-center gap-2">
+                      <div onClick={() => navigate("/transaction-history", { replace: true })} className="flex items-center justify-center gap-2">
                         <span>View Transaction History</span>
                         <ArrowRight className="w-5 h-5" />
-                      </Link>
+                      </div>
                     </Button>
                     <Button
                       variant="outline"
+                      onClick={() => navigate("/donation", { state: { fromPaymentResult: true }, replace: true })}
                       asChild
                       className="w-full border-2 border-gray-300 hover:border-gray-400 py-6 text-base font-semibold"
                     >
-                      <Link to="/" className="flex items-center justify-center gap-2">
+                      <div  className="flex items-center justify-center gap-2">
                         <Home className="w-5 h-5" />
-                        <span>Return to Home</span>
-                      </Link>
+                        <span>Return to Donation</span>
+                      </div>
                     </Button>
                   </>
                 ) : (
                   <>
-                    <Button
+                    {/* <Button
                       asChild
                       className="w-full bg-blue-600 hover:bg-blue-700 text-white py-6 text-base font-semibold shadow-lg hover:shadow-xl transition-all"
                     >
-                      <Link to="/donation" className="flex items-center justify-center gap-2">
+                      <div onClick={() => navigate("/donation", { state: { fromPaymentResult: fals }, replace: true })} className="flex items-center justify-center gap-2">
                         <span>Try Again</span>
                         <ArrowRight className="w-5 h-5" />
-                      </Link>
-                    </Button>
+                      </div>
+                    </Button> */}
                     <Button
                       variant="outline"
                       asChild
                       className="w-full border-2 border-gray-300 hover:border-gray-400 py-6 text-base font-semibold"
                     >
-                      <Link to="/" className="flex items-center justify-center gap-2">
+                      <div onClick={() => navigate("/", { replace: true })} className="flex items-center justify-center gap-2">
                         <Home className="w-5 h-5" />
                         <span>Return to Home</span>
-                      </Link>
+                      </div>
                     </Button>
                     <Button
                       variant="ghost"

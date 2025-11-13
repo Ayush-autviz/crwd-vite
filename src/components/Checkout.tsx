@@ -2,11 +2,13 @@ import { HelpCircle, Settings, X, ChevronDown, ChevronUp } from "lucide-react";
 import { useState, useEffect } from "react";
 
 import { Button } from "@/components/ui/button";
-import { Link } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import ManageDonationBox from "./ManageDonationBox";
 import { CROWDS, RECENTS, SUGGESTED } from "@/constants";
 import ReactConfetti from "react-confetti";
 import { getCollectiveById } from "@/services/api/crwd";
+import { useQueryClient } from "@tanstack/react-query";
+import { useAuthStore } from "@/stores/store";
 
 interface DonationOverviewProps {
   donationAmount?: number;
@@ -17,6 +19,7 @@ interface DonationOverviewProps {
   onCloseManage?: () => void;
   onShowManage?: () => void;
   onCancelSuccess?: () => void;
+  fromPaymentResult?: boolean;
 }
 
 export const Checkout = ({
@@ -28,7 +31,12 @@ export const Checkout = ({
   onCloseManage,
   onShowManage,
   onCancelSuccess,
+  fromPaymentResult = false,
 }: DonationOverviewProps) => {
+  const queryClient = useQueryClient();
+  const { user: currentUser } = useAuthStore();
+  const navigate = useNavigate();
+  const location = useLocation();
   const [showManageDonationBox, setShowManageDonationBox] = useState(initialShowManage);
   const [localSelectedOrgs, setLocalSelectedOrgs] = useState(selectedOrgIds);
   const [showAddMoreCauses, setShowAddMoreCauses] = useState(false);
@@ -56,11 +64,28 @@ export const Checkout = ({
   const totalCauses = manualCauses.length;
   const totalCollectives = attributingCollectives.length;
 
-  // Show success modal when component mounts
+  // Show confetti and refetch donation box when coming from payment result (only once)
   useEffect(() => {
-    // setShowSuccessModal(true);
+    if (fromPaymentResult) {
+      // Show confetti
+      setShowSuccessModal(true);
+      
+      // Refetch donation box data
+      queryClient.invalidateQueries({ queryKey: ['donationBox', currentUser?.id] });
+      queryClient.refetchQueries({ queryKey: ['donationBox', currentUser?.id] });
+      
+      // Immediately clear fromPaymentResult from location state to prevent showing again when switching tabs
+      const newState = { ...location.state };
+      delete newState.fromPaymentResult;
+      navigate(location.pathname + (location.search || ''), { 
+        replace: true, 
+        state: newState
+      });
+    }
+  }, [fromPaymentResult, queryClient, currentUser?.id, navigate, location]);
 
-    // Update window dimensions on resize for confetti
+  // Update window dimensions on resize for confetti
+  useEffect(() => {
     const handleResize = () => {
       setWindowDimensions({
         width: window.innerWidth,

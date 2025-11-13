@@ -6,8 +6,10 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import Footer from "@/components/Footer";
-import { useQuery } from "@tanstack/react-query";
-import { getCausesBySearch } from "@/services/api/crwd";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { getCausesBySearch, getCauses } from "@/services/api/crwd";
+import { getRecentSearches, createRecentSearch, deleteRecentSearch } from "@/services/api/social";
+import { useAuthStore } from "@/stores/store";
 import { categories as discoverCategories } from "@/constants/categories";
 import {
   Clock,
@@ -26,16 +28,12 @@ import { Link, useLocation } from "react-router-dom";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { getNonprofitColor } from "@/lib/getNonprofitColor";
 
-const recentSearches = [
-  "Atlanta animal shelters",
-  "Gaza support efforts",
-  "Marine wildlife charities",
-];
+// Recent searches will be fetched from API
 
-const popularSearches = [
-  "Protests near me",
-  "Harvard opens free classes to public",
-];
+// const popularSearches: (string | { id: number; name: string })[] = [
+//   "Protests near me",
+//   "Harvard opens free classes to public",
+// ];
 
 
 const searchTips = [
@@ -54,13 +52,34 @@ const searchTips = [
 
 export default function SearchPage() {
   const location = useLocation();
+  const queryClient = useQueryClient();
+  const { user: currentUser } = useAuthStore();
   const [discover, setDiscover] = useState(location.state?.discover);
   const [search, setSearch] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("All");
-  const [recentSearchesList, setRecentSearchesList] = useState(recentSearches);
+  const [recentSearchesList, setRecentSearchesList] = useState<Array<{ id: number; search_query: string }>>([]);
   const [popularSearchesList, setPopularSearchesList] =
-    useState(popularSearches);
+    useState<(string | { id: number; name: string })[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
+
+  // Fetch nonprofits for popular searches
+  const { data: nonprofitsData } = useQuery({
+    queryKey: ['nonprofits'],
+    queryFn: () => getCauses(),
+    enabled: true,
+  });
+
+  // Update popular searches list with nonprofits when data is available
+  useEffect(() => {
+    if (nonprofitsData?.results && nonprofitsData.results.length > 0) {
+      // Take first few nonprofits (limit to 5 or available)
+      const nonprofits = nonprofitsData.results.slice(0, 5).map((nonprofit: any) => ({
+        id: nonprofit.id,
+        name: nonprofit.name,
+      }));
+      setPopularSearchesList(nonprofits);
+    }
+  }, [nonprofitsData]);
   const [searchTrigger, setSearchTrigger] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
   const [allCauses, setAllCauses] = useState<any[]>([]);
@@ -83,27 +102,73 @@ export default function SearchPage() {
     }
   }, [categoryId, categoryName]);
 
-  // Get causes with search and category filtering
+  // Get recent searches (only if user is logged in)
+  const { data: recentSearchesData } = useQuery({
+    queryKey: ['recentSearches'],
+    queryFn: () => getRecentSearches(),
+    enabled: !!currentUser?.id,
+    refetchOnMount: true,
+  });
+
+  // Update recent searches list when data is available (limit to 5)
+  useEffect(() => {
+    if (recentSearchesData?.results) {
+      const searches = recentSearchesData.results
+        .slice(0, 5) // Limit to 5 items
+        .map((item: any) => ({
+          id: item.id,
+          search_query: item.search_query
+        }));
+      setRecentSearchesList(searches);
+    }
+  }, [recentSearchesData]);
+
+  // Create recent search mutation
+  const createRecentSearchMutation = useMutation({
+    mutationFn: (search_query: string) => createRecentSearch(search_query),
+    onSuccess: () => {
+      // Refetch recent searches after creation
+      queryClient.invalidateQueries({ queryKey: ['recentSearches'] });
+      queryClient.refetchQueries({ queryKey: ['recentSearches'] });
+    },
+  });
+
+  // Delete recent search mutation
+  const deleteRecentSearchMutation = useMutation({
+    mutationFn: (searchId: string) => deleteRecentSearch(searchId),
+    onSuccess: () => {
+      // Refetch recent searches after deletion
+      queryClient.invalidateQueries({ queryKey: ['recentSearches'] });
+      queryClient.refetchQueries({ queryKey: ['recentSearches'] });
+    },
+  });
+
+  // Get causes with search and category filtering (only when searchTrigger is set)
   const { data: causesData, isLoading: isCausesLoading, error } = useQuery({
     queryKey: ['causes', selectedCategory, searchQuery, searchTrigger, currentPage],
     queryFn: () => {
       return getCausesBySearch(searchQuery, selectedCategory === "All" || selectedCategory === "" ? '' : selectedCategory, currentPage);
     },
-    enabled: true, // Always enabled to fetch causes automatically on page load
-    refetchOnMount: true,
+    enabled: searchTrigger > 0, // Only enabled when search is triggered (not on mount)
+    refetchOnMount: false,
     refetchOnWindowFocus: false,
   });
 
-  // Handle API response and accumulate results
+  // Handle API response and accumulate results, and save to recent searches
   useEffect(() => {
     if (causesData?.results) {
       if (currentPage === 1) {
         setAllCauses(causesData.results);
+        // Save to recent searches on successful search (only if user is logged in)
+        if (searchQuery.trim() && currentUser?.id) {
+          createRecentSearchMutation.mutate(searchQuery.trim());
+        }
       } else {
         setAllCauses(prev => [...prev, ...causesData.results]);
       }
     }
-  }, [causesData, currentPage]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [causesData, currentPage, searchQuery, currentUser?.id]);
 
   // Reset page when search or category changes
   useEffect(() => {
@@ -111,13 +176,7 @@ export default function SearchPage() {
     setAllCauses([]);
   }, [searchTrigger, selectedCategory]);
 
-  // Trigger initial search on mount if no category or search query is set
-  useEffect(() => {
-    if (!categoryId && !categoryName && !searchQuery && selectedCategory === "All") {
-      // Auto-trigger search on page load
-      setSearchTrigger(prev => prev + 1);
-    }
-  }, []);
+  // Don't auto-trigger search on mount - only on Enter key press
 
   // Handle search input with Enter key
   const handleSearchKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -128,12 +187,27 @@ export default function SearchPage() {
     }
   };
 
-  const removeRecentSearch = (index: number) => {
-    setRecentSearchesList((prev) => prev.filter((_, i) => i !== index));
+  const removeRecentSearch = (searchId: number) => {
+    if (currentUser?.id) {
+      deleteRecentSearchMutation.mutate(searchId.toString());
+    }
+  };
+
+  const handleRecentSearchClick = (searchQuery: string) => {
+    // Set the search query and trigger search
+    setSearch(searchQuery);
+    setSearchQuery(searchQuery);
+    setSearchTrigger(prev => prev + 1);
+    setDiscover(false);
   };
 
   const removePopularSearch = (index: number) => {
-    setPopularSearchesList((prev) => prev.filter((_, i) => i !== index));
+    // Don't allow removing nonprofits from popular searches
+    // Only allow removing if it's a string (old static data)
+    const item = popularSearchesList[index];
+    if (typeof item === 'string') {
+      setPopularSearchesList((prev) => prev.filter((_, i) => i !== index));
+    }
   };
 
 
@@ -293,8 +367,8 @@ export default function SearchPage() {
               )}
             </div>
 
-            {/* Recent Searches */}
-            {recentSearchesList.length > 0 && allCauses.length === 0 && (
+            {/* Recent Searches - Only show if user is logged in */}
+            {currentUser?.id && recentSearchesList.length > 0 && allCauses.length === 0 && (
               <div className="mb-8">
                 <div className="flex items-center justify-between mb-4">
                   <div className="flex items-center gap-2">
@@ -305,28 +379,28 @@ export default function SearchPage() {
                   </div>
                 </div>
                 <div className="bg-white rounded-xl  overflow-hidden ">
-                  {recentSearchesList.map((searchTerm, index) => (
+                  {recentSearchesList.map((item, index) => (
                     <div
-                      key={index}
+                      key={item.id || index}
                       className="flex items-center justify-between py-4  transition-colors border-b border-gray-100 last:border-b-0 group cursor-pointer"
                     >
-                      <div className="flex items-center gap-3 flex-1">
+                      <div 
+                        className="flex items-center gap-3 flex-1 cursor-pointer"
+                        onClick={() => handleRecentSearchClick(item.search_query)}
+                      >
                         <div className="p-2 bg-gray-100 rounded-full group-hover:bg-gray-200 transition-colors">
                           <Clock className="w-4 h-4 text-gray-500" />
                         </div>
-                        <Link
-                          to="/search2"
-                          className="text-gray-900 font-medium group-hover:text-gray-700"
-                        >
-                          {searchTerm}
-                        </Link>
+                        <span className="text-gray-900 font-medium group-hover:text-gray-700">
+                          {item.search_query}
+                        </span>
                       </div>
                       <Button
                         variant="ghost"
                         size="sm"
                         onClick={(e) => {
                           e.stopPropagation();
-                          removeRecentSearch(index);
+                          removeRecentSearch(item.id);
                         }}
                         className=" transition-opacity h-8 w-8 p-0 hover:bg-gray-100 rounded-full"
                       >
@@ -348,41 +422,46 @@ export default function SearchPage() {
                   </h2>
                 </div>
                 <div className="bg-white rounded-xl  overflow-hidden ">
-                  {popularSearchesList.map((searchTerm, index) => (
-                    <div
-                      key={index}
-                      className="flex items-center justify-between py-4  transition-colors border-b border-gray-100 last:border-b-0 group cursor-pointer"
-                    >
-                      <div className="flex items-center gap-3 flex-1">
-                        <div className="p-2 bg-gray-100 rounded-full group-hover:bg-gray-200 transition-colors">
-                          <TrendingUp className="w-4 h-4 text-gray-600" />
-                        </div>
-                        <Link
-                          to="/search2"
-                          className="text-gray-900 font-medium group-hover:text-gray-700"
-                        >
-                          {searchTerm}
-                        </Link>
-                      </div>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          removePopularSearch(index);
-                        }}
-                        className="  transition-opacity h-8 w-8 p-0 hover:bg-gray-100 rounded-full"
+                  {popularSearchesList.map((item, index) => {
+                    const isString = typeof item === 'string';
+                    return (
+                      <div
+                        key={isString ? index : item.id}
+                        className="flex items-center justify-between py-4  transition-colors border-b border-gray-100 last:border-b-0 group cursor-pointer"
                       >
-                        <X className="w-4 h-4" />
-                      </Button>
-                    </div>
-                  ))}
+                        <div className="flex items-center gap-3 flex-1">
+                          <div className="p-2 bg-gray-100 rounded-full group-hover:bg-gray-200 transition-colors">
+                            <TrendingUp className="w-4 h-4 text-gray-600" />
+                          </div>
+                          <Link
+                            to={isString ? "/search2" : `/cause/${item.id}`}
+                            className="text-gray-900 font-medium group-hover:text-gray-700"
+                          >
+                            {isString ? item : item.name}
+                          </Link>
+                        </div>
+                        {isString && (
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              removePopularSearch(index);
+                            }}
+                            className="  transition-opacity h-8 w-8 p-0 hover:bg-gray-100 rounded-full"
+                          >
+                            <X className="w-4 h-4" />
+                          </Button>
+                        )}
+                      </div>
+                    );
+                  })}
                 </div>
               </div>
             )}
 
-            {/* Empty State */}
-            {recentSearchesList.length === 0 &&
+            {/* Empty State - Only show if user is not logged in or no searches */}
+            {(!currentUser?.id || recentSearchesList.length === 0) &&
               popularSearchesList.length === 0 && (
                 <div className="text-center py-12">
                   <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">

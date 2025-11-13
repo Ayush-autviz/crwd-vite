@@ -23,9 +23,10 @@ interface DonationBoxProps {
     data: any;
   };
   activeTab?: string;
+  fromPaymentResult?: boolean;
 }
 
-const DonationBox = ({ tab = "setup", preselectedItem, activeTab }: DonationBoxProps) => {
+const DonationBox = ({ tab = "setup", preselectedItem, activeTab, fromPaymentResult }: DonationBoxProps) => {
   // Initialize activeTabState: prioritize tab prop from URL, then check preselectedItem
   // If tab is explicitly "setup", always use setup. Otherwise, if preselectedItem exists, use onetime
   const initialTab = tab === "setup" ? "setup" : (preselectedItem ? "onetime" : (tab as "setup" | "onetime" || "setup"));
@@ -90,6 +91,13 @@ const DonationBox = ({ tab = "setup", preselectedItem, activeTab }: DonationBoxP
       }
     }
   }, [donationBox, activeTabState]);
+
+  // Show checkout screen when coming from payment result
+  useEffect(() => {
+    if (fromPaymentResult && donationBox && donationBox.id) {
+      setCheckout(true);
+    }
+  }, [fromPaymentResult, donationBox]);
 
   // Get causes with search - only when setup tab is active and on step 1
   const { data: causesData, isLoading: causesLoading } = useQuery({
@@ -312,6 +320,7 @@ const DonationBox = ({ tab = "setup", preselectedItem, activeTab }: DonationBoxP
             setCheckout(false);
             setStep(3);
           }}
+          fromPaymentResult={fromPaymentResult}
         />
       ) : (
         <>

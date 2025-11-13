@@ -14,6 +14,7 @@ export default function DonationPage() {
   // Get preselected item and active tab from navigation state
   const preselectedItem = location.state?.preselectedItem;
   const activeTab = location.state?.activeTab;
+  const fromPaymentResult = location.state?.fromPaymentResult;
   
   console.log('Preselected item:', preselectedItem);
   console.log('Active tab:', activeTab);
@@ -72,6 +73,7 @@ export default function DonationPage() {
         tab={tab || "setup"} 
         preselectedItem={preselectedItem}
         activeTab={activeTab}
+        fromPaymentResult={fromPaymentResult}
       />
       <div className="hidden md:block">
         <Footer />
