@@ -502,7 +502,7 @@ export default function HomePage() {
               ))}
             </div>
             <div className="flex justify-end mt-4">
-              <Link to="/search">
+              <Link to="/search" >
                 <Button
                   variant="link"
                   className="text-primary flex items-center"
@@ -513,6 +513,7 @@ export default function HomePage() {
             </div>
           </div>
 
+          {posts?.results?.length > 0 && (
           <div className="mr-auto  ">
             <PopularPosts 
               posts={posts} 
@@ -522,6 +523,7 @@ export default function HomePage() {
               isLoadingMore={isFetchingNextPage}
             />
           </div>
+          )}
           <div className="md:-mx-6">    
             <Footer />
           </div>
