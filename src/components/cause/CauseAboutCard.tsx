@@ -24,7 +24,7 @@ const CauseAboutCard: React.FC<{ causeData?: any }> = ({ causeData }) => {
         className="w-12 h-12 rounded-lg object-cover"
       /> */}
       <Avatar className="w-12 h-12 rounded-full">
-        <AvatarImage src={causeData?.logo} />
+        <AvatarImage src={causeData?.image} />
         <AvatarFallback style={{ backgroundColor: '#dbeafe' }} className="text-blue-600 font-semibold rounded-lg">
           {causeData?.name?.charAt(0).toUpperCase()}
         </AvatarFallback>
@@ -69,9 +69,9 @@ const CauseAboutCard: React.FC<{ causeData?: any }> = ({ causeData }) => {
 
         <div className="text-sm flex flex-col gap-1  text-gray-600">
           <span className="font-semibold">MAIN FOCUS</span>{" "}
-          <Link to="/search?q=Animal%20Welfare">
-            <span className="text-blue-600 underline cursor-pointer hover:text-blue-800">{category?.name}</span>
-          </Link>
+          {/* <Link to="/search?q=Animal%20Welfare"> */}
+            <span className="text-blue-600 cursor-pointer hover:text-blue-800">{category?.name}</span>
+          {/* </Link> */}
         </div>
         {/* <div className="text-sm flex flex-col gap-1  text-gray-600">
           <span className="font-semibold">ESTABLISHED</span>{" "}

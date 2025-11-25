@@ -123,7 +123,7 @@ const CauseProfileCard: React.FC<CauseProfileCardProps> = ({
           className="w-14 h-14 rounded-lg object-cover"
         /> */}
         <Avatar className="w-14 h-14 rounded-full">
-          <AvatarImage src={causeData?.logo} />
+          <AvatarImage src={causeData?.image} />
           <AvatarFallback style={{ backgroundColor: '#dbeafe' }} className="text-blue-600 font-semibold rounded-lg">
             {causeData?.name?.charAt(0).toUpperCase()}
           </AvatarFallback>
@@ -224,9 +224,9 @@ const CauseProfileCard: React.FC<CauseProfileCardProps> = ({
         </div>
         <p>Your donation is protected and guaranteed.</p>
       </div>
-      <Link to="#" className="text-blue-600 underline">
+      {/* <Link to="#" className="text-blue-600 underline">
         Learn More
-      </Link>
+      </Link> */}
 
       <SharePost
         url={window.location.origin + `/groupcrwd/`}

@@ -310,7 +310,7 @@ export default function HomePage() {
                           alt={cause.name}
                           className="w-full h-full object-cover"
                         /> */}
-                        <Avatar className="h-10 w-10 rounded-full">
+                        <Avatar className="h-10 w-10 rounded-full border border-gray-200">
                           <AvatarImage src={cause.image} />
                           <AvatarFallback 
                             style={{ 
@@ -444,7 +444,7 @@ export default function HomePage() {
                 >
                   <div className="flex items-center justify-between p-3 rounded-lg hover:bg-muted/50 cursor-pointer transition-colors bg-card">
                     <div className="flex items-center gap-2 md:gap-3 flex-1 min-w-0 mr-2">
-                      <Avatar className="h-10 w-10 md:h-12 md:w-12 rounded-full flex-shrink-0">
+                      <Avatar className="h-10 w-10 md:h-12 md:w-12 rounded-full flex-shrink-0 border border-gray-200">
                        <AvatarImage src={cause.image} />
                        <AvatarFallback 
                          style={{ 
