@@ -23,7 +23,7 @@ const CauseAboutCard: React.FC<{ causeData?: any }> = ({ causeData }) => {
         alt="Helping humanity"
         className="w-12 h-12 rounded-lg object-cover"
       /> */}
-      <Avatar className="w-12 h-12 rounded-full">
+      <Avatar className="w-12 h-12 rounded-full border-2 border-gray-200">
         <AvatarImage src={causeData?.image} />
         <AvatarFallback style={{ backgroundColor: '#dbeafe' }} className="text-blue-600 font-semibold rounded-lg">
           {causeData?.name?.charAt(0).toUpperCase()}

@@ -122,7 +122,7 @@ const CauseProfileCard: React.FC<CauseProfileCardProps> = ({
           alt="Helping Humanity"
           className="w-14 h-14 rounded-lg object-cover"
         /> */}
-        <Avatar className="w-14 h-14 rounded-full">
+        <Avatar className="w-14 h-14 rounded-full border-2 border-gray-200">
           <AvatarImage src={causeData?.image} />
           <AvatarFallback style={{ backgroundColor: '#dbeafe' }} className="text-blue-600 font-semibold rounded-lg">
             {causeData?.name?.charAt(0).toUpperCase()}
