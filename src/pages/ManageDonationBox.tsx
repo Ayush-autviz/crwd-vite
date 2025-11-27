@@ -103,6 +103,7 @@ export default function ManageDonationBoxPage() {
         onBack={handleBack}
         isActive={isActive}
         onCancelSuccess={handleCancelSuccess}
+        nextChargeDate={donationBox.next_charge_date}
       />
     </div>
   );

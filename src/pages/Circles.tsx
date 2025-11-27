@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { Plus, Users, Search, Loader2 } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Badge } from "@/components/ui/badge";
 import ProfileNavbar from "@/components/profile/ProfileNavbar";
 import { Link } from "react-router-dom";
 import Footer from "@/components/Footer";
@@ -68,7 +67,7 @@ const Circles = () => {
           {/* Create New Crwd Button */}
           <Link
             to={`/create-crwd`}
-            className=" flex items-center gap-2 justify-center w-fit bg-green-600 hover:bg-green-700 text-white px-4 py-2    rounded-lg text-base font-semibold shadow-lg"
+            className=" flex items-center gap-2 justify-center w-fit bg-green-600 hover:bg-green-700 text-white px-4 py-2    rounded-full text-base font-semibold shadow-lg"
           >
             <Plus className="" strokeWidth={3} />
             <p> Start a Collective</p>
@@ -76,14 +75,14 @@ const Circles = () => {
         </div>
 
         {/* Tab Navigation */}
-        <div className="px-6 mb-6">
-          <div className="flex  border-border justify-center">
+        <div className="px-6 md:px-[20%] mb-6">
+          <div className="flex bg-gray-100 rounded-full p-1.5 gap-0.5">
             <button
               onClick={() => setActiveTab("my-crwds")}
-              className={`flex items-center gap-2 px-4 py-3 text-sm font-medium border-b-2 transition-colors ${
+              className={`flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-full text-sm font-semibold transition-colors ${
                 activeTab === "my-crwds"
-                  ? "border-primary text-primary"
-                  : "border-transparent text-muted-foreground hover:text-foreground"
+                  ? "bg-white text-gray-900"
+                  : "text-gray-600"
               }`}
             >
               <Users className="w-4 h-4" />
@@ -91,10 +90,10 @@ const Circles = () => {
             </button>
             <button
               onClick={() => setActiveTab("discover")}
-              className={`flex items-center gap-2 px-4 py-3 text-sm font-medium border-b-2 transition-colors ${
+              className={`flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-full text-sm font-semibold transition-colors ${
                 activeTab === "discover"
-                  ? "border-primary text-primary"
-                  : "border-transparent text-muted-foreground hover:text-foreground"
+                  ? "bg-white text-gray-900"
+                  : "text-gray-600"
               }`}
             >
               <Search className="w-4 h-4" />
@@ -106,7 +105,7 @@ const Circles = () => {
         {/* Content Area */}
         <div className="px-6">
             {activeTab === "my-crwds" ? (
-              <div className="space-y-6 pb-16">
+              <div className="space-y-4 pb-16">
                 {/* Loading State */}
                 {isLoadingJoinCollective ? (
                   <div className="flex justify-center items-center mt-10">
@@ -115,56 +114,78 @@ const Circles = () => {
                 ) : (
                   <>
                     {joinCollectiveData?.data?.length > 0 ? (
-                      <div className="space-y-3">
-                        {joinCollectiveData.data.map((collective: any) => (
-                          <Link
-                            to={`/groupcrwd/${collective.collective?.id}`}
-                            
-                            key={collective.id}
-                            className="flex items-center justify-between p-4 rounded-lg border border-border bg-card hover:bg-muted/50 transition-colors"
-                          >
-                            <div className="flex items-center gap-3 flex-1 min-w-0">
-                              <Avatar className="h-12 w-12 rounded-full flex-shrink-0">
-                                <AvatarImage src={collective?.collective?.created_by?.profile_picture} alt={collective.name} />
-                                <AvatarFallback>{collective?.collective?.name.charAt(0)}</AvatarFallback>
-                              </Avatar>
-                              <div className="min-w-0 flex-1">
-                                <div className="flex items-center gap-2 mb-1">
-                                  <Badge
-                                    variant="secondary"
-                                    className="bg-green-100 text-green-600 text-xs px-2 py-1"
-                                  >
-                                    Collective
-                                  </Badge>
-                                </div>
-                                <h3 className="font-semibold text-foreground mb-1 truncate">
-                                  {collective?.collective?.name}
-                                </h3>
-                                <p className="text-sm text-muted-foreground line-clamp-2">
-                                  {collective?.collective?.description}
-                                </p>
-                                {/* <p className="text-xs text-muted-foreground mt-1">
-                                  {collective?.collective?.member_count || 0} members
-                                </p> */}
-                              </div>
-                            </div>
+                      <div className="space-y-4">
+                        {joinCollectiveData.data.map((collective: any) => {
+                          const circle = collective.collective || collective;
+                          // Generate consistent color based on collective name
+                          const colors = [
+                            '#f97316', // orange
+                            '#ec4899', // pink
+                            '#3b82f6', // blue
+                            '#10b981', // green
+                            '#f59e0b', // amber
+                            '#8b5cf6', // purple
+                            '#ef4444', // red
+                          ];
+                          const colorIndex = (circle.name?.charCodeAt(0) || 0) % colors.length;
+                          const circleBgColor = colors[colorIndex];
+                          const founderName = circle.created_by 
+                            ? `${circle.created_by.first_name || ''} ${circle.created_by.last_name || ''}`.trim() || circle.created_by.username
+                            : 'Unknown';
+                          
+                          return (
                             <Link
-                              to={`/groupcrwd/${collective.collective?.id}`}
-                              state={{ collectiveData: collective }}
-                              className="bg-green-600 hover:bg-green-700 text-white text-sm px-4 py-2 rounded-lg"
+                              to={`/groupcrwd/${circle.id}`}
+                              key={collective.id}
+                              className="flex flex-col p-4 rounded-lg border border-gray-200 bg-white hover:bg-gray-50 transition-colors"
                             >
-                              Learn More
+                              {/* Collective Icon */}
+                              <div
+                                className="w-12 h-12 rounded-full flex items-center justify-center mb-3"
+                                style={{ backgroundColor: circleBgColor }}
+                              >
+                                <span className="text-xl font-bold text-white">
+                                  {circle.name?.charAt(0)?.toUpperCase() || 'C'}
+                                </span>
+                              </div>
+
+                              <h3 className="font-semibold text-gray-900 mb-1.5">
+                                {circle.name}
+                              </h3>
+                              <p className="text-sm text-gray-600 mb-3 line-clamp-2">
+                                {circle.description}
+                              </p>
+                              
+                              {/* Founder Info */}
+                              {circle.created_by && (
+                                <div className="flex items-center gap-2 mb-2">
+                                  <Avatar className="h-5 w-5 flex-shrink-0">
+                                    <AvatarImage src={circle.created_by.profile_picture} alt={founderName} />
+                                    <AvatarFallback className="text-[10px]">
+                                      {founderName.charAt(0).toUpperCase()}
+                                    </AvatarFallback>
+                                  </Avatar>
+                                  <p className="text-xs text-gray-500">
+                                    Founded by {founderName}
+                                  </p>
+                                </div>
+                              )}
+                              
+                              {/* Supporting nonprofits count */}
+                              <p className="text-xs text-gray-500">
+                                Supporting {circle.causes_count || circle.supported_causes_count || 0} nonprofits
+                              </p>
                             </Link>
-                          </Link>
-                        ))}
+                          );
+                        })}
                       </div>
                     ) : (
-                      <div className="text-center py-8  rounded-lg">
-                        <div className="bg-muted p-4 w-fit  rounded-full mx-auto">
-                          <Users className="w-12 h-12 text-muted-foreground" />
+                      <div className="text-center py-8 rounded-lg">
+                        <div className="bg-gray-100 p-4 w-fit rounded-full mx-auto">
+                          <Users className="w-12 h-12 text-gray-400" />
                         </div>
-                        <p className="text-lg font-semibold">you haven't joined any collectives yet</p>
-                        <p className="text-muted-foreground">Check out the discover tab to join a collective</p>
+                        <p className="text-lg font-semibold text-gray-900 mt-4">You haven't joined any collectives yet</p>
+                        <p className="text-gray-500 mt-1">Check out the discover tab to join a collective</p>
                       </div>
                     )}
                   </>
@@ -173,45 +194,68 @@ const Circles = () => {
             ) : (
             /* Discover Tab Content */
             <div className="space-y-4 pb-16">
-              {collectiveData?.results?.map((circle: any) => (
-                <Link
-                  to={`/groupcrwd/${circle.id}`}
-                  
-                  key={circle.id}
-                  className="flex items-center justify-between p-4 rounded-lg border border-border bg-card hover:bg-muted/50 transition-colors"
-                >
-                  <div className="flex items-center gap-3 flex-1 min-w-0">
-                    <Avatar className="h-12 w-12 rounded-full flex-shrink-0">
-                      <AvatarImage src={circle.created_by.profile_picture} alt={circle.name} />
-                      <AvatarFallback>{circle.name.charAt(0)}</AvatarFallback>
-                    </Avatar>
-
-                    <div className="min-w-0 flex-1">
-                      <div className="flex items-center gap-2 mb-1">
-                        <Badge
-                          variant="secondary"
-                          className="bg-green-100 text-green-600 text-xs px-2 py-1"
-                        >
-                          Collective
-                        </Badge>
-                      </div>
-                      <h3 className="font-semibold text-foreground mb-1 truncate">
-                        {circle.name}
-                      </h3>
-                      <p className="text-sm text-muted-foreground line-clamp-2">
-                        {circle.description}
-                      </p>
-                    </div>
-                  </div>
-
+              {collectiveData?.results?.map((circle: any) => {
+                // Generate consistent color based on collective name
+                const colors = [
+                  '#f97316', // orange
+                  '#ec4899', // pink
+                  '#3b82f6', // blue
+                  '#10b981', // green
+                  '#f59e0b', // amber
+                  '#8b5cf6', // purple
+                  '#ef4444', // red
+                ];
+                const colorIndex = (circle.name?.charCodeAt(0) || 0) % colors.length;
+                const circleBgColor = colors[colorIndex];
+                const founderName = circle.created_by 
+                  ? `${circle.created_by.first_name || ''} ${circle.created_by.last_name || ''}`.trim() || circle.created_by.username
+                  : 'Unknown';
+                
+                return (
                   <Link
                     to={`/groupcrwd/${circle.id}`}
-                    className="bg-green-600 hover:bg-green-700 text-white text-sm px-4 py-2 rounded-lg"
+                    key={circle.id}
+                    className="flex flex-col p-4 rounded-lg border border-gray-200 bg-white hover:bg-gray-50 transition-colors"
                   >
-                    Learn More
+                    {/* Collective Icon */}
+                    <div
+                      className="w-12 h-12 rounded-full flex items-center justify-center mb-3"
+                      style={{ backgroundColor: circleBgColor }}
+                    >
+                      <span className="text-xl font-bold text-white">
+                        {circle.name?.charAt(0)?.toUpperCase() || 'C'}
+                      </span>
+                    </div>
+
+                    <h3 className="font-semibold text-gray-900 mb-1.5">
+                      {circle.name}
+                    </h3>
+                    <p className="text-sm text-gray-600 mb-3 line-clamp-2">
+                      {circle.description}
+                    </p>
+                    
+                    {/* Founder Info */}
+                    {circle.created_by && (
+                      <div className="flex items-center gap-2 mb-2">
+                        <Avatar className="h-5 w-5 flex-shrink-0">
+                          <AvatarImage src={circle.created_by.profile_picture} alt={founderName} />
+                          <AvatarFallback className="text-[10px]">
+                            {founderName.charAt(0).toUpperCase()}
+                          </AvatarFallback>
+                        </Avatar>
+                        <p className="text-xs text-gray-500">
+                          Founded by {founderName}
+                        </p>
+                      </div>
+                    )}
+                    
+                    {/* Supporting nonprofits count */}
+                    <p className="text-xs text-gray-500">
+                      Supporting {circle.causes_count || circle.supported_causes_count || 0} nonprofits
+                    </p>
                   </Link>
-                </Link>
-              ))}
+                );
+              })}
             </div>
           )}
         </div>

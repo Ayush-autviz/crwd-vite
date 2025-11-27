@@ -8,7 +8,6 @@ import { EllipsisIcon, Trash2 } from "lucide-react";
 import type { PostDetail } from "@/lib/types";
 import { cn } from "@/lib/utils";
 import { Link } from "react-router-dom";
-import { IoArrowRedoOutline } from "react-icons/io5";
 import { SharePost } from "../ui/SharePost";
 import { Toast } from "../ui/toast";
 import {
@@ -28,11 +27,9 @@ import { useAuthStore } from "@/stores/store";
 export default function ProfileActivityCard({
   post,
   className,
-  showDelete = false,
   imageUrl,
 }: {
   post: PostDetail;
-  showDelete?: boolean;
   className?: string;
   imageUrl?: string;
 }) {
@@ -134,44 +131,63 @@ export default function ProfileActivityCard({
     };
   }, [showMenu]);
 
+  // Generate consistent color for org tag based on post ID
+  const tagColors = [
+    '#ec4899', // pink
+    '#3b82f6', // blue
+    '#10b981', // green
+    '#f59e0b', // amber
+    '#8b5cf6', // purple
+    '#ef4444', // red
+    '#06b6d4', // cyan
+    '#f97316', // orange
+    '#84cc16', // lime
+    '#a855f7', // violet
+    '#14b8a6', // teal
+    '#f43f5e', // rose
+    '#6366f1', // indigo
+  ];
+  const tagColorIndex = post.id ? (String(post.id).charCodeAt(String(post.id).length - 1) || 0) % tagColors.length : 0;
+  const tagBgColor = tagColors[tagColorIndex];
+
   return (
     <>
       <Card
         key={post.id}
         className={cn(
-          "overflow-hidden border-0 shadow-sm lg:max-w-[600px] ",
+          "bg-white rounded-xl shadow-sm border-0 mb-4 overflow-hidden",
+          "shadow-[0_2px_2px_rgba(89,89,89,0.15)]",
           className
         )}
       >
-        <CardContent className="">
-          {/* <Link to={`/posts/${post.id}`} className='w-full'> */}
+        <CardContent className="p-4">
           <div className="flex gap-3">
-            {/* <div
-              onClick={() =>
-                navigate(`/user-profile`, {
-                  state: { imageUrl: post.avatarUrl, name: post.username },
-                })
-              }
-              className="cursor-pointer"
-            > */}
             <Link to={isOwnPost ? `/profile` : `/user-profile/${post.userId}`}>
               <Avatar className="h-10 w-10 flex-shrink-0">
                 <AvatarImage
                   src={imageUrl ?? post.avatarUrl}
                   alt={post.username}
                 />
-                <AvatarFallback>{post.username.charAt(0)}</AvatarFallback>
+                <AvatarFallback>{post.username.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2)}</AvatarFallback>
               </Avatar>
             </Link>
-            <Link to={`/post/${post.id}`} className="w-full">
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center justify-between">
-                  <div className="">
-                    <span className="font-medium text-sm">{post.username}</span>
-                    <span className="text-xs text-muted-foreground ml-2">
-                      • {post.time}
-                    </span>
+            <div className="flex-1 min-w-0">
+              <div className="flex items-start justify-between mb-3">
+                <div className="flex-1 flex-wrap items-center">
+                  <span className="text-sm font-semibold text-gray-900">{post.username}</span>
+                  <div className="flex items-center gap-1">
+                    <span className="text-xs text-gray-500">{post.time}</span>
+                    {post.org && (
+                      <span 
+                        className="px-2.5 py-1 rounded-xl text-[11px] font-medium text-white"
+                        style={{ backgroundColor: tagBgColor }}
+                      >
+                        {post.org}
+                      </span>
+                    )}
                   </div>
+                </div>
+                {isOwnPost && (
                   <div className="relative" ref={menuRef}>
                     <button
                       onClick={(e) => {
@@ -181,25 +197,11 @@ export default function ProfileActivityCard({
                       }}
                       className="p-1 rounded-full hover:bg-gray-100 transition-colors"
                     >
-                      <EllipsisIcon className="h-4 w-4 text-muted-foreground cursor-pointer" />
+                      <EllipsisIcon className="h-5 w-5 text-gray-500 cursor-pointer" />
                     </button>
 
                     {showMenu && (
                       <div className="absolute right-0 top-8 bg-white border border-gray-200 rounded-md shadow-lg z-10 w-36">
-                        {showDelete && (
-                          <button
-                            onClick={(e) => {
-                              e.preventDefault();
-                              e.stopPropagation();
-                              setShowMenu(false);
-                              setShowDeleteConfirm(true);
-                            }}
-                            className="flex items-center gap-2 w-full px-3 py-2 text-sm text-red-600 hover:bg-gray-50 transition-colors"
-                          >
-                            <Trash2 className="h-4 w-4" />
-                            Delete Post
-                          </button>
-                        )}
                         <button
                           onClick={(e) => {
                             e.preventDefault();
@@ -212,21 +214,6 @@ export default function ProfileActivityCard({
                           <Share2 className="h-4 w-4" />
                           Share Post
                         </button>
-                        {/* <button
-                          onClick={(e) => {
-                            e.preventDefault();
-                            e.stopPropagation();
-                            setShowMenu(false);
-                            // Handle report post
-                            console.log("Report post");
-                          }}
-                          className="flex items-center gap-2 w-full px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
-                        >
-                          <Flag className="h-4 w-4" />
-                          Report Post
-                        </button> */}
-                        {/* delete post */}
-                        {isOwnPost && (
                         <button
                           onClick={(e) => {
                             e.preventDefault();
@@ -239,24 +226,14 @@ export default function ProfileActivityCard({
                           <Trash2 className="h-4 w-4" />
                           Delete Post
                         </button>
-                        )}
                       </div>
                     )}
                   </div>
-                </div>
-                {post.orgUrl ? (
-                  <Link to={`/groupcrwd/${post.orgUrl.toString()}`} onClick={(e) => e.stopPropagation()}>
-                    <div className="text-xs text-primary -mt-[2px] hover:underline cursor-pointer">
-                      {post.org}
-                    </div>
-                  </Link>
-                ) : (
-                  <div className="text-xs text-primary -mt-[2px]">
-                    {post.org}
-                  </div>
                 )}
+              </div>
 
-                <div className="text-sm mt-2 mb-3 whitespace-pre-line leading-snug">
+              <Link to={`/post/${post.id}`} className="block">
+                <div className="text-sm text-gray-900 leading-5 mb-3 whitespace-pre-line">
                   {post.text}
                 </div>
 
@@ -267,12 +244,12 @@ export default function ProfileActivityCard({
                     target="_blank"
                     rel="noopener noreferrer"
                     onClick={(e) => e.stopPropagation()}
-                    className="block w-full rounded-lg overflow-hidden mb-3 border border-gray-200 hover:border-gray-300 transition-colors cursor-pointer"
+                    className="block w-full rounded-lg overflow-hidden mb-3 border border-gray-200 bg-white hover:opacity-90 transition-opacity cursor-pointer"
                   >
                     <div className="flex flex-col md:flex-row bg-white">
                       {/* Preview Image */}
                       {post.previewDetails.image && (
-                        <div className="w-full md:w-48 h-48 md:h-auto flex-shrink-0">
+                        <div className="w-full md:w-48 h-[200px] md:h-auto flex-shrink-0">
                           <img
                             src={post.previewDetails.image}
                             alt={post.previewDetails.title || 'Link preview'}
@@ -281,75 +258,78 @@ export default function ProfileActivityCard({
                         </div>
                       )}
                       {/* Preview Content */}
-                      <div className="flex-1 p-4">
+                      <div className="flex-1 p-3">
                         {post.previewDetails.site_name && (
-                          <div className="text-xs text-muted-foreground mb-1 uppercase tracking-wide">
+                          <div className="text-[10px] text-gray-500 uppercase tracking-wide mb-1">
                             {post.previewDetails.site_name}
                           </div>
                         )}
                         {post.previewDetails.title && (
-                          <h3 className="text-sm font-semibold text-foreground mb-2 line-clamp-2">
+                          <h3 className="text-sm font-semibold text-gray-900 mb-1 line-clamp-2">
                             {post.previewDetails.title}
                           </h3>
                         )}
                         {post.previewDetails.description && (
-                          <p className="text-xs text-muted-foreground mb-2 line-clamp-2">
+                          <p className="text-xs text-gray-500 mb-1 line-clamp-2">
                             {post.previewDetails.description}
                           </p>
                         )}
-                        <div className="text-xs text-muted-foreground truncate">
-                          {post.previewDetails.domain}
-                        </div>
+                        {post.previewDetails.domain && (
+                          <div className="text-[11px] text-gray-500 truncate">
+                            {post.previewDetails.domain}
+                          </div>
+                        )}
                       </div>
                     </div>
                   </a>
                 ) : post.imageUrl ? (
-                  <div className="w-full h-48 rounded-lg overflow-hidden mb-3">
+                  <div className="w-full rounded-lg overflow-hidden mb-3 border border-gray-200">
                     <img
                       src={post.imageUrl}
                       alt="Post"
-                      className="w-full h-full object-cover"
+                      className="w-full h-[200px] object-cover"
                     />
                   </div>
                 ) : null}
 
-                <div className="flex items-center gap-4 text-muted-foreground mt-2">
+                {/* Footer */}
+                <div className="flex items-center justify-between pt-3 ">
+                  <div className="flex items-center gap-4">
+                    <button
+                      onClick={handleLikeClick}
+                      disabled={likeMutation.isPending || unlikeMutation.isPending}
+                      className="flex items-center gap-1.5 hover:opacity-80 transition-opacity disabled:opacity-50"
+                    >
+                      {likeMutation.isPending || unlikeMutation.isPending ? (
+                        <Loader2 className="w-[18px] h-[18px] animate-spin text-gray-500" />
+                      ) : (
+                        <Heart
+                          className={`w-[18px] h-[18px] ${
+                            isLiked ? "fill-[#ef4444] text-[#ef4444]" : "text-gray-500"
+                          }`}
+                        />
+                      )}
+                      <span className="text-sm text-gray-500">{likesCount}</span>
+                    </button>
+                    <button className="flex items-center gap-1.5 hover:opacity-80 transition-opacity">
+                      <MessageCircle className="w-[18px] h-[18px] text-gray-500" />
+                      <span className="text-sm text-gray-500">{post.comments}</span>
+                    </button>
+                  </div>
                   <button
-                    onClick={handleLikeClick}
-                    disabled={likeMutation.isPending || unlikeMutation.isPending}
-                    className="flex items-center gap-1 hover:text-red-500 transition-colors disabled:opacity-50"
-                  >
-                    {likeMutation.isPending || unlikeMutation.isPending ? (
-                      <Loader2 className="w-4 h-4 animate-spin" />
-                    ) : (
-                      <Heart
-                        className={`w-4 h-4 ${
-                          isLiked ? "fill-red-500 text-red-500" : ""
-                        }`}
-                      />
-                    )}
-                    <span className="text-xs">{likesCount}</span>
-                  </button>
-                  <button className="flex items-center gap-1 hover:text-primary transition-colors">
-                    <MessageCircle className="w-4 h-4" />
-                    <span className="text-xs">{post.comments}</span>
-                  </button>
-                  <button
-                    className="flex items-center gap-1 hover:text-primary transition-colors ml-auto"
+                    className="p-1 hover:opacity-80 transition-opacity"
                     onClick={(e) => {
                       e.preventDefault();
                       e.stopPropagation();
                       setShowShareModal(true);
                     }}
                   >
-                    <IoArrowRedoOutline className="w-4 h-4" />
-                    {/* <span className="text-xs">{post.shares}</span> */}
+                    <Share2 className="w-[18px] h-[18px] text-gray-500" />
                   </button>
                 </div>
-              </div>
-            </Link>
+              </Link>
+            </div>
           </div>
-          {/* </Link> */}
         </CardContent>
       </Card>
 

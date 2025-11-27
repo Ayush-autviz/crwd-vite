@@ -46,6 +46,7 @@ interface ManageDonationBoxProps {
   onRemove?: (id: string) => void;
   isActive?: boolean;
   onCancelSuccess?: () => void;
+  nextChargeDate?: string;
 }
 
 const ManageDonationBox: React.FC<ManageDonationBoxProps> = ({
@@ -55,6 +56,7 @@ const ManageDonationBox: React.FC<ManageDonationBoxProps> = ({
   onRemove,
   isActive = true,
   onCancelSuccess,
+  nextChargeDate,
 }) => {
   const queryClient = useQueryClient();
   const { user: currentUser } = useAuthStore();
@@ -393,6 +395,45 @@ const ManageDonationBox: React.FC<ManageDonationBoxProps> = ({
   // Get all selected collective IDs (existing + newly selected)
   const allSelectedCollectiveIds = [...existingCollectiveIds, ...selectedCollectives];
 
+  // Format next charge date
+  const formatNextChargeDate = (dateString?: string) => {
+    if (!dateString) return 'December 26, 2024'; // Fallback
+    
+    try {
+      const date = new Date(dateString);
+      const options: Intl.DateTimeFormatOptions = { 
+        year: 'numeric', 
+        month: 'long', 
+        day: 'numeric' 
+      };
+      return date.toLocaleDateString('en-US', options);
+    } catch (error) {
+      console.error('Error formatting date:', error);
+      return 'December 26, 2024'; // Fallback
+    }
+  };
+
+  // Get day of month from next charge date
+  const getChargeDay = (dateString?: string) => {
+    if (!dateString) return '26'; // Fallback
+    
+    try {
+      const date = new Date(dateString);
+      const day = date.getDate();
+      // Add ordinal suffix
+      if (day > 3 && day < 21) return `${day}th`;
+      switch (day % 10) {
+        case 1: return `${day}st`;
+        case 2: return `${day}nd`;
+        case 3: return `${day}rd`;
+        default: return `${day}th`;
+      }
+    } catch (error) {
+      console.error('Error getting charge day:', error);
+      return '26th'; // Fallback
+    }
+  };
+
   // Calculate if there are any items (existing not removed + newly selected)
   const remainingExistingCauseIdsForValidation = existingCauses
     .filter(c => !temporarilyRemovedCauses.includes(c.id))
@@ -543,7 +584,7 @@ const ManageDonationBox: React.FC<ManageDonationBoxProps> = ({
             </button>
           </div>
           <div className="text-white/80 text-sm mb-6">
-            on the 26th of every month
+            on the {getChargeDay(nextChargeDate)} of every month
           </div>
           <div className="flex w-full max-w-xs justify-between gap-2">
             <button
@@ -1083,7 +1124,7 @@ const ManageDonationBox: React.FC<ManageDonationBoxProps> = ({
               <div className="text-sm font-medium text-gray-900">
                 Next payment date
               </div>
-              <div className="text-xs text-gray-500">December 26, 2024</div>
+              <div className="text-xs text-gray-500">{formatNextChargeDate(nextChargeDate)}</div>
             </div>
             <div className="text-right">
               <div className="text-sm font-medium text-gray-900">

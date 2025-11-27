@@ -19,17 +19,35 @@ import { Link, useNavigate } from "react-router-dom";
 import { Toast } from "../components/ui/toast";
 import { useQuery, useMutation, useInfiniteQuery } from "@tanstack/react-query";
 // import { getProfile } from "@/services/api/auth";
-import { getPosts, getUserProfileById } from "@/services/api/social";
+import { 
+  getPosts, 
+  getUserProfileById, 
+  getSupportedCausesByUserId,
+  getUserFollowers,
+  getUserFollowing,
+  followUserById,
+  unfollowUserById,
+} from "@/services/api/social";
+import { getJoinCollective } from "@/services/api/crwd";
 import { logout } from "@/services/api/auth";
 import { useAuthStore } from "@/stores/store";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { queryClient } from "@/lib/react-query/client";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetDescription,
+} from "@/components/ui/sheet";
 
 
 export default function ProfilePage() {
   const [showMenu, setShowMenu] = useState(false);
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
+  const [showStatsSheet, setShowStatsSheet] = useState(false);
+  const [activeStatsTab, setActiveStatsTab] = useState<'causes' | 'following' | 'followers' | 'crwds'>('causes');
   const menuRef = useRef<HTMLDivElement>(null);
   const { user: currentUser, logout: logoutStore } = useAuthStore();
   const navigate = useNavigate();
@@ -94,6 +112,79 @@ export default function ProfilePage() {
     queryFn: () => getUserProfileById(currentUser?.id || ''),
     enabled: !!currentUser?.id,
   });
+
+  // Statistics bottom sheet queries
+  const targetUserId = profileData?.id?.toString() || currentUser?.id?.toString() || '';
+  
+  const { data: statsCausesData, isLoading: statsCausesLoading } = useQuery({
+    queryKey: ['supportedCauses', targetUserId],
+    queryFn: () => getSupportedCausesByUserId(targetUserId),
+    enabled: !!targetUserId && showStatsSheet && activeStatsTab === 'causes',
+  });
+
+  const { data: statsCollectivesData, isLoading: statsCollectivesLoading } = useQuery({
+    queryKey: ['joinCollective', targetUserId],
+    queryFn: () => getJoinCollective(targetUserId),
+    enabled: !!targetUserId && showStatsSheet && activeStatsTab === 'crwds',
+  });
+
+  const { data: statsFollowersData, isLoading: statsFollowersLoading } = useQuery({
+    queryKey: ['followers', targetUserId],
+    queryFn: () => getUserFollowers(targetUserId),
+    enabled: !!targetUserId && showStatsSheet && activeStatsTab === 'followers',
+  });
+
+  const { data: statsFollowingData, isLoading: statsFollowingLoading } = useQuery({
+    queryKey: ['following', targetUserId],
+    queryFn: () => getUserFollowing(targetUserId),
+    enabled: !!targetUserId && showStatsSheet && activeStatsTab === 'following',
+  });
+
+  // Follow/Unfollow mutations
+  const followUserMutation = useMutation({
+    mutationFn: followUserById,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['followers'] });
+      queryClient.invalidateQueries({ queryKey: ['following'] });
+      queryClient.invalidateQueries({ queryKey: ['userProfile', currentUser?.id] });
+      setToastMessage('Followed');
+      setShowToast(true);
+    },
+    onError: (error) => {
+      console.error('Error following user:', error);
+      setToastMessage('Error following user');
+      setShowToast(true);
+    },
+  });
+
+  const unfollowUserMutation = useMutation({
+    mutationFn: unfollowUserById,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['followers'] });
+      queryClient.invalidateQueries({ queryKey: ['following'] });
+      queryClient.invalidateQueries({ queryKey: ['userProfile', currentUser?.id] });
+      setToastMessage('Unfollowed');
+      setShowToast(true);
+    },
+    onError: (error) => {
+      console.error('Error unfollowing user:', error);
+      setToastMessage('Error unfollowing user');
+      setShowToast(true);
+    },
+  });
+
+  const handleFollowToggle = (userId: string, isFollowing: boolean) => {
+    if (isFollowing) {
+      unfollowUserMutation.mutate(userId);
+    } else {
+      followUserMutation.mutate(userId);
+    }
+  };
+
+  const handleStatPress = (tab: 'causes' | 'following' | 'followers' | 'crwds') => {
+    setActiveStatsTab(tab);
+    setShowStatsSheet(true);
+  };
 
 
 
@@ -355,6 +446,7 @@ export default function ProfilePage() {
               isLoadingCrwds={profileLoading}
               isLoadingFollowers={profileLoading}
               isLoadingFollowing={profileLoading}
+              onStatPress={handleStatPress}
             />
 
             {/* Divider */}
@@ -462,6 +554,284 @@ export default function ProfilePage() {
       <div className="">
         <Footer />
       </div>
+
+      {/* Statistics Bottom Sheet */}
+      <Sheet open={showStatsSheet} onOpenChange={setShowStatsSheet}>
+        <SheetContent side="bottom" className="h-[75vh] max-h-[75vh] p-0 flex flex-col">
+          {/* Drag Handle */}
+          <div className="flex justify-center pt-3 pb-2">
+            <div className="w-12 h-1.5 bg-gray-300 rounded-full" />
+          </div>
+
+          <div className="px-4 ">
+            <SheetHeader>
+              <SheetTitle className="text-2xl font-bold text-gray-900">
+                {activeStatsTab === 'causes' && 'Causes'}
+                {activeStatsTab === 'crwds' && 'Collectives'}
+                {activeStatsTab === 'followers' && 'Followers'}
+                {activeStatsTab === 'following' && 'Following'}
+              </SheetTitle>
+              <SheetDescription className="text-sm text-gray-500">
+                {activeStatsTab === 'causes' && 'Causes you support'}
+                {activeStatsTab === 'crwds' && "Collectives you're part of"}
+                {activeStatsTab === 'followers' && 'People following you'}
+                {activeStatsTab === 'following' && 'People you follow'}
+              </SheetDescription>
+            </SheetHeader>
+          </div>
+
+          {/* Tabs */}
+          <div className="px-4  mb-2">
+            <div className="flex gap-0.5 bg-gray-100 rounded-2xl p-1">
+              {[
+                { label: 'Causes', value: 'causes' },
+                { label: 'Collectives', value: 'crwds' },
+                { label: 'Followers', value: 'followers' },
+                { label: 'Following', value: 'following' },
+              ].map((tab) => (
+                <button
+                  key={tab.value}
+                  onClick={() => setActiveStatsTab(tab.value as typeof activeStatsTab)}
+                  className={`flex-1 px-3 py-1.5 rounded-xl text-sm font-semibold transition-colors ${
+                    activeStatsTab === tab.value
+                      ? 'bg-white text-gray-900'
+                      : 'text-gray-600'
+                  }`}
+                >
+                  {tab.label}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Content */}
+          <div className="flex-1 overflow-y-auto px-4 pb-6">
+            {activeStatsTab === 'causes' && (
+              <>
+                {statsCausesLoading ? (
+                  <div className="flex flex-col items-center justify-center py-10">
+                    <Loader2 className="w-6 h-6 animate-spin text-blue-600" />
+                    <p className="text-sm text-gray-600 mt-2.5">Loading causes...</p>
+                  </div>
+                ) : statsCausesData?.results?.length > 0 ? (
+                  <div className="space-y-0">
+                    {statsCausesData.results.map((item: any, index: number) => {
+                      const cause = item.cause || item;
+                      const causeColors = [
+                        '#f97316', '#ec4899', '#3b82f6', '#10b981', '#f59e0b', '#8b5cf6',
+                      ];
+                      const colorIndex = (cause.name?.charCodeAt(0) || 0) % causeColors.length;
+                      const causeBgColor = causeColors[colorIndex];
+                      
+                      return (
+                        <Link
+                          key={cause.id || index}
+                          to={`/cause/${cause.id}`}
+                          onClick={() => setShowStatsSheet(false)}
+                          className="flex items-center gap-3 py-4 border-b border-gray-100 hover:bg-gray-50 transition-colors"
+                        >
+                          <div
+                            className="w-12 h-12 rounded-lg flex items-center justify-center flex-shrink-0"
+                            style={{ backgroundColor: causeBgColor }}
+                          >
+                            <span className="text-xl font-bold text-white">
+                              {cause.name?.charAt(0)?.toUpperCase() || 'N'}
+                            </span>
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <p className="text-sm font-semibold text-gray-900 mb-1">
+                              {cause.name || 'Unknown Cause'}
+                            </p>
+                            <p className="text-xs text-gray-500 line-clamp-2">
+                              {cause.mission || 'Supporting this cause'}
+                            </p>
+                          </div>
+                        </Link>
+                      );
+                    })}
+                  </div>
+                ) : (
+                  <div className="flex items-center justify-center py-10">
+                    <p className="text-sm text-gray-500">No causes found</p>
+                  </div>
+                )}
+              </>
+            )}
+
+            {activeStatsTab === 'crwds' && (
+              <>
+                {statsCollectivesLoading ? (
+                  <div className="flex flex-col items-center justify-center py-10">
+                    <Loader2 className="w-6 h-6 animate-spin text-blue-600" />
+                    <p className="text-sm text-gray-600 mt-2.5">Loading collectives...</p>
+                  </div>
+                ) : statsCollectivesData?.data?.length > 0 ? (
+                  <div className="space-y-0">
+                    {statsCollectivesData.data.map((item: any, index: number) => {
+                      const collective = item.collective || item;
+                      return (
+                        <div
+                          key={collective.id || index}
+                          className="flex items-center justify-between py-3 border-b border-gray-100"
+                        >
+                          <div className="flex items-center gap-3 flex-1 min-w-0">
+                            <Avatar className="w-10 h-10 flex-shrink-0">
+                              <AvatarImage src={collective.created_by?.profile_picture || collective.avatar || collective.image} />
+                              <AvatarFallback className="bg-green-100 text-green-600">
+                                {collective.name?.charAt(0)?.toUpperCase() || 'N'}
+                              </AvatarFallback>
+                            </Avatar>
+                            <div className="flex-1 min-w-0">
+                              <div className="bg-green-100 text-green-600 px-2 py-0.5 rounded text-[10px] font-semibold w-fit mb-1">
+                                Collective
+                              </div>
+                              <p className="text-sm font-medium text-gray-900 mb-1">
+                                {collective.name || 'Unknown Collective'}
+                              </p>
+                              <p className="text-xs text-gray-500 line-clamp-2">
+                                {collective.description || ''}
+                              </p>
+                            </div>
+                          </div>
+                          <Button
+                            onClick={() => {
+                              setShowStatsSheet(false);
+                              navigate(`/groupcrwd/${collective.id}`);
+                            }}
+                            className="bg-blue-600 hover:bg-blue-700 text-white text-xs px-4 py-2 rounded-lg"
+                          >
+                            View Details
+                          </Button>
+                        </div>
+                      );
+                    })}
+                  </div>
+                ) : (
+                  <div className="flex items-center justify-center py-10">
+                    <p className="text-sm text-gray-500">No collectives found</p>
+                  </div>
+                )}
+              </>
+            )}
+
+            {activeStatsTab === 'followers' && (
+              <>
+                {statsFollowersLoading ? (
+                  <div className="flex flex-col items-center justify-center py-10">
+                    <Loader2 className="w-6 h-6 animate-spin text-blue-600" />
+                    <p className="text-sm text-gray-600 mt-2.5">Loading followers...</p>
+                  </div>
+                ) : statsFollowersData?.followers?.length > 0 ? (
+                  <div className="space-y-0">
+                    {statsFollowersData.followers.map((item: any, index: number) => {
+                      const userData = item.follower || item.user || item;
+                      const isFollowing = item.is_following ?? userData.is_following ?? false;
+                      return (
+                        <div
+                          key={userData.id || index}
+                          className="flex items-center justify-between py-3 border-b border-gray-100"
+                        >
+                          <div className="flex items-center gap-3 flex-1 min-w-0">
+                            <Avatar className="w-10 h-10 flex-shrink-0">
+                              <AvatarImage src={userData.profile_picture || userData.avatar} />
+                              <AvatarFallback>
+                                {userData.first_name && userData.last_name
+                                  ? `${userData.first_name[0]}${userData.last_name[0]}`
+                                  : (userData.name || 'U').charAt(0)}
+                              </AvatarFallback>
+                            </Avatar>
+                            <div className="flex-1 min-w-0">
+                              <p className="text-sm font-medium text-gray-900">
+                                {userData.first_name && userData.last_name
+                                  ? `${userData.first_name} ${userData.last_name}`
+                                  : userData.first_name || userData.name || 'Unknown User'}
+                              </p>
+                              <p className="text-xs text-gray-500">@{userData.username || 'unknown'}</p>
+                            </div>
+                          </div>
+                          {userData.id !== currentUser?.id && (
+                            <Button
+                              onClick={() => handleFollowToggle(userData.id.toString(), isFollowing)}
+                              disabled={followUserMutation.isPending || unfollowUserMutation.isPending}
+                              className={`text-xs px-4 py-2 rounded-full ${
+                                isFollowing
+                                  ? 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                                  : 'bg-blue-600 text-white hover:bg-blue-700'
+                              }`}
+                            >
+                              {isFollowing ? 'Following' : 'Follow'}
+                            </Button>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+                ) : (
+                  <div className="flex items-center justify-center py-10">
+                    <p className="text-sm text-gray-500">No followers found</p>
+                  </div>
+                )}
+              </>
+            )}
+
+            {activeStatsTab === 'following' && (
+              <>
+                {statsFollowingLoading ? (
+                  <div className="flex flex-col items-center justify-center py-10">
+                    <Loader2 className="w-6 h-6 animate-spin text-blue-600" />
+                    <p className="text-sm text-gray-600 mt-2.5">Loading following...</p>
+                  </div>
+                ) : statsFollowingData?.following?.length > 0 ? (
+                  <div className="space-y-0">
+                    {statsFollowingData.following.map((item: any, index: number) => {
+                      const userData = item.followee || item.following || item.user || item;
+                      const isFollowing = true; // Always true for following tab
+                      return (
+                        <div
+                          key={userData.id || index}
+                          className="flex items-center justify-between py-3 border-b border-gray-100"
+                        >
+                          <div className="flex items-center gap-3 flex-1 min-w-0">
+                            <Avatar className="w-10 h-10 flex-shrink-0">
+                              <AvatarImage src={userData.profile_picture || userData.avatar} />
+                              <AvatarFallback>
+                                {userData.first_name && userData.last_name
+                                  ? `${userData.first_name[0]}${userData.last_name[0]}`
+                                  : (userData.name || 'U').charAt(0)}
+                              </AvatarFallback>
+                            </Avatar>
+                            <div className="flex-1 min-w-0">
+                              <p className="text-sm font-medium text-gray-900">
+                                {userData.first_name && userData.last_name
+                                  ? `${userData.first_name} ${userData.last_name}`
+                                  : userData.first_name || userData.name || 'Unknown User'}
+                              </p>
+                              <p className="text-xs text-gray-500">@{userData.username || 'unknown'}</p>
+                            </div>
+                          </div>
+                          {userData.id !== currentUser?.id && (
+                            <Button
+                              onClick={() => handleFollowToggle(userData.id.toString(), isFollowing)}
+                              disabled={followUserMutation.isPending || unfollowUserMutation.isPending}
+                              className="bg-gray-100 text-gray-600 hover:bg-gray-200 text-xs px-4 py-2 rounded-full"
+                            >
+                              Following
+                            </Button>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+                ) : (
+                  <div className="flex items-center justify-center py-10">
+                    <p className="text-sm text-gray-500">No following found</p>
+                  </div>
+                )}
+              </>
+            )}
+          </div>
+        </SheetContent>
+      </Sheet>
 
       {/* Toast notification */}
       <Toast

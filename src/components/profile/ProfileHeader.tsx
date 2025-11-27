@@ -84,7 +84,7 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
             <MapPin className="w-4 h-4" />
             {location}
           </span>
-          <a
+          {/* <a
             href={link}
             className="text-blue-500 hover:underline"
             target="_blank"
@@ -92,7 +92,7 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
           >
             {link}
           </a>
-          <span className="text-gray-500 text-xs">Active since {new Date(activeSince).getFullYear()}</span>
+          <span className="text-gray-500 text-xs">Active since {new Date(activeSince).getFullYear()}</span> */}
         </div>
       </div>
     </div>
