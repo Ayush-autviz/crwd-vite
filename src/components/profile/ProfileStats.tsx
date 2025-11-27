@@ -1,6 +1,7 @@
 "use client";
 import React from "react";
 import { useNavigate } from "react-router-dom";
+import { Loader2 } from "lucide-react";
 
 interface ProfileStatsProps {
   causes: number;
@@ -8,6 +9,11 @@ interface ProfileStatsProps {
   followers: number;
   following: number;
   profileId: string; // Pass the profile id as a prop
+  isLoadingCauses?: boolean;
+  isLoadingCrwds?: boolean;
+  isLoadingFollowers?: boolean;
+  isLoadingFollowing?: boolean;
+  onStatPress?: (tab: 'causes' | 'following' | 'followers' | 'crwds') => void;
 }
 
 const ProfileStats: React.FC<ProfileStatsProps> = ({
@@ -16,43 +22,79 @@ const ProfileStats: React.FC<ProfileStatsProps> = ({
   followers,
   following,
   profileId,
+  isLoadingCauses = false,
+  isLoadingCrwds = false,
+  isLoadingFollowers = false,
+  isLoadingFollowing = false,
+  onStatPress,
 }) => {
   const navigate = useNavigate();
 
-  const goToStats = (activeTab: string) => {
-    navigate(`/profile/statistics?userId=${profileId}&tab=${activeTab}`);
+  const handleStatsPress = (tab: 'causes' | 'following' | 'followers' | 'crwds') => {
+    if (onStatPress) {
+      onStatPress(tab);
+    } else {
+      navigate(`/profile/statistics?userId=${profileId}&tab=${tab}`);
+    }
   };
 
   return (
-    <div className="flex justify-between text-center divide-x-2 divide-gray-200  rounded-md">
-      <div
-        className="flex-1 cursor-pointer hover:bg-gray-50 py-1 transition-colors rounded-l-md flex flex-col items-center"
-        onClick={() => goToStats("causes")}
+    <div className="flex flex-row items-center justify-center py-4 mt-6">
+      <button
+        className="flex-1 flex items-center justify-center cursor-pointer"
+        onClick={() => handleStatsPress("causes")}
       >
-        <div className="font-bold text-lg">{causes ?? 0}</div>
-        <div className="text-xs text-gray-500 flex items-center">Causes</div>
-      </div>
-      <div
-        className="flex-1 cursor-pointer hover:bg-gray-50 py-1 transition-colors flex flex-col items-center"
-        onClick={() => goToStats("crwds")}
+        {isLoadingCauses ? (
+          <Loader2 className="w-3 h-3 sm:w-4 sm:h-4 animate-spin text-blue-600" />
+        ) : (
+          <div className="flex flex-row items-center gap-0.5 sm:gap-1">
+            <span className="text-xs sm:text-sm font-semibold text-[#595959] text-center">{causes ?? 0}</span>
+            <span className="text-xs sm:text-sm text-[#595959] text-center font-semibold">Causes</span>
+          </div>
+        )}
+      </button>
+      <div className="w-0.5 h-0.5 sm:w-1 sm:h-1 bg-[#595959] mx-1 sm:mx-2 rounded-full" />
+      <button
+        className="flex-1 flex items-center justify-center cursor-pointer"
+        onClick={() => handleStatsPress("crwds")}
       >
-        <div className="font-bold text-lg">{crwds ?? 0}</div>
-        <div className="text-xs text-gray-500 flex items-center">Collectives</div>
-      </div>
-      <div
-        className="flex-1 cursor-pointer hover:bg-gray-50 py-1 transition-colors flex flex-col items-center"
-        onClick={() => goToStats("followers")}
+        {isLoadingCrwds ? (
+          <Loader2 className="w-3 h-3 sm:w-4 sm:h-4 animate-spin text-blue-600" />
+        ) : (
+          <div className="flex flex-row items-center gap-0.5 sm:gap-1">
+            <span className="text-xs sm:text-sm font-semibold text-[#595959] text-center">{crwds ?? 0}</span>
+            <span className="text-xs sm:text-sm text-[#595959] text-center font-semibold">Collectives</span>
+          </div>
+        )}
+      </button>
+      <div className="w-0.5 h-0.5 sm:w-1 sm:h-1 bg-[#595959] mx-1 sm:mx-2 rounded-full" />
+      <button
+        className="flex-1 flex items-center justify-center cursor-pointer"
+        onClick={() => handleStatsPress("followers")}
       >
-        <div className="font-bold text-lg">{followers ?? 0}</div>
-        <div className="text-xs text-gray-500 flex items-center">Followers</div>
-      </div>
-      <div
-        className="flex-1 cursor-pointer hover:bg-gray-50 py-1 transition-colors rounded-r-md flex flex-col items-center"
-        onClick={() => goToStats("following")}
+        {isLoadingFollowers ? (
+          <Loader2 className="w-3 h-3 sm:w-4 sm:h-4 animate-spin text-blue-600" />
+        ) : (
+          <div className="flex flex-row items-center gap-0.5 sm:gap-1">
+            <span className="text-xs sm:text-sm font-semibold text-[#595959] text-center">{followers ?? 0}</span>
+            <span className="text-xs sm:text-sm text-[#595959] text-center font-semibold">Followers</span>
+          </div>
+        )}
+      </button>
+      <div className="w-0.5 h-0.5 sm:w-1 sm:h-1 bg-[#595959] mx-1 sm:mx-2 rounded-full" />
+      <button
+        className="flex-1 flex items-center justify-center cursor-pointer"
+        onClick={() => handleStatsPress("following")}
       >
-        <div className="font-bold text-lg">{following ?? 0}</div>
-        <div className="text-xs text-gray-500 flex items-center">Following</div>
-      </div>
+        {isLoadingFollowing ? (
+          <Loader2 className="w-3 h-3 sm:w-4 sm:h-4 animate-spin text-blue-600" />
+        ) : (
+          <div className="flex flex-row items-center gap-0.5 sm:gap-1">
+            <span className="text-xs sm:text-sm font-semibold text-[#595959] text-center">{following ?? 0}</span>
+            <span className="text-xs sm:text-sm text-[#595959] text-center font-semibold">Following</span>
+          </div>
+        )}
+      </button>
     </div>
   );
 };

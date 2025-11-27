@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button";
 import {
   Ellipsis,
   Share,
+  Share2,
   Loader2,
   LogOut,
 } from "lucide-react";
@@ -62,6 +63,20 @@ export default function ProfilePage() {
     logoutStore();
     queryClient.clear()
     navigate('/', { replace: true });
+  };
+
+  const handleShareProfile = async () => {
+    try {
+      const profileUrl = `${window.location.origin}/user-profile/${currentUser?.id}`;
+      await navigator.clipboard.writeText(profileUrl);
+      setToastMessage("Profile link copied to clipboard");
+      setShowToast(true);
+      setShowMenu(false);
+    } catch (err) {
+      console.error("Failed to copy profile link:", err);
+      setToastMessage("Failed to copy profile link");
+      setShowToast(true);
+    }
   };
 
   // // Fetch profile data using React Query
@@ -252,8 +267,7 @@ export default function ProfilePage() {
               <button
                 onClick={() => {
                   setShowMenu(false);
-                  // Handle share profile
-                  console.log("Share profile");
+                  handleShareProfile();
                 }}
                 className="flex items-center gap-2 w-full px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
               >
@@ -309,68 +323,117 @@ export default function ProfilePage() {
               link={profileData?.username || ''}
               activeSince={activeSince}
             />
-            {/* <ProfileBio bio="This is a bio about Mya and how she likes to help others and give back to her community. She also loves ice cream." /> */}
-            {/* <div className="flex justify-center md:justify-start gap-4">
-              <Button className="bg-blue-500 text-white px-10">Follow</Button>
-              <Button variant="outline" className=" px-10">
-                <Share className="w-4 h-4" />
-                Share Profile
+            
+            {/* Edit Profile and Share Profile buttons */}
+            <div className="flex items-center justify-center gap-4 mt-4">
+              <Button
+                onClick={() => navigate("/profile/edit")}
+                variant="outline"
+                className="px-4 py-2.5 border border-gray-300 rounded-lg min-w-[120px]"
+              >
+                <span className="text-sm font-semibold text-gray-700">Edit Profile</span>
               </Button>
-            </div> */}
+              <Button
+                onClick={handleShareProfile}
+                variant="outline"
+                className="px-4 py-2.5 border border-gray-300 rounded-lg min-w-[120px]"
+              >
+                <div className="flex items-center gap-1">
+                  <Share2 className="w-4 h-4 text-gray-700" />
+                  <span className="text-sm font-semibold text-gray-700">Share Profile</span>
+                </div>
+              </Button>
+            </div>
+
             <ProfileStats
               profileId={profileData?.id?.toString() || ''}
               causes={profileData?.supported_causes_count || 0}
               crwds={profileData?.joined_collectives_count || 0}
               followers={profileData?.followers_count || 0}
               following={profileData?.following_count || 0}
+              isLoadingCauses={profileLoading}
+              isLoadingCrwds={profileLoading}
+              isLoadingFollowers={profileLoading}
+              isLoadingFollowing={profileLoading}
             />
-            {/* <ProfileInterests
-              interests={[
-                "Environment",
-                "Food Insecurity",
-                "Education",
-                "Healthcare",
-              ]}
-            /> */}
-            {/* <div className="py-4">
-              <ProfileRecentDonations />
-            </div> */}
+
+            {/* Divider */}
+            <div className="h-px bg-gray-200 mx-2 mt-2"></div>
+
+            {/* Supports Section */}
             {profileData?.recently_supported_causes && profileData.recently_supported_causes.length > 0 && (
               <>
-                <div className="flex justify-between items-center px-4">
-                  <h2 className="text-lg font-semibold">Recently Supported</h2>
-                  {/* <Link
-                    to="/interests"
-                    className="text-sm text-blue-500 underline flex items-center gap-1"
-                  >
-                    More
-                    <ChevronRight className="w-4 h-4" />
-                  </Link> */}
-                </div>
-
-                <div className="overflow-x-auto pb-2 -mx-4 px-4">
-                  <div className="flex items-center gap-4">
-                    {profileData.recently_supported_causes.map((cause: any, i: number) => (
-                      <Link 
-                        key={cause.id || i} 
-                        to={`/cause/${cause.id}`}
-                        className="flex flex-col items-center flex-shrink-0 w-20"
-                      >
-                        <Avatar className="w-14 h-14 rounded-md">
-                          <AvatarImage src={cause.logo} alt={cause.name} />
-                          <AvatarFallback className="bg-blue-100 text-blue-600 text-sm font-semibold rounded-md">
-                            {cause.name?.charAt(0)?.toUpperCase() || 'N'}
-                          </AvatarFallback>
-                        </Avatar>
-                        <p className="text-xs font-semibold mt-1 text-gray-500 text-center line-clamp-2 w-full">
-                          {cause.name}
-                        </p>
-                      </Link>
-                    ))}
+                <div className="mt-6">
+                  <div className="flex justify-between items-center mb-4">
+                    <h2 className="text-lg font-bold text-gray-900">Supports</h2>
                   </div>
+
+                  {/* Grid Layout - Responsive: 2 cols mobile, 3 cols tablet, 4 cols desktop */}
+                  <div className="flex flex-wrap -mx-1.5 sm:-mx-2">
+                    {profileData.recently_supported_causes.slice(0, 6).map((cause: any, i: number) => {
+                      // Generate consistent color based on cause name
+                      const colors = [
+                        '#f97316', // orange
+                        '#ec4899', // pink
+                        '#3b82f6', // blue
+                        '#ef4444', // red
+                        '#10b981', // green
+                        '#f97316', // orange (repeat)
+                      ];
+                      const bgColor = colors[i % colors.length];
+                      
+                      return (
+                        <Link 
+                          key={cause.id || i} 
+                          to={`/cause/${cause.id}`}
+                          className="w-1/2 sm:w-1/3 lg:w-1/4 px-1.5 sm:px-2 mb-3"
+                        >
+                          <div className="bg-white border border-gray-200 rounded-lg p-2 sm:p-3 flex flex-col items-center justify-between h-[100px] sm:h-[120px]">
+                            {cause.logo ? (
+                              <Avatar className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg mb-2 flex-shrink-0">
+                                <AvatarImage src={cause.logo} alt={cause.name} />
+                                <AvatarFallback className="bg-blue-100 text-blue-600 text-xs sm:text-sm font-semibold rounded-lg">
+                                  {cause.name?.charAt(0)?.toUpperCase() || 'N'}
+                                </AvatarFallback>
+                              </Avatar>
+                            ) : (
+                              <div 
+                                className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg mb-2 flex items-center justify-center flex-shrink-0"
+                                style={{ backgroundColor: bgColor }}
+                              >
+                                <span className="text-lg sm:text-xl font-semibold text-white">
+                                  {cause.name?.charAt(0)?.toUpperCase() || 'N'}
+                                </span>
+                              </div>
+                            )}
+                            <p className="text-xs font-semibold text-gray-900 text-center line-clamp-2 flex-grow flex items-center justify-center">
+                              {cause.name}
+                            </p>
+                          </div>
+                        </Link>
+                      );
+                    })}
+                  </div>
+
+                  {/* Show more causes text and link */}
+                  {profileData.recently_supported_causes.length > 6 && (
+                    <div className="flex flex-col items-center gap-2 mt-4">
+                      <p className="text-sm text-gray-500">
+                        + {profileData.recently_supported_causes.length - 6} more causes
+                      </p>
+                      <Link to="/interests">
+                        <span className="text-sm text-blue-600 font-medium">
+                          See all {profileData.recently_supported_causes.length} →
+                        </span>
+                      </Link>
+                    </div>
+                  )}
                 </div>
               </>
             )}
+
+            {/* Divider */}
+            <div className="h-px bg-gray-200 mx-2 mt-4"></div>
 
             <ProfileBio bio={profileData?.bio} />
             <div className="py-4">
