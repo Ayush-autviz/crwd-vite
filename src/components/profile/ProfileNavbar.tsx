@@ -94,6 +94,12 @@ const {token} = useAuthStore();
 
           {/* Action buttons on the right */}
           <div className="flex items-center gap-2.5">
+            <button
+              onClick={() => navigate("/waitlist")}
+              className="px-3 py-1.5 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors"
+            >
+              Waitlist
+            </button>
             {token?.access_token && (
               <>
                 <button
@@ -128,7 +134,7 @@ const {token} = useAuthStore();
       )}
 
       {showDesktopMenu && title === "Home" && (
-        <header className="w-full flex items-center justify-between px-6 py-4 border-b-2 border-gray-200 bg-gray-50 sticky top-0 z-10 hidden md:flex">
+        <header className="w-full items-center justify-between px-6 py-4 border-b-2 border-gray-200 bg-gray-50 sticky top-0 z-10 hidden md:flex">
           {/* Logo on the left */}
           <div className="flex-shrink-0">
             <Link to="/">
@@ -144,6 +150,12 @@ const {token} = useAuthStore();
 
           {/* Action buttons on the right */}
           <div className="flex items-center gap-2.5">
+            <button
+              onClick={() => navigate("/waitlist")}
+              className="px-3 py-1.5 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors"
+            >
+              Waitlist
+            </button>
             {token?.access_token && (
               <>
                 <button

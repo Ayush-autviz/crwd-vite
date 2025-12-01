@@ -62,6 +62,7 @@ import GoogleCallback from "./pages/auth/GoogleCallback";
 import Circles from "./pages/Circles";
 import Articles from "./pages/Articles";
 import PaymentResult from "./pages/PaymentResult";
+import Waitlist from "./pages/Waitlist";
 
 // ScrollToTop component that works for all pages
 function ScrollToTop() {
@@ -147,6 +148,7 @@ function App() {
                 <Layout>
                   <Routes>
                     <Route path="/" element={<Home />} />
+                    <Route path="/waitlist" element={<Waitlist />} />
                     <Route path="/search" element={<Search />} />
                     <Route path="/search2" element={<Search2 />} />
                     <Route path="/donation" element={<Donation />} />
