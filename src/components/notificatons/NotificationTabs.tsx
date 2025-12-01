@@ -13,7 +13,7 @@ export default function NotificationTabs() {
   const location = useLocation();
   const { user: currentUser } = useAuthStore();
   const [activeTab, setActiveTab] = useState<"notifications" | "community">(
-    location.state?.tab || "community"
+    location.state?.tab || "notifications"
   );
 
   // Fetch notifications from API
@@ -64,7 +64,7 @@ export default function NotificationTabs() {
   return (
     <div className="w-full">
       {/* Tab Headers */}
-      <div className="flex border-b border-gray-200">
+      {/* <div className="flex border-b border-gray-200">
         <button
           onClick={() => setActiveTab("community")}
           className={`flex-1 px-6 py-4 text-sm font-medium transition-colors ${
@@ -84,13 +84,9 @@ export default function NotificationTabs() {
               : "text-gray-500 hover:text-gray-700"
           }`}
         >
-          {/* Red dot notification indicator - show only if there are unread personal notifications */}
-          {/* {hasUnreadNotifications && (
-            <div className="w-2 h-2 bg-red-500 rounded-full"></div>
-          )} */}
           Notifications
         </button>
-      </div>
+      </div> */}
 
       {/* Tab Content */}
       <div className="w-full">

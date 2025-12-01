@@ -25,6 +25,7 @@ import Profile from "./pages/Profile";
 import ProfileById from "./pages/ProfileById";
 import ProfileStatistics from "./pages/ProfileStatistics";
 import Settings from "./pages/Settings";
+import NewSettings from "./pages/NewSettings";
 import SettingsEmail from "./pages/settings/Email";
 import SettingsPassword from "./pages/settings/Password";
 import SettingsPayments from "./pages/settings/Payments";
@@ -162,7 +163,7 @@ function App() {
                       path="/profile/statistics"
                       element={<ProfileStatistics />}
                     />
-                    <Route path="/settings" element={<Settings />} />
+                    <Route path="/settings" element={<NewSettings />} />
                     <Route path="/settings/email" element={<SettingsEmail />} />
                     <Route
                       path="/settings/password"

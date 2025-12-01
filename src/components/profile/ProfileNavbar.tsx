@@ -1,5 +1,5 @@
 import { Button } from "../ui/button";
-import { ChevronLeft } from "lucide-react";
+import { ChevronLeft, Bell, Settings } from "lucide-react";
 import HamburgerMenu from "../hamburgerMenu/HamburgerMenu";
 import { cn } from "@/lib/utils";
 import { Link, useNavigate } from "react-router-dom";
@@ -78,129 +78,101 @@ const {token} = useAuthStore();
       )}
 
       {showMobileMenu && title === "Home" && (
-        <header className="w-full flex items-center justify-between  px-2 py-4 border-b-2 border-gray-200 bg-gray-50 sticky top-0 z-10 md:hidden">
+        <header className="w-full flex items-center justify-between px-2.5 py-4 border-b-2 border-gray-200 bg-gray-50 sticky top-0 z-10 md:hidden">
           {/* Logo on the left */}
           <div className="flex-shrink-0">
             <Link to="/">
               <img
                 src="/logo3.png"
                 width={70}
-                height={70}
+                height={60}
                 alt="CRWD Logo"
                 className="object-contain"
               />
             </Link>
           </div>
 
-          {/* Search bar in the center */}
-          <div className="flex-1 mx-2">
-            <div className="relative">
-              <input
-                type="text"
-                placeholder="Find nonprofits"
-                className="w-full bg-gray-100 rounded-lg px-4 py-2 text-xs cursor-pointer"
-                onClick={() => navigate("/search")}
-                readOnly
-              />
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="20"
-                height="20"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                className="absolute right-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-500 cursor-pointer"
-                onClick={() => navigate("/search")}
-              >
-                <circle cx="11" cy="11" r="8" />
-                <path d="m21 21-4.3-4.3" />
-              </svg>
-            </div>
-          </div>
-
           {/* Action buttons on the right */}
-          <div className="flex items-center gap-2">
-            {!token?.access_token && (
-            <Link
-              to="/onboarding"
-              className="text-white bg-red-600 px-2 text-sm py-1 rounded-md"
-            >
-              Log In
-            </Link>
+          <div className="flex items-center gap-2.5">
+            {token?.access_token && (
+              <>
+                <button
+                  onClick={() => navigate("/notifications")}
+                  className="relative p-1.5 bg-red-50 rounded-full"
+                >
+                  <Bell size={20} className="text-gray-900" />
+                  {unreadCount?.data > 0 && (
+                    <div className="absolute -top-0.5 -right-1.5 bg-red-500 rounded-lg min-w-[16px] h-4 flex items-center justify-center px-1">
+                      <span className="text-white text-[10px] font-bold">{unreadCount?.data}</span>
+                    </div>
+                  )}
+                </button>
+                <button
+                  onClick={() => navigate("/settings")}
+                  className="p-1"
+                >
+                  <Settings size={24} className="text-gray-900" />
+                </button>
+              </>
             )}
-            <div className="relative">
-              <HamburgerMenu />
-              {token?.access_token && unreadCount?.data > 0 && (
-                <div className="absolute z-10 top-0 -right-1 w-2 h-2 bg-red-500 rounded-full"></div>
-              )}
-            </div>
+            {!token?.access_token && (
+              <Link
+                to="/onboarding"
+                className="text-white bg-red-600 px-2 text-sm py-1 rounded-md"
+              >
+                Log In
+              </Link>
+            )}
           </div>
         </header>
       )}
 
       {showDesktopMenu && title === "Home" && (
-        <header className="w-full items-center justify-between px-6 py-4 border-b-2 border-gray-200 bg-gray-50 sticky top-0 z-10 hidden md:flex">
+        <header className="w-full flex items-center justify-between px-6 py-4 border-b-2 border-gray-200 bg-gray-50 sticky top-0 z-10 hidden md:flex">
           {/* Logo on the left */}
           <div className="flex-shrink-0">
             <Link to="/">
               <img
                 src="/logo3.png"
                 width={70}
-                height={70}
+                height={60}
                 alt="CRWD Logo"
                 className="object-contain"
               />
             </Link>
           </div>
 
-          {/* Search bar in the center */}
-          <div className="flex-1 mx-2">
-            <div className="relative">
-              <input
-                type="text"
-                placeholder="Find nonprofits"
-                className="w-full bg-gray-100 rounded-lg px-4 py-2 text-sm cursor-pointer"
-                onClick={() => navigate("/search")}
-                readOnly
-              />
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="20"
-                height="20"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                className="absolute right-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-500 cursor-pointer"
-                onClick={() => navigate("/search")}
-              >
-                <circle cx="11" cy="11" r="8" />
-                <path d="m21 21-4.3-4.3" />
-              </svg>
-            </div>
-          </div>
-
           {/* Action buttons on the right */}
-          <div className="flex items-center gap-2">
-            {!token?.access_token && (
-            <Link
-              to="/onboarding"
-              className="text-white bg-red-600 px-2 text-sm py-1 rounded-md"
-            >
-              Log In
-            </Link>
+          <div className="flex items-center gap-2.5">
+            {token?.access_token && (
+              <>
+                <button
+                  onClick={() => navigate("/notifications")}
+                  className="relative p-1.5 bg-red-50 rounded-full"
+                >
+                  <Bell size={20} className="text-gray-900" />
+                  {unreadCount?.data > 0 && (
+                    <div className="absolute -top-0.5 -right-1.5 bg-red-500 rounded-lg min-w-[16px] h-4 flex items-center justify-center px-1">
+                      <span className="text-white text-[10px] font-bold">{unreadCount?.data}</span>
+                    </div>
+                  )}
+                </button>
+                <button
+                  onClick={() => navigate("/settings")}
+                  className="p-1"
+                >
+                  <Settings size={24} className="text-gray-900" />
+                </button>
+              </>
             )}
-            <div className="relative">
-              <HamburgerMenu />
-              {token?.access_token && unreadCount?.data > 0 && (
-                <div className="absolute z-10 top-0 -right-1 w-2 h-2 bg-red-500 rounded-full"></div>
-              )}
-            </div>
+            {!token?.access_token && (
+              <Link
+                to="/onboarding"
+                className="text-white bg-red-600 px-2 text-sm py-1 rounded-md"
+              >
+                Log In
+              </Link>
+            )}
           </div>
         </header>
       )}
