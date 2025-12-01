@@ -8,6 +8,7 @@ import {
   X,
   ChevronDown,
   ChevronUp,
+  Book,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
@@ -24,8 +25,8 @@ import { getCausesBySearch, getJoinCollective, getCollectiveById } from "@/servi
 import { updateDonationBox, cancelDonationBox } from "@/services/api/donation";
 import { useAuthStore } from "@/stores/store";
 import { cn } from "@/lib/utils";
-import { Avatar, AvatarImage, AvatarFallback } from "./ui/avatar";
 import { Toast } from "./ui/toast";
+import { getNonprofitColor } from "@/lib/getNonprofitColor";
 
 // Define Organization type locally to avoid import issues
 type Organization = {
@@ -61,7 +62,7 @@ const ManageDonationBox: React.FC<ManageDonationBoxProps> = ({
   const queryClient = useQueryClient();
   const { user: currentUser } = useAuthStore();
   const [activeTab, setActiveTab] = useState<"nonprofits" | "collectives">("nonprofits");
-  const [editableAmount, setEditableAmount] = React.useState(amount);
+  const [editableAmount, setEditableAmount] = React.useState(Math.round(amount));
   const [isEditingAmount, setIsEditingAmount] = React.useState(false);
   const [isEditMode, setIsEditMode] = React.useState(false);
   const [temporarilyRemovedCauses, setTemporarilyRemovedCauses] =
@@ -165,12 +166,13 @@ const ManageDonationBox: React.FC<ManageDonationBoxProps> = ({
   });
 
   const incrementAmount = () => {
-    setEditableAmount((prev) => prev + 1);
+    setEditableAmount((prev) => Math.round(prev) + 1);
   };
 
   const decrementAmount = () => {
-    if (editableAmount > 1) {
-      setEditableAmount((prev) => prev - 1);
+    const current = Math.round(editableAmount);
+    if (current > 1) {
+      setEditableAmount(current - 1);
     }
   };
 
@@ -455,6 +457,19 @@ const ManageDonationBox: React.FC<ManageDonationBoxProps> = ({
   const totalCollectiveIds = [...remainingExistingCollectiveIdsForValidation, ...selectedCollectives];
   const hasNoItems = totalCauseIds.length === 0 && totalCollectiveIds.length === 0;
 
+  // Calculate equal distribution percentage and amount per item
+  const totalItems = totalCauseIds.length + totalCollectiveIds.length;
+  const distributionPercentage = totalItems > 0 ? Math.floor(100 / totalItems) : 0;
+  const amountPerItem = totalItems > 0 ? (editableAmount * 0.9) / totalItems : 0; // 90% after fees, divided equally
+
+  // Calculate capacity and counts for summary card
+  const totalCausesCount = totalCauseIds.length;
+  const totalCollectivesCount = totalCollectiveIds.length;
+  const currentCapacity = totalCausesCount;
+  const maxCapacity = 30; // Default capacity, could come from donationBox if available
+  const remainingCapacity = maxCapacity - currentCapacity;
+  const capacityPercentage = (currentCapacity / maxCapacity) * 100;
+
   // Create combined selected causes list for display (existing + newly selected from search results)
   const getSelectedCausesForDisplay = () => {
     const existingList = existingCauses.filter(c => !temporarilyRemovedCauses.includes(c.id));
@@ -542,65 +557,98 @@ const ManageDonationBox: React.FC<ManageDonationBoxProps> = ({
         <div className="w-10"></div>
       </div> */}
 
-      {/* Blue Card */}
-      <div className="bg-blue-600 rounded-xl px-4 py-6 mx-4 mt-4 relative">
-        <Link
-          to="/transaction-history"
-          className="absolute right-4 top-4 text-xs text-white/80 underline"
-        >
-          See full transaction history
-        </Link>
-        <div className="flex flex-col items-center mt-4">
-          <div className="flex items-center gap-4 mb-4">
-            <button
-              onClick={decrementAmount}
-              className="bg-white/20 rounded-full p-2 text-white hover:bg-white/30 transition"
-            >
-              <Minus size={20} />
-            </button>
-            {isEditingAmount ? (
-              <input
-                type="text"
-                value={editableAmount}
-                onChange={handleAmountChange}
-                onBlur={() => setIsEditingAmount(false)}
-                autoFocus
-                className="text-4xl font-bold text-white bg-transparent border-b border-white/30 w-24 text-center focus:outline-none"
-              />
-            ) : (
+      {/* Donation Box Summary Card */}
+      <div className="mx-4 mt-4 mb-6">
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+          {/* Gradient Header */}
+          <div className="bg-gradient-to-r from-blue-500 to-purple-500 h-2"></div>
+
+          <div className="p-6">
+            {/* Monthly Donation Section */}
+            <div className="mb-6">
+              <h2 className="text-base font-medium text-gray-900 mb-3">Monthly Donation</h2>
+              <div className="flex items-center justify-between mb-2">
+                <div className="flex items-center gap-4">
+                  <button
+                    onClick={decrementAmount}
+                    className="w-8 h-8 rounded-lg bg-gray-100 hover:bg-gray-200 flex items-center justify-center transition-colors"
+                    aria-label="Decrease amount"
+                  >
+                    <Minus className="w-4 h-4 text-gray-600" />
+                  </button>
+                  <div className="flex items-baseline gap-2">
+                    {isEditingAmount ? (
+                      <input
+                        type="text"
+                        value={editableAmount}
+                        onChange={handleAmountChange}
+                        onBlur={() => setIsEditingAmount(false)}
+                        autoFocus
+                        className="text-4xl font-bold text-gray-900 bg-transparent border-b border-gray-300 w-24 text-center focus:outline-none"
+                      />
+                    ) : (
+                      <>
+                        <span className="text-4xl font-bold text-gray-900">${editableAmount}</span>
+                        <span className="text-base text-gray-600">/   month</span>
+                      </>
+                    )}
+                  </div>
+                  <button
+                    onClick={incrementAmount}
+                    className="w-8 h-8 rounded-lg bg-gray-100 hover:bg-gray-200 flex items-center justify-center transition-colors"
+                    aria-label="Increase amount"
+                  >
+                    <Plus className="w-4 h-4 text-gray-600" />
+                  </button>
+                </div>
+             
+              </div>
+            </div>
+
+            {/* Supported Entities */}
+            <div className="bg-gray-100 rounded-lg px-4 py-3 mb-6 text-center">
+              <p className="text-sm font-bold text-gray-900">
+                {totalCausesCount} Cause{totalCausesCount !== 1 ? 's' : ''} • {totalCollectivesCount} Collective{totalCollectivesCount !== 1 ? 's' : ''}
+              </p>
+            </div>
+
+            {/* Donation Box Capacity */}
+            <div className="bg-blue-50 rounded-lg p-4 mb-6">
+              <div className="flex items-center justify-between mb-2">
+                <h3 className="text-sm font-bold text-blue-600">Donation Box Capacity</h3>
+                <span className="text-sm text-gray-900">{currentCapacity}/{maxCapacity} causes</span>
+              </div>
+              <div className="w-full bg-gray-200 rounded-full h-2 mb-2">
+                <div
+                  className="bg-gradient-to-r from-blue-500 to-purple-500 h-2 rounded-full transition-all duration-300"
+                  style={{ width: `${capacityPercentage}%` }}
+                ></div>
+              </div>
+              <p className="text-sm text-blue-600">
+                You can support {remainingCapacity} more cause{remainingCapacity !== 1 ? 's' : ''} with this donation amount.
+              </p>
+            </div>
+
+            {/* Payment Schedule and Action Buttons */}
+            <div className="text-sm text-gray-600 mb-4 text-center">
+              on the {getChargeDay(nextChargeDate)} of every month
+            </div>
+            <div className="flex w-full max-w-xs mx-auto justify-between gap-2">
               <button
-                className="text-4xl font-bold text-white cursor-pointer bg-transparent border-none p-0"
+                className="flex flex-col items-center flex-1 bg-gray-50 hover:bg-gray-100 rounded-xl py-3 transition-colors"
                 onClick={() => setIsEditingAmount(true)}
-                type="button"
               >
-                ${editableAmount}
+                <DollarSign size={22} className="mb-1 text-gray-600" />
+                <span className="text-xs text-gray-600">Edit amount</span>
               </button>
-            )}
-            <button
-              onClick={incrementAmount}
-              className="bg-white/20 rounded-full p-2 text-white hover:bg-white/30 transition"
-            >
-              <Plus size={20} />
-            </button>
-          </div>
-          <div className="text-white/80 text-sm mb-6">
-            on the {getChargeDay(nextChargeDate)} of every month
-          </div>
-          <div className="flex w-full max-w-xs justify-between gap-2">
-            <button
-              className="flex flex-col items-center flex-1 bg-white/10 rounded-xl py-3 text-white hover:bg-white/20 transition"
-              onClick={() => setIsEditingAmount(true)}
-            >
-              <DollarSign size={22} className="mb-1" />
-              <span className="text-xs">Edit amount</span>
-            </button>
-            {/* <Link
-              to="/settings/payments"
-              className="flex flex-col items-center flex-1 bg-white/10 rounded-xl py-3 text-white hover:bg-white/20 transition"
-            >
-              <CreditCard size={22} className="mb-1" />
-              <span className="text-xs">Edit payment</span>
-            </Link> */}
+              <Link
+                to="/transaction-history"
+                className="flex flex-col items-center flex-1 bg-gray-50 hover:bg-gray-100 rounded-xl py-3 transition-colors"
+              >
+                <Book size={22} className="mb-1 text-gray-600" />
+                <span className="text-xs text-gray-600 underline">transaction history</span>
+              </Link>
+            </div>
           </div>
         </div>
       </div>
@@ -655,44 +703,51 @@ const ManageDonationBox: React.FC<ManageDonationBoxProps> = ({
                   <div className="space-y-3">
                     {selectedCausesForDisplay.map((org) => {
                       const causeId = org.isNewlySelected ? (org as any).causeId : parseInt(org.id.replace('cause-', ''));
+                      const colors = getNonprofitColor(causeId || org.name);
                       return (
                         <div
                           key={org.id}
-                          className="bg-white rounded-xl p-4 border border-blue-100 shadow-sm"
+                          className="bg-white rounded-xl px-4 py-4 shadow-sm border border-gray-200"
                         >
                           <div className="flex gap-4 items-center">
-                            <div className="w-12 h-12 flex-shrink-0 rounded-full overflow-hidden shadow">
-                              {org.imageUrl ? (
-                                <img
-                                  src={org.imageUrl}
-                                  alt={org.name}
-                                  className="w-full h-full object-cover"
-                                />
-                              ) : (
-                                <div
-                                  className="w-full h-full flex items-center justify-center text-lg font-semibold text-blue-600 bg-blue-100"
-                                >
-                                  {org.name.charAt(0).toUpperCase()}
-                                </div>
-                              )}
+                            <div 
+                              className="w-12 h-12 flex-shrink-0 rounded-lg flex items-center justify-center"
+                              style={{ backgroundColor: colors.bgColor }}
+                            >
+                              <span 
+                                className="text-xl font-bold"
+                                style={{ color: colors.textColor }}
+                              >
+                                {org.name.charAt(0).toUpperCase()}
+                              </span>
                             </div>
-                            <div className="flex-1">
-                              <h3 className="font-semibold text-gray-900 text-base">
+                            <div className="flex-1 min-w-0">
+                              <h3 className="font-bold text-gray-900 text-base mb-1">
                                 {org.name}
                               </h3>
                               {org.description && (
-                                <p className="text-xs text-gray-500 line-clamp-2 mt-1">
+                                <p className="text-sm text-gray-500 line-clamp-1">
                                   {org.description}
                                 </p>
                               )}
                             </div>
-                            <button
-                              className="text-xs text-gray-600 hover:text-red-500 flex items-center px-2 py-1 rounded-md bg-gray-50 hover:bg-gray-100 transition-colors"
-                              onClick={() => handleDeselectCause(causeId, org.isNewlySelected, org.name)}
-                            >
-                              <Trash2 size={12} className="mr-1" />
-                              Remove
-                            </button>
+                            <div className="flex items-center gap-4">
+                              <div className="text-right">
+                                <div className="font-bold text-gray-900 text-base">
+                                  {distributionPercentage}%
+                                </div>
+                                <div className="text-sm text-gray-500">
+                                  ${amountPerItem.toFixed(2)}/mo
+                                </div>
+                              </div>
+                              <button
+                                className="text-red-500 hover:text-red-600 transition-colors flex-shrink-0"
+                                onClick={() => handleDeselectCause(causeId, org.isNewlySelected, org.name)}
+                                aria-label="Remove cause"
+                              >
+                                <Trash2 size={18} />
+                              </button>
+                            </div>
                           </div>
                         </div>
                       );
@@ -755,23 +810,29 @@ const ManageDonationBox: React.FC<ManageDonationBoxProps> = ({
                   <div className="space-y-3">
                     {defaultCauses.map((cause: any) => {
                       const isSelected = selectedCauses.includes(cause.id);
+                      const colors = getNonprofitColor(cause.id || cause.name);
                       return (
                         <div
                           key={cause.id}
-                          className="flex items-center p-3 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors cursor-pointer"
+                          className="flex items-center gap-4 bg-white rounded-xl px-4 py-4 shadow-sm border border-gray-200 hover:bg-gray-50 transition-colors cursor-pointer"
                           onClick={() => handleToggleCause(cause.id)}
                         >
-                          <Avatar className="w-12 h-12 rounded-full object-cover mr-3">
-                            <AvatarImage src={cause.logo} />
-                            <AvatarFallback className="bg-blue-100 text-blue-600 font-semibold">
+                          <div 
+                            className="w-12 h-12 flex-shrink-0 rounded-lg flex items-center justify-center"
+                            style={{ backgroundColor: colors.bgColor }}
+                          >
+                            <span 
+                              className="text-xl font-bold"
+                              style={{ color: colors.textColor }}
+                            >
                               {cause.name?.charAt(0)?.toUpperCase() || 'C'}
-                            </AvatarFallback>
-                          </Avatar>
-                          <div className="flex-1">
-                            <h3 className="font-semibold text-gray-800">{cause.name}</h3>
-                            <p className="text-sm text-gray-600">{cause.mission || cause.description}</p>
+                            </span>
                           </div>
-                          <div className={`w-6 h-6 rounded-full flex items-center justify-center ${isSelected ? 'bg-blue-600' : 'border-2 border-gray-300'}`}>
+                          <div className="flex-1 min-w-0">
+                            <h3 className="font-bold text-gray-900 text-base mb-1">{cause.name}</h3>
+                            <p className="text-sm text-gray-500 line-clamp-1">{cause.mission || cause.description}</p>
+                          </div>
+                          <div className={`w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 ${isSelected ? 'bg-blue-600' : 'border-2 border-gray-300'}`}>
                             {isSelected && (
                               <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
                                 <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
@@ -800,23 +861,29 @@ const ManageDonationBox: React.FC<ManageDonationBoxProps> = ({
                   <div className="space-y-3">
                     {searchResults.map((cause: any) => {
                       const isSelected = selectedCauses.includes(cause.id);
+                      const colors = getNonprofitColor(cause.id || cause.name);
                       return (
                         <div
                           key={cause.id}
-                          className="flex items-center p-3 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors cursor-pointer"
+                          className="flex items-center gap-4 bg-white rounded-xl px-4 py-4 shadow-sm border border-gray-200 hover:bg-gray-50 transition-colors cursor-pointer"
                           onClick={() => handleToggleCause(cause.id)}
                         >
-                          <Avatar className="w-12 h-12 rounded-full object-cover mr-3">
-                            <AvatarImage src={cause.logo} />
-                            <AvatarFallback className="bg-blue-100 text-blue-600 font-semibold">
+                          <div 
+                            className="w-12 h-12 flex-shrink-0 rounded-lg flex items-center justify-center"
+                            style={{ backgroundColor: colors.bgColor }}
+                          >
+                            <span 
+                              className="text-xl font-bold"
+                              style={{ color: colors.textColor }}
+                            >
                               {cause.name?.charAt(0)?.toUpperCase() || 'C'}
-                            </AvatarFallback>
-                          </Avatar>
-                          <div className="flex-1">
-                            <h3 className="font-semibold text-gray-800">{cause.name}</h3>
-                            <p className="text-sm text-gray-600">{cause.mission || cause.description}</p>
+                            </span>
                           </div>
-                          <div className={`w-6 h-6 rounded-full flex items-center justify-center ${isSelected ? 'bg-blue-600' : 'border-2 border-gray-300'}`}>
+                          <div className="flex-1 min-w-0">
+                            <h3 className="font-bold text-gray-900 text-base mb-1">{cause.name}</h3>
+                            <p className="text-sm text-gray-500 line-clamp-1">{cause.mission || cause.description}</p>
+                          </div>
+                          <div className={`w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 ${isSelected ? 'bg-blue-600' : 'border-2 border-gray-300'}`}>
                             {isSelected && (
                               <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
                                 <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
@@ -850,40 +917,57 @@ const ManageDonationBox: React.FC<ManageDonationBoxProps> = ({
                       const details = collectiveDetails[collectiveId];
                       const isLoading = loadingCollectives.has(collectiveId);
                       
+                      // Generate consistent color for collective
+                      const collectiveColors = [
+                        { bg: '#dbeafe', text: '#1e40af' }, // blue
+                        { bg: '#fce7f3', text: '#831843' }, // pink
+                        { bg: '#e9d5ff', text: '#6b21a8' }, // purple
+                        { bg: '#d1fae5', text: '#065f46' }, // green
+                        { bg: '#fed7aa', text: '#9a3412' }, // orange
+                      ];
+                      const colorIndex = (org.name?.charCodeAt(0) || 0) % collectiveColors.length;
+                      const collectiveColor = collectiveColors[colorIndex];
+                      
                       return (
                         <div key={org.id}>
-                          <div className="bg-white rounded-xl p-4 border border-blue-100 shadow-sm">
+                          <div className="bg-white rounded-xl px-4 py-4 shadow-sm border border-gray-200">
                             <div className="flex gap-4 items-center">
                               <div
-                                className="flex-1 flex gap-4 items-center cursor-pointer"
+                                className="flex gap-4 items-center cursor-pointer flex-1 min-w-0"
                                 onClick={() => handleToggleCollectiveDropdown(collectiveId)}
                               >
-                                <div className="w-12 h-12 flex-shrink-0 rounded-full overflow-hidden shadow">
-                                  {org.imageUrl ? (
-                                    <img
-                                      src={org.imageUrl}
-                                      alt={org.name}
-                                      className="w-full h-full object-cover"
-                                    />
-                                  ) : (
-                                    <div
-                                      className="w-full h-full flex items-center justify-center text-lg font-semibold text-green-600 bg-green-100"
-                                    >
-                                      {org.name.charAt(0).toUpperCase()}
-                                    </div>
-                                  )}
+                                <div 
+                                  className="w-12 h-12 flex-shrink-0 rounded-lg flex items-center justify-center"
+                                  style={{ backgroundColor: collectiveColor.bg }}
+                                >
+                                  <span 
+                                    className="text-xl font-bold"
+                                    style={{ color: collectiveColor.text }}
+                                  >
+                                    {org.name.charAt(0).toUpperCase()}
+                                  </span>
                                 </div>
-                                <div className="flex-1">
-                                  <h3 className="font-semibold text-gray-900 text-base">
+                                <div className="flex-1 min-w-0">
+                                  <h3 className="font-bold text-gray-900 text-base mb-1">
                                     {org.name}
                                   </h3>
                                   {org.description && (
-                                    <p className="text-xs text-gray-500 line-clamp-2 mt-1">
+                                    <p className="text-sm text-gray-500 line-clamp-1">
                                       {org.description}
                                     </p>
                                   )}
                                 </div>
-                                <div className="ml-4">
+                              </div>
+                              <div className="flex items-center gap-4">
+                                <div className="text-right">
+                                  <div className="font-bold text-gray-900 text-base">
+                                    {distributionPercentage}%
+                                  </div>
+                                  <div className="text-sm text-gray-500">
+                                    ${amountPerItem.toFixed(2)}/mo
+                                  </div>
+                                </div>
+                                <div className="flex items-center gap-2">
                                   {isLoading ? (
                                     <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-green-600"></div>
                                   ) : (
@@ -893,18 +977,18 @@ const ManageDonationBox: React.FC<ManageDonationBoxProps> = ({
                                       <ChevronDown size={20} className="text-gray-500" />
                                     )
                                   )}
+                                  <button
+                                    className="text-red-500 hover:text-red-600 transition-colors flex-shrink-0"
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      handleDeselectCollective(collectiveId, org.isNewlySelected, org.name);
+                                    }}
+                                    aria-label="Remove collective"
+                                  >
+                                    <Trash2 size={18} />
+                                  </button>
                                 </div>
                               </div>
-                              <button
-                                className="text-xs text-gray-600 hover:text-red-500 flex items-center px-2 py-1 rounded-md bg-gray-50 hover:bg-gray-100 transition-colors"
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  handleDeselectCollective(collectiveId, org.isNewlySelected, org.name);
-                                }}
-                              >
-                                <Trash2 size={12} className="mr-1" />
-                                Remove
-                              </button>
                             </div>
                           </div>
                           {isExpanded && details && details.causes && details.causes.length > 0 && (
@@ -958,22 +1042,38 @@ const ManageDonationBox: React.FC<ManageDonationBoxProps> = ({
                     const details = collectiveDetails[collective.id];
                     const isLoading = loadingCollectives.has(collective.id);
                     
+                    // Generate consistent color for collective
+                    const collectiveColors = [
+                      { bg: '#dbeafe', text: '#1e40af' }, // blue
+                      { bg: '#fce7f3', text: '#831843' }, // pink
+                      { bg: '#e9d5ff', text: '#6b21a8' }, // purple
+                      { bg: '#d1fae5', text: '#065f46' }, // green
+                      { bg: '#fed7aa', text: '#9a3412' }, // orange
+                    ];
+                    const colorIndex = (collective.name?.charCodeAt(0) || 0) % collectiveColors.length;
+                    const collectiveColor = collectiveColors[colorIndex];
+                    
                     return (
                       <div key={collective.id}>
-                        <div className="flex items-center p-3 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
+                        <div className="flex items-center gap-4 bg-white rounded-xl px-4 py-4 shadow-sm border border-gray-200 hover:bg-gray-50 transition-colors">
                           <div
-                            className="flex-1 flex items-center cursor-pointer"
+                            className="flex gap-4 items-center cursor-pointer flex-1 min-w-0"
                             onClick={() => handleToggleCollectiveDropdown(collective.id)}
                           >
-                            <Avatar className="w-12 h-12 rounded-full object-cover mr-3">
-                              <AvatarImage src={collective.cover_image} />
-                              <AvatarFallback className="bg-green-100 text-green-600 font-semibold">
+                            <div 
+                              className="w-12 h-12 flex-shrink-0 rounded-lg flex items-center justify-center"
+                              style={{ backgroundColor: collectiveColor.bg }}
+                            >
+                              <span 
+                                className="text-xl font-bold"
+                                style={{ color: collectiveColor.text }}
+                              >
                                 {collective.name?.charAt(0)?.toUpperCase() || 'C'}
-                              </AvatarFallback>
-                            </Avatar>
-                            <div className="flex-1">
-                              <h3 className="font-semibold text-gray-800">{collective.name}</h3>
-                              <p className="text-sm text-gray-600">{collective.description || 'Community collective'}</p>
+                              </span>
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <h3 className="font-bold text-gray-900 text-base mb-1">{collective.name}</h3>
+                              <p className="text-sm text-gray-500 line-clamp-1">{collective.description || 'Community collective'}</p>
                             </div>
                             <div className="ml-4">
                               {isLoading ? (
@@ -988,7 +1088,7 @@ const ManageDonationBox: React.FC<ManageDonationBoxProps> = ({
                             </div>
                           </div>
                           <div
-                            className={`w-6 h-6 rounded-full flex items-center justify-center ml-4 cursor-pointer ${isSelected ? 'bg-blue-600' : 'border-2 border-gray-300'}`}
+                            className={`w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 cursor-pointer ${isSelected ? 'bg-blue-600' : 'border-2 border-gray-300'}`}
                             onClick={(e) => {
                               e.stopPropagation();
                               handleToggleCollective(collective.id);

@@ -1,14 +1,17 @@
-import { HelpCircle, Settings, X, ChevronDown, ChevronUp } from "lucide-react";
+import { HelpCircle, Settings, X, ChevronDown, ChevronUp, Trash2 } from "lucide-react";
 import { useState, useEffect } from "react";
 
 import { Button } from "@/components/ui/button";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import ManageDonationBox from "./ManageDonationBox";
+import { DonationBoxSummaryCard } from "./DonationBoxSummaryCard";
 import { CROWDS, RECENTS, SUGGESTED } from "@/constants";
 import ReactConfetti from "react-confetti";
 import { getCollectiveById } from "@/services/api/crwd";
-import { useQueryClient } from "@tanstack/react-query";
+import { useQueryClient, useQuery } from "@tanstack/react-query";
 import { useAuthStore } from "@/stores/store";
+import { getDonationHistory } from "@/services/api/donation";
+import { getNonprofitColor } from "@/lib/getNonprofitColor";
 
 interface DonationOverviewProps {
   donationAmount?: number;
@@ -63,6 +66,25 @@ export const Checkout = ({
   const hasApiData = manualCauses.length > 0 || attributingCollectives.length > 0;
   const totalCauses = manualCauses.length;
   const totalCollectives = attributingCollectives.length;
+
+  // Fetch donation history to calculate lifetime amount
+  const { data: donationHistoryData } = useQuery({
+    queryKey: ['donationHistory'],
+    queryFn: getDonationHistory,
+    enabled: !!currentUser?.id,
+  });
+
+  // Calculate lifetime amount from donation history
+  const lifetimeAmount = donationHistoryData?.results?.reduce((sum: number, transaction: any) => {
+    return sum + parseFloat(transaction.gross_amount || '0');
+  }, 0) || 0;
+
+  // Get capacity from donation box - count all causes (manual + from collectives)
+  // Count unique causes from box_causes array
+  const boxCauses = donationBox?.box_causes || [];
+  const uniqueCauseIds = new Set(boxCauses.map((bc: any) => bc.cause?.id).filter(Boolean));
+  const currentCapacity = uniqueCauseIds.size || 0;
+  const maxCapacity = donationBox?.capacity || 30;
 
   // Show confetti and refetch donation box when coming from payment result (only once)
   useEffect(() => {
@@ -173,7 +195,7 @@ export const Checkout = ({
     setShowSuccessModal(false);
   };
 
-  // Calculate equal distribution percentage
+  // Calculate equal distribution percentage and amount per item
   const totalItems = hasApiData 
     ? (totalCauses + totalCollectives)
     : selectedOrganizations.length;
@@ -181,6 +203,9 @@ export const Checkout = ({
     totalItems > 0
       ? Math.floor(100 / totalItems)
       : 0;
+  const amountPerItem = totalItems > 0
+    ? (actualDonationAmount * 0.9) / totalItems // 90% after fees, divided equally
+    : 0;
 
   if (showManageDonationBox) {
     // Convert API data to Organization objects for ManageDonationBox
@@ -255,41 +280,32 @@ export const Checkout = ({
         <div className="w-10"></div>
       </div> */}
 
-      {/* Blue Card */}
-      <div className="bg-blue-600 text-white p-5 pb-8 mx-4 mt-4 rounded-xl shadow-md mb-6">
-        <div className="flex flex-col items-center mt-2">
-          <div className="text-5xl font-bold mb-1">${actualDonationAmount}</div>
-          <div className="text-base flex items-center gap-1">
-            per month <HelpCircle size={16} />
-          </div>
-        </div>
-        <div className="flex mt-8 mb-2 divide-x divide-white/20">
-          <div className="flex-1 text-center">
-            <div className="text-2xl font-bold">
-              {totalCauses}
-            </div>
-            <div className="text-sm">Causes</div>
-          </div>
-          <div className="flex-1 text-center">
-            <div className="text-2xl font-bold">{totalCollectives}</div>
-            <div className="text-sm">CRWDS</div>
-          </div>
-          <div className="flex-1 flex justify-center items-center pl-4">
-            <Button
-              onClick={() => {
-                setShowManageDonationBox(true);
-                if (onShowManage) {
-                  onShowManage();
-                }
-              }}
-              size="sm"
-              className="bg-blue-400/30 text-white hover:bg-blue-400/50 rounded-md px-4 py-2 flex items-center gap-1"
-            >
-              <Settings size={16} />
-              Manage
-            </Button>
-          </div>
-        </div>
+      {/* Donation Box Summary Card */}
+      <div className="mx-4 mt-4 mb-6">
+        <DonationBoxSummaryCard
+          monthlyAmount={Math.round(actualDonationAmount)}
+          lifetimeAmount={Math.round(lifetimeAmount)}
+          causesCount={totalCauses}
+          collectivesCount={totalCollectives}
+          currentCapacity={currentCapacity}
+          maxCapacity={maxCapacity}
+          onEditAmount={() => {
+            setShowManageDonationBox(true);
+            if (onShowManage) {
+              onShowManage();
+            }
+          }}
+          onEditPayment={() => {
+            // Navigate to payment settings or open payment modal
+            navigate("/settings/payments");
+          }}
+          onAddCauses={() => {
+            setShowManageDonationBox(true);
+            if (onShowManage) {
+              onShowManage();
+            }
+          }}
+        />
       </div>
 
       {/* Search Bar */}
@@ -320,44 +336,52 @@ export const Checkout = ({
               </h2>
               {/* <HelpCircle size={16} className="ml-2 text-gray-500" /> */}
             </div>
-            <div className="space-y-2">
-              {manualCauses.map((cause: any, index: number) => (
-                <div
-                  key={`cause-${cause.id}-${index}`}
-                  className="flex gap-4 items-center bg-white px-8 py-4 border-b border-gray-200"
-                >
-                  <div className="w-12 h-12 flex-shrink-0 rounded-lg overflow-hidden shadow">
-                    {cause.logo ? (
-                      <img
-                        src={cause.logo}
-                        alt={cause.name}
-                        className="w-full h-full object-cover"
-                      />
-                    ) : (
-                      <div
-                        className="w-full h-full flex items-center justify-center text-lg font-bold text-white bg-blue-500"
+            <div className="space-y-3 px-8">
+              {manualCauses.map((cause: any, index: number) => {
+                const colors = getNonprofitColor(cause.id || cause.name);
+                return (
+                  <div
+                    key={`cause-${cause.id}-${index}`}
+                    className="flex gap-4 items-center bg-white rounded-xl px-4 py-4 shadow-sm border border-gray-200"
+                  >
+                    <div 
+                      className="w-12 h-12 flex-shrink-0 rounded-lg flex items-center justify-center"
+                      style={{ backgroundColor: colors.bgColor }}
+                    >
+                      <span 
+                        className="text-xl font-bold"
+                        style={{ color: colors.textColor }}
                       >
-                        {cause.name?.charAt(0) || 'C'}
+                        {cause.name?.charAt(0)?.toUpperCase() || 'C'}
+                      </span>
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <h3 className="font-bold text-gray-900 text-base mb-1">
+                        {cause.name}
+                      </h3>
+                      <p className="text-sm text-gray-500 line-clamp-1">
+                        {cause.mission || cause.description || 'Making a positive impact in the community'}
+                      </p>
+                    </div>
+                    <div className="flex items-center gap-4">
+                      <div className="text-right">
+                        <div className="font-bold text-gray-900 text-base">
+                          {distributionPercentage}%
+                        </div>
+                        <div className="text-sm text-gray-500">
+                          ${amountPerItem.toFixed(2)}/mo
+                        </div>
                       </div>
-                    )}
-                  </div>
-                  <div className="flex-1">
-                    <div className="flex justify-between items-start mb-1">
-                      <div>
-                        <h3 className="font-semibold text-gray-900 text-base">
-                          {cause.name}
-                        </h3>
-                        <p className="text-xs text-gray-500 line-clamp-2 mt-1">
-                          {cause.mission || cause.description || 'Making a positive impact in the community'}
-                        </p>
-                      </div>
-                      {/* <div className="text-blue-600 font-semibold text-sm">
-                        {distributionPercentage}%
-                      </div> */}
+                      <button
+                        className="text-red-500 hover:text-red-600 transition-colors flex-shrink-0"
+                        aria-label="Remove cause"
+                      >
+                        <Trash2 size={18} />
+                      </button>
                     </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </>
         )}
@@ -371,57 +395,77 @@ export const Checkout = ({
               </h2>
               {/* <HelpCircle size={16} className="ml-2 text-gray-500" /> */}
             </div>
-            <div className="space-y-2">
+            <div className="space-y-3 px-8">
               {attributingCollectives.map((collective: any, index: number) => {
                 const isExpanded = expandedCollectives.has(collective.id);
                 const details = collectiveDetails[collective.id];
                 const isLoading = loadingCollectives.has(collective.id);
                 
+                // Generate consistent color for collective
+                const collectiveColors = [
+                  { bg: '#dbeafe', text: '#1e40af' }, // blue
+                  { bg: '#fce7f3', text: '#831843' }, // pink
+                  { bg: '#e9d5ff', text: '#6b21a8' }, // purple
+                  { bg: '#d1fae5', text: '#065f46' }, // green
+                  { bg: '#fed7aa', text: '#9a3412' }, // orange
+                ];
+                const colorIndex = (collective.name?.charCodeAt(0) || 0) % collectiveColors.length;
+                const collectiveColor = collectiveColors[colorIndex];
+                
                 return (
                   <div key={`collective-${collective.id}-${index}`}>
                     <div
-                      className="flex gap-4 items-center bg-white px-8 py-4 border-b border-gray-200 cursor-pointer hover:bg-gray-50 transition-colors"
+                      className="flex gap-4 items-center bg-white rounded-xl px-4 py-4 shadow-sm border border-gray-200 cursor-pointer hover:bg-gray-50 transition-colors"
                       onClick={() => handleToggleCollectiveDropdown(collective.id)}
                     >
-                      <div className="w-12 h-12 flex-shrink-0 rounded-lg overflow-hidden shadow">
-                        {collective.cover_image ? (
-                          <img
-                            src={collective.cover_image}
-                            alt={collective.name}
-                            className="w-full h-full object-cover"
-                          />
-                        ) : (
-                          <div
-                            className="w-full h-full flex items-center justify-center text-lg font-bold text-white bg-purple-500"
-                          >
-                            {collective.name?.charAt(0) || 'C'}
-                          </div>
-                        )}
+                      <div 
+                        className="w-12 h-12 flex-shrink-0 rounded-lg flex items-center justify-center"
+                        style={{ backgroundColor: collectiveColor.bg }}
+                      >
+                        <span 
+                          className="text-xl font-bold"
+                          style={{ color: collectiveColor.text }}
+                        >
+                          {collective.name?.charAt(0)?.toUpperCase() || 'C'}
+                        </span>
                       </div>
-                      <div className="flex-1">
-                        <div className="flex justify-between items-start mb-1">
-                          <div>
-                            <h3 className="font-semibold text-gray-900 text-base">
-                              {collective.name}
-                            </h3>
-                            <p className="text-xs text-gray-500 line-clamp-2 mt-1">
-                              {collective.description || 'Community collective'}
-                            </p>
+                      <div className="flex-1 min-w-0">
+                        <h3 className="font-bold text-gray-900 text-base mb-1">
+                          {collective.name}
+                        </h3>
+                        <p className="text-sm text-gray-500 line-clamp-1">
+                          {collective.description || 'Community collective'}
+                        </p>
+                      </div>
+                      <div className="flex items-center gap-4">
+                        <div className="text-right">
+                          <div className="font-bold text-gray-900 text-base">
+                            {distributionPercentage}%
                           </div>
-                          <div className="flex items-center gap-2">
-                            {/* <div className="text-blue-600 font-semibold text-sm">
-                              {distributionPercentage}%
-                            </div> */}
-                            {isLoading ? (
-                              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600"></div>
+                          <div className="text-sm text-gray-500">
+                            ${amountPerItem.toFixed(2)}/mo
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          {isLoading ? (
+                            <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-purple-600"></div>
+                          ) : (
+                            isExpanded ? (
+                              <ChevronUp size={20} className="text-gray-500" />
                             ) : (
-                              isExpanded ? (
-                                <ChevronUp size={20} className="text-gray-500" />
-                              ) : (
-                                <ChevronDown size={20} className="text-gray-500" />
-                              )
-                            )}
-                          </div>
+                              <ChevronDown size={20} className="text-gray-500" />
+                            )
+                          )}
+                          <button
+                            className="text-red-500 hover:text-red-600 transition-colors flex-shrink-0"
+                            aria-label="Remove collective"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              // Handle remove collective
+                            }}
+                          >
+                            <Trash2 size={18} />
+                          </button>
                         </div>
                       </div>
                     </div>
