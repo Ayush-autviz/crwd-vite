@@ -1,0 +1,87 @@
+import { Link } from "react-router-dom";
+import { ChevronRight } from "lucide-react";
+
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
+import { getNonprofitColor } from "@/lib/getNonprofitColor";
+
+interface Nonprofit {
+  id: string | number;
+  name: string;
+  image?: string;
+  description?: string;
+  mission?: string;
+}
+
+interface NewFeaturedNonprofitsProps {
+  nonprofits?: Nonprofit[];
+  seeAllLink?: string;
+}
+
+export default function NewFeaturedNonprofits({
+  nonprofits = [],
+  seeAllLink = "/search",
+}: NewFeaturedNonprofitsProps) {
+  if (!nonprofits || nonprofits.length === 0) {
+    return null;
+  }
+
+  return (
+    <div className="px-4 mt-8 md:px-0 md:mt-10">
+      <div className="flex justify-between items-center mb-4">
+        <h2 className="text-lg font-semibold">Featured Nonprofits</h2>
+        <Link to={seeAllLink}>
+          <Button variant="link" className="text-primary p-0 h-auto flex items-center">
+            See all <ChevronRight className="h-4 w-4 ml-1" />
+          </Button>
+        </Link>
+      </div>
+      <div className="overflow-x-auto pb-2">
+        <div className="flex gap-4 w-max items-stretch">
+          {nonprofits.map((nonprofit) => {
+            const colors = getNonprofitColor(nonprofit.id);
+            const description = nonprofit.description || nonprofit.mission || "";
+
+            return (
+              <Link
+                to={`/cause/${nonprofit.id}`}
+                key={nonprofit.id}
+                className="block"
+              >
+                <div className="flex items-start gap-3 p-4 rounded-lg border border-gray-200 hover:bg-gray-50 cursor-pointer transition-colors bg-white min-w-[280px] max-w-[320px] h-full">
+                  {/* Avatar - Rounded square */}
+                  <Avatar className="h-12 w-12 rounded-lg flex-shrink-0 border border-gray-200">
+                    <AvatarImage src={nonprofit.image} />
+                    <AvatarFallback
+                      style={{
+                        backgroundColor: colors.bgColor,
+                        color: colors.textColor,
+                      }}
+                      className="font-semibold rounded-lg"
+                    >
+                      {nonprofit.name.charAt(0).toUpperCase()}
+                    </AvatarFallback>
+                  </Avatar>
+
+                  {/* Content */}
+                  <div className="flex-1 min-w-0 flex flex-col h-full">
+                    {/* Title */}
+                    <h3 className="font-bold text-base text-gray-900 mb-1">
+                      {nonprofit.name}
+                    </h3>
+
+                    {/* Description */}
+                    <p className="text-sm text-gray-600 leading-relaxed line-clamp-3">
+                      {description}
+                    </p>
+                  </div>
+                </div>
+              </Link>
+            );
+          })}
+        </div>
+      </div>
+    </div>
+  );
+}
+

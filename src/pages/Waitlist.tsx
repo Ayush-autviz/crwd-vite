@@ -90,12 +90,22 @@ export default function WaitlistPage() {
 
   return (
     <div className="min-h-screen bg-background">
-      <ProfileNavbar
+      {/* <ProfileNavbar
         title="Waitlist"
         showMobileMenu={true}
         showDesktopMenu={true}
         showBackButton={false}
-      />
+      /> */}
+
+
+{/* Navbar */}
+<div className="sticky top-0 z-10 w-full flex items-center justify-between p-4 border-b">
+  <img src="/logo3.png" width={100} height={100} alt="CRWD Logo" />
+  <Button variant="ghost" className="px-4 font-bold" onClick={() => navigate("/")}>
+    See How It Works
+  </Button>
+</div>
+
       {/* Hero Section */}
       <div className="bg-card pt-6 pb-12 md:pt-8 md:pb-16 px-4 md:px-6">
         {/* Launch Banner */}

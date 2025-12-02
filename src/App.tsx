@@ -63,6 +63,7 @@ import Circles from "./pages/Circles";
 import Articles from "./pages/Articles";
 import PaymentResult from "./pages/PaymentResult";
 import Waitlist from "./pages/Waitlist";
+import NewHome from "./pages/NewHome";
 
 // ScrollToTop component that works for all pages
 function ScrollToTop() {
@@ -147,7 +148,8 @@ function App() {
               element={
                 <Layout>
                   <Routes>
-                    <Route path="/" element={<Home />} />
+                    {/* <Route path="/" element={<Home />} /> */}
+                    <Route path="/" element={<NewHome />} />
                     <Route path="/waitlist" element={<Waitlist />} />
                     <Route path="/search" element={<Search />} />
                     <Route path="/search2" element={<Search2 />} />

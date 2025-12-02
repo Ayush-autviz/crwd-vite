@@ -1,5 +1,5 @@
 import { Button } from "../ui/button";
-import { ChevronLeft, Bell, Settings } from "lucide-react";
+import { ChevronLeft, Bell, Settings, Search } from "lucide-react";
 import HamburgerMenu from "../hamburgerMenu/HamburgerMenu";
 import { cn } from "@/lib/utils";
 import { Link, useNavigate } from "react-router-dom";
@@ -81,7 +81,7 @@ const {token} = useAuthStore();
         <header className="w-full flex items-center justify-between px-2.5 py-4 border-b-2 border-gray-200 bg-gray-50 sticky top-0 z-10 md:hidden">
           {/* Logo on the left */}
           <div className="flex-shrink-0">
-            <Link to="/">
+            <Link to="/waitlist">
               <img
                 src="/logo3.png"
                 width={70}
@@ -94,12 +94,12 @@ const {token} = useAuthStore();
 
           {/* Action buttons on the right */}
           <div className="flex items-center gap-2.5">
-            <button
+            {/* <button
               onClick={() => navigate("/waitlist")}
               className="px-3 py-1.5 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors"
             >
               Waitlist
-            </button>
+            </button> */}
             {token?.access_token && (
               <>
                 <button
@@ -137,7 +137,7 @@ const {token} = useAuthStore();
         <header className="w-full items-center justify-between px-6 py-4 border-b-2 border-gray-200 bg-gray-50 sticky top-0 z-10 hidden md:flex">
           {/* Logo on the left */}
           <div className="flex-shrink-0">
-            <Link to="/">
+            <Link to="/waitlist">
               <img
                 src="/logo3.png"
                 width={70}
@@ -150,17 +150,20 @@ const {token} = useAuthStore();
 
           {/* Action buttons on the right */}
           <div className="flex items-center gap-2.5">
-            <button
+            {/* <button
               onClick={() => navigate("/waitlist")}
               className="px-3 py-1.5 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors"
             >
               Waitlist
-            </button>
+            </button> */}
             {token?.access_token && (
               <>
+              <Link to="/search">
+              <Search size={20} className="text-gray-900" />
+              </Link>
                 <button
                   onClick={() => navigate("/notifications")}
-                  className="relative p-1.5 bg-red-50 rounded-full"
+                  className="relative p-1.5 rounded-full"
                 >
                   <Bell size={20} className="text-gray-900" />
                   {unreadCount?.data > 0 && (
@@ -169,12 +172,14 @@ const {token} = useAuthStore();
                     </div>
                   )}
                 </button>
-                <button
+                {/* <button
                   onClick={() => navigate("/settings")}
                   className="p-1"
                 >
                   <Settings size={24} className="text-gray-900" />
-                </button>
+                </button> */}
+
+                
               </>
             )}
             {!token?.access_token && (
@@ -205,12 +210,12 @@ const {token} = useAuthStore();
               <h1 className={cn("text-xl font-bold", titleClassName)}>{title}</h1>
             )}
           </div>
-          <div className="flex items-center space-x-4">
+          {/* <div className="flex items-center space-x-4">
             <div className="relative">
               <HamburgerMenu />
               <div className="absolute z-10 top-0 -right-1 w-2 h-2 bg-red-500 rounded-full"></div>
             </div>
-          </div>
+          </div> */}
         </header>
       )}
     </>

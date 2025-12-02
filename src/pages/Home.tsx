@@ -148,7 +148,7 @@ export default function HomePage() {
             <div className=" p-6 md:p-8 rounded-2xl text-center  relative overflow-hidden">
               {/* Content */}
               <div className="relative ">
-                <h1 className="text-black text-2xl lg:text-3xl font-bold mb-4 leading-tight max-w-3xl mx-auto">
+                <h1 className="text-black text-3xl lg:text-4xl font-bold mb-4 leading-tight max-w-3xl mx-auto">
                   The easiest way to <i className="text-green-600">give </i>
                   to everything you care about, at once.
                 </h1>
