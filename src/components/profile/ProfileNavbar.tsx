@@ -1,11 +1,12 @@
 import { Button } from "../ui/button";
-import { ChevronLeft, Bell, Settings, Search } from "lucide-react";
-import HamburgerMenu from "../hamburgerMenu/HamburgerMenu";
+import { ChevronLeft, Bell, Settings, Search, Users, Mail, LogOut, ArrowRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuthStore } from "@/stores/store";
 import { useQuery } from "@tanstack/react-query";
 import { getUnreadCount } from "@/services/api/notification";
+import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
+import { useState, useEffect } from "react";
 
 
 interface ProfileNavbarProps {
@@ -28,8 +29,35 @@ export default function ProfileNavbar({
   showPostButton = false,
 }: ProfileNavbarProps) {
   const navigate = useNavigate();
+  const [open, setOpen] = useState(false);
+  const [isVisible, setIsVisible] = useState(false);
+  const [isAnimating, setIsAnimating] = useState(false);
 
-const {token} = useAuthStore();
+  const { token, user, logout } = useAuthStore();
+
+  useEffect(() => {
+    let timer: NodeJS.Timeout;
+
+    if (open) {
+      // mount the modal
+      setIsVisible(true);
+      setIsAnimating(false);
+      timer = setTimeout(() => setIsAnimating(true), 20);
+    } else if (isVisible) {
+      // start closing animation
+      setIsAnimating(false);
+      timer = setTimeout(() => setIsVisible(false), 300); // must match transition duration
+    }
+
+    return () => clearTimeout(timer);
+  }, [open, isVisible]);
+
+  const handleClose = () => {
+    setIsAnimating(false);
+    setTimeout(() => {
+      setOpen(false);
+    }, 300);
+  };
 
   const { data: unreadCount } = useQuery({
     queryKey: ['unreadCount'],
@@ -37,7 +65,26 @@ const {token} = useAuthStore();
     enabled: !!token?.access_token,
   });
 
-  
+  const handleLogout = () => {
+    logout();
+    navigate("/onboarding");
+    setOpen(false);
+  };
+
+  const getUserInitials = () => {
+    if (user?.first_name && user?.last_name) {
+      return `${user.first_name.charAt(0)}${user.last_name.charAt(0)}`.toUpperCase();
+    }
+    if (user?.first_name) {
+      return user.first_name.charAt(0).toUpperCase();
+    }
+    if (user?.username) {
+      return user.username.charAt(0).toUpperCase();
+    }
+    return "U";
+  };
+
+
   return (
     <>
       {showMobileMenu && title !== "Home" && (
@@ -114,11 +161,109 @@ const {token} = useAuthStore();
                   )}
                 </button>
                 <button
-                  onClick={() => navigate("/settings")}
-                  className="p-1"
+                  onClick={() => setOpen(true)}
+                  className="p-0 cursor-pointer"
                 >
-                  <Settings size={24} className="text-gray-900" />
+                  <Avatar className="h-8 w-8">
+                    <AvatarImage src={user?.profile_picture} />
+                    <AvatarFallback className="bg-[#0047FF] text-white">
+                      {getUserInitials()}
+                    </AvatarFallback>
+                  </Avatar>
                 </button>
+                {isVisible && (
+                  <div
+                    className={`fixed inset-0 bg-black/50 flex items-end justify-center z-50 transition-opacity duration-300 ${
+                      isAnimating ? "opacity-100" : "opacity-0"
+                    }`}
+                    onClick={handleClose}
+                  >
+                    <div
+                      className={`bg-white rounded-t-3xl w-full max-h-[80vh] overflow-y-auto transform transition-transform duration-300 ${
+                        isAnimating ? "translate-y-0" : "translate-y-full"
+                      }`}
+                      style={{
+                        transitionTimingFunction: "cubic-bezier(0.25, 0.46, 0.45, 0.94)",
+                      }}
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      {/* Scroll indicator */}
+                      <div className="flex justify-center pt-2 pb-1 sticky top-0 bg-white z-10">
+                        <div className="w-12 h-1 bg-gray-300 rounded-full"></div>
+                      </div>
+
+                      {/* User Profile Section */}
+                      <div className="px-6 pt-4 pb-6 border-b">
+                        <div className="flex items-center gap-3 ">
+                          <Avatar className="h-12 w-12">
+                            <AvatarImage src={user?.profile_picture} />
+                            <AvatarFallback className="bg-[#0047FF] text-white">
+                              {getUserInitials()}
+                            </AvatarFallback>
+                          </Avatar>
+                          <div className="flex-1">
+                            <h3 className="font-bold text-lg text-gray-900">
+                              {user?.first_name && user?.last_name
+                                ? `${user.first_name} ${user.last_name}`
+                                : user?.username || "User"}
+                            </h3>
+
+                            <Link
+                              to="/profile"
+                              onClick={handleClose}
+                              className="text-[#0047FF] text-sm"
+                            >
+                              View Profile
+                            </Link>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Menu Items */}
+                      <div className="px-6 py-4 space-y-1">
+                        <Link
+                          to="/circles"
+                          onClick={handleClose}
+                          className="flex items-center gap-3 py-3 px-2 rounded-lg hover:bg-gray-100 transition-colors"
+                        >
+                          <Users className="h-5 w-5 text-gray-700" />
+                          <span className="text-gray-900 font-medium">Collectives</span>
+                        </Link>
+                        <Link
+                          to="/donation"
+                          onClick={handleClose}
+                          className="flex items-center gap-3 py-3 px-2 rounded-lg hover:bg-gray-100 transition-colors"
+                        >
+                          <Mail className="h-5 w-5 text-gray-700" />
+                          <span className="text-gray-900 font-medium">Donation Box</span>
+                        </Link>
+                        <Link
+                          to="/settings"
+                          onClick={handleClose}
+                          className="flex items-center gap-3 py-3 px-2 rounded-lg hover:bg-gray-100 transition-colors"
+                        >
+                          <Settings className="h-5 w-5 text-gray-700" />
+                          <span className="text-gray-900 font-medium">Settings</span>
+                        </Link>
+                      </div>
+
+                      {/* Separator */}
+                      <div className="border-t border-gray-200 mx-6"></div>
+
+                      {/* Log Out Section */}
+                      <div className="px-6 m-6 rounded-lg py-4 border border-gray-200 flex items-center justify-between">
+                        <button
+                          onClick={handleLogout}
+                          className="flex items-center gap-2 text-red-600 hover:text-red-700 transition-colors"
+                        >
+                          <LogOut className="h-5 w-5" />
+                          <span className="font-medium">Log Out</span>
+                          <ArrowRight className="h-4 w-4" />
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                )}
               </>
             )}
             {!token?.access_token && (
@@ -158,9 +303,9 @@ const {token} = useAuthStore();
             </button> */}
             {token?.access_token && (
               <>
-              <Link to="/search">
-              <Search size={20} className="text-gray-900" />
-              </Link>
+                <Link to="/search">
+                  <Search size={20} className="text-gray-900" />
+                </Link>
                 <button
                   onClick={() => navigate("/notifications")}
                   className="relative p-1.5 rounded-full"
@@ -172,14 +317,112 @@ const {token} = useAuthStore();
                     </div>
                   )}
                 </button>
-                {/* <button
-                  onClick={() => navigate("/settings")}
-                  className="p-1"
+                <button
+                  onClick={() => setOpen(true)}
+                  className="p-0 cursor-pointer"
                 >
-                  <Settings size={24} className="text-gray-900" />
-                </button> */}
+                  <Avatar className="h-8 w-8">
+                    <AvatarImage src={user?.profile_picture} />
+                    <AvatarFallback className="bg-[#0047FF] text-white">
+                      {getUserInitials()}
+                    </AvatarFallback>
+                  </Avatar>
+                </button>
+                {isVisible && (
+                  <div
+                    className={`fixed inset-0 bg-black/50 flex items-end justify-center z-50 transition-opacity duration-300 ${
+                      isAnimating ? "opacity-100" : "opacity-0"
+                    }`}
+                    onClick={handleClose}
+                  >
+                    <div
+                      className={`bg-white rounded-t-3xl w-full max-h-[80vh] overflow-y-auto transform transition-transform duration-300 ${
+                        isAnimating ? "translate-y-0" : "translate-y-full"
+                      }`}
+                      style={{
+                        transitionTimingFunction: "cubic-bezier(0.25, 0.46, 0.45, 0.94)",
+                      }}
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      {/* Scroll indicator */}
+                      <div className="flex justify-center pt-2 pb-1 sticky top-0 bg-white z-10">
+                        <div className="w-12 h-1 bg-gray-300 rounded-full"></div>
+                      </div>
 
-                
+                      {/* User Profile Section */}
+                      <div className="px-6 pt-4 pb-6 border-b">
+                        <div className="flex items-center gap-3 ">
+                          <Avatar className="h-12 w-12">
+                            <AvatarImage src={user?.profile_picture} />
+                            <AvatarFallback className="bg-[#0047FF] text-white">
+                              {getUserInitials()}
+                            </AvatarFallback>
+                          </Avatar>
+                          <div className="flex-1">
+                            <h3 className="font-bold text-lg text-gray-900">
+                              {user?.first_name && user?.last_name
+                                ? `${user.first_name} ${user.last_name}`
+                                : user?.username || "User"}
+                            </h3>
+
+                            <Link
+                              to="/profile"
+                              onClick={handleClose}
+                              className="text-[#0047FF] text-sm"
+                            >
+                              View Profile
+                            </Link>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Menu Items */}
+                      <div className="px-6 py-4 space-y-1">
+                        <Link
+                          to="/circles"
+                          onClick={handleClose}
+                          className="flex items-center gap-3 py-3 px-2 rounded-lg hover:bg-gray-100 transition-colors"
+                        >
+                          <Users className="h-5 w-5 text-gray-700" />
+                          <span className="text-gray-900 font-medium">Collectives</span>
+                        </Link>
+                        <Link
+                          to="/donation"
+                          onClick={handleClose}
+                          className="flex items-center gap-3 py-3 px-2 rounded-lg hover:bg-gray-100 transition-colors"
+                        >
+                          <Mail className="h-5 w-5 text-gray-700" />
+                          <span className="text-gray-900 font-medium">Donation Box</span>
+                        </Link>
+                        <Link
+                          to="/settings"
+                          onClick={handleClose}
+                          className="flex items-center gap-3 py-3 px-2 rounded-lg hover:bg-gray-100 transition-colors"
+                        >
+                          <Settings className="h-5 w-5 text-gray-700" />
+                          <span className="text-gray-900 font-medium">Settings</span>
+                        </Link>
+                      </div>
+
+                      {/* Separator */}
+                      <div className="border-t border-gray-200 mx-6"></div>
+
+                      {/* Log Out Section */}
+                      <div className="px-6 m-6 rounded-lg py-4 border border-gray-200 flex items-center justify-between">
+                        <button
+                          onClick={handleLogout}
+                          className="flex items-center gap-2 text-red-600 hover:text-red-700 transition-colors"
+                        >
+                          <LogOut className="h-5 w-5" />
+                          <span className="font-medium">Log Out</span>
+                          <ArrowRight className="h-4 w-4" />
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+
               </>
             )}
             {!token?.access_token && (

@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useState } from 'react'
+import React, { useRef, useState } from 'react'
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
@@ -16,6 +16,12 @@ export default function WaitlistPage() {
   const [activeTab, setActiveTab] = useState<"waitlist" | "collective">("waitlist")
   const [donationAmount, setDonationAmount] = useState(35) // Default $35/month
   
+  const sectionRef = useRef<HTMLDivElement>(null);
+
+  const scrollToSection = () => {
+    sectionRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
   // Join Waitlist form state
   const [waitlistForm, setWaitlistForm] = useState({
     email: "",
@@ -99,7 +105,7 @@ export default function WaitlistPage() {
 
 
 {/* Navbar */}
-<div className="sticky top-0 z-10 w-full flex items-center justify-between p-4 border-b">
+<div className="sticky top-0 z-10 w-full flex items-center justify-between p-4 border-b bg-background">
   <img src="/logo3.png" width={100} height={100} alt="CRWD Logo" />
   <Button variant="ghost" className="px-4 font-bold" onClick={() => navigate("/")}>
     See How It Works
@@ -124,16 +130,13 @@ export default function WaitlistPage() {
           </p>
           
           <Button
-            onClick={() => {
-              setActiveTab("waitlist")
-              const element = document.getElementById('tab-content')
-              element?.scrollIntoView({ behavior: 'smooth', block: 'start' })
-            }}
+            onClick={scrollToSection}
             size="lg"
             className="h-12 px-8 rounded-full"
           >
             Join the Waitlist
           </Button>
+         
         </div>
       </div>
 
@@ -203,7 +206,7 @@ export default function WaitlistPage() {
               </p>
 
               <Button
-                onClick={() => navigate("/")}
+                onClick={scrollToSection}
                 size="lg"
                 className="w-full h-11 md:h-12 rounded-full"
               >
@@ -326,11 +329,7 @@ export default function WaitlistPage() {
               </p>
 
               <Button
-                onClick={() => {
-                  setActiveTab("waitlist")
-                  const element = document.getElementById('tab-content')
-                  element?.scrollIntoView({ behavior: 'smooth', block: 'start' })
-                }}
+                onClick={scrollToSection}
                 size="lg"
                 className="h-11 md:h-12 px-6 md:px-8 rounded-full"
               >
@@ -366,7 +365,7 @@ export default function WaitlistPage() {
       </div>
 
       {/* Tab Navigation */}
-      <div className="w-full bg-muted  md:top-0 z-40">
+      <div ref={sectionRef} className="w-full bg-muted  md:top-0 z-40">
         <div className="pt-16">
         <div className="max-w-7xl mx-[5%] px-4 py-1.5 md:py-2 flex justify-center gap-3 md:gap-4 bg-purple-100 rounded-xl">
           <button
@@ -492,7 +491,7 @@ export default function WaitlistPage() {
                       {amount}
                     </button>
                   ))}
-                </div>
+                </div>  
               </div>
 
               {/* Submit Button */}
