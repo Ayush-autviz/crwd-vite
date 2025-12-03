@@ -6,9 +6,8 @@ import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Card, CardContent } from "@/components/ui/card"
 import { useNavigate } from "react-router-dom"
-import { ChevronRight, DollarSign, Settings, Users, Heart, ArrowRight } from "lucide-react"
+import { ChevronRight, DollarSign, Settings, Users, Heart, ArrowRight, Zap, Sparkle, Sparkles } from "lucide-react"
 import Footer from "@/components/Footer"
-import ProfileNavbar from "@/components/profile/ProfileNavbar"
 
 export default function WaitlistPage() {
   const navigate = useNavigate()
@@ -32,10 +31,10 @@ export default function WaitlistPage() {
   
   // Start a Collective form state
   const [collectiveForm, setCollectiveForm] = useState({
-    name: "Alex Johnson",
-    email: "you@example.com",
-    socialHandle: "@yourusername",
-    idea: "E.g., 'Ocean Lovers' - For people who want to protect our oceans and marine life.",
+    name: "",
+    email: "",
+    socialHandle: "",
+    idea: "",
     vibe: ""
   })
 
@@ -120,12 +119,12 @@ export default function WaitlistPage() {
             LAUNCHING EARLY 2026
           </div>
           
-          <h1 className="text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-[800] text-foreground mb-3 md:mb-4 leading-tight">
+          <h1 className="font-[800] text-foreground mb-3 md:mb-4 leading-tight" style={{ fontSize: 'clamp(2rem, 5vw, 4.5rem)' }}>
             Stop Choosing Between the
             <span className="text-[#1600ff]"> Causes You Care About.</span>
           </h1>
           
-          <p className="text-base md:text-lg lg:text-xl text-muted-foreground mb-6 md:mb-8 max-w-2xl mx-auto">
+          <p className="text-muted-foreground mb-6 md:mb-8 max-w-2xl mx-auto" style={{ fontSize: 'clamp(1rem, 2vw, 1.25rem)' }}>
             One monthly gift. All your causes. Automatic impact. Join the waitlist to become someone who actually shows up.
           </p>
           
@@ -143,18 +142,18 @@ export default function WaitlistPage() {
       {/* See the Magic in Action Section */}
       <div className="bg-gradient-to-br from-[#f1f6ff] via-[#f7f6ff] to-[#fdf3f8] py-10 md:py-16 px-4 md:px-6">
         <div className="max-w-4xl mx-auto">
-          <h2 className="text-2xl md:text-3xl lg:text-4xl font-[800] text-foreground mb-3 md:mb-4 text-center">
+          <h2 className="font-[800] text-foreground mb-3 md:mb-4 text-center" style={{ fontSize: 'clamp(1.5rem, 4vw, 2.5rem)' }}>
             See the <span className="text-[#1600ff]">Magic</span> in Action
           </h2>
-          <p className="text-base md:text-lg lg:text-xl text-muted-foreground mb-8 md:mb-12 text-center">
+          <p className="text-muted-foreground mb-8 md:mb-12 text-center" style={{ fontSize: 'clamp(1rem, 2vw, 1.25rem)' }}>
             Pick your causes. Give once. Multiply your impact.
           </p>
 
           {/* Demo Card */}
           <Card className="max-w-[80%] lg:max-w-3xl mx-auto">
             <CardContent className="p-4 md:p-8 lg:p-12">
-              <div className="text-sm md:text-md lg:text-lg  text-gray-500 mb-4 text-center     ">
-                You can give <span className="text-[#1600ff] font-[900] text-5xl">${donationAmount}</span>/month to
+              <div className="text-gray-500 mb-4 text-center" style={{ fontSize: 'clamp(0.875rem, 2vw, 1.125rem)' }}>
+                You can give <span className="text-[#1600ff] font-[900]" style={{ fontSize: 'clamp(2rem, 5vw, 3rem)' }}>${donationAmount}</span>/month to
               </div>
               
               {/* Slider */}
@@ -189,8 +188,8 @@ export default function WaitlistPage() {
                 </button>
               </div>
 
-              <div className="text-lg md:text-xl font-bold text-[#1600ff] mb-3 md:mb-4 text-center  ">
-                <span className="text-xl md:text-2xl lg:text-3xl font-[700]">= ${donationAmount * 12}</span> /year of impact
+              <div className="font-bold text-[#1600ff] mb-3 md:mb-4 text-center" style={{ fontSize: 'clamp(1.125rem, 2.5vw, 1.25rem)' }}>
+                <span className="font-[700]" style={{ fontSize: 'clamp(1.25rem, 3vw, 1.875rem)' }}>= ${donationAmount * 12}</span> /year of impact
               </div>
 
               {/* Distribution Bar */}
@@ -201,7 +200,7 @@ export default function WaitlistPage() {
                 <div className="bg-[#1600ff] flex-1" />
               </div>
 
-              <p className="text-sm md:text-base text-gray-700 mb-6 md:mb-8 text-center font-[600] mt-6">
+              <p className="text-gray-700 mb-6 md:mb-8 text-center font-[600] mt-6" style={{ fontSize: 'clamp(0.875rem, 2vw, 1rem)' }}>
                 One gift. Multiple causes.
               </p>
 
@@ -220,12 +219,12 @@ export default function WaitlistPage() {
       {/* Problem Statement Section */}
       <div className="bg-[#f6f7f9] flex py-10 md:py-16 px-4 md:px-6">
         <div className="max-w-4xl mx-auto flex flex-col items-center justify-center">
-          <h2 className="text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-[900] text-foreground mb-3 md:mb-4 text-center">
+          <h2 className="font-[900] text-foreground mb-3 md:mb-4 text-center" style={{ fontSize: 'clamp(1.5rem, 5vw, 3rem)' }}>
             You Care About Everything.<br />
             <span className="text-[#1600ff]">But You Give to Nothing.</span>
           </h2>
           
-          <div className="text-center space-y-3 md:space-y-4 text-lg md:text-xl lg:text-2xl text-muted-foreground mt-6 md:mt-8">
+          <div className="text-center space-y-3 md:space-y-4 text-muted-foreground mt-6 md:mt-8" style={{ fontSize: 'clamp(1.125rem, 2.5vw, 1.5rem)' }}>
             <p className='text-black font-[600]'>
               Clean water. Education. Climate. Animals. Mental health. Maybe one. Maybe all.
             </p>
@@ -242,10 +241,10 @@ export default function WaitlistPage() {
       {/* Headline and Mission Statement Section */}
       <div className="bg-card py-10 md:py-10 px-4 md:px-6">
         <div className="max-w-4xl mx-auto text-center py-10">
-          <h2 className="text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-[900] text-foreground mb-4 md:mb-6">
+          <h2 className="font-[900] text-foreground mb-4 md:mb-6" style={{ fontSize: 'clamp(1.5rem, 5vw, 3rem)' }}>
             What If You Could Support <span className="text-[#1600ff]">Every Cause With One Decision?</span>
           </h2>
-          <p className="text-xl md:text-2xl lg:text-3xl font-[700] text-center text-gray-900 mt-10 ">
+          <p className="font-[700] text-center text-gray-900 mt-10" style={{ fontSize: 'clamp(1.25rem, 3vw, 1.875rem)' }}>
             The most powerful thing about your giving isn't the amount. It's the commitment.
           </p>
         </div>
@@ -254,7 +253,7 @@ export default function WaitlistPage() {
       {/* How It Works Section */}
       <div className="bg-card py-10 px-4 md:px-6 pb-40">
         <div className="max-w-4xl mx-auto">
-          <h3 className="text-2xl md:text-3xl lg:text-4xl font-[800] text-foreground mb-8 md:mb-12 text-center">
+          <h3 className="font-[800] text-foreground mb-8 md:mb-12 text-center" style={{ fontSize: 'clamp(1.5rem, 4vw, 2.5rem)' }}>
             How It Works:
           </h3>
           
@@ -292,13 +291,13 @@ export default function WaitlistPage() {
       {/* Who We're Building For Section */}
       <div className="bg-[#f8f9ff] py-10 md:py-24 px-4 md:px-6">
         <div className="max-w-4xl mx-auto">
-          <h2 className="text-3xl text-center  md:text-4xl lg:text-5xl font-[900] text-foreground mb-4 md:mb-6">
+          <h2 className="text-center font-[900] text-foreground mb-4 md:mb-6" style={{ fontSize: 'clamp(1.875rem, 5vw, 3rem)' }}>
             This is who <span className="text-[#a955f7]">we're building for.</span>
           </h2>
-          <p className="mt-10 text-xl text-center md:text-2xl lg:text-3xl text-foreground font-[800] max-w-3xl mx-auto">
+          <p className="mt-10 text-center text-foreground font-[800] max-w-3xl mx-auto" style={{ fontSize: 'clamp(1.25rem, 3vw, 1.875rem)' }}>
             Not the people who already give $1,000/year to one charity. The people who want to give something to everything they care about. 
           </p>
-          <p className="mt-8 text-xl text-center md:text-2xl lg:text-3xl text-foreground font-[600] max-w-3xl mx-auto">
+          <p className="mt-8 text-center text-foreground font-[600] max-w-3xl mx-auto" style={{ fontSize: 'clamp(1.25rem, 3vw, 1.875rem)' }}>
             You're one of them. That's why you're here.
           </p>
         </div>
@@ -310,28 +309,28 @@ export default function WaitlistPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 lg:gap-12 items-center">
             {/* Text Content */}
             <div>
-              <h2 className="text-3xl md:text-4xl lg:text-5xl font-[800] text-foreground mb-4 md:mb-6">
+              <h2 className="font-[800] text-foreground mb-4 md:mb-6" style={{ fontSize: 'clamp(1.875rem, 5vw, 3rem)' }}>
                 The Question Isn't <span className="text-[#1600ff]">"Can I Afford to Give?"</span>
               </h2>
-              <p className="text-xl md:text-2xl lg:text-3xl text-foreground font-[800] ">
+              <p className="text-foreground font-[800]" style={{ fontSize: 'clamp(1.25rem, 3vw, 1.875rem)' }}>
                 The Question Is: "Can I Afford Not to Become Someone Who Shows Up?"
               </p>
-              <p className="text-base md:text-lg lg:text-xl text-muted-foreground mb-6 md:mb-8 mt-8">
+              <p className="text-muted-foreground mb-6 md:mb-8 mt-8" style={{ fontSize: 'clamp(1rem, 2vw, 1.25rem)' }}>
                 You've been meaning to give. You've been caring from the sidelines. 
               </p>
 
-              <p className="text-base md:text-lg lg:text-xl text-black font-[800] mb-6 md:mb-8 mt-8">
+              <p className="text-black font-[800] mb-6 md:mb-8 mt-8" style={{ fontSize: 'clamp(1rem, 2vw, 1.25rem)' }}>
                 Today, that changes. 
               </p>
 
-              <p className="text-base md:text-lg lg:text-xl text-muted-foreground mb-6 md:mb-8 mt-8">
+              <p className="text-muted-foreground mb-6 md:mb-8 mt-8" style={{ fontSize: 'clamp(1rem, 2vw, 1.25rem)' }}>
                 Join the waitlist. Support multiple causes with one decision. Set it once. Change everything.
               </p>
 
               <Button
                 onClick={scrollToSection}
                 size="lg"
-                className="h-11 md:h-12 px-6 md:px-8 rounded-full"
+                className="h-14 md:h-12 px-6 md:px-8 font-[800] rounded-full"
               >
                 Join the Waitlist <ArrowRight className="ml-2 h-4 w-4 md:h-5 md:w-5" />
               </Button>
@@ -367,18 +366,19 @@ export default function WaitlistPage() {
       {/* Tab Navigation */}
       <div ref={sectionRef} className="w-full bg-[#edeff1]  md:top-0 z-40 flex justify-center">
         <div className="pt-16 w-full">
-        <div className=" max-w-[90%] md:max-w-[80%] lg:max-w-[70%] mx-auto px-4 py-1.5 md:py-2 flex justify-center gap-3 md:gap-4 bg-purple-100 rounded-xl">
+        <div className=" max-w-[90%] md:max-w-[80%] lg:max-w-[70%] mx-auto px-4 py-1.5 md:py-2 flex justify-center gap-3 md:gap-4 bg-[#eae0f8] rounded-xl">
           <button
             onClick={() => {
               setActiveTab("waitlist")
               const element = document.getElementById('tab-content')
               element?.scrollIntoView({ behavior: 'smooth', block: 'start' })
             }}
-            className={`rounded-xl px-4 w-full py-1.5 md:px-6 md:py-3 text-base md:text-lg font-medium transition-all ${
+            className={`rounded-xl px-4 w-full py-1.5 md:px-6 md:py-3 font-medium transition-all ${
               activeTab !== "waitlist"
-                ? "bg-purple-100 text-gray-700"
-                : "bg-white text-gray-700 border border-purple-200"
+                ? "bg-[#eae0f8] text-gray-700 font-[800]"
+                : "bg-white text-gray-700 border border-[#eae0f8] font-[800]"
             }`}
+            style={{ fontSize: 'clamp(0.875rem, 2vw, 1.125rem)' }}
           >
             Join Waitlist
           </button>
@@ -388,11 +388,12 @@ export default function WaitlistPage() {
               const element = document.getElementById('tab-content')
               element?.scrollIntoView({ behavior: 'smooth', block: 'start' })
             }}
-            className={`rounded-xl w-full px-4 py-1.5 md:px-6 md:py-3 text-base md:text-lg font-medium transition-all ${
+            className={`rounded-xl w-full px-4 py-1.5 md:px-6 md:py-3 font-medium transition-all ${
               activeTab !== "collective"
-                ? "bg-purple-100 text-gray-700"
-                : "bg-white text-gray-700 border border-purple-200"
+                ? "bg-[#eae0f8] text-gray-700 font-[800]"
+                : "bg-white text-gray-700 border border-[#eae0f8] font-[800]"
             }`}
+            style={{ fontSize: 'clamp(0.875rem, 2vw, 1.125rem)' }}
           >
             Start a Collective
           </button>
@@ -407,10 +408,10 @@ export default function WaitlistPage() {
             {/* Join Waitlist Form Section */}
             <div className="bg-[#edeff1] py-10 md:py-16 px-4 md:px-6">
               <div className="max-w-2xl mx-auto">
-                <h2 className="text-3xl md:text-4xl lg:text-5xl font-[800] text-[#1600ff] mb-3 md:mb-4 text-center">
+                <h2 className="font-[900] text-[#1600ff] mb-3 md:mb-4 text-center" style={{ fontSize: 'clamp(1.875rem, 3vw, 2.5rem)' }}>
                   Join people who are ready to stop choosing and start giving.
                 </h2>
-                <p className="text-base md:text-lg text-muted-foreground mb-8 md:mb-12 text-center">
+                <p className="text-muted-foreground mb-8 md:mb-12 text-center" style={{ fontSize: 'clamp(1rem, 2vw, 1.125rem)' }}>
                   Get early access when we launch in 2026
                 </p>
 
@@ -465,7 +466,7 @@ export default function WaitlistPage() {
                         onChange={() => toggleCause(cause)}
                         className="w-4 h-4 text-[#1600ff] border-gray-300 rounded focus:ring-[#1600ff]"
                       />
-                      <span className="text-base text-gray-700">{cause}</span>
+                      <span className="text-gray-700" style={{ fontSize: 'clamp(0.875rem, 2vw, 1rem)' }}>{cause}</span>
                     </label>
                   ))}
                 </div>
@@ -523,19 +524,19 @@ export default function WaitlistPage() {
               <div className="max-w-4xl mx-auto">
                 {/* Early Founder Program Tag */}
                 <div className="text-center mb-4 md:mb-6">
-                  <div className="inline-block bg-green-500 text-primary-foreground px-3 py-1.5 md:px-4 md:py-2 rounded-lg text-xs md:text-sm font-medium">
+                  <div className="inline-block bg-[#aeff30] text-black px-3 py-1.5 md:px-4 md:py-2 rounded-full text-xs md:text-sm font-bold">
                     EARLY FOUNDER PROGRAM
                   </div>
                 </div>
 
                 {/* Title */}
-                <h2 className="text-3xl md:text-4xl lg:text-5xl font-[800] text-[#6A0DAD] mb-3 md:mb-4 text-center">
+                <h2 className="font-[800] text-[#1600ff] mb-3 md:mb-4 text-center" style={{ fontSize: 'clamp(1.875rem, 3vw, 2.5rem)' }}>
                   Start a Collective
                 </h2>
-                <h3 className="text-xl md:text-2xl lg:text-3xl font-[800] text-foreground mb-3 md:mb-4 text-center">
+                <h3 className="font-[800] text-gray-700 mb-3 md:mb-4 text-center" style={{ fontSize: 'clamp(1.25rem, 3vw, 1.5rem)' }}>
                   Lead a Giving Community Around What You Care About.
                 </h3>
-                <p className="text-base md:text-lg text-muted-foreground mb-8 md:mb-12 text-center max-w-3xl mx-auto">
+                <p className="text-muted-foreground mb-8 md:mb-12 text-center max-w-3xl mx-auto" style={{ fontSize: 'clamp(1rem, 2vw, 1.125rem)' }}>
             Rally your friends, family, followers, or anyone who shares your passion. Pick the causes. They join and give monthly. Watch your collective impact grow.
           </p>
 
@@ -544,44 +545,44 @@ export default function WaitlistPage() {
             {/* We'll Match Donations */}
             <Card>
               <CardContent className="px-6">
-              <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mb-4">
-                <DollarSign className="w-6 h-6 text-green-600" />
+              <div className="w-12 h-12 bg-[#aeff30] rounded-full flex items-center justify-center mb-4">
+                <Zap className="w-6 h-6" />
               </div>
-              <h4 className="text-xl md:text-xl font-[800] text-foreground mb-2">We'll Match Donations</h4>
-              <p className="text-base md:text-lg text-muted-foreground">Get up to $200 in matched donations to jumpstart your collective's impact.</p>
+              <h4 className="font-[800] text-foreground mb-2" style={{ fontSize: 'clamp(1.125rem, 2.5vw, 1.25rem)' }}>We'll Match Donations</h4>
+              <p className="text-muted-foreground" style={{ fontSize: 'clamp(1rem, 2vw, 1.125rem)' }}>Get up to $200 in matched donations to jumpstart your collective's impact.</p>
             </CardContent>
             </Card>
 
             {/* Get In First */}
             <Card>
               <CardContent className="px-6">
-              <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center mb-4">
-                <Settings className="w-6 h-6 text-purple-600" />
+              <div className="w-12 h-12 bg-[#a854f7] rounded-full flex items-center justify-center mb-4">
+                <Sparkles className="w-6 h-6 text-white" />
               </div>
-              <h4 className="text-xl md:text-xl font-[800] text-foreground mb-2">Get In First</h4>
-              <p className="text-base md:text-lg text-muted-foreground">Early access means you get to build your community before everyone else even knows we exist.</p>
+              <h4 className="font-[800] text-foreground mb-2" style={{ fontSize: 'clamp(1.125rem, 2.5vw, 1.25rem)' }}>Get In First</h4>
+              <p className="text-muted-foreground" style={{ fontSize: 'clamp(1rem, 2vw, 1.125rem)' }}>Early access means you get to build your community before everyone else even knows we exist.</p>
             </CardContent>
             </Card>
 
             {/* We'll Help You Grow */}
             <Card>
               <CardContent className="px-6">
-              <div className="w-12 h-12 bg-pink-100 rounded-lg flex items-center justify-center mb-4">
-                <Users className="w-6 h-6 text-pink-600" />
+              <div className="w-12 h-12 bg-[#ff3366] rounded-full flex items-center justify-center mb-4">
+                <Users className="w-6 h-6 text-white" />
               </div>
-              <h4 className="text-xl md:text-xl font-[800] text-foreground mb-2">We'll Help You Grow</h4>
-              <p className="text-base md:text-lg text-muted-foreground">Your collective gets featured in our campaigns so you can rally more people to your cause.</p>
+              <h4 className="font-[800] text-foreground mb-2" style={{ fontSize: 'clamp(1.125rem, 2.5vw, 1.25rem)' }}>We'll Help You Grow</h4>
+              <p className="text-muted-foreground" style={{ fontSize: 'clamp(1rem, 2vw, 1.125rem)' }}>Your collective gets featured in our campaigns so you can rally more people to your cause.</p>
             </CardContent>
             </Card>
 
             {/* Build With Us */}
             <Card>
               <CardContent className="px-6">
-              <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mb-4">
-                <Heart className="w-6 h-6 text-[#1600ff]" />
+              <div className="w-12 h-12 bg-[#1600ff] rounded-full flex items-center justify-center mb-4">
+                <Heart className="w-6 h-6 text-white" />
               </div>
-              <h4 className="text-xl md:text-xl font-[800] text-foreground mb-2">Build With Us</h4>
-              <p className="text-base md:text-lg text-muted-foreground">Work directly with the CRWD team to shape features and make the platform better for everyone.</p>
+              <h4 className="font-[800] text-foreground mb-2" style={{ fontSize: 'clamp(1.125rem, 2.5vw, 1.25rem)' }}>Build With Us</h4>
+              <p className="text-muted-foreground" style={{ fontSize: 'clamp(1rem, 2vw, 1.125rem)' }}>Work directly with the CRWD team to shape features and make the platform better for everyone.</p>
             </CardContent>
             </Card>
           </div>
@@ -589,47 +590,49 @@ export default function WaitlistPage() {
                 {/* Become a Collective Founder Form */}
                 <Card>
                   <CardContent className="p-4 md:p-8 lg:p-12">
-                  <h3 className="text-xl md:text-2xl lg:text-3xl font-[800] text-foreground mb-6 md:mb-8">Become a Collective Founder</h3>
+                  <h3 className="font-[800] text-gray-900 mb-6 md:mb-8 text-center" style={{ fontSize: 'clamp(1.25rem, 3vw, 1.875rem)' }}>Become a Collective Founder</h3>
             
             <form onSubmit={handleCollectiveSubmit} className="space-y-6">
               {/* Your Name */}
               <div>
-                <label className="block text-base md:text-lg font-medium text-gray-700 mb-2">
+                <label className="block font-bold text-gray-900 mb-2" style={{ fontSize: 'clamp(0.9rem, 1.8vw, 1rem)' }}>
                   Your Name*
                 </label>
                 <Input
                   type="text"
                   value={collectiveForm.name}
                   onChange={(e) => setCollectiveForm(prev => ({ ...prev, name: e.target.value }))}
-                  className="w-full h-12"
+                  className="w-full h-12 bg-gray-100"
                   required
+                  placeholder="Alex Johnson"
                 />
               </div>
 
               {/* Email Address */}
               <div>
-                <label className="block text-base md:text-lg font-medium text-gray-700 mb-2">
+                <label className="block font-bold text-gray-900 mb-2" style={{ fontSize: 'clamp(0.9rem, 1.8vw, 1rem)' }}>
                   Email Address*
                 </label>
                 <Input
                   type="email"
                   value={collectiveForm.email}
                   onChange={(e) => setCollectiveForm(prev => ({ ...prev, email: e.target.value }))}
-                  className="w-full h-12"
+                  className="w-full h-12 bg-gray-100"
                   required
+                  placeholder="you@example.com"
                 />
               </div>
 
               {/* Social Media Handle */}
               <div>
-                <label className="block text-base md:text-lg font-medium text-gray-700 mb-2">
+                <label className="block font-bold text-gray-900 mb-2" style={{ fontSize: 'clamp(0.9rem, 1.8vw, 1rem)' }}>
                   Social Media Handle (optional)
                 </label>
                 <Input
                   type="text"
                   value={collectiveForm.socialHandle}
                   onChange={(e) => setCollectiveForm(prev => ({ ...prev, socialHandle: e.target.value }))}
-                  className="w-full h-12"
+                  className="w-full h-12 bg-gray-100"
                   placeholder="@yourusername"
                 />
                 <p className="text-sm text-gray-500 mt-1">Instagram, TikTok, X/Twitter, or any platform.</p>
@@ -637,21 +640,22 @@ export default function WaitlistPage() {
 
               {/* Collective Idea */}
               <div>
-                <label className="block text-base md:text-lg font-medium text-gray-700 mb-2">
+                <label className="block font-bold text-gray-900 mb-2" style={{ fontSize: 'clamp(0.9rem, 1.8vw, 1rem)' }}>
                   What's your collective idea?*
                 </label>
                 <Textarea
                   value={collectiveForm.idea}
                   onChange={(e) => setCollectiveForm(prev => ({ ...prev, idea: e.target.value }))}
-                  className="w-full min-h-[120px]"
+                  className="w-full min-h-[120px] bg-gray-100"
                   required
+                  placeholder='E.g., "Ocean Lovers" - For people who want to protect our oceans and marine life.'
                 />
                 <p className="text-sm text-gray-500 mt-1">What causes? Who would join? What's the vibe? Dream big!</p>
               </div>
 
               {/* Main Vibe */}
               <div>
-                <label className="block text-base md:text-lg font-medium text-gray-700 mb-3">
+                <label className="block font-bold text-gray-900 mb-2" style={{ fontSize: 'clamp(0.9rem, 1.8vw, 1rem)' }}>
                   Main vibe? (optional)
                 </label>
                 <div className="grid grid-cols-2 gap-3">
@@ -677,7 +681,7 @@ export default function WaitlistPage() {
                 type="submit"
                 disabled={isSubmitting}
                 size="lg"
-                className="w-full h-12 bg-[#6A0DAD] hover:bg-[#5A0B9D] text-primary-foreground"
+                className="w-full h-12 bg-[#a955f7] hover:bg-[#8a3feb] text-white font-[800] rounded-full"
               >
                 {isSubmitting ? "Submitting..." : "Sign Me Up"}
               </Button>
