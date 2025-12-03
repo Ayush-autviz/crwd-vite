@@ -141,7 +141,7 @@ export default function WaitlistPage() {
       </div>
 
       {/* See the Magic in Action Section */}
-      <div className="bg-purple-50 py-10 md:py-16 px-4 md:px-6">
+      <div className="bg-gradient-to-br from-[#f1f6ff] via-[#f7f6ff] to-[#fdf3f8] py-10 md:py-16 px-4 md:px-6">
         <div className="max-w-4xl mx-auto">
           <h2 className="text-2xl md:text-3xl lg:text-4xl font-[800] text-foreground mb-3 md:mb-4 text-center">
             See the <span className="text-[#1600ff]">Magic</span> in Action
@@ -151,7 +151,7 @@ export default function WaitlistPage() {
           </p>
 
           {/* Demo Card */}
-          <Card className="max-w-2xl mx-auto">
+          <Card className="max-w-[80%] lg:max-w-3xl mx-auto">
             <CardContent className="p-4 md:p-8 lg:p-12">
               <div className="text-sm md:text-md lg:text-lg  text-gray-500 mb-4 text-center     ">
                 You can give <span className="text-[#1600ff] font-[900] text-5xl">${donationAmount}</span>/month to
@@ -174,23 +174,23 @@ export default function WaitlistPage() {
               </div>
               
               {/* Cause Buttons */}
-              <div className="flex flex-wrap gap-2 md:gap-3 mb-4 md:mb-6">
-                <button className="px-3 py-1.5 md:px-4 md:py-2 rounded-lg text-primary-foreground text-sm md:text-base font-medium bg-slate-400 hover:bg-slate-500 transition-colors">
+              <div className="flex flex-wrap gap-2 md:gap-3 mb-4 md:mb-6 justify-center">
+                <button className="px-3 py-1.5 md:px-4 md:py-2 rounded-full text-primary-foreground text-sm md:text-base font-medium bg-slate-400 hover:bg-slate-500 transition-colors">
                   refugees
                 </button>
-                <button className="px-3 py-1.5 md:px-4 md:py-2 rounded-lg text-primary-foreground text-sm md:text-base font-medium bg-purple-300 hover:bg-purple-400 transition-colors">
+                <button className="px-3 py-1.5 md:px-4 md:py-2 rounded-full text-primary-foreground text-sm md:text-base font-medium bg-purple-300 hover:bg-purple-400 transition-colors">
                   sanctuaries
                 </button>
-                <button className="px-3 py-1.5 md:px-4 md:py-2 rounded-lg text-primary-foreground text-sm md:text-base font-medium bg-green-300 hover:bg-green-400 transition-colors">
+                <button className="px-3 py-1.5 md:px-4 md:py-2 rounded-full text-primary-foreground text-sm md:text-base font-medium bg-green-300 hover:bg-green-400 transition-colors">
                   veteran housing
                 </button>
-                <button className="px-3 py-1.5 md:px-4 md:py-2 rounded-lg text-primary-foreground text-sm md:text-base font-medium bg-orange-300 hover:bg-orange-400 transition-colors">
+                <button className="px-3 py-1.5 md:px-4 md:py-2 rounded-full text-primary-foreground text-sm md:text-base font-medium bg-orange-300 hover:bg-orange-400 transition-colors">
                   pediatric care
                 </button>
               </div>
 
-              <div className="text-lg md:text-xl font-bold text-[#1600ff] mb-3 md:mb-4">
-                = ${donationAmount * 12}/year of impact
+              <div className="text-lg md:text-xl font-bold text-[#1600ff] mb-3 md:mb-4 text-center  ">
+                <span className="text-xl md:text-2xl lg:text-3xl font-[700]">= ${donationAmount * 12}</span> /year of impact
               </div>
 
               {/* Distribution Bar */}
@@ -201,14 +201,14 @@ export default function WaitlistPage() {
                 <div className="bg-[#1600ff] flex-1" />
               </div>
 
-              <p className="text-sm md:text-base text-muted-foreground mb-6 md:mb-8">
+              <p className="text-sm md:text-base text-gray-700 mb-6 md:mb-8 text-center font-[600] mt-6">
                 One gift. Multiple causes.
               </p>
 
               <Button
                 onClick={scrollToSection}
                 size="lg"
-                className="w-full h-11 md:h-12 rounded-full"
+                className="w-full h-11 md:h-12 rounded-full font-bold text-lg"
               >
                 Get Early Access <ChevronRight className="ml-2 h-4 w-4 md:h-5 md:w-5" />
               </Button>
@@ -218,9 +218,9 @@ export default function WaitlistPage() {
       </div>
 
       {/* Problem Statement Section */}
-      <div className="bg-gray-50 flex py-10 md:py-16 px-4 md:px-6">
+      <div className="bg-[#f6f7f9] flex py-10 md:py-16 px-4 md:px-6">
         <div className="max-w-4xl mx-auto flex flex-col items-center justify-center">
-          <h2 className="text-3sxl md:text-4xl lg:text-5xl font-[800] text-foreground mb-3 md:mb-4">
+          <h2 className="text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-[900] text-foreground mb-3 md:mb-4 text-center">
             You Care About Everything.<br />
             <span className="text-[#1600ff]">But You Give to Nothing.</span>
           </h2>
@@ -232,7 +232,7 @@ export default function WaitlistPage() {
             <p>
               But choosing between causes feels impossible. Managing multiple gifts is overwhelming. And deep down, you wonder if it even makes a difference.
             </p>
-            <p className="font-bold text-black">
+            <p className="font-[800] text-black">
               So giving gets put off. Again and again.
             </p>
           </div>
@@ -240,19 +240,19 @@ export default function WaitlistPage() {
       </div>
 
       {/* Headline and Mission Statement Section */}
-      <div className="bg-card py-10 md:py-16 px-4 md:px-6">
-        <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-3sxl md:text-4xl lg:text-5xl font-[800] text-foreground mb-4 md:mb-6">
-            What If You Could Support <span className="text-[#6A0DAD]">Every Cause</span> With <span className="text-[#6A0DAD]">One Decision</span>?
+      <div className="bg-card py-10 md:py-10 px-4 md:px-6">
+        <div className="max-w-4xl mx-auto text-center py-10">
+          <h2 className="text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-[900] text-foreground mb-4 md:mb-6">
+            What If You Could Support <span className="text-[#1600ff]">Every Cause With One Decision?</span>
           </h2>
-          <p className="text-base md:text-lg lg:text-xl text-muted-foreground">
+          <p className="text-xl md:text-2xl lg:text-3xl font-[700] text-center text-gray-900 mt-10 ">
             The most powerful thing about your giving isn't the amount. It's the commitment.
           </p>
         </div>
       </div>
 
       {/* How It Works Section */}
-      <div className="bg-card py-10 md:py-8px-4 md:px-6">
+      <div className="bg-card py-10 px-4 md:px-6 pb-40">
         <div className="max-w-4xl mx-auto">
           <h3 className="text-2xl md:text-3xl lg:text-4xl font-[800] text-foreground mb-8 md:mb-12 text-center">
             How It Works:
@@ -270,7 +270,7 @@ export default function WaitlistPage() {
 
             {/* Step 2 */}
             <div className="flex flex-col items-center text-center">
-              <div className="w-16 h-16 rounded-full bg-[#6A0DAD] flex items-center justify-center mb-4">
+              <div className="w-16 h-16 rounded-full bg-[#a955f7] flex items-center justify-center mb-4">
                 <span className="text-primary-foreground text-xl font-bold">2</span>
               </div>
               <h4 className="text-lg font-bold text-foreground mb-2">Set Your Monthly Amount</h4>
@@ -279,7 +279,7 @@ export default function WaitlistPage() {
 
             {/* Step 3 */}
             <div className="flex flex-col items-center text-center">
-              <div className="w-16 h-16 rounded-full bg-pink-500 flex items-center justify-center mb-4">
+              <div className="w-16 h-16 rounded-full bg-[#ff3366] flex items-center justify-center mb-4">
                 <span className="text-primary-foreground text-xl font-bold">3</span>
               </div>
               <h4 className="text-lg font-bold text-foreground mb-2">Give to All of Them</h4>
@@ -290,22 +290,22 @@ export default function WaitlistPage() {
       </div>
 
       {/* Who We're Building For Section */}
-      <div className="bg-blue-50 py-10 md:py-16 px-4 md:px-6">
+      <div className="bg-[#f8f9ff] py-10 md:py-24 px-4 md:px-6">
         <div className="max-w-4xl mx-auto">
-          <h2 className="text-3xl text-center  md:text-4xl lg:text-5xl font-[800] text-foreground mb-4 md:mb-6">
-            This is who <span className="text-[#6A0DAD]">we're building for.</span>
+          <h2 className="text-3xl text-center  md:text-4xl lg:text-5xl font-[900] text-foreground mb-4 md:mb-6">
+            This is who <span className="text-[#a955f7]">we're building for.</span>
           </h2>
           <p className="mt-10 text-xl text-center md:text-2xl lg:text-3xl text-foreground font-[800] max-w-3xl mx-auto">
             Not the people who already give $1,000/year to one charity. The people who want to give something to everything they care about. 
           </p>
-          <p className="mt-8 text-xl text-center md:text-2xl lg:text-3xl text-foreground font-[800] max-w-3xl mx-auto">
+          <p className="mt-8 text-xl text-center md:text-2xl lg:text-3xl text-foreground font-[600] max-w-3xl mx-auto">
             You're one of them. That's why you're here.
           </p>
         </div>
       </div>
 
       {/* The Question Isn't Section */}
-      <div className="bg-card py-10 md:py-16 px-4 md:px-6">
+      <div className="bg-gradient-to-br from-[#f0f6ff] via-[#faf3fd] to-[#fdf3f8] py-10 md:py-16 px-4 md:px-6">
         <div className="max-w-6xl mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 lg:gap-12 items-center">
             {/* Text Content */}
@@ -346,7 +346,7 @@ export default function WaitlistPage() {
                   className="w-full h-auto"
                 />
                 {/* Overlaid Icons */}
-                <div className="absolute top-4 left-4 w-10 h-10 bg-card rounded-full flex items-center justify-center shadow-md">
+                {/* <div className="absolute top-4 left-4 w-10 h-10 bg-card rounded-full flex items-center justify-center shadow-md">
                   <div className="w-6 h-6 bg-[#1600ff] rounded-full" />
                 </div>
                 <div className="absolute bottom-4 left-4 w-10 h-10 bg-card rounded-full flex items-center justify-center shadow-md">
@@ -357,7 +357,7 @@ export default function WaitlistPage() {
                 </div>
                 <div className="absolute bottom-4 right-4 w-10 h-10 bg-card rounded-full flex items-center justify-center shadow-md">
                   <div className="w-6 h-6 bg-pink-500 rounded-full" />
-                </div>
+                </div> */}
               </div>
             </div>
           </div>
@@ -365,9 +365,9 @@ export default function WaitlistPage() {
       </div>
 
       {/* Tab Navigation */}
-      <div ref={sectionRef} className="w-full bg-muted  md:top-0 z-40">
-        <div className="pt-16">
-        <div className="max-w-7xl mx-[5%] px-4 py-1.5 md:py-2 flex justify-center gap-3 md:gap-4 bg-purple-100 rounded-xl">
+      <div ref={sectionRef} className="w-full bg-[#edeff1]  md:top-0 z-40 flex justify-center">
+        <div className="pt-16 w-full">
+        <div className=" max-w-[90%] md:max-w-[80%] lg:max-w-[70%] mx-auto px-4 py-1.5 md:py-2 flex justify-center gap-3 md:gap-4 bg-purple-100 rounded-xl">
           <button
             onClick={() => {
               setActiveTab("waitlist")
@@ -405,9 +405,9 @@ export default function WaitlistPage() {
         {activeTab === "waitlist" && (
           <>
             {/* Join Waitlist Form Section */}
-            <div className="bg-muted py-10 md:py-16 px-4 md:px-6">
+            <div className="bg-[#edeff1] py-10 md:py-16 px-4 md:px-6">
               <div className="max-w-2xl mx-auto">
-                <h2 className="text-2xl md:text-3xl lg:text-4xl font-[800] text-[#1600ff] mb-3 md:mb-4 text-center">
+                <h2 className="text-3xl md:text-4xl lg:text-5xl font-[800] text-[#1600ff] mb-3 md:mb-4 text-center">
                   Join people who are ready to stop choosing and start giving.
                 </h2>
                 <p className="text-base md:text-lg text-muted-foreground mb-8 md:mb-12 text-center">
@@ -420,7 +420,7 @@ export default function WaitlistPage() {
             <form onSubmit={handleWaitlistSubmit} className="space-y-6">
               {/* Email */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-semibold mb-2">
                   Email Address*
                 </label>
                 <Input
@@ -435,7 +435,7 @@ export default function WaitlistPage() {
 
               {/* First Name */}
               <div>
-                <label className="block text-base md:text-lg font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-semibold mb-2">
                   First Name*
                 </label>
                 <Input
@@ -450,10 +450,10 @@ export default function WaitlistPage() {
 
               {/* Causes */}
               <div>
-                <label className="block text-base md:text-lg font-medium text-gray-700 mb-3">
+                <label className="block text-sm font-semibold mb-3">
                   Which causes do you care about? (optional)
                 </label>
-                <div className="grid grid-cols-2 gap-3">
+                <div className="grid grid-cols-2 gap-1">
                   {causes.map((cause) => (
                     <label
                       key={cause}
@@ -473,7 +473,7 @@ export default function WaitlistPage() {
 
               {/* Monthly Amount */}
               <div>
-                <label className="block text-base md:text-lg font-medium text-gray-700 mb-3">
+                <label className="block text-sm font-semibold mb-3">
                   How much would you donate monthly? (optional)
                 </label>
                 <div className="grid grid-cols-2 gap-3">
@@ -482,10 +482,10 @@ export default function WaitlistPage() {
                       key={amount}
                       type="button"
                       onClick={() => setWaitlistForm(prev => ({ ...prev, monthlyAmount: amount }))}
-                      className={`h-12 rounded-lg border-2 transition-colors ${
+                      className={`h-12 rounded-full border-2 transition-colors ${
                         waitlistForm.monthlyAmount === amount
-                          ? "border-[#1600ff] bg-[#1600ff] text-white"
-                          : "border-gray-300 bg-white text-gray-700 hover:border-[#1600ff]"
+                          ? "border-[#1600ff] bg-[#1600ff] font-bold text-white"
+                          : "border-gray-300 bg-white font-bold text-gray-700 hover:border-[#1600ff]"
                       }`}
                     >
                       {amount}
@@ -499,7 +499,7 @@ export default function WaitlistPage() {
                 type="submit"
                 disabled={isSubmitting}
                 size="lg"
-                className="w-full h-12"
+                className="w-full h-12 rounded-full font-semi bold text-lg"
               >
                 {isSubmitting ? "Joining..." : "Join the Waitlist"} <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
@@ -519,7 +519,7 @@ export default function WaitlistPage() {
         {activeTab === "collective" && (
           <>
             {/* Start a Collective Section */}
-            <div className="bg-muted py-10 md:py-16 px-4 md:px-6">
+            <div className="bg-[#edeff1] py-10 md:py-16 px-4 md:px-6">
               <div className="max-w-4xl mx-auto">
                 {/* Early Founder Program Tag */}
                 <div className="text-center mb-4 md:mb-6">
