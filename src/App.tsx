@@ -64,6 +64,10 @@ import Articles from "./pages/Articles";
 import PaymentResult from "./pages/PaymentResult";
 import Waitlist from "./pages/Waitlist";
 import NewHome from "./pages/NewHome";
+import NewOnboard from "./pages/newOnboarding/NewOnboard";
+import NewClaimProfile from "./pages/newOnboarding/NewClaimProfile";
+import NewNonProfitInterests from "./pages/newOnboarding/NewNonProfitInterests";
+import NewCompleteOnboard from "./pages/newOnboarding/NewCompleteOnboard";
 
 // ScrollToTop component that works for all pages
 function ScrollToTop() {
@@ -132,9 +136,11 @@ function App() {
                 <Route path="/interests" element={<Interests />} />
                 <Route path="/verify" element={<Verify />} />
                 <Route path="/auth/google/callback" element={<GoogleCallback />} />
-                <Route path="/onboarding" element={<OnBoard />} />
+                {/* <Route path="/onboarding" element={<OnBoard />} />s */}
+                <Route path="/onboarding" element={<NewOnboard />} />
                 {/* <Route path="/complete-onboard" element={<CompleteOnboard />} /> */}
-                <Route path="/claim-profile" element={<ClaimProfile />} />
+                {/* <Route path="/claim-profile" element={<ClaimProfile />} /> */}
+                <Route path="/claim-profile" element={<NewClaimProfile />} /> New Claim Profile
                 {/* <Route
                   path="/non-profit-interests"
                   element={<NonProfitInterests />}
@@ -156,10 +162,11 @@ function App() {
                     <Route path="/donation" element={<Donation />} />
                     <Route path="/donation/manage" element={<ManageDonationBox />} />
                     <Route path="/notifications" element={<Notifications />} />
-                    <Route
+                    {/* <Route
                   path="/non-profit-interests"
                   element={<NonProfitInterests />}
-                />
+                /> */}
+                <Route path="/non-profit-interests" element={<NewNonProfitInterests />} />
                     <Route path="/profile" element={<Profile />} />
                     {/* <Route path="/profile/:id" element={<ProfileById />} /> */}
                     <Route path="/profile/edit" element={<ProfileById />} />
@@ -214,8 +221,8 @@ function App() {
                     <Route path="/user-profile/:userId" element={<UserProfile />} />
                     <Route path="/circles" element={<Circles />} />
                     <Route path="/articles" element={<Articles />} />
-                <Route path="/complete-onboard" element={<CompleteOnboard />} />
-
+                {/* <Route path="/complete-onboard" element={<CompleteOnboard />} /> */}
+                <Route path="/complete-onboard" element={<NewCompleteOnboard />} />
                   </Routes>
                 </Layout>
               }

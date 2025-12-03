@@ -117,3 +117,6 @@ export const darkTheme = {
   input: 'oklch(1 0 0 / 15%)',
   ring: colors.neutral[500],
 };
+
+
+export const PrimaryBlue = '#1600ff';

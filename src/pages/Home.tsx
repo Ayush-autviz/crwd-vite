@@ -155,7 +155,7 @@ export default function HomePage() {
 
                 {/* <Link to="/onboarding"> */}
                 <Link to={token?.access_token ? '/donation' : 'onboarding'}>
-                  <Button className="bg-[#0047FF] text-primary-foreground px-10 py-5 rounded-lg text-base font-semibold ">
+                  <Button className="bg-[#1600ff] text-primary-foreground px-10 py-5 rounded-lg text-base font-semibold ">
                     Start Your Donation Box
                   </Button>
                 </Link>

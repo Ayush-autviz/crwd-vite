@@ -45,7 +45,7 @@ export default function CommunityUpdates({
               {/* Avatar */}
               <Avatar className="h-10 w-10 flex-shrink-0">
                 <AvatarImage src={update.user.avatar} />
-                <AvatarFallback className="bg-[#0047FF] text-white">
+                <AvatarFallback className="bg-[#1600ff] text-white">
                   {update.user.name
                     .split(" ")
                     .map((n) => n.charAt(0))
@@ -79,4 +79,6 @@ export default function CommunityUpdates({
     </div>
   );
 }
+
+
 

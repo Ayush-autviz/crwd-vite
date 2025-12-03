@@ -28,7 +28,7 @@ export default function MyDonationBoxCard({
           </p>
           <Link
             to="/donation"
-            className="text-[#0047FF] text-sm font-medium inline-flex items-center gap-1 hover:underline"
+            className="text-[#1600ff] text-sm font-medium inline-flex items-center gap-1 hover:underline"
           >
             Manage box <ChevronRight className="h-4 w-4" />
           </Link>

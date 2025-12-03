@@ -166,7 +166,7 @@ export default function ProfileNavbar({
                 >
                   <Avatar className="h-8 w-8">
                     <AvatarImage src={user?.profile_picture} />
-                    <AvatarFallback className="bg-[#0047FF] text-white">
+                    <AvatarFallback className="bg-[#1600ff] text-white">
                       {getUserInitials()}
                     </AvatarFallback>
                   </Avatar>
@@ -197,7 +197,7 @@ export default function ProfileNavbar({
                         <div className="flex items-center gap-3 ">
                           <Avatar className="h-12 w-12">
                             <AvatarImage src={user?.profile_picture} />
-                            <AvatarFallback className="bg-[#0047FF] text-white">
+                            <AvatarFallback className="bg-[#1600ff] text-white">
                               {getUserInitials()}
                             </AvatarFallback>
                           </Avatar>
@@ -211,7 +211,7 @@ export default function ProfileNavbar({
                             <Link
                               to="/profile"
                               onClick={handleClose}
-                              className="text-[#0047FF] text-sm"
+                              className="text-[#1600ff] text-sm"
                             >
                               View Profile
                             </Link>
@@ -323,7 +323,7 @@ export default function ProfileNavbar({
                 >
                   <Avatar className="h-8 w-8">
                     <AvatarImage src={user?.profile_picture} />
-                    <AvatarFallback className="bg-[#0047FF] text-white">
+                    <AvatarFallback className="bg-[#1600ff] text-white">
                       {getUserInitials()}
                     </AvatarFallback>
                   </Avatar>
@@ -354,7 +354,7 @@ export default function ProfileNavbar({
                         <div className="flex items-center gap-3 ">
                           <Avatar className="h-12 w-12">
                             <AvatarImage src={user?.profile_picture} />
-                            <AvatarFallback className="bg-[#0047FF] text-white">
+                            <AvatarFallback className="bg-[#1600ff] text-white">
                               {getUserInitials()}
                             </AvatarFallback>
                           </Avatar>
@@ -368,7 +368,7 @@ export default function ProfileNavbar({
                             <Link
                               to="/profile"
                               onClick={handleClose}
-                              className="text-[#0047FF] text-sm"
+                              className="text-[#1600ff] text-sm"
                             >
                               View Profile
                             </Link>

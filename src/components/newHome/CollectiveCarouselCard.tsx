@@ -109,7 +109,7 @@ export default function CollectiveCarouselCard({
                   View
                 </Button>
               </Link>
-              <Button className="bg-[#0047FF] text-white flex items-center gap-2">
+              <Button className="bg-[#1600ff] text-white flex items-center gap-2">
                 <Share2 className="h-4 w-4" />
                 Share
               </Button>

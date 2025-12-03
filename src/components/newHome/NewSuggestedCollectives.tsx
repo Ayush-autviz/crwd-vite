@@ -29,7 +29,7 @@ export default function NewSuggestedCollectives({
   // Generate color for icon if not provided
   const getIconColor = (index: number): string => {
     const colors = [
-      "#0047FF", // Blue
+      "#1600ff", // Blue
       "#10B981", // Green
       "#EC4899", // Pink
       "#F59E0B", // Amber

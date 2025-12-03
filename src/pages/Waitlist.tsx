@@ -115,14 +115,14 @@ export default function WaitlistPage() {
       {/* Hero Section */}
       <div className="bg-card pt-6 pb-12 md:pt-8 md:pb-16 px-4 md:px-6">
         {/* Launch Banner */}
-        <div className="max-w-4xl mx-auto text-center mb-6 md:mb-8">
-          <div className="w-fit mx-auto bg-green-500 text-primary-foreground px-4 py-2 rounded-full text-md font-medium mb-4 md:mb-6">
+        <div className="max-w-4xl mx-auto text-center mt-20  mb-6 md:mb-8">
+          <div className="w-fit mx-auto bg-[#aeff30] text-black px-4 py-1 rounded-full text-sm font-bold mb-4 md:mb-6">
             LAUNCHING EARLY 2026
           </div>
           
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-[800] text-foreground mb-3 md:mb-4 leading-tight">
-            Stop Choosing Between<br />
-            <span className="text-[#0047FF]">the Causes You Care About.</span>
+          <h1 className="text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-[800] text-foreground mb-3 md:mb-4 leading-tight">
+            Stop Choosing Between the
+            <span className="text-[#1600ff]"> Causes You Care About.</span>
           </h1>
           
           <p className="text-base md:text-lg lg:text-xl text-muted-foreground mb-6 md:mb-8 max-w-2xl mx-auto">
@@ -132,7 +132,7 @@ export default function WaitlistPage() {
           <Button
             onClick={scrollToSection}
             size="lg"
-            className="h-12 px-8 rounded-full"
+            className="h-14 px-8 rounded-full bg-[#1600ff] text-white font-bold text-lg"
           >
             Join the Waitlist
           </Button>
@@ -144,7 +144,7 @@ export default function WaitlistPage() {
       <div className="bg-purple-50 py-10 md:py-16 px-4 md:px-6">
         <div className="max-w-4xl mx-auto">
           <h2 className="text-2xl md:text-3xl lg:text-4xl font-[800] text-foreground mb-3 md:mb-4 text-center">
-            See the <span className="text-[#0047FF]">Magic</span> in Action
+            See the <span className="text-[#1600ff]">Magic</span> in Action
           </h2>
           <p className="text-base md:text-lg lg:text-xl text-muted-foreground mb-8 md:mb-12 text-center">
             Pick your causes. Give once. Multiply your impact.
@@ -153,8 +153,8 @@ export default function WaitlistPage() {
           {/* Demo Card */}
           <Card className="max-w-2xl mx-auto">
             <CardContent className="p-4 md:p-8 lg:p-12">
-              <div className="text-lg md:text-xl lg:text-2xl font-bold text-foreground mb-4">
-                You can give <span className="text-[#0047FF]">${donationAmount}</span>/month to
+              <div className="text-sm md:text-md lg:text-lg  text-gray-500 mb-4 text-center     ">
+                You can give <span className="text-[#1600ff] font-[900] text-5xl">${donationAmount}</span>/month to
               </div>
               
               {/* Slider */}
@@ -166,9 +166,9 @@ export default function WaitlistPage() {
                   step="1"
                   value={donationAmount}
                   onChange={(e) => setDonationAmount(Number(e.target.value))}
-                  className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-5 [&::-webkit-slider-thumb]:h-5 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-[#0047FF] [&::-webkit-slider-thumb]:cursor-pointer [&::-webkit-slider-thumb]:shadow-md [&::-moz-range-thumb]:w-5 [&::-moz-range-thumb]:h-5 [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:bg-[#0047FF] [&::-moz-range-thumb]:cursor-pointer [&::-moz-range-thumb]:border-0 [&::-moz-range-thumb]:shadow-md"
+                  className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-5 [&::-webkit-slider-thumb]:h-5 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-[#fff] [&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-[#1600ff] [&::-webkit-slider-thumb]:cursor-pointer [&::-webkit-slider-thumb]:shadow-md [&::-moz-range-thumb]:w-5 [&::-moz-range-thumb]:h-5 [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:bg-[#1600ff] [&::-moz-range-thumb]:cursor-pointer [&::-moz-range-thumb]:border-0 [&::-moz-range-thumb]:shadow-md"
                   style={{
-                    background: `linear-gradient(to right, #0047FF 0%, #0047FF ${((donationAmount - 5) / 95) * 100}%, #e5e7eb ${((donationAmount - 5) / 95) * 100}%, #e5e7eb 100%)`
+                    background: `linear-gradient(to right, #1600ff 0%, #1600ff ${((donationAmount - 5) / 95) * 100}%, #e5e7eb ${((donationAmount - 5) / 95) * 100}%, #e5e7eb 100%)`
                   }}
                 />
               </div>
@@ -189,7 +189,7 @@ export default function WaitlistPage() {
                 </button>
               </div>
 
-              <div className="text-lg md:text-xl font-bold text-[#0047FF] mb-3 md:mb-4">
+              <div className="text-lg md:text-xl font-bold text-[#1600ff] mb-3 md:mb-4">
                 = ${donationAmount * 12}/year of impact
               </div>
 
@@ -198,7 +198,7 @@ export default function WaitlistPage() {
                 <div className="bg-pink-500 flex-1" />
                 <div className="bg-orange-500 flex-1" />
                 <div className="bg-green-500 flex-1" />
-                <div className="bg-[#0047FF] flex-1" />
+                <div className="bg-[#1600ff] flex-1" />
               </div>
 
               <p className="text-sm md:text-base text-muted-foreground mb-6 md:mb-8">
@@ -222,7 +222,7 @@ export default function WaitlistPage() {
         <div className="max-w-4xl mx-auto flex flex-col items-center justify-center">
           <h2 className="text-3sxl md:text-4xl lg:text-5xl font-[800] text-foreground mb-3 md:mb-4">
             You Care About Everything.<br />
-            <span className="text-[#0047FF]">But You Give to Nothing.</span>
+            <span className="text-[#1600ff]">But You Give to Nothing.</span>
           </h2>
           
           <div className="text-center space-y-3 md:space-y-4 text-lg md:text-xl lg:text-2xl text-muted-foreground mt-6 md:mt-8">
@@ -261,7 +261,7 @@ export default function WaitlistPage() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 lg:gap-12">
             {/* Step 1 */}
             <div className="flex flex-col items-center text-center">
-              <div className="w-16 h-16 rounded-full bg-[#0047FF] flex items-center justify-center mb-4">
+              <div className="w-16 h-16 rounded-full bg-[#1600ff] flex items-center justify-center mb-4">
                 <span className="text-primary-foreground text-xl font-bold">1</span>
               </div>
               <h4 className="text-lg font-bold text-foreground mb-2">Pick Your Causes</h4>
@@ -311,7 +311,7 @@ export default function WaitlistPage() {
             {/* Text Content */}
             <div>
               <h2 className="text-3xl md:text-4xl lg:text-5xl font-[800] text-foreground mb-4 md:mb-6">
-                The Question Isn't <span className="text-[#0047FF]">"Can I Afford to Give?"</span>
+                The Question Isn't <span className="text-[#1600ff]">"Can I Afford to Give?"</span>
               </h2>
               <p className="text-xl md:text-2xl lg:text-3xl text-foreground font-[800] ">
                 The Question Is: "Can I Afford Not to Become Someone Who Shows Up?"
@@ -347,7 +347,7 @@ export default function WaitlistPage() {
                 />
                 {/* Overlaid Icons */}
                 <div className="absolute top-4 left-4 w-10 h-10 bg-card rounded-full flex items-center justify-center shadow-md">
-                  <div className="w-6 h-6 bg-[#0047FF] rounded-full" />
+                  <div className="w-6 h-6 bg-[#1600ff] rounded-full" />
                 </div>
                 <div className="absolute bottom-4 left-4 w-10 h-10 bg-card rounded-full flex items-center justify-center shadow-md">
                   <div className="w-0 h-0 border-l-[6px] border-r-[6px] border-b-[10px] border-l-transparent border-r-transparent border-b-green-500" />
@@ -407,7 +407,7 @@ export default function WaitlistPage() {
             {/* Join Waitlist Form Section */}
             <div className="bg-muted py-10 md:py-16 px-4 md:px-6">
               <div className="max-w-2xl mx-auto">
-                <h2 className="text-2xl md:text-3xl lg:text-4xl font-[800] text-[#0047FF] mb-3 md:mb-4 text-center">
+                <h2 className="text-2xl md:text-3xl lg:text-4xl font-[800] text-[#1600ff] mb-3 md:mb-4 text-center">
                   Join people who are ready to stop choosing and start giving.
                 </h2>
                 <p className="text-base md:text-lg text-muted-foreground mb-8 md:mb-12 text-center">
@@ -463,7 +463,7 @@ export default function WaitlistPage() {
                         type="checkbox"
                         checked={waitlistForm.causes.includes(cause)}
                         onChange={() => toggleCause(cause)}
-                        className="w-4 h-4 text-[#0047FF] border-gray-300 rounded focus:ring-[#0047FF]"
+                        className="w-4 h-4 text-[#1600ff] border-gray-300 rounded focus:ring-[#1600ff]"
                       />
                       <span className="text-base text-gray-700">{cause}</span>
                     </label>
@@ -484,8 +484,8 @@ export default function WaitlistPage() {
                       onClick={() => setWaitlistForm(prev => ({ ...prev, monthlyAmount: amount }))}
                       className={`h-12 rounded-lg border-2 transition-colors ${
                         waitlistForm.monthlyAmount === amount
-                          ? "border-[#0047FF] bg-[#0047FF] text-white"
-                          : "border-gray-300 bg-white text-gray-700 hover:border-[#0047FF]"
+                          ? "border-[#1600ff] bg-[#1600ff] text-white"
+                          : "border-gray-300 bg-white text-gray-700 hover:border-[#1600ff]"
                       }`}
                     >
                       {amount}
@@ -578,7 +578,7 @@ export default function WaitlistPage() {
             <Card>
               <CardContent className="px-6">
               <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mb-4">
-                <Heart className="w-6 h-6 text-[#0047FF]" />
+                <Heart className="w-6 h-6 text-[#1600ff]" />
               </div>
               <h4 className="text-xl md:text-xl font-[800] text-foreground mb-2">Build With Us</h4>
               <p className="text-base md:text-lg text-muted-foreground">Work directly with the CRWD team to shape features and make the platform better for everyone.</p>
