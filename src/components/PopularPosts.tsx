@@ -1,4 +1,3 @@
-import { useState } from "react";
 import ProfileActivity from "./profile/ProfileActivity";
 import { Button } from "@/components/ui/button";
 import { Loader2, HelpCircle } from "lucide-react";
@@ -35,6 +34,8 @@ export const PopularPosts = ({
   return (
     <div className="w-full p-4 md:p-0">
       <div className="flex items-center gap-2 mb-4">
+        {title != "no title" && (
+          <>
         <h2 className="text-lg font-semibold">
           {related ? "Related Posts" : title}
         </h2>
@@ -45,6 +46,8 @@ export const PopularPosts = ({
             <div className="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-gray-900"></div>
           </div>
         </div>
+        </>
+      )}
       </div>
       {isLoading ? (
         <div className="flex justify-center items-center py-8">
@@ -56,10 +59,12 @@ export const PopularPosts = ({
           {posts?.results.length > 0 ? (
             posts.results.map((post: any) => {
               // Transform API response to match PostDetail interface
-              const transformedPost = {
+              const transformedPost: any = {
                 id: post.id,
                 avatarUrl: post.user?.profile_picture || '/placeholder.svg',
                 username: post.user?.username || post.user?.full_name || 'Unknown User',
+                firstName: post.user?.first_name || '',
+                lastName: post.user?.last_name || '',
                 userId: post.user?.id,
                 time: new Date(post.created_at).toLocaleDateString(),
                 org: post.collective?.name || 'Unknown Collective',

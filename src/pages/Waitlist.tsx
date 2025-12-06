@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useRef, useState } from 'react'
+import React, { useRef, useState, useEffect } from 'react'
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
@@ -9,17 +9,49 @@ import { useNavigate } from "react-router-dom"
 import { ChevronRight, DollarSign, Settings, Users, Heart, ArrowRight, Zap, Sparkle, Sparkles } from "lucide-react"
 import Footer from "@/components/Footer"
 
+// Define two sets of causes with their styling
+const causeSets = [
+  [
+    { name: "refugees", bgColor: "bg-slate-400", hoverColor: "hover:bg-slate-500" },
+    { name: "sanctuaries", bgColor: "bg-purple-300", hoverColor: "hover:bg-purple-400" },
+    { name: "veteran housing", bgColor: "bg-green-300", hoverColor: "hover:bg-green-400" },
+    { name: "pediatric care", bgColor: "bg-orange-300", hoverColor: "hover:bg-orange-400" },
+  ],
+  [
+    { name: "food banks", bgColor: "bg-slate-400", hoverColor: "hover:bg-slate-500" },
+    { name: "animal shelters", bgColor: "bg-purple-300", hoverColor: "hover:bg-purple-400" },
+    { name: "homeless shelters", bgColor: "bg-green-300", hoverColor: "hover:bg-green-400" },
+    { name: "cancer research", bgColor: "bg-orange-300", hoverColor: "hover:bg-orange-400" },
+  ],
+  [
+      { name: "disaster relief", bgColor: "bg-slate-400", hoverColor: "hover:bg-slate-500" },
+      { name: "wildlife rescue", bgColor: "bg-purple-300", hoverColor: "hover:bg-purple-400" },
+      { name: "affordable housing", bgColor: "bg-green-300", hoverColor: "hover:bg-green-400" },
+      { name: "mental health", bgColor: "bg-orange-300", hoverColor: "hover:bg-orange-400" },
+  ]
+];
+
 export default function WaitlistPage() {
   const navigate = useNavigate()
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [activeTab, setActiveTab] = useState<"waitlist" | "collective">("waitlist")
-  const [donationAmount, setDonationAmount] = useState(35) // Default $35/month
+  const [donationAmount, setDonationAmount] = useState(5) // Default $35/month
+  const [currentCauseSet, setCurrentCauseSet] = useState(0)
   
   const sectionRef = useRef<HTMLDivElement>(null);
 
   const scrollToSection = () => {
     sectionRef.current?.scrollIntoView({ behavior: "smooth" });
   };
+
+  // Rotate cause sets every 3 seconds
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentCauseSet((prev) => (prev + 1) % causeSets.length);
+    }, 3000);
+
+    return () => clearInterval(interval);
+  }, []);
 
   // Join Waitlist form state
   const [waitlistForm, setWaitlistForm] = useState({
@@ -165,7 +197,7 @@ export default function WaitlistPage() {
                   step="1"
                   value={donationAmount}
                   onChange={(e) => setDonationAmount(Number(e.target.value))}
-                  className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-5 [&::-webkit-slider-thumb]:h-5 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-[#fff] [&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-[#1600ff] [&::-webkit-slider-thumb]:cursor-pointer [&::-webkit-slider-thumb]:shadow-md [&::-moz-range-thumb]:w-5 [&::-moz-range-thumb]:h-5 [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:bg-[#1600ff] [&::-moz-range-thumb]:cursor-pointer [&::-moz-range-thumb]:border-0 [&::-moz-range-thumb]:shadow-md"
+                  className="w-full h-3 bg-gray-200 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-5 [&::-webkit-slider-thumb]:h-5 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-[#fff] [&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-[#1600ff] [&::-webkit-slider-thumb]:cursor-pointer [&::-webkit-slider-thumb]:shadow-md [&::-moz-range-thumb]:w-5 [&::-moz-range-thumb]:h-5 [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:bg-[#1600ff] [&::-moz-range-thumb]:cursor-pointer [&::-moz-range-thumb]:border-0 [&::-moz-range-thumb]:shadow-md"
                   style={{
                     background: `linear-gradient(to right, #1600ff 0%, #1600ff ${((donationAmount - 5) / 95) * 100}%, #e5e7eb ${((donationAmount - 5) / 95) * 100}%, #e5e7eb 100%)`
                   }}
@@ -174,18 +206,14 @@ export default function WaitlistPage() {
               
               {/* Cause Buttons */}
               <div className="flex flex-wrap gap-2 md:gap-3 mb-4 md:mb-6 justify-center">
-                <button className="px-3 py-1.5 md:px-4 md:py-2 rounded-full text-primary-foreground text-sm md:text-base font-medium bg-slate-400 hover:bg-slate-500 transition-colors">
-                  refugees
-                </button>
-                <button className="px-3 py-1.5 md:px-4 md:py-2 rounded-full text-primary-foreground text-sm md:text-base font-medium bg-purple-300 hover:bg-purple-400 transition-colors">
-                  sanctuaries
-                </button>
-                <button className="px-3 py-1.5 md:px-4 md:py-2 rounded-full text-primary-foreground text-sm md:text-base font-medium bg-green-300 hover:bg-green-400 transition-colors">
-                  veteran housing
-                </button>
-                <button className="px-3 py-1.5 md:px-4 md:py-2 rounded-full text-primary-foreground text-sm md:text-base font-medium bg-orange-300 hover:bg-orange-400 transition-colors">
-                  pediatric care
-                </button>
+                {causeSets[currentCauseSet].map((cause) => (
+                  <button
+                    key={`${cause.name}-${currentCauseSet}`}
+                    className={`px-3 py-1.5 md:px-4 md:py-2 rounded-full text-primary-foreground text-sm md:text-base font-medium ${cause.bgColor} ${cause.hoverColor} transition-colors`}
+                  >
+                    {cause.name}
+                  </button>
+                ))}
               </div>
 
               <div className="font-bold text-[#1600ff] mb-3 md:mb-4 text-center" style={{ fontSize: 'clamp(1.125rem, 2.5vw, 1.25rem)' }}>
@@ -653,7 +681,7 @@ export default function WaitlistPage() {
                 <p className="text-sm text-gray-500 mt-1">What causes? Who would join? What's the vibe? Dream big!</p>
               </div>
 
-              {/* Main Vibe */}
+              {/* Main Vibe */} 
               <div>
                 <label className="block font-bold text-gray-900 mb-2" style={{ fontSize: 'clamp(0.9rem, 1.8vw, 1rem)' }}>
                   Main vibe? (optional)

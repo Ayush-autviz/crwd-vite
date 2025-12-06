@@ -11,6 +11,7 @@ import { getCollectives, getCauses, getJoinCollective } from "@/services/api/crw
 import { getDonationBox } from "@/services/api/donation";
 import { getPosts } from "@/services/api/social";
 import { useAuthStore } from "@/stores/store";
+import GuestHome from "@/components/GuestHome";
 
 export default function NewHome() {
     const { user, token } = useAuthStore();
@@ -129,6 +130,11 @@ export default function NewHome() {
             content: post.content || post.text || "",
             timestamp: post.created_at || post.timestamp,
         })) || [];
+
+
+    if (!user?.id) {
+        return <GuestHome />;
+    }
 
     return (
         <div className="">

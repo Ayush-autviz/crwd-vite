@@ -106,20 +106,20 @@ function ScrollToTop() {
 function AuthRouteHandler() {
   const { token } = useAuthStore();
   const navigate = useNavigate();
-  
+
   // If user has a token, navigate to home
   useEffect(() => {
     if (token?.access_token) {
       navigate("/");
     }
   }, []);
-  
+
   return null;
 }
 
 function App() {
   const { token } = useAuthStore();
-  
+
   return (
     <Router>
       <ScrollToTop />
@@ -166,7 +166,7 @@ function App() {
                   path="/non-profit-interests"
                   element={<NonProfitInterests />}
                 /> */}
-                <Route path="/non-profit-interests" element={<NewNonProfitInterests />} />
+                    <Route path="/non-profit-interests" element={<NewNonProfitInterests />} />
                     <Route path="/profile" element={<Profile />} />
                     {/* <Route path="/profile/:id" element={<ProfileById />} /> */}
                     <Route path="/profile/edit" element={<ProfileById />} />
@@ -221,8 +221,9 @@ function App() {
                     <Route path="/user-profile/:userId" element={<UserProfile />} />
                     <Route path="/circles" element={<Circles />} />
                     <Route path="/articles" element={<Articles />} />
-                {/* <Route path="/complete-onboard" element={<CompleteOnboard />} /> */}
-                <Route path="/complete-onboard" element={<NewCompleteOnboard />} />
+                    {/* <Route path="/complete-onboard" element={<CompleteOnboard />} /> */}
+                    <Route path="/complete-onboard" element={<NewCompleteOnboard />} />
+                    
                   </Routes>
                 </Layout>
               }

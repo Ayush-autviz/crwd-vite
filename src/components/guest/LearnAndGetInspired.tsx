@@ -1,0 +1,110 @@
+import { Link } from "react-router-dom";
+import { Card, CardContent } from "@/components/ui/card";
+import { Clock } from "lucide-react";
+
+interface Article {
+  id: string | number;
+  title: string;
+  description: string;
+  readTime: string;
+  image: string;
+  slug?: string;
+}
+
+interface LearnAndGetInspiredProps {
+  articles?: Article[];
+  seeAllLink?: string;
+}
+
+export default function LearnAndGetInspired({
+  articles,
+  seeAllLink = "/articles",
+}: LearnAndGetInspiredProps) {
+  // Default articles data if none provided
+  const defaultArticles: Article[] = [
+    {
+      id: 1,
+      title: "How to donate to multiple charities at once",
+      description: "Learn how CRWD's donation box makes it easy to support all your favorite causes",
+      readTime: "5 min read",
+      image: "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=400&h=300&fit=crop",
+    },
+    {
+      id: 2,
+      title: "Why Small Donations Matter",
+      description: "Every contribution counts toward lasting change",
+      readTime: "4 min read",
+      image: "https://images.unsplash.com/photo-1517487881594-2787fef5ebf7?w=400&h=300&fit=crop",
+    },
+    {
+      id: 3,
+      title: "What is a CRWD Collective?",
+      description: "Learn how collectives amplify your giving power",
+      readTime: "5 min read",
+      image: "https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=400&h=300&fit=crop",
+    },
+  ];
+
+  const displayArticles = articles && articles.length > 0 ? articles : defaultArticles;
+
+  return (
+    <div className="bg-card py-10 md:py-16 px-4 md:px-6">
+      <div className="max-w-6xl mx-auto">
+        {/* Header with Title and Link */}
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 md:mb-8 gap-4">
+          <h2 className="font-[800] text-foreground" style={{ fontSize: 'clamp(1.5rem, 4vw, 2.5rem)' }}>
+            Learn & Get Inspired
+          </h2>
+          <Link
+            to={seeAllLink}
+            className="text-[#1600ff] font-[600] hover:underline flex items-center gap-1 text-base md:text-lg"
+          >
+            All articles <span>→</span>
+          </Link>
+        </div>
+
+        {/* Article Cards Grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 md:gap-6">
+          {displayArticles.map((article) => (
+            <div key={article.id} className="rounded-xl shadow-sm hover:shadow-lg transition-shadow duration-300 overflow-hidden">
+              <Link to={article.slug ? `/articles/${article.slug}` : `/articles/${article.id}`}>
+                <div className="p-0">
+                  {/* Article Image */}
+                  <div className="w-full h-48 md:h-56 overflow-hidden">
+                    <img
+                      src={article.image}
+                      alt={article.title}
+                      className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                    />
+                  </div>
+
+                  {/* Article Content */}
+                  <div className="p-4 md:p-6">
+                    {/* Read Time */}
+                    <div className="flex items-center gap-2 mb-3">
+                      <Clock className="w-4 h-4 text-muted-foreground" />
+                      <p className="text-xs md:text-sm text-muted-foreground">
+                        {article.readTime}
+                      </p>
+                    </div>
+
+                    {/* Title */}
+                    <h3 className="font-bold text-lg md:text-xl text-foreground mb-2 line-clamp-2">
+                      {article.title}
+                    </h3>
+
+                    {/* Description */}
+                    <p className="text-sm md:text-base text-muted-foreground leading-relaxed line-clamp-2">
+                      {article.description}
+                    </p>
+                  </div>
+                </div>
+              </Link>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+

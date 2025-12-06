@@ -9,7 +9,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useAuthStore } from "@/stores/store";
 
 const Circles = () => {
-  const { user: currentUser } = useAuthStore();
+  const { user: currentUser, token } = useAuthStore();
   const [activeTab, setActiveTab] = useState<"my-crwds" | "discover">(
     "my-crwds"
   );
@@ -24,7 +24,7 @@ const Circles = () => {
   const { data: joinCollectiveData, isLoading: isLoadingJoinCollective } = useQuery({
     queryKey: ['join-collective'],
     queryFn: () => getJoinCollective(currentUser?.id),
-    enabled: true,
+    enabled: !!token?.access_token && !!currentUser?.id,
   });
 
   // Auto-switch to discover tab if no joined collectives

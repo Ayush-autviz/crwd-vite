@@ -150,6 +150,46 @@ export default function ProfileActivityCard({
   const tagColorIndex = post.id ? (String(post.id).charCodeAt(String(post.id).length - 1) || 0) % tagColors.length : 0;
   const tagBgColor = tagColors[tagColorIndex];
 
+  // Generate random vibrant avatar colors
+  const avatarColors = [
+    '#3B82F6', // Blue
+    '#EC4899', // Pink
+    '#8B5CF6', // Purple
+    '#10B981', // Green
+    '#F59E0B', // Amber
+    '#EF4444', // Red
+    '#06B6D4', // Cyan
+    '#F97316', // Orange
+    '#84CC16', // Lime
+    '#A855F7', // Violet
+    '#14B8A6', // Teal
+    '#F43F5E', // Rose
+    '#6366F1', // Indigo
+    '#22C55E', // Emerald
+    '#EAB308', // Yellow
+  ];
+  // Use post ID to generate a consistent random color for each post
+  // This ensures the same post always gets the same color
+  const avatarColorIndex = post.id ? (Number(post.id) % avatarColors.length) : Math.floor(Math.random() * avatarColors.length);
+  const avatarBgColor = avatarColors[avatarColorIndex];
+
+  // Get user initials following the same pattern as ProfileNavbar
+  const getUserInitials = () => {
+    const postAny = post as any;
+    if (postAny.firstName && postAny.lastName) {
+      return `${postAny.firstName.charAt(0)}${postAny.lastName.charAt(0)}`.toUpperCase();
+    }
+    if (postAny.firstName) {
+      return postAny.firstName.charAt(0).toUpperCase();
+    }
+    if (post.username) {
+      return post.username.charAt(0).toUpperCase();
+    }
+    return "U";
+  };
+  
+  const initials = getUserInitials();
+
   return (
     <>
       <Card
@@ -168,7 +208,12 @@ export default function ProfileActivityCard({
                   src={imageUrl ?? post.avatarUrl}
                   alt={post.username}
                 />
-                <AvatarFallback>{post.username.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2)}</AvatarFallback>
+                <AvatarFallback 
+                  style={{ backgroundColor: avatarBgColor }}
+                  className="text-white font-bold"
+                >
+                  {initials}
+                </AvatarFallback>
               </Avatar>
             </Link>
             <div className="flex-1 min-w-0">
