@@ -48,6 +48,7 @@ import CauseById from "./pages/CauseById";
 import GroupCrwd from "./pages/GroupCrwd";
 import GroupCrwdById from "./pages/GroupCrwdById";
 import NewGroupCrwd from "./pages/NewGroupCrwd";
+import NewCause from "./pages/NewCause";
 import EditCollective from "./pages/EditCollective";
 import Members from "./pages/Members";
 import Posts from "./pages/Posts";
@@ -209,7 +210,8 @@ function App() {
                     <Route path="/create-post" element={<CreatePost />} />
                     {/* <Route path="/create-cause" element={<CreateCause />} /> */}
                     {/* <Route path="/feed-hungry" element={<FeedHungry />} /> */}
-                    <Route path="/cause/:causeId" element={<Cause />} />
+                    {/* <Route path="/cause/:causeId" element={<Cause />} /> */}
+                    <Route path="/cause/:causeId" element={<NewCause />} />
                     {/* <Route path="/cause-detail" element={<CauseDetail />} /> */}
                     {/* <Route path="/cause/:id" element={<CauseById />} /> */}
                     {/* <Route path="/groupcrwd/:crwdId" element={<GroupCrwd />} /> */}

@@ -1,0 +1,88 @@
+import { MapPin } from 'lucide-react';
+import { categories } from '@/constants/categories';
+
+interface CauseDetailsProps {
+  causeData: any;
+}
+
+export default function CauseDetails({ causeData }: CauseDetailsProps) {
+  const category = categories.find((cat) => cat.id === causeData?.category);
+  
+  // Get related categories - show related categories based on the main category
+  // For Wellness (G), show related: Health (E), Mental (F), Research (H), Science (U)
+  const getRelatedCategories = () => {
+    if (!category) return [];
+    
+    // Map of category IDs to related category IDs
+    const relatedMap: Record<string, string[]> = {
+      'G': ['E', 'F', 'H', 'U'], // Wellness -> Health, Mental, Research, Science
+      'E': ['G', 'F', 'H', 'U'], // Health -> Wellness, Mental, Research, Science
+      'F': ['E', 'G', 'H'], // Mental -> Health, Wellness, Research
+      'H': ['E', 'F', 'U', 'G'], // Research -> Health, Mental, Science, Wellness
+      'U': ['H', 'E', 'G'], // Science -> Research, Health, Wellness
+    };
+    
+    const relatedIds = relatedMap[category.id] || [];
+    return relatedIds
+      .map(id => categories.find(cat => cat.id === id))
+      .filter(Boolean) as typeof categories;
+  };
+
+  const relatedCategories = getRelatedCategories();
+
+  return (
+    <div className="mx-4 mb-6 bg-gray-50 rounded-xl p-4">
+      {/* Address */}
+      {causeData?.street && (
+        <div className="flex items-start gap-2 mb-4">
+          <MapPin className="w-5 h-5 text-gray-600 flex-shrink-0 mt-0.5" />
+          <div>
+            <h3 className="text-sm font-bold text-gray-900 mb-1">ADDRESS</h3>
+          <div className="text-sm text-gray-700 uppercase">
+            {causeData.street}
+            {causeData.city && `, ${causeData.city}`}
+            {causeData.state && `, ${causeData.state}`}
+          </div>
+          </div>
+        </div>
+      )}
+
+      {/* Related Causes */}
+      {relatedCategories.length > 0 && (
+        <div className="mb-4">
+          <h3 className="text-sm font-bold text-gray-900 mb-2">RELATED CAUSES</h3>
+          <div className="flex flex-wrap gap-2">
+            {relatedCategories.map((cat) => (
+              <span
+                key={cat.id}
+                className="px-3 py-1.5 rounded-full text-xs font-medium text-white"
+                style={{ backgroundColor: cat.text }}
+              >
+                {cat.name}
+              </span>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Main Focus */}
+      {category && (
+        <div className="mb-4">
+          <h3 className="text-sm font-bold text-gray-900 mb-1">MAIN FOCUS</h3>
+          <span className="text-sm font-medium" style={{ color: '#1600ff' }}>
+            {category.name}
+          </span>
+        </div>
+      )}
+
+      {/* Tax ID */}
+      {causeData?.tax_id_number && (
+        <div>
+          <h3 className="text-sm font-bold text-gray-900 mb-1">TAX ID</h3>
+          <span className="text-sm text-gray-700">{causeData.tax_id_number}</span>
+        </div>
+      )}
+    </div>
+  );
+}
+
