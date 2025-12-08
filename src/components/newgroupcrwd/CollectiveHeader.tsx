@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react';
-import { ArrowLeft, Star, Share2, MoreHorizontal } from 'lucide-react';
+import { useState, useEffect, useRef } from 'react';
+import { ArrowLeft, Star, Share2, MoreHorizontal, Edit, Link2, Flag } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { favoriteCollective, unfavoriteCollective } from '@/services/api/social';
@@ -9,26 +9,47 @@ interface CollectiveHeaderProps {
   title: string;
   collectiveId?: string;
   isFavorite?: boolean;
+  isAdmin?: boolean;
   onShare?: () => void;
-  onMore?: () => void;
+  onManageCollective?: () => void;
 }
 
 export default function CollectiveHeader({ 
   title, 
   collectiveId,
   isFavorite: initialIsFavorite = false,
+  isAdmin = false,
   onShare, 
-  onMore 
+  onManageCollective
 }: CollectiveHeaderProps) {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const { user: currentUser } = useAuthStore();
   const [isFavorite, setIsFavorite] = useState(initialIsFavorite);
+  const [showDropdown, setShowDropdown] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
   // Update favorite state when prop changes
   useEffect(() => {
     setIsFavorite(initialIsFavorite);
   }, [initialIsFavorite]);
+
+  // Handle click outside to close dropdown
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setShowDropdown(false);
+      }
+    };
+
+    if (showDropdown) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [showDropdown]);
 
   // Favorite mutation
   const favoriteMutation = useMutation({
@@ -70,6 +91,44 @@ export default function CollectiveHeader({
     }
   };
 
+  const handleCopyLink = async () => {
+    try {
+      const url = window.location.href;
+      await navigator.clipboard.writeText(url);
+      setShowDropdown(false);
+      // You could add a toast notification here
+    } catch (err) {
+      console.error('Failed to copy link:', err);
+    }
+  };
+
+  const handleManageCollective = () => {
+    if (onManageCollective) {
+      onManageCollective();
+    } else if (collectiveId) {
+      navigate(`/edit-collective/${collectiveId}`);
+    }
+    setShowDropdown(false);
+  };
+
+  const handleShareClick = () => {
+    if (onShare) {
+      onShare();
+    }
+    setShowDropdown(false);
+  };
+
+  const handleFavoriteFromDropdown = () => {
+    handleFavoriteClick();
+    setShowDropdown(false);
+  };
+
+  const handleReport = () => {
+    // TODO: Implement report functionality
+    console.log('Report clicked');
+    setShowDropdown(false);
+  };
+
   const isLoading = favoriteMutation.isPending || unfavoriteMutation.isPending;
 
   return (
@@ -86,7 +145,7 @@ export default function CollectiveHeader({
         {title}
       </h1>
 
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-2 relative">
         <button
           onClick={handleFavoriteClick}
           disabled={isLoading || !currentUser}
@@ -108,13 +167,65 @@ export default function CollectiveHeader({
         >
           <Share2 className="w-5 h-5 text-gray-700" />
         </button>
-        <button
-          onClick={onMore}
-          className="p-2 hover:bg-gray-100 rounded-full transition-colors"
-          aria-label="More options"
-        >
-          <MoreHorizontal className="w-5 h-5 text-gray-700" />
-        </button>
+        <div className="relative" ref={dropdownRef}>
+          <button
+            onClick={() => setShowDropdown(!showDropdown)}
+            className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+            aria-label="More options"
+          >
+            <MoreHorizontal className="w-5 h-5 text-gray-700" />
+          </button>
+
+          {/* Dropdown Menu */}
+          {showDropdown && (
+            <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-50">
+              {isAdmin && (
+                <>
+                  <button
+                    onClick={handleManageCollective}
+                    className="w-full font-semibold flex items-center gap-3 px-4 py-2 text-sm text-foreground hover:bg-gray-100 transition-colors"
+                  >
+                    <Edit className="w-4 h-4" strokeWidth={2.5} />
+                    Manage collective
+                  </button>
+                  <div className="border-t border-gray-200 my-1"></div>
+                </>
+              )}
+              <button
+                onClick={handleShareClick}
+                className="w-full font-semibold flex items-center gap-3 px-4 py-2 text-sm text-foreground hover:bg-gray-100 transition-colors"
+              >
+                <Share2 className="w-4 h-4" strokeWidth={2.5} />
+                Share
+              </button>
+             
+              <button
+                onClick={handleCopyLink}
+                className="w-full font-semibold flex items-center gap-3 px-4 py-2 text-sm text-foreground hover:bg-gray-100 transition-colors"
+              >
+                <Link2 className="w-4 h-4" strokeWidth={2.5} />
+                Copy link
+              </button>
+              
+              <button
+                onClick={handleFavoriteFromDropdown}
+                disabled={isLoading || !currentUser}
+                className="w-full font-semibold flex items-center gap-3 px-4 py-2 text-sm text-foreground hover:bg-gray-100 transition-colors disabled:opacity-50"
+              >
+                <Star className={`w-4 h-4 ${isFavorite ? 'fill-yellow-500 text-yellow-500' : ''}`} strokeWidth={2.5} />
+                {isFavorite ? 'Remove favorite' : 'Add to favorites'}
+              </button>
+              <div className="border-t border-gray-200 my-1"></div>
+              <button
+                onClick={handleReport}
+                className="w-full font-semibold flex items-center gap-3 px-4 py-2 text-sm text-foreground hover:bg-gray-100 transition-colors"
+              >
+                <Flag className="w-4 h-4" strokeWidth={2.5} />
+                Report
+              </button>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );

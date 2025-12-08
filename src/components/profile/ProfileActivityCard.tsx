@@ -23,6 +23,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { likePost, unlikePost, deletePost } from "@/services/api/social";
 import { Loader2 } from "lucide-react";
 import { useAuthStore } from "@/stores/store";
+import CommentsBottomSheet from "../post/CommentsBottomSheet";
 
 export default function ProfileActivityCard({
   post,
@@ -35,6 +36,7 @@ export default function ProfileActivityCard({
 }) {
   const [showMenu, setShowMenu] = useState(false);
   const [showShareModal, setShowShareModal] = useState(false);
+  const [showCommentsSheet, setShowCommentsSheet] = useState(false);
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
@@ -356,7 +358,14 @@ export default function ProfileActivityCard({
                       )}
                       <span className="text-sm text-gray-500">{likesCount}</span>
                     </button>
-                    <button className="flex items-center gap-1.5 hover:opacity-80 transition-opacity">
+                    <button
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        setShowCommentsSheet(true);
+                      }}
+                      className="flex items-center gap-1.5 hover:opacity-80 transition-opacity"
+                    >
                       <MessageCircle className="w-[18px] h-[18px] text-gray-500" />
                       <span className="text-sm text-gray-500">{post.comments}</span>
                     </button>
@@ -429,6 +438,20 @@ export default function ProfileActivityCard({
         show={showToast}
         onHide={() => setShowToast(false)}
         duration={2000}
+      />
+
+      {/* Comments Bottom Sheet */}
+      <CommentsBottomSheet
+        isOpen={showCommentsSheet}
+        onClose={() => setShowCommentsSheet(false)}
+        post={{
+          id: post.id,
+          username: post.username,
+          text: post.text,
+          avatarUrl: post.avatarUrl,
+          firstName: (post as any).firstName,
+          lastName: (post as any).lastName,
+        }}
       />
     </>
   );

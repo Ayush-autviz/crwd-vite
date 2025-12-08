@@ -285,9 +285,10 @@ export default function NewGroupCrwdPage() {
     setShowShareModal(true);
   };
 
-  const handleMore = () => {
-    // TODO: Implement more options menu
-    console.log('More clicked');
+  const handleManageCollective = () => {
+    if (crwdId) {
+      navigate(`/edit-collective/${crwdId}`);
+    }
   };
 
   return (
@@ -296,8 +297,9 @@ export default function NewGroupCrwdPage() {
         title={crwdData.name || 'Collective'}
         collectiveId={crwdId}
         isFavorite={crwdData.is_favorite}
+        isAdmin={isAdmin}
         onShare={handleShare}
-        onMore={handleMore}
+        onManageCollective={handleManageCollective}
       />
 
       <CollectiveProfile

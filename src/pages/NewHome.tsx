@@ -6,6 +6,7 @@ import HelloGreeting from "@/components/newHome/HelloGreeting";
 import MyDonationBoxCard from "@/components/newHome/MyDonationBoxCard";
 import CollectiveCarouselCard from "@/components/newHome/CollectiveCarouselCard";
 import CommunityUpdates from "@/components/newHome/CommunityUpdates";
+import ExploreCards from "@/components/newHome/ExploreCards";
 import ProfileNavbar from "@/components/profile/ProfileNavbar";
 import { getCollectives, getCauses, getJoinCollective } from "@/services/api/crwd";
 import { getDonationBox } from "@/services/api/donation";
@@ -174,6 +175,8 @@ export default function NewHome() {
                             )
                         )}
 
+                        {/* Explore Cards */}
+
                         </div>
 
             <div className="md:grid md:grid-cols-12 md:gap-6 md:pt-6 md:px-6">
@@ -218,6 +221,8 @@ export default function NewHome() {
                         )}
                     </div>
                 </div>
+                <ExploreCards />
+
             </div>
             );
 }
