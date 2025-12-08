@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Button } from './ui/button'
 import { Card, CardContent } from './ui/card'
-import { ChevronRight } from 'lucide-react';
+import { ChevronRight, Search, Menu, Users, CheckSquare, Settings, LogIn } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import AutomaticImpact from './guest/AutomaticImpact';
 import PopularCollectives from './guest/PopularCollectives';
@@ -37,6 +37,9 @@ export default function GuestHome() {
   const navigate = useNavigate()
     const [donationAmount, setDonationAmount] = useState(5) // Default $35/month
     const [currentCauseSet, setCurrentCauseSet] = useState(0)
+    const [menuOpen, setMenuOpen] = useState(false)
+    const [isVisible, setIsVisible] = useState(false)
+    const [isAnimating, setIsAnimating] = useState(false)
 
       // Rotate cause sets every 3 seconds
   useEffect(() => {
@@ -47,16 +50,86 @@ export default function GuestHome() {
     return () => clearInterval(interval);
   }, []);
 
+  // Handle bottom sheet menu animations
+  useEffect(() => {
+    let timer: NodeJS.Timeout;
+
+    if (menuOpen) {
+      setIsVisible(true);
+      setIsAnimating(false);
+      timer = setTimeout(() => setIsAnimating(true), 20);
+    } else if (isVisible) {
+      setIsAnimating(false);
+      timer = setTimeout(() => setIsVisible(false), 300);
+    }
+
+    return () => clearTimeout(timer);
+  }, [menuOpen, isVisible]);
+
+  const handleCloseMenu = () => {
+    setIsAnimating(false);
+    setTimeout(() => {
+      setMenuOpen(false);
+    }, 300);
+  };
+
     return (
         <div className="min-h-screen bg-background">
 
 
             {/* Navbar */}
-            <div className="sticky top-0 z-10 w-full flex items-center justify-between p-4 border-b bg-background">
-                <img src="/logo3.png" width={100} height={100} alt="CRWD Logo" />
-                <Button variant="ghost" className="px-4 font-bold" onClick={() => navigate("/")}>
-                    See How It Works
-                </Button>
+            <div className="sticky top-0 z-10 w-full flex items-center justify-between p-4 md:px-6 border-b bg-background">
+                {/* Logo with colored circles */}
+                <div className="flex items-center gap-3">
+                    <div className="grid grid-cols-2 gap-1 w-8 h-8 md:w-10 md:h-10">
+                        <div className="bg-[#3B82F6] rounded-full"></div>
+                        <div className="bg-[#EC4899] rounded-full"></div>
+                        <div className="bg-[#84CC16] rounded-full"></div>
+                        <div className="bg-[#8B5CF6] rounded-full"></div>
+                    </div>
+                    <span className="font-bold text-xl md:text-2xl text-foreground lowercase">crwd</span>
+                </div>
+
+                {/* Right side buttons */}
+                <div className="flex items-center gap-3 md:gap-4">
+                    {/* Search Icon */}
+                   
+                    <button
+                        onClick={() => navigate("/search")}
+                        className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+                        aria-label="Search"
+                    >
+                        <Search className="w-5 h-5 md:w-6 md:h-6 text-gray-700" />
+                    </button>
+
+                    {/* Sign In Button */}
+                    <Button
+                        onClick={() => navigate("/login")}
+                        className="bg-[#ff3366] hover:bg-[#ff0033] text-white font-bold px-4 md:px-6 py-2 rounded-full text-sm md:text-base hidden sm:inline-flex"
+                    >
+                        Sign In
+                    </Button>
+
+                    {/* Get the App Button */}
+                    <Button
+                        variant="outline"
+                        className="border-[#1600ff] text-[#1600ff] hover:bg-[#1600ff] hover:text-white font-bold px-4 md:px-6 py-2 rounded-full text-sm md:text-base hidden md:inline-flex"
+                    >
+                        Get the App
+                    </Button>
+
+                    {/* Hamburger Menu */}
+                    {/* <button
+                        onClick={() => setMenuOpen(true)}
+                        className="p-2 hover:bg-gray-100 rounded-full transition-colors md:hidden"
+                        aria-label="Menu"
+                    >
+                        <Menu className="w-6 h-6 text-gray-700" />
+                    </button> */}
+                    <button onClick={() => setMenuOpen(true)}>
+                        <Menu className="w-9 h-9 text-gray-700" />
+                    </button>
+                </div>
             </div>
 
             {/* Hero Section */}
@@ -176,6 +249,89 @@ export default function GuestHome() {
 
             {/* Footer */}
             <Footer />
+
+            {/* Bottom Sheet Menu */}
+            {isVisible && (
+                <div
+                    className={`fixed inset-0 bg-black/50 flex items-end justify-center z-50 transition-opacity duration-300 ${
+                        isAnimating ? "opacity-100" : "opacity-0"
+                    }`}
+                    onClick={handleCloseMenu}
+                >
+                    <div
+                        className={`bg-white rounded-t-3xl w-full max-h-[80vh] overflow-y-auto transform transition-transform duration-300 ${
+                            isAnimating ? "translate-y-0" : "translate-y-full"
+                        }`}
+                        style={{
+                            transitionTimingFunction: "cubic-bezier(0.25, 0.46, 0.45, 0.94)",
+                        }}
+                        onClick={(e) => e.stopPropagation()}
+                    >
+                        {/* Scroll indicator */}
+                        <div className="flex justify-center pt-2 pb-1 sticky top-0 bg-white z-10">
+                            <div className="w-12 h-1 bg-gray-300 rounded-full"></div>
+                        </div>
+
+                        {/* Log In/Get Started Button */}
+                        <div className="px-6 pt-4 pb-6">
+                            
+                        </div>
+
+                        {/* Menu Items */}
+                        <div className="px-6 pb-4 space-y-1">
+                        <button
+                                onClick={() => {
+                                    navigate("/onboarding");
+                                    handleCloseMenu();
+                                }}
+                                
+                                className="flex items-center gap-3 py-3 px-2 rounded-lg hover:bg-gray-100 transition-colors w-full text-left"
+
+                            >
+                                <LogIn className="h-5 w-5 text-[#1600ff] group-hover:text-white transition-colors" />
+                                <span>Log In/Get Started</span>
+                            </button>
+                            <button
+                                onClick={() => {
+                                    navigate("/circles");
+                                    handleCloseMenu();
+                                }}
+                                className="flex items-center gap-3 py-3 px-2 rounded-lg hover:bg-gray-100 transition-colors w-full text-left"
+                            >
+                                <Users className="h-5 w-5 text-[#1600ff]" />
+                                <span className="text-gray-900 font-medium">Collectives</span>
+                            </button>
+                            <button
+                                onClick={() => {
+                                    navigate("/donation");
+                                    handleCloseMenu();
+                                }}
+                                className="flex items-center gap-3 py-3 px-2 rounded-lg hover:bg-gray-100 transition-colors w-full text-left"
+                            >
+                                <CheckSquare className="h-5 w-5 text-[#1600ff]" />
+                                <span className="text-gray-900 font-medium">Donation Box</span>
+                            </button>
+                        </div>
+
+                        {/* Separator */}
+                        <div className="border-t border-gray-200 mx-6"></div>
+
+                        {/* Learn More */}
+                        <div className="px-6 py-4">
+                            <button
+                                onClick={() => {
+                                    navigate("/waitlist");
+                                    handleCloseMenu();
+                                }}
+                                className="flex items-center gap-3 py-3 px-2 rounded-lg hover:bg-gray-100 transition-colors w-full text-left"
+                            >
+                                <Settings className="h-5 w-5 text-[#1600ff]" />
+                                <span className="text-gray-900 font-medium">Learn More</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     )
 }
