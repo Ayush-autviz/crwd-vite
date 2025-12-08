@@ -18,6 +18,7 @@ import Interests from "./pages/auth/Interests";
 import Verify from "./pages/auth/Verify";
 import Search from "./pages/Search";
 import Search2 from "./pages/Search2";
+import NewSearch from "./pages/NewSearch";
 import Donation from "./pages/Donation";
 import ManageDonationBox from "./pages/ManageDonationBox";
 import Notifications from "./pages/Notifications";
@@ -35,6 +36,7 @@ import SettingsPrivacy from "./pages/settings/Privacy";
 import SettingsAbout from "./pages/settings/About";
 import SettingsReport from "./pages/settings/Report";
 import TransactionHistory from "./pages/TransactionHistory";
+import TaxReceipts from "./pages/TaxReceipts";
 import Saved from "./pages/Saved";
 import YourCrwds from "./pages/YourCrwds";
 import ManageCrwd from "./pages/ManageCrwd";
@@ -71,6 +73,8 @@ import NewOnboard from "./pages/newOnboarding/NewOnboard";
 import NewClaimProfile from "./pages/newOnboarding/NewClaimProfile";
 import NewNonProfitInterests from "./pages/newOnboarding/NewNonProfitInterests";
 import NewCompleteOnboard from "./pages/newOnboarding/NewCompleteOnboard";
+import SurpriseMe from "./pages/SurpriseMe";
+import NewSaved from "./pages/NewSaved";
 
 // ScrollToTop component that works for all pages
 function ScrollToTop() {
@@ -158,10 +162,12 @@ function App() {
                 <Layout>
                   <Routes>
                     {/* <Route path="/" element={<Home />} /> */}
-                    <Route path="/" element={<NewHome />} />
-                    <Route path="/waitlist" element={<Waitlist />} />
-                    <Route path="/search" element={<Search />} />
-                    <Route path="/search2" element={<Search2 />} />
+                 <Route path="/" element={<NewHome />} />
+                 <Route path="/waitlist" element={<Waitlist />} />
+                 {/* <Route path="/search" element={<Search />} /> */}
+                 <Route path="/search" element={<NewSearch />} />
+                 <Route path="/surprise-me" element={<SurpriseMe />} />
+                 <Route path="/search2" element={<Search2 />} />
                     <Route path="/donation" element={<Donation />} />
                     <Route path="/donation/manage" element={<ManageDonationBox />} />
                     <Route path="/notifications" element={<Notifications />} />
@@ -198,12 +204,16 @@ function App() {
                       path="/settings/report"
                       element={<SettingsReport />}
                     />
-                    <Route
+                    {/* <Route
                       path="/transaction-history"
                       element={<TransactionHistory />}
+                    /> */}
+                    <Route
+                      path="/transaction-history"
+                      element={<TaxReceipts />}
                     />
                     <Route path="/payment/result" element={<PaymentResult />} />
-                    <Route path="/saved" element={<Saved />} />
+                    <Route path="/saved" element={<NewSaved />} />
                     {/* <Route path="/your-crwds" element={<YourCrwds />} /> */}
                     {/* <Route path="/your-crwds/:id" element={<ManageCrwd />} /> */}
                     <Route path="/create-crwd" element={<CreateCrwd />} />

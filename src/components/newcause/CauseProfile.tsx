@@ -57,10 +57,9 @@ export default function CauseProfile({ causeData }: CauseProfileProps) {
         {category && (
           <Badge
             variant="secondary"
-            className="rounded-full px-3 py-1 text-sm font-medium"
+            className="rounded-full px-3 py-1 text-sm font-medium text-white"
             style={{
               backgroundColor: category.background,
-              color: category.text,
             }}
           >
             {category.name}

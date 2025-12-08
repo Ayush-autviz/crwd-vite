@@ -63,7 +63,7 @@ export default function SimilarNonprofits({ similarCauses, isLoading }: SimilarN
             >
               <CardContent className="px-4">
                 <div className="flex gap-4">
-                  <Avatar className="w-16 h-16 rounded-lg flex-shrink-0">
+                  <Avatar className="w-14 h-14 rounded-lg flex-shrink-0">
                     <AvatarImage src={cause.image} alt={cause.name} />
                     <AvatarFallback
                       style={{ backgroundColor: avatarBgColor }}

@@ -302,6 +302,9 @@ export default function NewGroupCrwdPage() {
         onManageCollective={handleManageCollective}
       />
 
+    <div className='lg:max-w-[60%] lg:mx-auto'>
+
+
       <CollectiveProfile
         name={crwdData.name || 'Collective'}
         image={crwdData.avatar || crwdData.image}
@@ -397,6 +400,7 @@ export default function NewGroupCrwdPage() {
         collectiveName={crwdData.name}
         initialTab={statisticsTab}
       />
+      </div>
 
       {/* Join Modal */}
       {showJoinModal && (
