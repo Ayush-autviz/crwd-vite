@@ -75,6 +75,7 @@ import NewNonProfitInterests from "./pages/newOnboarding/NewNonProfitInterests";
 import NewCompleteOnboard from "./pages/newOnboarding/NewCompleteOnboard";
 import SurpriseMe from "./pages/SurpriseMe";
 import NewSaved from "./pages/NewSaved";
+import NewCreateCollective from "./pages/NewCreateCollective";
 
 // ScrollToTop component that works for all pages
 function ScrollToTop() {
@@ -216,7 +217,7 @@ function App() {
                     <Route path="/saved" element={<NewSaved />} />
                     {/* <Route path="/your-crwds" element={<YourCrwds />} /> */}
                     {/* <Route path="/your-crwds/:id" element={<ManageCrwd />} /> */}
-                    <Route path="/create-crwd" element={<CreateCrwd />} />
+                    <Route path="/create-crwd" element={<NewCreateCollective />} />
                     <Route path="/create-post" element={<CreatePost />} />
                     {/* <Route path="/create-cause" element={<CreateCause />} /> */}
                     {/* <Route path="/feed-hungry" element={<FeedHungry />} /> */}

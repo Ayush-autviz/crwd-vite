@@ -31,15 +31,20 @@ export default function UserResultCard({ user }: UserResultCardProps) {
     ? `${user.first_name.charAt(0)}${user.last_name.charAt(0)}`.toUpperCase()
     : user.username?.charAt(0).toUpperCase() || 'U';
 
+  // Get full name
+  const fullName = user.first_name && user.last_name
+    ? `${user.first_name} ${user.last_name}`
+    : user.first_name || user.username || 'Unknown User';
+
   return (
     <Card
       onClick={() => navigate(`/user-profile/${user.id}`)}
-      className="cursor-pointer hover:shadow-md transition-shadow border border-gray-200"
+      className="cursor-pointer hover:shadow-md transition-shadow border border-gray-200 bg-white rounded-lg"
     >
-      <CardContent className="p-4">
-        <div className="flex items-start gap-4">
+      <CardContent className="px-4">
+        <div className="flex items-center gap-4">
           <Avatar className="w-12 h-12 rounded-full flex-shrink-0">
-            <AvatarImage src={user.profile_picture} alt={user.username} />
+            <AvatarImage src={user.profile_picture} alt={fullName} />
             <AvatarFallback
               style={{ backgroundColor: avatarBgColor }}
               className="text-white font-bold"
@@ -48,11 +53,13 @@ export default function UserResultCard({ user }: UserResultCardProps) {
             </AvatarFallback>
           </Avatar>
           <div className="flex-1 min-w-0">
-            <h3 className="font-bold text-base text-foreground mb-1">
-              @{user.username}
+            {/* First Name and Last Name */}
+            <h3 className="font-bold text-base text-gray-900">
+              {fullName}
             </h3>
+            {/* Bio */}
             {user.bio && (
-              <p className="text-sm text-gray-700">{user.bio}</p>
+              <p className="text-sm text-gray-600">{user.bio}</p>
             )}
           </div>
         </div>
@@ -60,4 +67,5 @@ export default function UserResultCard({ user }: UserResultCardProps) {
     </Card>
   );
 }
+
 

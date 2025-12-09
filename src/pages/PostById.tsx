@@ -205,24 +205,24 @@ export default function PostById() {
     }
   };
 
-  useEffect(() => {
-    const handleBackButton = () => {
-      window.history.pushState(null, "", window.location.href);
-      window.onpopstate = function () {
-        if (inputValue.trim()) {
-          window.history.pushState(null, "", window.location.href);
-          setShowDialog(true);
-        } else {
-          navigate("/");
-        }
-      };
-    };
+  // useEffect(() => {
+  //   const handleBackButton = () => {
+  //     window.history.pushState(null, "", window.location.href);
+  //     window.onpopstate = function () {
+  //       if (inputValue.trim()) {
+  //         window.history.pushState(null, "", window.location.href);
+  //         setShowDialog(true);
+  //       } else {
+  //         navigate("/");
+  //       }
+  //     };
+  //   };
 
-    handleBackButton();
-    return () => {
-      window.onpopstate = null;
-    };
-  }, [inputValue, navigate]);
+  //   handleBackButton();
+  //   return () => {
+  //     window.onpopstate = null;
+  //   };
+  // }, [inputValue, navigate]);
 
   const handleConfirmLeave = () => {
     setShowDialog(false);

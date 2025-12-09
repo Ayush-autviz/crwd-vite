@@ -23,6 +23,7 @@ import CommunityActivity from '@/components/newgroupcrwd/CommunityActivity';
 import CollectiveStatisticsModal from '@/components/newgroupcrwd/CollectiveStatisticsModal';
 import { SharePost } from '@/components/ui/SharePost';
 import { useAuthStore } from '@/stores/store';
+import Footer from '@/components/Footer';
 
 export default function NewGroupCrwdPage() {
   const { crwdId } = useParams<{ crwdId: string }>();
@@ -292,7 +293,7 @@ export default function NewGroupCrwdPage() {
   };
 
   return (
-    <div className="min-h-screen bg-white pb-20">
+    <div className="min-h-screen bg-white">
       <CollectiveHeader
         title={crwdData.name || 'Collective'}
         collectiveId={crwdId}
@@ -401,6 +402,8 @@ export default function NewGroupCrwdPage() {
         initialTab={statisticsTab}
       />
       </div>
+
+      <Footer />
 
       {/* Join Modal */}
       {showJoinModal && (

@@ -4,6 +4,7 @@ import NewSuggestedCollectives from "@/components/newHome/NewSuggestedCollective
 import NewFeaturedNonprofits from "@/components/newHome/NewFeaturedNonprofits";
 import HelloGreeting from "@/components/newHome/HelloGreeting";
 import MyDonationBoxCard from "@/components/newHome/MyDonationBoxCard";
+import DonationBoxPrompt from "@/components/newHome/DonationBoxPrompt";
 import CollectiveCarouselCard from "@/components/newHome/CollectiveCarouselCard";
 import CommunityUpdates from "@/components/newHome/CommunityUpdates";
 import ExploreCards from "@/components/newHome/ExploreCards";
@@ -13,6 +14,7 @@ import { getDonationBox } from "@/services/api/donation";
 import { getPosts } from "@/services/api/social";
 import { useAuthStore } from "@/stores/store";
 import GuestHome from "@/components/GuestHome";
+import Footer from "@/components/Footer";
 
 export default function NewHome() {
     const { user, token } = useAuthStore();
@@ -150,7 +152,7 @@ export default function NewHome() {
                         {/* Personalized Greeting */}
                         <HelloGreeting />
 
-                        {/* My Donation Box Card */}
+                        {/* My Donation Box Card or Prompt */}
                         {token?.access_token && (
                             donationBoxLoading ? (
                                 <div className="flex items-center justify-center py-8 W-[200px]">
@@ -161,7 +163,9 @@ export default function NewHome() {
                                     monthlyAmount={donationBoxInfo.monthlyAmount}
                                     causeCount={donationBoxInfo.causeCount}
                                 />
-                            ) : null
+                            ) : (
+                                <DonationBoxPrompt />
+                            )
                         )}
 
                         {/* Collective Carousel Card */}
@@ -222,6 +226,8 @@ export default function NewHome() {
                     </div>
                 </div>
                 <ExploreCards />
+
+                <Footer />
 
             </div>
             );

@@ -3,8 +3,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { ArrowLeft, Search as SearchIcon, Sparkles, Plus, Loader2 } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent } from '@/components/ui/card';
-import { getCausesBySearch, getCollectivesBySearch } from '@/services/api/crwd';
-import { getPosts } from '@/services/api/social';
+import { newSearch } from '@/services/api/social';
 import { useQuery } from '@tanstack/react-query';
 import SearchResultsHeader from '@/components/newsearch/SearchResultsHeader';
 import SearchTabs from '@/components/newsearch/SearchTabs';
@@ -32,42 +31,28 @@ export default function NewSearchPage() {
     }
   }, [location.state]);
 
-  // Fetch causes
-  const { data: causesData, isLoading: isLoadingCauses } = useQuery({
-    queryKey: ['causes-search', searchQuery],
-    queryFn: () => getCausesBySearch(searchQuery, '', 1),
-    enabled: hasSearched && searchQuery.trim().length > 0 && activeTab === 'Causes',
+  // Map tab names to API tab values
+  const getTabValue = (tab: TabType): 'cause' | 'collective' | 'user' | 'post' => {
+    switch (tab) {
+      case 'Causes':
+        return 'cause';
+      case 'Collectives':
+        return 'collective';
+      case 'Users':
+        return 'user';
+      case 'Posts':
+        return 'post';
+      default:
+        return 'cause';
+    }
+  };
+
+  // Fetch search results using the new unified search API
+  const { data: searchData, isLoading: isLoadingSearch } = useQuery({
+    queryKey: ['new-search', activeTab, searchQuery],
+    queryFn: () => newSearch(getTabValue(activeTab), searchQuery),
+    enabled: hasSearched && searchQuery.trim().length > 0,
   });
-
-  // Fetch collectives
-  const { data: collectivesData, isLoading: isLoadingCollectives } = useQuery({
-    queryKey: ['collectives-search', searchQuery],
-    queryFn: () => getCollectivesBySearch(searchQuery),
-    enabled: hasSearched && searchQuery.trim().length > 0 && activeTab === 'Collectives',
-  });
-
-  // Fetch posts - Note: getPosts doesn't support search directly, so we fetch all and filter client-side
-  // TODO: Check if there's a search endpoint for posts
-  const { data: postsData, isLoading: isLoadingPosts } = useQuery({
-    queryKey: ['posts-search', searchQuery],
-    queryFn: () => getPosts('', '', 1),
-    enabled: hasSearched && searchQuery.trim().length > 0 && activeTab === 'Posts',
-  });
-
-  // Filter posts by search query client-side
-  const filteredPosts = postsData?.results?.filter((post: any) => {
-    const searchLower = searchQuery.toLowerCase();
-    return (
-      post.text?.toLowerCase().includes(searchLower) ||
-      post.user?.username?.toLowerCase().includes(searchLower) ||
-      post.user?.first_name?.toLowerCase().includes(searchLower) ||
-      post.user?.last_name?.toLowerCase().includes(searchLower)
-    );
-  }) || [];
-
-  // TODO: Fetch users - need to check if there's a user search API
-  const usersData = { results: [] };
-  const isLoadingUsers = false;
 
   const handleSearch = () => {
     if (searchQuery.trim()) {
@@ -85,39 +70,38 @@ export default function NewSearchPage() {
     navigate('/surprise-me');
   };
 
-  // Get results based on active tab
+  // Get results based on active tab from the unified search API response
   const getResults = () => {
+    if (!searchData) return [];
+    
+    // The API response structure may vary, but typically it returns results in a results array
+    // or directly as an array. Let's handle both cases.
+    if (Array.isArray(searchData)) {
+      return searchData;
+    }
+    
+    // If it's an object with a results property
+    if (searchData.results) {
+      return searchData.results;
+    }
+    
+    // If it's an object with tab-specific properties
     switch (activeTab) {
       case 'Causes':
-        return causesData?.results || [];
+        return searchData.causes || searchData.cause || [];
       case 'Collectives':
-        return collectivesData?.results || collectivesData || [];
+        return searchData.collectives || searchData.collective || [];
       case 'Users':
-        return usersData?.results || [];
+        return searchData.users || searchData.user || [];
       case 'Posts':
-        return filteredPosts;
+        return searchData.posts || searchData.post || [];
       default:
         return [];
     }
   };
 
-  const getIsLoading = () => {
-    switch (activeTab) {
-      case 'Causes':
-        return isLoadingCauses;
-      case 'Collectives':
-        return isLoadingCollectives;
-      case 'Users':
-        return isLoadingUsers;
-      case 'Posts':
-        return isLoadingPosts;
-      default:
-        return false;
-    }
-  };
-
   const results = getResults();
-  const isLoading = getIsLoading();
+  const isLoading = isLoadingSearch;
   const resultsCount = results.length;
 
   return (
