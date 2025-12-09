@@ -149,6 +149,11 @@ export default function ProfileNavbar({
             </button> */}
             {token?.access_token && (
               <>
+                <Link to="/search">
+                  <button className="p-1.5 rounded-full">
+                    <Search size={20} className="text-gray-900" />
+                  </button>
+                </Link>
                 <button
                   onClick={() => navigate("/notifications")}
                   className="relative p-1.5 bg-red-50 rounded-full"

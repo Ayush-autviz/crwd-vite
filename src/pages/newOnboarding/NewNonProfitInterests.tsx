@@ -1,8 +1,11 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Heart, Check, ArrowRight } from "lucide-react";
+import { Heart, ArrowRight, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { categories } from "@/constants/categories";
+import { useMutation } from "@tanstack/react-query";
+import { postCauseInterests } from "@/services/api/social";
+import { toast } from "sonner";
 
 export default function NewNonProfitInterests() {
   const navigate = useNavigate();
@@ -21,17 +24,26 @@ export default function NewNonProfitInterests() {
     });
   };
 
-  const handleContinue = () => {
-    // TODO: Handle continue action (no API integration as per requirements)
-    console.log("Selected categories:", selectedCategories);
-    // Navigate to next step
-    navigate("/complete-onboard", { 
-      state: { selectedCategories } 
-    });
-  };
+  // Post cause interests mutation
+  const postInterestsMutation = useMutation({
+    mutationFn: (interests: string[]) => postCauseInterests({ interests }),
+    onSuccess: () => {
+      toast.success("Interests saved successfully!");
+      navigate("/complete-onboard", { 
+        state: { selectedCategories } 
+      });
+    },
+    onError: (error: any) => {
+      toast.error(error?.response?.data?.message || "Failed to save interests");
+    },
+  });
 
-  const handleBack = () => {
-    navigate(-1);
+  const handleContinue = () => {
+    if (selectedCategories.length === 0) {
+      return;
+    }
+    // Post the selected category IDs
+    postInterestsMutation.mutate(selectedCategories);
   };
 
   const handleSkip = () => {
@@ -76,20 +88,18 @@ export default function NewNonProfitInterests() {
                 onClick={() => handleCategoryToggle(category.id)}
                 className={`
                   relative px-4 py-3 rounded-full text-sm font-medium transition-all duration-200
-                  flex items-center justify-center gap-2
+                  flex items-center justify-center
                   ${isSelected 
                     ? "text-white shadow-md transform scale-105" 
                     : "hover:shadow-sm"
                   }
                 `}
                 style={{
-                  backgroundColor: isSelected ? category.text : category.background,
-                  color: isSelected ? "white" : category.text,
+                  backgroundColor: category.background,
+                  color: category.text,
+                  opacity: isSelected ? 1 : 0.6,
                 }}
               >
-                {isSelected && (
-                  <Check className="w-4 h-4" />
-                )}
                 <span>{category.name}</span>
               </button>
             );
@@ -116,11 +126,20 @@ export default function NewNonProfitInterests() {
             </Button> */}
             <Button
               onClick={handleContinue}
-              disabled={selectedCategories.length === 0}
+              disabled={selectedCategories.length === 0 || postInterestsMutation.isPending}
               className="flex-1 h-12 bg-indigo-500 hover:bg-indigo-600 text-white flex items-center justify-center gap-2"
             >
-              Continue
-              <ArrowRight className="w-4 h-4" />
+              {postInterestsMutation.isPending ? (
+                <>
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                  Saving...
+                </>
+              ) : (
+                <>
+                  Continue
+                  <ArrowRight className="w-4 h-4" />
+                </>
+              )}
             </Button>
           </div>
 

@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, Sparkles, Phone, HelpCircle } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
-import { getCausesBySearch } from '@/services/api/crwd';
+import { getSurpriseMe } from '@/services/api/crwd';
 import { addCausesToBox } from '@/services/api/donation';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
@@ -35,20 +35,26 @@ export default function SurpriseMePage() {
   const queryClient = useQueryClient();
   const [surpriseCauses, setSurpriseCauses] = useState<any[]>([]);
 
-  // Fetch causes - we'll get a random set
-  const { data: causesData, isLoading, refetch } = useQuery({
-    queryKey: ['surprise-causes'],
-    queryFn: () => getCausesBySearch('', '', 1),
+  // Fetch random causes using the surprise me API
+  const { data: surpriseData, isLoading, refetch } = useQuery({
+    queryKey: ['surprise-me'],
+    queryFn: () => getSurpriseMe(),
     enabled: true,
   });
 
-  // Get 5 random causes when data is loaded
+  // Set causes when data is loaded
   useEffect(() => {
-    if (causesData?.results && causesData.results.length > 0) {
-      const shuffled = [...causesData.results].sort(() => 0.5 - Math.random());
-      setSurpriseCauses(shuffled.slice(0, 5));
+    if (surpriseData) {
+      // Handle different response structures
+      if (Array.isArray(surpriseData)) {
+        setSurpriseCauses(surpriseData);
+      } else if (surpriseData.data && Array.isArray(surpriseData.data)) {
+        setSurpriseCauses(surpriseData.data);
+      } else if (surpriseData.results && Array.isArray(surpriseData.results)) {
+        setSurpriseCauses(surpriseData.results);
+      }
     }
-  }, [causesData]);
+  }, [surpriseData]);
 
   // Add all causes to donation box mutation
   const addToBoxMutation = useMutation({

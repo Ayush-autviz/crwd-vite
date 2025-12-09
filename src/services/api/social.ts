@@ -243,3 +243,10 @@ export const newSearch = async (tab: 'cause' | 'collective' | 'user' | 'post', q
     const response = await axiosClient.get(`/social/search/?tab=${tab}&q=${query}`);
     return response.data;
 };
+
+
+// casueInterests API endpoints
+export const postCauseInterests = async (data: any) => {
+    const response = await axiosClient.post('/social/users/cause-interests/', data);
+    return response.data;
+};

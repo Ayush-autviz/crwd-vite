@@ -11,7 +11,7 @@ export default function DonationBoxPrompt() {
   return (
     <div className="px-4 py-6">
       {/* Greeting */}
-      <h2 className="text-2xl font-bold text-foreground text-center mb-6">
+      <h2 className="text-2xl font-bold text-foreground mb-6">
         Hi {firstName}, ready to make an impact?
       </h2>
 
@@ -22,17 +22,17 @@ export default function DonationBoxPrompt() {
           onClick={() => navigate('/donation')}
           className="cursor-pointer hover:shadow-md transition-shadow border border-gray-200"
         >
-          <CardContent className="p-6">
-            <div className="flex items-start gap-4">
+          <CardContent className="px-6">
+            {/* <div className="flex items-start gap-4"> */}
               {/* Blue Icon */}
               <div className="w-12 h-12 rounded-full bg-[#1600ff] flex items-center justify-center flex-shrink-0">
                 <ShoppingBag className="w-6 h-6 text-white" />
               </div>
               <div className="flex-1 min-w-0">
-                <h3 className="font-bold text-lg text-foreground mb-2">
+                <h3 className="font-bold text-lg text-foreground mt-2">
                   Create a Donation Box
                 </h3>
-                <p className="text-sm text-gray-600 mb-4">
+                <p className="text-sm text-gray-600 mb-2">
                   Support multiple causes with one donation
                 </p>
                 <button
@@ -40,12 +40,12 @@ export default function DonationBoxPrompt() {
                     e.stopPropagation();
                     navigate('/donation');
                   }}
-                  className="text-[#1600ff] font-medium text-sm hover:underline"
+                  className="text-[#1600ff] font-semibold text-sm hover:underline"
                 >
                   Start donating →
                 </button>
               </div>
-            </div>
+            {/* </div> */}
           </CardContent>
         </Card>
 
@@ -54,17 +54,17 @@ export default function DonationBoxPrompt() {
           onClick={() => navigate('/create-crwd')}
           className="cursor-pointer hover:shadow-md transition-shadow border border-gray-200"
         >
-          <CardContent className="p-6">
-            <div className="flex items-start gap-4">
+          <CardContent className="px-6">
+            {/* <div className="flex items-start gap-4"> */}
               {/* Green Icon */}
-              <div className="w-12 h-12 rounded-full bg-green-500 flex items-center justify-center flex-shrink-0">
-                <Plus className="w-6 h-6 text-white" />
+              <div className="w-12 h-12 rounded-full bg-[#aeff30] flex items-center justify-center flex-shrink-0">
+                <Plus className="w-6 h-6 text-black" strokeWidth={3}/>
               </div>
               <div className="flex-1 min-w-0">
-                <h3 className="font-bold text-lg text-foreground mb-2">
+                <h3 className="font-bold text-lg text-foreground mt-2">
                   Start Your Own Collective
                 </h3>
-                <p className="text-sm text-gray-600 mb-4">
+                <p className="text-sm text-gray-600 mb-2">
                   Bring people together around causes you care about.
                 </p>
                 <button
@@ -72,12 +72,12 @@ export default function DonationBoxPrompt() {
                     e.stopPropagation();
                     navigate('/create-crwd');
                   }}
-                  className="text-foreground font-medium text-sm hover:underline"
+                  className="text-foreground font-semibold text-sm hover:underline"
                 >
                   Create collective →
                 </button>
               </div>
-            </div>
+            {/* </div> */}
           </CardContent>
         </Card>
       </div>

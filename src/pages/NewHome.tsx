@@ -89,8 +89,12 @@ export default function NewHome() {
             mission: nonprofit.mission || "",
         })) || [];
 
+    // Check if donation box exists
+    // API returns {"status_code":200,"message":"Donation box not found"} when not set up
+    const isDonationBoxNotFound = donationBoxData?.message === "Donation box not found";
+    
     // Transform donation box data
-    const donationBoxInfo = donationBoxData
+    const donationBoxInfo = donationBoxData && !isDonationBoxNotFound
         ? {
             monthlyAmount: donationBoxData.monthly_amount || donationBoxData.amount || 10,
             causeCount:
@@ -150,7 +154,6 @@ export default function NewHome() {
                 {/* Main Content - Takes full width on mobile, 12 columns on desktop */}
                     <div className="bg-gradient-to-r from-blue-50 via-purple-50 to-pink-50 px-10 py-6">
                         {/* Personalized Greeting */}
-                        <HelloGreeting />
 
                         {/* My Donation Box Card or Prompt */}
                         {token?.access_token && (
@@ -159,10 +162,13 @@ export default function NewHome() {
                                     <Loader2 className="h-6 w-6 animate-spin" />
                                 </div>
                             ) : donationBoxInfo ? (
+                                <>
+                                <HelloGreeting />
                                 <MyDonationBoxCard
                                     monthlyAmount={donationBoxInfo.monthlyAmount}
                                     causeCount={donationBoxInfo.causeCount}
                                 />
+                                </>
                             ) : (
                                 <DonationBoxPrompt />
                             )
