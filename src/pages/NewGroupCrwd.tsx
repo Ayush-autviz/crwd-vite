@@ -374,6 +374,7 @@ export default function NewGroupCrwdPage() {
         isLoading={isLoadingPosts}
         collectiveId={crwdId}
         isJoined={crwdData.is_joined}
+        collectiveData={crwdData}
       />
 
       {/* Legal Disclaimer */}

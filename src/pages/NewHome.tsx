@@ -255,6 +255,12 @@ export default function NewHome() {
                     actionText = actionText.charAt(0).toUpperCase() + actionText.slice(1);
                 }
 
+                // Check if this is a join notification
+                const isJoinNotification = 
+                    notification.body?.toLowerCase().includes('joined') ||
+                    notification.data?.new_member_id !== undefined ||
+                    notification.title?.toLowerCase().includes('new member');
+
                 return {
                     id: notification.id,
                     user: {
@@ -274,6 +280,8 @@ export default function NewHome() {
                     timestamp: notification.created_at || notification.timestamp,
                     likesCount: 0, // Not available in notification API
                     commentsCount: 0, // Not available in notification API
+                    postId: notification.data?.post_id || null, // Extract post_id if available
+                    isJoinNotification: isJoinNotification, // Flag for join notifications
                 };
             }) || [];
     }, [notificationsData, userProfilesMap]);

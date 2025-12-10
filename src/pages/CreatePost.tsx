@@ -4,9 +4,7 @@ import React, { useState, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useNavigate, useLocation } from "react-router-dom";
-import { ImageIcon, Link, X, Loader2 } from "lucide-react";
-import ProfileNavbar from "@/components/profile/ProfileNavbar";
-import Footer from "@/components/Footer";
+import { ImageIcon, X, Loader2, ArrowLeft, Lightbulb, Paperclip } from "lucide-react";
 import { Toast } from "@/components/ui/toast";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { createPost } from "@/services/api/social";
@@ -140,17 +138,13 @@ export default function CreatePostPage() {
     // Post can be submitted with just content (text-only post)
     if (!form.content.trim()) return false;
     
-    // If link type is selected, URL must be provided and valid
-    if (postType === "link") {
-      return form.url.trim() && validateUrl(form.url) && !urlError;
+    // If URL is provided, it must be valid
+    if (form.url.trim() && (!validateUrl(form.url) || urlError)) {
+      return false;
     }
     
-    // If image type is selected, image must be provided
-    if (postType === "image") {
-      return selectedImage !== null;
-    }
-    
-    // Text-only post or event post (just needs content)
+    // Allow text-only posts, posts with image, posts with link, or any combination
+    // Image and link are optional
     return true;
   };
 
@@ -177,8 +171,18 @@ export default function CreatePostPage() {
 
   if (!currentUser?.id) {
     return (
-      <div className="min-h-screen flex flex-col bg-background">
-        <ProfileNavbar title="Create a Post" />
+      <div className="min-h-screen flex flex-col bg-white">
+        <div className="sticky top-0 bg-white border-b border-gray-200 z-10">
+          <div className="flex items-center gap-3 px-4 py-3">
+            <button
+              onClick={() => navigate(-1)}
+              className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+            >
+              <ArrowLeft className="w-5 h-5 text-gray-700" />
+            </button>
+            <h1 className="text-lg font-bold text-gray-900">Create Post</h1>
+          </div>
+        </div>
         <div className="flex items-center justify-center flex-1">
           <div className="text-center">
             <div className="text-lg font-semibold text-gray-700 mb-2">
@@ -199,8 +203,18 @@ export default function CreatePostPage() {
   // Check if collective_id is provided
   if (!collectiveData) {
     return (
-      <div className="min-h-screen flex flex-col bg-background">
-        <ProfileNavbar title="Create a Post" />
+      <div className="min-h-screen flex flex-col bg-white">
+        <div className="sticky top-0 bg-white border-b border-gray-200 z-10">
+          <div className="flex items-center gap-3 px-4 py-3">
+            <button
+              onClick={() => navigate(-1)}
+              className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+            >
+              <ArrowLeft className="w-5 h-5 text-gray-700" />
+            </button>
+            <h1 className="text-lg font-bold text-gray-900">Create Post</h1>
+          </div>
+        </div>
         <div className="flex items-center justify-center flex-1">
           <div className="text-center">
             <div className="text-lg font-semibold text-gray-700 mb-2">
@@ -219,154 +233,164 @@ export default function CreatePostPage() {
   }
 
   // Main create post form
+  const characterCount = form.content.length;
+  const maxCharacters = 500;
+
   return (
-    <div className="min-h-screen flex flex-col bg-gradient-to-b from-background to-muted/40 ">
-      <ProfileNavbar title="Create a Post" />
-
-      <div className="flex-1 flex flex-col  p-4">
-        <div className="flex flex-col p-4">
-          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 sm:gap-0">
-            <div className="w-full">
-              <div className="text-sm font-medium text-gray-700 mb-2">
-                Creating post for {collectiveData.name}
-              </div>
+    <div className="min-h-screen flex flex-col bg-white">
+      {/* Header */}
+      <div className="sticky top-0 bg-white border-b border-gray-200 z-10">
+        <div className="flex items-center justify-between px-4 py-3">
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => navigate(-1)}
+              className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+            >
+              <ArrowLeft className="w-5 h-5 text-gray-700" />
+            </button>
+            <div>
+              <h1 className="text-lg font-bold text-gray-900">Create Post</h1>
+              <p className="text-xs text-gray-500">{collectiveData?.name || "Your Collective"}</p>
             </div>
           </div>
-          
-          <div className="flex-1">
-            {/* {postType ? ( */}
-              <div className="mt-6">
-                {/* Title/Content Input - Always shown for all post types */}
-                <div className="mb-6">
-                  <textarea
-                    name="content"
-                    value={form.content}
-                    onChange={handleInputChange}
-                    placeholder={
-                     "What's on your mind?"
-                     
-                    }
-                    className="w-full min-h-[100px] p-0 border-0 bg-transparent text-lg focus:outline-none resize-none placeholder:text-gray-400"
-                  />
-                </div>
-
-                {/* URL Input for Link Posts */}
-                {postType === "link" && (
-                  <div className="mb-6">
-                    <div className="relative">
-                      <Input
-                        name="url"
-                        value={form.url}
-                        onChange={handleInputChange}
-                        onBlur={handleUrlBlur}
-                        placeholder="URL"
-                        className="border-0 border-b border-gray-300 rounded-none px-0 py-3 text-blue-500 focus-visible:ring-0 focus-visible:border-primary placeholder:text-gray-400"
-                      />
-                      {form.url && (
-                        <button
-                          onClick={() =>
-                            setForm((prev) => ({ ...prev, url: "" }))
-                          }
-                          className="absolute right-0 top-1/2 transform -translate-y-1/2 w-6 h-6 bg-gray-400 rounded-full flex items-center justify-center text-white text-sm hover:bg-gray-500"
-                        >
-                          <X size={14} />
-                        </button>
-                      )}
-                    </div>
-                    {urlError && (
-                      <div className="text-red-500 text-sm mt-2">
-                        {urlError}
-                      </div>
-                    )}
-                  </div>
-                )}
-
-                {/* Image Preview for Image Posts */}
-                {postType === "image" && selectedImage && imagePreview && (
-                  <div className="mb-6">
-                    <div className="relative">
-                      <img
-                        src={imagePreview}
-                        alt="Selected"
-                        className="w-full max-h-64 object-cover rounded-lg"
-                      />
-                      <button
-                        onClick={() => {
-                          setSelectedImage(null);
-                          setImagePreview(null);
-                        }}
-                        className="absolute top-2 right-2 w-8 h-8 bg-black bg-opacity-50 rounded-full flex items-center justify-center text-white hover:bg-opacity-70"
-                      >
-                        <X size={16} />
-                      </button>
-                    </div>
-                  </div>
-                )}
-              </div>
-            {/* ) : (
-              <div className="flex flex-col items-center justify-center mt-10 px-1">
-                <div className="text-gray-400 text-center">
-                  <div className="text-lg mb-2">
-                    Select a post type below to get started
-                  </div>
-                  <div className="text-sm">
-                    Choose from link, photo
-                  </div>
-                </div>
-              </div>
-            )} */}
-
-            {/* Post Type Icons - Always visible below textarea */}
-            <div className="mt-6 px-2">
-              <div className="flex gap-8 mb-2">
-                <button
-                  onClick={() => handlePostTypeSelect("link")}
-                  className="focus:outline-none"
-                >
-                  <Link
-                    className={`h-6 w-6 ${
-                      postType === "link" ? "text-primary" : "text-gray-500"
-                    } transition-colors`}
-                  />
-                </button>
-                <button
-                  onClick={() => handlePostTypeSelect("image")}
-                  className="focus:outline-none"
-                >
-                  <ImageIcon
-                    className={`h-6 w-6 ${
-                      postType === "image" ? "text-primary" : "text-gray-500"
-                    } transition-colors`}
-                  />
-                </button>
-              </div>
-              <div className="text-muted-foreground text-sm italic">
-                {postType
-                  ? "Add a link or image"
-                  : "Select a post type to get started"}
-              </div>
-            </div>
-
-            <div className="mt-8 flex justify-end">
-              <Button
-                variant="default"
-                className="w-full sm:w-auto rounded-lg px-6 py-2 text-sm font-medium text-white"
-                onClick={handleSubmitPost}
-                disabled={!canSubmitPost() || createPostMutation.isPending}
-              >
-                {createPostMutation.isPending ? (
-                  <>
-                    <Loader2 size={16} className="mr-2 animate-spin" />
-                    Creating...
-                  </>
-                ) : (
-                  "Create Post"
-                )}
-              </Button>
-            </div>
-          </div>
+          <Button
+            onClick={handleSubmitPost}
+            disabled={!canSubmitPost() || createPostMutation.isPending}
+            className="bg-[#1600ff] hover:bg-[#1400cc] text-white px-6 py-2 rounded-lg font-medium"
+          >
+            {createPostMutation.isPending ? (
+              <>
+                <Loader2 size={16} className="mr-2 animate-spin" />
+                Posting...
+              </>
+            ) : (
+              "Post"
+            )}
+          </Button>
         </div>
       </div>
+
+      <div className="flex-1 flex flex-col px-4 py-6 max-w-2xl mx-auto w-full">
+        {/* Main Content Input */}
+        <div className="mb-6">
+          <div className="border-2 rounded-lg p-4 bg-gray-50 border-gray-300 transition-all">
+            <textarea
+              name="content"
+              value={form.content}
+              onChange={handleInputChange}
+              placeholder="What's on your mind?"
+              className="w-full min-h-[200px] p-0 border-0 bg-transparent text-base focus:outline-none resize-none placeholder:text-gray-400"
+              maxLength={maxCharacters}
+            />
+          </div>
+          {/* Character Count */}
+          <div className="flex justify-end mt-2">
+            <span className="text-xs text-gray-500">
+              {characterCount}/{maxCharacters}
+            </span>
+          </div>
+        </div>
+
+        {/* Add Image and Add Link Buttons */}
+        <div className="flex gap-3 mb-4">
+          <button
+            onClick={() => handlePostTypeSelect("image")}
+            className="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+          >
+            <ImageIcon className="w-5 h-5 text-gray-700" />
+            <span className="text-sm font-medium text-gray-700">Add Image</span>
+          </button>
+          <button
+            onClick={() => handlePostTypeSelect("link")}
+            className="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+          >
+            <Paperclip className="w-5 h-5 text-gray-700" />
+            <span className="text-sm font-medium text-gray-700">Add Link</span>
+          </button>
+        </div>
+
+        {/* Link Input Field - Show when link is selected or URL is entered */}
+        {(postType === "link" || form.url) && (
+          <div className="mb-4">
+            <div className="relative">
+              <Input
+                name="url"
+                value={form.url}
+                onChange={handleInputChange}
+                onBlur={handleUrlBlur}
+                placeholder="https://example.com/article"
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1600ff] focus:border-transparent"
+              />
+              {form.url && (
+                <button
+                  onClick={() => {
+                    setForm((prev) => ({ ...prev, url: "" }));
+                    if (postType === "link") setPostType(null);
+                  }}
+                  className="absolute right-3 top-1/2 transform -translate-y-1/2 w-6 h-6 flex items-center justify-center text-gray-500 hover:text-gray-700"
+                >
+                  <X size={16} />
+                </button>
+              )}
+            </div>
+            {urlError && (
+              <div className="text-red-500 text-sm mt-2">
+                {urlError}
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Image Preview */}
+        {selectedImage && imagePreview && (
+          <div className="mb-4">
+            <div className="relative rounded-lg overflow-hidden">
+              <img
+                src={imagePreview}
+                alt="Selected"
+                className="w-full max-h-64 object-cover"
+              />
+              <button
+                onClick={() => {
+                  setSelectedImage(null);
+                  setImagePreview(null);
+                  if (postType === "image") setPostType(null);
+                }}
+                className="absolute top-2 right-2 w-8 h-8 bg-black bg-opacity-50 rounded-full flex items-center justify-center text-white hover:bg-opacity-70"
+              >
+                <X size={16} />
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* Posting Tips Box */}
+        <div className="mt-auto bg-blue-50 rounded-lg p-4 border border-blue-100">
+          <div className="flex items-center gap-2 mb-3">
+            <Lightbulb className="w-5 h-5 text-blue-600" />
+            <h3 className="text-sm font-semibold text-blue-900">Posting Tips</h3>
+          </div>
+          <ul className="space-y-2 text-sm text-blue-800">
+            <li className="flex items-start gap-2">
+              <span className="text-blue-600 mt-0.5">•</span>
+              <span>Share inspiring stories about the causes you support</span>
+            </li>
+            <li className="flex items-start gap-2">
+              <span className="text-blue-600 mt-0.5">•</span>
+              <span>Post updates about your collective's impact</span>
+            </li>
+            <li className="flex items-start gap-2">
+              <span className="text-blue-600 mt-0.5">•</span>
+              <span>Include relevant articles or resources to engage members</span>
+            </li>
+            <li className="flex items-start gap-2">
+              <span className="text-blue-600 mt-0.5">•</span>
+              <span>Text-only posts are perfect for quick updates!</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+
       {/* Hidden file input for image selection */}
       <input
         ref={fileInputRef}
@@ -383,13 +407,6 @@ export default function CreatePostPage() {
         onHide={() => setShowToast(false)}
         duration={2000}
       />
-
-      {/* <div className="h-20 md:hidden" /> */}
-
-      {/* Footer */}
-      <div className="hidden md:block">
-        <Footer />
-      </div>
     </div>
   );
 }

@@ -7,6 +7,7 @@ interface CommunityActivityProps {
   isLoading?: boolean;
   collectiveId?: string;
   isJoined?: boolean;
+  collectiveData?: any;
 }
 
 export default function CommunityActivity({
@@ -14,6 +15,7 @@ export default function CommunityActivity({
   isLoading = false,
   collectiveId,
   isJoined = false,
+  collectiveData,
 }: CommunityActivityProps) {
   const navigate = useNavigate();
 
@@ -30,17 +32,19 @@ export default function CommunityActivity({
             </p>
           )}
         </div>
-        {!isJoined && (
-          <Button
-            onClick={() => {
-              // Navigate to join or show join modal
-              if (collectiveId) {
-                navigate(`/newgroupcrwd/${collectiveId}`);
-              }
-            }}
+        {!isJoined ? (
+          <div
             className="bg-[#1600ff] hover:bg-[#1400cc] text-white font-bold px-4 py-2 rounded-full text-sm"
           >
             Join to post updates
+          </div>
+        ) : (
+          <Button
+            onClick={() => navigate("/create-post", { state: { collectiveData } })}
+            variant="default"
+            className="px-6 py-2 rounded-full"
+          >
+            Start a Conversation
           </Button>
         )}
       </div>
