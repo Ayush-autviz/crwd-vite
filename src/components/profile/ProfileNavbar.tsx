@@ -130,13 +130,7 @@ export default function ProfileNavbar({
           {/* Logo on the left */}
           <div className="flex-shrink-0">
             <Link to="/waitlist">
-              <img
-                src="/logo3.png"
-                width={70}
-                height={60}
-                alt="CRWD Logo"
-                className="object-contain"
-              />
+              <NewLogo />
             </Link>
           </div>
 
