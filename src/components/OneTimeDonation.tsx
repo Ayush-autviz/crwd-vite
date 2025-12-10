@@ -156,11 +156,11 @@ export default function OneTimeDonation({
   };
 
   return (
-    <div className="p-4 mt-4 mb-4 rounded-lg  ">
+    <div className="p-3 md:p-4 mt-3 md:mt-4 mb-4 rounded-lg">
       {/* Main container - flex column on mobile, flex row on larger screens */}
       <div className="flex flex-col md:flex-row md:gap-6 w-full">
         {/* Left column - Organizations section */}
-        <div className="w-full mb-5 md:mb-0">
+        <div className="w-full mb-4 md:mb-0">
           <DonationCauseSelector
             selectedItems={selectedItems}
             onSelectItem={handleSelectItem}
@@ -172,61 +172,61 @@ export default function OneTimeDonation({
         </div>
 
         {/* Right column - Donation amount and checkout */}
-        <div className="w-full  space-y-5">
+        <div className="w-full space-y-4 md:space-y-5">
           {/* Donation amount section */}
-          <div className="bg-blue-50 rounded-xl w-full p-6">
-            <div className="flex items-center mb-4 rounded-lg">
-              <h2 className="text-base font-medium text-gray-800">
+          <div className="bg-blue-50 rounded-xl w-full p-4 md:p-6">
+            <div className="flex items-center mb-3 md:mb-4 rounded-lg">
+              <h2 className="text-sm md:text-base font-medium text-gray-800">
                 Enter donation amount
               </h2>
             </div>
 
-            <div className="bg-blue-50 rounded-lg mb-4">
+            <div className="bg-blue-50 rounded-lg mb-3 md:mb-4">
               <div className="bg-white flex items-center rounded-lg border shadow-sm">
                 <button
                   onClick={decrementDonation}
-                  className="flex items-center justify-center w-12 h-12 rounded-l-lg hover:bg-gray-50 transition-colors"
+                  className="flex items-center justify-center w-10 h-10 md:w-12 md:h-12 rounded-l-lg hover:bg-gray-50 transition-colors"
                 >
-                  <Minus size={18} />
+                  <Minus size={16} className="md:w-[18px] md:h-[18px]" />
                 </button>
-                <div className="flex-1 flex justify-center items-center h-12 px-4 border-x">
-                  <span className="text-blue-600 text-2xl font-bold relative">
+                <div className="flex-1 flex justify-center items-center h-10 md:h-12 px-3 md:px-4 border-x">
+                  <span className="text-blue-600 text-xl md:text-2xl font-bold relative">
                     $
                     <input
                       type="text"
                       value={inputValue}
                       onChange={handleInputChange}
                       onBlur={handleInputBlur}
-                      className="bg-transparent w-20 text-center focus:outline-none"
+                      className="bg-transparent w-16 md:w-20 text-center focus:outline-none text-xl md:text-2xl"
                       aria-label="Donation amount"
                     />
                   </span>
                 </div>
                 <button
                   onClick={incrementDonation}
-                  className="flex items-center justify-center w-12 h-12 rounded-r-lg hover:bg-gray-50 transition-colors"
+                  className="flex items-center justify-center w-10 h-10 md:w-12 md:h-12 rounded-r-lg hover:bg-gray-50 transition-colors"
                 >
-                  <Plus size={18} />
+                  <Plus size={16} className="md:w-[18px] md:h-[18px]" />
                 </button>
               </div>
 
-              <p className="text-xs text-gray-500 mt-2">
+              <p className="text-xs text-gray-500 mt-1.5 md:mt-2">
                 Input amount over $5
               </p>
             </div>
 
-            <div className="flex justify-between items-center p-3 border-b border-gray-200">
-              <span className="text-sm font-medium text-gray-700">TOTAL:</span>
-              <span className="text-lg font-bold text-blue-600">${donationAmount.toFixed(2)}</span>
+            <div className="flex justify-between items-center p-2.5 md:p-3 border-b border-gray-200">
+              <span className="text-xs md:text-sm font-medium text-gray-700">TOTAL:</span>
+              <span className="text-base md:text-lg font-bold text-blue-600">${donationAmount.toFixed(2)}</span>
             </div>
           </div>
 
           {/* Security message */}
-          <div className="flex items-center p-3 bg-gray-50 rounded-lg">
-            <div className="flex items-center justify-center w-6 h-6 rounded-full bg-green-100 text-green-600 mr-2">
-              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" /><polyline points="22 4 12 14.01 9 11.01" /></svg>
+          <div className="flex items-center p-2.5 md:p-3 bg-gray-50 rounded-lg">
+            <div className="flex items-center justify-center w-5 h-5 md:w-6 md:h-6 rounded-full bg-green-100 text-green-600 mr-1.5 md:mr-2 flex-shrink-0">
+              <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" className="md:w-[14px] md:h-[14px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" /><polyline points="22 4 12 14.01 9 11.01" /></svg>
             </div>
-            <p className="text-sm text-gray-600">
+            <p className="text-xs md:text-sm text-gray-600">
               Your donation is protected and guaranteed.{" "}
               <Link to="/settings/about" className="text-blue-600 font-medium">
                 Learn More
@@ -235,11 +235,11 @@ export default function OneTimeDonation({
           </div>
 
           {/* Checkout button */}
-          <div className="py-4 w-full">
+          <div className="py-3 md:py-4 w-full">
             <Button
               onClick={handleCheckout}
               disabled={oneTimeDonationMutation.isPending || selectedItems.length === 0}
-              className="bg-green-500 hover:bg-green-600 text-black w-full py-6 md:py-6 rounded-lg font-medium transition-colors flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed"
+              className="bg-green-500 hover:bg-green-600 text-black w-full py-4 md:py-6 rounded-lg font-medium transition-colors flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed text-sm md:text-base"
             >
               {oneTimeDonationMutation.isPending ? 'Processing...' : 'Checkout'}
             </Button>

@@ -280,13 +280,13 @@ const DonationBox = ({ tab = "setup", preselectedItem, activeTab, fromPaymentRes
       />
 
       {/* Content Container with max-width */}
-      <div className="md:max-w-[60%] mx-auto w-full">
+      <div className="w-full md:max-w-[60%] mx-auto">
         {/* Tab Navigation - Always Visible */}
-        <div className="mx-4 mt-4">
+        <div className="mx-3 md:mx-4 mt-3 md:mt-4">
         <div className="flex rounded-full overflow-hidden border bg-white shadow-sm">
           <button
             className={cn(
-              "flex-1 py-4 text-sm font-medium transition-all relative",
+              "flex-1 py-2.5 md:py-4 text-xs md:text-sm font-medium transition-all relative",
               activeTabState === "setup"
                 ? "text-white bg-[#1600ff]"
                 : "text-gray-500 hover:text-gray-700 hover:bg-gray-50"
@@ -309,7 +309,7 @@ const DonationBox = ({ tab = "setup", preselectedItem, activeTab, fromPaymentRes
           </button>
           <button
             className={cn(
-              "flex-1 py-4 text-sm font-medium transition-all relative",
+              "flex-1 py-2.5 md:py-4 text-xs md:text-sm font-medium transition-all relative",
               activeTabState === "onetime"
                 ? "text-white bg-[#1600ff]"
                 : "text-gray-500 hover:text-gray-700 hover:bg-gray-50"
@@ -366,67 +366,67 @@ const DonationBox = ({ tab = "setup", preselectedItem, activeTab, fromPaymentRes
           ) : (
             <>
               {step === 1 ? (
-                <div className="flex-1 mt-4 flex flex-col p-4 mb-24 space-y-4">
+                <div className="flex-1 mt-3 md:mt-4 flex flex-col p-3 md:p-4 mb-20 md:mb-24 space-y-3 md:space-y-4">
 
                  <div>
-                <p className="text-2xl font-bold text-[#1600ff] text-center">Set your monthly gift</p>
-                <p className="text-gray-600 text-xs text-center mt-2">Support multiple causes with one donation, split evenly. Change anytime.</p>
+                <p className="text-xl md:text-2xl font-bold text-[#1600ff] text-center">Set your monthly gift</p>
+                <p className="text-gray-600 text-xs text-center mt-1.5 md:mt-2">Support multiple causes with one donation, split evenly. Change anytime.</p>
                   </div>
                   {/* Donation Box Card */}
-                  <div className="bg-white rounded-xl mb-6 p-6 shadow-sm border border-gray-100">
+                  <div className="bg-white rounded-xl mb-4 md:mb-6 p-4 md:p-6 shadow-sm border border-gray-100">
                     {/* Your Monthly Impact Section */}
-                    <div className="mb-6">
-                      <h2 className="text-xl font-bold text-gray-900 text-center mb-6">
+                    <div className="mb-4 md:mb-6">
+                      <h2 className="text-lg md:text-xl font-bold text-gray-900 text-center mb-4 md:mb-6">
                         Your Monthly Impact
                       </h2>
                       
                       {/* Amount Selector */}
-                      <div className="flex items-center justify-center gap-4">
+                      <div className="flex items-center justify-center gap-3 md:gap-4">
                         <button
                           onClick={decrementDonation}
-                          className={`flex items-center justify-center w-12 h-12 rounded-lg ${donationAmount > 5 ? 'bg-[#1600ff] hover:bg-[#1600ff]' : 'bg-gray-200 hover:bg-gray-300'} transition-colors`}
+                          className={`flex items-center justify-center w-10 h-10 md:w-12 md:h-12 rounded-lg ${donationAmount > 5 ? 'bg-[#1600ff] hover:bg-[#1600ff]' : 'bg-gray-200 hover:bg-gray-300'} transition-colors`}
                         >
-                          <Minus size={20} className="text-white font-bold" strokeWidth={3} />
+                          <Minus size={18} className="md:w-5 md:h-5 text-white font-bold" strokeWidth={3} />
                         </button>
                         <div className="text-center">
-                          <div className="text-[#1600ff] text-4xl font-bold">
+                          <div className="text-[#1600ff] text-3xl md:text-4xl font-bold">
                             ${donationAmount}
                           </div>
-                          <div className="text-gray-900 text-sm mt-1">
+                          <div className="text-gray-900 text-xs md:text-sm mt-1">
                             per month
                           </div>
                         </div>
                         <button
                           onClick={incrementDonation}
-                          className="flex items-center justify-center w-12 h-12 rounded-lg bg-[#1600ff] hover:bg-[#1600ff] transition-colors"
+                          className="flex items-center justify-center w-10 h-10 md:w-12 md:h-12 rounded-lg bg-[#1600ff] hover:bg-[#1600ff] transition-colors"
                         >
-                          <Plus size={20} className="text-white font-bold" strokeWidth={3} />
+                          <Plus size={18} className="md:w-5 md:h-5 text-white font-bold" strokeWidth={3} />
                         </button>
                       </div>
                     </div>
 
                     {/* Donation Box Capacity Section */}
-                    <div className="bg-blue-50 rounded-xl p-4">
-                      <div className="flex items-center justify-between mb-3">
-                        <h3 className="text-base font-bold text-[#1600ff]">
+                    <div className="bg-blue-50 rounded-xl p-3 md:p-4">
+                      <div className="flex items-center justify-between mb-2 md:mb-3">
+                        <h3 className="text-sm md:text-base font-bold text-[#1600ff]">
                           Donation Box Capacity
                         </h3>
-                        <span className="text-sm font-medium text-[#1600ff]">
+                        <span className="text-xs md:text-sm font-medium text-[#1600ff]">
                           {selectedCauseIds.length + selectedCollectiveIds.length}/20 causes
                         </span>
                       </div>
                       
                       {/* Progress Bar */}
-                      <div className="w-full h-2 bg-blue-100 rounded-full mb-3">
+                      <div className="w-full h-1.5 md:h-2 bg-blue-100 rounded-full mb-2 md:mb-3">
                         <div
-                          className="h-2 bg-[#1600ff] rounded-full transition-all duration-300"
+                          className="h-1.5 md:h-2 bg-[#1600ff] rounded-full transition-all duration-300"
                           style={{
                             width: `${Math.min(100, ((selectedCauseIds.length + selectedCollectiveIds.length) / 20) * 100)}%`,
                           }}
                         />
                       </div>
                       
-                      <p className="text-sm text-[#1600ff]">
+                      <p className="text-xs md:text-sm text-[#1600ff]">
                         For every ${donationAmount}, you can support 20 causes.
                       </p>
                     </div>
@@ -434,37 +434,37 @@ const DonationBox = ({ tab = "setup", preselectedItem, activeTab, fromPaymentRes
 
                   {/* Your Selected Causes */}
                   {selectedCauseIds.length > 0 && (
-                    <div className=" mb-6">
+                    <div className="mb-4 md:mb-6">
                       <div className="flex items-center justify-between mb-2">
                         <div>
-                          <h2 className="text-xl font-bold text-gray-800">Your Selected Causes</h2>
-                          <p className="text-sm text-gray-600 mt-1">Your Donation Box. Add or remove anytime.</p>
+                          <h2 className="text-lg md:text-xl font-bold text-gray-800">Your Selected Causes</h2>
+                          <p className="text-xs md:text-sm text-gray-600 mt-0.5 md:mt-1">Your Donation Box. Add or remove anytime.</p>
                         </div>
-                        <div className="w-8 h-8 rounded-full bg-[#1600ff] flex items-center justify-center">
-                          <span className="text-white text-sm font-bold">{selectedCauseIds.length}</span>
+                        <div className="w-7 h-7 md:w-8 md:h-8 rounded-full bg-[#1600ff] flex items-center justify-center">
+                          <span className="text-white text-xs md:text-sm font-bold">{selectedCauseIds.length}</span>
                         </div>
                       </div>
                       
-                      <div className="space-y-3 mt-4">
+                      <div className="space-y-2 md:space-y-3 mt-3 md:mt-4">
                         {selectedCausesData.map((cause: any) => {
                           const avatarBgColor = getConsistentColor(cause.id, avatarColors);
                           const initials = getInitials(cause.name);
                           return (
-                            <div key={cause.id} className="flex items-center p-3 border border-gray-200 rounded-lg">
+                            <div key={cause.id} className="flex items-center p-2.5 md:p-3 border border-gray-200 rounded-lg">
                               <div
-                                className="w-12 h-12 rounded-xl flex items-center justify-center mr-3 flex-shrink-0"
+                                className="w-10 h-10 md:w-12 md:h-12 rounded-xl flex items-center justify-center mr-2.5 md:mr-3 flex-shrink-0"
                                 style={{ backgroundColor: avatarBgColor }}
                               >
-                                <span className="text-white font-bold text-base">
+                                <span className="text-white font-bold text-sm md:text-base">
                                   {initials}
                                 </span>
                               </div>
                               <div className="flex-1 min-w-0">
-                                <div className="flex items-center gap-2 mb-1">
-                                  <h3 className="font-bold text-gray-900">{cause.name}</h3>
+                                <div className="flex items-center gap-1.5 md:gap-2 mb-0.5 md:mb-1">
+                                  <h3 className="font-bold text-sm md:text-base text-gray-900">{cause.name}</h3>
                                   {/* <Star className="w-4 h-4 text-yellow-500 fill-yellow-500 flex-shrink-0" /> */}
                                 </div>
-                                <p className="text-sm text-gray-600 line-clamp-1">
+                                <p className="text-xs md:text-sm text-gray-600 line-clamp-1">
                                   {cause.mission || cause.description || 'No description available'}
                                 </p>
                               </div>
@@ -474,9 +474,9 @@ const DonationBox = ({ tab = "setup", preselectedItem, activeTab, fromPaymentRes
                                   setSelectedCauseIds(selectedCauseIds.filter(id => id !== cause.id));
                                   setSelectedCausesData(selectedCausesData.filter(c => c.id !== cause.id));
                                 }}
-                                className="p-2 text-gray-400 hover:text-red-500 transition-colors flex-shrink-0"
+                                className="p-1.5 md:p-2 text-gray-400 hover:text-red-500 transition-colors flex-shrink-0"
                               >
-                                <Trash2 size={18} />
+                                <Trash2 size={16} className="md:w-[18px] md:h-[18px]" />
                               </button>
                             </div>
                           );
@@ -486,21 +486,21 @@ const DonationBox = ({ tab = "setup", preselectedItem, activeTab, fromPaymentRes
                   )}
 
                   {/* Add More Causes Section */}
-                  <div className="mb-6">
-                    <h2 className="text-xl font-bold text-gray-800 mb-4">
+                  <div className="mb-4 md:mb-6">
+                    <h2 className="text-lg md:text-xl font-bold text-gray-800 mb-3 md:mb-4">
                       Add More Causes
                     </h2>
                     
                     {/* Search Bar with All Button */}
-                    <div className="flex gap-2 mb-4">
+                    <div className="flex gap-2 mb-3 md:mb-4">
                       <div className="relative flex-1">
-                        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+                        <Search className="absolute left-2.5 md:left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4 md:w-5 md:h-5" />
                         <input
                           type="text"
                           placeholder="Search for causes..."
                           value={searchQuery}
                           onChange={(e) => setSearchQuery(e.target.value)}
-                          className="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#1600ff]"
+                          className="w-full pl-8 md:pl-10 pr-3 md:pr-4 py-2 md:py-2.5 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#1600ff] text-sm md:text-base"
                         />
                       </div>
                       {/* <button className="px-4 py-2.5 bg-[#1600ff] text-white rounded-lg font-medium hover:bg-[#1400cc] transition-colors">
@@ -509,20 +509,20 @@ const DonationBox = ({ tab = "setup", preselectedItem, activeTab, fromPaymentRes
                     </div>
 
                     {/* Request Nonprofit Link */}
-                    <div className="mb-4 flex justify-center">
+                    <div className="mb-3 md:mb-4 flex justify-center">
                       <button
                         onClick={() => setShowRequestModal(true)}
-                        className="text-sm text-[#1600ff] underline font-medium" 
+                        className="text-xs md:text-sm text-[#1600ff] underline font-medium" 
                       >
                         Can't find your nonprofit? Request it here
                       </button>
                     </div>
 
                     {/* Nonprofits List */}
-                    <div className="space-y-3">
+                    <div className="space-y-2 md:space-y-3">
                       {causesLoading ? (
-                        <div className="flex justify-center py-8">
-                          <Loader2 className="w-6 h-6 animate-spin text-gray-400" />
+                        <div className="flex justify-center py-6 md:py-8">
+                          <Loader2 className="w-5 h-5 md:w-6 md:h-6 animate-spin text-gray-400" />
                         </div>
                       ) : causesData?.results?.length > 0 ? (
                         causesData.results
@@ -533,19 +533,19 @@ const DonationBox = ({ tab = "setup", preselectedItem, activeTab, fromPaymentRes
                             return (
                               <div
                                 key={cause.id}
-                                className="flex items-center p-3 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
+                                className="flex items-center p-2.5 md:p-3 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
                               >
                                 <div
-                                  className="w-12 h-12 rounded-xl flex items-center justify-center mr-3 flex-shrink-0"
+                                  className="w-10 h-10 md:w-12 md:h-12 rounded-xl flex items-center justify-center mr-2.5 md:mr-3 flex-shrink-0"
                                   style={{ backgroundColor: avatarBgColor }}
                                 >
-                                  <span className="text-white font-bold text-base">
+                                  <span className="text-white font-bold text-sm md:text-base">
                                     {initials}
                                   </span>
                                 </div>
                                 <div className="flex-1 min-w-0">
-                                  <h3 className="font-bold text-gray-900 mb-1">{cause.name}</h3>
-                                  <p className="text-sm text-gray-600 line-clamp-1">
+                                  <h3 className="font-bold text-sm md:text-base text-gray-900 mb-0.5 md:mb-1">{cause.name}</h3>
+                                  <p className="text-xs md:text-sm text-gray-600 line-clamp-1">
                                     {cause.mission || cause.description || 'No description available'}
                                   </p>
                                 </div>
@@ -555,15 +555,15 @@ const DonationBox = ({ tab = "setup", preselectedItem, activeTab, fromPaymentRes
                                     setSelectedCauseIds([...selectedCauseIds, cause.id]);
                                     setSelectedCausesData([...selectedCausesData, cause]);
                                   }}
-                                  className="w-8 h-8 rounded-full bg-red-100 hover:bg-red-200 flex items-center justify-center transition-colors flex-shrink-0"
+                                  className="w-7 h-7 md:w-8 md:h-8 rounded-full bg-red-100 hover:bg-red-200 flex items-center justify-center transition-colors flex-shrink-0"
                                 >
-                                  <Plus size={16} className="text-pink-600" strokeWidth={3} />
+                                  <Plus size={14} className="md:w-4 md:h-4 text-pink-600" strokeWidth={3} />
                                 </button>
                               </div>
                             );
                           })
                       ) : (
-                        <p className="text-gray-500 text-center py-8">No nonprofits found</p>
+                        <p className="text-gray-500 text-center py-6 md:py-8 text-sm md:text-base">No nonprofits found</p>
                       )}
                     </div>
                   </div>
@@ -724,7 +724,7 @@ const DonationBox = ({ tab = "setup", preselectedItem, activeTab, fromPaymentRes
                     {/* </div> */}
 
                   {/* Summary and Next Button */}
-                <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100  fixed bottom-0 w-full left-0 right-0 ">
+                <div className="bg-white rounded-xl p-4 md:p-6 shadow-sm border border-gray-100 fixed bottom-0 w-full left-0 right-0 md:relative md:rounded-t-xl md:mt-4">
                     {/* <div className="flex justify-between items-center">
                       <div>
                         <p className="text-lg font-semibold text-gray-800">
@@ -779,7 +779,7 @@ const DonationBox = ({ tab = "setup", preselectedItem, activeTab, fromPaymentRes
                       }}
                       disabled={createBoxMutation.isPending || (selectedCauseIds.length === 0 && selectedCollectiveIds.length === 0)}
                       className={cn(
-                        "w-full bg-[#1600ff] text-white px-6 py-2 rounded-full font-medium",
+                        "w-full bg-[#1600ff] text-white px-4 md:px-6 py-2.5 md:py-2 rounded-full font-medium text-sm md:text-base",
                         createBoxMutation.isPending || (selectedCauseIds.length === 0 && selectedCollectiveIds.length === 0) ? "cursor-not-allowed opacity-50" : ""
                       )}
                     >
@@ -804,62 +804,62 @@ const DonationBox = ({ tab = "setup", preselectedItem, activeTab, fromPaymentRes
                   }}
                 />
               ) : (
-                <div className="flex-1 mx-4 mt-4 mb-4 flex flex-col">
+                <div className="flex-1 mx-3 md:mx-4 mt-3 md:mt-4 mb-4 flex flex-col">
                   {/* Info Card */}
-                  <div className="bg-[#f5f6ff] rounded-xl  mb-4 ">
-                    <h2 className="text-xl font-medium text-gray-700  py-1 my-2">
+                  <div className="bg-[#f5f6ff] rounded-xl mb-3 md:mb-4 p-3 md:p-4">
+                    <h2 className="text-lg md:text-xl font-medium text-gray-700 py-0.5 md:py-1 my-1.5 md:my-2">
                       Welcome to your donation box
                     </h2>
-                    <p className="text-gray-600 text-sm py-3 ">
+                    <p className="text-gray-600 text-xs md:text-sm py-2 md:py-3">
                       Your donation box makes giving back easy! Just set your
                       price and you can add as many of your favorite causes at
                       any time. Your donation will be evenly distributed across
                       all of the organizations in your box. Let's get started!
                     </p>
-                    <div className=" bg-[#e6e7f4] rounded-lg mt-6  flex justify-between items-center">
+                    <div className="bg-[#e6e7f4] rounded-lg mt-4 md:mt-6 flex justify-between items-center p-3 md:p-4">
                       <div>
-                        <p className="text-sm font-medium mb-1">
+                        <p className="text-xs md:text-sm font-medium mb-0.5 md:mb-1">
                           Enter monthly donation
                         </p>
-                        <p className="text-xs text-gray-500 ">
+                        <p className="text-[10px] md:text-xs text-gray-500">
                           Input amount over $5
                         </p>
                       </div>
                       <div className="bg-[#dbddf6] flex items-center rounded-full border">
                         <button
                           onClick={decrementDonation}
-                          className="flex items-center justify-center w-10 h-10  rounded-full"
+                          className="flex items-center justify-center w-8 h-8 md:w-10 md:h-10 rounded-full"
                         >
-                          <Minus size={16} />
+                          <Minus size={14} className="md:w-4 md:h-4" />
                         </button>
-                        <div className="flex-1 flex justify-center items-center h-10 px-4">
-                          <span className="text-blue-500 text-2xl font-bold relative">
+                        <div className="flex-1 flex justify-center items-center h-8 md:h-10 px-3 md:px-4">
+                          <span className="text-blue-500 text-xl md:text-2xl font-bold relative">
                             $
                             <input
                               type="text"
                               value={inputValue}
                               onChange={handleInputChange}
                               onBlur={handleInputBlur}
-                              className="bg-transparent w-16 text-center focus:outline-none"
+                              className="bg-transparent w-12 md:w-16 text-center focus:outline-none text-xl md:text-2xl"
                               aria-label="Donation amount"
                             />
                           </span>
                         </div>
                         <button
                           onClick={incrementDonation}
-                          className="flex items-center justify-center w-10 h-10  rounded-r-full"
+                          className="flex items-center justify-center w-8 h-8 md:w-10 md:h-10 rounded-r-full"
                         >
-                          <Plus size={16} />
+                          <Plus size={14} className="md:w-4 md:h-4" />
                         </button>
                       </div>
                     </div>
 
                     {/* Security Message */}
-                    <div className="flex items-center mt-4 p-2">
-                      <div className="flex items-center justify-center w-4 h-4 rounded-full bg-gray-300 mr-2">
-                        <span className="text-xs">✓</span>
+                    <div className="flex items-center mt-3 md:mt-4 p-1.5 md:p-2">
+                      <div className="flex items-center justify-center w-3.5 h-3.5 md:w-4 md:h-4 rounded-full bg-gray-300 mr-1.5 md:mr-2">
+                        <span className="text-[10px] md:text-xs">✓</span>
                       </div>
-                      <p className="text-xs text-gray-500">
+                      <p className="text-[10px] md:text-xs text-gray-500">
                         Your donation is protected and guaranteed.{" "}
                         <Link to="/settings/about" className="text-blue-500">
                           Learn More
@@ -868,14 +868,14 @@ const DonationBox = ({ tab = "setup", preselectedItem, activeTab, fromPaymentRes
                     </div>
                   </div>
                   <div
-                    className={`p-4 flex justify-between items-center ${
+                    className={`p-3 md:p-4 flex justify-between items-center ${
                       isMobile ? "mb-20" : ""
                     }`}
                   >
-                    <p className={`text-gray-500`}>Now let's add some causes</p>
+                    <p className={`text-sm md:text-base text-gray-500`}>Now let's add some causes</p>
                     <button
                       onClick={() => setStep(2)}
-                      className={`bg-green-500 text-white px-6 py-2 rounded-full font-medium `}
+                      className={`bg-green-500 text-white px-4 md:px-6 py-1.5 md:py-2 rounded-full font-medium text-sm md:text-base`}
                     >
                       Next
                     </button>

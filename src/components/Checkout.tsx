@@ -302,23 +302,23 @@ export const Checkout = ({
   }
 
   return (
-    <div className="w-full h-full bg-white flex flex-col pb-24">
-      <div className="flex-1 overflow-auto mt-2 mx-4">
+    <div className="w-full h-full bg-white flex flex-col pb-20 md:pb-24">
+      <div className="flex-1 overflow-auto mt-2 mx-3 md:mx-4">
         {/* Content Container with max-width */}
         <div className="w-full">
           {/* Donation Box Summary Card */}
-          <div className="bg-white rounded-xl mb-6 shadow-sm border border-gray-200 overflow-hidden">
+          <div className="bg-white rounded-xl mb-4 md:mb-6 shadow-sm border border-gray-200 overflow-hidden">
             {/* Gradient Header */}
-            <div className="h-1 bg-gradient-to-r from-blue-500 to-purple-500"></div>
+            <div className="h-0.5 md:h-1 bg-gradient-to-r from-blue-500 to-purple-500"></div>
 
-            <div className="p-6">
+            <div className="p-4 md:p-6">
               {/* Monthly Donation Section */}
-              <div className="mb-6">
-                <h2 className="text-base font-medium text-gray-900 mb-3">Monthly Donation</h2>
-                <div className="flex items-center justify-between mb-2">
-                  <div className="flex items-baseline gap-2">
-                    <span className="text-4xl font-bold text-gray-900">${Math.round(actualDonationAmount)}</span>
-                    <span className="text-base text-gray-600">/   month</span>
+              <div className="mb-4 md:mb-6">
+                <h2 className="text-sm md:text-base font-medium text-gray-900 mb-2 md:mb-3">Monthly Donation</h2>
+                <div className="flex items-center justify-between mb-1.5 md:mb-2">
+                  <div className="flex items-baseline gap-1.5 md:gap-2">
+                    <span className="text-3xl md:text-4xl font-bold text-gray-900">${Math.round(actualDonationAmount)}</span>
+                    <span className="text-sm md:text-base text-gray-600">/   month</span>
                   </div>
                   <button
                     onClick={() => {
@@ -327,44 +327,44 @@ export const Checkout = ({
                         onShowManage();
                       }
                     }}
-                    className="w-10 h-10 rounded-lg bg-gray-100 hover:bg-gray-200 flex items-center justify-center transition-colors"
+                    className="w-9 h-9 md:w-10 md:h-10 rounded-lg bg-gray-100 hover:bg-gray-200 flex items-center justify-center transition-colors"
                     aria-label="Edit amount"
                   >
-                    <Pencil className="w-4 h-4 text-gray-600" />
+                    <Pencil className="w-3.5 h-3.5 md:w-4 md:h-4 text-gray-600" />
                   </button>
                 </div>
                 {lifetimeAmount > 0 && (
-                  <p className="text-sm text-gray-600">${lifetimeAmount.toLocaleString()} lifetime</p>
+                  <p className="text-xs md:text-sm text-gray-600">${lifetimeAmount.toLocaleString()} lifetime</p>
                 )}
               </div>
 
               {/* Supported Entities */}
-              <div className="bg-gray-100 rounded-lg px-4 py-3 mb-6 text-center">
-                <p className="text-sm font-bold text-gray-900">
+              <div className="bg-gray-100 rounded-lg px-3 md:px-4 py-2.5 md:py-3 mb-4 md:mb-6 text-center">
+                <p className="text-xs md:text-sm font-bold text-gray-900">
                   {totalCauses} Cause{totalCauses !== 1 ? 's' : ''} • {totalCollectives} Collective{totalCollectives !== 1 ? 's' : ''}
                 </p>
               </div>
 
               {/* Donation Box Capacity */}
-              <div className="bg-gradient-to-br from-blue-50 to-purple-50 rounded-lg p-4 mb-6">
-                <div className="flex items-center justify-between mb-2">
-                  <h3 className="text-sm font-bold text-blue-600">Donation Box Capacity</h3>
-                  <span className="text-sm text-gray-900">{currentCapacity}/{maxCapacity} causes</span>
+              <div className="bg-gradient-to-br from-blue-50 to-purple-50 rounded-lg p-3 md:p-4 mb-4 md:mb-6">
+                <div className="flex items-center justify-between mb-1.5 md:mb-2">
+                  <h3 className="text-xs md:text-sm font-bold text-blue-600">Donation Box Capacity</h3>
+                  <span className="text-xs md:text-sm text-gray-900">{currentCapacity}/{maxCapacity} causes</span>
                 </div>
-                <div className="w-full bg-gray-200 rounded-full h-2 mb-2">
+                <div className="w-full bg-gray-200 rounded-full h-1.5 md:h-2 mb-1.5 md:mb-2">
                   <div
-                    className="bg-gradient-to-r from-blue-500 to-purple-500 h-2 rounded-full transition-all duration-300"
+                    className="bg-gradient-to-r from-blue-500 to-purple-500 h-1.5 md:h-2 rounded-full transition-all duration-300"
                     style={{ width: `${Math.min(100, (currentCapacity / maxCapacity) * 100)}%` }}
                   ></div>
                 </div>
-                <p className="text-sm text-blue-600">
+                <p className="text-xs md:text-sm text-blue-600">
                   You can support {maxCapacity - currentCapacity} more cause{(maxCapacity - currentCapacity) !== 1 ? 's' : ''} with this donation amount.
                 </p>
               </div>
 
               {/* Payment Schedule */}
               {donationBox?.next_charge_date && (
-                <p className="text-sm text-gray-600 text-center mb-4">
+                <p className="text-xs md:text-sm text-gray-600 text-center mb-3 md:mb-4">
                   on the {getChargeDay(donationBox.next_charge_date)} of every month
                 </p>
               )}
@@ -376,47 +376,47 @@ export const Checkout = ({
 
           {/* Currently Supporting Section */}
           {manualCauses.length > 0 && (
-            <div className="mb-6">
-              <div className="mb-4">
-                <h2 className="text-xl font-bold text-gray-900">Currently Supporting</h2>
-                <p className="text-sm text-gray-600 mt-1">
+            <div className="mb-4 md:mb-6">
+              <div className="mb-3 md:mb-4">
+                <h2 className="text-lg md:text-xl font-bold text-gray-900">Currently Supporting</h2>
+                <p className="text-xs md:text-sm text-gray-600 mt-0.5 md:mt-1">
                   Supporting {manualCauses.length} nonprofit{manualCauses.length !== 1 ? 's' : ''}
                 </p>
               </div>
 
               {/* Manual Causes List */}
-              <div className="space-y-3">
+              <div className="space-y-2.5 md:space-y-3">
                 {manualCauses.map((cause: any) => {
                   const avatarBgColor = getConsistentColor(cause.id, avatarColors);
                   const initials = getInitials(cause.name || 'N');
                   return (
                     <div
                       key={cause.id}
-                      className="flex items-center p-4 bg-white border border-gray-200 rounded-lg shadow-sm"
+                      className="flex items-center p-3 md:p-4 bg-white border border-gray-200 rounded-lg shadow-sm"
                     >
                       {/* Avatar */}
                       <div
-                        className="w-12 h-12 rounded-xl flex items-center justify-center mr-4 flex-shrink-0"
+                        className="w-10 h-10 md:w-12 md:h-12 rounded-xl flex items-center justify-center mr-3 md:mr-4 flex-shrink-0"
                         style={{ backgroundColor: avatarBgColor }}
                       >
-                        <span className="text-white font-bold text-lg">
+                        <span className="text-white font-bold text-base md:text-lg">
                           {initials}
                         </span>
                       </div>
 
                       {/* Cause Info */}
                       <div className="flex-1 min-w-0">
-                        <h3 className="font-bold text-gray-900 mb-1">{cause.name}</h3>
-                        <p className="text-sm text-gray-600 line-clamp-1">
+                        <h3 className="font-bold text-sm md:text-base text-gray-900 mb-0.5 md:mb-1">{cause.name}</h3>
+                        <p className="text-xs md:text-sm text-gray-600 line-clamp-1">
                           {cause.mission || cause.description || 'Making a positive impact in the community'}
                         </p>
                       </div>
 
                       {/* Donation Info */}
-                      <div className="flex items-center gap-4 ml-4">
+                      <div className="flex items-center gap-3 md:gap-4 ml-2 md:ml-4">
                         <div className="text-right">
-                          <p className="font-bold text-gray-900">{distributionPercentage}%</p>
-                          <p className="text-sm text-gray-600">${amountPerItem.toFixed(2)}/mo</p>
+                          <p className="font-bold text-sm md:text-base text-gray-900">{distributionPercentage}%</p>
+                          <p className="text-xs md:text-sm text-gray-600">${amountPerItem.toFixed(2)}/mo</p>
                         </div>
                       </div>
                     </div>
@@ -442,40 +442,40 @@ export const Checkout = ({
 
           {/* Fallback to selectedOrganizations if no API data */}
           {!hasApiData && selectedOrganizations.length > 0 && (
-            <div className="mb-6">
-              <div className="mb-4">
-                <h2 className="text-xl font-bold text-gray-900">Currently Supporting</h2>
-                <p className="text-sm text-gray-600 mt-1">
+            <div className="mb-4 md:mb-6">
+              <div className="mb-3 md:mb-4">
+                <h2 className="text-lg md:text-xl font-bold text-gray-900">Currently Supporting</h2>
+                <p className="text-xs md:text-sm text-gray-600 mt-0.5 md:mt-1">
                   Supporting {selectedOrganizations.length} nonprofit{selectedOrganizations.length !== 1 ? 's' : ''}
                 </p>
               </div>
-              <div className="space-y-3">
+              <div className="space-y-2.5 md:space-y-3">
                 {selectedOrganizations.map((orgName: string, index: number) => {
                   const avatarBgColor = getConsistentColor(orgName, avatarColors);
                   const initials = getInitials(orgName);
                   return (
                     <div
                       key={`${orgName}-${index}`}
-                      className="flex items-center p-4 bg-white border border-gray-200 rounded-lg shadow-sm"
+                      className="flex items-center p-3 md:p-4 bg-white border border-gray-200 rounded-lg shadow-sm"
                     >
                       <div
-                        className="w-12 h-12 rounded-xl flex items-center justify-center mr-4 flex-shrink-0"
+                        className="w-10 h-10 md:w-12 md:h-12 rounded-xl flex items-center justify-center mr-3 md:mr-4 flex-shrink-0"
                         style={{ backgroundColor: avatarBgColor }}
                       >
-                        <span className="text-white font-bold text-lg">
+                        <span className="text-white font-bold text-base md:text-lg">
                           {initials}
                         </span>
                       </div>
                       <div className="flex-1 min-w-0">
-                        <h3 className="font-bold text-gray-900 mb-1">{orgName}</h3>
-                        <p className="text-sm text-gray-600 line-clamp-1">
+                        <h3 className="font-bold text-sm md:text-base text-gray-900 mb-0.5 md:mb-1">{orgName}</h3>
+                        <p className="text-xs md:text-sm text-gray-600 line-clamp-1">
                           {getOrganizationDescription(orgName)}
                         </p>
                       </div>
-                      <div className="flex items-center gap-4 ml-4">
+                      <div className="flex items-center gap-3 md:gap-4 ml-2 md:ml-4">
                         <div className="text-right">
-                          <p className="font-bold text-gray-900">{distributionPercentage}%</p>
-                          <p className="text-sm text-gray-600">${amountPerItem.toFixed(2)}/mo</p>
+                          <p className="font-bold text-sm md:text-base text-gray-900">{distributionPercentage}%</p>
+                          <p className="text-xs md:text-sm text-gray-600">${amountPerItem.toFixed(2)}/mo</p>
                         </div>
                       </div>
                     </div>
@@ -510,7 +510,7 @@ export const Checkout = ({
       {/* Success Modal with Confetti */}
       {showSuccessModal && (
         <div
-          className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4"
+          className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-3 md:p-4"
           onClick={handleCloseSuccessModal}
         >
           <ReactConfetti
@@ -520,39 +520,39 @@ export const Checkout = ({
             numberOfPieces={200}
           />
           <div
-            className="bg-white rounded-lg max-w-md w-full mx-4 p-6 relative"
+            className="bg-white rounded-lg max-w-md w-full mx-3 md:mx-4 p-4 md:p-6 relative"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Close Button */}
             <button
               onClick={handleCloseSuccessModal}
-              className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors"
+              className="absolute top-3 right-3 md:top-4 md:right-4 text-gray-400 hover:text-gray-600 transition-colors"
             >
-              <X size={24} />
+              <X size={20} className="md:w-6 md:h-6" />
             </button>
 
             {/* Modal Content */}
             <div className="text-center">
-              <h2 className="text-2xl font-bold text-gray-900 mb-2">
+              <h2 className="text-xl md:text-2xl font-bold text-gray-900 mb-1.5 md:mb-2">
                 Welcome to Checkout!
               </h2>
 
-              <p className="text-gray-600 mb-4">
+              <p className="text-sm md:text-base text-gray-600 mb-3 md:mb-4">
                 Here's your donation summary:
               </p>
 
               {/* Donation Summary Card */}
-              <div className="bg-gray-50 border border-gray-200 rounded-lg p-4 mb-6">
-                <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 bg-blue-500 rounded-lg flex items-center justify-center">
-                    <span className="text-white text-sm font-semibold">💝</span>
+              <div className="bg-gray-50 border border-gray-200 rounded-lg p-3 md:p-4 mb-4 md:mb-6">
+                <div className="flex items-center gap-2.5 md:gap-3">
+                  <div className="w-10 h-10 md:w-12 md:h-12 bg-blue-500 rounded-lg flex items-center justify-center">
+                    <span className="text-white text-xs md:text-sm font-semibold">💝</span>
                   </div>
                   <div className="text-left">
-                    <h3 className="font-semibold text-gray-900">
+                    <h3 className="font-semibold text-sm md:text-base text-gray-900">
                       Monthly Donation Box
                     </h3>
-                      <div className="flex items-center gap-2 mt-1">
-                      <span className="text-sm text-gray-600">
+                      <div className="flex items-center gap-1.5 md:gap-2 mt-0.5 md:mt-1">
+                      <span className="text-xs md:text-sm text-gray-600">
                         ${actualDonationAmount}/month
                       </span>
                     </div>
@@ -560,7 +560,7 @@ export const Checkout = ({
                 </div>
               </div>
 
-              <p className="text-gray-600 mb-6">
+              <p className="text-sm md:text-base text-gray-600 mb-4 md:mb-6">
                 Supporting {totalItems} {totalItems === 1 ? 'organization' : 'organizations'} with your
                 monthly donation.
               </p>

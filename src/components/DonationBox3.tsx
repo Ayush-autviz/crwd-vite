@@ -342,19 +342,19 @@ export const DonationBox3 = ({
   };
 
   return (
-    <div className="w-full h-full bg-white flex flex-col pb-24">
-      <div className="flex-1 overflow-auto mt-2 mx-4">
+    <div className="w-full h-full bg-white flex flex-col pb-20 md:pb-24">
+      <div className="flex-1 overflow-auto mt-2 mx-3 md:mx-4">
         {/* Donation Box Summary Card */}
-        <div className="bg-white rounded-xl mb-6 shadow-sm border border-gray-200 overflow-hidden">
+        <div className="bg-white rounded-xl mb-4 md:mb-6 shadow-sm border border-gray-200 overflow-hidden">
           {/* Gradient Header */}
-          <div className="h-1 bg-gradient-to-r from-blue-500 to-purple-500"></div>
+          <div className="h-0.5 md:h-1 bg-gradient-to-r from-blue-500 to-purple-500"></div>
 
-          <div className="p-6">
+          <div className="p-4 md:p-6">
             {/* Monthly Donation Section */}
-            <div className="mb-6">
-              <h2 className="text-base font-medium text-gray-900 mb-3">Monthly Donation</h2>
-              <div className="flex items-center justify-between mb-2">
-                <div className="flex items-center gap-4">
+            <div className="mb-4 md:mb-6">
+              <h2 className="text-sm md:text-base font-medium text-gray-900 mb-2 md:mb-3">Monthly Donation</h2>
+              <div className="flex items-center justify-between mb-1.5 md:mb-2">
+                <div className="flex items-center gap-3 md:gap-4">
                   {/* <button
                     onClick={decrementAmount}
                     disabled={editableAmount <= 5}
@@ -362,7 +362,7 @@ export const DonationBox3 = ({
                   >
                     <Minus size={16} className="text-gray-600 font-bold" strokeWidth={3} />
                   </button> */}
-                  <div className="flex items-baseline gap-2">
+                  <div className="flex items-baseline gap-1.5 md:gap-2">
                     {isEditingAmount ? (
                       <input
                         type="number"
@@ -376,12 +376,12 @@ export const DonationBox3 = ({
                           setEditableAmount(prev => Math.round(prev));
                         }}
                         autoFocus
-                        className="text-4xl font-bold text-gray-900 w-24 border-b-2 border-gray-300 focus:outline-none focus:border-blue-500"
+                        className="text-3xl md:text-4xl font-bold text-gray-900 w-20 md:w-24 border-b-2 border-gray-300 focus:outline-none focus:border-blue-500"
                       />
                     ) : (
                       <>
-                        <span className="text-4xl font-bold text-gray-900">${Math.round(editableAmount)}</span>
-                        <span className="text-base text-gray-600">/   month</span>
+                        <span className="text-3xl md:text-4xl font-bold text-gray-900">${Math.round(editableAmount)}</span>
+                        <span className="text-sm md:text-base text-gray-600">/   month</span>
                       </>
                     )}
                   </div>
@@ -394,44 +394,44 @@ export const DonationBox3 = ({
                 </div>
                 <button
                   onClick={() => navigate('/donation/manage')}
-                  className="w-10 h-10 rounded-lg bg-gray-100 hover:bg-gray-200 flex items-center justify-center transition-colors"
+                  className="w-9 h-9 md:w-10 md:h-10 rounded-lg bg-gray-100 hover:bg-gray-200 flex items-center justify-center transition-colors"
                   aria-label="Edit amount"
                 >
-                  <Pencil className="w-4 h-4 text-gray-600" />
+                  <Pencil className="w-3.5 h-3.5 md:w-4 md:h-4 text-gray-600" />
                 </button>
               </div>
               {lifetimeAmount > 0 && (
-                <p className="text-sm text-gray-600">${lifetimeAmount.toLocaleString()} lifetime</p>
+                <p className="text-xs md:text-sm text-gray-600">${lifetimeAmount.toLocaleString()} lifetime</p>
               )}
             </div>
 
             {/* Supported Entities */}
-            <div className="bg-gray-100 rounded-lg px-4 py-3 mb-6 text-center">
-              <p className="text-sm font-bold text-gray-900">
+            <div className="bg-gray-100 rounded-lg px-3 md:px-4 py-2.5 md:py-3 mb-4 md:mb-6 text-center">
+              <p className="text-xs md:text-sm font-bold text-gray-900">
                 {totalCausesCount} Cause{totalCausesCount !== 1 ? 's' : ''} • {totalCollectivesCount} Collective{totalCollectivesCount !== 1 ? 's' : ''}
               </p>
             </div>
 
             {/* Donation Box Capacity */}
-            <div className="bg-gradient-to-br from-blue-50 to-purple-50 rounded-lg p-4 mb-6">
-              <div className="flex items-center justify-between mb-2">
-                <h3 className="text-sm font-bold text-blue-600">Donation Box Capacity</h3>
-                <span className="text-sm text-gray-900">{currentCapacity}/{maxCapacity} causes</span>
+            <div className="bg-gradient-to-br from-blue-50 to-purple-50 rounded-lg p-3 md:p-4 mb-4 md:mb-6">
+              <div className="flex items-center justify-between mb-1.5 md:mb-2">
+                <h3 className="text-xs md:text-sm font-bold text-blue-600">Donation Box Capacity</h3>
+                <span className="text-xs md:text-sm text-gray-900">{currentCapacity}/{maxCapacity} causes</span>
               </div>
-              <div className="w-full bg-gray-200 rounded-full h-2 mb-2">
+              <div className="w-full bg-gray-200 rounded-full h-1.5 md:h-2 mb-1.5 md:mb-2">
                 <div
-                  className="bg-gradient-to-r from-blue-500 to-purple-500 h-2 rounded-full transition-all duration-300"
+                  className="bg-gradient-to-r from-blue-500 to-purple-500 h-1.5 md:h-2 rounded-full transition-all duration-300"
                   style={{ width: `${Math.min(100, (currentCapacity / maxCapacity) * 100)}%` }}
                 ></div>
               </div>
-              <p className="text-sm text-blue-600">
+              <p className="text-xs md:text-sm text-blue-600">
                 You can support {maxCapacity - currentCapacity} more cause{(maxCapacity - currentCapacity) !== 1 ? 's' : ''} with this donation amount.
               </p>
             </div>
 
             {/* Payment Schedule */}
             {donationBox?.next_charge_date && (
-              <p className="text-sm text-gray-600 text-center mb-4">
+              <p className="text-xs md:text-sm text-gray-600 text-center mb-3 md:mb-4">
                 on the {getChargeDay(donationBox.next_charge_date)} of every month
               </p>
             )}
@@ -439,16 +439,16 @@ export const DonationBox3 = ({
         </div>
 
         {/* Currently Supporting Section */}
-        <div className="mb-6">
-          <div className="mb-4">
-            <h2 className="text-xl font-bold text-gray-900">Currently Supporting</h2>
-            <p className="text-sm text-gray-600 mt-1">
+        <div className="mb-4 md:mb-6">
+          <div className="mb-3 md:mb-4">
+            <h2 className="text-lg md:text-xl font-bold text-gray-900">Currently Supporting</h2>
+            <p className="text-xs md:text-sm text-gray-600 mt-0.5 md:mt-1">
               Supporting {manualCauses.length} nonprofit{manualCauses.length !== 1 ? 's' : ''}
             </p>
           </div>
 
           {/* Manual Causes List */}
-          <div className="space-y-3">
+          <div className="space-y-2.5 md:space-y-3">
             {manualCauses.length > 0 ? (
               manualCauses.map((cause: any) => {
                 const avatarBgColor = getConsistentColor(cause.id, avatarColors);
@@ -456,38 +456,38 @@ export const DonationBox3 = ({
                 return (
                   <div
                     key={cause.id}
-                    className="flex items-center p-4 bg-white border border-gray-200 rounded-lg shadow-sm"
+                    className="flex items-center p-3 md:p-4 bg-white border border-gray-200 rounded-lg shadow-sm"
                   >
                     {/* Avatar */}
                     <div
-                      className="w-12 h-12 rounded-xl flex items-center justify-center mr-4 flex-shrink-0"
+                      className="w-10 h-10 md:w-12 md:h-12 rounded-xl flex items-center justify-center mr-3 md:mr-4 flex-shrink-0"
                       style={{ backgroundColor: avatarBgColor }}
                     >
-                      <span className="text-white font-bold text-lg">
+                      <span className="text-white font-bold text-base md:text-lg">
                         {initials}
                       </span>
                     </div>
 
                     {/* Cause Info */}
                     <div className="flex-1 min-w-0">
-                      <h3 className="font-bold text-gray-900 mb-1">{cause.name}</h3>
-                      <p className="text-sm text-gray-600 line-clamp-1">
+                      <h3 className="font-bold text-sm md:text-base text-gray-900 mb-0.5 md:mb-1">{cause.name}</h3>
+                      <p className="text-xs md:text-sm text-gray-600 line-clamp-1">
                         {cause.mission || cause.description || 'Making a positive impact in the community'}
                       </p>
                     </div>
 
                     {/* Donation Info & Action */}
-                    <div className="flex items-center gap-4 ml-4">
+                    <div className="flex items-center gap-3 md:gap-4 ml-2 md:ml-4">
                       <div className="text-right">
-                        <p className="font-bold text-gray-900">{distributionPercentage}%</p>
-                        <p className="text-sm text-gray-600">${amountPerItem.toFixed(2)}/mo</p>
+                        <p className="font-bold text-sm md:text-base text-gray-900">{distributionPercentage}%</p>
+                        <p className="text-xs md:text-sm text-gray-600">${amountPerItem.toFixed(2)}/mo</p>
                       </div>
                     </div>
                   </div>
                 );
               })
             ) : (
-              <p className="text-gray-500 text-center py-4">No causes</p>
+              <p className="text-gray-500 text-center py-3 md:py-4 text-sm md:text-base">No causes</p>
             )}
           </div>
         </div>
@@ -946,9 +946,9 @@ export const DonationBox3 = ({
         </div> */}
 
          {/* checkout button */}
-         <div className="space-y-1  fixed bottom-0 p-6   left-0 right-0 border-t border-gray-200 ">
+         <div className="space-y-1 fixed bottom-0 p-4 md:p-6 left-0 right-0 border-t border-gray-200 bg-white">
            <Button 
-             className="w-full bg-[#aeff30] hover:bg-[#91d11c] text-black py-6 md:py-6 rounded-full font-bold transition-colors flex items-center justify-center" 
+             className="w-full bg-[#aeff30] hover:bg-[#91d11c] text-black py-4 md:py-6 rounded-full font-bold transition-colors flex items-center justify-center text-sm md:text-base" 
              onClick={handleCheckout}
              disabled={activateBoxMutation.isPending}
            >

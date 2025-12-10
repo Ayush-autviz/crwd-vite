@@ -576,17 +576,17 @@ const ManageDonationBox: React.FC<ManageDonationBoxProps> = ({
       </div> */}
 
       {/* Donation Box Summary Card */}
-      <div className="mx-4 mt-4 mb-6">
+      <div className="mx-3 md:mx-4 mt-3 md:mt-4 mb-4 md:mb-6">
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
           {/* Gradient Header */}
-          <div className="bg-gradient-to-r from-blue-500 to-purple-500 h-2"></div>
+          <div className="bg-gradient-to-r from-blue-500 to-purple-500 h-1 md:h-2"></div>
 
-          <div className="p-6">
+          <div className="p-4 md:p-6">
             {/* Monthly Donation Section */}
-            <div className="mb-6">
-              <h2 className="text-base font-medium text-gray-900 mb-3">Monthly Donation</h2>
-              <div className="flex items-center justify-between mb-2">
-                <div className="flex items-baseline gap-2">
+            <div className="mb-4 md:mb-6">
+              <h2 className="text-sm md:text-base font-medium text-gray-900 mb-2 md:mb-3">Monthly Donation</h2>
+              <div className="flex items-center justify-between mb-1.5 md:mb-2">
+                <div className="flex items-baseline gap-1.5 md:gap-2">
                   {isEditingAmount ? (
                     <input
                       type="text"
@@ -594,46 +594,46 @@ const ManageDonationBox: React.FC<ManageDonationBoxProps> = ({
                       onChange={handleAmountChange}
                       onBlur={() => setIsEditingAmount(false)}
                       autoFocus
-                      className="text-4xl font-bold text-gray-900 bg-transparent border-b border-gray-300 w-24 text-center focus:outline-none"
+                      className="text-3xl md:text-4xl font-bold text-gray-900 bg-transparent border-b border-gray-300 w-20 md:w-24 text-center focus:outline-none"
                     />
                   ) : (
                     <>
-                      <span className="text-4xl font-bold text-gray-900">${editableAmount}</span>
-                      <span className="text-base text-gray-600">/   month</span>
+                      <span className="text-3xl md:text-4xl font-bold text-gray-900">${editableAmount}</span>
+                      <span className="text-sm md:text-base text-gray-600">/   month</span>
                     </>
                   )}
                 </div>
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-1.5 md:gap-2">
                   <button
                     onClick={decrementAmount}
                     disabled={editableAmount <= 5}
-                    className={`w-8 h-8 rounded-full flex items-center justify-center transition-colors ${
+                    className={`w-7 h-7 md:w-8 md:h-8 rounded-full flex items-center justify-center transition-colors ${
                       editableAmount > 5 
                         ? 'bg-gray-100 hover:bg-gray-200' 
                         : 'bg-gray-200 cursor-not-allowed opacity-50'
                     }`}
                     aria-label="Decrease amount"
                   >
-                    <Minus className="w-4 h-4 text-gray-600 font-bold" strokeWidth={3} />
+                    <Minus className="w-3.5 h-3.5 md:w-4 md:h-4 text-gray-600 font-bold" strokeWidth={3} />
                   </button>
                   <button
                     onClick={incrementAmount}
-                    className="w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center transition-colors"
+                    className="w-7 h-7 md:w-8 md:h-8 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center transition-colors"
                     aria-label="Increase amount"
                   >
-                    <Plus className="w-4 h-4 text-gray-600" />
+                    <Plus className="w-3.5 h-3.5 md:w-4 md:h-4 text-gray-600" />
                   </button>
                 </div>
               </div>
               {lifetimeAmount > 0 && (
-                <p className="text-sm text-gray-600">${lifetimeAmount.toLocaleString()} lifetime</p>
+                <p className="text-xs md:text-sm text-gray-600">${lifetimeAmount.toLocaleString()} lifetime</p>
               )}
             </div>
 
             {/* Information Banner - Show when amount has changed */}
             {formatNextChargeDate(nextChargeDate) && (
-              <div className="bg-blue-50 rounded-lg px-4 py-3 mb-6 border border-blue-100">
-                <p className="text-sm text-blue-700">
+              <div className="bg-blue-50 rounded-lg px-3 md:px-4 py-2.5 md:py-3 mb-4 md:mb-6 border border-blue-100">
+                <p className="text-xs md:text-sm text-blue-700">
                   Changes take effect on your next billing cycle ({formatNextChargeDate(nextChargeDate)} of the month)
                 </p>
               </div>
@@ -642,25 +642,25 @@ const ManageDonationBox: React.FC<ManageDonationBoxProps> = ({
            
 
             {/* Supported Entities */}
-            <div className="bg-gray-100 rounded-lg px-4 py-3 mb-6 text-center">
-              <p className="text-sm font-bold text-gray-900">
+            <div className="bg-gray-100 rounded-lg px-3 md:px-4 py-2.5 md:py-3 mb-4 md:mb-6 text-center">
+              <p className="text-xs md:text-sm font-bold text-gray-900">
                 {totalCausesCount} Cause{totalCausesCount !== 1 ? 's' : ''} • {totalCollectivesCount} Collective{totalCollectivesCount !== 1 ? 's' : ''}
               </p>
             </div>
 
             {/* Donation Box Capacity */}
-            <div className="bg-gradient-to-br from-blue-50 to-purple-50 rounded-lg p-4 mb-6">
-              <div className="flex items-center justify-between mb-2">
-                <h3 className="text-sm font-bold text-blue-600">Donation Box Capacity</h3>
-                <span className="text-sm text-gray-900">{currentCapacity}/{maxCapacity} causes</span>
+            <div className="bg-gradient-to-br from-blue-50 to-purple-50 rounded-lg p-3 md:p-4 mb-4 md:mb-6">
+              <div className="flex items-center justify-between mb-1.5 md:mb-2">
+                <h3 className="text-xs md:text-sm font-bold text-blue-600">Donation Box Capacity</h3>
+                <span className="text-xs md:text-sm text-gray-900">{currentCapacity}/{maxCapacity} causes</span>
               </div>
-              <div className="w-full bg-gray-200 rounded-full h-2 mb-2">
+              <div className="w-full bg-gray-200 rounded-full h-1.5 md:h-2 mb-1.5 md:mb-2">
                 <div
-                  className="bg-gradient-to-r from-blue-500 to-purple-500 h-2 rounded-full transition-all duration-300"
+                  className="bg-gradient-to-r from-blue-500 to-purple-500 h-1.5 md:h-2 rounded-full transition-all duration-300"
                   style={{ width: `${Math.min(100, capacityPercentage)}%` }}
                 ></div>
               </div>
-              <p className="text-sm text-blue-600">
+              <p className="text-xs md:text-sm text-blue-600">
                 You can support {remainingCapacity} more cause{remainingCapacity !== 1 ? 's' : ''} with this donation amount.
               </p>
             </div>
@@ -725,57 +725,57 @@ const ManageDonationBox: React.FC<ManageDonationBoxProps> = ({
       </div> */}
 
       {/* Content Area */}
-      <div className="flex-1 mt-4 mb-24 overflow-auto">
+      <div className="flex-1 mt-3 md:mt-4 mb-20 md:mb-24 overflow-auto">
         {activeTab === "nonprofits" ? (
-          <div className="px-4">
+          <div className="px-3 md:px-4">
             {/* Selected Nonprofits - Combined existing + newly selected */}
             {(() => {
               const selectedCausesForDisplay = getSelectedCausesForDisplay();
               return selectedCausesForDisplay.length > 0 && (
-                <div className="mb-6">
+                <div className="mb-4 md:mb-6">
                   <div className="flex items-center justify-between mb-2">
                     <div>
-                      <h2 className="text-xl font-bold text-gray-800">Your Selected Causes</h2>
-                      <p className="text-sm text-gray-600 mt-1">Your Donation Box. Add or remove anytime.</p>
+                      <h2 className="text-lg md:text-xl font-bold text-gray-800">Your Selected Causes</h2>
+                      <p className="text-xs md:text-sm text-gray-600 mt-0.5 md:mt-1">Your Donation Box. Add or remove anytime.</p>
                     </div>
                   </div>
-                  <div className="space-y-3">
+                  <div className="space-y-2.5 md:space-y-3">
                     {selectedCausesForDisplay.map((org) => {
                       const causeId = org.isNewlySelected ? (org as any).causeId : parseInt(org.id.replace('cause-', ''));
                       const colors = getNonprofitColor(causeId || org.name);
                       return (
                         <div
                           key={org.id}
-                          className="bg-white rounded-xl px-4 py-4 shadow-sm border border-gray-200"
+                          className="bg-white rounded-xl px-3 md:px-4 py-3 md:py-4 shadow-sm border border-gray-200"
                         >
-                          <div className="flex gap-4 items-center">
+                          <div className="flex gap-3 md:gap-4 items-center">
                             <div 
-                              className="w-12 h-12 flex-shrink-0 rounded-lg flex items-center justify-center"
+                              className="w-10 h-10 md:w-12 md:h-12 flex-shrink-0 rounded-lg flex items-center justify-center"
                               style={{ backgroundColor: colors.bgColor }}
                             >
                               <span 
-                                className="text-xl font-bold"
+                                className="text-lg md:text-xl font-bold"
                                 style={{ color: colors.textColor }}
                               >
                                 {org.name.charAt(0).toUpperCase()}
                               </span>
                             </div>
                             <div className="flex-1 min-w-0">
-                              <h3 className="font-bold text-gray-900 text-base mb-1">
+                              <h3 className="font-bold text-gray-900 text-sm md:text-base mb-0.5 md:mb-1">
                                 {org.name}
                               </h3>
                               {org.description && (
-                                <p className="text-sm text-gray-500 line-clamp-1">
+                                <p className="text-xs md:text-sm text-gray-500 line-clamp-1">
                                   {org.description}
                                 </p>
                               )}
                             </div>
-                            <div className="flex items-center gap-4">
+                            <div className="flex items-center gap-3 md:gap-4">
                               <div className="text-right">
-                                <div className="font-bold text-gray-900 text-base">
+                                <div className="font-bold text-gray-900 text-sm md:text-base">
                                   {distributionPercentage}%
                                 </div>
-                                <div className="text-sm text-gray-500">
+                                <div className="text-xs md:text-sm text-gray-500">
                                   ${amountPerItem.toFixed(2)}/mo
                                 </div>
                               </div>
@@ -784,7 +784,7 @@ const ManageDonationBox: React.FC<ManageDonationBoxProps> = ({
                                 onClick={() => handleDeselectCause(causeId, org.isNewlySelected, org.name)}
                                 aria-label="Remove cause"
                               >
-                                <Trash2 size={18} />
+                                <Trash2 size={16} className="md:w-[18px] md:h-[18px]" />
                               </button>
                             </div>
                           </div>
@@ -797,13 +797,13 @@ const ManageDonationBox: React.FC<ManageDonationBoxProps> = ({
             })()}
 
             {/* Search Section */}
-            <div className="mb-6">
-              <h2 className="text-xl font-bold text-gray-800 mb-4">
+            <div className="mb-4 md:mb-6">
+              <h2 className="text-lg md:text-xl font-bold text-gray-800 mb-3 md:mb-4">
                 Add More Causes
               </h2>
-              <div className="flex gap-2 mb-4">
+              <div className="flex gap-2 mb-3 md:mb-4">
                 <div className="relative flex-1">
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+                  <Search className="absolute left-2.5 md:left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4 md:w-5 md:h-5" />
                   <input
                     type="text"
                     placeholder="Search for causes..."
@@ -814,7 +814,7 @@ const ManageDonationBox: React.FC<ManageDonationBoxProps> = ({
                         handleSearch();
                       }
                     }}
-                    className="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#1600ff]"
+                    className="w-full pl-8 md:pl-10 pr-3 md:pr-4 py-2 md:py-2.5 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#1600ff] text-sm md:text-base"
                   />
                   {searchQuery && (
                     <button
@@ -822,9 +822,9 @@ const ManageDonationBox: React.FC<ManageDonationBoxProps> = ({
                         setSearchQuery("");
                         setShowSearchResults(false);
                       }}
-                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                      className="absolute right-2.5 md:right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
                     >
-                      <X size={16} />
+                      <X size={14} className="md:w-4 md:h-4" />
                     </button>
                   )}
                 </div>
@@ -834,37 +834,37 @@ const ManageDonationBox: React.FC<ManageDonationBoxProps> = ({
 
             {/* Default Causes - Show when no search is active */}
             {!showSearchResults && (
-              <div className="mb-6">
-                <h3 className="text-sm font-semibold text-gray-700 mb-3">
+              <div className="mb-4 md:mb-6">
+                <h3 className="text-xs md:text-sm font-semibold text-gray-700 mb-2 md:mb-3">
                   Suggested Nonprofits
                 </h3>
                 {defaultCausesLoading ? (
-                  <p className="text-gray-500 text-center py-4">Loading...</p>
+                  <p className="text-gray-500 text-center py-3 md:py-4 text-sm md:text-base">Loading...</p>
                 ) : defaultCauses.length > 0 ? (
-                  <div className="space-y-3">
+                  <div className="space-y-2.5 md:space-y-3">
                     {defaultCauses.map((cause: any) => {
                       const isSelected = selectedCauses.includes(cause.id);
                       const colors = getNonprofitColor(cause.id || cause.name);
                       return (
                         <div
                           key={cause.id}
-                          className="flex items-center gap-4 bg-white rounded-xl px-4 py-4 shadow-sm border border-gray-200 hover:bg-gray-50 transition-colors cursor-pointer"
+                          className="flex items-center gap-3 md:gap-4 bg-white rounded-xl px-3 md:px-4 py-3 md:py-4 shadow-sm border border-gray-200 hover:bg-gray-50 transition-colors cursor-pointer"
                           onClick={() => handleToggleCause(cause.id)}
                         >
                           <div 
-                            className="w-12 h-12 flex-shrink-0 rounded-lg flex items-center justify-center"
+                            className="w-10 h-10 md:w-12 md:h-12 flex-shrink-0 rounded-lg flex items-center justify-center"
                             style={{ backgroundColor: colors.bgColor }}
                           >
                             <span 
-                              className="text-xl font-bold"
+                              className="text-lg md:text-xl font-bold"
                               style={{ color: colors.textColor }}
                             >
                               {cause.name?.charAt(0)?.toUpperCase() || 'C'}
                             </span>
                           </div>
                           <div className="flex-1 min-w-0">
-                            <h3 className="font-bold text-gray-900 text-base mb-1">{cause.name}</h3>
-                            <p className="text-sm text-gray-500 line-clamp-1">{cause.mission || cause.description}</p>
+                            <h3 className="font-bold text-gray-900 text-sm md:text-base mb-0.5 md:mb-1">{cause.name}</h3>
+                            <p className="text-xs md:text-sm text-gray-500 line-clamp-1">{cause.mission || cause.description}</p>
                           </div>
                           {!isSelected && (
                             <button
@@ -872,14 +872,14 @@ const ManageDonationBox: React.FC<ManageDonationBoxProps> = ({
                                 e.stopPropagation();
                                 handleToggleCause(cause.id);
                               }}
-                              className="w-8 h-8 rounded-full bg-red-100 hover:bg-red-200 flex items-center justify-center transition-colors flex-shrink-0"
+                              className="w-7 h-7 md:w-8 md:h-8 rounded-full bg-red-100 hover:bg-red-200 flex items-center justify-center transition-colors flex-shrink-0"
                             >
-                              <Plus size={16} className="text-pink-600" strokeWidth={3} />
+                              <Plus size={14} className="md:w-4 md:h-4 text-pink-600" strokeWidth={3} />
                             </button>
                           )}
                           {isSelected && (
-                            <div className="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center flex-shrink-0">
-                              <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+                            <div className="w-7 h-7 md:w-8 md:h-8 rounded-full bg-blue-600 flex items-center justify-center flex-shrink-0">
+                              <svg className="w-3.5 h-3.5 md:w-4 md:h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
                                 <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                               </svg>
                             </div>
@@ -889,43 +889,43 @@ const ManageDonationBox: React.FC<ManageDonationBoxProps> = ({
                     })}
                   </div>
                 ) : (
-                  <p className="text-gray-500 text-center py-4">No nonprofits available</p>
+                  <p className="text-gray-500 text-center py-3 md:py-4 text-sm md:text-base">No nonprofits available</p>
                 )}
               </div>
             )}
 
             {/* Search Results */}
             {showSearchResults && (
-              <div className="mb-6">
-                <h3 className="text-sm font-semibold text-gray-700 mb-3">
+              <div className="mb-4 md:mb-6">
+                <h3 className="text-xs md:text-sm font-semibold text-gray-700 mb-2 md:mb-3">
                   Search Results (Max 5)
                 </h3>
                 {causesLoading ? (
-                  <p className="text-gray-500 text-center py-4">Loading...</p>
+                  <p className="text-gray-500 text-center py-3 md:py-4 text-sm md:text-base">Loading...</p>
                 ) : searchResults.length > 0 ? (
-                  <div className="space-y-3">
+                  <div className="space-y-2.5 md:space-y-3">
                     {searchResults.map((cause: any) => {
                       const isSelected = selectedCauses.includes(cause.id);
                       const colors = getNonprofitColor(cause.id || cause.name);
                       return (
                         <div
                           key={cause.id}
-                          className="flex items-center gap-4 bg-white rounded-xl px-4 py-4 shadow-sm border border-gray-200 hover:bg-gray-50 transition-colors"
+                          className="flex items-center gap-3 md:gap-4 bg-white rounded-xl px-3 md:px-4 py-3 md:py-4 shadow-sm border border-gray-200 hover:bg-gray-50 transition-colors"
                         >
                           <div 
-                            className="w-12 h-12 flex-shrink-0 rounded-lg flex items-center justify-center"
+                            className="w-10 h-10 md:w-12 md:h-12 flex-shrink-0 rounded-lg flex items-center justify-center"
                             style={{ backgroundColor: colors.bgColor }}
                           >
                             <span 
-                              className="text-xl font-bold"
+                              className="text-lg md:text-xl font-bold"
                               style={{ color: colors.textColor }}
                             >
                               {cause.name?.charAt(0)?.toUpperCase() || 'C'}
                             </span>
                           </div>
                           <div className="flex-1 min-w-0">
-                            <h3 className="font-bold text-gray-900 text-base mb-1">{cause.name}</h3>
-                            <p className="text-sm text-gray-500 line-clamp-1">{cause.mission || cause.description}</p>
+                            <h3 className="font-bold text-gray-900 text-sm md:text-base mb-0.5 md:mb-1">{cause.name}</h3>
+                            <p className="text-xs md:text-sm text-gray-500 line-clamp-1">{cause.mission || cause.description}</p>
                           </div>
                           {!isSelected && (
                             <button
@@ -933,14 +933,14 @@ const ManageDonationBox: React.FC<ManageDonationBoxProps> = ({
                                 e.stopPropagation();
                                 handleToggleCause(cause.id);
                               }}
-                              className="w-8 h-8 rounded-full bg-red-100 hover:bg-red-200 flex items-center justify-center transition-colors flex-shrink-0"
+                              className="w-7 h-7 md:w-8 md:h-8 rounded-full bg-red-100 hover:bg-red-200 flex items-center justify-center transition-colors flex-shrink-0"
                             >
-                              <Plus size={16} className="text-pink-600" strokeWidth={3} />
+                              <Plus size={14} className="md:w-4 md:h-4 text-pink-600" strokeWidth={3} />
                             </button>
                           )}
                           {isSelected && (
-                            <div className="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center flex-shrink-0">
-                              <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+                            <div className="w-7 h-7 md:w-8 md:h-8 rounded-full bg-blue-600 flex items-center justify-center flex-shrink-0">
+                              <svg className="w-3.5 h-3.5 md:w-4 md:h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
                                 <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                               </svg>
                             </div>
@@ -950,22 +950,22 @@ const ManageDonationBox: React.FC<ManageDonationBoxProps> = ({
                     })}
                   </div>
                 ) : (
-                  <p className="text-gray-500 text-center py-4">No nonprofits found</p>
+                  <p className="text-gray-500 text-center py-3 md:py-4 text-sm md:text-base">No nonprofits found</p>
                 )}
               </div>
             )}
           </div>
                         ) : (
-          <div className="px-4">
+          <div className="px-3 md:px-4">
             {/* Selected Collectives - Combined existing + newly selected */}
             {(() => {
               const selectedCollectivesForDisplay = getSelectedCollectivesForDisplay();
               return selectedCollectivesForDisplay.length > 0 && (
-                <div className="mb-6">
-                  <h2 className="text-base font-semibold text-gray-700 uppercase mb-4 tracking-wide">
+                <div className="mb-4 md:mb-6">
+                  <h2 className="text-sm md:text-base font-semibold text-gray-700 uppercase mb-3 md:mb-4 tracking-wide">
                     Selected Collectives
                   </h2>
-                  <div className="space-y-3">
+                  <div className="space-y-2.5 md:space-y-3">
                     {selectedCollectivesForDisplay.map((org) => {
                       const collectiveId = org.isNewlySelected ? (org as any).collectiveId : parseInt(org.id.replace('collective-', ''));
                       const isExpanded = expandedCollectives.has(collectiveId);
@@ -985,51 +985,51 @@ const ManageDonationBox: React.FC<ManageDonationBoxProps> = ({
                       
                       return (
                         <div key={org.id}>
-                          <div className="bg-white rounded-xl px-4 py-4 shadow-sm border border-gray-200">
-                            <div className="flex gap-4 items-center">
+                          <div className="bg-white rounded-xl px-3 md:px-4 py-3 md:py-4 shadow-sm border border-gray-200">
+                            <div className="flex gap-3 md:gap-4 items-center">
                               <div
-                                className="flex gap-4 items-center cursor-pointer flex-1 min-w-0"
+                                className="flex gap-3 md:gap-4 items-center cursor-pointer flex-1 min-w-0"
                                 onClick={() => handleToggleCollectiveDropdown(collectiveId)}
                               >
                                 <div 
-                                  className="w-12 h-12 flex-shrink-0 rounded-lg flex items-center justify-center"
+                                  className="w-10 h-10 md:w-12 md:h-12 flex-shrink-0 rounded-lg flex items-center justify-center"
                                   style={{ backgroundColor: collectiveColor.bg }}
                                 >
                                   <span 
-                                    className="text-xl font-bold"
+                                    className="text-lg md:text-xl font-bold"
                                     style={{ color: collectiveColor.text }}
                                   >
                                     {org.name.charAt(0).toUpperCase()}
                                   </span>
                                 </div>
                                 <div className="flex-1 min-w-0">
-                                  <h3 className="font-bold text-gray-900 text-base mb-1">
+                                  <h3 className="font-bold text-gray-900 text-sm md:text-base mb-0.5 md:mb-1">
                                     {org.name}
                                   </h3>
                                   {org.description && (
-                                    <p className="text-sm text-gray-500 line-clamp-1">
+                                    <p className="text-xs md:text-sm text-gray-500 line-clamp-1">
                                       {org.description}
                                     </p>
                                   )}
                                 </div>
                               </div>
-                              <div className="flex items-center gap-4">
+                              <div className="flex items-center gap-3 md:gap-4">
                                 <div className="text-right">
-                                  <div className="font-bold text-gray-900 text-base">
+                                  <div className="font-bold text-gray-900 text-sm md:text-base">
                                     {distributionPercentage}%
                                   </div>
-                                  <div className="text-sm text-gray-500">
+                                  <div className="text-xs md:text-sm text-gray-500">
                                     ${amountPerItem.toFixed(2)}/mo
                                   </div>
                                 </div>
-                                <div className="flex items-center gap-2">
+                                <div className="flex items-center gap-1.5 md:gap-2">
                                   {isLoading ? (
-                                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-green-600"></div>
+                                    <div className="animate-spin rounded-full h-3.5 w-3.5 md:h-4 md:w-4 border-b-2 border-green-600"></div>
                                   ) : (
                                     isExpanded ? (
-                                      <ChevronUp size={20} className="text-gray-500" />
+                                      <ChevronUp size={18} className="md:w-5 md:h-5 text-gray-500" />
                                     ) : (
-                                      <ChevronDown size={20} className="text-gray-500" />
+                                      <ChevronDown size={18} className="md:w-5 md:h-5 text-gray-500" />
                                     )
                                   )}
                                   <button
@@ -1040,31 +1040,31 @@ const ManageDonationBox: React.FC<ManageDonationBoxProps> = ({
                                     }}
                                     aria-label="Remove collective"
                                   >
-                                    <Trash2 size={18} />
+                                    <Trash2 size={16} className="md:w-[18px] md:h-[18px]" />
                                   </button>
                                 </div>
                               </div>
                             </div>
                           </div>
                           {isExpanded && details && details.causes && details.causes.length > 0 && (
-                            <div className="bg-gray-50 p-4 border border-gray-200 rounded-lg mt-2 ml-4">
-                              <h4 className="text-sm font-semibold text-gray-800 mb-3">
+                            <div className="bg-gray-50 p-3 md:p-4 border border-gray-200 rounded-lg mt-2 ml-3 md:ml-4">
+                              <h4 className="text-xs md:text-sm font-semibold text-gray-800 mb-2 md:mb-3">
                                 Nonprofits ({details.causes.length})
                               </h4>
-                              <div className="space-y-3 pl-14">
+                              <div className="space-y-2 md:space-y-3 pl-12 md:pl-14">
                                 {details.causes.map((causeItem: any) => (
-                                  <div key={causeItem.id} className="flex items-center gap-3 py-2 border-b border-gray-200 last:border-b-0">
-                                    <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0">
-                                      <span className="text-blue-600 text-xs font-semibold">
+                                  <div key={causeItem.id} className="flex items-center gap-2.5 md:gap-3 py-1.5 md:py-2 border-b border-gray-200 last:border-b-0">
+                                    <div className="w-7 h-7 md:w-8 md:h-8 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0">
+                                      <span className="text-blue-600 text-[10px] md:text-xs font-semibold">
                                         {causeItem.cause?.name?.charAt(0).toUpperCase() || 'N'}
                                       </span>
                                     </div>
                                     <div className="flex-1 min-w-0">
-                                      <h5 className="font-semibold text-gray-800 text-sm">
+                                      <h5 className="font-semibold text-gray-800 text-xs md:text-sm">
                                         {causeItem.cause?.name}
                                       </h5>
                                       {causeItem.cause?.description && (
-                                        <p className="text-xs text-gray-600 line-clamp-2 mt-1">
+                                        <p className="text-[10px] md:text-xs text-gray-600 line-clamp-2 mt-0.5 md:mt-1">
                                           {causeItem.cause.description}
                                         </p>
                                       )}
@@ -1083,14 +1083,14 @@ const ManageDonationBox: React.FC<ManageDonationBoxProps> = ({
             })()}
 
             {/* Available Collectives */}
-            <div className="mb-6">
-              <h2 className="text-base font-semibold text-gray-700 uppercase mb-4 tracking-wide">
+            <div className="mb-4 md:mb-6">
+              <h2 className="text-sm md:text-base font-semibold text-gray-700 uppercase mb-3 md:mb-4 tracking-wide">
                 Joined Collectives
               </h2>
               {joinedCollectivesLoading ? (
-                <p className="text-gray-500 text-center py-4">Loading...</p>
+                <p className="text-gray-500 text-center py-3 md:py-4 text-sm md:text-base">Loading...</p>
               ) : availableCollectives.length > 0 ? (
-                <div className="space-y-3">
+                <div className="space-y-2.5 md:space-y-3">
                   {availableCollectives.map((collective: any) => {
                     const isSelected = selectedCollectives.includes(collective.id);
                     const isExpanded = expandedCollectives.has(collective.id);
@@ -1110,71 +1110,71 @@ const ManageDonationBox: React.FC<ManageDonationBoxProps> = ({
                     
                     return (
                       <div key={collective.id}>
-                        <div className="flex items-center gap-4 bg-white rounded-xl px-4 py-4 shadow-sm border border-gray-200 hover:bg-gray-50 transition-colors">
+                        <div className="flex items-center gap-3 md:gap-4 bg-white rounded-xl px-3 md:px-4 py-3 md:py-4 shadow-sm border border-gray-200 hover:bg-gray-50 transition-colors">
                           <div
-                            className="flex gap-4 items-center cursor-pointer flex-1 min-w-0"
+                            className="flex gap-3 md:gap-4 items-center cursor-pointer flex-1 min-w-0"
                             onClick={() => handleToggleCollectiveDropdown(collective.id)}
                           >
                             <div 
-                              className="w-12 h-12 flex-shrink-0 rounded-lg flex items-center justify-center"
+                              className="w-10 h-10 md:w-12 md:h-12 flex-shrink-0 rounded-lg flex items-center justify-center"
                               style={{ backgroundColor: collectiveColor.bg }}
                             >
                               <span 
-                                className="text-xl font-bold"
+                                className="text-lg md:text-xl font-bold"
                                 style={{ color: collectiveColor.text }}
                               >
                                 {collective.name?.charAt(0)?.toUpperCase() || 'C'}
                               </span>
                             </div>
                             <div className="flex-1 min-w-0">
-                              <h3 className="font-bold text-gray-900 text-base mb-1">{collective.name}</h3>
-                              <p className="text-sm text-gray-500 line-clamp-1">{collective.description || 'Community collective'}</p>
+                              <h3 className="font-bold text-gray-900 text-sm md:text-base mb-0.5 md:mb-1">{collective.name}</h3>
+                              <p className="text-xs md:text-sm text-gray-500 line-clamp-1">{collective.description || 'Community collective'}</p>
                             </div>
-                            <div className="ml-4">
+                            <div className="ml-2 md:ml-4">
                               {isLoading ? (
-                                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-green-600"></div>
+                                <div className="animate-spin rounded-full h-3.5 w-3.5 md:h-4 md:w-4 border-b-2 border-green-600"></div>
                               ) : (
                                 isExpanded ? (
-                                  <ChevronUp size={20} className="text-gray-500" />
+                                  <ChevronUp size={18} className="md:w-5 md:h-5 text-gray-500" />
                                 ) : (
-                                  <ChevronDown size={20} className="text-gray-500" />
+                                  <ChevronDown size={18} className="md:w-5 md:h-5 text-gray-500" />
                                 )
                               )}
                             </div>
                           </div>
                           <div
-                            className={`w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 cursor-pointer ${isSelected ? 'bg-blue-600' : 'border-2 border-gray-300'}`}
+                            className={`w-5 h-5 md:w-6 md:h-6 rounded-full flex items-center justify-center flex-shrink-0 cursor-pointer ${isSelected ? 'bg-blue-600' : 'border-2 border-gray-300'}`}
                             onClick={(e) => {
                               e.stopPropagation();
                               handleToggleCollective(collective.id);
                             }}
                           >
                             {isSelected && (
-                              <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+                              <svg className="w-3 h-3 md:w-4 md:h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
                                 <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                               </svg>
                             )}
                           </div>
                         </div>
                         {isExpanded && details && details.causes && details.causes.length > 0 && (
-                          <div className="bg-gray-50 p-4 border border-gray-200 rounded-lg mt-2 ml-4">
-                            <h4 className="text-sm font-semibold text-gray-800 mb-3">
+                          <div className="bg-gray-50 p-3 md:p-4 border border-gray-200 rounded-lg mt-2 ml-3 md:ml-4">
+                            <h4 className="text-xs md:text-sm font-semibold text-gray-800 mb-2 md:mb-3">
                               Nonprofits ({details.causes.length})
                             </h4>
-                            <div className="space-y-3 pl-14">
+                            <div className="space-y-2 md:space-y-3 pl-12 md:pl-14">
                               {details.causes.map((causeItem: any) => (
-                                <div key={causeItem.id} className="flex items-center gap-3 py-2 border-b border-gray-200 last:border-b-0">
-                                  <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0">
-                                    <span className="text-blue-600 text-xs font-semibold">
+                                <div key={causeItem.id} className="flex items-center gap-2.5 md:gap-3 py-1.5 md:py-2 border-b border-gray-200 last:border-b-0">
+                                  <div className="w-7 h-7 md:w-8 md:h-8 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0">
+                                    <span className="text-blue-600 text-[10px] md:text-xs font-semibold">
                                       {causeItem.cause?.name?.charAt(0).toUpperCase() || 'N'}
                                     </span>
                                   </div>
                                   <div className="flex-1 min-w-0">
-                                    <h5 className="font-semibold text-gray-800 text-sm">
+                                    <h5 className="font-semibold text-gray-800 text-xs md:text-sm">
                                       {causeItem.cause?.name}
                                     </h5>
                                     {causeItem.cause?.description && (
-                                      <p className="text-xs text-gray-600 line-clamp-2 mt-1">
+                                      <p className="text-[10px] md:text-xs text-gray-600 line-clamp-2 mt-0.5 md:mt-1">
                                         {causeItem.cause.description}
                                       </p>
                                     )}
@@ -1189,7 +1189,7 @@ const ManageDonationBox: React.FC<ManageDonationBoxProps> = ({
                   })}
                 </div>
               ) : (
-                <p className="text-gray-500 text-center py-4">No collectives available</p>
+                <p className="text-gray-500 text-center py-3 md:py-4 text-sm md:text-base">No collectives available</p>
               )}
             </div>
           </div>
@@ -1206,11 +1206,11 @@ const ManageDonationBox: React.FC<ManageDonationBoxProps> = ({
       </div> */}
 
       {/* Update Donation Button */}
-      <div className="fixed bottom-0 left-0 right-0 p-6 border-t border-gray-200 bg-white">
+      <div className="fixed bottom-0 left-0 right-0 p-4 md:p-6 border-t border-gray-200 bg-white">
         <Button
           onClick={handleUpdateDonation}
           disabled={updateDonationBoxMutation.isPending || hasNoItems}
-          className="w-full bg-[#1600ff] hover:bg-[#0000ff] text-white py-6 rounded-lg font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
+          className="w-full bg-[#1600ff] hover:bg-[#0000ff] text-white py-4 md:py-6 rounded-lg font-semibold disabled:opacity-50 disabled:cursor-not-allowed text-sm md:text-base"
         >
           {updateDonationBoxMutation.isPending
             ? 'Updating...'
@@ -1231,7 +1231,7 @@ const ManageDonationBox: React.FC<ManageDonationBoxProps> = ({
             onClick={() => setShowCancelModal(true)}
             disabled={cancelDonationBoxMutation.isPending}
             variant="outline"
-            className="w-full mt-4 border-red-300 text-red-600 hover:bg-red-50 hover:text-red-700 py-6 rounded-lg font-semibold"
+            className="w-full mt-3 md:mt-4 border-red-300 text-red-600 hover:bg-red-50 hover:text-red-700 py-4 md:py-6 rounded-lg font-semibold text-sm md:text-base"
           >
             {cancelDonationBoxMutation.isPending
               ? 'Deactivating...'
