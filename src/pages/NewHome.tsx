@@ -304,13 +304,13 @@ export default function NewHome() {
                 showBackButton={false}
             />
             {/* Main Content - Takes full width on mobile, 12 columns on desktop */}
-            <div className="bg-gradient-to-r from-blue-50 via-purple-50 to-pink-50 px-10 py-6">
+            <div className="bg-gradient-to-r from-blue-50 via-purple-50 to-pink-50 px-4 md:px-6 lg:px-10 py-4 md:py-6">
                 {/* Personalized Greeting */}
 
                 {/* My Donation Box Card or Prompt */}
                 {token?.access_token && (
                     donationBoxLoading ? (
-                        <div className="flex items-center justify-center py-8 W-[200px]">
+                        <div className="flex items-center justify-center py-8 w-full max-w-[200px] mx-auto">
                             <Loader2 className="h-6 w-6 animate-spin" />
                         </div>
                     ) : donationBoxInfo ? (
@@ -329,7 +329,7 @@ export default function NewHome() {
                 {/* Collective Carousel Card */}
                 {token?.access_token && (
                     joinedCollectivesLoading ? (
-                        <div className="flex items-center justify-center py-8 max-w-[200px]">
+                        <div className="flex items-center justify-center py-8 w-full max-w-[200px] mx-auto">
                             <Loader2 className="h-6 w-6 animate-spin" />
                         </div>
                     ) : (
@@ -344,8 +344,8 @@ export default function NewHome() {
             {/* <div className="md:grid md:grid-cols-12 md:gap-6 md:pt-6 md:px-6">
                 <div className="md:col-span-12"> */}
 
-                <div className=" max-w-6xl mx-auto">
-                <div className="mx-4">
+                <div className="w-full max-w-6xl mx-auto">
+                <div className="mx-4 md:mx-6 lg:mx-8">
                     {/* First 2 Community Updates - Above Featured Nonprofits */}
                     {token?.access_token && (
                         notificationsLoading ? (

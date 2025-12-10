@@ -41,9 +41,9 @@ function PostWithData({ update }: { update: CommunityUpdate }) {
 
   if (isLoading) {
     return (
-      <div className="bg-white rounded-lg border border-gray-200 p-4">
-        <div className="flex items-center justify-center py-8">
-          <p className="text-sm text-gray-500">Loading post...</p>
+      <div className="bg-white rounded-lg border border-gray-200 p-3 md:p-4">
+        <div className="flex items-center justify-center py-6 md:py-8">
+          <p className="text-xs md:text-sm text-gray-500">Loading post...</p>
         </div>
       </div>
     );
@@ -88,14 +88,14 @@ function NotificationSummary({ update }: { update: CommunityUpdate }) {
   const isJoinNotification = update.isJoinNotification || false;
 
   return (
-    <div className="bg-white rounded-lg border border-gray-200 p-4 hover:shadow-md transition-shadow">
+    <div className="bg-white rounded-lg border border-gray-200 p-3 md:p-4 hover:shadow-md transition-shadow">
       {/* Top Section: Profile and Follow Button */}
-      <div className="flex items-start justify-between mb-3">
-        <div className="flex items-center gap-3">
+      <div className="flex items-start justify-between mb-2.5 md:mb-3">
+        <div className="flex items-center gap-2.5 md:gap-3">
           {/* Avatar */}
-          <Avatar className="h-12 w-12 flex-shrink-0 rounded-xl">
+          <Avatar className="h-10 w-10 md:h-12 md:w-12 flex-shrink-0 rounded-xl">
             <AvatarImage src={update.user.avatar} />
-            <AvatarFallback className="bg-[#1600ff] text-white">
+            <AvatarFallback className="bg-[#1600ff] text-white text-xs md:text-sm">
               {update.user.name
                 .split(" ")
                 .map((n) => n.charAt(0))
@@ -106,44 +106,44 @@ function NotificationSummary({ update }: { update: CommunityUpdate }) {
 
           {/* User Info */}
           <div className="flex-1 min-w-0">
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1.5 md:gap-2 flex-wrap">
               <Link
                 to={`/user-profile/${update.user.username}`}
-                className="font-bold text-gray-900 hover:underline block"
+                className="font-bold text-sm md:text-base text-gray-900 hover:underline block"
               >
                 {update.user.firstName && update.user.lastName 
                   ? `${update.user.firstName} ${update.user.lastName}`
                   : update.user.name || update.user.username}
               </Link>
-              <p className="text-sm text-gray-500">@{update.user.username}</p>
+              <p className="text-xs md:text-sm text-gray-500">@{update.user.username}</p>
             </div>
             {update.collective && (
-              <p className="text-sm text-gray-500">{update.collective.name}</p>
+              <p className="text-xs md:text-sm text-gray-500">{update.collective.name}</p>
             )}
           </div>
         </div>
       </div>
 
       {/* Content Box */}
-      <div className={`rounded-lg p-3 mb-3 flex items-center gap-3 ${
+      <div className={`rounded-lg p-2.5 md:p-3 mb-2.5 md:mb-3 flex items-center gap-2.5 md:gap-3 ${
         isJoinNotification 
           ? 'bg-blue-50' 
           : 'bg-green-50'
       }`}>
         {/* Icon */}
-        <div className={`h-10 w-10 rounded-full flex items-center justify-center flex-shrink-0 ${
+        <div className={`h-8 w-8 md:h-10 md:w-10 rounded-full flex items-center justify-center flex-shrink-0 ${
           isJoinNotification 
             ? 'bg-blue-500' 
             : 'bg-[#13b981]'
         }`}>
           {isJoinNotification ? (
-            <UserPlus className="h-5 w-5 text-white" />
+            <UserPlus className="h-4 w-4 md:h-5 md:w-5 text-white" />
           ) : (
-            <HandHeart className="h-5 w-5 text-white" />
+            <HandHeart className="h-4 w-4 md:h-5 md:w-5 text-white" />
           )}
         </div>
         {/* Action Text */}
-        <p className="text-sm font-semibold text-gray-900 flex-1">
+        <p className="text-xs md:text-sm font-semibold text-gray-900 flex-1">
           {actionText}
         </p>
       </div>
@@ -161,17 +161,17 @@ export default function CommunityUpdates({
   }
 
   return (
-    <div className="px-4 my-8 mb-10 md:px-0 md:mt-10">
+    <div className="w-full px-4 my-6 mb-8 md:px-0 md:my-8 md:mb-10">
       {showHeading && (
-        <div className="mb-4">
-          <h2 className=" lg:text-4xl text-3xl font-bold text-gray-900 mb-2">Community Updates</h2>
-          <p className="text-sm text-gray-600">
+        <div className="mb-4 md:mb-6">
+          <h2 className=" text-base xs:text-sm sm:text-base md:text-lg lg:text-2xl font-bold text-gray-900 mb-1.5 md:mb-2">Community Updates</h2>
+          <p className="text-xs md:text-sm text-gray-600">
             Activity, updates, and discoveries from your community
           </p>
         </div>
       )}
 
-      <div className="space-y-4">
+      <div className="space-y-3 md:space-y-4">
         {updates.map((update) => {
           // If postId exists, fetch and display the full post
           const PostContent = update.postId ? PostWithData : NotificationSummary;

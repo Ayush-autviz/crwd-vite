@@ -305,7 +305,7 @@ export default function WaitlistPage() {
               <Button
                 onClick={scrollToSection}
                 size="lg"
-                className="w-full h-11 md:h-12 rounded-full font-bold text-lg"
+                className="w-full h-11 md:h-12 rounded-full font-bold text-xs xs:text-sm sm:text-base lg:text-lg"
               >
                 Get Early Access <ChevronRight className="ml-2 h-4 w-4 md:h-5 md:w-5" />
               </Button>

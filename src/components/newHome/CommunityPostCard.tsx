@@ -77,14 +77,14 @@ export default function CommunityPostCard({ post }: CommunityPostCardProps) {
     : post.user.name || post.user.username;
 
   return (
-    <div className="bg-white rounded-lg border border-gray-200 p-4 hover:shadow-md transition-shadow">
+    <div className="bg-white rounded-lg border border-gray-200 p-3 md:p-4 hover:shadow-md transition-shadow">
       {/* Header Section */}
-      <div className="flex items-start justify-between mb-4">
-        <div className="flex items-center gap-3 flex-1">
+      <div className="flex items-start justify-between mb-3 md:mb-4">
+        <div className="flex items-center gap-2.5 md:gap-3 flex-1">
           {/* Avatar */}
-          <Avatar className="h-12 w-12 flex-shrink-0">
+          <Avatar className="h-10 w-10 md:h-12 md:w-12 flex-shrink-0">
             <AvatarImage src={post.user.avatar} />
-            <AvatarFallback className="bg-[#1600ff] text-white">
+            <AvatarFallback className="bg-[#1600ff] text-white text-xs md:text-sm">
               {displayName
                 .split(" ")
                 .map((n) => n.charAt(0))
@@ -95,17 +95,17 @@ export default function CommunityPostCard({ post }: CommunityPostCardProps) {
 
           {/* User Info */}
           <div className="flex-1 min-w-0">
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1.5 md:gap-2 flex-wrap">
             <Link
               to={`/user-profile/${post.user.username}`}
-              className="font-bold text-gray-900 hover:underline block"
+              className="font-bold text-sm md:text-base text-gray-900 hover:underline block"
             >
               {displayName}
             </Link>
-            <p className="text-sm text-gray-500">@{post.user.username}</p>
+            <p className="text-xs md:text-sm text-gray-500">@{post.user.username}</p>
             </div>
             {post.collective && (
-              <p className="text-sm text-gray-500 mt-0.5">{post.collective.name}</p>
+              <p className="text-xs md:text-sm text-gray-500 mt-0.5">{post.collective.name}</p>
             )}
           </div>
         </div>
@@ -126,15 +126,15 @@ export default function CommunityPostCard({ post }: CommunityPostCardProps) {
       </div>
 
       {/* Post Content */}
-      <div className="mb-4">
-        <p className="text-gray-900 text-sm leading-relaxed whitespace-pre-wrap">
+      <div className="mb-3 md:mb-4">
+        <p className="text-gray-900 text-xs md:text-sm leading-relaxed whitespace-pre-wrap">
           {post.content}
         </p>
       </div>
 
       {/* Post Image */}
       {post.imageUrl && (
-        <div className="mb-4 rounded-lg overflow-hidden">
+        <div className="mb-3 md:mb-4 rounded-lg overflow-hidden">
           <img
             src={post.imageUrl}
             alt="Post content"
@@ -144,33 +144,33 @@ export default function CommunityPostCard({ post }: CommunityPostCardProps) {
       )}
 
       {/* Engagement Section */}
-      <div className="flex items-center justify-between pt-3 border-t border-gray-200">
-        <div className="flex items-center gap-4">
+      <div className="flex items-center justify-between pt-2.5 md:pt-3 border-t border-gray-200">
+        <div className="flex items-center gap-3 md:gap-4">
           <button
             onClick={handleLikeClick}
             disabled={likeMutation.isPending || unlikeMutation.isPending}
-            className="flex items-center gap-1.5 hover:opacity-70 transition-opacity disabled:opacity-50"
+            className="flex items-center gap-1 md:gap-1.5 hover:opacity-70 transition-opacity disabled:opacity-50"
           >
             <Heart
-              className={`h-4 w-4 ${
+              className={`h-3.5 w-3.5 md:h-4 md:w-4 ${
                 isLiked ? "fill-red-500 text-red-500" : "text-gray-600"
               }`}
             />
-            <span className="text-sm text-gray-600">{likesCount}</span>
+            <span className="text-xs md:text-sm text-gray-600">{likesCount}</span>
           </button>
           <button
             onClick={() => setShowCommentsSheet(true)}
-            className="flex items-center gap-1.5 hover:opacity-70 transition-opacity"
+            className="flex items-center gap-1 md:gap-1.5 hover:opacity-70 transition-opacity"
           >
-            <MessageCircle className="h-4 w-4 text-gray-600" />
-            <span className="text-sm text-gray-600">{post.comments || 0}</span>
+            <MessageCircle className="h-3.5 w-3.5 md:h-4 md:w-4 text-gray-600" />
+            <span className="text-xs md:text-sm text-gray-600">{post.comments || 0}</span>
           </button>
         </div>
         <button
           onClick={() => setShowShareModal(true)}
           className="hover:opacity-70 transition-opacity"
         >
-          <Share2 className="h-4 w-4 text-gray-600" />
+          <Share2 className="h-3.5 w-3.5 md:h-4 md:w-4 text-gray-600" />
         </button>
       </div>
 

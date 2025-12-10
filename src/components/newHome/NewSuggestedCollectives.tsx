@@ -49,17 +49,17 @@ export default function NewSuggestedCollectives({
   }
 
   return (
-    <div className="px-4 mt-8 md:px-0 md:mt-10">
-      <div className="flex justify-between items-center mb-4">
-        <h2 className="text-3xl font-bold">Suggested Collectives</h2>
+    <div className="w-full px-4 mt-6 md:px-0 md:mt-8 lg:mt-10">
+      <div className="flex justify-between items-center mb-3 md:mb-4">
+        <h2 className=" text-base xs:text-sm sm:text-base md:text-lg lg:text-2xl font-bold">Suggested Collectives</h2>
         <Link to={seeAllLink}>
-          <Button variant="link" className="text-[#1600ff] p-0 h-auto flex items-center">
+          <Button variant="link" className="text-[#1600ff] p-0 h-auto flex items-center text-xs md:text-sm">
             See all
           </Button>
         </Link>
       </div>
-      <div className="overflow-x-auto pb-2">
-        <div className="flex gap-4 w-max">
+      <div className="overflow-x-auto pb-2 -mx-4 px-4 md:mx-0 md:px-0">
+        <div className="flex gap-3 md:gap-4 w-max">
           {collectives.map((collective, index) => {
             const iconColor = collective.iconColor || getIconColor(index);
             const iconLetter = collective.icon || getIconLetter(collective.name);
@@ -70,10 +70,10 @@ export default function NewSuggestedCollectives({
                 key={collective.id}
                 className="block"
               >
-                <div className="flex flex-col gap-3 p-4 rounded-lg hover:bg-gray-100 cursor-pointer transition-colors bg-gray-50 min-w-[280px] max-w-[320px]">
+                <div className="flex flex-col gap-2.5 md:gap-3 p-3 md:p-4 rounded-lg hover:bg-gray-100 cursor-pointer transition-colors bg-gray-50 min-w-[240px] md:min-w-[280px] max-w-[280px] md:max-w-[320px]">
                   {/* Icon */}
                   <div
-                    className="w-12 h-12 rounded-lg flex items-center justify-center"
+                    className="w-10 h-10 md:w-12 md:h-12 rounded-lg flex items-center justify-center"
                     style={{ backgroundColor: iconColor }}
                   >
                     {collective.icon && collective.icon.startsWith("http") ? (
@@ -83,22 +83,22 @@ export default function NewSuggestedCollectives({
                         className="w-full h-full object-cover rounded-lg"
                       />
                     ) : (
-                      <span className="text-white font-bold text-xl">
+                      <span className="text-white font-bold text-lg md:text-xl">
                         {iconLetter}
                       </span>
                     )}
                   </div>
 
                   {/* Title */}
-                  <h3 className="font-bold text-base text-black">
+                  <h3 className="font-bold text-sm md:text-base text-black">
                     {collective.name}
                   </h3>
 
                   {/* Founder */}
-                  <div className="flex items-center gap-2">
-                    <Avatar className="h-6 w-6">
+                  <div className="flex items-center gap-1.5 md:gap-2">
+                    <Avatar className="h-5 w-5 md:h-6 md:w-6">
                       <AvatarImage src={collective.founder.profile_picture} />
-                      <AvatarFallback>
+                      <AvatarFallback className="text-xs">
                         {collective.founder.name
                           .split(" ")
                           .map((n) => n.charAt(0))
@@ -118,7 +118,7 @@ export default function NewSuggestedCollectives({
                   </p>
 
                   {/* Description */}
-                  <p className="text-sm text-muted-foreground leading-relaxed">
+                  <p className="text-xs md:text-sm text-muted-foreground leading-relaxed line-clamp-2 md:line-clamp-none">
                     {collective.description}
                   </p>
                 </div>

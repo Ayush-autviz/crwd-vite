@@ -223,7 +223,7 @@ export default function GuestHome() {
                                 onClick={() => navigate("/waitlist")}
                                 size="lg" */}
                                 <a href="/waitlist"
-                                className="w-full h-11 md:h-12 rounded-full font-bold text-lg px-10 py-4 inline-flex items-center justify-center bg-[#1600ff] text-white"
+                                className="w-full h-11 md:h-12 rounded-full font-bold  text-xs xs:text-sm sm:text-base lg:text-lg px-10 py-4 inline-flex items-center justify-center bg-[#1600ff] text-white"
                             >
                                 Start Supporting <ChevronRight className="ml-2 h-4 w-4 md:h-5 md:w-5" />
                             </a>
