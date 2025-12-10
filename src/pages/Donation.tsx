@@ -75,9 +75,9 @@ export default function DonationPage() {
         activeTab={activeTab}
         fromPaymentResult={fromPaymentResult}
       />
-      <div className="hidden md:block">
+      {/* <div className="hidden md:block">
         <Footer />
-      </div>
+      </div> */}
     </div>
   );
 }

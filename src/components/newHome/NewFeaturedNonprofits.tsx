@@ -3,7 +3,6 @@ import { ChevronRight } from "lucide-react";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { getNonprofitColor } from "@/lib/getNonprofitColor";
 
 interface Nonprofit {
   id: string | number;
@@ -18,6 +17,20 @@ interface NewFeaturedNonprofitsProps {
   seeAllLink?: string;
 }
 
+// Generate color for icon (same as Suggested Collectives)
+const getIconColor = (id: number | string): string => {
+  const colors = [
+    "#1600ff", // Blue
+    "#10B981", // Green
+    "#EC4899", // Pink
+    "#F59E0B", // Amber
+    "#8B5CF6", // Purple
+    "#EF4444", // Red
+  ];
+  const hash = typeof id === 'number' ? id : id.toString().split('').reduce((acc: number, char: string) => acc + char.charCodeAt(0), 0);
+  return colors[hash % colors.length];
+};
+
 export default function NewFeaturedNonprofits({
   nonprofits = [],
   seeAllLink = "/search",
@@ -29,17 +42,17 @@ export default function NewFeaturedNonprofits({
   return (
     <div className="px-4 mt-8 md:px-0 md:mt-10">
       <div className="flex justify-between items-center mb-4">
-        <h2 className="text-lg font-semibold">Featured Nonprofits</h2>
+        <h2 className="text-2xl font-bold">Featured Nonprofits</h2>
         <Link to={seeAllLink}>
-          <Button variant="link" className="text-primary p-0 h-auto flex items-center">
-            See all <ChevronRight className="h-4 w-4 ml-1" />
+          <Button variant="link" className="text-green-600 p-0 h-auto flex items-center">
+            See all
           </Button>
         </Link>
       </div>
       <div className="overflow-x-auto pb-2">
         <div className="flex gap-4 w-max items-stretch">
           {nonprofits.map((nonprofit) => {
-            const colors = getNonprofitColor(nonprofit.id);
+            const iconColor = getIconColor(nonprofit.id);
             const description = nonprofit.description || nonprofit.mission || "";
 
             return (
@@ -54,10 +67,9 @@ export default function NewFeaturedNonprofits({
                     <AvatarImage src={nonprofit.image} />
                     <AvatarFallback
                       style={{
-                        backgroundColor: colors.bgColor,
-                        color: colors.textColor,
+                        backgroundColor: iconColor,
                       }}
-                      className="font-semibold rounded-lg"
+                      className="font-semibold rounded-lg text-white"
                     >
                       {nonprofit.name.charAt(0).toUpperCase()}
                     </AvatarFallback>

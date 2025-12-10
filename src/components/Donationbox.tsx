@@ -1,5 +1,5 @@
 import { useState, useEffect, useLayoutEffect } from "react";
-import { Loader2, Minus, Plus, Search, ChevronDown, ChevronUp, Trash2 } from "lucide-react";
+import { Loader2, Minus, Plus, Search, Trash2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { DonationBox3 } from "./DonationBox3";
@@ -14,6 +14,7 @@ import { getCausesBySearch, getJoinCollective, getCollectiveById } from "@/servi
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { useAuthStore } from "@/stores/store";
 import ProfileNavbar from "./profile/ProfileNavbar";
+import RequestNonprofitModal from "./newsearch/RequestNonprofitModal";
 
 interface DonationBoxProps {
   tab?: string;
@@ -59,6 +60,31 @@ const DonationBox = ({ tab = "setup", preselectedItem, activeTab, fromPaymentRes
   const [expandedCollectives, setExpandedCollectives] = useState<Set<number>>(new Set());
   const [collectiveDetails, setCollectiveDetails] = useState<Record<number, any>>({});
   const [loadingCollectives, setLoadingCollectives] = useState<Set<number>>(new Set());
+  const [showRequestModal, setShowRequestModal] = useState(false);
+
+  // Avatar colors for consistent coloring
+  const avatarColors = [
+    '#EF4444', // Red
+    '#8B5CF6', // Purple
+    '#EC4899', // Pink
+    '#F97316', // Orange
+    '#10B981', // Green
+    '#3B82F6', // Blue
+  ];
+
+  const getConsistentColor = (id: number | string, colors: string[]) => {
+    const hash = typeof id === 'number' ? id : id.toString().split('').reduce((acc: number, char: string) => acc + char.charCodeAt(0), 0);
+    return colors[hash % colors.length];
+  };
+
+  const getInitials = (name: string) => {
+    if (!name) return 'N';
+    const words = name.trim().split(' ');
+    if (words.length >= 2) {
+      return (words[0].charAt(0) + words[1].charAt(0)).toUpperCase();
+    }
+    return name.charAt(0).toUpperCase();
+  };
 
   const isMobile = useIsMobile();
   const queryClient = useQueryClient();
@@ -166,14 +192,14 @@ const DonationBox = ({ tab = "setup", preselectedItem, activeTab, fromPaymentRes
   }, [preselectedItem, preselectedItemAdded, tab, activeTabState]);
 
   const incrementDonation = () => {
-    const newAmount = donationAmount + 1;
+    const newAmount = donationAmount + 5;
     setDonationAmount(newAmount);
     setInputValue(newAmount.toString());
   };
 
   const decrementDonation = () => {
     if (donationAmount > 5) {
-      const newAmount = donationAmount - 1;
+      const newAmount = Math.max(5, donationAmount - 5);
       setDonationAmount(newAmount);
       setInputValue(newAmount.toString());
     }
@@ -253,14 +279,16 @@ const DonationBox = ({ tab = "setup", preselectedItem, activeTab, fromPaymentRes
         }}
       />
 
-      {/* Tab Navigation - Always Visible */}
-      <div className="mx-4 mt-4">
-        <div className="flex rounded-xl overflow-hidden border bg-white shadow-sm">
+      {/* Content Container with max-width */}
+      <div className="md:max-w-[60%] mx-auto w-full">
+        {/* Tab Navigation - Always Visible */}
+        <div className="mx-4 mt-4">
+        <div className="flex rounded-full overflow-hidden border bg-white shadow-sm">
           <button
             className={cn(
               "flex-1 py-4 text-sm font-medium transition-all relative",
               activeTabState === "setup"
-                ? "text-white bg-blue-600"
+                ? "text-white bg-[#1600ff]"
                 : "text-gray-500 hover:text-gray-700 hover:bg-gray-50"
             )}
             onClick={() => {
@@ -272,17 +300,18 @@ const DonationBox = ({ tab = "setup", preselectedItem, activeTab, fromPaymentRes
             }}
           >
             <div className="flex items-center justify-center">
-              {donationBox?.id ? 'Donation Box' : 'Set up donation box'}
+              {/* {donationBox?.id ? 'Donation Box' : 'Set up donation box'} */}
+              Monthly Giving
             </div>
             {activeTabState === "setup" && (
-              <div className="absolute bottom-0 left-0 w-full h-0.5 bg-blue-600"></div>
+              <div className="absolute bottom-0 left-0 w-full h-0.5 bg-[#1600ff]"></div>
             )}
           </button>
           <button
             className={cn(
               "flex-1 py-4 text-sm font-medium transition-all relative",
               activeTabState === "onetime"
-                ? "text-white bg-blue-600"
+                ? "text-white bg-[#1600ff]"
                 : "text-gray-500 hover:text-gray-700 hover:bg-gray-50"
             )}
             onClick={() => {
@@ -296,7 +325,7 @@ const DonationBox = ({ tab = "setup", preselectedItem, activeTab, fromPaymentRes
               One-Time Donation
             </div>
             {activeTabState === "onetime" && (
-              <div className="absolute bottom-0 left-0 w-full h-0.5 bg-blue-600"></div>
+              <div className="absolute bottom-0 left-0 w-full h-0.5 bg-[#1600ff]"></div>
             )}
           </button>
         </div>
@@ -337,246 +366,215 @@ const DonationBox = ({ tab = "setup", preselectedItem, activeTab, fromPaymentRes
           ) : (
             <>
               {step === 1 ? (
-                <div className="flex-1 mt-4 flex flex-col p-4 mb-24">
-                  {/* Set Monthly Donation Amount Section */}
-                  <div className="bg-blue-50 rounded-xl mb-6 p-6 shadow-sm border border-gray-100">
-                    <h2 className="text-xl font-bold text-gray-800 mb-3">
-                      Set monthly donation amount
-                    </h2>
-                    <p className="text-gray-600 text-sm mb-6">
-                      Set one monthly amount and we'll split it across causes
-                      you're passionate about. You can edit at any time.
-                    </p>
+                <div className="flex-1 mt-4 flex flex-col p-4 mb-24 space-y-4">
 
-                    {/* Amount Selector */}
-                    <div className="flex items-center justify-center mb-6">
-                      <button
-                        onClick={decrementDonation}
-                        className="flex items-center justify-center w-12 h-12 rounded-full bg-gray-50 hover:bg-gray-200 transition-colors"
-                      >
-                        <Minus size={20} className="text-gray-600" />
-                      </button>
-                      <div className="mx-6 text-center">
-                        <span className="text-blue-600 text-3xl font-bold">
-                          ${donationAmount}
-                        </span>
-                        <span className="text-gray-500 text-lg ml-2">
-                          per month
-                        </span>
+                 <div>
+                <p className="text-2xl font-bold text-[#1600ff] text-center">Set your monthly gift</p>
+                <p className="text-gray-600 text-xs text-center mt-2">Support multiple causes with one donation, split evenly. Change anytime.</p>
+                  </div>
+                  {/* Donation Box Card */}
+                  <div className="bg-white rounded-xl mb-6 p-6 shadow-sm border border-gray-100">
+                    {/* Your Monthly Impact Section */}
+                    <div className="mb-6">
+                      <h2 className="text-xl font-bold text-gray-900 text-center mb-6">
+                        Your Monthly Impact
+                      </h2>
+                      
+                      {/* Amount Selector */}
+                      <div className="flex items-center justify-center gap-4">
+                        <button
+                          onClick={decrementDonation}
+                          className={`flex items-center justify-center w-12 h-12 rounded-lg ${donationAmount > 5 ? 'bg-[#1600ff] hover:bg-[#1600ff]' : 'bg-gray-200 hover:bg-gray-300'} transition-colors`}
+                        >
+                          <Minus size={20} className="text-white font-bold" strokeWidth={3} />
+                        </button>
+                        <div className="text-center">
+                          <div className="text-[#1600ff] text-4xl font-bold">
+                            ${donationAmount}
+                          </div>
+                          <div className="text-gray-900 text-sm mt-1">
+                            per month
+                          </div>
+                        </div>
+                        <button
+                          onClick={incrementDonation}
+                          className="flex items-center justify-center w-12 h-12 rounded-lg bg-[#1600ff] hover:bg-[#1600ff] transition-colors"
+                        >
+                          <Plus size={20} className="text-white font-bold" strokeWidth={3} />
+                        </button>
                       </div>
-                      <button
-                        onClick={incrementDonation}
-                        className="flex items-center justify-center w-12 h-12 rounded-full bg-gray-50 hover:bg-gray-200 transition-colors"
-                      >
-                        <Plus size={20} className="text-gray-600" />
-                      </button>
                     </div>
 
-                    {/* Slider for fine-tuning */}
-                    {/* <div className="relative mb-6">
+                    {/* Donation Box Capacity Section */}
+                    <div className="bg-blue-50 rounded-xl p-4">
                       <div className="flex items-center justify-between mb-3">
-                        <span className="text-sm font-medium text-gray-600">$5</span>
-                        <span className="text-sm font-medium text-gray-600">$100</span>
+                        <h3 className="text-base font-bold text-[#1600ff]">
+                          Donation Box Capacity
+                        </h3>
+                        <span className="text-sm font-medium text-[#1600ff]">
+                          {selectedCauseIds.length + selectedCollectiveIds.length}/20 causes
+                        </span>
                       </div>
-                      <Range
-                        step={1}
-                        min={5}
-                        max={100}
-                        values={[donationAmount]}
-                        onChange={(values) => {
-                          const newAmount = values[0];
-                          setDonationAmount(newAmount);
-                          setInputValue(newAmount.toString());
-                        }}
-                        renderTrack={({ props, children }) => (
-                          <div
-                            {...props}
-                            className="h-2 w-full bg-gray-200 rounded-full"
-                            style={{
-                              ...props.style,
-                            }}
-                          >
-                            <div
-                              className="h-2 bg-blue-600 rounded-full transition-all duration-300 ease-out"
-                              style={{
-                                width: `${Math.max(
-                                  0,
-                                  Math.min(
-                                    100,
-                                    ((donationAmount - 5) / 95) * 100
-                                  )
-                                )}%`,
-                              }}
-                            />
-                            {children}
-                          </div>
-                        )}
-                        renderThumb={({ props }) => (
-                          <div
-                            {...props}
-                            className="w-5 h-5 bg-blue-600 rounded-full shadow-md"
-                            style={{
-                              ...props.style,
-                              cursor: "pointer",
-                            }}
-                          />
-                        )}
-                      />
-                    </div> */}
+                      
+                      {/* Progress Bar */}
+                      <div className="w-full h-2 bg-blue-100 rounded-full mb-3">
+                        <div
+                          className="h-2 bg-[#1600ff] rounded-full transition-all duration-300"
+                          style={{
+                            width: `${Math.min(100, ((selectedCauseIds.length + selectedCollectiveIds.length) / 20) * 100)}%`,
+                          }}
+                        />
+                      </div>
+                      
+                      <p className="text-sm text-[#1600ff]">
+                        For every ${donationAmount}, you can support 20 causes.
+                      </p>
+                    </div>
                   </div>
 
-                  {/* Selected Items Display */}
-                  {(selectedCauseIds.length > 0 || selectedCollectiveIds.length > 0) && (
-                    <div className="bg-white rounded-xl mb-6 p-6 shadow-sm border border-gray-100">
-                      <h2 className="text-xl font-bold text-gray-800 mb-4">Your selection</h2>
-                      
-                      {selectedCauseIds.length > 0 && (
-                        <div className="mb-4">
-                          <h3 className="text-sm font-semibold text-gray-700 mb-3">Nonprofits</h3>
-                          <div className="space-y-3">
-                            {selectedCausesData.map((cause: any) => (
-                              <div key={cause.id} className="flex items-center p-3 border border-gray-200 rounded-lg">
-                                <div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center mr-3">
-                                  <Avatar className="w-12 h-12 rounded-full object-cover">
-                                    <AvatarImage src={cause.logo || '/default-logo.png'} />
-                                    <AvatarFallback className="bg-blue-100 text-blue-600">
-                                      {cause.name?.charAt(0).toUpperCase() || 'N'}
-                                    </AvatarFallback>
-                                  </Avatar>
-                                </div>
-                                <div className="flex-1">
-                                  <h3 className="font-semibold text-gray-800">{cause.name}</h3>
-                                  {cause.description && (
-                                    <p className="text-sm text-gray-600 line-clamp-1">{cause.description}</p>
-                                  )}
-                                </div>
-                                <button
-                                  onClick={() => {
-                                    setSelectedCauseIds(selectedCauseIds.filter(id => id !== cause.id));
-                                    setSelectedCausesData(selectedCausesData.filter(c => c.id !== cause.id));
-                                  }}
-                                  className="p-2 text-red-500 hover:text-red-700 transition-colors"
-                                >
-                                  <Trash2 size={18} />
-                                </button>
-                              </div>
-                            ))}
-                          </div>
-                        </div>
-                      )}
-
-                      {selectedCollectiveIds.length > 0 && (
+                  {/* Your Selected Causes */}
+                  {selectedCauseIds.length > 0 && (
+                    <div className=" mb-6">
+                      <div className="flex items-center justify-between mb-2">
                         <div>
-                          <h3 className="text-sm font-semibold text-gray-700 mb-3">Collectives</h3>
-                          <div className="space-y-3">
-                            {selectedCollectivesData.map((collective: any) => (
-                              <div key={collective.id} className="flex items-center p-3 border border-gray-200 rounded-lg">
-                                <div className="w-12 h-12 rounded-full bg-green-100 flex items-center justify-center mr-3">
-                                  <Avatar className="w-12 h-12 rounded-full object-cover">
-                                    <AvatarImage src={collective.cover_image || collective.image || '/default-collective.png'} />
-                                    <AvatarFallback className="bg-green-100 text-green-600">
-                                      {collective.name?.charAt(0).toUpperCase() || 'C'}
-                                    </AvatarFallback>
-                                  </Avatar>
-                                </div>
-                                <div className="flex-1">
-                                  <h3 className="font-semibold text-gray-800">{collective.name}</h3>
-                                  {collective.description && (
-                                    <p className="text-sm text-gray-600 line-clamp-1">{collective.description}</p>
-                                  )}
-                                </div>
-                                <button
-                                  onClick={() => {
-                                    setSelectedCollectiveIds(selectedCollectiveIds.filter(id => id !== collective.id));
-                                    setSelectedCollectivesData(selectedCollectivesData.filter(c => c.id !== collective.id));
-                                  }}
-                                  className="p-2 text-red-500 hover:text-red-700 transition-colors"
-                                >
-                                  <Trash2 size={18} />
-                                </button>
-                              </div>
-                            ))}
-                          </div>
+                          <h2 className="text-xl font-bold text-gray-800">Your Selected Causes</h2>
+                          <p className="text-sm text-gray-600 mt-1">Your Donation Box. Add or remove anytime.</p>
                         </div>
-                      )}
+                        <div className="w-8 h-8 rounded-full bg-[#1600ff] flex items-center justify-center">
+                          <span className="text-white text-sm font-bold">{selectedCauseIds.length}</span>
+                        </div>
+                      </div>
+                      
+                      <div className="space-y-3 mt-4">
+                        {selectedCausesData.map((cause: any) => {
+                          const avatarBgColor = getConsistentColor(cause.id, avatarColors);
+                          const initials = getInitials(cause.name);
+                          return (
+                            <div key={cause.id} className="flex items-center p-3 border border-gray-200 rounded-lg">
+                              <div
+                                className="w-12 h-12 rounded-xl flex items-center justify-center mr-3 flex-shrink-0"
+                                style={{ backgroundColor: avatarBgColor }}
+                              >
+                                <span className="text-white font-bold text-base">
+                                  {initials}
+                                </span>
+                              </div>
+                              <div className="flex-1 min-w-0">
+                                <div className="flex items-center gap-2 mb-1">
+                                  <h3 className="font-bold text-gray-900">{cause.name}</h3>
+                                  {/* <Star className="w-4 h-4 text-yellow-500 fill-yellow-500 flex-shrink-0" /> */}
+                                </div>
+                                <p className="text-sm text-gray-600 line-clamp-1">
+                                  {cause.mission || cause.description || 'No description available'}
+                                </p>
+                              </div>
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  setSelectedCauseIds(selectedCauseIds.filter(id => id !== cause.id));
+                                  setSelectedCausesData(selectedCausesData.filter(c => c.id !== cause.id));
+                                }}
+                                className="p-2 text-gray-400 hover:text-red-500 transition-colors flex-shrink-0"
+                              >
+                                <Trash2 size={18} />
+                              </button>
+                            </div>
+                          );
+                        })}
+                      </div>
                     </div>
                   )}
 
-                  {/* Choose Nonprofit to Support Section */}
-                  <div className="bg-white rounded-xl mb-6 p-6 shadow-sm border border-gray-100">
+                  {/* Add More Causes Section */}
+                  <div className="mb-6">
                     <h2 className="text-xl font-bold text-gray-800 mb-4">
-                      Choose nonprofit to support
+                      Add More Causes
                     </h2>
                     
-                    {/* Search Bar */}
-                    <div className="relative mb-4">
-                      <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-                      <input
-                        type="text"
-                        placeholder="Search nonprofits..."
-                        value={searchQuery}
-                        onChange={(e) => setSearchQuery(e.target.value)}
-                        className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                      />
+                    {/* Search Bar with All Button */}
+                    <div className="flex gap-2 mb-4">
+                      <div className="relative flex-1">
+                        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+                        <input
+                          type="text"
+                          placeholder="Search for causes..."
+                          value={searchQuery}
+                          onChange={(e) => setSearchQuery(e.target.value)}
+                          className="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#1600ff]"
+                        />
+                      </div>
+                      {/* <button className="px-4 py-2.5 bg-[#1600ff] text-white rounded-lg font-medium hover:bg-[#1400cc] transition-colors">
+                        All
+                      </button> */}
                     </div>
 
-                    {/* Nonprofits List - Max 5 */}
+                    {/* Request Nonprofit Link */}
+                    <div className="mb-4 flex justify-center">
+                      <button
+                        onClick={() => setShowRequestModal(true)}
+                        className="text-sm text-[#1600ff] underline font-medium" 
+                      >
+                        Can't find your nonprofit? Request it here
+                      </button>
+                    </div>
+
+                    {/* Nonprofits List */}
                     <div className="space-y-3">
                       {causesLoading ? (
-                        <p className="text-gray-500 text-center">Loading...</p>
+                        <div className="flex justify-center py-8">
+                          <Loader2 className="w-6 h-6 animate-spin text-gray-400" />
+                        </div>
                       ) : causesData?.results?.length > 0 ? (
-                        causesData.results.slice(0, 5).map((cause: any) => {
-                          const isSelected = selectedCauseIds.includes(cause.id);
-                          return (
-                            <div
-                              key={cause.id}
-                              className="flex items-center p-3 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors cursor-pointer"
-                              onClick={() => {
-                                if (isSelected) {
-                                  setSelectedCauseIds(selectedCauseIds.filter(id => id !== cause.id));
-                                  setSelectedCausesData(selectedCausesData.filter(c => c.id !== cause.id));
-                                } else {
-                                  setSelectedCauseIds([...selectedCauseIds, cause.id]);
-                                  setSelectedCausesData([...selectedCausesData, cause]);
-                                }
-                              }}
-                            >
-                              <div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center mr-3">
-                                {/* <img src={cause.logo || '/default-logo.png'} alt={cause.name} className="w-12 h-12 rounded-full object-cover" /> */}
-                                <Avatar className="w-12 h-12 rounded-full object-cover">
-                                  <AvatarImage src={cause.logo || '/default-logo.png'} />
-                                  <AvatarFallback className="bg-blue-100 text-blue-600">
-                                    {cause.name.charAt(0).toUpperCase()}
-                                  </AvatarFallback>
-                                </Avatar>
+                        causesData.results
+                          .filter((cause: any) => !selectedCauseIds.includes(cause.id))
+                          .map((cause: any) => {
+                            const avatarBgColor = getConsistentColor(cause.id, avatarColors);
+                            const initials = getInitials(cause.name);
+                            return (
+                              <div
+                                key={cause.id}
+                                className="flex items-center p-3 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
+                              >
+                                <div
+                                  className="w-12 h-12 rounded-xl flex items-center justify-center mr-3 flex-shrink-0"
+                                  style={{ backgroundColor: avatarBgColor }}
+                                >
+                                  <span className="text-white font-bold text-base">
+                                    {initials}
+                                  </span>
+                                </div>
+                                <div className="flex-1 min-w-0">
+                                  <h3 className="font-bold text-gray-900 mb-1">{cause.name}</h3>
+                                  <p className="text-sm text-gray-600 line-clamp-1">
+                                    {cause.mission || cause.description || 'No description available'}
+                                  </p>
+                                </div>
+                                <button
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    setSelectedCauseIds([...selectedCauseIds, cause.id]);
+                                    setSelectedCausesData([...selectedCausesData, cause]);
+                                  }}
+                                  className="w-8 h-8 rounded-full bg-red-100 hover:bg-red-200 flex items-center justify-center transition-colors flex-shrink-0"
+                                >
+                                  <Plus size={16} className="text-pink-600" strokeWidth={3} />
+                                </button>
                               </div>
-                              <div className="flex-1">
-                                <h3 className="font-semibold text-gray-800">{cause.name}</h3>
-                                <p className="text-sm text-gray-600">{cause.description}</p>
-                              </div>
-                              <div className={`w-6 h-6 rounded-full flex items-center justify-center ${isSelected ? 'bg-blue-600' : 'border-2 border-gray-300'}`}>
-                                {isSelected && (
-                                  <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                                  </svg>
-                                )}
-                              </div>
-                            </div>
-                          );
-                        })
+                            );
+                          })
                       ) : (
-                        <p className="text-gray-500 text-center">No nonprofits found</p>
+                        <p className="text-gray-500 text-center py-8">No nonprofits found</p>
                       )}
                     </div>
                   </div>
 
                   {/* Choose Collective to Support Section */}
-                  <div className="bg-white rounded-xl mb-6 p-6 shadow-sm border border-gray-100">
+                  {/* <div className="bg-white rounded-xl mb-6 p-6 shadow-sm border border-gray-100">
                     <h2 className="text-xl font-bold text-gray-800 mb-4">
                       Choose collective to support
                     </h2>
                     
-                    {/* Joined Collectives List */}
+                    
                     <div className="space-y-3">
                       {joinedCollectivesData?.data?.length > 0 ? (
                         joinedCollectivesData.data.map((item: any) => {
@@ -672,7 +670,9 @@ const DonationBox = ({ tab = "setup", preselectedItem, activeTab, fromPaymentRes
                         <p className="text-gray-500 text-center">No joined collectives</p>
                       )}
                     </div>
-                  </div>
+
+                    
+                  </div> */}
 
                   {/* Old hardcoded organization list removed - now using API data above */}
                   {/* <div className="space-y-4">
@@ -724,8 +724,8 @@ const DonationBox = ({ tab = "setup", preselectedItem, activeTab, fromPaymentRes
                     {/* </div> */}
 
                   {/* Summary and Next Button */}
-                <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100 mb-6 fixed bottom-0 w-calc(100%-16px) left-0 right-0 mx-4">
-                    <div className="flex justify-between items-center">
+                <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100  fixed bottom-0 w-full left-0 right-0 ">
+                    {/* <div className="flex justify-between items-center">
                       <div>
                         <p className="text-lg font-semibold text-gray-800">
                           ${donationAmount} per month
@@ -766,7 +766,25 @@ const DonationBox = ({ tab = "setup", preselectedItem, activeTab, fromPaymentRes
                           <path d="m12 5 7 7-7 7" />
                         </svg>
                       </button>
-                    </div>
+                    </div> */}
+
+                    <button 
+                      onClick={() => {
+                        // Call API to create donation box
+                        createBoxMutation.mutate({
+                          monthly_amount: donationAmount,
+                          cause_ids: selectedCauseIds,
+                          collective_ids: selectedCollectiveIds,
+                        });
+                      }}
+                      disabled={createBoxMutation.isPending || (selectedCauseIds.length === 0 && selectedCollectiveIds.length === 0)}
+                      className={cn(
+                        "w-full bg-[#1600ff] text-white px-6 py-2 rounded-full font-medium",
+                        createBoxMutation.isPending || (selectedCauseIds.length === 0 && selectedCollectiveIds.length === 0) ? "cursor-not-allowed opacity-50" : ""
+                      )}
+                    >
+                      Create Donation Box
+                    </button>
                   </div>
 
                   {/* <div className="h-24 md:hidden"></div> */}
@@ -869,6 +887,13 @@ const DonationBox = ({ tab = "setup", preselectedItem, activeTab, fromPaymentRes
           )}
         </>
       )}
+      </div>
+
+      {/* Request Nonprofit Modal */}
+      <RequestNonprofitModal
+        isOpen={showRequestModal}
+        onClose={() => setShowRequestModal(false)}
+      />
     </div>
   );
 };

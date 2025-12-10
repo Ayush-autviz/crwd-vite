@@ -74,3 +74,11 @@ export const updateProfile = async (data: any) => {
     const response = await axiosClient.patch('/auth/me/update/', data);
     return response.data;
 };
+
+
+
+//  waitlist
+export const joinWaitlist = async (data: any) => {
+    const response = await axiosClient.post('/auth/waitlist/join/', data);
+    return response.data;
+};

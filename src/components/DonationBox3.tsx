@@ -1,11 +1,12 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { CROWDS, RECENTS, SUGGESTED } from "@/constants";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { removeCauseFromBox, removeCollectiveFromBox, activateDonationBox } from "@/services/api/donation";
+import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
+import { removeCauseFromBox, removeCollectiveFromBox, activateDonationBox, getDonationHistory } from "@/services/api/donation";
 import { useAuthStore } from "@/stores/store";
 import { getCollectiveById } from "@/services/api/crwd";
-import { ChevronDown, ChevronUp } from "lucide-react";
+import { ChevronDown, ChevronUp, Pencil, FileText, Plus, Minus, Trash2 } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import {
   Select,
   SelectContent,
@@ -46,6 +47,7 @@ export const DonationBox3 = ({
 }: DonationSummaryProps) => {
   const queryClient = useQueryClient();
   const { user: currentUser } = useAuthStore();
+  const navigate = useNavigate();
 
   // State for confirmation modal
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -53,13 +55,112 @@ export const DonationBox3 = ({
   const [expandedCollectives, setExpandedCollectives] = useState<Set<number>>(new Set());
   const [collectiveDetails, setCollectiveDetails] = useState<Record<number, any>>({});
   const [loadingCollectives, setLoadingCollectives] = useState<Set<number>>(new Set());
+  const [isEditingAmount, setIsEditingAmount] = useState(false);
+  const [editableAmount, setEditableAmount] = useState(parseFloat(donationBox?.monthly_amount || donationAmount.toString()));
 
   // Get manual causes and attributing collectives from donation box
   const manualCauses = donationBox?.manual_causes || [];
   const attributingCollectives = donationBox?.attributing_collectives || [];
   const actualDonationAmount = parseFloat(donationBox?.monthly_amount || donationAmount.toString());
+
+  // Helper for consistent avatar colors
+  const avatarColors = [
+    '#3B82F6', '#EC4899', '#8B5CF6', '#10B981', '#F59E0B', '#EF4444', '#06B6D4',
+    '#F97316', '#84CC16', '#A855F7', '#14B8A6', '#F43F5E', '#6366F1', '#22C55E', '#EAB308',
+  ];
+
+  const getConsistentColor = (id: number | string, colors: string[]) => {
+    const hash = typeof id === 'number' ? id : id.toString().split('').reduce((acc: number, char: string) => acc + char.charCodeAt(0), 0);
+    return colors[hash % colors.length];
+  };
+
+  const getInitials = (name: string) => {
+    const words = name.split(' ');
+    if (words.length >= 2) {
+      return (words[0].charAt(0) + words[1].charAt(0)).toUpperCase();
+    }
+    return name.substring(0, 2).toUpperCase();
+  };
+
+  // Calculate distribution
+  const totalItems = manualCauses.length + attributingCollectives.length;
+  const distributionPercentage = totalItems > 0 ? Math.floor(100 / totalItems) : 0;
+  const amountPerItem = totalItems > 0 ? (actualDonationAmount * 0.9) / totalItems : 0; // 90% after fees, divided equally
   const [selectedPaymentMethod, setSelectedPaymentMethod] =
     useState<string>("");
+
+  // Update editableAmount when donation box data changes
+  useEffect(() => {
+    if (donationBox?.monthly_amount) {
+      setEditableAmount(Math.round(parseFloat(donationBox.monthly_amount)));
+    }
+  }, [donationBox?.monthly_amount]);
+
+  // Fetch donation history for lifetime amount
+  const { data: donationHistoryData } = useQuery({
+    queryKey: ['donationHistory'],
+    queryFn: getDonationHistory,
+  });
+
+  // Calculate lifetime amount from donation history
+  const lifetimeAmount = donationHistoryData?.results?.reduce((sum: number, transaction: any) => {
+    return sum + parseFloat(transaction.gross_amount || '0');
+  }, 0) || 0;
+
+  // Calculate capacity and counts
+  const currentCapacity = manualCauses.length;
+  const maxCapacity = donationBox?.capacity || 30;
+  const totalCausesCount = manualCauses.length;
+  const totalCollectivesCount = attributingCollectives.length;
+
+  // Format next charge date
+  const formatNextChargeDate = (dateString?: string) => {
+    if (!dateString) return 'December 26, 2024'; // Fallback
+    
+    try {
+      const date = new Date(dateString);
+      const options: Intl.DateTimeFormatOptions = { 
+        year: 'numeric', 
+        month: 'long', 
+        day: 'numeric' 
+      };
+      return date.toLocaleDateString('en-US', options);
+    } catch (error) {
+      console.error('Error formatting date:', error);
+      return 'December 26, 2024'; // Fallback
+    }
+  };
+
+  // Get day of month from next charge date
+  const getChargeDay = (dateString?: string) => {
+    if (!dateString) return '26th'; // Fallback
+    
+    try {
+      const date = new Date(dateString);
+      const day = date.getDate();
+      // Add ordinal suffix
+      if (day > 3 && day < 21) return `${day}th`;
+      switch (day % 10) {
+        case 1: return `${day}st`;
+        case 2: return `${day}nd`;
+        case 3: return `${day}rd`;
+        default: return `${day}th`;
+      }
+    } catch (error) {
+      console.error('Error getting charge day:', error);
+      return '26th'; // Fallback
+    }
+  };
+
+  const incrementAmount = () => {
+    setEditableAmount(prev => Math.round(prev) + 5);
+  };
+
+  const decrementAmount = () => {
+    if (editableAmount > 5) {
+      setEditableAmount(prev => Math.max(5, Math.round(prev) - 5));
+    }
+  };
 
   // Mutation to remove cause from box
   const removeCauseMutation = useMutation({
@@ -243,56 +344,148 @@ export const DonationBox3 = ({
   return (
     <div className="w-full h-full bg-white flex flex-col pb-24">
       <div className="flex-1 overflow-auto mt-2 mx-4">
-        {/* Manual Causes Section */}
-        <div className="bg-white rounded-xl mb-6 p-6 shadow-sm border border-gray-100">
-          <h2 className="text-xl font-bold text-gray-800 mb-4">
-            Nonprofits
-          </h2>
+        {/* Donation Box Summary Card */}
+        <div className="bg-white rounded-xl mb-6 shadow-sm border border-gray-200 overflow-hidden">
+          {/* Gradient Header */}
+          <div className="h-1 bg-gradient-to-r from-blue-500 to-purple-500"></div>
+
+          <div className="p-6">
+            {/* Monthly Donation Section */}
+            <div className="mb-6">
+              <h2 className="text-base font-medium text-gray-900 mb-3">Monthly Donation</h2>
+              <div className="flex items-center justify-between mb-2">
+                <div className="flex items-center gap-4">
+                  {/* <button
+                    onClick={decrementAmount}
+                    disabled={editableAmount <= 5}
+                    className={`flex items-center justify-center w-8 h-8 rounded-lg ${editableAmount > 5 ? 'bg-gray-100 hover:bg-gray-200' : 'bg-gray-200 cursor-not-allowed'} transition-colors`}
+                  >
+                    <Minus size={16} className="text-gray-600 font-bold" strokeWidth={3} />
+                  </button> */}
+                  <div className="flex items-baseline gap-2">
+                    {isEditingAmount ? (
+                      <input
+                        type="number"
+                        value={Math.round(editableAmount)}
+                        onChange={(e) => {
+                          const value = parseInt(e.target.value) || 5;
+                          setEditableAmount(Math.max(5, value));
+                        }}
+                        onBlur={() => {
+                          setIsEditingAmount(false);
+                          setEditableAmount(prev => Math.round(prev));
+                        }}
+                        autoFocus
+                        className="text-4xl font-bold text-gray-900 w-24 border-b-2 border-gray-300 focus:outline-none focus:border-blue-500"
+                      />
+                    ) : (
+                      <>
+                        <span className="text-4xl font-bold text-gray-900">${Math.round(editableAmount)}</span>
+                        <span className="text-base text-gray-600">/   month</span>
+                      </>
+                    )}
+                  </div>
+                  {/* <button
+                    onClick={incrementAmount}
+                    className="flex items-center justify-center w-8 h-8 rounded-lg bg-gray-100 hover:bg-gray-200 transition-colors"
+                  >
+                    <Plus size={16} className="text-gray-600" />
+                  </button> */}
+                </div>
+                <button
+                  onClick={() => navigate('/donation/manage')}
+                  className="w-10 h-10 rounded-lg bg-gray-100 hover:bg-gray-200 flex items-center justify-center transition-colors"
+                  aria-label="Edit amount"
+                >
+                  <Pencil className="w-4 h-4 text-gray-600" />
+                </button>
+              </div>
+              {lifetimeAmount > 0 && (
+                <p className="text-sm text-gray-600">${lifetimeAmount.toLocaleString()} lifetime</p>
+              )}
+            </div>
+
+            {/* Supported Entities */}
+            <div className="bg-gray-100 rounded-lg px-4 py-3 mb-6 text-center">
+              <p className="text-sm font-bold text-gray-900">
+                {totalCausesCount} Cause{totalCausesCount !== 1 ? 's' : ''} • {totalCollectivesCount} Collective{totalCollectivesCount !== 1 ? 's' : ''}
+              </p>
+            </div>
+
+            {/* Donation Box Capacity */}
+            <div className="bg-gradient-to-br from-blue-50 to-purple-50 rounded-lg p-4 mb-6">
+              <div className="flex items-center justify-between mb-2">
+                <h3 className="text-sm font-bold text-blue-600">Donation Box Capacity</h3>
+                <span className="text-sm text-gray-900">{currentCapacity}/{maxCapacity} causes</span>
+              </div>
+              <div className="w-full bg-gray-200 rounded-full h-2 mb-2">
+                <div
+                  className="bg-gradient-to-r from-blue-500 to-purple-500 h-2 rounded-full transition-all duration-300"
+                  style={{ width: `${Math.min(100, (currentCapacity / maxCapacity) * 100)}%` }}
+                ></div>
+              </div>
+              <p className="text-sm text-blue-600">
+                You can support {maxCapacity - currentCapacity} more cause{(maxCapacity - currentCapacity) !== 1 ? 's' : ''} with this donation amount.
+              </p>
+            </div>
+
+            {/* Payment Schedule */}
+            {donationBox?.next_charge_date && (
+              <p className="text-sm text-gray-600 text-center mb-4">
+                on the {getChargeDay(donationBox.next_charge_date)} of every month
+              </p>
+            )}
+          </div>
+        </div>
+
+        {/* Currently Supporting Section */}
+        <div className="mb-6">
+          <div className="mb-4">
+            <h2 className="text-xl font-bold text-gray-900">Currently Supporting</h2>
+            <p className="text-sm text-gray-600 mt-1">
+              Supporting {manualCauses.length} nonprofit{manualCauses.length !== 1 ? 's' : ''}
+            </p>
+          </div>
 
           {/* Manual Causes List */}
-          <div className="space-y-4">
+          <div className="space-y-3">
             {manualCauses.length > 0 ? (
-              manualCauses.map((cause: any) => (
-                <div
-                  key={cause.id}
-                  className="flex items-center p-4 border border-gray-200 rounded-lg"
-                >
-                  <div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center mr-4">
-                    <span className="text-blue-600 font-semibold text-lg">
-                      {cause.name?.charAt(0)?.toUpperCase() || 'C'}
-                    </span>
-                  </div>
-                  <div className="flex-1">
-                    <h3 className="font-semibold text-gray-800">{cause.name}</h3>
-                    <p className="text-sm text-gray-600">
-                      {cause.mission || 'Making a positive impact in the community'}
-                    </p>
-                  </div>
-                  {/* <div className="flex items-center gap-2">
-                    <button
-                      className="p-2 hover:bg-gray-100 rounded-full transition-colors"
-                      onClick={() => {
-                        setItemToDelete({ id: cause.id.toString(), name: cause.name, type: 'cause' });
-                        setShowDeleteModal(true);
-                      }}
+              manualCauses.map((cause: any) => {
+                const avatarBgColor = getConsistentColor(cause.id, avatarColors);
+                const initials = getInitials(cause.name || 'N');
+                return (
+                  <div
+                    key={cause.id}
+                    className="flex items-center p-4 bg-white border border-gray-200 rounded-lg shadow-sm"
+                  >
+                    {/* Avatar */}
+                    <div
+                      className="w-12 h-12 rounded-xl flex items-center justify-center mr-4 flex-shrink-0"
+                      style={{ backgroundColor: avatarBgColor }}
                     >
-                      <svg
-                        className="w-5 h-5 text-red-600"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-                        />
-                      </svg>
-                    </button>
-                  </div> */}
-                </div>
-              ))
+                      <span className="text-white font-bold text-lg">
+                        {initials}
+                      </span>
+                    </div>
+
+                    {/* Cause Info */}
+                    <div className="flex-1 min-w-0">
+                      <h3 className="font-bold text-gray-900 mb-1">{cause.name}</h3>
+                      <p className="text-sm text-gray-600 line-clamp-1">
+                        {cause.mission || cause.description || 'Making a positive impact in the community'}
+                      </p>
+                    </div>
+
+                    {/* Donation Info & Action */}
+                    <div className="flex items-center gap-4 ml-4">
+                      <div className="text-right">
+                        <p className="font-bold text-gray-900">{distributionPercentage}%</p>
+                        <p className="text-sm text-gray-600">${amountPerItem.toFixed(2)}/mo</p>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })
             ) : (
               <p className="text-gray-500 text-center py-4">No causes</p>
             )}
@@ -300,12 +493,12 @@ export const DonationBox3 = ({
         </div>
 
         {/* Attributing Collectives Section */}
-        <div className="bg-white rounded-xl mb-6 p-6 shadow-sm border border-gray-100">
+        {/* <div className="bg-white rounded-xl mb-6 p-6 shadow-sm border border-gray-100">
           <h2 className="text-xl font-bold text-gray-800 mb-4">
             Collectives
           </h2>
 
-          {/* Collectives List */}
+        
           <div className="space-y-4">
             {attributingCollectives.length > 0 ? (
               attributingCollectives.map((collective: any) => {
@@ -377,10 +570,10 @@ export const DonationBox3 = ({
               <p className="text-gray-500 text-center py-4">No collectives</p>
             )}
           </div>
-        </div>
+        </div> */}
 
         {/* Distribution Details */}
-        <div className="bg-blue-50 rounded-xl mb-10 p-6">
+        {/* <div className="bg-blue-50 rounded-xl mb-10 p-6">
           <h3 className="text-lg font-semibold text-gray-800 mb-3">
             Distribution
           </h3>
@@ -398,10 +591,10 @@ export const DonationBox3 = ({
               per month
             </span>
           </div>
-        </div>
+        </div> */}
 
         {/* Manage Donation Box Button - Only show if donation box exists */}
-        {(donationBox?.id) && (
+        {/* {(donationBox?.id) && (
           <div className="mb-6">
             <Button
               onClick={() => {
@@ -415,7 +608,7 @@ export const DonationBox3 = ({
               Manage Donation Box
             </Button>
           </div>
-        )}
+        )} */}
 
         {/* Add More Button */}
         {/* <div className="mb-6">
@@ -753,9 +946,9 @@ export const DonationBox3 = ({
         </div> */}
 
          {/* checkout button */}
-         <div className="space-y-1  fixed bottom-12 md:bottom-32  w-calc(100%-16px) left-0 right-0 mx-4">
+         <div className="space-y-1  fixed bottom-0 p-6   left-0 right-0 border-t border-gray-200 ">
            <Button 
-             className="w-full bg-green-500 hover:bg-green-600 text-white py-6 md:py-6 rounded-lg font-medium transition-colors flex items-center justify-center" 
+             className="w-full bg-[#aeff30] hover:bg-[#91d11c] text-black py-6 md:py-6 rounded-full font-bold transition-colors flex items-center justify-center" 
              onClick={handleCheckout}
              disabled={activateBoxMutation.isPending}
            >

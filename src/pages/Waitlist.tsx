@@ -6,8 +6,13 @@ import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Card, CardContent } from "@/components/ui/card"
 import { useNavigate } from "react-router-dom"
-import { ChevronRight, DollarSign, Settings, Users, Heart, ArrowRight, Zap, Sparkle, Sparkles } from "lucide-react"
+import { ChevronRight, Users, Heart, ArrowRight, Zap, Sparkles } from "lucide-react"
 import Footer from "@/components/Footer"
+import { toast } from "sonner"
+import { joinWaitlist } from "@/services/api/auth"
+
+const isValidEmail = (email: string) =>
+  /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())
 
 // Define two sets of causes with their styling
 const causeSets = [
@@ -55,11 +60,13 @@ export default function WaitlistPage() {
 
   // Join Waitlist form state
   const [waitlistForm, setWaitlistForm] = useState({
+    name: "",
     email: "",
-    firstName: "",
     causes: [] as string[],
     monthlyAmount: ""
   })
+  const [waitlistSuccess, setWaitlistSuccess] = useState(false)
+  const [emailError, setEmailError] = useState("")
   
   // Start a Collective form state
   const [collectiveForm, setCollectiveForm] = useState({
@@ -72,14 +79,40 @@ export default function WaitlistPage() {
 
   const handleWaitlistSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (!waitlistForm.email.trim() || !waitlistForm.firstName.trim()) return
+    if (!waitlistForm.email.trim() || !waitlistForm.name.trim()) return
+    if (!isValidEmail(waitlistForm.email)) {
+      setEmailError("Enter a valid email address.")
+      return
+    }
+    setEmailError("")
     
     setIsSubmitting(true)
-    // TODO: Add API call to join waitlist
-    setTimeout(() => {
+    setWaitlistSuccess(false)
+    const category = waitlistForm.causes.length > 0 ? waitlistForm.causes[0] : "General"
+    const amountMatch = waitlistForm.monthlyAmount.match(/\d+/g)
+    const amountValue = amountMatch ? amountMatch[0] : "0"
+
+    try {
+      await joinWaitlist({
+        name: waitlistForm.name.trim(),
+        email: waitlistForm.email.trim(),
+        category,
+        amount: amountValue,
+      })
+      toast.success("You're on the waitlist! We'll be in touch soon.")
+      setWaitlistForm({
+        name: "",
+        email: "",
+        causes: [],
+        monthlyAmount: ""
+      })
+      setWaitlistSuccess(true)
+    } catch (error) {
+      console.error("Waitlist submission failed:", error)
+      toast.error("We couldn't join the waitlist. Please try again.")
+    } finally {
       setIsSubmitting(false)
-      // Show success message or redirect
-    }, 1000)
+    }
   }
 
   const handleCollectiveSubmit = async (e: React.FormEvent) => {
@@ -456,22 +489,33 @@ export default function WaitlistPage() {
                   type="email"
                   placeholder="you@example.com"
                   value={waitlistForm.email}
-                  onChange={(e) => setWaitlistForm(prev => ({ ...prev, email: e.target.value }))}
+                  onChange={(e) => {
+                    const value = e.target.value
+                    setWaitlistForm(prev => ({ ...prev, email: value }))
+                    if (emailError && isValidEmail(value)) {
+                      setEmailError("")
+                    }
+                  }}
                   className="w-full h-12"
                   required
                 />
+                {emailError && (
+                  <p className="text-xs text-rose-500 mt-2">
+                    {emailError}
+                  </p>
+                )}
               </div>
 
               {/* First Name */}
               <div>
                 <label className="block text-sm font-semibold mb-2">
-                  First Name*
+                  Full Name*
                 </label>
                 <Input
                   type="text"
                   placeholder="Alex"
-                  value={waitlistForm.firstName}
-                  onChange={(e) => setWaitlistForm(prev => ({ ...prev, firstName: e.target.value }))}
+                  value={waitlistForm.name}
+                  onChange={(e) => setWaitlistForm(prev => ({ ...prev, name: e.target.value }))}
                   className="w-full h-12"
                   required
                 />
@@ -532,6 +576,12 @@ export default function WaitlistPage() {
               >
                 {isSubmitting ? "Joining..." : "Join the Waitlist"} <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
+
+              {waitlistSuccess && (
+                <p className="text-sm text-emerald-700 text-center mt-2">
+                  Thanks! We'll be in touch as soon as we launch.
+                </p>
+              )}
 
               {/* Privacy Statement */}
               <p className="text-xs text-muted-foreground text-center">
