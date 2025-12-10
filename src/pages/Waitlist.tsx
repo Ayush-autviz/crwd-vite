@@ -10,6 +10,7 @@ import { ChevronRight, Users, Heart, ArrowRight, Zap, Sparkles } from "lucide-re
 import Footer from "@/components/Footer"
 import { toast } from "sonner"
 import { joinWaitlist } from "@/services/api/auth"
+import NewLogo from '@/assets/newLogo'
 
 const isValidEmail = (email: string) =>
   /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())
@@ -170,7 +171,8 @@ export default function WaitlistPage() {
 
 {/* Navbar */}
 <div className="sticky top-0 z-10 w-full flex items-center justify-between p-4 border-b bg-background">
-  <img src="/logo3.png" width={100} height={100} alt="CRWD Logo" />
+  {/* <img src="/logo3.png" width={100} height={100} alt="CRWD Logo" /> */}
+  <NewLogo />
   <Button variant="ghost" className="px-4 font-bold" onClick={() => navigate("/")}>
     See How It Works
   </Button>

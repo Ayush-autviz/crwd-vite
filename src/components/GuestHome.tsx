@@ -9,20 +9,21 @@ import LearnAndGetInspired from './guest/LearnAndGetInspired';
 import CommunityTestimonials from './guest/CommunityTestimonials';
 import StartMakingDifference from './guest/StartMakingDifference';
 import Footer from './Footer';
+import { NewLogo } from '@/assets/newLogo';
 
 // Define two sets of causes with their styling
 const causeSets = [
     [
-      { name: "refugees", bgColor: "bg-slate-400", hoverColor: "hover:bg-slate-500" },
-      { name: "sanctuaries", bgColor: "bg-purple-300", hoverColor: "hover:bg-purple-400" },
-      { name: "veteran housing", bgColor: "bg-green-300", hoverColor: "hover:bg-green-400" },
-      { name: "pediatric care", bgColor: "bg-orange-300", hoverColor: "hover:bg-orange-400" },
+        { name: "refugees", bgColor: "bg-slate-400", hoverColor: "hover:bg-slate-500" },
+        { name: "sanctuaries", bgColor: "bg-purple-300", hoverColor: "hover:bg-purple-400" },
+        { name: "veteran housing", bgColor: "bg-green-300", hoverColor: "hover:bg-green-400" },
+        { name: "pediatric care", bgColor: "bg-orange-300", hoverColor: "hover:bg-orange-400" },
     ],
     [
-      { name: "food banks", bgColor: "bg-slate-400", hoverColor: "hover:bg-slate-500" },
-      { name: "animal shelters", bgColor: "bg-purple-300", hoverColor: "hover:bg-purple-400" },
-      { name: "homeless shelters", bgColor: "bg-green-300", hoverColor: "hover:bg-green-400" },
-      { name: "cancer research", bgColor: "bg-orange-300", hoverColor: "hover:bg-orange-400" },
+        { name: "food banks", bgColor: "bg-slate-400", hoverColor: "hover:bg-slate-500" },
+        { name: "animal shelters", bgColor: "bg-purple-300", hoverColor: "hover:bg-purple-400" },
+        { name: "homeless shelters", bgColor: "bg-green-300", hoverColor: "hover:bg-green-400" },
+        { name: "cancer research", bgColor: "bg-orange-300", hoverColor: "hover:bg-orange-400" },
     ],
     [
         { name: "disaster relief", bgColor: "bg-slate-400", hoverColor: "hover:bg-slate-500" },
@@ -30,48 +31,48 @@ const causeSets = [
         { name: "affordable housing", bgColor: "bg-green-300", hoverColor: "hover:bg-green-400" },
         { name: "mental health", bgColor: "bg-orange-300", hoverColor: "hover:bg-orange-400" },
     ]
-  ];
-  
+];
+
 
 export default function GuestHome() {
-  const navigate = useNavigate()
+    const navigate = useNavigate()
     const [donationAmount, setDonationAmount] = useState(5) // Default $35/month
     const [currentCauseSet, setCurrentCauseSet] = useState(0)
     const [menuOpen, setMenuOpen] = useState(false)
     const [isVisible, setIsVisible] = useState(false)
     const [isAnimating, setIsAnimating] = useState(false)
 
-      // Rotate cause sets every 3 seconds
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentCauseSet((prev) => (prev + 1) % causeSets.length);
-    }, 3000);
+    // Rotate cause sets every 3 seconds
+    useEffect(() => {
+        const interval = setInterval(() => {
+            setCurrentCauseSet((prev) => (prev + 1) % causeSets.length);
+        }, 3000);
 
-    return () => clearInterval(interval);
-  }, []);
+        return () => clearInterval(interval);
+    }, []);
 
-  // Handle bottom sheet menu animations
-  useEffect(() => {
-    let timer: NodeJS.Timeout;
+    // Handle bottom sheet menu animations
+    useEffect(() => {
+        let timer: NodeJS.Timeout;
 
-    if (menuOpen) {
-      setIsVisible(true);
-      setIsAnimating(false);
-      timer = setTimeout(() => setIsAnimating(true), 20);
-    } else if (isVisible) {
-      setIsAnimating(false);
-      timer = setTimeout(() => setIsVisible(false), 300);
-    }
+        if (menuOpen) {
+            setIsVisible(true);
+            setIsAnimating(false);
+            timer = setTimeout(() => setIsAnimating(true), 20);
+        } else if (isVisible) {
+            setIsAnimating(false);
+            timer = setTimeout(() => setIsVisible(false), 300);
+        }
 
-    return () => clearTimeout(timer);
-  }, [menuOpen, isVisible]);
+        return () => clearTimeout(timer);
+    }, [menuOpen, isVisible]);
 
-  const handleCloseMenu = () => {
-    setIsAnimating(false);
-    setTimeout(() => {
-      setMenuOpen(false);
-    }, 300);
-  };
+    const handleCloseMenu = () => {
+        setIsAnimating(false);
+        setTimeout(() => {
+            setMenuOpen(false);
+        }, 300);
+    };
 
     return (
         <div className="min-h-screen bg-background">
@@ -80,35 +81,33 @@ export default function GuestHome() {
             {/* Navbar */}
             <div className="sticky top-0 z-10 w-full flex items-center justify-between p-4 md:px-6 border-b bg-background">
                 {/* Logo with colored circles */}
-                <div className="flex items-center gap-3">
-                    <div className="grid grid-cols-2 gap-1 w-8 h-8 md:w-10 md:h-10">
-                        <div className="bg-[#3B82F6] rounded-full"></div>
-                        <div className="bg-[#EC4899] rounded-full"></div>
-                        <div className="bg-[#84CC16] rounded-full"></div>
-                        <div className="bg-[#8B5CF6] rounded-full"></div>
-                    </div>
-                    <span className="font-bold text-xl md:text-2xl text-foreground lowercase">crwd</span>
-                </div>
+                
+                <a href="/waitlist">
+                    <NewLogo />
+                </a>
 
+                
                 {/* Right side buttons */}
                 <div className="flex items-center gap-3 md:gap-4">
                     {/* Search Icon */}
-                   
-                    <button
-                        onClick={() => navigate("/search")}
+
+                    {/* <button
+                        onClick={() => navigate("/search")} */}
+                    <a href="/search"
                         className="p-2 hover:bg-gray-100 rounded-full transition-colors"
                         aria-label="Search"
                     >
                         <Search className="w-5 h-5 md:w-6 md:h-6 text-gray-700" />
-                    </button>
+                    </a>
 
                     {/* Sign In Button */}
-                    <Button
-                        onClick={() => navigate("/login")}
+                    {/* <Button
+                        onClick={() => navigate("/login")} */}
+                    <a href="/login"
                         className="bg-[#ff3366] hover:bg-[#ff0033] text-white font-bold px-4 md:px-6 py-2 rounded-full text-sm md:text-base hidden sm:inline-flex"
                     >
                         Sign In
-                    </Button>
+                    </a>
 
                     {/* Get the App Button */}
                     <Button
@@ -136,24 +135,25 @@ export default function GuestHome() {
             <div className="bg-card pt-6 pb-12 md:pt-8 md:pb-16 px-4 md:px-6">
                 {/* Launch Banner */}
                 <div className="max-w-4xl mx-auto text-center mt-20  mb-6 md:mb-8">
-                  
+
 
                     <h1 className="font-[900] text-foreground mb-3 md:mb-4 leading-tight" style={{ fontSize: 'clamp(2rem, 5vw, 4.5rem)' }}>
-                    Stop Wishing You Made a Difference.
+                        Stop Wishing You Made a Difference.
                         <span className="text-[#1600ff]"> Start Being Someone Who Does.</span>
                     </h1>
 
                     <p className="text-muted-foreground mb-6 md:mb-8 max-w-2xl mx-auto" style={{ fontSize: 'clamp(1rem, 2vw, 1.5rem)' }}>
-                    What if you could support every cause you care about automatically, affordably, and powerfully?
+                        What if you could support every cause you care about automatically, affordably, and powerfully?
                     </p>
 
-                    <Button
-          onClick={() => navigate("/onboarding")}
-          size="lg"
-          className="h-14 px-8 rounded-lg bg-[#1600ff] text-white font-bold text-lg"
-        >
-          Get started
-        </Button>
+                    {/* <Button
+                        onClick={() => navigate("/onboarding")} */}
+                        <a href="/onboarding"
+                        // size="lg"
+                        className="h-14 px-10 py-4  rounded-lg bg-[#1600ff] text-white font-bold text-lg"
+                    >
+                        Get started
+                    </a>
 
                 </div>
             </div>
@@ -219,13 +219,14 @@ export default function GuestHome() {
                                 One gift. Multiple causes.
                             </p>
 
-                            <Button
+                            {/* <Button
                                 onClick={() => navigate("/waitlist")}
-                                size="lg"
-                                className="w-full h-11 md:h-12 rounded-full font-bold text-lg"
+                                size="lg" */}
+                                <a href="/waitlist"
+                                className="w-full h-11 md:h-12 rounded-full font-bold text-lg px-10 py-4 inline-flex items-center justify-center bg-[#1600ff] text-white"
                             >
                                 Start Supporting <ChevronRight className="ml-2 h-4 w-4 md:h-5 md:w-5" />
-                            </Button>
+                            </a>
                             <p className="text-gray-500 text-center mt-4" style={{ fontSize: 'clamp(0.875rem, 2vw, 1rem)' }}>Every dollar makes a difference</p>
                         </CardContent>
                     </Card>
@@ -253,15 +254,13 @@ export default function GuestHome() {
             {/* Bottom Sheet Menu */}
             {isVisible && (
                 <div
-                    className={`fixed inset-0 bg-black/50 flex items-end justify-center z-50 transition-opacity duration-300 ${
-                        isAnimating ? "opacity-100" : "opacity-0"
-                    }`}
+                    className={`fixed inset-0 bg-black/50 flex items-end justify-center z-50 transition-opacity duration-300 ${isAnimating ? "opacity-100" : "opacity-0"
+                        }`}
                     onClick={handleCloseMenu}
                 >
                     <div
-                        className={`bg-white rounded-t-3xl w-full max-h-[80vh] overflow-y-auto transform transition-transform duration-300 ${
-                            isAnimating ? "translate-y-0" : "translate-y-full"
-                        }`}
+                        className={`bg-white rounded-t-3xl w-full max-h-[80vh] overflow-y-auto transform transition-transform duration-300 ${isAnimating ? "translate-y-0" : "translate-y-full"
+                            }`}
                         style={{
                             transitionTimingFunction: "cubic-bezier(0.25, 0.46, 0.45, 0.94)",
                         }}
@@ -274,17 +273,17 @@ export default function GuestHome() {
 
                         {/* Log In/Get Started Button */}
                         <div className="px-6 pt-4 pb-6">
-                            
+
                         </div>
 
                         {/* Menu Items */}
                         <div className="px-6 pb-4 space-y-1">
-                        <button
+                            <button
                                 onClick={() => {
                                     navigate("/onboarding");
                                     handleCloseMenu();
                                 }}
-                                
+
                                 className="flex items-center gap-3 py-3 px-2 rounded-lg hover:bg-gray-100 transition-colors w-full text-left"
 
                             >

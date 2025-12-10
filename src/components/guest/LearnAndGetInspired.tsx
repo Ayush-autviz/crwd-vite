@@ -55,19 +55,20 @@ export default function LearnAndGetInspired({
           <h2 className="font-[800] text-foreground" style={{ fontSize: 'clamp(1.5rem, 4vw, 2.5rem)' }}>
             Learn & Get Inspired
           </h2>
-          <Link
-            to={seeAllLink}
+          {/* <Link
+            to={seeAllLink} */}
+            <a href={seeAllLink}
             className="text-[#1600ff] font-[600] hover:underline flex items-center gap-1 text-base md:text-lg"
           >
             All articles <span>→</span>
-          </Link>
+            </a>
+          {/* </Link> */}
         </div>
 
         {/* Article Cards Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 md:gap-6">
           {displayArticles.map((article) => (
             <div key={article.id} className="rounded-xl shadow-sm hover:shadow-lg transition-shadow duration-300 overflow-hidden">
-              <Link to={article.slug ? `/articles/${article.slug}` : `/articles/${article.id}`}>
                 <div className="p-0">
                   {/* Article Image */}
                   <div className="w-full h-48 md:h-56 overflow-hidden">
@@ -99,7 +100,6 @@ export default function LearnAndGetInspired({
                     </p>
                   </div>
                 </div>
-              </Link>
             </div>
           ))}
         </div>

@@ -146,14 +146,16 @@ export default function PopularCollectives({
                   </p>
 
                   {/* View Collective Button */}
-                  <Link to={`/groupcrwd/${collective.id}`}>
+                  {/* <Link to={`/groupcrwd/${collective.id}`}> */}
+                  <a href={`/groupcrwd/${collective.id}`}>
                     <Button
                       variant="outline"
                       className="w-full border-[#a854f7] text-[#a854f7] hover:bg-[#a854f7] hover:text-white"
                     >
                       View Collective
                     </Button>
-                  </Link>
+                  </a>
+                  {/* </Link> */}
                 </CardContent>
               </Card>
             );
@@ -163,14 +165,16 @@ export default function PopularCollectives({
 
         {/* See All Collectives Button */}
         <div className="flex justify-center">
-          <Link to={seeAllLink}>
+          {/* <Link to={seeAllLink}> */}
+          <a href={seeAllLink}>
             <Button
               variant="outline"
               className="border-[#a854f7] text-[#a854f7] hover:bg-[#a854f7] hover:text-white px-6 md:px-8 py-2 md:py-3 text-base md:text-lg font-medium"
             >
               See All Collectives
             </Button>
-          </Link>
+          </a>
+          {/* </Link> */}
         </div>
       </div>
     </div>

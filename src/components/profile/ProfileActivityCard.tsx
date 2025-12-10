@@ -204,7 +204,8 @@ export default function ProfileActivityCard({
       >
         <CardContent className="p-4">
           <div className="flex gap-3">
-            <Link to={isOwnPost ? `/profile` : `/user-profile/${post.userId}`}>
+            {/* <Link to={isOwnPost ? `/profile` : `/user-profile/${post.userId}`}> */}
+            <a href={isOwnPost ? `/profile` : `/user-profile/${post.userId}`}>
               <Avatar className="h-10 w-10 flex-shrink-0">
                 <AvatarImage
                   src={imageUrl ?? post.avatarUrl}
@@ -217,7 +218,8 @@ export default function ProfileActivityCard({
                   {initials}
                 </AvatarFallback>
               </Avatar>
-            </Link>
+            </a>
+            {/* </Link> */}
             <div className="flex-1 min-w-0">
               <div className="flex items-start justify-between mb-3">
                 <div className="flex-1 flex-wrap items-center">
@@ -279,7 +281,8 @@ export default function ProfileActivityCard({
                 )}
               </div>
 
-              <Link to={`/post/${post.id}`} className="block">
+              {/* <Link to={`/post/${post.id}`} className="block"> */}
+              <a href={`/post/${post.id}`} className="block">
                 <div className="text-sm text-gray-900 leading-5 mb-3 whitespace-pre-line">
                   {post.text}
                 </div>
@@ -381,7 +384,8 @@ export default function ProfileActivityCard({
                     <Share2 className="w-[18px] h-[18px] text-gray-500" />
                   </button>
                 </div>
-              </Link>
+              </a>
+              {/* </Link> */}
             </div>
           </div>
         </CardContent>

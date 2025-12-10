@@ -18,12 +18,14 @@ export default function StartMakingDifference() {
         </p>
 
         {/* Call-to-Action Button */}
-        <Button
-          onClick={() => navigate("/onboarding")}
+        {/* <Button
+          onClick={() => navigate("/onboarding")} */}
+          <a href="/onboarding"
           className="bg-[#aeff30] hover:bg-[#93c902] text-black font-[700] px-8 md:px-10 py-6 md:py-7 rounded-full text-base md:text-lg shadow-lg"
         >
           Get Started for Free
-        </Button>
+        </a>
+        {/* </Button> */}
       </div>
     </div>
   );
