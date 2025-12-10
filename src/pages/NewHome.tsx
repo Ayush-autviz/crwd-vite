@@ -149,20 +149,56 @@ export default function NewHome() {
         }
         : null;
 
-    // Transform joined collectives data for carousel
+    // Transform attributing collectives from donation box for carousel (priority)
+    const transformedAttributingCollectives = useMemo(() => {
+        if (donationBoxData && !isDonationBoxNotFound && donationBoxData.attributing_collectives) {
+            return donationBoxData.attributing_collectives.map((collective: any) => {
+                // Calculate cause count from box_causes that have this collective in attributed_collectives
+                const attributedCauseCount = donationBoxData.box_causes?.filter((boxCause: any) => 
+                    boxCause.attributed_collectives?.includes(collective.id) || 
+                    boxCause.attributed_collectives?.includes(collective.id.toString())
+                ).length || 0;
+
+                // Check if current user is the creator
+                const isAdmin = collective.creator?.id === user?.id;
+
+                return {
+                    id: collective.id,
+                    name: collective.name || "Unknown Collective",
+                    memberCount: collective.member_count || 0,
+                    yearlyAmount: parseFloat(collective.total_donated || "0") * 12, // Convert monthly to yearly estimate
+                    causeCount: attributedCauseCount || 0,
+                    role: isAdmin ? "Admin" : "Member",
+                    image: collective.logo || collective.creator?.profile_picture || "",
+                };
+            });
+        }
+        return [];
+    }, [donationBoxData, isDonationBoxNotFound, user?.id]);
+
+    // Transform joined collectives data for carousel (fallback)
     const transformedJoinedCollectives =
         joinedCollectivesData?.data?.map((item: any) => {
             const collective = item.collective || item;
+            // Check if current user is the creator
+            const isAdmin = collective.created_by?.id === user?.id || 
+                          collective.creator?.id === user?.id;
+            
             return {
                 id: collective.id,
                 name: collective.name || "Unknown Collective",
                 memberCount: collective.member_count || 0,
                 yearlyAmount: collective.yearly_donation_amount || collective.total_donations || 2340,
                 causeCount: collective.causes_count || collective.supported_causes_count || 3,
-                role: item.role || "Member",
+                role: isAdmin ? "Admin" : (item.role || "Member"),
                 image: collective.cover_image || collective.avatar || collective.image || collective.created_by?.profile_picture || "",
             };
         }) || [];
+
+    // Use attributing collectives if available, otherwise fall back to joined collectives
+    const collectivesForCarousel = transformedAttributingCollectives.length > 0 
+        ? transformedAttributingCollectives 
+        : transformedJoinedCollectives;
 
     // Transform notifications data for community updates
     // Only show type "community" (not "community_post")
@@ -339,7 +375,7 @@ export default function NewHome() {
 
                 {/* Collective Carousel Card */}
                 {token?.access_token && (
-                    joinedCollectivesLoading ? (
+                    (donationBoxLoading || joinedCollectivesLoading) ? (
                         <div className="w-full mt-4 md:mt-6 lg:mt-8 max-w-full md:max-w-[95%] lg:max-w-[70%] mx-auto">
                             <div className="bg-white rounded-xl border border-gray-200 p-4 md:p-6 shadow-sm animate-pulse">
                                 <div className="space-y-4">
@@ -353,9 +389,9 @@ export default function NewHome() {
                                 </div>
                             </div>
                         </div>
-                    ) : (
-                        <CollectiveCarouselCard collectives={transformedJoinedCollectives} />
-                    )
+                    ) : collectivesForCarousel.length > 0 ? (
+                        <CollectiveCarouselCard collectives={collectivesForCarousel} />
+                    ) : null
                 )}
 
                 {/* Explore Cards */}
