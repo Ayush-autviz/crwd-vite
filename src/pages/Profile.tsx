@@ -395,7 +395,7 @@ export default function ProfilePage() {
           )}
         </div>
         <Button
-          onClick={() => navigate("/profile/edit")}
+          onClick={() => navigate("/settings")}
           variant="outline"
           className="text-xs md:text-sm py-1.5 md:py-2 px-2.5 md:px-3"
         >
@@ -419,7 +419,7 @@ export default function ProfilePage() {
             {/* Edit Profile and Share Profile buttons */}
             <div className="flex items-center justify-center gap-3 md:gap-4 mt-3 md:mt-4">
               <Button
-                onClick={() => navigate("/profile/edit")}
+                onClick={() => navigate("/settings")}
                 variant="outline"
                 className="px-3 md:px-4 py-2 md:py-2.5 border border-gray-300 rounded-lg min-w-[100px] md:min-w-[120px]"
               >

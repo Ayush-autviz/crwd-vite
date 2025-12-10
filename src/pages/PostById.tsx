@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import ProfileActivityCard from "@/components/profile/ProfileActivityCard";
 import { X, Loader2 } from "lucide-react";
@@ -236,31 +236,31 @@ export default function PostById() {
   if (!currentUser?.id) {
     return (
       <div className="w-full flex flex-col items-center justify-center min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
-        <div className="text-center max-w-md mx-auto p-8">
+        <div className="text-center max-w-md mx-auto p-4 md:p-8">
           {/* Icon */}
-          <div className="w-20 h-20 mx-auto mb-6 bg-blue-100 rounded-full flex items-center justify-center">
-            <svg className="w-10 h-10 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div className="w-16 h-16 md:w-20 md:h-20 mx-auto mb-4 md:mb-6 bg-blue-100 rounded-full flex items-center justify-center">
+            <svg className="w-8 h-8 md:w-10 md:h-10 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
             </svg>
           </div>
           
           {/* Title */}
-          <h2 className="text-2xl font-bold text-gray-900 mb-3">
+          <h2 className="text-xl md:text-2xl font-bold text-gray-900 mb-2 md:mb-3">
             Sign in to view this post
           </h2>
           
           {/* Description */}
-          <p className="text-gray-600 mb-8 leading-relaxed">
+          <p className="text-sm md:text-base text-gray-600 mb-6 md:mb-8 leading-relaxed">
             Sign in to view your profile, manage your causes, and connect with your community.
           </p>
           
           {/* CTA Button */}
           <Button 
             size="lg" 
-            className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-lg font-medium transition-colors duration-200 shadow-lg hover:shadow-xl"
+            className="bg-blue-600 hover:bg-blue-700 text-white px-6 md:px-8 py-2.5 md:py-3 rounded-lg font-medium transition-colors duration-200 shadow-lg hover:shadow-xl text-sm md:text-base"
           >
-            <Link to="/onboarding" className="flex items-center gap-2">
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <Link to="/onboarding" className="flex items-center gap-1.5 md:gap-2">
+              <svg className="w-4 h-4 md:w-5 md:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
               </svg>
               Sign In to Continue
@@ -268,7 +268,7 @@ export default function PostById() {
           </Button>
           
           {/* Additional Info */}
-          <p className="text-sm text-gray-500 mt-6">
+          <p className="text-xs md:text-sm text-gray-500 mt-4 md:mt-6">
             Don't have an account? 
             <Link to="/claim-profile" className="text-blue-600 hover:text-blue-700 font-medium ml-1">
               Create one here
@@ -282,15 +282,15 @@ export default function PostById() {
   // Loading state
   if (isLoading) {
     return (
-      <div className="bg-white min-h-screen flex flex-col relative pb-16">
+      <div className="bg-white min-h-screen flex flex-col relative pb-16 md:pb-0">
         <ProfileNavbar title="Post" />
         <div className="flex-1 flex items-center justify-center">
-          <div className="text-center py-10">
-            <Loader2 className="w-8 h-8 animate-spin mx-auto mb-4" />
-            <h2 className="text-xl font-semibold text-gray-900 mb-2">
+          <div className="text-center py-8 md:py-10 px-4">
+            <Loader2 className="w-6 h-6 md:w-8 md:h-8 animate-spin mx-auto mb-3 md:mb-4" />
+            <h2 className="text-lg md:text-xl font-semibold text-gray-900 mb-1.5 md:mb-2">
               Loading post...
             </h2>
-            <p className="text-gray-600">
+            <p className="text-sm md:text-base text-gray-600">
               Please wait while we fetch the post details.
             </p>
           </div>
@@ -302,19 +302,19 @@ export default function PostById() {
   // Error state
   if (error || !post) {
     return (
-      <div className="bg-white min-h-screen flex flex-col relative pb-16">
+      <div className="bg-white min-h-screen flex flex-col relative pb-16 md:pb-0">
         <ProfileNavbar title="Post" />
         <div className="flex-1 flex items-center justify-center">
-          <div className="text-center py-10">
-            <h2 className="text-xl font-semibold text-gray-900 mb-2">
+          <div className="text-center py-8 md:py-10 px-4">
+            <h2 className="text-lg md:text-xl font-semibold text-gray-900 mb-1.5 md:mb-2">
               Post not found
             </h2>
-            <p className="text-gray-600">
+            <p className="text-sm md:text-base text-gray-600 mb-3 md:mb-4">
               The post you're looking for doesn't exist or has been removed.
             </p>
             <button
               onClick={() => navigate('/')}
-              className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+              className="mt-3 md:mt-4 px-4 md:px-5 py-2 md:py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm md:text-base"
             >
               Go Back Home
             </button>
@@ -334,27 +334,27 @@ export default function PostById() {
         />
 
         {/* Comments Section */}
-         <div className="px-4 py-6">
+         <div className="px-3 md:px-4 py-4 md:py-6">
            {isLoadingComments ? (
-             <div className="text-center py-8 px-4">
-               <div className="bg-gray-50 rounded-lg p-6 border border-gray-100">
-                 <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                   <Loader2 className="w-6 h-6 text-primary animate-spin" />
+             <div className="text-center py-6 md:py-8 px-3 md:px-4">
+               <div className="bg-gray-50 rounded-lg p-4 md:p-6 border border-gray-100">
+                 <div className="w-10 h-10 md:w-12 md:h-12 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-3 md:mb-4">
+                   <Loader2 className="w-5 h-5 md:w-6 md:h-6 text-primary animate-spin" />
                  </div>
-                 <h3 className="text-base font-medium text-gray-900 mb-2">
+                 <h3 className="text-sm md:text-base font-medium text-gray-900 mb-1.5 md:mb-2">
                    Loading comments...
                  </h3>
-                 <p className="text-sm text-gray-500">
+                 <p className="text-xs md:text-sm text-gray-500">
                    Please wait while we fetch the comments
                  </p>
                </div>
              </div>
            ) : comments.length === 0 ? (
-            <div className="text-center py-8 px-4">
-              <div className="bg-gray-50 rounded-lg p-6 border border-gray-100">
-                <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
+            <div className="text-center py-6 md:py-8 px-3 md:px-4">
+              <div className="bg-gray-50 rounded-lg p-4 md:p-6 border border-gray-100">
+                <div className="w-10 h-10 md:w-12 md:h-12 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-3 md:mb-4">
                   <svg
-                    className="w-6 h-6 text-primary"
+                    className="w-5 h-5 md:w-6 md:h-6 text-primary"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -367,17 +367,17 @@ export default function PostById() {
                     />
                   </svg>
                 </div>
-                <h3 className="text-base font-medium text-gray-900 mb-2">
+                <h3 className="text-sm md:text-base font-medium text-gray-900 mb-1.5 md:mb-2">
                   Be the first one to comment
                 </h3>
-                <p className="text-sm text-gray-500">
+                <p className="text-xs md:text-sm text-gray-500">
                   Share your thoughts and start the conversation
                 </p>
               </div>
             </div>
           ) : (
-            <div className="space-y-6">
-              <p className="text-sm text-gray-600 font-medium">
+            <div className="space-y-4 md:space-y-6">
+              <p className="text-xs md:text-sm text-gray-600 font-medium">
                 {comments.length} comment{comments.length !== 1 ? "s" : ""}
               </p>
               {comments.map((comment) => (
@@ -417,16 +417,16 @@ export default function PostById() {
         </div>
 
         {/* Spacer for sticky input */}
-        <div className="h-30" />
+        <div className="h-24 md:h-30" />
       </main>
 
       {/* Sticky Input Bar */}
-      <div className="fixed bottom-0 right-0 bg-white border-t px-4 py-3 flex items-center gap-2 w-full ">
-        <div className="flex items-center gap-2 flex-1 bg-gray-100 rounded-full px-4 py-2 relative">
+      <div className="fixed bottom-0 right-0 bg-white border-t px-3 md:px-4 py-2.5 md:py-3 flex items-center gap-1.5 md:gap-2 w-full">
+        <div className="flex items-center gap-1.5 md:gap-2 flex-1 bg-gray-100 rounded-full px-3 md:px-4 py-1.5 md:py-2 relative">
           <img
             src="/view.png"
             alt="current user"
-            className="w-5 h-5 rounded-full border"
+            className="w-4 h-4 md:w-5 md:h-5 rounded-full border flex-shrink-0"
           />
           <input
             type="text"
@@ -435,18 +435,18 @@ export default function PostById() {
             onKeyPress={handleKeyPress}
             placeholder="Join the conversation"
             disabled={createCommentMutation.isPending}
-            className="bg-transparent outline-none flex-1 text-sm text-gray-700 placeholder-gray-400 pr-6 disabled:opacity-50"
+            className="bg-transparent outline-none flex-1 text-xs md:text-sm text-gray-700 placeholder-gray-400 pr-5 md:pr-6 disabled:opacity-50"
           />
           {createCommentMutation.isPending ? (
-            <div className="absolute right-3 p-1">
-              <Loader2 className="w-4 h-4 text-gray-500 animate-spin" />
+            <div className="absolute right-2 md:right-3 p-0.5 md:p-1">
+              <Loader2 className="w-3.5 h-3.5 md:w-4 md:h-4 text-gray-500 animate-spin" />
             </div>
           ) : inputValue ? (
             <button
               onClick={() => setInputValue("")}
-              className="absolute right-3 p-1 hover:bg-gray-200 rounded-full transition-colors"
+              className="absolute right-2 md:right-3 p-0.5 md:p-1 hover:bg-gray-200 rounded-full transition-colors"
             >
-              <X className="w-4 h-4 text-gray-500" />
+              <X className="w-3.5 h-3.5 md:w-4 md:h-4 text-gray-500" />
             </button>
           ) : null}
         </div>
@@ -459,19 +459,19 @@ export default function PostById() {
       />
 
       <Dialog open={showDialog} onOpenChange={setShowDialog}>
-        <DialogContent className="sm:max-w-[425px]">
+        <DialogContent className="sm:max-w-[425px] max-w-[90vw]">
           <DialogHeader>
-            <DialogTitle>Leave this page?</DialogTitle>
-            <DialogDescription>
+            <DialogTitle className="text-base md:text-lg">Leave this page?</DialogTitle>
+            <DialogDescription className="text-sm md:text-base">
               You have typed a comment. If you leave now, your comment will be
               lost.
             </DialogDescription>
           </DialogHeader>
-          <DialogFooter>
-            <Button variant="outline" onClick={handleCancelLeave}>
+          <DialogFooter className="flex-col sm:flex-row gap-2">
+            <Button variant="outline" onClick={handleCancelLeave} className="w-full sm:w-auto text-sm md:text-base">
               Stay on this page
             </Button>
-            <Button variant="destructive" onClick={handleConfirmLeave}>
+            <Button variant="destructive" onClick={handleConfirmLeave} className="w-full sm:w-auto text-sm md:text-base">
               Leave anyway
             </Button>
           </DialogFooter>

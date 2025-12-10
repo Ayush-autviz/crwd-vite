@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { ArrowLeft, Edit2, HelpCircle, Loader2, Palette, Camera, Search, X, Save, Smartphone, HelpCircle as HelpIcon } from 'lucide-react';
+import { ArrowLeft, Edit2, HelpCircle, Loader2, Palette, Camera, Search, X, Save } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -278,30 +278,30 @@ export default function EditCollectivePage() {
   return (
     <div className="min-h-screen bg-white">
       {/* Header */}
-      <div className="sticky top-0 z-10 w-full flex items-center gap-4 p-4 border-b bg-white">
+      <div className="sticky top-0 z-10 w-full flex items-center gap-3 md:gap-4 p-3 md:p-4 border-b bg-white">
         <button
           onClick={() => navigate(-1)}
-          className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+          className="p-1.5 md:p-2 hover:bg-gray-100 rounded-full transition-colors"
           aria-label="Go back"
         >
-          <ArrowLeft className="w-5 h-5 text-gray-700" />
+          <ArrowLeft className="w-4 h-4 md:w-5 md:h-5 text-gray-700" />
         </button>
-        <h1 className="font-bold text-xl text-foreground">Edit Collective</h1>
+        <h1 className="font-bold text-lg md:text-xl text-foreground">Edit Collective</h1>
       </div>
 
-      <div className="px-4 py-6">
+      <div className="px-3 md:px-4 py-4 md:py-6 pb-24 md:pb-28 lg:max-w-[60%] lg:mx-auto">
 
       {/* Banner */}
-      <div className="bg-gradient-to-r from-blue-50 via-pink-50 to-purple-50 px-4 py-6 rounded-xl">
-        <div className="flex items-center gap-4">
-          <div className="w-12 h-12 bg-[#1600ff] rounded-full flex items-center justify-center flex-shrink-0">
-            <Edit2 className="w-6 h-6 text-white" />
+      <div className="bg-gradient-to-r from-blue-50 via-pink-50 to-purple-50 px-3 md:px-4 py-4 md:py-6 rounded-xl mb-4 md:mb-6">
+        <div className="flex items-center gap-3 md:gap-4">
+          <div className="w-10 h-10 md:w-12 md:h-12 bg-[#1600ff] rounded-full flex items-center justify-center flex-shrink-0">
+            <Edit2 className="w-5 h-5 md:w-6 md:h-6 text-white" />
           </div>
           <div>
-            <h2 className="font-bold text-lg text-foreground mb-1">
+            <h2 className="font-bold text-base md:text-lg text-foreground mb-1">
               Update Your Collective
             </h2>
-            <p className="text-sm text-muted-foreground">
+            <p className="text-xs md:text-sm text-muted-foreground">
               Make changes to your collective name, mission, or the causes you support.
             </p>
           </div>
@@ -309,75 +309,75 @@ export default function EditCollectivePage() {
       </div>
 
       {/* Form */}
-      <div className="px-4 py-6 space-y-6">
+      <div className="space-y-4 md:space-y-6">
         {/* Collective Name */}
-        <div  className='border border-gray-200 rounded-lg p-4'>
+        <div className='border border-gray-200 rounded-lg p-3 md:p-4'>
           <div className="flex items-center gap-2 mb-2">
-            <label className="font-semibold text-foreground">
+            <label className="font-semibold text-sm md:text-base text-foreground">
               Collective Name <span className='text-red-500'>*</span>
             </label>
-            <HelpCircle className="w-4 h-4 text-gray-400" />
+            <HelpCircle className="w-3.5 h-3.5 md:w-4 md:h-4 text-gray-400" />
           </div>
           <Input
             value={name}
             onChange={(e) => setName(e.target.value)}
             placeholder="Enter collective name"
-            className="w-full bg-gray-100 rounded-2xl"
+            className="w-full bg-gray-100 rounded-2xl text-sm md:text-base"
           />
         </div>
 
         {/* Description */}
-        <div  className='border border-gray-200 rounded-lg p-4'>
+        <div className='border border-gray-200 rounded-lg p-3 md:p-4'>
           <div className="flex items-center gap-2 mb-2">
-            <label className="font-semibold text-foreground">
+            <label className="font-semibold text-sm md:text-base text-foreground">
               What Brings This Group Together? <span className='text-red-500'>*</span>
             </label>
-            <HelpCircle className="w-4 h-4 text-gray-400" />
+            <HelpCircle className="w-3.5 h-3.5 md:w-4 md:h-4 text-gray-400" />
           </div>
           <Textarea
             value={description}
             onChange={(e) => setDescription(e.target.value)}
             placeholder="Describe what brings this group together"
-            className="w-full min-h-[100px] bg-gray-100 rounded-2xl"
+            className="w-full min-h-[100px] bg-gray-100 rounded-2xl text-sm md:text-base"
           />
         </div>
 
         {/* Collective Logo */}
-        <div className="border border-gray-200 rounded-lg p-4">
-          <div className="flex items-center gap-4">
-            <Avatar className="w-16 h-16 rounded-lg flex-shrink-0">
+        <div className="border border-gray-200 rounded-lg p-3 md:p-4">
+          <div className="flex items-center gap-3 md:gap-4">
+            <Avatar className="w-12 h-12 md:w-16 md:h-16 rounded-lg flex-shrink-0">
               {displayLogo ? (
                 <AvatarImage src={displayLogo} alt={name} />
               ) : (
                 <AvatarFallback
                   style={{ backgroundColor: logoColor }}
-                  className="text-white rounded-lg font-bold text-2xl"
+                  className="text-white rounded-lg font-bold text-lg md:text-2xl"
                 >
                   {logoLetter}
                 </AvatarFallback>
               )}
             </Avatar>
             <div className="flex-1">
-              <label className="font-bold text-foreground block">
+              <label className="font-bold text-sm md:text-base text-foreground block">
                 Collective Logo
               </label>
-              <p className="text-sm text-muted-foreground">
+              <p className="text-xs md:text-sm text-muted-foreground">
                 {logoType === 'letter' ? 'Letter logo' : 'Custom image'}
               </p>
             </div>
             <Button
               onClick={() => setShowLogoCustomization(!showLogoCustomization)}
               variant="outline"
-              className="border-gray-300"
+              className="border-gray-300 text-xs md:text-sm px-2 md:px-4 py-1.5 md:py-2"
             >
               {showLogoCustomization ? (
                 <>
-                  <Edit2 className="w-4 h-4 mr-2" />
+                  <Edit2 className="w-3.5 h-3.5 md:w-4 md:h-4 mr-1.5 md:mr-2" />
                   Done
                 </>
               ) : (
                 <>
-                  <Edit2 className="w-4 h-4 mr-2" />
+                  <Edit2 className="w-3.5 h-3.5 md:w-4 md:h-4 mr-1.5 md:mr-2" />
                   Customize
                 </>
               )}
@@ -472,14 +472,14 @@ export default function EditCollectivePage() {
         </div>
 
         {/* Causes Management Section */}
-        <div className="mt-8 space-y-6">
+        <div className="mt-6 md:mt-8 space-y-4 md:space-y-6">
           {/* Selected Causes */}
-          <div className='border border-blue-200 p-4 rounded-2xl bg-gradient-to-br from-blue-50 via-pink-50 to-purple-50'>
-            <h3 className="font-bold text-lg text-foreground mb-4">
+          <div className='border border-blue-200 p-3 md:p-4 rounded-2xl bg-gradient-to-br from-blue-50 via-pink-50 to-purple-50'>
+            <h3 className="font-bold text-base md:text-lg text-foreground mb-3 md:mb-4">
               Selected Causes ({selectedCauses.length})
             </h3>
             {selectedCauses.length > 0 ? (
-              <div className="space-y-3">
+              <div className="space-y-2 md:space-y-3">
                 {selectedCauses.map((cause) => {
                   const causeData = cause.cause || cause;
                   // Get category ID from cause (it's a single letter like "X", "G")
@@ -489,37 +489,31 @@ export default function EditCollectivePage() {
                   const categoryColor = category?.text || '#10B981';
                   
                   return (
-                    <div key={cause.id} className="bg-white rounded-lg p-4 shadow-sm hover:shadow-md transition-shadow">
-                      <div className="flex items-center gap-4">
-                        <Avatar className="w-12 h-12 rounded-full flex-shrink-0">
+                    <div key={cause.id} className="bg-white rounded-lg p-3 md:p-4 shadow-sm hover:shadow-md transition-shadow">
+                      <div className="flex items-center gap-3 md:gap-4">
+                        <Avatar className="w-10 h-10 md:w-12 md:h-12 rounded-full flex-shrink-0">
                           <AvatarImage src={causeData.image} alt={causeData.name} />
-                          <AvatarFallback className="bg-gray-200 text-gray-600 font-bold">
+                          <AvatarFallback className="bg-gray-200 text-gray-600 font-bold text-xs md:text-sm">
                             {causeData.name?.charAt(0).toUpperCase()}
                           </AvatarFallback>
                         </Avatar>
                         <div className="flex-1 min-w-0">
-                            <div className="flex items-center gap-2">
-                          <h4 className="font-bold text-foreground mb-1">{causeData.name}</h4>
+                            <div className="flex items-center gap-2 mb-1 flex-wrap">
+                          <h4 className="font-bold text-sm md:text-base text-foreground truncate">{causeData.name}</h4>
                           <span
-                            className="inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium"
+                            className="inline-flex items-center rounded-full px-1.5 md:px-2 py-0.5 text-[10px] md:text-xs font-medium flex-shrink-0"
                               style={{ backgroundColor: `${categoryColor}20`, color: categoryColor }}
                             >
                               {categoryName}
                             </span>
                           </div>
-                          <p className="text-sm text-muted-foreground mb-2">{causeData.mission || causeData.description}</p>
-                          {/* <span
-                            className="inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium"
-                            style={{ backgroundColor: `${categoryColor}20`, color: categoryColor }}
-                          >
-                            {categoryName}
-                          </span> */}
+                          <p className="text-xs md:text-sm text-muted-foreground line-clamp-2">{causeData.mission || causeData.description}</p>
                         </div>
                         <button
                           onClick={() => handleRemoveCause(cause.id)}
-                          className="p-2 hover:bg-gray-200 rounded-full transition-colors"
+                          className="p-1.5 md:p-2 hover:bg-gray-200 rounded-full transition-colors flex-shrink-0"
                         >
-                          <X className="w-5 h-5 text-gray-600" />
+                          <X className="w-4 h-4 md:w-5 md:h-5 text-gray-600" />
                         </button>
                       </div>
                     </div>
@@ -527,34 +521,34 @@ export default function EditCollectivePage() {
                 })}
               </div>
             ) : (
-              <p className="text-sm text-muted-foreground">No causes selected</p>
+              <p className="text-xs md:text-sm text-muted-foreground">No causes selected</p>
             )}
           </div>
 
           {/* Add or Remove Causes */}
-          <div className='border border-gray-200 p-4 rounded-2xl'>
-            <h3 className="font-bold text-lg text-foreground mb-2">
+          <div className='border border-gray-200 p-3 md:p-4 rounded-2xl'>
+            <h3 className="font-bold text-base md:text-lg text-foreground mb-2 md:mb-3">
               Add or Remove Causes <span className="text-red-500">*</span>
             </h3>
             
             {/* Search Bar */}
-            <div className="relative mb-4">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+            <div className="relative mb-3 md:mb-4">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 md:w-5 md:h-5 text-gray-400" />
               <Input
                 type="text"
                 placeholder="Search nonprofits..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 onKeyPress={handleSearchKeyPress}
-                className="pl-10 bg-gray-100 rounded-lg"
+                className="pl-9 md:pl-10 bg-gray-100 rounded-lg text-sm md:text-base"
               />
             </div>
 
             {/* Causes List */}
-            <div className="space-y-3 max-h-96 overflow-y-auto">
+            <div className="space-y-2 md:space-y-3 max-h-96 overflow-y-auto">
               {isCausesLoading ? (
-                <div className="flex items-center justify-center py-8">
-                  <Loader2 className="w-6 h-6 animate-spin text-gray-400" />
+                <div className="flex items-center justify-center py-6 md:py-8">
+                  <Loader2 className="w-5 h-5 md:w-6 md:h-6 animate-spin text-gray-400" />
                 </div>
               ) : (
                 (() => {
@@ -569,7 +563,7 @@ export default function EditCollectivePage() {
 
                   if (availableCauses.length === 0) {
                     return (
-                      <p className="text-sm text-muted-foreground text-center py-8">
+                      <p className="text-xs md:text-sm text-muted-foreground text-center py-6 md:py-8">
                         No causes found
                       </p>
                     );
@@ -586,33 +580,35 @@ export default function EditCollectivePage() {
                     return (
                       <div
                         key={cause.id}
-                        className="flex items-center gap-4 p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
+                        className="flex items-center gap-3 md:gap-4 p-3 md:p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
                       >
-                        <Avatar className="w-12 h-12 rounded-full flex-shrink-0">
+                        <Avatar className="w-10 h-10 md:w-12 md:h-12 rounded-full flex-shrink-0">
                           <AvatarImage src={cause.image} alt={cause.name} />
-                          <AvatarFallback className="bg-gray-200 text-gray-600 font-bold">
+                          <AvatarFallback className="bg-gray-200 text-gray-600 font-bold text-xs md:text-sm">
                             {cause.name?.charAt(0).toUpperCase()}
                           </AvatarFallback>
                         </Avatar>
                         <div className="flex-1 min-w-0">
-                          <h4 className="font-bold text-foreground mb-1">{cause.name}</h4>
-                          <p className="text-sm text-muted-foreground mb-2">
+                          <div className="flex items-center gap-2 mb-1 flex-wrap">
+                            <h4 className="font-bold text-sm md:text-base text-foreground truncate">{cause.name}</h4>
+                            <span
+                              className="inline-flex items-center rounded-full px-1.5 md:px-2 py-0.5 text-[10px] md:text-xs font-medium flex-shrink-0"
+                              style={{ backgroundColor: `${categoryColor}20`, color: categoryColor }}
+                            >
+                              {categoryName}
+                            </span>
+                          </div>
+                          <p className="text-xs md:text-sm text-muted-foreground line-clamp-2">
                             {cause.mission || cause.description}
                           </p>
-                          </div>
-                          <span
-                            className="inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium"
-                            style={{ backgroundColor: `${categoryColor}20`, color: categoryColor }}
-                          >
-                            {categoryName}
-                          </span>
+                        </div>
                         
-                        <label className="flex items-center cursor-pointer">
+                        <label className="flex items-center cursor-pointer flex-shrink-0">
                           <input
                             type="radio"
                             checked={isSelected}
                             onChange={() => handleToggleCause(cause)}
-                            className="w-5 h-5 text-[#1600ff] focus:ring-[#1600ff]"
+                            className="w-4 h-4 md:w-5 md:h-5 text-[#1600ff] focus:ring-[#1600ff]"
                           />
                         </label>
                       </div>
@@ -624,13 +620,14 @@ export default function EditCollectivePage() {
           </div>
         </div>
       </div>
+      </div>
 
       {/* Footer Buttons */}
-      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 p-4 flex items-center justify-between gap-4 z-10">
+      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 p-3 md:p-4 flex items-center justify-between gap-3 md:gap-4 z-10 lg:max-w-[60%] lg:left-1/2 lg:transform lg:-translate-x-1/2">
         <Button
           onClick={() => navigate(-1)}
           variant="outline"
-          className="border-gray-300 rounded-full font-semibold text-foreground w-[48%]"
+          className="border-gray-300 rounded-full font-semibold text-xs md:text-sm text-foreground w-[48%] py-2 md:py-2.5"
         >
           Cancel
         </Button>
@@ -639,23 +636,22 @@ export default function EditCollectivePage() {
             await handleSave();
             await handleSaveCauses();
           }}
-          className="bg-[#1600ff] hover:bg-[#1400cc] text-white font-semibold rounded-full px-6 w-[48%]"
+          className="bg-[#1600ff] hover:bg-[#1400cc] text-white font-semibold rounded-full px-4 md:px-6 w-[48%] py-2 md:py-2.5 text-xs md:text-sm"
           disabled={updateMutation.isPending || addCauseMutation.isPending || removeCauseMutation.isPending}
         >
           {updateMutation.isPending || addCauseMutation.isPending || removeCauseMutation.isPending ? (
             <>
-              <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+              <Loader2 className="w-3.5 h-3.5 md:w-4 md:h-4 mr-1.5 md:mr-2 animate-spin" />
               Saving...
             </>
           ) : (
             <>
-              <Save className="w-4 h-4 mr-2" />
+              <Save className="w-3.5 h-3.5 md:w-4 md:h-4 mr-1.5 md:mr-2" />
               Save Changes
             </>
           )}
         </Button>
       </div>
-    </div>
     </div>
   );
 }

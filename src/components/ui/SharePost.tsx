@@ -1,8 +1,9 @@
 import { useState, useRef, useEffect } from "react";
-import { Button } from "./button";
-import { Link, Mail, ChevronDown } from "lucide-react";
+import { Link, Mail, MessageCircle, Linkedin, Camera, X } from "lucide-react";
 import {
-  FacebookShareButton,
+  TwitterShareButton,
+  LinkedinShareButton,
+  FacebookMessengerShareButton,
 } from "react-share";
 import { MobileShareModal } from "./MobileShareModal";
 
@@ -101,6 +102,17 @@ export function SharePost({
     window.open(emailUrl, '_blank');
   };
 
+  const handleLinkedInShare = () => {
+    const shareUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`;
+    window.open(shareUrl, '_blank', 'width=600,height=700');
+  };
+
+  const handleMessengerShare = () => {
+    // Messenger share via Facebook Messenger
+    const shareUrl = `https://www.facebook.com/dialog/send?link=${encodeURIComponent(url)}&app_id=YOUR_APP_ID`;
+    window.open(shareUrl, '_blank', 'width=600,height=700');
+  };
+
   if (!isOpen) return null;
 
   // Render mobile bottom sheet for mobile devices
@@ -116,92 +128,125 @@ export function SharePost({
     );
   }
 
+  const shareOptions = [
+    {
+      id: 'copy',
+      label: 'Copy Link',
+      icon: Link,
+      bgColor: 'bg-blue-100',
+      iconColor: 'text-blue-600',
+      onClick: handleCopyLink,
+    },
+    {
+      id: 'twitter',
+      label: 'Twitter',
+      icon: X,
+      bgColor: 'bg-gray-100',
+      iconColor: 'text-gray-900',
+      onClick: () => {},
+      shareButton: true,
+    },
+    {
+      id: 'messenger',
+      label: 'Messenger',
+      icon: MessageCircle,
+      bgColor: 'bg-blue-100',
+      iconColor: 'text-blue-600',
+      onClick: handleMessengerShare,
+    },
+    {
+      id: 'linkedin',
+      label: 'LinkedIn',
+      icon: Linkedin,
+      bgColor: 'bg-gray-100',
+      iconColor: 'text-gray-900',
+      onClick: handleLinkedInShare,
+      shareButton: true,
+    },
+    {
+      id: 'email',
+      label: 'Email',
+      icon: Mail,
+      bgColor: 'bg-red-100',
+      iconColor: 'text-red-600',
+      onClick: handleEmailShare,
+    },
+    {
+      id: 'instagram',
+      label: 'Instagram',
+      icon: Camera,
+      bgColor: 'bg-pink-100',
+      iconColor: 'text-gray-900',
+      onClick: handleInstagramShare,
+    },
+  ];
+
   return (
     <div className="fixed inset-0 bg-black/50 items-center justify-center z-50 hidden md:flex">
       <div
         ref={modalRef}
-        className="bg-white rounded-xl p-6 max-w-md w-[90%] md:w-[400px] shadow-2xl"
+        className="bg-white rounded-xl p-6 max-w-md w-[90%] md:w-[450px] shadow-2xl"
       >
         {/* Header */}
-        <div className="text-center mb-6">
-          <h2 className="text-xl font-bold mb-2">{title}</h2>
-          {/* <p className="text-sm text-gray-600">
-            CRWDs are more impactful with people you know. Invite friends to
-            join and give alongside you.
-          </p> */}
-        </div>
-
-        {/* Primary Actions */}
-        <div className="space-y-3 mb-6">
-          <Button
-            onClick={handleCopyLink}
-            className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3"
-          >
-            <Link className="w-4 h-4 mr-2" />
-            {copied ? "Copied!" : "Copy Link"}
-          </Button>
-
-          <Button
-            variant="outline"
-            onClick={handleEmailShare}
-            className="w-full py-3 border-gray-300 text-gray-900 hover:bg-gray-50"
-          >
-            <Mail className="w-4 h-4 mr-2" />
-            Invite by Email
-          </Button>
-        </div>
-
-        {/* Social Sharing */}
         <div className="mb-6">
-          <label className="block text-sm font-medium text-gray-700 mb-3">
-            Share directly:
-          </label>
-          <div className="flex gap-3">
-            <FacebookShareButton
-              url={url}
-              hashtag="#CRWD"
-              className="flex-shrink-0 cursor-pointer hover:opacity-80 transition-opacity"
-            >
-              <img
-                src="/socials/facebook.png"
-                alt="Facebook"
-                className="w-12 h-12"
-              />
-            </FacebookShareButton>
-
-            <button
-              onClick={handleInstagramShare}
-              className="flex-shrink-0 cursor-pointer hover:opacity-80 transition-opacity border-none bg-transparent p-0"
-            >
-              <img
-                src="/socials/instagram.png"
-                alt="Instagram"
-                className="w-12 h-12"
-              />
-            </button>
-
-            <button
-              onClick={handleTikTokShare}
-              className="flex-shrink-0 cursor-pointer hover:opacity-80 transition-opacity border-none bg-transparent p-0"
-            >
-              <img
-                src="/socials/tiktok.png"
-                alt="TikTok"
-                className="w-12 h-12"
-              />
-            </button>
-          </div>
+          <h2 className="text-xl font-bold text-gray-900 mb-2">Share</h2>
+          <p className="text-sm text-gray-600">
+            Share this with your friends and community
+          </p>
         </div>
 
-        {/* Skip Option */}
-        <div className="text-center">
-          <button
-            onClick={onClose}
-            className="text-sm text-gray-500 hover:text-gray-700 flex items-center justify-center mx-auto gap-1 transition-colors"
-          >
-            Skip for now
-            <ChevronDown className="w-4 h-4" />
-          </button>
+        {/* Share Options Grid */}
+        <div className="grid grid-cols-3 gap-6 gap-y-8">
+          {shareOptions.map((option) => {
+            const IconComponent = option.icon;
+            
+            if (option.id === 'twitter' && option.shareButton) {
+              return (
+                <TwitterShareButton
+                  key={option.id}
+                  url={url}
+                  title={title}
+                  className="flex flex-col items-center gap-2 cursor-pointer"
+                >
+                  <div className={`w-14 h-14 ${option.bgColor} rounded-full flex items-center justify-center`}>
+                    <IconComponent className={`w-6 h-6 ${option.iconColor}`} />
+                  </div>
+                  <span className="text-sm font-medium text-gray-900">{option.label}</span>
+                </TwitterShareButton>
+              );
+            }
+            
+            if (option.id === 'linkedin' && option.shareButton) {
+              return (
+                <LinkedinShareButton
+                  key={option.id}
+                  url={url}
+                  title={title}
+                  className="flex flex-col items-center gap-2 cursor-pointer"
+                >
+                  <div className={`w-14 h-14 ${option.bgColor} rounded-full flex items-center justify-center`}>
+                    <IconComponent className={`w-6 h-6 ${option.iconColor}`} />
+                  </div>
+                  <span className="text-sm font-medium text-gray-900">{option.label}</span>
+                </LinkedinShareButton>
+              );
+            }
+
+            return (
+              <button
+                key={option.id}
+                onClick={option.onClick}
+                className="flex flex-col items-center gap-2 cursor-pointer hover:opacity-80 transition-opacity"
+              >
+                <div className={`w-14 h-14 ${option.bgColor} rounded-full flex items-center justify-center`}>
+                  <IconComponent className={`w-6 h-6 ${option.iconColor}`} />
+                </div>
+                <span className="text-sm font-medium text-gray-900">
+                  {option.id === 'copy' && copied ? 'Copied!' : option.label}
+                </span>
+              </button>
+            );
+          })}
         </div>
       </div>
     </div>

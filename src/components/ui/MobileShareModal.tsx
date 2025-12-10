@@ -1,13 +1,11 @@
 import React, { useState, useEffect } from "react";
 import {
-  Share2,
-  MessageCircle,
-  Mail,
-  Phone,
-  Linkedin,
-  MessageSquare,
   Link,
-  ChevronDown,
+  Mail,
+  MessageCircle,
+  Linkedin,
+  Camera,
+  X,
 } from "lucide-react";
 
 interface MobileShareModalProps {
@@ -53,92 +51,56 @@ export function MobileShareModal({
     }, 300); // Wait for animation to complete before calling onClose
   };
 
-  const handleShare = async (platform?: string) => {
+  const [copied, setCopied] = useState(false);
+
+  const handleCopyLink = async () => {
     try {
-      let shareUrl = url || "";
-
-      switch (platform) {
-        case "facebook":
-          shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(
-            url
-          )}&quote=${encodeURIComponent(message)}`;
-          window.open(shareUrl, "_blank");
-          break;
-        case "twitter":
-          shareUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(
-            message
-          )}&url=${encodeURIComponent(url)}`;
-          window.open(shareUrl, "_blank");
-          break;
-        case "linkedin":
-          shareUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(
-            url
-          )}&summary=${encodeURIComponent(message)}`;
-          window.open(shareUrl, "_blank");
-          break;
-        case "whatsapp":
-          shareUrl = `https://wa.me/?text=${encodeURIComponent(
-            message + (url ? "\n" + url : "")
-          )}`;
-          window.open(shareUrl, "_blank");
-          break;
-        case "telegram":
-          shareUrl = `https://t.me/share/url?url=${encodeURIComponent(
-            url
-          )}&text=${encodeURIComponent(message)}`;
-          window.open(shareUrl, "_blank");
-          break;
-        case "email":
-          {
-            const emailSubject = title || 'Check this out';
-            const emailBody = message ? `${message}\n\n${url}` : url;
-            // Open email in a new tab
-            shareUrl = `mailto:?subject=${encodeURIComponent(emailSubject)}&body=${encodeURIComponent(emailBody)}`;
-            window.open(shareUrl, '_blank');
-          }
-          break;
-        case "sms":
-          shareUrl = `sms:?body=${encodeURIComponent(
-            message + (url ? "\n" + url : "")
-          )}`;
-          window.open(shareUrl);
-          break;
-        case "instagram":
-          {
-            const shareText = title ? `${title}\n\n${url}` : (message ? `${message}\n\n${url}` : url);
-            // Open Instagram in a new window (popup) similar to Facebook
-            const instagramUrl = `https://www.instagram.com/create/details/?mediaType=PHOTO`;
-            window.open(instagramUrl, '_blank', 'width=600,height=700,scrollbars=yes,resizable=yes');
-            // Also copy to clipboard for convenience
-            await navigator.clipboard.writeText(shareText);
-          }
-          break;
-        case "tiktok":
-          {
-            const shareText = title ? `${title}\n\n${url}` : (message ? `${message}\n\n${url}` : url);
-            // Open TikTok in a new window (popup) similar to Facebook
-            const tiktokUrl = `https://www.tiktok.com/upload`;
-            window.open(tiktokUrl, '_blank', 'width=600,height=700,scrollbars=yes,resizable=yes');
-            // Also copy to clipboard for convenience
-            await navigator.clipboard.writeText(shareText);
-          }
-          break;
-        default:
-          if (navigator.share) {
-            await navigator.share({ title, text: message, url });
-          } else {
-            await navigator.clipboard.writeText(
-              message + (url ? "\n" + url : "")
-            );
-            alert("Content copied to clipboard!");
-          }
-      }
-
-      handleClose(); // Use handleClose instead of onClose
-    } catch (error) {
-      console.error("Error sharing:", error);
-      alert("Error sharing content");
+      await navigator.clipboard.writeText(url);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+      handleClose();
+    } catch (err) {
+      console.error("Failed to copy link");
     }
+  };
+
+  const handleEmailShare = () => {
+    const emailSubject = title || 'Check this out';
+    const emailBody = message ? `${message}\n\n${url}` : url;
+    const emailUrl = `mailto:?subject=${encodeURIComponent(emailSubject)}&body=${encodeURIComponent(emailBody)}`;
+    window.open(emailUrl, '_blank');
+    handleClose();
+  };
+
+  const handleTwitterShare = () => {
+    const shareUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(
+      title || message
+    )}&url=${encodeURIComponent(url)}`;
+    window.open(shareUrl, '_blank');
+    handleClose();
+  };
+
+  const handleLinkedInShare = () => {
+    const shareUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`;
+    window.open(shareUrl, '_blank');
+    handleClose();
+  };
+
+  const handleMessengerShare = () => {
+    const shareUrl = `https://www.facebook.com/dialog/send?link=${encodeURIComponent(url)}`;
+    window.open(shareUrl, '_blank');
+    handleClose();
+  };
+
+  const handleInstagramShare = () => {
+    const shareText = title ? `${title}\n\n${url}` : (message ? `${message}\n\n${url}` : url);
+    const instagramUrl = `https://www.instagram.com/create/details/?mediaType=PHOTO`;
+    window.open(instagramUrl, '_blank', 'width=600,height=700,scrollbars=yes,resizable=yes');
+    navigator.clipboard.writeText(shareText).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    });
+    handleClose();
   };
 
   if (!isVisible) return null;
@@ -160,86 +122,87 @@ export function MobileShareModal({
         onClick={(e) => e.stopPropagation()}
       >
         {/* Handle */}
-        <div className="w-10 h-1 bg-gray-300 rounded-full mx-auto mt-5 mb-5" />
+        <div className="w-10 h-1 bg-gray-300 rounded-full mx-auto mt-4 mb-4" />
 
         {/* Header */}
-        <div className="text-center mb-6 px-6">
-          <h2 className="text-xl font-bold mb-2">Check out this nonprofit</h2>
-        </div>
-
-        {/* Primary Actions */}
-        <div className="space-y-3 mb-6 px-6">
-          <button
-            onClick={() => {
-              navigator.clipboard.writeText(url);
-              alert("Link copied!");
-              handleClose(); // Use handleClose instead of onClose
-            }}
-            className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-lg flex items-center justify-center"
-          >
-            <Link className="w-4 h-4 mr-2" />
-            Copy Invite Link
-          </button>
-
-          <button
-            onClick={() => handleShare("email")}
-            className="w-full py-3 border border-gray-300 text-gray-900 hover:bg-gray-50 rounded-lg flex items-center justify-center"
-          >
-            <Mail className="w-4 h-4 mr-2" />
-            Invite by Email
-          </button>
-        </div>
-
-        {/* Social Sharing */}
         <div className="mb-6 px-6">
-          <label className="block text-sm font-medium text-gray-700 mb-3">
-            Share directly:
-          </label>
-          <div className="flex gap-3">
+          <h2 className="text-xl font-bold text-gray-900 mb-2">Share</h2>
+          <p className="text-sm text-gray-600">
+            Share this with your friends and community
+          </p>
+        </div>
+
+        {/* Share Options Grid */}
+        <div className="px-6 pb-8">
+          <div className="grid grid-cols-3 gap-6 gap-y-8">
+            {/* Copy Link */}
             <button
-              onClick={() => handleShare("facebook")}
-              className="cursor-pointer hover:opacity-80 transition-opacity border-none bg-transparent p-0"
+              onClick={handleCopyLink}
+              className="flex flex-col items-center gap-2 cursor-pointer hover:opacity-80 transition-opacity"
             >
-              <img
-                src="/socials/facebook.png"
-                alt="Facebook"
-                className="w-12 h-12"
-              />
+              <div className="w-14 h-14 bg-blue-100 rounded-full flex items-center justify-center">
+                <Link className="w-6 h-6 text-blue-600" />
+              </div>
+              <span className="text-sm font-medium text-gray-900">
+                {copied ? 'Copied!' : 'Copy Link'}
+              </span>
             </button>
 
+            {/* Twitter */}
             <button
-              onClick={() => handleShare("instagram")}
-              className="cursor-pointer hover:opacity-80 transition-opacity border-none bg-transparent p-0"
+              onClick={handleTwitterShare}
+              className="flex flex-col items-center gap-2 cursor-pointer hover:opacity-80 transition-opacity"
             >
-              <img
-                src="/socials/instagram.png"
-                alt="Instagram"
-                className="w-12 h-12"
-              />
+              <div className="w-14 h-14 bg-gray-100 rounded-full flex items-center justify-center">
+                <X className="w-6 h-6 text-gray-900" />
+              </div>
+              <span className="text-sm font-medium text-gray-900">Twitter</span>
             </button>
 
+            {/* Messenger */}
             <button
-              onClick={() => handleShare("tiktok")}
-              className="cursor-pointer hover:opacity-80 transition-opacity border-none bg-transparent p-0"
+              onClick={handleMessengerShare}
+              className="flex flex-col items-center gap-2 cursor-pointer hover:opacity-80 transition-opacity"
             >
-              <img
-                src="/socials/tiktok.png"
-                alt="TikTok"
-                className="w-12 h-12"
-              />
+              <div className="w-14 h-14 bg-blue-100 rounded-full flex items-center justify-center">
+                <MessageCircle className="w-6 h-6 text-blue-600" />
+              </div>
+              <span className="text-sm font-medium text-gray-900">Messenger</span>
+            </button>
+
+            {/* LinkedIn */}
+            <button
+              onClick={handleLinkedInShare}
+              className="flex flex-col items-center gap-2 cursor-pointer hover:opacity-80 transition-opacity"
+            >
+              <div className="w-14 h-14 bg-gray-100 rounded-full flex items-center justify-center">
+                <Linkedin className="w-6 h-6 text-gray-900" />
+              </div>
+              <span className="text-sm font-medium text-gray-900">LinkedIn</span>
+            </button>
+
+            {/* Email */}
+            <button
+              onClick={handleEmailShare}
+              className="flex flex-col items-center gap-2 cursor-pointer hover:opacity-80 transition-opacity"
+            >
+              <div className="w-14 h-14 bg-red-100 rounded-full flex items-center justify-center">
+                <Mail className="w-6 h-6 text-red-600" />
+              </div>
+              <span className="text-sm font-medium text-gray-900">Email</span>
+            </button>
+
+            {/* Instagram */}
+            <button
+              onClick={handleInstagramShare}
+              className="flex flex-col items-center gap-2 cursor-pointer hover:opacity-80 transition-opacity"
+            >
+              <div className="w-14 h-14 bg-pink-100 rounded-full flex items-center justify-center">
+                <Camera className="w-6 h-6 text-gray-900" />
+              </div>
+              <span className="text-sm font-medium text-gray-900">Instagram</span>
             </button>
           </div>
-        </div>
-
-        {/* Skip Option */}
-        <div className="text-center px-6 pb-8">
-          <button
-            onClick={handleClose} // Use handleClose instead of onClose
-            className="text-sm text-gray-500 hover:text-gray-700 flex items-center justify-center mx-auto gap-1 transition-colors"
-          >
-            Skip for now
-            <ChevronDown className="w-4 h-4" />
-          </button>
         </div>
       </div>
     </div>

@@ -41,9 +41,24 @@ function PostWithData({ update }: { update: CommunityUpdate }) {
 
   if (isLoading) {
     return (
-      <div className="bg-white rounded-lg border border-gray-200 p-3 md:p-4">
-        <div className="flex items-center justify-center py-6 md:py-8">
-          <p className="text-xs md:text-sm text-gray-500">Loading post...</p>
+      <div className="bg-white rounded-lg border border-gray-200 p-3 md:p-4 animate-pulse">
+        <div className="flex items-start gap-3 md:gap-4">
+          <div className="w-10 h-10 md:w-12 md:h-12 bg-gray-200 rounded-full flex-shrink-0"></div>
+          <div className="flex-1 space-y-3">
+            <div className="flex items-center gap-2">
+              <div className="h-4 bg-gray-200 rounded w-24"></div>
+              <div className="h-3 bg-gray-200 rounded w-16"></div>
+            </div>
+            <div className="space-y-2">
+              <div className="h-3 bg-gray-200 rounded w-full"></div>
+              <div className="h-3 bg-gray-200 rounded w-5/6"></div>
+            </div>
+            <div className="h-32 md:h-40 bg-gray-200 rounded-lg"></div>
+            <div className="flex items-center gap-4 pt-2">
+              <div className="h-4 bg-gray-200 rounded w-12"></div>
+              <div className="h-4 bg-gray-200 rounded w-16"></div>
+            </div>
+          </div>
         </div>
       </div>
     );
@@ -108,7 +123,7 @@ function NotificationSummary({ update }: { update: CommunityUpdate }) {
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-1.5 md:gap-2 flex-wrap">
               <Link
-                to={`/user-profile/${update.user.username}`}
+                to={`/user-profile/${update.user.id}`}
                 className="font-bold text-sm md:text-base text-gray-900 hover:underline block"
               >
                 {update.user.firstName && update.user.lastName 
@@ -163,7 +178,8 @@ export default function CommunityUpdates({
   return (
     <div className="w-full px-4 my-6 mb-8 md:px-0 md:my-8 md:mb-10">
       {showHeading && (
-        <div className="mb-4 md:mb-6">
+        <div className="
+        mb-4 md:mb-6">
           <h2 className=" text-base xs:text-sm sm:text-base md:text-lg lg:text-2xl font-bold text-gray-900 mb-1.5 md:mb-2">Community Updates</h2>
           <p className="text-xs md:text-sm text-gray-600">
             Activity, updates, and discoveries from your community

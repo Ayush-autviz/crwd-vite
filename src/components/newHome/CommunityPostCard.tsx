@@ -97,7 +97,7 @@ export default function CommunityPostCard({ post }: CommunityPostCardProps) {
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-1.5 md:gap-2 flex-wrap">
             <Link
-              to={`/user-profile/${post.user.username}`}
+              to={`/user-profile/${post.user.id}`}
               className="font-bold text-sm md:text-base text-gray-900 hover:underline block"
             >
               {displayName}
