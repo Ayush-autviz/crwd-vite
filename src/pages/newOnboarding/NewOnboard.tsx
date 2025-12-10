@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { googleLogin } from "@/services/api/auth";
 import { ArrowRight } from "lucide-react";
+import NewLogo from "@/assets/newLogo/NewLogo";
 
 export default function NewOnboard() {
   const navigate = useNavigate();
@@ -45,10 +46,12 @@ export default function NewOnboard() {
   return (
     <div className="min-h-screen bg-white flex flex-col items-center justify-center px-4">
       {/* Logo */}
-      <img src="/logo3.png" width={150} height={150} alt="CRWD Logo" className="mb-10" />
+      {/* <img src="/logo3.png" width={150} height={150} alt="CRWD Logo" className="mb-10" /> */}
+      <NewLogo size="lg" />
+
 
       {/* Headings */}
-      <div className="text-center mb-12 space-y-3">
+      <div className="text-center my-12 space-y-3">
         <h1 className="text-3xl md:text-4xl lg:text-5xl font-[800] text-gray-900">
           Stop Wishing You Made a Difference.
         </h1>

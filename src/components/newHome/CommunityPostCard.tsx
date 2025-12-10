@@ -95,6 +95,7 @@ export default function CommunityPostCard({ post }: CommunityPostCardProps) {
 
           {/* User Info */}
           <div className="flex-1 min-w-0">
+            <div className="flex items-center gap-2">
             <Link
               to={`/user-profile/${post.user.username}`}
               className="font-bold text-gray-900 hover:underline block"
@@ -102,6 +103,7 @@ export default function CommunityPostCard({ post }: CommunityPostCardProps) {
               {displayName}
             </Link>
             <p className="text-sm text-gray-500">@{post.user.username}</p>
+            </div>
             {post.collective && (
               <p className="text-sm text-gray-500 mt-0.5">{post.collective.name}</p>
             )}
@@ -142,7 +144,7 @@ export default function CommunityPostCard({ post }: CommunityPostCardProps) {
       )}
 
       {/* Engagement Section */}
-      <div className="flex items-center justify-between pt-3">
+      <div className="flex items-center justify-between pt-3 border-t border-gray-200">
         <div className="flex items-center gap-4">
           <button
             onClick={handleLikeClick}

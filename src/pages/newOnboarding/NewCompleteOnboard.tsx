@@ -122,9 +122,10 @@ export default function NewCompleteOnboard() {
   };
 
   const handleStartWithNonprofits = () => {
-    if (selectedCauses.length > 0) {
-      addToBoxMutation.mutate(selectedCauses);
-    }
+    // if (selectedCauses.length > 0) {
+    //   addToBoxMutation.mutate(selectedCauses);
+    // }
+    navigate('/');
   };
 
   const getCategoryInfo = (categoryId: string) => {
