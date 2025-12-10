@@ -171,7 +171,6 @@ export default function NewHome() {
     const transformedCommunityUpdates = useMemo(() => {
         return notificationsData?.results
             ?.filter((notification: any) => notification.type === "community")
-            .slice(0, 5)
             .map((notification: any) => {
                 // Extract username from body if it contains @username pattern
                 // Example: "@drake_ji donated $7.0 to test" -> "drake_ji"
@@ -286,6 +285,11 @@ export default function NewHome() {
             }) || [];
     }, [notificationsData, userProfilesMap]);
 
+    // Split community updates into three sections
+    const firstTwoUpdates = transformedCommunityUpdates.slice(0, 2);
+    const nextTwoUpdates = transformedCommunityUpdates.slice(2, 4);
+    const remainingUpdates = transformedCommunityUpdates.slice(4);
+
 
     if (!user?.id) {
         return <GuestHome />;
@@ -342,6 +346,17 @@ export default function NewHome() {
 
                 <div className=" max-w-6xl mx-auto">
                 <div className="mx-4">
+                    {/* First 2 Community Updates - Above Featured Nonprofits */}
+                    {token?.access_token && (
+                        notificationsLoading ? (
+                            <div className="flex items-center justify-center py-8">
+                                <Loader2 className="h-6 w-6 animate-spin" />
+                            </div>
+                        ) : firstTwoUpdates.length > 0 ? (
+                            <CommunityUpdates updates={firstTwoUpdates} showHeading={true} />
+                        ) : null
+                    )}
+
                     {/* Featured Nonprofits Section */}
                     {nonprofitsLoading ? (
                         <div className="flex items-center justify-center py-8">
@@ -352,6 +367,15 @@ export default function NewHome() {
                             nonprofits={transformedNonprofits}
                             seeAllLink="/search"
                         />
+                    )}
+
+                    {/* Next 2 Community Updates - Above Suggested Collectives */}
+                    {token?.access_token && (
+                        notificationsLoading ? (
+                            null
+                        ) : nextTwoUpdates.length > 0 ? (
+                            <CommunityUpdates updates={nextTwoUpdates} showHeading={false} />
+                        ) : null
                     )}
 
                     {/* Suggested Collectives Section */}
@@ -366,17 +390,13 @@ export default function NewHome() {
                         />
                     )}
 
-
-
-                    {/* Community Updates Section */}
+                    {/* Remaining Community Updates - Below Suggested Collectives */}
                     {token?.access_token && (
                         notificationsLoading ? (
-                            <div className="flex items-center justify-center py-8">
-                                <Loader2 className="h-6 w-6 animate-spin" />
-                            </div>
-                        ) : (
-                            <CommunityUpdates updates={transformedCommunityUpdates} />
-                        )
+                            null
+                        ) : remainingUpdates.length > 0 ? (
+                            <CommunityUpdates updates={remainingUpdates} showHeading={false} />
+                        ) : null
                     )}
 
                     </div>

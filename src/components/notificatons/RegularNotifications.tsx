@@ -1,7 +1,6 @@
 import React, { useMemo } from 'react';
-import NotificationItem from './NotificationItem';
-import { Loader2 } from 'lucide-react';
-import type { NotificationType } from '@/lib/types';
+import { Loader2, HandHeart, Users, Mountain } from 'lucide-react';
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 interface RegularNotificationsProps {
   notifications?: any[];
@@ -18,16 +17,16 @@ const formatTimeAgo = (dateString: string): string => {
     const diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000);
     
     if (diffInSeconds < 60) {
-      return `${diffInSeconds}s`;
+      return `${diffInSeconds} seconds ago`;
     } else if (diffInSeconds < 3600) {
       const minutes = Math.floor(diffInSeconds / 60);
-      return `${minutes}m`;
+      return `${minutes} ${minutes === 1 ? 'minute' : 'minutes'} ago`;
     } else if (diffInSeconds < 86400) {
       const hours = Math.floor(diffInSeconds / 3600);
-      return `${hours}h`;
+      return `${hours} ${hours === 1 ? 'hour' : 'hours'} ago`;
     } else {
       const days = Math.floor(diffInSeconds / 86400);
-      return `${days}d`;
+      return `${days} ${days === 1 ? 'day' : 'days'} ago`;
     }
   } catch {
     return '';
@@ -38,59 +37,65 @@ const RegularNotifications: React.FC<RegularNotificationsProps> = ({
   notifications = [], 
   isLoading = false 
 }) => {
-  // Transform API notifications to match NotificationItem props
-  // Only show personal notifications (already filtered in NotificationTabs, but double-check here)
+  // Transform API notifications to match the new UI design
   const transformedNotifications = useMemo(() => {
     if (!notifications || notifications.length === 0) return [];
 
     return notifications
       .filter((notification: any) => notification.type === "personal")
       .map((notification: any) => {
-        // Extract username from body if it contains @username pattern
-        let username = '';
-        const usernameMatch = notification.body?.match(/@(\w+)/);
-        if (usernameMatch) {
-          username = usernameMatch[1];
-        } else {
-          username = notification.user?.username || notification.data?.follower_username || '';
+        // Determine notification type and extract data
+        const isDonation = notification.title?.toLowerCase().includes('donation') || 
+                          notification.body?.toLowerCase().includes('donation') ||
+                          notification.data?.donor_id;
+        const isNewMember = notification.title?.toLowerCase().includes('member') || 
+                           notification.body?.toLowerCase().includes('joined') ||
+                           notification.data?.new_member_id;
+        
+        // Extract collective name from body or title
+        let collectiveName = '';
+        if (notification.body) {
+          const receivedMatch = notification.body.match(/received.*?donation.*?to (.+)/i);
+          if (receivedMatch) {
+            collectiveName = receivedMatch[1].trim();
+          } else {
+            const joinedMatch = notification.body.match(/joined (.+)/i);
+            if (joinedMatch) {
+              collectiveName = joinedMatch[1].trim();
+            }
+          }
+        }
+        
+        // Extract user name for new member notifications
+        let memberName = '';
+        if (isNewMember && notification.body) {
+          const nameMatch = notification.body.match(/^([^ ]+ [^ ]+)/);
+          if (nameMatch) {
+            memberName = nameMatch[1].trim();
+          }
+        }
+        
+        // Extract donation amount
+        let donationAmount = '';
+        if (isDonation && notification.body) {
+          const amountMatch = notification.body.match(/\$(\d+)/);
+          if (amountMatch) {
+            donationAmount = `$${amountMatch[1]}`;
+          }
         }
 
-        // Determine notification type based on title/body
-        let notificationType: NotificationType = 'follow';
-        if (notification.title?.includes('Follower') || notification.body?.includes('started following')) {
-          notificationType = 'follow';
-        } else if (notification.title?.includes('Mention') || notification.body?.includes('@')) {
-          notificationType = 'mention';
-        } else if (notification.title?.includes('Like')) {
-          notificationType = 'like';
-        } else if (notification.title?.includes('Comment')) {
-          notificationType = 'comment';
-        }
-
-        // Extract user ID from notification data based on type
-        const userId = 
-          notification.data?.follower_id || 
-          notification.data?.liker_id ||
-          notification.data?.user_id || 
-          notification.data?.creator_id || 
-          notification.data?.donor_id ||
-          notification.user?.id ||
-          null;
-
-        const baseNotification = {
+        return {
           id: notification.id,
-          type: notificationType as NotificationType,
-          message: notification.body || notification.title || notification.message || '',
+          type: isDonation ? 'donation' : isNewMember ? 'new_member' : 'other',
+          title: isDonation ? 'Donation Received' : isNewMember ? 'New Member' : notification.title || 'Notification',
+          description: notification.body || notification.title || '',
+          collectiveName: collectiveName,
+          memberName: memberName,
+          donationAmount: donationAmount,
           time: formatTimeAgo(notification.created_at || notification.updated_at),
           avatarUrl: notification.user?.profile_picture || notification.data?.profile_picture || '',
-          username: username,
-          userId: userId,
-          link: notification.data?.post_id ? `/posts/${notification.data.post_id}` : 
-                notification.data?.collective_id ? `/groupcrwd/${notification.data.collective_id}` :
-                userId ? `/user-profile/${userId}` : undefined,
+          collectiveId: notification.data?.collective_id,
         };
-
-        return baseNotification;
       });
   }, [notifications]);
 
@@ -122,7 +127,64 @@ const RegularNotifications: React.FC<RegularNotificationsProps> = ({
   return (
     <div className="w-full flex flex-col bg-white">
       {transformedNotifications.map((notification, idx) => (
-        <NotificationItem key={notification.id || `regular-${idx}`} {...notification} />
+        <div key={notification.id || `regular-${idx}`} className="px-4 py-6 border-b border-gray-100 last:border-b-0">
+          <div className="flex items-start gap-4">
+            {/* Avatar with overlay icon */}
+            <div className="relative flex-shrink-0">
+              {notification.type === 'donation' ? (
+                <>
+                  {/* Green circle with 'C' */}
+                  <div className="w-14 h-14 rounded-full bg-green-500 flex items-center justify-center">
+                    <span className="text-white font-bold text-lg">C</span>
+                  </div>
+                  {/* Hand icon overlay */}
+                  <div className="absolute -bottom-1 -right-1 w-6 h-6 rounded-full bg-blue-400 flex items-center justify-center border-2 border-white">
+                    <HandHeart className="w-3.5 h-3.5 text-white" />
+                  </div>
+                </>
+              ) : notification.type === 'new_member' ? (
+                <>
+                  {/* Gray circle with landscape icon */}
+                  <div className="w-14 h-14 rounded-full bg-gray-200 flex items-center justify-center border-2 border-gray-300">
+                    <Mountain className="w-7 h-7 text-gray-500" />
+                  </div>
+                  {/* People icon overlay */}
+                  <div className="absolute -bottom-1 -right-1 w-6 h-6 rounded-full bg-green-400 flex items-center justify-center border-2 border-white">
+                    <Users className="w-3.5 h-3.5 text-white" />
+                  </div>
+                </>
+              ) : (
+                <>
+                  {/* Default avatar */}
+                  <Avatar className="w-14 h-14">
+                    <AvatarImage src={notification.avatarUrl} />
+                    <AvatarFallback className="bg-gray-200 text-gray-600">
+                      {notification.title.charAt(0)}
+                    </AvatarFallback>
+                  </Avatar>
+                </>
+              )}
+            </div>
+
+            {/* Content */}
+            <div className="flex-1 min-w-0">
+              <h3 className="font-bold text-gray-900 text-base mb-1">
+                {notification.title}
+              </h3>
+              <p className="text-gray-700 text-sm mb-2">
+                {notification.type === 'donation' 
+                  ? `Your collective ${notification.collectiveName || 'Community Champions'} received a ${notification.donationAmount || '$50'} donation`
+                  : notification.type === 'new_member'
+                  ? `${notification.memberName || 'Taylor Kim'} joined ${notification.collectiveName || 'Community Champions'}`
+                  : notification.description
+                }
+              </p>
+              <p className="text-gray-500 text-xs">
+                {notification.time}
+              </p>
+            </div>
+          </div>
+        </div>
       ))}
     </div>
   );

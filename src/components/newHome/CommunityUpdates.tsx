@@ -28,6 +28,7 @@ interface CommunityUpdate {
 
 interface CommunityUpdatesProps {
   updates?: CommunityUpdate[];
+  showHeading?: boolean;
 }
 
 // Component to display full post when postId exists
@@ -152,6 +153,7 @@ function NotificationSummary({ update }: { update: CommunityUpdate }) {
 
 export default function CommunityUpdates({
   updates = [],
+  showHeading = true,
 }: CommunityUpdatesProps) {
 
   if (!updates || updates.length === 0) {
@@ -160,12 +162,14 @@ export default function CommunityUpdates({
 
   return (
     <div className="px-4 my-8 mb-10 md:px-0 md:mt-10">
-      <div className="mb-4">
-        <h2 className="text-3xl font-bold text-gray-900 mb-2">Community Updates</h2>
-        <p className="text-sm text-gray-600">
-          Activity, updates, and discoveries from your community
-        </p>
-      </div>
+      {showHeading && (
+        <div className="mb-4">
+          <h2 className=" lg:text-4xl text-3xl font-bold text-gray-900 mb-2">Community Updates</h2>
+          <p className="text-sm text-gray-600">
+            Activity, updates, and discoveries from your community
+          </p>
+        </div>
+      )}
 
       <div className="space-y-4">
         {updates.map((update) => {

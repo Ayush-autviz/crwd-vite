@@ -89,16 +89,30 @@ export default function WaitlistPage() {
     
     setIsSubmitting(true)
     setWaitlistSuccess(false)
-    const category = waitlistForm.causes.length > 0 ? waitlistForm.causes[0] : "General"
-    const amountMatch = waitlistForm.monthlyAmount.match(/\d+/g)
-    const amountValue = amountMatch ? amountMatch[0] : "0"
+    
+    // Extract category from causes (first one or null)
+    const category = waitlistForm.causes.length > 0 ? waitlistForm.causes[0] : null
+    
+    // Extract amount from monthlyAmount string (e.g., "$5-10" -> "5" or "-1" if not provided)
+    let amount = "-1"
+    if (waitlistForm.monthlyAmount) {
+      const amountMatch = waitlistForm.monthlyAmount.match(/\d+/g)
+      if (amountMatch && amountMatch.length > 0) {
+        // Take the first number from the range (e.g., "$5-10" -> "5")
+        amount = amountMatch[0]
+      }
+    }
 
     try {
       await joinWaitlist({
+        type: "waitlist",
         name: waitlistForm.name.trim(),
         email: waitlistForm.email.trim(),
-        category,
-        amount: amountValue,
+        category: category || null,
+        amount: amount,
+        social_media_handle: null,
+        idea: null,
+        vibe: null,
       })
       toast.success("You're on the waitlist! We'll be in touch soon.")
       setWaitlistForm({
@@ -121,11 +135,32 @@ export default function WaitlistPage() {
     if (!collectiveForm.name.trim() || !collectiveForm.email.trim() || !collectiveForm.idea.trim()) return
     
     setIsSubmitting(true)
-    // TODO: Add API call to start collective
-    setTimeout(() => {
+    
+    try {
+      await joinWaitlist({
+        type: "collective",
+        name: collectiveForm.name.trim(),
+        email: collectiveForm.email.trim(),
+        category: collectiveForm.vibe || null,
+        amount: "-1",
+        social_media_handle: collectiveForm.socialHandle.trim() || null,
+        idea: collectiveForm.idea.trim() || null,
+        vibe: collectiveForm.vibe || null,
+      })
+      toast.success("Thanks for your interest! We'll be in touch soon.")
+      setCollectiveForm({
+        name: "",
+        email: "",
+        socialHandle: "",
+        idea: "",
+        vibe: ""
+      })
+    } catch (error) {
+      console.error("Collective submission failed:", error)
+      toast.error("We couldn't submit your request. Please try again.")
+    } finally {
       setIsSubmitting(false)
-      // Show success message or redirect
-    }, 1000)
+    }
   }
 
   const toggleCause = (cause: string) => {

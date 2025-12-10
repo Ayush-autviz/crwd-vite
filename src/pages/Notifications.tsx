@@ -4,6 +4,7 @@ import NotificationTabs from "../components/notificatons/NotificationTabs";
 import { useAuthStore } from "@/stores/store";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
+import BackButton from "@/components/ui/BackButton";
 
 export default function NotificationsPage() {
   const { user: currentUser } = useAuthStore();
@@ -55,13 +56,18 @@ export default function NotificationsPage() {
   }
   return (
     <section className="bg-white w-full flex flex-col min-h-screen">
-      <ProfileNavbar title="Notifications" />
+      {/* <ProfileNavbar title="Notifications" showBackButton={true} /> */}
+      <div className="h-16 flex items-center gap-2 mx-4">
+        <BackButton className="rounded-full" />
+        <h1 className="text-2xl font-bold text-gray-900">Notifications</h1>
+      </div>
+
       <div className="flex-1">
         <NotificationTabs />
       </div>
-      <div className="hidden md:block mt-auto">
+      {/* <div className="hidden md:block mt-auto">
         <Footer />
-      </div>
+      </div> */}
     </section>
   );
 }
