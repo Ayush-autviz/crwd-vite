@@ -7,6 +7,7 @@ import { useQuery } from "@tanstack/react-query";
 import { getUnreadCount } from "@/services/api/notification";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { useState, useEffect } from "react";
+import NewLogo from "@/assets/newLogo";
 
 
 interface ProfileNavbarProps {
@@ -256,7 +257,7 @@ export default function ProfileNavbar({
                       <div className="border-t border-gray-200 mx-6"></div>
 
                       {/* Log Out Section */}
-                      <div className="px-6 m-6 rounded-lg py-4 border border-gray-200 flex items-center justify-between">
+                      <div className="px-6 m-6 rounded-lg py-4 border border-gray-200 flex items-center justify-center">
                         <button
                           onClick={handleLogout}
                           className="flex items-center gap-2 text-red-600 hover:text-red-700 transition-colors"
@@ -286,7 +287,7 @@ export default function ProfileNavbar({
       {showDesktopMenu && title === "Home" && (
         <header className="w-full items-center justify-between px-6 py-4 border-b-2 border-gray-200 bg-gray-50 sticky top-0 z-10 hidden md:flex">
           {/* Logo on the left */}
-          <div className="flex-shrink-0">
+          {/* <div className="flex-shrink-0">
             <Link to="/waitlist">
               <img
                 src="/logo3.png"
@@ -296,7 +297,9 @@ export default function ProfileNavbar({
                 className="object-contain"
               />
             </Link>
-          </div>
+          </div> */}
+
+          <NewLogo />
 
           {/* Action buttons on the right */}
           <div className="flex items-center gap-2.5">
@@ -413,9 +416,9 @@ export default function ProfileNavbar({
                       <div className="border-t border-gray-200 mx-6"></div>
 
                       {/* Log Out Section */}
-                      <div className="px-6 m-6 rounded-lg py-4 border border-gray-200 flex items-center justify-between">
+                      <div onClick={handleLogout} className="px-6 m-6 rounded-lg py-4 border border-gray-200 hover:bg-gray-100 transition-colors flex items-center justify-center">
                         <button
-                          onClick={handleLogout}
+                          
                           className="flex items-center gap-2 text-red-600 hover:text-red-700 transition-colors"
                         >
                           <LogOut className="h-5 w-5" />

@@ -51,7 +51,7 @@ export default function NewSuggestedCollectives({
   return (
     <div className="px-4 mt-8 md:px-0 md:mt-10">
       <div className="flex justify-between items-center mb-4">
-        <h2 className="text-2xl font-bold">Suggested Collectives</h2>
+        <h2 className="text-3xl font-bold">Suggested Collectives</h2>
         <Link to={seeAllLink}>
           <Button variant="link" className="text-[#1600ff] p-0 h-auto flex items-center">
             See all

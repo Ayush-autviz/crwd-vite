@@ -281,8 +281,8 @@ export default function ProfileActivityCard({
                 )}
               </div>
 
-              {/* <Link to={`/post/${post.id}`} className="block"> */}
-              <a href={`/post/${post.id}`} className="block">
+              <Link to={`/post/${post.id}`} className="block">
+              {/* <a href={`/post/${post.id}`} className="block"> */}
                 <div className="text-sm text-gray-900 leading-5 mb-3 whitespace-pre-line">
                   {post.text}
                 </div>
@@ -384,8 +384,8 @@ export default function ProfileActivityCard({
                     <Share2 className="w-[18px] h-[18px] text-gray-500" />
                   </button>
                 </div>
-              </a>
-              {/* </Link> */}
+              {/* </a> */}
+              </Link>
             </div>
           </div>
         </CardContent>

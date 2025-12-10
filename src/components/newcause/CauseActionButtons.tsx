@@ -41,12 +41,12 @@ export default function CauseActionButtons({
         Add to Donation Box
       </Button>
       
-      <Button
+      {/* <Button
         onClick={handleDonate}
         className="w-full bg-[#1600ff] hover:bg-[#1400cc] text-white font-semibold rounded-full py-5 text-base"
       >
         Be the First to Donate
-      </Button>
+      </Button> */}
     </div>
   );
 }

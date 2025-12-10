@@ -278,38 +278,41 @@ export default function GuestHome() {
 
                         {/* Menu Items */}
                         <div className="px-6 pb-4 space-y-1">
-                            <button
+                            {/* <button
                                 onClick={() => {
                                     navigate("/onboarding");
                                     handleCloseMenu();
-                                }}
+                                }} */}
 
+                                <a href="/onboarding"
                                 className="flex items-center gap-3 py-3 px-2 rounded-lg hover:bg-gray-100 transition-colors w-full text-left"
 
                             >
                                 <LogIn className="h-5 w-5 text-[#1600ff] group-hover:text-white transition-colors" />
                                 <span>Log In/Get Started</span>
-                            </button>
-                            <button
+                            </a>
+                            {/* <button
                                 onClick={() => {
                                     navigate("/circles");
                                     handleCloseMenu();
-                                }}
+                                }} */}
+                                <a href="/circles"
                                 className="flex items-center gap-3 py-3 px-2 rounded-lg hover:bg-gray-100 transition-colors w-full text-left"
                             >
                                 <Users className="h-5 w-5 text-[#1600ff]" />
                                 <span className="text-gray-900 font-medium">Collectives</span>
-                            </button>
-                            <button
+                            </a>
+                            {/* <button
                                 onClick={() => {
                                     navigate("/donation");
                                     handleCloseMenu();
-                                }}
+                                }} */}
+                                <a href="/donation"
                                 className="flex items-center gap-3 py-3 px-2 rounded-lg hover:bg-gray-100 transition-colors w-full text-left"
                             >
                                 <CheckSquare className="h-5 w-5 text-[#1600ff]" />
                                 <span className="text-gray-900 font-medium">Donation Box</span>
-                            </button>
+                            </a>
                         </div>
 
                         {/* Separator */}
@@ -317,16 +320,17 @@ export default function GuestHome() {
 
                         {/* Learn More */}
                         <div className="px-6 py-4">
-                            <button
+                            {/* <button
                                 onClick={() => {
                                     navigate("/waitlist");
                                     handleCloseMenu();
-                                }}
+                                }} */}
+                                <a href="/waitlist"
                                 className="flex items-center gap-3 py-3 px-2 rounded-lg hover:bg-gray-100 transition-colors w-full text-left"
                             >
                                 <Settings className="h-5 w-5 text-[#1600ff]" />
                                 <span className="text-gray-900 font-medium">Learn More</span>
-                            </button>
+                            </a>
                         </div>
                     </div>
                 </div>
