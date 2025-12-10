@@ -9,34 +9,34 @@ export default function SettingsTerms() {
       <ProfileNavbar title="Terms of Use" />
 
       <div className="flex-1 w-full bg-white md:rounded-2xl mt-0 md:mt-8 overflow-hidden">
-        <div className="max-w-4xl mx-auto p-6">
+        <div className="max-w-4xl mx-auto p-3 md:p-4 lg:p-6">
           <Card className="border-none shadow-none">
             <CardContent className="p-0">
               {/* <div className="mb-6">
                 <BackButton variant="outlined" />
               </div> */}
               <div className="prose prose-blue max-w-none">
-                <h1 className="text-3xl font-bold mb-8">Terms of Use</h1>
+                <h1 className="text-2xl md:text-3xl font-bold mb-6 md:mb-8">Terms of Use</h1>
 
-                <section className="mb-8">
-                  <h2 className="text-2xl font-semibold mb-4">
+                <section className="mb-6 md:mb-8">
+                  <h2 className="text-xl md:text-2xl font-semibold mb-3 md:mb-4">
                     1. Acceptance of Terms
                   </h2>
-                  <p className="text-gray-600 mb-4">
+                  <p className="text-sm md:text-base text-gray-600 mb-3 md:mb-4">
                     By accessing and using CRWD, you accept and agree to be
                     bound by the terms and provision of this agreement.
                   </p>
                 </section>
 
-                <section className="mb-8">
-                  <h2 className="text-2xl font-semibold mb-4">
+                <section className="mb-6 md:mb-8">
+                  <h2 className="text-xl md:text-2xl font-semibold mb-3 md:mb-4">
                     2. Use License
                   </h2>
-                  <p className="text-gray-600 mb-4">
+                  <p className="text-sm md:text-base text-gray-600 mb-3 md:mb-4">
                     Permission is granted to temporarily use CRWD for personal,
                     non-commercial transitory viewing only.
                   </p>
-                  <ul className="list-disc pl-6 text-gray-600 mb-4">
+                  <ul className="list-disc pl-5 md:pl-6 text-sm md:text-base text-gray-600 mb-3 md:mb-4 space-y-1">
                     <li>Modify or copy the materials</li>
                     <li>Use the materials for commercial purposes</li>
                     <li>Attempt to reverse engineer any software</li>
@@ -44,32 +44,32 @@ export default function SettingsTerms() {
                   </ul>
                 </section>
 
-                <section className="mb-8">
-                  <h2 className="text-2xl font-semibold mb-4">
+                <section className="mb-6 md:mb-8">
+                  <h2 className="text-xl md:text-2xl font-semibold mb-3 md:mb-4">
                     3. User Accounts
                   </h2>
-                  <p className="text-gray-600 mb-4">
+                  <p className="text-sm md:text-base text-gray-600 mb-3 md:mb-4">
                     You are responsible for maintaining the confidentiality of
                     your account and password.
                   </p>
                 </section>
 
-                <section className="mb-8">
-                  <h2 className="text-2xl font-semibold mb-4">4. Donations</h2>
-                  <p className="text-gray-600 mb-4">
+                <section className="mb-6 md:mb-8">
+                  <h2 className="text-xl md:text-2xl font-semibold mb-3 md:mb-4">4. Donations</h2>
+                  <p className="text-sm md:text-base text-gray-600 mb-3 md:mb-4">
                     All donations made through CRWD are final and non-refundable
                     unless required by law.
                   </p>
                 </section>
 
-                <section className="mb-8">
-                  <h2 className="text-2xl font-semibold mb-4">
+                <section className="mb-6 md:mb-8">
+                  <h2 className="text-xl md:text-2xl font-semibold mb-3 md:mb-4">
                     5. Prohibited Uses
                   </h2>
-                  <p className="text-gray-600 mb-4">
+                  <p className="text-sm md:text-base text-gray-600 mb-3 md:mb-4">
                     You may not use our service:
                   </p>
-                  <ul className="list-disc pl-6 text-gray-600 mb-4">
+                  <ul className="list-disc pl-5 md:pl-6 text-sm md:text-base text-gray-600 mb-3 md:mb-4 space-y-1">
                     <li>For any unlawful purpose</li>
                     <li>To harass, abuse, or harm others</li>
                     <li>To transmit spam or malicious content</li>
@@ -77,17 +77,17 @@ export default function SettingsTerms() {
                   </ul>
                 </section>
 
-                <section className="mb-8">
-                  <h2 className="text-2xl font-semibold mb-4">
+                <section className="mb-6 md:mb-8">
+                  <h2 className="text-xl md:text-2xl font-semibold mb-3 md:mb-4">
                     6. Termination
                   </h2>
-                  <p className="text-gray-600 mb-4">
+                  <p className="text-sm md:text-base text-gray-600 mb-3 md:mb-4">
                     We may terminate your access to the service at any time for
                     violations of these terms.
                   </p>
                 </section>
 
-                <div className="text-sm text-gray-500 mt-8 pt-8 border-t">
+                <div className="text-xs md:text-sm text-gray-500 mt-6 md:mt-8 pt-6 md:pt-8 border-t">
                   Last updated: December 2024
                 </div>
               </div>

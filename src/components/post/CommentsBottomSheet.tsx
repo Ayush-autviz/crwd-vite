@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useMemo } from 'react';
 import { X, MessageCircle, Send, Loader2 } from 'lucide-react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { getPostComments, createPostComment, getCommentReplies } from '@/services/api/social';
@@ -71,37 +71,43 @@ export default function CommentsBottomSheet({
     enabled: isOpen && !!post.id,
   });
 
-  // Transform API comments to CommentData format
-  const apiComments = commentsData?.results?.map((comment: any) => ({
-    id: comment.id,
-    username: comment.user?.username || comment.user?.full_name || 'Unknown User',
-    avatarUrl: comment.user?.profile_picture || '/placeholder.svg',
-    content: comment.content,
-    timestamp: new Date(comment.created_at),
-    likes: 0,
-    replies: [],
-    repliesCount: comment.replies_count || 0,
-    parentComment: comment.parent_comment,
-    userId: comment.user?.id,
-  })) || [];
+  // Transform API comments to CommentData format - memoized to prevent infinite loops
+  const apiComments = useMemo(() => {
+    return commentsData?.results?.map((comment: any) => ({
+      id: comment.id,
+      username: comment.user?.username || comment.user?.full_name || 'Unknown User',
+      avatarUrl: comment.user?.profile_picture || '/placeholder.svg',
+      content: comment.content,
+      timestamp: new Date(comment.created_at),
+      likes: 0,
+      replies: [],
+      repliesCount: comment.replies_count || 0,
+      parentComment: comment.parent_comment,
+      userId: comment.user?.id,
+    })) || [];
+  }, [commentsData?.results]);
 
   // Update comments when API data changes, but preserve existing replies
   useEffect(() => {
-    if (apiComments.length > 0) {
-      setComments(prev => {
-        // Preserve replies that were already loaded
-        return apiComments.map((apiComment: CommentData) => {
-          const existingComment = prev.find(c => c.id === apiComment.id);
-          return {
-            ...apiComment,
-            replies: existingComment?.replies || [],
-          };
+    // Only update if we have commentsData (not undefined/null)
+    if (commentsData !== undefined) {
+      if (apiComments.length > 0) {
+        setComments(prev => {
+          // Preserve replies that were already loaded
+          return apiComments.map((apiComment: CommentData) => {
+            const existingComment = prev.find(c => c.id === apiComment.id);
+            return {
+              ...apiComment,
+              replies: existingComment?.replies || [],
+            };
+          });
         });
-      });
-    } else {
-      setComments([]);
+      } else {
+        // Only clear if we actually have no comments (not just loading)
+        setComments(prev => prev.length > 0 ? [] : prev);
+      }
     }
-  }, [apiComments]);
+  }, [apiComments, commentsData]);
 
   // Create comment mutation
   const createCommentMutation = useMutation({

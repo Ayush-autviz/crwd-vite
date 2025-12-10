@@ -103,7 +103,7 @@ export default function NotificationTabs() {
           />
         )}
       </div>
-      <div className="h-10 md:hidden" />
+      <div className="h-8 md:h-10" />
     </div>
   );
 }

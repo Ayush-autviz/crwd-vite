@@ -162,23 +162,23 @@ const CommunityUpdates: React.FC<CommunityUpdatesProps> = ({
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center py-12">
-        <Loader2 className="w-6 h-6 animate-spin text-gray-400" />
-        <span className="ml-2 text-sm text-gray-600">Loading community updates...</span>
+      <div className="flex items-center justify-center py-8 md:py-12">
+        <Loader2 className="w-5 h-5 md:w-6 md:h-6 animate-spin text-gray-400" />
+        <span className="ml-1.5 md:ml-2 text-xs md:text-sm text-gray-600">Loading community updates...</span>
       </div>
     );
   }
 
   if (transformedPosts.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center py-16 px-4">
-        <div className="w-16 h-16 mx-auto mb-4 bg-gray-100 rounded-full flex items-center justify-center">
-          <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <div className="flex flex-col items-center justify-center py-12 md:py-16 px-3 md:px-4">
+        <div className="w-12 h-12 md:w-16 md:h-16 mx-auto mb-3 md:mb-4 bg-gray-100 rounded-full flex items-center justify-center">
+          <svg className="w-6 h-6 md:w-8 md:h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
           </svg>
         </div>
-        <h3 className="text-lg font-semibold text-gray-900 mb-2">No community updates yet</h3>
-        <p className="text-sm text-gray-500 text-center max-w-sm">
+        <h3 className="text-base md:text-lg font-semibold text-gray-900 mb-1.5 md:mb-2">No community updates yet</h3>
+        <p className="text-xs md:text-sm text-gray-500 text-center max-w-sm">
           When members of your collectives post updates or join, you'll see them here.
         </p>
       </div>
@@ -197,30 +197,30 @@ const CommunityUpdates: React.FC<CommunityUpdatesProps> = ({
             key={post.id}
             className="overflow-hidden border-0 shadow-none rounded-none border-b border-gray-200 bg-white"
           >
-            <CardContent className="">
-              <div className="flex gap-3">
+            <CardContent className="p-3 md:p-4">
+              <div className="flex gap-2.5 md:gap-3">
                 {post.profileLink ? (
                   <Link to={post.profileLink}>
-                    <Avatar className="h-10 w-10 flex-shrink-0 cursor-pointer hover:opacity-80 transition-opacity">
+                    <Avatar className="h-9 w-9 md:h-10 md:w-10 flex-shrink-0 cursor-pointer hover:opacity-80 transition-opacity">
                       <AvatarImage src={post.avatarUrl} alt={post.username} />
-                      <AvatarFallback>{post.username?.charAt(0).toUpperCase() || 'U'}</AvatarFallback>
+                      <AvatarFallback className="text-xs md:text-sm">{post.username?.charAt(0).toUpperCase() || 'U'}</AvatarFallback>
                     </Avatar>
                   </Link>
                 ) : (
-                  <Avatar className="h-10 w-10 flex-shrink-0">
+                  <Avatar className="h-9 w-9 md:h-10 md:w-10 flex-shrink-0">
                     <AvatarImage src={post.avatarUrl} alt={post.username} />
-                    <AvatarFallback>{post.username?.charAt(0).toUpperCase() || 'U'}</AvatarFallback>
+                    <AvatarFallback className="text-xs md:text-sm">{post.username?.charAt(0).toUpperCase() || 'U'}</AvatarFallback>
                   </Avatar>
                 )}
 
                 <div className="flex-1 min-w-0">
                   {!post.isDonation && (
                     <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-1">
-                        <span className="font-semibold text-sm text-gray-900">
+                      <div className="flex items-center gap-0.5 md:gap-1">
+                        <span className="font-semibold text-xs md:text-sm text-gray-900">
                           {post.username}
                         </span>
-                        <span className="text-xs text-gray-400">
+                        <span className="text-[10px] md:text-xs text-gray-400">
                           • {post.time}
                         </span>
                       </div>
@@ -230,20 +230,20 @@ const CommunityUpdates: React.FC<CommunityUpdatesProps> = ({
 
                   {post.org && (
                     <Link to={post.collectiveId ? `/groupcrwd/${post.collectiveId}` : `/groupcrwd`}>
-                      <div className="text-xs text-blue-600 hover:underline cursor-pointer">
+                      <div className="text-[10px] md:text-xs text-blue-600 hover:underline cursor-pointer">
                         {typeof post.org === 'string' && post.org.startsWith('/') ? post.groupName : post.org}
                       </div>
                     </Link>
                   )}
                   {post.groupName && !post.org && (
                     <Link to={post.collectiveId ? `/groupcrwd/${post.collectiveId}` : `/groupcrwd`}>
-                      <div className="text-xs text-blue-600 hover:underline cursor-pointer">
+                      <div className="text-[10px] md:text-xs text-blue-600 hover:underline cursor-pointer">
                         {post.groupName}
                       </div>
                     </Link>
                   )}
 
-                  <div className="text-[0.98rem] mt-2 mb-3 text-gray-700 leading-snug">
+                  <div className="text-sm md:text-[0.98rem] mt-1.5 md:mt-2 mb-2 md:mb-3 text-gray-700 leading-snug">
                     {(() => {
                       if (post.isDonation) {
                         return (
@@ -315,7 +315,7 @@ const CommunityUpdates: React.FC<CommunityUpdatesProps> = ({
                   </div>
 
                   {post.imageUrl && (
-                    <div className="w-full h-48 rounded-lg overflow-hidden mb-3 lg:max-w-[600px]">
+                    <div className="w-full h-40 md:h-48 rounded-lg overflow-hidden mb-2 md:mb-3 lg:max-w-[600px]">
                       <img
                         src={post.imageUrl}
                         alt="Post"
@@ -325,19 +325,19 @@ const CommunityUpdates: React.FC<CommunityUpdatesProps> = ({
                   )}
 
                   {post.linkPreview && (
-                    <div className="border border-gray-200 rounded-lg p-3 mb-3">
-                      <h3 className="font-semibold text-gray-900 text-[0.98rem] mb-1">
+                    <div className="border border-gray-200 rounded-lg p-2.5 md:p-3 mb-2 md:mb-3">
+                      <h3 className="font-semibold text-gray-900 text-sm md:text-[0.98rem] mb-0.5 md:mb-1">
                         {post.linkPreview.title}
                       </h3>
-                      <p className="text-[0.98rem] text-gray-600">
+                      <p className="text-xs md:text-[0.98rem] text-gray-600">
                         {post.linkPreview.description}
                       </p>
                     </div>
                   )}
 
                   {post.isEvent && post.eventDetails && (
-                    <div className="space-y-2 mb-3">
-                      <div className="flex items-center gap-4 text-[0.98rem]">
+                    <div className="space-y-1.5 md:space-y-2 mb-2 md:mb-3">
+                      <div className="flex items-center gap-2 md:gap-4 text-xs md:text-[0.98rem] flex-wrap">
                         <div>
                           <span className="font-semibold text-gray-900">
                             Date
@@ -371,7 +371,7 @@ const CommunityUpdates: React.FC<CommunityUpdatesProps> = ({
                           </span>
                         </div>
                       </div>
-                      <div className="text-[0.98rem]">
+                      <div className="text-xs md:text-[0.98rem]">
                         <span className="font-semibold text-gray-900">
                           Place
                         </span>

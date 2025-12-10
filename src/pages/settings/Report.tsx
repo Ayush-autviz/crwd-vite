@@ -83,27 +83,27 @@ export default function SettingsReport() {
       <ProfileNavbar title="Report an Issue" />
 
       <div className="flex-1 w-full bg-white md:rounded-2xl mt-0 md:mt-8 overflow-hidden">
-        <div className="max-w-2xl mx-auto p-6">
+        <div className="max-w-2xl mx-auto p-3 md:p-4 lg:p-6">
           <Card className="border-none shadow-none">
             <CardContent className="p-0">
               {/* <div className="mb-6">
                 <BackButton variant="outlined" />
               </div> */}
-              <div className="mb-8">
-                <h1 className="text-2xl font-bold mb-2">Report an Issue</h1>
-                <p className="text-gray-600">
+              <div className="mb-6 md:mb-8">
+                <h1 className="text-xl md:text-2xl font-bold mb-1.5 md:mb-2">Report an Issue</h1>
+                <p className="text-sm md:text-base text-gray-600">
                   Help us improve CRWD by reporting any issues you encounter or providing feedback.
                 </p>
               </div>
 
-              <form onSubmit={handleSubmit} className="space-y-6">
-                <div className="space-y-2">
-                  <Label htmlFor="type">Issue Type</Label>
+              <form onSubmit={handleSubmit} className="space-y-4 md:space-y-6">
+                <div className="space-y-1.5 md:space-y-2">
+                  <Label htmlFor="type" className="text-sm md:text-base">Issue Type</Label>
                   <Select
                     value={formData.type}
                     onValueChange={handleSelectChange}
                   >
-                    <SelectTrigger>
+                    <SelectTrigger className="text-sm md:text-base">
                       <SelectValue placeholder="Select issue type" />
                     </SelectTrigger>
                     <SelectContent>
@@ -115,8 +115,8 @@ export default function SettingsReport() {
                   </Select>
                 </div>
 
-                <div className="space-y-2">
-                  <Label htmlFor="title">Title</Label>
+                <div className="space-y-1.5 md:space-y-2">
+                  <Label htmlFor="title" className="text-sm md:text-base">Title</Label>
                   <Input
                     id="title"
                     name="title"
@@ -124,11 +124,12 @@ export default function SettingsReport() {
                     onChange={handleChange}
                     placeholder="Brief description of the issue"
                     required
+                    className="text-sm md:text-base"
                   />
                 </div>
 
-                <div className="space-y-2">
-                  <Label htmlFor="description">Description</Label>
+                <div className="space-y-1.5 md:space-y-2">
+                  <Label htmlFor="description" className="text-sm md:text-base">Description</Label>
                   <Textarea
                     id="description"
                     name="description"
@@ -136,26 +137,26 @@ export default function SettingsReport() {
                     onChange={handleChange}
                     placeholder="Please provide a detailed description of the issue"
                     required
-                    className="min-h-[100px]"
+                    className="min-h-[80px] md:min-h-[100px] text-sm md:text-base"
                   />
                 </div>
 
-                <div className="space-y-2">
-                  <Label htmlFor="steps">Steps to Reproduce</Label>
+                <div className="space-y-1.5 md:space-y-2">
+                  <Label htmlFor="steps" className="text-sm md:text-base">Steps to Reproduce</Label>
                   <Textarea
                     id="steps"
                     name="steps"
                     value={formData.steps}
                     onChange={handleChange}
                     placeholder="1. First step&#10;2. Second step&#10;3. And so on..."
-                    className="min-h-[100px]"
+                    className="min-h-[80px] md:min-h-[100px] text-sm md:text-base"
                   />
                 </div>
 
-                <div className="flex flex-col sm:flex-row gap-4 pt-4">
+                <div className="flex flex-col sm:flex-row gap-3 md:gap-4 pt-3 md:pt-4">
                   <Button
                     type="submit"
-                    className="bg-blue-600 hover:bg-blue-700"
+                    className="bg-blue-600 hover:bg-blue-700 text-sm md:text-base py-2 md:py-2.5"
                     disabled={reportIssueMutation.isPending}
                   >
                     {reportIssueMutation.isPending ? "Submitting..." : "Submit Report"}
@@ -169,15 +170,16 @@ export default function SettingsReport() {
                       description: "",
                       steps: "",
                     })}
+                    className="text-sm md:text-base py-2 md:py-2.5"
                   >
                     Clear Form
                   </Button>
                 </div>
               </form>
 
-              <div className="mt-8 p-4 bg-gray-50 rounded-lg">
-                <h3 className="font-semibold mb-2">Tips for Submitting a Good Report</h3>
-                <ul className="list-disc pl-6 text-gray-600 space-y-1">
+              <div className="mt-6 md:mt-8 p-3 md:p-4 bg-gray-50 rounded-lg">
+                <h3 className="font-semibold mb-1.5 md:mb-2 text-sm md:text-base">Tips for Submitting a Good Report</h3>
+                <ul className="list-disc pl-5 md:pl-6 text-xs md:text-sm text-gray-600 space-y-0.5 md:space-y-1">
                   <li>Be specific and provide clear details about the issue</li>
                   <li>Include steps to reproduce the problem</li>
                   <li>Add screenshots or screen recordings if relevant</li>
@@ -189,7 +191,7 @@ export default function SettingsReport() {
           </Card>
         </div>
       </div>
-      <div className="h-20" />
+      <div className="h-16 md:h-20" />
     </div>
   );
 }

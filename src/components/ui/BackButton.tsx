@@ -38,12 +38,12 @@ const BackButton: React.FC<BackButtonProps> = ({
     }
   };
 
-  const baseStyles = "inline-flex items-center gap-2 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 rounded-lg";
+  const baseStyles = "inline-flex items-center gap-1.5 md:gap-2 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 rounded-lg";
 
   const variantStyles = {
-    default: "px-3 py-2 hover:bg-gray-100 text-gray-700 hover:text-gray-900",
-    minimal: "p-2 hover:bg-gray-50 text-gray-600 hover:text-gray-800",
-    outlined: "p-2  bg-gray-100 hover:bg-gray-200 text-gray-700 hover:text-gray-900 shadow-sm rounded-3xl transition-colors"
+    default: "px-2.5 md:px-3 py-1.5 md:py-2 hover:bg-gray-100 text-gray-700 hover:text-gray-900",
+    minimal: "p-1.5 md:p-2 hover:bg-gray-50 text-gray-600 hover:text-gray-800",
+    outlined: "p-1.5 md:p-2 bg-gray-100 hover:bg-gray-200 text-gray-700 hover:text-gray-900 shadow-sm rounded-3xl transition-colors"
   };
 
   return (
@@ -55,7 +55,7 @@ const BackButton: React.FC<BackButtonProps> = ({
     >
       <ArrowLeft
         size={iconSize}
-        className="flex-shrink-0 transition-transform duration-200 group-hover:-translate-x-0.5"
+        className="flex-shrink-0 transition-transform duration-200 group-hover:-translate-x-0.5 w-4 h-4 md:w-5 md:h-5"
       />
       {/* {!iconOnly && (
         <span className="font-medium text-sm">{text}</span>

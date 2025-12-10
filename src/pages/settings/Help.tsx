@@ -120,17 +120,17 @@ export default function SettingsHelp() {
   ];
 
   return (
-    <div className="w-full flex flex-col items-center justify-start space-y-6 min-h-screen bg-gray-50">
-      <ProfileNavbar title="Help & Support" titleClassName="text-2xl" />
+    <div className="w-full flex flex-col items-center justify-start space-y-4 md:space-y-6 min-h-screen bg-gray-50">
+      <ProfileNavbar title="Help & Support" titleClassName="text-xl md:text-2xl" />
 
-      <div className="w-full max-w-4xl mx-auto px-4">
+      <div className="w-full max-w-4xl mx-auto px-3 md:px-4">
         {/* <BackButton className='mb-4' variant='outlined' /> */}
         {/* Welcome Section */}
-        <div className="bg-white rounded-xl p-6 mb-6 shadow-sm">
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">
+        <div className="bg-white rounded-xl p-4 md:p-6 mb-4 md:mb-6 shadow-sm">
+          <h2 className="text-xl md:text-2xl font-bold text-gray-900 mb-1.5 md:mb-2">
             How can we help you?
           </h2>
-          <p className="text-gray-600 mb-4">
+          <p className="text-sm md:text-base text-gray-600 mb-3 md:mb-4">
             Find answers to common questions or get in touch with our support
             team.
           </p>
@@ -171,11 +171,11 @@ export default function SettingsHelp() {
         </div> */}
 
         {/* FAQ Section */}
-        <div className="bg-white rounded-xl p-6 mb-6 shadow-sm">
-          <h3 className="text-xl font-semibold text-gray-900 mb-4">
+        <div className="bg-white rounded-xl p-4 md:p-6 mb-4 md:mb-6 shadow-sm">
+          <h3 className="text-lg md:text-xl font-semibold text-gray-900 mb-3 md:mb-4">
             Frequently Asked Questions
           </h3>
-          <div className="space-y-3">
+          <div className="space-y-2.5 md:space-y-3">
             {filteredFAQs.map((faq, index) => (
               <div
                 key={index}
@@ -183,22 +183,22 @@ export default function SettingsHelp() {
               >
                 <button
                   onClick={() => toggleFAQ(index)}
-                  className="w-full px-4 py-4 text-left hover:bg-gray-50 focus:outline-none focus:bg-gray-50 transition-colors"
+                  className="w-full px-3 md:px-4 py-3 md:py-4 text-left hover:bg-gray-50 focus:outline-none focus:bg-gray-50 transition-colors"
                 >
                   <div className="flex items-center justify-between">
-                    <h4 className="font-semibold text-gray-900 pr-4">
+                    <h4 className="font-semibold text-sm md:text-base text-gray-900 pr-2 md:pr-4">
                       {faq.question}
                     </h4>
                     {expandedFAQ === index ? (
-                      <ChevronDown className="w-5 h-5 text-gray-500 flex-shrink-0" />
+                      <ChevronDown className="w-4 h-4 md:w-5 md:h-5 text-gray-500 flex-shrink-0" />
                     ) : (
-                      <ChevronRight className="w-5 h-5 text-gray-500 flex-shrink-0" />
+                      <ChevronRight className="w-4 h-4 md:w-5 md:h-5 text-gray-500 flex-shrink-0" />
                     )}
                   </div>
                 </button>
                 {expandedFAQ === index && (
-                  <div className="px-4 pb-4 border-t border-gray-100">
-                    <p className="text-gray-600 pt-3">{faq.answer}</p>
+                  <div className="px-3 md:px-4 pb-3 md:pb-4 border-t border-gray-100">
+                    <p className="text-xs md:text-sm text-gray-600 pt-2 md:pt-3">{faq.answer}</p>
                   </div>
                 )}
               </div>
@@ -206,11 +206,11 @@ export default function SettingsHelp() {
           </div>
 
           {filteredFAQs.length === 0 && searchQuery && (
-            <div className="text-center py-8">
-              <p className="text-gray-500">
+            <div className="text-center py-6 md:py-8">
+              <p className="text-sm md:text-base text-gray-500">
                 No results found for "{searchQuery}"
               </p>
-              <p className="text-sm text-gray-400 mt-1">
+              <p className="text-xs md:text-sm text-gray-400 mt-1">
                 Try different search terms or contact support
               </p>
             </div>
@@ -218,16 +218,16 @@ export default function SettingsHelp() {
         </div>
 
         {/* Contact Support Section */}
-        <div className="bg-white rounded-xl p-6 mb-20 shadow-sm">
-          <h3 className="text-xl font-semibold text-gray-900 mb-4">
+        <div className="bg-white rounded-xl p-4 md:p-6 mb-16 md:mb-20 shadow-sm">
+          <h3 className="text-lg md:text-xl font-semibold text-gray-900 mb-3 md:mb-4">
             Still need help?
           </h3>
-          <p className="text-gray-600 mb-6">
+          <p className="text-sm md:text-base text-gray-600 mb-4 md:mb-6">
             Can't find what you're looking for? Our support team is here to
             help.
           </p>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4">
             {/* <Link
               to="/contact"
               className="flex items-center gap-3 p-4 border border-gray-200 rounded-lg hover:border-blue-300 hover:bg-blue-50 transition-colors group"
@@ -243,35 +243,35 @@ export default function SettingsHelp() {
 
             <a
               href="mailto:support@crwd.app"
-              className="flex items-center gap-3 p-4 border border-gray-200 rounded-lg hover:border-blue-300 hover:bg-blue-50 transition-colors group"
+              className="flex items-center gap-2.5 md:gap-3 p-3 md:p-4 border border-gray-200 rounded-lg hover:border-blue-300 hover:bg-blue-50 transition-colors group"
             >
-              <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center group-hover:bg-blue-200 transition-colors">
-                <Mail className="w-5 h-5 text-blue-600" />
+              <div className="w-9 h-9 md:w-10 md:h-10 bg-blue-100 rounded-lg flex items-center justify-center group-hover:bg-blue-200 transition-colors">
+                <Mail className="w-4 h-4 md:w-5 md:h-5 text-blue-600" />
               </div>
               <div>
-                <h4 className="font-semibold text-gray-900">Email Support</h4>
-                <p className="text-sm text-gray-600">support@crwd.app</p>
+                <h4 className="font-semibold text-xs md:text-sm text-gray-900">Email Support</h4>
+                <p className="text-xs md:text-sm text-gray-600">support@crwd.app</p>
               </div>
             </a>
 
             <a
               href="tel:+1-555-0123"
-              className="flex items-center gap-3 p-4 border border-gray-200 rounded-lg hover:border-blue-300 hover:bg-blue-50 transition-colors group"
+              className="flex items-center gap-2.5 md:gap-3 p-3 md:p-4 border border-gray-200 rounded-lg hover:border-blue-300 hover:bg-blue-50 transition-colors group"
             >
-              <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center group-hover:bg-blue-200 transition-colors">
-                <Phone className="w-5 h-5 text-blue-600" />
+              <div className="w-9 h-9 md:w-10 md:h-10 bg-blue-100 rounded-lg flex items-center justify-center group-hover:bg-blue-200 transition-colors">
+                <Phone className="w-4 h-4 md:w-5 md:h-5 text-blue-600" />
               </div>
               <div>
-                <h4 className="font-semibold text-gray-900">Phone Support</h4>
-                <p className="text-sm text-gray-600">Mon-Fri, 9am-6pm EST</p>
+                <h4 className="font-semibold text-xs md:text-sm text-gray-900">Phone Support</h4>
+                <p className="text-xs md:text-sm text-gray-600">Mon-Fri, 9am-6pm EST</p>
               </div>
             </a>
           </div>
 
-          <div className="mt-6 p-4 bg-blue-50 rounded-lg">
-            <div className="flex items-start gap-3">
-              <div className="w-5 h-5 text-blue-600 mt-0.5">
-                <svg viewBox="0 0 20 20" fill="currentColor">
+          <div className="mt-4 md:mt-6 p-3 md:p-4 bg-blue-50 rounded-lg">
+            <div className="flex items-start gap-2.5 md:gap-3">
+              <div className="w-4 h-4 md:w-5 md:h-5 text-blue-600 mt-0.5 flex-shrink-0">
+                <svg viewBox="0 0 20 20" fill="currentColor" className="w-full h-full">
                   <path
                     fillRule="evenodd"
                     d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
@@ -280,8 +280,8 @@ export default function SettingsHelp() {
                 </svg>
               </div>
               <div>
-                <h4 className="font-semibold text-blue-900 mb-1">Quick Tip</h4>
-                <p className="text-sm text-blue-800">
+                <h4 className="font-semibold text-xs md:text-sm text-blue-900 mb-0.5 md:mb-1">Quick Tip</h4>
+                <p className="text-xs md:text-sm text-blue-800">
                   For faster support, include your username and a description of
                   the issue when contacting us.
                 </p>

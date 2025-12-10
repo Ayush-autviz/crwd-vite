@@ -92,7 +92,7 @@ export default function SurpriseMePage() {
   if (isLoading) {
     return (
       <div className="min-h-screen bg-white flex items-center justify-center">
-        <Loader2 className="w-8 h-8 animate-spin text-gray-400" />
+        <Loader2 className="w-6 h-6 md:w-8 md:h-8 animate-spin text-gray-400" />
       </div>
     );
   }
@@ -100,46 +100,46 @@ export default function SurpriseMePage() {
   return (
     <div className="min-h-screen bg-white">
       {/* Header */}
-      <div className="sticky top-0 z-10 w-full flex items-center justify-between px-4 py-4 border-b bg-white">
+      <div className="sticky top-0 z-10 w-full flex items-center justify-between px-3 md:px-4 py-3 md:py-4 border-b bg-white">
         <button
           onClick={() => navigate(-1)}
-          className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+          className="p-1.5 md:p-2 hover:bg-gray-100 rounded-full transition-colors"
           aria-label="Go back"
         >
-          <ArrowLeft className="w-5 h-5 text-gray-700" />
+          <ArrowLeft className="w-4 h-4 md:w-5 md:h-5 text-gray-700" />
         </button>
         <button
           onClick={handleSurpriseAgain}
-          className="flex items-center gap-1.5 text-purple-600 hover:text-purple-700 font-medium"
+          className="flex items-center gap-1 md:gap-1.5 text-purple-600 hover:text-purple-700 font-medium text-xs md:text-sm"
         >
-          <Sparkles className="w-4 h-4" />
+          <Sparkles className="w-3.5 h-3.5 md:w-4 md:h-4" />
           Surprise Again
         </button>
       </div>
 
       {/* Main Content */}
       <div className="md:max-w-[60%] mx-auto">
-      <div className="px-4 py-6">
+      <div className="px-3 md:px-4 py-4 md:py-6">
         {/* Sparkle Icons */}
-        <div className="flex justify-center mb-4">
-          <div className="flex gap-2">
-            <Sparkles className="w-6 h-6 text-yellow-500" />
-            <Sparkles className="w-6 h-6 text-yellow-500" />
+        <div className="flex justify-center mb-3 md:mb-4">
+          <div className="flex gap-1.5 md:gap-2">
+            <Sparkles className="w-5 h-5 md:w-6 md:h-6 text-yellow-500" />
+            <Sparkles className="w-5 h-5 md:w-6 md:h-6 text-yellow-500" />
           </div>
         </div>
 
         {/* Title */}
-        <h1 className="text-3xl font-bold text-foreground text-center mb-2">
+        <h1 className="text-2xl md:text-3xl font-bold text-foreground text-center mb-1.5 md:mb-2">
           Your Surprise Nonprofits!
         </h1>
 
         {/* Subtitle */}
-        <p className="text-gray-600 text-center mb-8">
+        <p className="text-sm md:text-base text-gray-600 text-center mb-6 md:mb-8">
           We picked these 5 amazing organizations for you
         </p>
 
         {/* Nonprofit Cards */}
-        <div className="space-y-4 mb-8">
+        <div className="space-y-3 md:space-y-4 mb-6 md:mb-8">
           {surpriseCauses.map((cause) => {
             const avatarBgColor = getConsistentColor(cause.id, avatarColors);
             const initials = getInitials(cause.name || 'N');
@@ -150,22 +150,22 @@ export default function SurpriseMePage() {
                 onClick={() => navigate(`/cause/${cause.id}`)}
                 className="cursor-pointer hover:shadow-md transition-shadow border border-gray-200"
               >
-                <CardContent className="px-4">
-                  <div className="flex items-start gap-4">
-                    <Avatar className="w-12 h-12 rounded-lg flex-shrink-0">
+                <CardContent className="px-3 md:px-4 py-3 md:py-4">
+                  <div className="flex items-start gap-3 md:gap-4">
+                    <Avatar className="w-10 h-10 md:w-12 md:h-12 rounded-lg flex-shrink-0">
                       <AvatarImage src={cause.image || undefined} alt={cause.name} />
                       <AvatarFallback
                         style={{ backgroundColor: avatarBgColor }}
-                        className="text-white rounded-lg font-bold text-base"
+                        className="text-white rounded-lg font-bold text-sm md:text-base"
                       >
                         {initials}
                       </AvatarFallback>
                     </Avatar>
                     <div className="flex-1 min-w-0">
-                      <h3 className="font-bold text-base text-foreground mb-1">
+                      <h3 className="font-bold text-sm md:text-base text-foreground mb-0.5 md:mb-1">
                         {cause.name}
                       </h3>
-                      <p className="text-sm text-gray-600">
+                      <p className="text-xs md:text-sm text-gray-600">
                         {cause.mission || cause.description || 'No description available'}
                       </p>
                     </div>
@@ -178,16 +178,16 @@ export default function SurpriseMePage() {
       </div>
 
       {/* Footer */}
-      <div className="fixed bottom-0 left-0 right-0 bg-white px-4 py-4 space-y-4 safe-area-bottom md:max-w-[60%] mx-auto">
+      <div className="fixed bottom-0 left-0 right-0 bg-white px-3 md:px-4 py-3 md:py-4 space-y-3 md:space-y-4 safe-area-bottom md:max-w-[60%] mx-auto">
         {/* Add All Button */}
         <Button
           onClick={handleAddAllToBox}
           disabled={addToBoxMutation.isPending || surpriseCauses.length === 0}
-          className="w-full bg-[#1600ff] hover:bg-[#1400cc] text-white font-semibold rounded-lg py-6 text-base"
+          className="w-full bg-[#1600ff] hover:bg-[#1400cc] text-white font-semibold rounded-lg py-4 md:py-6 text-sm md:text-base"
         >
           {addToBoxMutation.isPending ? (
             <>
-              <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+              <Loader2 className="w-3.5 h-3.5 md:w-4 md:h-4 mr-1.5 md:mr-2 animate-spin" />
               Adding...
             </>
           ) : (
@@ -199,9 +199,9 @@ export default function SurpriseMePage() {
         <div className="text-center">
           <button
             onClick={handleSurpriseAgain}
-            className="flex items-center gap-1.5 text-purple-600 hover:text-purple-700 font-medium mx-auto"
+            className="flex items-center gap-1 md:gap-1.5 text-purple-600 hover:text-purple-700 font-medium mx-auto text-xs md:text-sm"
           >
-            <Sparkles className="w-4 h-4 text-yellow-500" />
+            <Sparkles className="w-3.5 h-3.5 md:w-4 md:h-4 text-yellow-500" />
             Surprise Me Again
           </button>
         </div>
@@ -212,7 +212,7 @@ export default function SurpriseMePage() {
       </div>
 
       {/* Spacer to prevent content from being hidden behind fixed footer */}
-      <div className="h-24" />
+      <div className="h-20 md:h-24" />
     </div>
   );
 }

@@ -101,23 +101,23 @@ const RegularNotifications: React.FC<RegularNotificationsProps> = ({
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center py-12">
-        <Loader2 className="w-6 h-6 animate-spin text-gray-400" />
-        <span className="ml-2 text-sm text-gray-600">Loading notifications...</span>
+      <div className="flex items-center justify-center py-8 md:py-12">
+        <Loader2 className="w-5 h-5 md:w-6 md:h-6 animate-spin text-gray-400" />
+        <span className="ml-1.5 md:ml-2 text-xs md:text-sm text-gray-600">Loading notifications...</span>
       </div>
     );
   }
 
   if (transformedNotifications.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center py-16 px-4">
-        <div className="w-16 h-16 mx-auto mb-4 bg-gray-100 rounded-full flex items-center justify-center">
-          <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <div className="flex flex-col items-center justify-center py-12 md:py-16 px-3 md:px-4">
+        <div className="w-12 h-12 md:w-16 md:h-16 mx-auto mb-3 md:mb-4 bg-gray-100 rounded-full flex items-center justify-center">
+          <svg className="w-6 h-6 md:w-8 md:h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
           </svg>
         </div>
-        <h3 className="text-lg font-semibold text-gray-900 mb-2">No notifications yet</h3>
-        <p className="text-sm text-gray-500 text-center max-w-sm">
+        <h3 className="text-base md:text-lg font-semibold text-gray-900 mb-1.5 md:mb-2">No notifications yet</h3>
+        <p className="text-xs md:text-sm text-gray-500 text-center max-w-sm">
           When someone follows you, mentions you, or interacts with your posts, you'll see it here.
         </p>
       </div>
@@ -127,38 +127,38 @@ const RegularNotifications: React.FC<RegularNotificationsProps> = ({
   return (
     <div className="w-full flex flex-col bg-white">
       {transformedNotifications.map((notification, idx) => (
-        <div key={notification.id || `regular-${idx}`} className="px-4 py-6 border-b border-gray-100 last:border-b-0">
-          <div className="flex items-start gap-4">
+        <div key={notification.id || `regular-${idx}`} className="px-3 md:px-4 py-4 md:py-6 border-b border-gray-100 last:border-b-0">
+          <div className="flex items-start gap-3 md:gap-4">
             {/* Avatar with overlay icon */}
             <div className="relative flex-shrink-0">
               {notification.type === 'donation' ? (
                 <>
                   {/* Green circle with 'C' */}
-                  <div className="w-14 h-14 rounded-full bg-green-500 flex items-center justify-center">
-                    <span className="text-white font-bold text-lg">C</span>
+                  <div className="w-12 h-12 md:w-14 md:h-14 rounded-full bg-green-500 flex items-center justify-center">
+                    <span className="text-white font-bold text-base md:text-lg">C</span>
                   </div>
                   {/* Hand icon overlay */}
-                  <div className="absolute -bottom-1 -right-1 w-6 h-6 rounded-full bg-blue-400 flex items-center justify-center border-2 border-white">
-                    <HandHeart className="w-3.5 h-3.5 text-white" />
+                  <div className="absolute -bottom-0.5 md:-bottom-1 -right-0.5 md:-right-1 w-5 h-5 md:w-6 md:h-6 rounded-full bg-blue-400 flex items-center justify-center border-2 border-white">
+                    <HandHeart className="w-3 h-3 md:w-3.5 md:h-3.5 text-white" />
                   </div>
                 </>
               ) : notification.type === 'new_member' ? (
                 <>
                   {/* Gray circle with landscape icon */}
-                  <div className="w-14 h-14 rounded-full bg-gray-200 flex items-center justify-center border-2 border-gray-300">
-                    <Mountain className="w-7 h-7 text-gray-500" />
+                  <div className="w-12 h-12 md:w-14 md:h-14 rounded-full bg-gray-200 flex items-center justify-center border-2 border-gray-300">
+                    <Mountain className="w-6 h-6 md:w-7 md:h-7 text-gray-500" />
                   </div>
                   {/* People icon overlay */}
-                  <div className="absolute -bottom-1 -right-1 w-6 h-6 rounded-full bg-green-400 flex items-center justify-center border-2 border-white">
-                    <Users className="w-3.5 h-3.5 text-white" />
+                  <div className="absolute -bottom-0.5 md:-bottom-1 -right-0.5 md:-right-1 w-5 h-5 md:w-6 md:h-6 rounded-full bg-green-400 flex items-center justify-center border-2 border-white">
+                    <Users className="w-3 h-3 md:w-3.5 md:h-3.5 text-white" />
                   </div>
                 </>
               ) : (
                 <>
                   {/* Default avatar */}
-                  <Avatar className="w-14 h-14">
+                  <Avatar className="w-12 h-12 md:w-14 md:h-14">
                     <AvatarImage src={notification.avatarUrl} />
-                    <AvatarFallback className="bg-gray-200 text-gray-600">
+                    <AvatarFallback className="bg-gray-200 text-gray-600 text-sm md:text-base">
                       {notification.title.charAt(0)}
                     </AvatarFallback>
                   </Avatar>
@@ -168,10 +168,10 @@ const RegularNotifications: React.FC<RegularNotificationsProps> = ({
 
             {/* Content */}
             <div className="flex-1 min-w-0">
-              <h3 className="font-bold text-gray-900 text-base mb-1">
+              <h3 className="font-bold text-gray-900 text-sm md:text-base mb-0.5 md:mb-1">
                 {notification.title}
               </h3>
-              <p className="text-gray-700 text-sm mb-2">
+              <p className="text-gray-700 text-xs md:text-sm mb-1.5 md:mb-2">
                 {notification.type === 'donation' 
                   ? `Your collective ${notification.collectiveName || 'Community Champions'} received a ${notification.donationAmount || '$50'} donation`
                   : notification.type === 'new_member'
@@ -179,7 +179,7 @@ const RegularNotifications: React.FC<RegularNotificationsProps> = ({
                   : notification.description
                 }
               </p>
-              <p className="text-gray-500 text-xs">
+              <p className="text-gray-500 text-[10px] md:text-xs">
                 {notification.time}
               </p>
             </div>
