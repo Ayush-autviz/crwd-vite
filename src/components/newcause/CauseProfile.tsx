@@ -24,32 +24,32 @@ export default function CauseProfile({ causeData }: CauseProfileProps) {
   const avatarBgColor = getConsistentColor(causeData?.id || 'default', avatarColors);
 
   return (
-    <div className="px-4 py-6 space-y-4">
+    <div className="px-3 md:px-4 py-4 md:py-6 space-y-3 md:space-y-4">
       {/* Profile Section */}
-      <div className="flex items-start gap-4">
-        <Avatar className="w-16 h-16 rounded-lg flex-shrink-0">
+      <div className="flex items-start gap-3 md:gap-4">
+        <Avatar className="w-14 h-14 md:w-16 md:h-16 rounded-lg flex-shrink-0">
           <AvatarImage src={causeData?.image} alt={causeData?.name} />
           <AvatarFallback
             style={{ backgroundColor: avatarBgColor }}
-            className="text-white rounded-lg font-bold text-2xl"
+            className="text-white rounded-lg font-bold text-xl md:text-2xl"
           >
             {firstLetter}
           </AvatarFallback>
         </Avatar>
         
         <div className="flex-1 min-w-0">
-          <h1 className="font-bold text-xl text-foreground mb-1">
+          <h1 className="font-bold text-lg md:text-xl text-foreground mb-0.5 md:mb-1">
             {causeData?.name}
           </h1>
-          <p className="text-sm text-muted-foreground">
+          <p className="text-xs md:text-sm text-muted-foreground">
             in {causeData?.collective_count || 0} Collectives • {causeData?.donation_count || 0} donations
           </p>
         </div>
       </div>
 
       {/* Mission Statement */}
-      <div className="space-y-2">
-        <p className="text-base text-foreground">
+      <div className="space-y-1.5 md:space-y-2">
+        <p className="text-sm md:text-base text-foreground">
           {causeData?.mission || causeData?.description}
         </p>
         
@@ -57,7 +57,7 @@ export default function CauseProfile({ causeData }: CauseProfileProps) {
         {category && (
           <Badge
             variant="secondary"
-            className="rounded-full px-3 py-1 text-sm font-medium text-white"
+            className="rounded-full px-2.5 md:px-3 py-0.5 md:py-1 text-xs md:text-sm font-medium text-white"
             style={{
               backgroundColor: category.background,
             }}

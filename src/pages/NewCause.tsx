@@ -134,7 +134,7 @@ export default function NewCausePage() {
   if (isLoadingCause) {
     return (
       <div className="min-h-screen bg-white flex items-center justify-center">
-        <Loader2 className="w-8 h-8 animate-spin text-gray-400" />
+        <Loader2 className="w-6 h-6 md:w-8 md:h-8 animate-spin text-gray-400" />
       </div>
     );
   }
@@ -142,15 +142,15 @@ export default function NewCausePage() {
   // Error state
   if (causeError || !causeData) {
     return (
-      <div className="min-h-screen bg-white flex items-center justify-center px-4">
+      <div className="min-h-screen bg-white flex items-center justify-center px-3 md:px-4">
         <div className="text-center">
-          <p className="text-lg font-semibold text-gray-900 mb-2">
+          <p className="text-base md:text-lg font-semibold text-gray-900 mb-1.5 md:mb-2">
             Nonprofit not found
           </p>
-          <p className="text-gray-600 mb-4">
+          <p className="text-sm md:text-base text-gray-600 mb-3 md:mb-4">
             The nonprofit you're looking for doesn't exist or has been removed.
           </p>
-          <Button onClick={() => navigate('/')} variant="outline">
+          <Button onClick={() => navigate('/')} variant="outline" className="text-sm md:text-base py-2 md:py-2.5 px-3 md:px-4">
             Go Home
           </Button>
         </div>
@@ -225,33 +225,34 @@ export default function NewCausePage() {
 
       {/* Add to Donation Box Confirmation Modal */}
       {showAddToBoxModal && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-3 md:p-4">
           <div
             ref={addToBoxModalRef}
-            className="bg-white rounded-lg max-w-md w-full mx-4 p-6 relative"
+            className="bg-white rounded-lg max-w-md w-full mx-3 md:mx-4 p-4 md:p-6 relative"
           >
-            <h2 className="text-2xl font-bold text-gray-900 mb-2">
+            <h2 className="text-xl md:text-2xl font-bold text-gray-900 mb-1.5 md:mb-2">
               Add to Donation Box?
             </h2>
-            <p className="text-gray-600 mb-6">
+            <p className="text-sm md:text-base text-gray-600 mb-4 md:mb-6">
               This will add {causeData?.name} to your donation box. You can manage your donations anytime.
             </p>
-            <div className="flex items-center justify-center gap-3">
+            <div className="flex items-center justify-center gap-2.5 md:gap-3">
               <Button
                 onClick={() => setShowAddToBoxModal(false)}
                 variant="outline"
                 disabled={addToDonationBoxMutation.isPending}
+                className="text-sm md:text-base py-2 md:py-2.5 px-3 md:px-4"
               >
                 Cancel
               </Button>
               <Button
                 onClick={handleConfirmAddToBox}
                 disabled={addToDonationBoxMutation.isPending}
-                className="bg-[#84CC16] hover:bg-[#6BB00F] text-white"
+                className="bg-[#84CC16] hover:bg-[#6BB00F] text-white text-sm md:text-base py-2 md:py-2.5 px-3 md:px-4"
               >
                 {addToDonationBoxMutation.isPending ? (
                   <>
-                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                    <Loader2 className="w-3.5 h-3.5 md:w-4 md:h-4 mr-1.5 md:mr-2 animate-spin" />
                     Adding...
                   </>
                 ) : (

@@ -88,41 +88,41 @@ export default function PostResultCard({ post }: PostResultCardProps) {
       onClick={() => navigate(`/post/${post.id}`)}
       className="cursor-pointer hover:shadow-md transition-shadow border border-gray-200 bg-white rounded-lg"
     >
-      <CardContent className="px-4 py-4">
+      <CardContent className="px-3 md:px-4 py-3 md:py-4">
         {/* User Header */}
-        <div className="flex items-start gap-3 mb-3">
+        <div className="flex items-start gap-2.5 md:gap-3 mb-2.5 md:mb-3">
           {user && (
-            <Avatar className="w-10 h-10 rounded-full flex-shrink-0">
+            <Avatar className="w-9 h-9 md:w-10 md:h-10 rounded-full flex-shrink-0">
               <AvatarImage src={user.profile_picture} alt={fullName} />
               <AvatarFallback
                 style={{ backgroundColor: avatarBgColor }}
-                className="text-white font-bold text-sm"
+                className="text-white font-bold text-xs md:text-sm"
               >
                 {initials}
               </AvatarFallback>
             </Avatar>
           )}
           <div className="flex-1 min-w-0">
-            <div className="flex items-center gap-2 flex-wrap">
-              <h3 className="font-bold text-sm text-gray-900">
+            <div className="flex items-center gap-1.5 md:gap-2 flex-wrap">
+              <h3 className="font-bold text-xs md:text-sm text-gray-900">
                 {fullName}
               </h3>
               {post.collective && (
                 <>
                   <span className="text-gray-400">•</span>
-                  <span className="text-sm text-[#1600ff] font-medium">
+                  <span className="text-xs md:text-sm text-[#1600ff] font-medium">
                     {post.collective.name}
                   </span>
                 </>
               )}
             </div>
-            <p className="text-xs text-gray-500">{timeAgo}</p>
+            <p className="text-[10px] md:text-xs text-gray-500">{timeAgo}</p>
           </div>
         </div>
 
         {/* Post Content */}
         {post.content && (
-          <p className="text-sm text-gray-900 mb-3 line-clamp-3">
+          <p className="text-xs md:text-sm text-gray-900 mb-2.5 md:mb-3 line-clamp-3">
             {post.content}
           </p>
         )}
@@ -134,12 +134,12 @@ export default function PostResultCard({ post }: PostResultCardProps) {
             target="_blank"
             rel="noopener noreferrer"
             onClick={(e) => e.stopPropagation()}
-            className="block w-full rounded-lg overflow-hidden mb-3 border border-gray-200 bg-white hover:opacity-90 transition-opacity cursor-pointer"
+            className="block w-full rounded-lg overflow-hidden mb-2.5 md:mb-3 border border-gray-200 bg-white hover:opacity-90 transition-opacity cursor-pointer"
           >
             <div className="flex flex-col md:flex-row bg-white">
               {/* Preview Image */}
               {post.preview_details.image && (
-                <div className="w-full md:w-48 h-[200px] md:h-auto flex-shrink-0">
+                <div className="w-full md:w-48 h-[180px] md:h-[200px] lg:h-auto flex-shrink-0">
                   <img
                     src={post.preview_details.image}
                     alt={post.preview_details.title || 'Link preview'}
@@ -148,24 +148,24 @@ export default function PostResultCard({ post }: PostResultCardProps) {
                 </div>
               )}
               {/* Preview Content */}
-              <div className="flex-1 p-3">
+              <div className="flex-1 p-2.5 md:p-3">
                 {post.preview_details.site_name && (
-                  <div className="text-[10px] text-gray-500 uppercase tracking-wide mb-1">
+                  <div className="text-[9px] md:text-[10px] text-gray-500 uppercase tracking-wide mb-0.5 md:mb-1">
                     {post.preview_details.site_name}
                   </div>
                 )}
                 {post.preview_details.title && (
-                  <h3 className="text-sm font-semibold text-gray-900 mb-1 line-clamp-2">
+                  <h3 className="text-xs md:text-sm font-semibold text-gray-900 mb-0.5 md:mb-1 line-clamp-2">
                     {post.preview_details.title}
                   </h3>
                 )}
                 {post.preview_details.description && (
-                  <p className="text-xs text-gray-500 mb-1 line-clamp-2">
+                  <p className="text-[10px] md:text-xs text-gray-500 mb-0.5 md:mb-1 line-clamp-2">
                     {post.preview_details.description}
                   </p>
                 )}
                 {post.preview_details.domain && (
-                  <div className="text-[11px] text-gray-500 truncate">
+                  <div className="text-[10px] md:text-[11px] text-gray-500 truncate">
                     {post.preview_details.domain}
                   </div>
                 )}
@@ -180,11 +180,11 @@ export default function PostResultCard({ post }: PostResultCardProps) {
             
             if (isImage) {
               return (
-                <div className="w-full rounded-lg overflow-hidden mb-3 border border-gray-200">
+                <div className="w-full rounded-lg overflow-hidden mb-2.5 md:mb-3 border border-gray-200">
                   <img
                     src={post.media}
                     alt="Post"
-                    className="w-full h-[200px] object-cover"
+                    className="w-full h-[180px] md:h-[200px] object-cover"
                   />
                 </div>
               );
@@ -201,15 +201,15 @@ export default function PostResultCard({ post }: PostResultCardProps) {
                     target="_blank"
                     rel="noopener noreferrer"
                     onClick={(e) => e.stopPropagation()}
-                    className="block w-full rounded-lg overflow-hidden mb-3 border border-gray-200 bg-white hover:opacity-90 transition-opacity cursor-pointer"
+                    className="block w-full rounded-lg overflow-hidden mb-2.5 md:mb-3 border border-gray-200 bg-white hover:opacity-90 transition-opacity cursor-pointer"
                   >
                     <div className="flex flex-col md:flex-row bg-white">
                       {/* Preview Content - styled like preview card */}
-                      <div className="flex-1 p-3">
-                        <div className="text-[10px] text-gray-500 uppercase tracking-wide mb-1">
+                      <div className="flex-1 p-2.5 md:p-3">
+                        <div className="text-[9px] md:text-[10px] text-gray-500 uppercase tracking-wide mb-0.5 md:mb-1">
                           {siteName}
                         </div>
-                        <div className="text-[11px] text-gray-500 truncate">
+                        <div className="text-[10px] md:text-[11px] text-gray-500 truncate">
                           {domain}
                         </div>
                       </div>
@@ -225,13 +225,13 @@ export default function PostResultCard({ post }: PostResultCardProps) {
         ) : null}
 
         {/* Like and Comment Counts */}
-        <div className="flex items-center gap-4 text-sm text-gray-600">
+        <div className="flex items-center gap-3 md:gap-4 text-xs md:text-sm text-gray-600">
           <div className="flex items-center gap-1">
-            <Heart className={`w-4 h-4 ${post.is_liked ? 'fill-red-500 text-red-500' : ''}`} />
+            <Heart className={`w-3.5 h-3.5 md:w-4 md:h-4 ${post.is_liked ? 'fill-red-500 text-red-500' : ''}`} />
             <span>{post.likes_count}</span>
           </div>
           <div className="flex items-center gap-1">
-            <MessageCircle className="w-4 h-4" />
+            <MessageCircle className="w-3.5 h-3.5 md:w-4 md:h-4" />
             <span>{post.comments_count}</span>
           </div>
         </div>

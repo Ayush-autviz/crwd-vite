@@ -66,14 +66,14 @@ export default function CollectiveResultCard({ collective }: CollectiveResultCar
       onClick={() => navigate(`/groupcrwd/${collective.id}`)}
       className="cursor-pointer hover:shadow-md transition-shadow border border-gray-200 bg-white rounded-lg"
     >
-      <CardContent className="px-4">
-        <div className="flex items-start gap-4">
+      <CardContent className="px-3 md:px-4 py-3 md:py-4">
+        <div className="flex items-start gap-3 md:gap-4">
           {/* Circular avatar with dynamic color */}
-          <Avatar className="w-12 h-12 rounded-full flex-shrink-0">
+          <Avatar className="w-10 h-10 md:w-12 md:h-12 rounded-full flex-shrink-0">
             <AvatarImage src={imageUrl} alt={collective.name} />
             <AvatarFallback
               style={{ backgroundColor: avatarBgColor }}
-              className="text-white rounded-full font-bold text-base"
+              className="text-white rounded-full font-bold text-sm md:text-base"
             >
               {firstLetter}
             </AvatarFallback>
@@ -81,37 +81,37 @@ export default function CollectiveResultCard({ collective }: CollectiveResultCar
 
           <div className="flex-1 min-w-0">
             {/* Title */}
-            <h3 className="font-bold text-base text-gray-900 mb-1">
+            <h3 className="font-bold text-sm md:text-base text-gray-900 mb-0.5 md:mb-1">
               {collective.name}
             </h3>
 
             {/* Description */}
-            <p className="text-sm text-gray-600 mb-3">
+            <p className="text-xs md:text-sm text-gray-600 mb-2.5 md:mb-3">
               {collective.description || 'No description available'}
             </p>
 
             {/* Founder Information */}
             {founder && (
-              <div className="flex items-center gap-2 mb-2">
-                <Avatar className="w-6 h-6 rounded-full flex-shrink-0">
+              <div className="flex items-center gap-1.5 md:gap-2 mb-1.5 md:mb-2">
+                <Avatar className="w-5 h-5 md:w-6 md:h-6 rounded-full flex-shrink-0">
                   <AvatarImage src={founder.profile_picture} alt={founderName} />
                   <AvatarFallback
                     style={{
                       backgroundColor: '#9CA3AF',
                     }}
-                    className="text-white text-xs font-bold"
+                    className="text-white text-[10px] md:text-xs font-bold"
                   >
                     {founderInitials}
                   </AvatarFallback>
                 </Avatar>
-                <span className="text-sm text-gray-600">
+                <span className="text-xs md:text-sm text-gray-600">
                   Founded by {founderName}
                 </span>
               </div>
             )}
 
             {/* Supporting nonprofits count */}
-            <p className="text-sm text-gray-600">
+            <p className="text-xs md:text-sm text-gray-600">
               Supporting {nonprofitCount} nonprofit{nonprofitCount !== 1 ? 's' : ''}
             </p>
           </div>

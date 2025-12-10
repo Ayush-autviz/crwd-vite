@@ -213,7 +213,7 @@ export default function NewGroupCrwdPage() {
   if (isLoadingCrwd) {
     return (
       <div className="min-h-screen bg-white flex items-center justify-center">
-        <Loader2 className="w-8 h-8 animate-spin text-gray-400" />
+        <Loader2 className="w-6 h-6 md:w-8 md:h-8 animate-spin text-gray-400" />
       </div>
     );
   }
@@ -221,15 +221,15 @@ export default function NewGroupCrwdPage() {
   // Error state
   if (crwdError || !crwdData) {
     return (
-      <div className="min-h-screen bg-white flex items-center justify-center px-4">
+      <div className="min-h-screen bg-white flex items-center justify-center px-3 md:px-4">
         <div className="text-center">
-          <p className="text-lg font-semibold text-gray-900 mb-2">
+          <p className="text-base md:text-lg font-semibold text-gray-900 mb-1.5 md:mb-2">
             Collective not found
           </p>
-          <p className="text-gray-600 mb-4">
+          <p className="text-sm md:text-base text-gray-600 mb-3 md:mb-4">
             The collective you're looking for doesn't exist or has been removed.
           </p>
-          <Button onClick={() => navigate('/')} variant="outline">
+          <Button onClick={() => navigate('/')} variant="outline" className="text-sm md:text-base py-2 md:py-2.5 px-3 md:px-4">
             Go Home
           </Button>
         </div>
@@ -327,12 +327,12 @@ export default function NewGroupCrwdPage() {
       <DonationInfoBox nonprofitCount={nonprofitCount} />
 
       {/* Action Buttons */}
-      <div className="px-4 mb-6 space-y-3">
+      <div className="px-3 md:px-4 mb-4 md:mb-6 space-y-2.5 md:space-y-3">
         {!isAdmin && (
           <Button
             onClick={handleJoinCollective}
             disabled={joinCollectiveMutation.isPending || leaveCollectiveMutation.isPending}
-            className={`w-full font-bold py-5 rounded-lg text-base ${
+            className={`w-full font-bold py-4 md:py-5 rounded-lg text-sm md:text-base ${
               crwdData.is_joined
                 ? 'bg-gray-100 text-gray-500 hover:bg-gray-200'
                 : 'bg-[#1600ff] hover:bg-[#1400cc] text-white'
@@ -340,17 +340,17 @@ export default function NewGroupCrwdPage() {
           >
             {joinCollectiveMutation.isPending ? (
               <>
-                <Loader2 className="w-4 h-4 mr-2 animate-spin inline" />
+                <Loader2 className="w-3.5 h-3.5 md:w-4 md:h-4 mr-1.5 md:mr-2 animate-spin inline" />
                 Joining...
               </>
             ) : leaveCollectiveMutation.isPending ? (
               <>
-                <Loader2 className="w-4 h-4 mr-2 animate-spin inline" />
+                <Loader2 className="w-3.5 h-3.5 md:w-4 md:h-4 mr-1.5 md:mr-2 animate-spin inline" />
                 Leaving...
               </>
             ) : crwdData.is_joined ? (
               <>
-                <Check className="w-4 h-4 mr-2 inline" />
+                <Check className="w-3.5 h-3.5 md:w-4 md:h-4 mr-1.5 md:mr-2 inline" />
                 Joined
               </>
             ) : (
@@ -361,7 +361,7 @@ export default function NewGroupCrwdPage() {
         <Button
           onClick={handleOneTimeDonation}
           variant="outline"
-          className="w-full border-[#1600ff] text-[#1600ff] hover:bg-[#1600ff] hover:text-white font-bold py-5 rounded-lg text-base"
+          className="w-full border-[#1600ff] text-[#1600ff] hover:bg-[#1600ff] hover:text-white font-bold py-4 md:py-5 rounded-lg text-sm md:text-base"
         >
           Make a One-Time Donation
         </Button>
@@ -378,8 +378,8 @@ export default function NewGroupCrwdPage() {
       />
 
       {/* Legal Disclaimer */}
-      <div className="px-4 py-6 border-t border-gray-200 mt-8">
-        <p className="text-xs text-gray-500 text-center leading-relaxed">
+      <div className="px-3 md:px-4 py-4 md:py-6 border-t border-gray-200 mt-6 md:mt-8">
+        <p className="text-[10px] md:text-xs text-gray-500 text-center leading-relaxed">
           All donations are made to CRWD Foundation Inc. (EIN: XX-XXXXXXX), a 501(c)(3) nonprofit organization. CRWD Foundation grants funds to qualified 501(c)(3) organizations selected by donors.
         </p>
       </div>
@@ -408,36 +408,36 @@ export default function NewGroupCrwdPage() {
 
       {/* Join Modal */}
       {showJoinModal && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-3 md:p-4">
           <div
             ref={joinModalRef}
-            className="bg-white rounded-lg max-w-md w-full mx-4 p-6 relative"
+            className="bg-white rounded-lg max-w-md w-full mx-3 md:mx-4 p-4 md:p-6 relative"
           >
             <button
               onClick={handleCloseJoinModal}
-              className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors"
+              className="absolute top-3 md:top-4 right-3 md:right-4 text-gray-400 hover:text-gray-600 transition-colors"
               aria-label="Close"
             >
-              <X className="w-5 h-5" />
+              <X className="w-4 h-4 md:w-5 md:h-5" />
             </button>
 
             <div className="text-center">
-              <h2 className="text-2xl font-bold text-gray-900 mb-2">
+              <h2 className="text-xl md:text-2xl font-bold text-gray-900 mb-1.5 md:mb-2">
                 Join {crwdData.name}?
               </h2>
 
-              <p className="text-gray-600 mb-6">
+              <p className="text-sm md:text-base text-gray-600 mb-4 md:mb-6">
                 This Collective includes {nonprofitCount} nonprofits.
               </p>
 
-              <div className="flex items-center justify-center gap-3">
-                <Button onClick={handleCloseJoinModal} variant="outline">
+              <div className="flex items-center justify-center gap-2.5 md:gap-3">
+                <Button onClick={handleCloseJoinModal} variant="outline" className="text-sm md:text-base py-2 md:py-2.5 px-3 md:px-4">
                   Learn More
                 </Button>
-                <Button onClick={handleJoinConfirm} disabled={joinCollectiveMutation.isPending}>
+                <Button onClick={handleJoinConfirm} disabled={joinCollectiveMutation.isPending} className="text-sm md:text-base py-2 md:py-2.5 px-3 md:px-4">
                   {joinCollectiveMutation.isPending ? (
                     <>
-                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                      <Loader2 className="w-3.5 h-3.5 md:w-4 md:h-4 mr-1.5 md:mr-2 animate-spin" />
                       Joining...
                     </>
                   ) : (

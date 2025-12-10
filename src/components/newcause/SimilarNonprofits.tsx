@@ -22,17 +22,17 @@ export default function SimilarNonprofits({ similarCauses, isLoading }: SimilarN
 
   if (isLoading) {
     return (
-      <div className="px-4 py-6">
-        <h2 className="text-lg font-bold text-foreground mb-4">Similar Nonprofits</h2>
-        <div className="space-y-4">
+      <div className="px-3 md:px-4 py-4 md:py-6">
+        <h2 className="text-base md:text-lg font-bold text-foreground mb-3 md:mb-4">Similar Nonprofits</h2>
+        <div className="space-y-3 md:space-y-4">
           {[1, 2].map((i) => (
             <Card key={i} className="animate-pulse">
-              <CardContent className="p-4">
-                <div className="flex gap-4">
-                  <div className="w-16 h-16 bg-gray-200 rounded-lg"></div>
-                  <div className="flex-1 space-y-2">
-                    <div className="h-4 bg-gray-200 rounded w-3/4"></div>
-                    <div className="h-3 bg-gray-200 rounded w-full"></div>
+              <CardContent className="p-3 md:p-4">
+                <div className="flex gap-3 md:gap-4">
+                  <div className="w-12 h-12 md:w-16 md:h-16 bg-gray-200 rounded-lg"></div>
+                  <div className="flex-1 space-y-1.5 md:space-y-2">
+                    <div className="h-3 md:h-4 bg-gray-200 rounded w-3/4"></div>
+                    <div className="h-2.5 md:h-3 bg-gray-200 rounded w-full"></div>
                   </div>
                 </div>
               </CardContent>
@@ -48,9 +48,9 @@ export default function SimilarNonprofits({ similarCauses, isLoading }: SimilarN
   }
 
   return (
-    <div className="px-4 py-6">
-      <h2 className="text-lg font-bold text-foreground mb-4">Similar Nonprofits</h2>
-      <div className="space-y-4">
+    <div className="px-3 md:px-4 py-4 md:py-6">
+      <h2 className="text-base md:text-lg font-bold text-foreground mb-3 md:mb-4">Similar Nonprofits</h2>
+      <div className="space-y-3 md:space-y-4">
         {similarCauses.map((cause) => {
           const avatarBgColor = getConsistentColor(cause.id || cause.name, avatarColors);
           const firstLetter = cause.name?.charAt(0).toUpperCase() || 'C';
@@ -61,22 +61,22 @@ export default function SimilarNonprofits({ similarCauses, isLoading }: SimilarN
               className="cursor-pointer hover:shadow-md transition-shadow"
               onClick={() => navigate(`/cause/${cause.id}`)}
             >
-              <CardContent className="px-4">
-                <div className="flex gap-4">
-                  <Avatar className="w-14 h-14 rounded-lg flex-shrink-0">
+              <CardContent className="px-3 md:px-4 py-2.5 md:py-3">
+                <div className="flex gap-3 md:gap-4">
+                  <Avatar className="w-12 h-12 md:w-14 md:h-14 rounded-lg flex-shrink-0">
                     <AvatarImage src={cause.image} alt={cause.name} />
                     <AvatarFallback
                       style={{ backgroundColor: avatarBgColor }}
-                      className="text-white rounded-lg font-bold text-xl"
+                      className="text-white rounded-lg font-bold text-lg md:text-xl"
                     >
                       {firstLetter}
                     </AvatarFallback>
                   </Avatar>
                   <div className="flex-1 min-w-0">
-                    <h3 className="font-bold text-base text-foreground mb-1">
+                    <h3 className="font-bold text-sm md:text-base text-foreground mb-0.5 md:mb-1">
                       {cause.name}
                     </h3>
-                    <p className="text-sm text-muted-foreground line-clamp-2">
+                    <p className="text-xs md:text-sm text-muted-foreground line-clamp-2">
                       {cause.mission || cause.description}
                     </p>
                   </div>

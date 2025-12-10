@@ -132,72 +132,72 @@ export default function CauseHeader({
   const isLoading = favoriteMutation.isPending || unfavoriteMutation.isPending;
 
   return (
-    <div className="sticky top-0 z-10 w-full flex items-center justify-between p-4 border-b bg-white">
-      <div className="flex items-center">
+    <div className="sticky top-0 z-10 w-full flex items-center justify-between p-3 md:p-4 border-b bg-white">
+      <div className="flex items-center flex-1 min-w-0">
       <button
         onClick={() => navigate(-1)}
-        className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+        className="p-1.5 md:p-2 hover:bg-gray-100 rounded-full transition-colors flex-shrink-0"
         aria-label="Go back"
       >
-        <ArrowLeft className="w-5 h-5 text-gray-700" />
+        <ArrowLeft className="w-4 h-4 md:w-5 md:h-5 text-gray-700" />
       </button>
 
-      <h1 className="font-bold text-xl text-foreground flex-1 text-center truncate">
+      <h1 className="font-bold text-lg md:text-xl text-foreground flex-1 text-center truncate px-2">
         {title}
       </h1>
 </div>
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-1.5 md:gap-2 flex-shrink-0">
         <button
           onClick={handleFavoriteClick}
-          className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+          className="p-1.5 md:p-2 hover:bg-gray-100 rounded-full transition-colors"
           aria-label="Favorite"
           disabled={isLoading}
         >
-          <Star className={`w-5 h-5 ${isFavorite ? 'text-yellow-500 fill-yellow-500' : 'text-gray-700'}`} />
+          <Star className={`w-4 h-4 md:w-5 md:h-5 ${isFavorite ? 'text-yellow-500 fill-yellow-500' : 'text-gray-700'}`} />
         </button>
         <div className="relative">
           <button
             ref={moreButtonRef}
             onClick={() => setShowDropdown(!showDropdown)}
-            className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+            className="p-1.5 md:p-2 hover:bg-gray-100 rounded-full transition-colors"
             aria-label="More options"
           >
-            <MoreHorizontal className="w-5 h-5 text-gray-700" />
+            <MoreHorizontal className="w-4 h-4 md:w-5 md:h-5 text-gray-700" />
           </button>
 
           {showDropdown && (
             <div
               ref={dropdownRef}
-              className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg z-20 py-1 border border-gray-200"
+              className="absolute right-0 mt-2 w-40 md:w-48 bg-white rounded-lg shadow-lg z-20 py-1 border border-gray-200"
             >
               <button
                 onClick={handleShareClick}
-                className="w-full font-semibold flex items-center gap-3 px-4 py-2 text-sm text-foreground hover:bg-gray-100 transition-colors"
+                className="w-full font-semibold flex items-center gap-2 md:gap-3 px-3 md:px-4 py-1.5 md:py-2 text-xs md:text-sm text-foreground hover:bg-gray-100 transition-colors"
               >
-                <Share2 className="w-4 h-4" strokeWidth={2.5} />
+                <Share2 className="w-3.5 h-3.5 md:w-4 md:h-4" strokeWidth={2.5} />
                 Share
               </button>
               <button
                 onClick={handleCopyLink}
-                className="w-full font-semibold flex items-center gap-3 px-4 py-2 text-sm text-foreground hover:bg-gray-100 transition-colors"
+                className="w-full font-semibold flex items-center gap-2 md:gap-3 px-3 md:px-4 py-1.5 md:py-2 text-xs md:text-sm text-foreground hover:bg-gray-100 transition-colors"
               >
-                <Link2 className="w-4 h-4" strokeWidth={2.5} />
+                <Link2 className="w-3.5 h-3.5 md:w-4 md:h-4" strokeWidth={2.5} />
                 Copy link
               </button>
               <button
                 onClick={handleFavoriteFromDropdown}
                 disabled={isLoading || !currentUser}
-                className="w-full font-semibold flex items-center gap-3 px-4 py-2 text-sm text-foreground hover:bg-gray-100 transition-colors disabled:opacity-50"
+                className="w-full font-semibold flex items-center gap-2 md:gap-3 px-3 md:px-4 py-1.5 md:py-2 text-xs md:text-sm text-foreground hover:bg-gray-100 transition-colors disabled:opacity-50"
               >
-                <Star className={`w-4 h-4 ${isFavorite ? 'fill-yellow-500 text-yellow-500' : ''}`} strokeWidth={2.5} />
+                <Star className={`w-3.5 h-3.5 md:w-4 md:h-4 ${isFavorite ? 'fill-yellow-500 text-yellow-500' : ''}`} strokeWidth={2.5} />
                 {isFavorite ? 'Remove favorite' : 'Add to favorites'}
               </button>
               <div className="border-t border-gray-200 my-1"></div>
               <button
                 onClick={handleReport}
-                className="w-full font-semibold flex items-center gap-3 px-4 py-2 text-sm text-foreground hover:bg-gray-100 transition-colors"
+                className="w-full font-semibold flex items-center gap-2 md:gap-3 px-3 md:px-4 py-1.5 md:py-2 text-xs md:text-sm text-foreground hover:bg-gray-100 transition-colors"
               >
-                <Flag className="w-4 h-4" strokeWidth={2.5} />
+                <Flag className="w-3.5 h-3.5 md:w-4 md:h-4" strokeWidth={2.5} />
                 Report
               </button>
             </div>

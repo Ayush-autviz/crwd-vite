@@ -252,64 +252,64 @@ export default function CommentsBottomSheet({
       >
         {/* Scroll indicator */}
         <div className="flex justify-center pt-2 pb-1 sticky top-0 bg-white z-10">
-          <div className="w-12 h-1 bg-gray-300 rounded-full"></div>
+          <div className="w-10 md:w-12 h-0.5 md:h-1 bg-gray-300 rounded-full"></div>
         </div>
 
         {/* Header */}
-        <div className="px-4 py-3 border-b border-gray-200 sticky top-0 bg-white z-10">
+        <div className="px-3 md:px-4 py-2.5 md:py-3 border-b border-gray-200 sticky top-0 bg-white z-10">
           <div className="flex items-center justify-between">
             <div className="flex-1 min-w-0">
-              <p className="text-sm text-muted-foreground truncate">
+              <p className="text-xs md:text-sm text-muted-foreground truncate">
                 Commenting on <span className="font-semibold text-foreground">@{post.username}</span>'s {truncatedText}
               </p>
             </div>
             <button
               onClick={handleClose}
-              className="p-2 hover:bg-gray-100 rounded-full transition-colors ml-2 flex-shrink-0"
+              className="p-1.5 md:p-2 hover:bg-gray-100 rounded-full transition-colors ml-1.5 md:ml-2 flex-shrink-0"
               aria-label="Close"
             >
-              <X className="w-5 h-5 text-gray-700" />
+              <X className="w-4 h-4 md:w-5 md:h-5 text-gray-700" />
             </button>
           </div>
         </div>
 
         {/* Original Post */}
-        <div className="px-4 py-4 border-b border-gray-200">
-          <div className="flex gap-3">
-            <Avatar className="w-10 h-10 flex-shrink-0">
+        <div className="px-3 md:px-4 py-3 md:py-4 border-b border-gray-200">
+          <div className="flex gap-2.5 md:gap-3">
+            <Avatar className="w-9 h-9 md:w-10 md:h-10 flex-shrink-0">
               <AvatarImage src={post.avatarUrl} alt={post.username} />
               <AvatarFallback
                 style={{ backgroundColor: postAvatarColor }}
-                className="text-white font-bold"
+                className="text-white font-bold text-xs md:text-sm"
               >
                 {postUserInitials}
               </AvatarFallback>
             </Avatar>
             <div className="flex-1 min-w-0">
-              <div className="flex items-center gap-2 mb-1">
-                <span className="font-bold text-sm text-foreground">{post.username}</span>
+              <div className="flex items-center gap-1.5 md:gap-2 mb-0.5 md:mb-1">
+                <span className="font-bold text-xs md:text-sm text-foreground">{post.username}</span>
               </div>
-              <p className="text-sm text-foreground whitespace-pre-line">{post.text}</p>
+              <p className="text-xs md:text-sm text-foreground whitespace-pre-line">{post.text}</p>
             </div>
           </div>
         </div>
 
         {/* Comments List */}
-        <div className="flex-1 overflow-y-auto px-4 py-4">
+        <div className="flex-1 overflow-y-auto px-3 md:px-4 py-3 md:py-4">
           {isLoadingComments ? (
-            <div className="flex items-center justify-center py-8">
-              <Loader2 className="w-6 h-6 animate-spin text-gray-400" />
+            <div className="flex items-center justify-center py-6 md:py-8">
+              <Loader2 className="w-5 h-5 md:w-6 md:h-6 animate-spin text-gray-400" />
             </div>
           ) : comments.length === 0 ? (
-            <div className="flex flex-col items-center justify-center py-12">
-              <MessageCircle className="w-12 h-12 text-gray-300 mb-4" />
-              <p className="text-sm text-muted-foreground text-center">
+            <div className="flex flex-col items-center justify-center py-8 md:py-12">
+              <MessageCircle className="w-10 h-10 md:w-12 md:h-12 text-gray-300 mb-3 md:mb-4" />
+              <p className="text-xs md:text-sm text-muted-foreground text-center">
                 No comments yet. Be the first to comment!
               </p>
             </div>
           ) : (
-            <div className="space-y-6">
-              <p className="text-sm text-gray-600 font-medium">
+            <div className="space-y-4 md:space-y-6">
+              <p className="text-xs md:text-sm text-gray-600 font-medium">
                 {comments.filter(c => !c.parentComment).length} comment{comments.filter(c => !c.parentComment).length !== 1 ? "s" : ""}
               </p>
               {comments
@@ -373,26 +373,26 @@ export default function CommentsBottomSheet({
         </div>
 
         {/* Input Bar */}
-        <div className="border-t border-gray-200 px-4 py-3 bg-white sticky bottom-0">
-          <form onSubmit={handleSubmit} className="flex items-center gap-2">
+        <div className="border-t border-gray-200 px-3 md:px-4 py-2.5 md:py-3 bg-white sticky bottom-0">
+          <form onSubmit={handleSubmit} className="flex items-center gap-1.5 md:gap-2">
             <Input
               ref={inputRef}
               type="text"
               placeholder="Join the conversation"
               value={commentText}
               onChange={(e) => setCommentText(e.target.value)}
-              className="flex-1 bg-gray-100 rounded-full border-none focus-visible:ring-0"
+              className="flex-1 bg-gray-100 rounded-full border-none focus-visible:ring-0 text-sm md:text-base py-2 md:py-2.5"
               disabled={createCommentMutation.isPending || !currentUser}
             />
             <button
               type="submit"
               disabled={!commentText.trim() || createCommentMutation.isPending || !currentUser}
-              className="p-2 bg-[#1600ff] text-white rounded-full hover:bg-[#1400cc] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="p-1.5 md:p-2 bg-[#1600ff] text-white rounded-full hover:bg-[#1400cc] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {createCommentMutation.isPending ? (
-                <Loader2 className="w-5 h-5 animate-spin" />
+                <Loader2 className="w-4 h-4 md:w-5 md:h-5 animate-spin" />
               ) : (
-                <Send className="w-5 h-5" />
+                <Send className="w-4 h-4 md:w-5 md:h-5" />
               )}
             </button>
           </form>

@@ -238,31 +238,31 @@ export default function ProfilePage() {
   if (!currentUser?.id) {
     return (
       <div className="w-full flex flex-col items-center justify-center min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
-        <div className="text-center max-w-md mx-auto p-8">
+        <div className="text-center max-w-md mx-auto p-4 md:p-8">
           {/* Icon */}
-          <div className="w-20 h-20 mx-auto mb-6 bg-blue-100 rounded-full flex items-center justify-center">
-            <svg className="w-10 h-10 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div className="w-16 h-16 md:w-20 md:h-20 mx-auto mb-4 md:mb-6 bg-blue-100 rounded-full flex items-center justify-center">
+            <svg className="w-8 h-8 md:w-10 md:h-10 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
             </svg>
           </div>
           
           {/* Title */}
-          <h2 className="text-2xl font-bold text-gray-900 mb-3">
+          <h2 className="text-xl md:text-2xl font-bold text-gray-900 mb-2 md:mb-3">
             Sign in to view your profile
           </h2>
           
           {/* Description */}
-          <p className="text-gray-600 mb-8 leading-relaxed">
+          <p className="text-sm md:text-base text-gray-600 mb-6 md:mb-8 leading-relaxed">
             Sign in to view your profile, manage your causes, and connect with your community.
           </p>
           
           {/* CTA Button */}
           <Button 
             size="lg" 
-            className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-lg font-medium transition-colors duration-200 shadow-lg hover:shadow-xl"
+            className="bg-blue-600 hover:bg-blue-700 text-white px-6 md:px-8 py-2.5 md:py-3 rounded-lg font-medium transition-colors duration-200 shadow-lg hover:shadow-xl text-sm md:text-base"
           >
-            <Link to="/login" className="flex items-center gap-2">
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <Link to="/login" className="flex items-center gap-1.5 md:gap-2">
+              <svg className="w-4 h-4 md:w-5 md:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
               </svg>
               Sign In to Continue
@@ -270,7 +270,7 @@ export default function ProfilePage() {
           </Button>
           
           {/* Additional Info */}
-          <p className="text-sm text-gray-500 mt-6">
+          <p className="text-xs md:text-sm text-gray-500 mt-4 md:mt-6">
             Don't have an account? 
             <Link to="/claim-profile" className="text-blue-600 hover:text-blue-700 font-medium ml-1">
               Create one here
@@ -285,9 +285,9 @@ export default function ProfilePage() {
   if (profileLoading) {
     return (
       <div className="w-full flex flex-col items-center justify-center min-h-screen">
-        <div className="flex items-center gap-3 text-gray-600">
-          <Loader2 className="w-5 h-5 animate-spin" />
-          <span>Loading profile...</span>
+        <div className="flex items-center gap-2 md:gap-3 text-gray-600">
+          <Loader2 className="w-4 h-4 md:w-5 md:h-5 animate-spin" />
+          <span className="text-sm md:text-base">Loading profile...</span>
         </div>
       </div>
     );
@@ -297,16 +297,16 @@ export default function ProfilePage() {
   if (profileError) {
     return (
       <div className="w-full flex flex-col items-center justify-center min-h-screen">
-        <div className="text-center py-10">
-          <h2 className="text-xl font-semibold text-red-600 mb-2">
+        <div className="text-center py-8 md:py-10 px-4">
+          <h2 className="text-lg md:text-xl font-semibold text-red-600 mb-2">
             Error loading profile
           </h2>
-          <p className="text-gray-600">
+          <p className="text-sm md:text-base text-gray-600">
             {(profileError as any)?.response?.data?.message || profileError.message}
           </p>
           <Button
             onClick={() => refetchProfile()}
-            className="mt-4 bg-gray-900 text-white hover:bg-gray-800"
+            className="mt-3 md:mt-4 bg-gray-900 text-white hover:bg-gray-800 text-sm md:text-base py-2 md:py-2.5 px-4 md:px-6"
           >
             Try Again
           </Button>
@@ -344,25 +344,25 @@ export default function ProfilePage() {
     <div className="">
       <ProfileNavbar title="Me" />
 
-      <div className="flex items-center gap-4 justify-end pt-6 pb-2 px-4 sticky top-16 z-10 bg-white">
+      <div className="flex items-center gap-3 md:gap-4 justify-end pt-4 md:pt-6 pb-2 px-3 md:px-4 sticky top-14 md:top-16 z-10 bg-white">
         <div className="relative" ref={menuRef}>
           <button
             onClick={() => setShowMenu(!showMenu)}
-            className="p-2 cursor-pointer rounded-full transition-colors"
+            className="p-1.5 md:p-2 cursor-pointer rounded-full transition-colors"
           >
-            <Ellipsis className="w-6 h-6" strokeWidth={3} />
+            <Ellipsis className="w-5 h-5 md:w-6 md:h-6" strokeWidth={3} />
           </button>
 
           {showMenu && (
-            <div className="absolute right-0 top-10 bg-white border border-gray-200 rounded-md shadow-lg z-20 w-36">
+            <div className="absolute right-0 top-9 md:top-10 bg-white border border-gray-200 rounded-md shadow-lg z-20 w-32 md:w-36">
               <button
                 onClick={() => {
                   setShowMenu(false);
                   handleShareProfile();
                 }}
-                className="flex items-center gap-2 w-full px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+                className="flex items-center gap-1.5 md:gap-2 w-full px-2.5 md:px-3 py-1.5 md:py-2 text-xs md:text-sm text-gray-700 hover:bg-gray-50 transition-colors"
               >
-                <Share className="h-4 w-4" />
+                <Share className="h-3.5 w-3.5 md:h-4 md:w-4" />
                 Share Profile
               </button>
               {/* <button
@@ -382,12 +382,12 @@ export default function ProfilePage() {
                   handleLogout();
                 }}
                 disabled={logoutMutation.isPending}
-                className="flex items-center gap-2 w-full px-3 py-2 text-sm text-red-600 hover:bg-gray-50 transition-colors disabled:opacity-50"
+                className="flex items-center gap-1.5 md:gap-2 w-full px-2.5 md:px-3 py-1.5 md:py-2 text-xs md:text-sm text-red-600 hover:bg-gray-50 transition-colors disabled:opacity-50"
               >
                 {logoutMutation.isPending ? (
-                  <Loader2 className="h-4 w-4 animate-spin" />
+                  <Loader2 className="h-3.5 w-3.5 md:h-4 md:w-4 animate-spin" />
                 ) : (
-                  <LogOut className="h-4 w-4" />
+                  <LogOut className="h-3.5 w-3.5 md:h-4 md:w-4" />
                 )}
                 {logoutMutation.isPending ? 'Logging out...' : 'Logout'}
               </button>
@@ -397,16 +397,17 @@ export default function ProfilePage() {
         <Button
           onClick={() => navigate("/profile/edit")}
           variant="outline"
+          className="text-xs md:text-sm py-1.5 md:py-2 px-2.5 md:px-3"
         >
           {/* <Pencil className="w-4 h-4 mr-2" /> */}
           Edit
         </Button>
       </div>
 
-      <div className="md:grid md:grid-cols-12 md:gap-6 md:px-6 md:pt-2 md:pb-6">
+      <div className="md:grid md:grid-cols-12 md:gap-6 md:px-4 lg:px-6 md:pt-2 md:pb-6">
         {/* Main Content */}
         <div className="md:col-span-12">
-          <div className="flex flex-col space-y-4 px-4 md:px-0">
+          <div className="flex flex-col space-y-3 md:space-y-4 px-3 md:px-4 lg:px-0">
             <ProfileHeader
               avatarUrl={profileData?.profile_picture || '/placeholder.svg'}
               name={fullName}
@@ -416,22 +417,22 @@ export default function ProfilePage() {
             />
             
             {/* Edit Profile and Share Profile buttons */}
-            <div className="flex items-center justify-center gap-4 mt-4">
+            <div className="flex items-center justify-center gap-3 md:gap-4 mt-3 md:mt-4">
               <Button
                 onClick={() => navigate("/profile/edit")}
                 variant="outline"
-                className="px-4 py-2.5 border border-gray-300 rounded-lg min-w-[120px]"
+                className="px-3 md:px-4 py-2 md:py-2.5 border border-gray-300 rounded-lg min-w-[100px] md:min-w-[120px]"
               >
-                <span className="text-sm font-semibold text-gray-700">Edit Profile</span>
+                <span className="text-xs md:text-sm font-semibold text-gray-700">Edit Profile</span>
               </Button>
               <Button
                 onClick={handleShareProfile}
                 variant="outline"
-                className="px-4 py-2.5 border border-gray-300 rounded-lg min-w-[120px]"
+                className="px-3 md:px-4 py-2 md:py-2.5 border border-gray-300 rounded-lg min-w-[100px] md:min-w-[120px]"
               >
                 <div className="flex items-center gap-1">
-                  <Share2 className="w-4 h-4 text-gray-700" />
-                  <span className="text-sm font-semibold text-gray-700">Share Profile</span>
+                  <Share2 className="w-3.5 h-3.5 md:w-4 md:h-4 text-gray-700" />
+                  <span className="text-xs md:text-sm font-semibold text-gray-700">Share Profile</span>
                 </div>
               </Button>
             </div>
@@ -455,13 +456,13 @@ export default function ProfilePage() {
             {/* Supports Section */}
             {profileData?.recently_supported_causes && profileData.recently_supported_causes.length > 0 && (
               <>
-                <div className="mt-6">
-                  <div className="flex justify-between items-center mb-4">
-                    <h2 className="text-lg font-bold text-gray-900">Supports</h2>
+                <div className="mt-4 md:mt-6">
+                  <div className="flex justify-between items-center mb-3 md:mb-4">
+                    <h2 className="text-base md:text-lg font-bold text-gray-900">Supports</h2>
                   </div>
 
                   {/* Grid Layout - Responsive: 2 cols mobile, 3 cols tablet, 4 cols desktop */}
-                  <div className="flex flex-wrap -mx-1.5 sm:-mx-2">
+                  <div className="flex flex-wrap -mx-1 sm:-mx-1.5 md:-mx-2">
                     {profileData.recently_supported_causes.slice(0, 6).map((cause: any, i: number) => {
                       // Generate consistent color based on cause name
                       const colors = [
@@ -478,27 +479,27 @@ export default function ProfilePage() {
                         <Link 
                           key={cause.id || i} 
                           to={`/cause/${cause.id}`}
-                          className="w-1/2 sm:w-1/3 lg:w-1/4 px-1.5 sm:px-2 mb-3"
+                          className="w-1/2 sm:w-1/3 lg:w-1/4 px-1 sm:px-1.5 md:px-2 mb-2 md:mb-3"
                         >
-                          <div className="bg-white border border-gray-200 rounded-lg p-2 sm:p-3 flex flex-col items-center justify-between h-[100px] sm:h-[120px]">
+                          <div className="bg-white border border-gray-200 rounded-lg p-1.5 sm:p-2 md:p-3 flex flex-col items-center justify-between h-[90px] sm:h-[100px] md:h-[120px]">
                             {cause.logo ? (
-                              <Avatar className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg mb-2 flex-shrink-0">
+                              <Avatar className="w-9 h-9 sm:w-10 sm:h-10 md:w-12 md:h-12 rounded-lg mb-1.5 md:mb-2 flex-shrink-0">
                                 <AvatarImage src={cause.logo} alt={cause.name} />
-                                <AvatarFallback className="bg-blue-100 text-blue-600 text-xs sm:text-sm font-semibold rounded-lg">
+                                <AvatarFallback className="bg-blue-100 text-blue-600 text-[10px] sm:text-xs md:text-sm font-semibold rounded-lg">
                                   {cause.name?.charAt(0)?.toUpperCase() || 'N'}
                                 </AvatarFallback>
                               </Avatar>
                             ) : (
                               <div 
-                                className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg mb-2 flex items-center justify-center flex-shrink-0"
+                                className="w-9 h-9 sm:w-10 sm:h-10 md:w-12 md:h-12 rounded-lg mb-1.5 md:mb-2 flex items-center justify-center flex-shrink-0"
                                 style={{ backgroundColor: bgColor }}
                               >
-                                <span className="text-lg sm:text-xl font-semibold text-white">
+                                <span className="text-base sm:text-lg md:text-xl font-semibold text-white">
                                   {cause.name?.charAt(0)?.toUpperCase() || 'N'}
                                 </span>
                               </div>
                             )}
-                            <p className="text-xs font-semibold text-gray-900 text-center line-clamp-2 flex-grow flex items-center justify-center">
+                            <p className="text-[10px] sm:text-xs font-semibold text-gray-900 text-center line-clamp-2 flex-grow flex items-center justify-center">
                               {cause.name}
                             </p>
                           </div>
@@ -509,12 +510,12 @@ export default function ProfilePage() {
 
                   {/* Show more causes text and link */}
                   {profileData.recently_supported_causes.length > 6 && (
-                    <div className="flex flex-col items-center gap-2 mt-4">
-                      <p className="text-sm text-gray-500">
+                    <div className="flex flex-col items-center gap-1.5 md:gap-2 mt-3 md:mt-4">
+                      <p className="text-xs md:text-sm text-gray-500">
                         + {profileData.recently_supported_causes.length - 6} more causes
                       </p>
                       <Link to="/interests">
-                        <span className="text-sm text-blue-600 font-medium">
+                        <span className="text-xs md:text-sm text-blue-600 font-medium">
                           See all {profileData.recently_supported_causes.length} →
                         </span>
                       </Link>
@@ -560,18 +561,18 @@ export default function ProfilePage() {
         <SheetContent side="bottom" className="h-[75vh] max-h-[75vh] p-0 flex flex-col">
           {/* Drag Handle */}
           <div className="flex justify-center pt-3 pb-2">
-            <div className="w-12 h-1.5 bg-gray-300 rounded-full" />
+            <div className="w-10 md:w-12 h-0.5 md:h-1.5 bg-gray-300 rounded-full" />
           </div>
 
-          <div className="px-4 ">
+          <div className="px-3 md:px-4">
             <SheetHeader>
-              <SheetTitle className="text-2xl font-bold text-gray-900">
+              <SheetTitle className="text-xl md:text-2xl font-bold text-gray-900">
                 {activeStatsTab === 'causes' && 'Causes'}
                 {activeStatsTab === 'crwds' && 'Collectives'}
                 {activeStatsTab === 'followers' && 'Followers'}
                 {activeStatsTab === 'following' && 'Following'}
               </SheetTitle>
-              <SheetDescription className="text-sm text-gray-500">
+              <SheetDescription className="text-xs md:text-sm text-gray-500">
                 {activeStatsTab === 'causes' && 'Causes you support'}
                 {activeStatsTab === 'crwds' && "Collectives you're part of"}
                 {activeStatsTab === 'followers' && 'People following you'}
@@ -581,8 +582,8 @@ export default function ProfilePage() {
           </div>
 
           {/* Tabs */}
-          <div className="px-4  mb-2">
-            <div className="flex gap-0.5 bg-gray-100 rounded-2xl p-1">
+          <div className="px-3 md:px-4 mb-2">
+            <div className="flex gap-0.5 bg-gray-100 rounded-2xl p-0.5 md:p-1">
               {[
                 { label: 'Causes', value: 'causes' },
                 { label: 'Collectives', value: 'crwds' },
@@ -592,7 +593,7 @@ export default function ProfilePage() {
                 <button
                   key={tab.value}
                   onClick={() => setActiveStatsTab(tab.value as typeof activeStatsTab)}
-                  className={`flex-1 px-3 py-1.5 rounded-xl text-sm font-semibold transition-colors ${
+                  className={`flex-1 px-2 md:px-3 py-1 md:py-1.5 rounded-xl text-xs md:text-sm font-semibold transition-colors ${
                     activeStatsTab === tab.value
                       ? 'bg-white text-gray-900'
                       : 'text-gray-600'
@@ -605,13 +606,13 @@ export default function ProfilePage() {
           </div>
 
           {/* Content */}
-          <div className="flex-1 overflow-y-auto px-4 pb-6">
+          <div className="flex-1 overflow-y-auto px-3 md:px-4 pb-4 md:pb-6">
             {activeStatsTab === 'causes' && (
               <>
                 {statsCausesLoading ? (
-                  <div className="flex flex-col items-center justify-center py-10">
-                    <Loader2 className="w-6 h-6 animate-spin text-blue-600" />
-                    <p className="text-sm text-gray-600 mt-2.5">Loading causes...</p>
+                  <div className="flex flex-col items-center justify-center py-8 md:py-10">
+                    <Loader2 className="w-5 h-5 md:w-6 md:h-6 animate-spin text-blue-600" />
+                    <p className="text-xs md:text-sm text-gray-600 mt-2 md:mt-2.5">Loading causes...</p>
                   </div>
                 ) : statsCausesData?.results?.length > 0 ? (
                   <div className="space-y-0">
@@ -628,21 +629,21 @@ export default function ProfilePage() {
                           key={cause.id || index}
                           to={`/cause/${cause.id}`}
                           onClick={() => setShowStatsSheet(false)}
-                          className="flex items-center gap-3 py-4 border-b border-gray-100 hover:bg-gray-50 transition-colors"
+                          className="flex items-center gap-2.5 md:gap-3 py-3 md:py-4 border-b border-gray-100 hover:bg-gray-50 transition-colors"
                         >
                           <div
-                            className="w-12 h-12 rounded-lg flex items-center justify-center flex-shrink-0"
+                            className="w-10 h-10 md:w-12 md:h-12 rounded-lg flex items-center justify-center flex-shrink-0"
                             style={{ backgroundColor: causeBgColor }}
                           >
-                            <span className="text-xl font-bold text-white">
+                            <span className="text-lg md:text-xl font-bold text-white">
                               {cause.name?.charAt(0)?.toUpperCase() || 'N'}
                             </span>
                           </div>
                           <div className="flex-1 min-w-0">
-                            <p className="text-sm font-semibold text-gray-900 mb-1">
+                            <p className="text-xs md:text-sm font-semibold text-gray-900 mb-0.5 md:mb-1">
                               {cause.name || 'Unknown Cause'}
                             </p>
-                            <p className="text-xs text-gray-500 line-clamp-2">
+                            <p className="text-[10px] md:text-xs text-gray-500 line-clamp-2">
                               {cause.mission || 'Supporting this cause'}
                             </p>
                           </div>
@@ -651,8 +652,8 @@ export default function ProfilePage() {
                     })}
                   </div>
                 ) : (
-                  <div className="flex items-center justify-center py-10">
-                    <p className="text-sm text-gray-500">No causes found</p>
+                  <div className="flex items-center justify-center py-8 md:py-10">
+                    <p className="text-xs md:text-sm text-gray-500">No causes found</p>
                   </div>
                 )}
               </>
@@ -661,9 +662,9 @@ export default function ProfilePage() {
             {activeStatsTab === 'crwds' && (
               <>
                 {statsCollectivesLoading ? (
-                  <div className="flex flex-col items-center justify-center py-10">
-                    <Loader2 className="w-6 h-6 animate-spin text-blue-600" />
-                    <p className="text-sm text-gray-600 mt-2.5">Loading collectives...</p>
+                  <div className="flex flex-col items-center justify-center py-8 md:py-10">
+                    <Loader2 className="w-5 h-5 md:w-6 md:h-6 animate-spin text-blue-600" />
+                    <p className="text-xs md:text-sm text-gray-600 mt-2 md:mt-2.5">Loading collectives...</p>
                   </div>
                 ) : statsCollectivesData?.data?.length > 0 ? (
                   <div className="space-y-0">
@@ -672,23 +673,23 @@ export default function ProfilePage() {
                       return (
                         <div
                           key={collective.id || index}
-                          className="flex items-center justify-between py-3 border-b border-gray-100"
+                          className="flex items-center justify-between py-2.5 md:py-3 border-b border-gray-100"
                         >
-                          <div className="flex items-center gap-3 flex-1 min-w-0">
-                            <Avatar className="w-10 h-10 flex-shrink-0">
+                          <div className="flex items-center gap-2.5 md:gap-3 flex-1 min-w-0">
+                            <Avatar className="w-9 h-9 md:w-10 md:h-10 flex-shrink-0">
                               <AvatarImage src={collective.created_by?.profile_picture || collective.avatar || collective.image} />
-                              <AvatarFallback className="bg-green-100 text-green-600">
+                              <AvatarFallback className="bg-green-100 text-green-600 text-xs md:text-sm">
                                 {collective.name?.charAt(0)?.toUpperCase() || 'N'}
                               </AvatarFallback>
                             </Avatar>
                             <div className="flex-1 min-w-0">
-                              <div className="bg-green-100 text-green-600 px-2 py-0.5 rounded text-[10px] font-semibold w-fit mb-1">
+                              <div className="bg-green-100 text-green-600 px-1.5 md:px-2 py-0.5 rounded text-[9px] md:text-[10px] font-semibold w-fit mb-0.5 md:mb-1">
                                 Collective
                               </div>
-                              <p className="text-sm font-medium text-gray-900 mb-1">
+                              <p className="text-xs md:text-sm font-medium text-gray-900 mb-0.5 md:mb-1">
                                 {collective.name || 'Unknown Collective'}
                               </p>
-                              <p className="text-xs text-gray-500 line-clamp-2">
+                              <p className="text-[10px] md:text-xs text-gray-500 line-clamp-2">
                                 {collective.description || ''}
                               </p>
                             </div>
@@ -698,7 +699,7 @@ export default function ProfilePage() {
                               setShowStatsSheet(false);
                               navigate(`/groupcrwd/${collective.id}`);
                             }}
-                            className="bg-blue-600 hover:bg-blue-700 text-white text-xs px-4 py-2 rounded-lg"
+                            className="bg-blue-600 hover:bg-blue-700 text-white text-[10px] md:text-xs px-3 md:px-4 py-1.5 md:py-2 rounded-lg"
                           >
                             View Details
                           </Button>
@@ -707,8 +708,8 @@ export default function ProfilePage() {
                     })}
                   </div>
                 ) : (
-                  <div className="flex items-center justify-center py-10">
-                    <p className="text-sm text-gray-500">No collectives found</p>
+                  <div className="flex items-center justify-center py-8 md:py-10">
+                    <p className="text-xs md:text-sm text-gray-500">No collectives found</p>
                   </div>
                 )}
               </>
@@ -717,9 +718,9 @@ export default function ProfilePage() {
             {activeStatsTab === 'followers' && (
               <>
                 {statsFollowersLoading ? (
-                  <div className="flex flex-col items-center justify-center py-10">
-                    <Loader2 className="w-6 h-6 animate-spin text-blue-600" />
-                    <p className="text-sm text-gray-600 mt-2.5">Loading followers...</p>
+                  <div className="flex flex-col items-center justify-center py-8 md:py-10">
+                    <Loader2 className="w-5 h-5 md:w-6 md:h-6 animate-spin text-blue-600" />
+                    <p className="text-xs md:text-sm text-gray-600 mt-2 md:mt-2.5">Loading followers...</p>
                   </div>
                 ) : statsFollowersData?.followers?.length > 0 ? (
                   <div className="space-y-0">
@@ -729,31 +730,31 @@ export default function ProfilePage() {
                       return (
                         <div
                           key={userData.id || index}
-                          className="flex items-center justify-between py-3 border-b border-gray-100"
+                          className="flex items-center justify-between py-2.5 md:py-3 border-b border-gray-100"
                         >
-                          <div className="flex items-center gap-3 flex-1 min-w-0">
-                            <Avatar className="w-10 h-10 flex-shrink-0">
+                          <div className="flex items-center gap-2.5 md:gap-3 flex-1 min-w-0">
+                            <Avatar className="w-9 h-9 md:w-10 md:h-10 flex-shrink-0">
                               <AvatarImage src={userData.profile_picture || userData.avatar} />
-                              <AvatarFallback>
+                              <AvatarFallback className="text-xs md:text-sm">
                                 {userData.first_name && userData.last_name
                                   ? `${userData.first_name[0]}${userData.last_name[0]}`
                                   : (userData.name || 'U').charAt(0)}
                               </AvatarFallback>
                             </Avatar>
                             <div className="flex-1 min-w-0">
-                              <p className="text-sm font-medium text-gray-900">
+                              <p className="text-xs md:text-sm font-medium text-gray-900">
                                 {userData.first_name && userData.last_name
                                   ? `${userData.first_name} ${userData.last_name}`
                                   : userData.first_name || userData.name || 'Unknown User'}
                               </p>
-                              <p className="text-xs text-gray-500">@{userData.username || 'unknown'}</p>
+                              <p className="text-[10px] md:text-xs text-gray-500">@{userData.username || 'unknown'}</p>
                             </div>
                           </div>
                           {userData.id !== currentUser?.id && (
                             <Button
                               onClick={() => handleFollowToggle(userData.id.toString(), isFollowing)}
                               disabled={followUserMutation.isPending || unfollowUserMutation.isPending}
-                              className={`text-xs px-4 py-2 rounded-full ${
+                              className={`text-[10px] md:text-xs px-3 md:px-4 py-1.5 md:py-2 rounded-full ${
                                 isFollowing
                                   ? 'bg-gray-100 text-gray-600 hover:bg-gray-200'
                                   : 'bg-blue-600 text-white hover:bg-blue-700'
@@ -767,8 +768,8 @@ export default function ProfilePage() {
                     })}
                   </div>
                 ) : (
-                  <div className="flex items-center justify-center py-10">
-                    <p className="text-sm text-gray-500">No followers found</p>
+                  <div className="flex items-center justify-center py-8 md:py-10">
+                    <p className="text-xs md:text-sm text-gray-500">No followers found</p>
                   </div>
                 )}
               </>
@@ -777,9 +778,9 @@ export default function ProfilePage() {
             {activeStatsTab === 'following' && (
               <>
                 {statsFollowingLoading ? (
-                  <div className="flex flex-col items-center justify-center py-10">
-                    <Loader2 className="w-6 h-6 animate-spin text-blue-600" />
-                    <p className="text-sm text-gray-600 mt-2.5">Loading following...</p>
+                  <div className="flex flex-col items-center justify-center py-8 md:py-10">
+                    <Loader2 className="w-5 h-5 md:w-6 md:h-6 animate-spin text-blue-600" />
+                    <p className="text-xs md:text-sm text-gray-600 mt-2 md:mt-2.5">Loading following...</p>
                   </div>
                 ) : statsFollowingData?.following?.length > 0 ? (
                   <div className="space-y-0">
@@ -789,31 +790,31 @@ export default function ProfilePage() {
                       return (
                         <div
                           key={userData.id || index}
-                          className="flex items-center justify-between py-3 border-b border-gray-100"
+                          className="flex items-center justify-between py-2.5 md:py-3 border-b border-gray-100"
                         >
-                          <div className="flex items-center gap-3 flex-1 min-w-0">
-                            <Avatar className="w-10 h-10 flex-shrink-0">
+                          <div className="flex items-center gap-2.5 md:gap-3 flex-1 min-w-0">
+                            <Avatar className="w-9 h-9 md:w-10 md:h-10 flex-shrink-0">
                               <AvatarImage src={userData.profile_picture || userData.avatar} />
-                              <AvatarFallback>
+                              <AvatarFallback className="text-xs md:text-sm">
                                 {userData.first_name && userData.last_name
                                   ? `${userData.first_name[0]}${userData.last_name[0]}`
                                   : (userData.name || 'U').charAt(0)}
                               </AvatarFallback>
                             </Avatar>
                             <div className="flex-1 min-w-0">
-                              <p className="text-sm font-medium text-gray-900">
+                              <p className="text-xs md:text-sm font-medium text-gray-900">
                                 {userData.first_name && userData.last_name
                                   ? `${userData.first_name} ${userData.last_name}`
                                   : userData.first_name || userData.name || 'Unknown User'}
                               </p>
-                              <p className="text-xs text-gray-500">@{userData.username || 'unknown'}</p>
+                              <p className="text-[10px] md:text-xs text-gray-500">@{userData.username || 'unknown'}</p>
                             </div>
                           </div>
                           {userData.id !== currentUser?.id && (
                             <Button
                               onClick={() => handleFollowToggle(userData.id.toString(), isFollowing)}
                               disabled={followUserMutation.isPending || unfollowUserMutation.isPending}
-                              className="bg-gray-100 text-gray-600 hover:bg-gray-200 text-xs px-4 py-2 rounded-full"
+                              className="bg-gray-100 text-gray-600 hover:bg-gray-200 text-[10px] md:text-xs px-3 md:px-4 py-1.5 md:py-2 rounded-full"
                             >
                               Following
                             </Button>
@@ -823,8 +824,8 @@ export default function ProfilePage() {
                     })}
                   </div>
                 ) : (
-                  <div className="flex items-center justify-center py-10">
-                    <p className="text-sm text-gray-500">No following found</p>
+                  <div className="flex items-center justify-center py-8 md:py-10">
+                    <p className="text-xs md:text-sm text-gray-500">No following found</p>
                   </div>
                 )}
               </>

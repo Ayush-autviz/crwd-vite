@@ -32,12 +32,12 @@ export default function CauseActionButtons({
   };
 
   return (
-    <div className="px-4 py-4 space-y-3">
+    <div className="px-3 md:px-4 py-3 md:py-4 space-y-2.5 md:space-y-3">
       <Button
         onClick={handleAddToDonationBox}
-        className="w-full bg-[#aeff30] hover:bg-[#93c902] text-black font-semibold rounded-full py-5 text-base"
+        className="w-full bg-[#aeff30] hover:bg-[#93c902] text-black font-semibold rounded-full py-4 md:py-5 text-sm md:text-base"
       >
-        <Plus className="w-5 h-5 mr-2" />
+        <Plus className="w-4 h-4 md:w-5 md:h-5 mr-1.5 md:mr-2" />
         Add to Donation Box
       </Button>
       
