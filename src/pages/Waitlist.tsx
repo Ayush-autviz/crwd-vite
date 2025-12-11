@@ -208,7 +208,7 @@ export default function WaitlistPage() {
 <div className="sticky top-0 z-10 w-full flex items-center justify-between p-4 border-b bg-background">
   {/* <img src="/logo3.png" width={100} height={100} alt="CRWD Logo" /> */}
   <NewLogo />
-  <Button variant="ghost" className="px-4 font-bold" onClick={() => navigate("/")}>
+  <Button variant="ghost" className="px-4 font-bold text-md md:text-lg" onClick={() => navigate("/")}>
     See How It Works
   </Button>
 </div>
@@ -216,12 +216,12 @@ export default function WaitlistPage() {
       {/* Hero Section */}
       <div className="bg-card pt-6 pb-12 md:pt-8 md:pb-16 px-4 md:px-6">
         {/* Launch Banner */}
-        <div className="max-w-4xl mx-auto text-center mt-20  mb-6 md:mb-8">
-          <div className="w-fit mx-auto bg-[#aeff30] text-black px-4 py-1 rounded-full text-sm font-bold mb-4 md:mb-6">
+        <div className="max-w-4xl mx-auto text-center mt-10 md:mt-20  mb-6 md:mb-8">
+          <div className="w-fit mx-auto bg-[#aeff30] text-black px-4 py-1 rounded-full text-sm font-[800] mb-4 md:mb-6">
             LAUNCHING EARLY 2026
           </div>
           
-          <h1 className="font-[800] text-foreground mb-3 md:mb-4 leading-tight" style={{ fontSize: 'clamp(2rem, 5vw, 4.5rem)' }}>
+          <h1 className="font-[900] text-foreground mb-3 md:mb-4 leading-tight" style={{ fontSize: 'clamp(2.2rem, 5vw, 4.5rem)' }}>
             Stop Choosing Between the
             <span className="text-[#1600ff]"> Causes You Care About.</span>
           </h1>
@@ -255,7 +255,7 @@ export default function WaitlistPage() {
           <Card className="max-w-[80%] lg:max-w-3xl mx-auto">
             <CardContent className="p-4 md:p-8 lg:p-12">
               <div className="text-gray-500 mb-4 text-center" style={{ fontSize: 'clamp(0.875rem, 2vw, 1.125rem)' }}>
-                You can give <span className="text-[#1600ff] font-[900]" style={{ fontSize: 'clamp(2rem, 5vw, 3rem)' }}>${donationAmount}</span>/month to
+                You can give <span className="text-[#1600ff] font-[900]" style={{ fontSize: 'clamp(2rem, 5vw, 3rem)' }}>${donationAmount}</span> /month to
               </div>
               
               {/* Slider */}
@@ -275,11 +275,11 @@ export default function WaitlistPage() {
               </div>
               
               {/* Cause Buttons */}
-              <div className="flex flex-wrap gap-2 md:gap-3 mb-4 md:mb-6 justify-center">
+              <div className="grid grid-cols-2 md:flex md:flex-wrap gap-2 md:gap-3 mb-4 md:mb-6 justify-center">
                 {causeSets[currentCauseSet].map((cause) => (
                   <button
                     key={`${cause.name}-${currentCauseSet}`}
-                    className={`px-3 py-1.5 md:px-4 md:py-2 rounded-full text-primary-foreground text-sm md:text-base font-medium ${cause.bgColor} ${cause.hoverColor} transition-colors`}
+                    className={`px-2 py-1 md:px-4 md:py-2 rounded-full text-primary-foreground text-xs sm:text-sm md:text-base font-medium ${cause.bgColor} ${cause.hoverColor} transition-colors`}
                   >
                     {cause.name}
                   </button>
@@ -355,7 +355,7 @@ export default function WaitlistPage() {
             How It Works:
           </h3>
           
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 lg:gap-12">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 md:gap-8 lg:gap-12">
             {/* Step 1 */}
             <div className="flex flex-col items-center text-center">
               <div className="w-16 h-16 rounded-full bg-[#1600ff] flex items-center justify-center mb-4">
@@ -533,7 +533,7 @@ export default function WaitlistPage() {
                       setEmailError("")
                     }
                   }}
-                  className="w-full h-12"
+                  className="w-full h-12 bg-gray-100"
                   required
                 />
                 {emailError && (
@@ -553,7 +553,7 @@ export default function WaitlistPage() {
                   placeholder="Alex"
                   value={waitlistForm.name}
                   onChange={(e) => setWaitlistForm(prev => ({ ...prev, name: e.target.value }))}
-                  className="w-full h-12"
+                  className="w-full h-12 bg-gray-100"
                   required
                 />
               </div>
@@ -563,7 +563,7 @@ export default function WaitlistPage() {
                 <label className="block text-sm font-semibold mb-3">
                   Which causes do you care about? (optional)
                 </label>
-                <div className="grid grid-cols-2 gap-1">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-1">
                   {causes.map((cause) => (
                     <label
                       key={cause}
@@ -573,7 +573,7 @@ export default function WaitlistPage() {
                         type="checkbox"
                         checked={waitlistForm.causes.includes(cause)}
                         onChange={() => toggleCause(cause)}
-                        className="w-4 h-4 text-[#1600ff] border-gray-300 rounded focus:ring-[#1600ff]"
+                        className="w-4 h-4 text-[#1600ff] border-gray-300 rounded-sm focus:ring-[#1600ff]"
                       />
                       <span className="text-gray-700" style={{ fontSize: 'clamp(0.875rem, 2vw, 1rem)' }}>{cause}</span>
                     </label>
@@ -656,7 +656,7 @@ export default function WaitlistPage() {
           </p>
 
                 {/* Feature Blocks */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 mb-10 md:mb-16">
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 gap-4 md:gap-6 mb-10 md:mb-16">
             {/* We'll Match Donations */}
             <Card>
               <CardContent className="px-6">
@@ -773,15 +773,15 @@ export default function WaitlistPage() {
                 <label className="block font-bold text-gray-900 mb-2" style={{ fontSize: 'clamp(0.9rem, 1.8vw, 1rem)' }}>
                   Main vibe? (optional)
                 </label>
-                <div className="grid grid-cols-2 gap-3">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-2 md:gap-3">
                   {collectiveCauses.map((cause) => (
                     <button
                       key={cause}
                       type="button"
                       onClick={() => setCollectiveForm(prev => ({ ...prev, vibe: cause }))}
-                      className={`h-12 rounded-lg border-2 transition-colors text-base ${
+                      className={`h-10 md:h-12 rounded-full border-2 transition-colors text-sm md:text-base ${
                         collectiveForm.vibe === cause
-                          ? "border-[#6A0DAD] bg-[#6A0DAD] text-white"
+                          ? "border-[#1600ff] bg-[#1600ff] text-white"
                           : "border-gray-300 bg-white text-gray-700 hover:border-[#6A0DAD]"
                       }`}
                     >

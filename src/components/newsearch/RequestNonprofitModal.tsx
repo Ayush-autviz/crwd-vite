@@ -108,7 +108,7 @@ export default function RequestNonprofitModal({
         }}
       >
         {/* Header */}
-        <div className="sticky top-0 bg-white border-b border-gray-200 px-4 md:px-6 py-3 md:py-4 flex items-center justify-between z-10">
+        <div className="sticky top-0 bg-white  px-4 md:px-6 py-3 md:py-4 flex items-center justify-between z-10">
           <h2 className="text-xl md:text-2xl font-bold text-foreground">Request a Nonprofit</h2>
           <button
             onClick={onClose}

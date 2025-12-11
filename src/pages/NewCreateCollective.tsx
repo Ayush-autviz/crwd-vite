@@ -66,19 +66,19 @@ export default function NewCreateCollectivePage() {
   // Logo customization state
   const [logo, setLogo] = useState<string | File>('');
   const [logoType, setLogoType] = useState<'letter' | 'upload'>('letter');
-  const [logoColor, setLogoColor] = useState('#EC4899');
+  const [logoColor, setLogoColor] = useState('#1600ff');
   const [logoPreview, setLogoPreview] = useState<string | null>(null);
   const [showLogoCustomization, setShowLogoCustomization] = useState(false);
 
   const colorSwatches = [
-    '#3B82F6', // Blue
-    '#EC4899', // Pink/Red
-    '#84CC16', // Lime Green
-    '#8B5CF6', // Purple
-    '#14B8A6', // Teal
-    '#F97316', // Orange
-    '#EF4444', // Red
-    '#06B6D4', // Light Blue/Periwinkle
+    '#1600ff', // Blue
+    '#ff3366', // Pink/Red
+    '#aeff30', // Lime Green
+    '#a955f7', // Purple
+    '#13b981', // Teal
+    '#ff6c36', // Orange
+    '#ef4444', // Red
+    '#6367f1', // Indigo
   ];
 
   // Save form data to localStorage
@@ -202,11 +202,36 @@ export default function NewCreateCollectivePage() {
     }
 
     // Create collective via API
-    createCollectiveMutation.mutate({
-      name: name.trim(),
-      description: description.trim(),
-      cause_ids: selectedCauses.map(c => c.id),
-    });
+    // Use FormData if there's a file upload, otherwise use JSON
+    if (logoType === 'upload' && logo instanceof File) {
+      const formData = new FormData();
+      formData.append('name', name.trim());
+      formData.append('description', description.trim());
+      // Append each cause_id separately (backend should handle this as an array)
+      selectedCauses.forEach(cause => {
+        formData.append('cause_ids', cause.id.toString());
+      });
+      formData.append('logo_file', logo);
+      // Add color even when uploading file (for fallback)
+      if (logoColor) {
+        formData.append('color', logoColor);
+      }
+      createCollectiveMutation.mutate(formData);
+    } else {
+      // Use JSON for letter logo or no logo
+      const requestData: any = {
+        name: name.trim(),
+        description: description.trim(),
+        cause_ids: selectedCauses.map(c => c.id),
+      };
+
+      // Add color if logo type is letter
+      if (logoType === 'letter' && logoColor) {
+        requestData.color = logoColor;
+      }
+
+      createCollectiveMutation.mutate(requestData);
+    }
   };
 
   // Show prompt if user is not logged in

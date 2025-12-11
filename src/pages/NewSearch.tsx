@@ -3,6 +3,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { ArrowLeft, Search as SearchIcon, Sparkles, Plus, Loader2 } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
 import { newSearch } from '@/services/api/social';
 import { useQuery } from '@tanstack/react-query';
 import SearchResultsHeader from '@/components/newsearch/SearchResultsHeader';
@@ -157,7 +158,7 @@ export default function NewSearchPage() {
               
               <Card
                 onClick={handleSurpriseMe}
-                className="bg-gray-50 border border-gray-200 rounded-lg cursor-pointer hover:bg-gray-100 transition-colors"
+                className="shadow-none border py-4 border-gray-200 rounded-lg cursor-pointer hover:border-1 hover:border-purple-500 transition-colors"
               >
                 <CardContent className="px-3 md:px-4 py-3 md:py-4">
                   <div className="flex items-center gap-3 md:gap-4">
@@ -225,24 +226,87 @@ export default function NewSearchPage() {
                       <PostResultCard key={post.id} post={post} />
                     ))}
                 </div>
+              ) : activeTab === 'Causes' ? (
+                <>
+                  {/* Causes Empty State */}
+                  <div className="text-center py-8 md:py-12 border-2 border-dashed border-gray-300 rounded-lg mb-6 md:mb-8">
+                    <p className="text-gray-700 text-sm md:text-base mb-3 md:mb-4">
+                      No organizations found matching your search.
+                    </p>
+                    <button
+                      onClick={() => setShowRequestModal(true)}
+                      className="text-xs md:text-sm text-[#1600ff] hover:underline"
+                    >
+                      Can't find your nonprofit? Request it here
+                    </button>
+                  </div>
+
+                  {/* Try searching for section */}
+                  <div className="mb-6 md:mb-8">
+                    <h4 className="text-sm md:text-base font-semibold text-gray-900 mb-3 md:mb-4">
+                      Try searching for:
+                    </h4>
+                    <ul className="space-y-2 md:space-y-3 text-left">
+                      {['Animals', 'Homelessness', 'Mental Health', 'Health & Medical', 'Education', 'Environment'].map((category) => (
+                        <li key={category} className="text-sm md:text-base text-gray-700">
+                          • {category}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+
+                  {/* Browse All Nonprofits Button */}
+                  <div className="text-center">
+                    <Button
+                      variant="outline"
+                      className="w-full md:w-auto px-6 md:px-8 py-2.5 md:py-3 text-sm md:text-base"
+                      onClick={() => {
+                        setSearchQuery('');
+                        setHasSearched(false);
+                      }}
+                    >
+                      Browse All Nonprofits
+                    </Button>
+                  </div>
+                </>
+              ) : activeTab === 'Collectives' ? (
+                <>
+                  {/* Collectives Empty State */}
+                  <div className="text-center py-8 md:py-12 border-2 border-dashed border-gray-300 rounded-lg mb-6 md:mb-8">
+                    <SearchIcon className="w-12 h-12 md:w-16 md:h-16 mx-auto mb-4 text-gray-400" />
+                    <p className="font-semibold mb-2 text-gray-700 text-sm md:text-base">
+                      No "{searchQuery}" collective found
+                    </p>
+                    <p className="text-sm md:text-base text-gray-500">
+                      Want to start one?
+                    </p>
+                  </div>
+
+                  {/* Create Collective Button */}
+                  <div className="text-center">
+                    <Button
+                      className="w-full md:w-auto px-6 md:px-8 py-2.5 md:py-3 text-sm md:text-base bg-[#2c7fff] text-white hover:bg-[#2c7fff]/90"
+                      onClick={() => {
+                        localStorage.setItem('createCrwd_name', searchQuery);
+                        navigate('/create-crwd');
+                      }}
+                    >
+                      Create "{searchQuery}" Collective
+                    </Button>
+                  </div>
+                </>
               ) : (
-                <div className="text-center py-8 md:py-12 text-gray-500 text-sm md:text-base">
-                  <p>No {activeTab.toLowerCase()} found for "{searchQuery}"</p>
+                <div className="text-center py-8 md:py-12 border-2 border-dashed border-gray-300 rounded-lg">
+                  <SearchIcon className="w-12 h-12 md:w-16 md:h-16 mx-auto mb-4 text-gray-300" />
+                  <p className="font-semibold mb-2 text-gray-500 text-sm md:text-base">
+                    No {activeTab.toLowerCase()} found for "{searchQuery}"
+                  </p>
+                  <p className="text-xs md:text-sm text-gray-400">
+                    Try another search or switch tabs.
+                  </p>
                 </div>
               )}
             </div>
-
-            {/* Footer Link */}
-            {activeTab === 'Causes' && (
-              <div className="mt-6 md:mt-8 text-center">
-                <button
-                  onClick={() => setShowRequestModal(true)}
-                  className="text-xs md:text-sm text-[#1600ff] hover:underline"
-                >
-                  Can't find your nonprofit? Request it here
-                </button>
-              </div>
-            )}
           </>
         )}
       </div>

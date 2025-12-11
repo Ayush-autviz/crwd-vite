@@ -1,6 +1,25 @@
+import { useState } from "react";
 import { Link } from "react-router-dom";
+import { ChevronDown } from "lucide-react";
 
 const Footer = () => {
+  const [openSections, setOpenSections] = useState<{
+    platform: boolean;
+    resources: boolean;
+    support: boolean;
+  }>({
+    platform: false,
+    resources: false,
+    support: false,
+  });
+
+  const toggleSection = (section: "platform" | "resources" | "support") => {
+    setOpenSections((prev) => ({
+      ...prev,
+      [section]: !prev[section],
+    }));
+  };
+
   return (
     <div className="bg-black text-white">
       <div className="max-w-7xl mx-auto px-3 md:px-4 lg:px-8 py-8 md:py-12 lg:py-16">
@@ -13,11 +32,25 @@ const Footer = () => {
         <div className="border-t border-gray-800 mb-6 md:mb-8"></div>
 
         {/* Categories Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 lg:gap-12 mb-8 md:mb-12">
+        <div className="space-y-0 md:grid md:grid-cols-3 md:gap-6 lg:gap-12 mb-8 md:mb-12">
           {/* Platform Column */}
-          <div>
-            <h3 className="font-bold text-sm md:text-base lg:text-lg mb-3 md:mb-4">Platform</h3>
-            <nav className="space-y-1.5 md:space-y-2">
+          <div className="border-b border-gray-800 pb-4 md:border-b-0 md:pb-0">
+            <button
+              onClick={() => toggleSection("platform")}
+              className="flex items-center justify-between w-full md:justify-start md:pointer-events-none "
+            >
+              <h3 className="font-bold text-sm md:text-base lg:text-lg">Platform</h3>
+              <ChevronDown
+                className={`w-4 h-4 md:hidden transition-transform ${
+                  openSections.platform ? "rotate-180" : ""
+                }`}
+              />
+            </button>
+            <nav
+              className={`space-y-1.5 md:space-y-2 ${
+                openSections.platform ? "block" : "hidden"
+              } md:block`}
+            >
               <Link
                 to="/search"
                 className="block text-white hover:text-gray-300 transition-colors text-xs md:text-sm lg:text-base"
@@ -40,9 +73,23 @@ const Footer = () => {
           </div>
 
           {/* Resources Column */}
-          <div>
-            <h3 className="font-bold text-sm md:text-base lg:text-lg mb-3 md:mb-4">Resources</h3>
-            <nav className="space-y-1.5 md:space-y-2">
+          <div className="border-b border-gray-800 pb-4 md:border-b-0 md:pb-0">
+            <button
+              onClick={() => toggleSection("resources")}
+              className="flex items-center justify-between w-full md:justify-start md:pointer-events-none mt-5 md:mt-0"
+            >
+              <h3 className="font-bold text-sm md:text-base lg:text-lg">Resources</h3>
+              <ChevronDown
+                className={`w-4 h-4 md:hidden transition-transform ${
+                  openSections.resources ? "rotate-180" : ""
+                }`}
+              />
+            </button>
+            <nav
+              className={`space-y-1.5 md:space-y-2 ${
+                openSections.resources ? "block" : "hidden"
+              } md:block`}
+            >
               <Link
                 to="/settings/about"
                 className="block text-white hover:text-gray-300 transition-colors text-xs md:text-sm lg:text-base"
@@ -65,9 +112,23 @@ const Footer = () => {
           </div>
 
           {/* Support Column */}
-          <div>
-            <h3 className="font-bold text-sm md:text-base lg:text-lg mb-3 md:mb-4">Support</h3>
-            <nav className="space-y-1.5 md:space-y-2">
+          <div className="border-b border-gray-800 pb-4 md:border-b-0 md:pb-0">
+            <button
+              onClick={() => toggleSection("support")}
+              className="flex items-center justify-between w-full md:justify-start md:pointer-events-none mb-3 md:mb-4 mt-5 md:mt-0"
+            >
+              <h3 className="font-bold text-sm md:text-base lg:text-lg">Support</h3>
+              <ChevronDown
+                className={`w-4 h-4 md:hidden transition-transform ${
+                  openSections.support ? "rotate-180" : ""
+                }`}
+              />
+            </button>
+            <nav
+              className={`space-y-1.5 md:space-y-2 ${
+                openSections.support ? "block" : "hidden"
+              } md:block`}
+            >
               <Link
                 to="/settings/help"
                 className="block text-white hover:text-gray-300 transition-colors text-xs md:text-sm lg:text-base"
@@ -80,20 +141,24 @@ const Footer = () => {
               >
                 Contact Us
               </Link>
-              <Link
-                to="/settings/privacy"
-                className="block text-white hover:text-gray-300 transition-colors text-xs md:text-sm lg:text-base"
-              >
-                Privacy Policy
-              </Link>
-              <Link
-                to="/settings/terms"
-                className="block text-white hover:text-gray-300 transition-colors text-xs md:text-sm lg:text-base"
-              >
-                Terms of Service
-              </Link>
             </nav>
           </div>
+        </div>
+
+        {/* Privacy Policy and Terms of Service - Separate Links */}
+        <div className="space-y-2 md:space-y-1.5 mb-6 md:mb-8">
+          <Link
+            to="/settings/privacy"
+            className="block text-white hover:text-gray-300 transition-colors text-xs md:text-sm lg:text-base font-bold md:font-normal"
+          >
+            Privacy Policy
+          </Link>
+          <Link
+            to="/settings/terms"
+            className="block text-white hover:text-gray-300 transition-colors text-xs md:text-sm lg:text-base"
+          >
+            Terms of Service
+          </Link>
         </div>
 
         {/* App Download Section - Left Side */}
