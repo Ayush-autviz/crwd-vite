@@ -59,16 +59,21 @@ export default function CollectiveProfile({
       </div>
       {founder && (
         <div className="flex items-center gap-1.5 md:gap-2">
-            <img src={founder?.profile_picture || image} alt={name} className="w-5 h-5 md:w-6 md:h-6 rounded-full" />
-        <p className="text-muted-foreground text-xs md:text-sm lg:text-base">
-          Founded by{' '}
-          <button
-            onClick={handleFounderClick}
-            className="text-[#1600ff] hover:underline font-medium"
-          >
-            {founderName}
-          </button>
-        </p>
+          <Avatar className="w-5 h-5 md:w-6 md:h-6 rounded-full flex-shrink-0">
+            <AvatarImage src={founder?.profile_picture || undefined} alt={founderName || 'Founder'} />
+            <AvatarFallback className="bg-gray-200 text-gray-600 font-semibold text-xs md:text-sm">
+              {(founderName || 'F').charAt(0).toUpperCase()}
+            </AvatarFallback>
+          </Avatar>
+          <p className="text-muted-foreground text-xs md:text-sm lg:text-base">
+            Founded by{' '}
+            <button
+              onClick={handleFounderClick}
+              className="text-[#1600ff] hover:underline font-medium"
+            >
+              {founderName}
+            </button>
+          </p>
         </div>
       )}
       {description && (

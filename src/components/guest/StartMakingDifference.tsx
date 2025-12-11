@@ -8,7 +8,7 @@ export default function StartMakingDifference() {
     <div className="bg-[#a955f7] py-12 md:py-16 px-4 md:px-6">
       <div className="max-w-4xl mx-auto text-center">
         {/* Headline */}
-        <h2 className="font-[800] text-white mb-4 md:mb-6" style={{ fontSize: 'clamp(2rem, 5vw, 3.5rem)' }}>
+        <h2 className="font-[900] text-white mb-4 md:mb-6" style={{ fontSize: 'clamp(2.2rem, 5vw, 3.5rem)' }}>
           Start Making a Difference
         </h2>
 
@@ -21,7 +21,7 @@ export default function StartMakingDifference() {
         {/* <Button
           onClick={() => navigate("/onboarding")} */}
           <a href="/onboarding"
-          className="bg-[#aeff30] hover:bg-[#93c902] text-black font-[700] px-8 md:px-10 py-6 md:py-7 rounded-full text-base md:text-lg shadow-lg"
+          className="bg-[#aeff30] hover:bg-[#93c902] text-black font-[900] px-8 md:px-10  py-5 md:py-7 rounded-full text-base md:text-lg shadow-lg"
         >
           Get Started for Free
         </a>

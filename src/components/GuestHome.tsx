@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Button } from './ui/button'
 import { Card, CardContent } from './ui/card'
-import { ChevronRight, Search, Menu, Users, CheckSquare, Settings, LogIn } from 'lucide-react';
+import { ChevronRight, Search, Menu, Users, CheckSquare, Settings, LogIn, X } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import AutomaticImpact from './guest/AutomaticImpact';
 import PopularCollectives from './guest/PopularCollectives';
@@ -41,6 +41,7 @@ export default function GuestHome() {
     const [menuOpen, setMenuOpen] = useState(false)
     const [isVisible, setIsVisible] = useState(false)
     const [isAnimating, setIsAnimating] = useState(false)
+    const [showAppBanner, setShowAppBanner] = useState(true)
 
     // Rotate cause sets every 3 seconds
     useEffect(() => {
@@ -75,7 +76,7 @@ export default function GuestHome() {
     };
 
     return (
-        <div className="min-h-screen bg-background">
+        <div className="min-h-screen bg-background pb-20 md:pb-24">
 
 
             {/* Navbar */}
@@ -104,7 +105,7 @@ export default function GuestHome() {
                     {/* <Button
                         onClick={() => navigate("/login")} */}
                     <a href="/login"
-                        className="bg-[#ff3366] hover:bg-[#ff0033] text-white font-bold px-4 md:px-6 py-2 rounded-full text-sm md:text-base hidden sm:inline-flex"
+                        className="bg-[#ff3366] hover:bg-[#ff0033] text-white font-bold px-3 md:px-6 py-2 rounded-full text-xs md:text-base inline-flex items-center justify-center"
                     >
                         Sign In
                     </a>
@@ -134,7 +135,7 @@ export default function GuestHome() {
             {/* Hero Section */}
             <div className="bg-card pt-6 pb-12 md:pt-8 md:pb-16 px-4 md:px-6">
                 {/* Launch Banner */}
-                <div className="max-w-4xl mx-auto text-center mt-20  mb-6 md:mb-8">
+                <div className="max-w-4xl mx-auto text-center mt-10 md:mt-20  mb-6 md:mb-8">
 
 
                     <h1 className="font-[900] text-foreground mb-3 md:mb-4 leading-tight" style={{ fontSize: 'clamp(2rem, 5vw, 4.5rem)' }}>
@@ -192,11 +193,11 @@ export default function GuestHome() {
                             </div>
 
                             {/* Cause Buttons */}
-                            <div className="flex flex-wrap gap-2 md:gap-3 mb-4 md:mb-6 justify-center">
+                            <div className="grid grid-cols-2 md:flex md:flex-wrap gap-2 md:gap-3 mb-4 md:mb-6 justify-center">
                                 {causeSets[currentCauseSet].map((cause) => (
                                     <button
                                         key={`${cause.name}-${currentCauseSet}`}
-                                        className={`px-3 py-1.5 md:px-4 md:py-2 rounded-full text-primary-foreground text-sm md:text-base font-medium ${cause.bgColor} ${cause.hoverColor} transition-colors`}
+                                        className={`px-2 py-1 md:px-4 md:py-2 rounded-full text-primary-foreground text-xs sm:text-sm md:text-base font-medium ${cause.bgColor} ${cause.hoverColor} transition-colors`}
                                     >
                                         {cause.name}
                                     </button>
@@ -250,6 +251,30 @@ export default function GuestHome() {
 
             {/* Footer */}
             <Footer />
+
+            {/* Fixed iOS App Banner */}
+            {showAppBanner && (
+              <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-4 md:px-6 py-3 md:py-4 z-40 shadow-lg block sm :hidden">
+                <div className="max-w-7xl mx-auto flex items-center justify-between gap-3 md:gap-4">
+                  <NewLogo />
+                  <div className="flex-1 flex flex-col md:flex-row md:items-center gap-1 md:gap-2">
+                    <p className="text-sm md:text-base font-bold text-gray-900">
+                      Get the full experience on iOS
+                    </p>
+                    <p className="text-xs md:text-sm text-gray-500">
+                      Easily manage all of your giving
+                    </p>
+                  </div>
+                  <button
+                    onClick={() => setShowAppBanner(false)}
+                    className="text-gray-400 hover:text-gray-600 transition-colors flex-shrink-0"
+                    aria-label="Close banner"
+                  >
+                    <X className="w-4 h-4 md:w-5 md:h-5" />
+                  </button>
+                </div>
+              </div>
+            )}
 
             {/* Bottom Sheet Menu */}
             {isVisible && (

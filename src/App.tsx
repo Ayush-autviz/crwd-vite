@@ -66,6 +66,7 @@ import CompleteOnboard from "./pages/onboarding/CompleteOnboard";
 import GoogleCallback from "./pages/auth/GoogleCallback";
 import Circles from "./pages/Circles";
 import Articles from "./pages/Articles";
+import ArticleDetail from "./pages/ArticleDetail";
 import PaymentResult from "./pages/PaymentResult";
 import Waitlist from "./pages/Waitlist";
 import NewHome from "./pages/NewHome";
@@ -238,6 +239,7 @@ function App() {
                     <Route path="/user-profile/:userId" element={<UserProfile />} />
                     <Route path="/circles" element={<Circles />} />
                     <Route path="/articles" element={<Articles />} />
+                    <Route path="/article/:id" element={<ArticleDetail />} />
                     {/* <Route path="/complete-onboard" element={<CompleteOnboard />} /> */}
                     <Route path="/complete-onboard" element={<NewCompleteOnboard />} />
                     

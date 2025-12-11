@@ -169,7 +169,7 @@ export default function PopularCollectives({
           <a href={seeAllLink}>
             <Button
               variant="outline"
-              className="border-[#a854f7] text-[#a854f7] hover:bg-[#a854f7] hover:text-white px-6 md:px-8 py-2 md:py-3 text-base md:text-lg font-medium"
+              className="border-[#a854f7] rounded-full text-[#a854f7] hover:bg-[#a854f7] hover:text-white px-6 md:px-8 py-2 md:py-3 text-base md:text-lg font-medium"
             >
               See All Collectives
             </Button>

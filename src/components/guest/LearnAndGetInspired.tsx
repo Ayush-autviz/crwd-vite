@@ -68,39 +68,43 @@ export default function LearnAndGetInspired({
         {/* Article Cards Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 md:gap-6">
           {displayArticles.map((article) => (
-            <div key={article.id} className="rounded-xl shadow-sm hover:shadow-lg transition-shadow duration-300 overflow-hidden">
-                <div className="p-0">
-                  {/* Article Image */}
-                  <div className="w-full h-48 md:h-56 overflow-hidden">
-                    <img
-                      src={article.image}
-                      alt={article.title}
-                      className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
-                    />
-                  </div>
+            <Link
+              key={article.id}
+              to={`/article/${article.id}`}
+              className="rounded-xl shadow-sm hover:shadow-lg transition-shadow duration-300 overflow-hidden cursor-pointer"
+            >
+              <div className="p-0">
+                {/* Article Image */}
+                <div className="w-full h-48 md:h-56 overflow-hidden">
+                  <img
+                    src={article.image}
+                    alt={article.title}
+                    className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                  />
+                </div>
 
-                  {/* Article Content */}
-                  <div className="p-4 md:p-6">
-                    {/* Read Time */}
-                    <div className="flex items-center gap-2 mb-3">
-                      <Clock className="w-4 h-4 text-muted-foreground" />
-                      <p className="text-xs md:text-sm text-muted-foreground">
-                        {article.readTime}
-                      </p>
-                    </div>
-
-                    {/* Title */}
-                    <h3 className="font-bold text-lg md:text-xl text-foreground mb-2 line-clamp-2">
-                      {article.title}
-                    </h3>
-
-                    {/* Description */}
-                    <p className="text-sm md:text-base text-muted-foreground leading-relaxed line-clamp-2">
-                      {article.description}
+                {/* Article Content */}
+                <div className="p-4 md:p-6">
+                  {/* Read Time */}
+                  <div className="flex items-center gap-2 mb-3">
+                    <Clock className="w-4 h-4 text-muted-foreground" />
+                    <p className="text-xs md:text-sm text-muted-foreground">
+                      {article.readTime}
                     </p>
                   </div>
+
+                  {/* Title */}
+                  <h3 className="font-bold text-lg md:text-xl text-foreground mb-2 line-clamp-2">
+                    {article.title}
+                  </h3>
+
+                  {/* Description */}
+                  <p className="text-sm md:text-base text-muted-foreground leading-relaxed line-clamp-2">
+                    {article.description}
+                  </p>
                 </div>
-            </div>
+              </div>
+            </Link>
           ))}
         </div>
       </div>
