@@ -78,6 +78,7 @@ export default function NewCreateCollectivePage() {
   
   // Loading dots state
   const [dotCount, setDotCount] = useState(0);
+  const [showAnimationComplete, setShowAnimationComplete] = useState(false);
 
   const colorSwatches = [
     '#0000FF', // Blue
@@ -146,11 +147,15 @@ export default function NewCreateCollectivePage() {
         localStorage.removeItem('createCrwd_desc');
       }
       setCreatedCollective(response);
-      setStep(3);
-      setShowConfetti(true);
+      // Wait for animation to complete (3 seconds for one full cycle) before showing success
       setTimeout(() => {
-        setShowConfetti(false);
-      }, 4000);
+        setShowAnimationComplete(true);
+        setStep(3);
+        setShowConfetti(true);
+        setTimeout(() => {
+          setShowConfetti(false);
+        }, 4000);
+      }, 3000);
       queryClient.invalidateQueries({ queryKey: ['collectives'] });
       queryClient.invalidateQueries({ queryKey: ['joined-collectives'] });
     },
@@ -164,9 +169,9 @@ export default function NewCreateCollectivePage() {
     },
   });
 
-  // Animate dots during API call
+  // Animate dots during API call or while waiting for animation to complete
   useEffect(() => {
-    if (createCollectiveMutation.isPending) {
+    if (createCollectiveMutation.isPending || (createdCollective && !showAnimationComplete)) {
       const interval = setInterval(() => {
         setDotCount((prev) => (prev + 1) % 4);
       }, 500);
@@ -174,7 +179,7 @@ export default function NewCreateCollectivePage() {
     } else {
       setDotCount(0);
     }
-  }, [createCollectiveMutation.isPending]);
+  }, [createCollectiveMutation.isPending, createdCollective, showAnimationComplete]);
 
   const handleSearchKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter' && searchQuery.trim()) {
@@ -423,15 +428,15 @@ export default function NewCreateCollectivePage() {
     );
   }
 
-  // Loading Animation Step (during API call)
-  if (createCollectiveMutation.isPending) {
+  // Loading Animation Step (during API call or while animation completes)
+  if (createCollectiveMutation.isPending || (createdCollective && !showAnimationComplete)) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-blue-50 via-pink-50 to-purple-50 flex items-center justify-center px-3 md:px-4">
         <div className="flex flex-col items-center gap-6 md:gap-8">
           <CrwdAnimation size="lg" />
-          <p className="text-base md:text-lg font-medium text-gray-700">
-            Creating collective{'.'.repeat(dotCount)}
-          </p>
+          {/* <p className="text-base md:text-lg font-medium text-gray-700">
+            {createCollectiveMutation.isPending ? 'Creating collective' : 'Collective created'}{'.'.repeat(dotCount)}
+          </p> */}
         </div>
       </div>
     );
@@ -1027,7 +1032,7 @@ export default function NewCreateCollectivePage() {
                   return (
                     <Button
                       disabled
-                      className="bg-gray-300 text-white font-semibold rounded-full px-4 md:px-6 py-2 md:py-2.5 w-full text-sm md:text-base cursor-not-allowed"
+                      className="bg-gray-300 text-white font-semibold rounded-full px-4 md:px-6 py-5 md:py-6 w-full text-sm md:text-base cursor-not-allowed"
                     >
                       Complete Required Fields
                     </Button>

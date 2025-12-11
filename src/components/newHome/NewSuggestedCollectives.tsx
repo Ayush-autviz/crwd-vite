@@ -1,5 +1,4 @@
 import { Link } from "react-router-dom";
-import { ChevronRight } from "lucide-react";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -7,8 +6,8 @@ import { Button } from "@/components/ui/button";
 interface Collective {
   id: string | number;
   name: string;
-  icon?: string; // Optional icon URL, if not provided will use first letter
-  iconColor?: string; // Optional color for the icon background
+  icon?: string; // Optional logo URL, if not provided will use first letter
+  iconColor?: string; // Optional color for the icon background (from API color field)
   founder: {
     name: string;
     profile_picture?: string;
@@ -61,8 +60,11 @@ export default function NewSuggestedCollectives({
       <div className="overflow-x-auto pb-2 -mx-4 px-4 md:mx-0 md:px-0">
         <div className="flex gap-3 md:gap-4 w-max">
           {collectives.map((collective, index) => {
-            const iconColor = collective.iconColor || getIconColor(index);
-            const iconLetter = collective.icon || getIconLetter(collective.name);
+            // Priority: 1. Use color (with white text), 2. Use logo (image), 3. Fallback to generated color with letter
+            const hasColor = collective.iconColor;
+            const hasLogo = collective.icon && (collective.icon.startsWith("http") || collective.icon.startsWith("/") || collective.icon.startsWith("data:"));
+            const iconColor = hasColor || (!hasLogo ? getIconColor(index) : undefined);
+            const iconLetter = getIconLetter(collective.name);
 
             return (
               <Link
@@ -74,9 +76,9 @@ export default function NewSuggestedCollectives({
                   {/* Icon */}
                   <div
                     className="w-10 h-10 md:w-12 md:h-12 rounded-lg flex items-center justify-center"
-                    style={{ backgroundColor: iconColor }}
+                    style={iconColor ? { backgroundColor: iconColor } : {}}
                   >
-                    {collective.icon && collective.icon.startsWith("http") ? (
+                    {hasLogo ? (
                       <img
                         src={collective.icon}
                         alt={collective.name}
