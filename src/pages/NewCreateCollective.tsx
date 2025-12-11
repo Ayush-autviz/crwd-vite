@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, HelpCircle, Search, X, Loader2, Edit2, Palette, Camera, Users } from 'lucide-react';
+import { ArrowLeft, HelpCircle, Search, X, Loader2, Edit2, Palette, Camera, Users, Check, Minus, Plus, Heart, Eye, Share2, Sparkles } from 'lucide-react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { createCollective, getCausesBySearch } from '@/services/api/crwd';
+import { getFavoriteCauses } from '@/services/api/social';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -12,6 +13,7 @@ import { categories } from '@/constants/categories';
 import Confetti from 'react-confetti';
 import { SharePost } from '@/components/ui/SharePost';
 import { useAuthStore } from '@/stores/store';
+import { CrwdAnimation } from '@/assets/newLogo';
 // CreateCollectivePrompt will be created if needed
 
 const getCategoryById = (categoryId: string | undefined) => {
@@ -69,17 +71,25 @@ export default function NewCreateCollectivePage() {
   const [logoColor, setLogoColor] = useState('#1600ff');
   const [logoPreview, setLogoPreview] = useState<string | null>(null);
   const [showLogoCustomization, setShowLogoCustomization] = useState(false);
+  
+  // Dropdown state for sections
+  const [isYourCausesOpen, setIsYourCausesOpen] = useState(true);
+  const [isSuggestedCausesOpen, setIsSuggestedCausesOpen] = useState(true);
+  
+  // Loading dots state
+  const [dotCount, setDotCount] = useState(0);
 
   const colorSwatches = [
-    '#1600ff', // Blue
-    '#ff3366', // Pink/Red
-    '#aeff30', // Lime Green
-    '#a955f7', // Purple
-    '#13b981', // Teal
-    '#ff6c36', // Orange
-    '#ef4444', // Red
-    '#6367f1', // Indigo
+    '#0000FF', // Blue
+    '#FF3366', // Pink/Red
+    '#ADFF2F', // Lime Green
+    '#A855F7', // Purple
+    '#10B981', // Teal
+    '#FF6B35', // Orange
+    '#EF4444', // Red
+    '#6366F1', // Indigo
   ];
+
 
   // Save form data to localStorage
   useEffect(() => {
@@ -101,6 +111,15 @@ export default function NewCreateCollectivePage() {
       }
     }
   }, [description]);
+
+  // Fetch favorite causes
+  const { data: favoriteCausesData, isLoading: isLoadingFavoriteCauses } = useQuery({
+    queryKey: ['favoriteCauses'],
+    queryFn: () => getFavoriteCauses(),
+    enabled: !!currentUser?.id,
+  });
+
+  const favoriteCauses = favoriteCausesData?.results || [];
 
   // Fetch default causes (no search query)
   const { data: defaultCausesData, isLoading: defaultCausesLoading } = useQuery({
@@ -127,7 +146,7 @@ export default function NewCreateCollectivePage() {
         localStorage.removeItem('createCrwd_desc');
       }
       setCreatedCollective(response);
-      setStep(2);
+      setStep(3);
       setShowConfetti(true);
       setTimeout(() => {
         setShowConfetti(false);
@@ -144,6 +163,18 @@ export default function NewCreateCollectivePage() {
       toast.error(errorMessage);
     },
   });
+
+  // Animate dots during API call
+  useEffect(() => {
+    if (createCollectiveMutation.isPending) {
+      const interval = setInterval(() => {
+        setDotCount((prev) => (prev + 1) % 4);
+      }, 500);
+      return () => clearInterval(interval);
+    } else {
+      setDotCount(0);
+    }
+  }, [createCollectiveMutation.isPending]);
 
   const handleSearchKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter' && searchQuery.trim()) {
@@ -186,7 +217,7 @@ export default function NewCreateCollectivePage() {
     }
   };
 
-  const handleCreateCollective = () => {
+  const handleContinueToReview = () => {
     // Validation
     if (name.trim() === '') {
       toast.error('Please enter a name for your CRWD');
@@ -201,6 +232,11 @@ export default function NewCreateCollectivePage() {
       return;
     }
 
+    // Navigate to review step
+    setStep(2);
+  };
+
+  const handleCreateCollective = () => {
     // Create collective via API
     // Use FormData if there's a file upload, otherwise use JSON
     if (logoType === 'upload' && logo instanceof File) {
@@ -275,53 +311,184 @@ export default function NewCreateCollectivePage() {
     ? logo 
     : null);
 
-  if (step === 2 && createdCollective) {
+  // Review/Confirmation Step
+  if (step === 2 && !createdCollective) {
+    return (
+      <div className="min-h-screen bg-gray-50">
+        {/* Header */}
+        <div className="sticky top-0 z-10 w-full flex items-center gap-3 md:gap-4 p-3 md:p-4 border-b bg-white">
+          <button
+            onClick={() => setStep(1)}
+            className="p-1.5 md:p-2 hover:bg-gray-100 rounded-full transition-colors"
+            aria-label="Go back"
+          >
+            <ArrowLeft className="w-4 h-4 md:w-5 md:h-5 text-gray-700" />
+          </button>
+          <h1 className="font-bold text-lg md:text-xl text-foreground">Confirm & Create</h1>
+        </div>
+
+        <div className="px-3 md:px-4 py-4 md:py-6 pb-24 md:pb-28 lg:max-w-[60%] lg:mx-auto">
+          <div className="bg-gradient-to-br from-blue-50 via-pink-50 to-purple-50 rounded-2xl p-4 md:p-6 shadow-sm">
+            {/* Collective Info Section */}
+            <div className="flex items-start gap-3 md:gap-4 mb-4 md:mb-6">
+              <Avatar className="w-16 h-16 md:w-20 md:h-20 rounded-lg flex-shrink-0">
+                {displayLogo ? (
+                  <AvatarImage src={displayLogo} alt={name} />
+                ) : (
+                  <AvatarFallback
+                    style={{ backgroundColor: logoColor }}
+                    className="text-white rounded-lg font-bold text-2xl md:text-3xl"
+                  >
+                    {logoLetter}
+                  </AvatarFallback>
+                )}
+              </Avatar>
+              <div className="flex-1 min-w-0">
+                <h2 className="font-bold text-lg md:text-xl text-[#1600ff] mb-1 md:mb-2">{name}</h2>
+                <div className="mb-2">
+                  <p className="text-xs md:text-sm text-gray-500 uppercase tracking-wide mb-1">What Brings Us Together</p>
+                  <p className="text-sm md:text-base text-gray-700">{description}</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Supported Causes Section */}
+            <div className="mb-4 md:mb-6">
+              <p className="text-xs md:text-sm text-gray-500 uppercase tracking-wide mb-3 md:mb-4">
+                Supporting {selectedCauses.length} {selectedCauses.length === 1 ? 'Cause' : 'Causes'}
+              </p>
+              <div className="space-y-2 md:space-y-3">
+                {selectedCauses.map((cause) => {
+                  const causeData = cause.cause || cause;
+                  const categoryId = causeData.category || causeData.cause_category;
+                  const category = getCategoryById(categoryId);
+                  const categoryName = category?.name || 'Uncategorized';
+                  const categoryColor = category?.text || '#10B981';
+                  const avatarBgColor = getConsistentColor(causeData.id, avatarColors);
+                  const initials = getInitials(causeData.name || 'N');
+                  
+                  return (
+                    <div key={cause.id} className="bg-white border border-gray-200 rounded-lg p-3 md:p-4">
+                      <div className="flex items-center gap-3 md:gap-4">
+                        <Avatar className="w-10 h-10 md:w-12 md:h-12 rounded-full flex-shrink-0">
+                          <AvatarImage src={causeData.image} alt={causeData.name} />
+                          <AvatarFallback
+                            style={{ backgroundColor: avatarBgColor }}
+                            className="text-white font-bold text-xs md:text-sm"
+                          >
+                            {initials}
+                          </AvatarFallback>
+                        </Avatar>
+                        <div className="flex-1 min-w-0">
+                          <h4 className="font-bold text-sm md:text-base text-foreground mb-1">{causeData.name}</h4>
+                          <p className="text-xs md:text-sm text-gray-600 line-clamp-2 mb-2">
+                            {causeData.mission || causeData.description}
+                          </p>
+                          <span
+                            className="inline-flex items-center rounded-full px-2 py-0.5 text-[10px] md:text-xs font-medium"
+                            style={{ backgroundColor: `${categoryColor}20`, color: categoryColor }}
+                          >
+                            {categoryName}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Donation Splitting Note */}
+            <div className="bg-gray-100 rounded-lg p-3 md:p-4">
+              <p className="text-xs md:text-sm text-gray-600 text-center">
+                All member donations will be split evenly across these causes.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* Footer Button */}
+        <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-3 md:px-4 py-3 z-10">
+          <div className="w-full lg:max-w-[60%] lg:mx-auto">
+            <Button
+              onClick={handleCreateCollective}
+              className="bg-[#1600ff] hover:bg-[#1400cc] text-white font-semibold rounded-full px-4 md:px-6 py-5 md:py-6 w-full text-sm md:text-base"
+              disabled={createCollectiveMutation.isPending}
+            >
+              Create Collective
+            </Button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Loading Animation Step (during API call)
+  if (createCollectiveMutation.isPending) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-pink-50 to-purple-50 flex items-center justify-center px-3 md:px-4">
+        <div className="flex flex-col items-center gap-6 md:gap-8">
+          <CrwdAnimation size="lg" />
+          <p className="text-base md:text-lg font-medium text-gray-700">
+            Creating collective{'.'.repeat(dotCount)}
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  // Success Step
+  if (step === 3 && createdCollective) {
     return (
       <>
-        <div className="min-h-screen bg-white">
-          <div className="sticky top-0 z-10 w-full flex items-center gap-3 md:gap-4 p-3 md:p-4 border-b bg-white">
-            <button
-              onClick={() => navigate(-1)}
-              className="p-1.5 md:p-2 hover:bg-gray-100 rounded-full transition-colors"
-              aria-label="Go back"
-            >
-              <ArrowLeft className="w-4 h-4 md:w-5 md:h-5 text-gray-700" />
-            </button>
-            <h1 className="font-bold text-lg md:text-xl text-foreground">Create a CRWD Collective</h1>
-          </div>
-
-          <div className="flex flex-col gap-4 items-center justify-center h-[65vh] md:h-[75vh] px-3 md:px-4">
-            <div className="w-full max-w-md gap-4">
-              <img
-                src="/icons/CRWD.png"
-                alt="CRWD Logo"
-                className="w-24 h-24 md:w-32 md:h-32 object-contain mx-auto mb-4 md:mb-6"
-              />
-              <h2 className="text-lg md:text-xl font-bold text-center mb-4 md:mb-6">
-                You've started a CRWD!
-              </h2>
-              {createdCollective && (
-                <div className="text-center mb-4 px-4">
-                  <p className="text-xs md:text-sm text-gray-600 mb-2">
-                    <strong>{createdCollective.name}</strong> has been created successfully!
-                  </p>
-                  <p className="text-xs text-gray-500">{createdCollective.description}</p>
+        <div className="min-h-screen bg-gradient-to-br from-blue-50 via-pink-50 to-purple-50">
+          <div className="flex flex-col items-center justify-center min-h-screen px-3 md:px-4 py-8 md:py-12">
+            <div className="w-full max-w-md bg-white rounded-2xl shadow-lg p-6 md:p-8">
+              {/* Success Icon */}
+              <div className="flex justify-center mb-4 md:mb-6">
+                <div className="w-16 h-16 md:w-20 md:h-20 rounded-full bg-[#ADFF2F] flex items-center justify-center">
+                  <Sparkles className="w-8 h-8 md:w-10 md:h-10 text-white" strokeWidth={2.5} />
                 </div>
-              )}
-              <div className="flex flex-col gap-2 px-4">
+              </div>
+
+              {/* Heading */}
+              <div className="text-center mb-3 md:mb-4">
+                <h2 className="text-xl md:text-2xl font-bold text-gray-900">
+                  🎉 Your Collective is <span className="font-bold">Live!</span>
+                </h2>
+              </div>
+
+              {/* Description */}
+              <p className="text-sm md:text-base text-gray-600 text-center mb-6 md:mb-8 leading-relaxed">
+                Your collective is ready to go! Set up your donation box to support your causes, or start sharing to grow your community.
+              </p>
+
+              {/* Action Buttons */}
+              <div className="space-y-3 md:space-y-4">
                 <Button
-                  className="w-full text-sm md:text-base py-2.5 md:py-3"
-                  onClick={() => setShowShareModal(true)}
+                  onClick={() => navigate('/donation?tab=setup')}
+                  className="w-full bg-[#1600ff] hover:bg-[#1400cc] text-white font-semibold rounded-lg py-3 md:py-4 text-sm md:text-base flex items-center justify-center gap-2"
                 >
-                  Invite Friends
+                  <Heart className="w-4 h-4 md:w-5 md:h-5" />
+                  Set Up My Donation Box
                 </Button>
+                
                 <Button
                   onClick={() => navigate(`/groupcrwd/${createdCollective.id}`)}
                   variant="outline"
-                  className="w-full text-sm md:text-base py-2.5 md:py-3"
+                  className="w-full border border-gray-300 text-gray-900 hover:bg-gray-50 font-semibold rounded-lg py-3 md:py-4 text-sm md:text-base flex items-center justify-center gap-2"
                 >
-                  View Collective
+                  <Eye className="w-4 h-4 md:w-5 md:h-5" />
+                  View My Collective
                 </Button>
+                
+                <button
+                  onClick={() => setShowShareModal(true)}
+                  className="w-full text-[#1600ff] hover:text-[#1400cc] font-semibold text-sm md:text-base flex items-center justify-center gap-2 py-2 md:py-3"
+                >
+                  <Share2 className="w-4 h-4 md:w-5 md:h-5" />
+                  Share Link
+                </button>
               </div>
             </div>
           </div>
@@ -383,8 +550,8 @@ export default function NewCreateCollectivePage() {
             <Input
               value={name}
               onChange={(e) => setName(e.target.value)}
-              placeholder="Atlanta Climate Action"
-              className="w-full bg-gray-100 rounded-2xl text-sm md:text-base"
+              placeholder='"Atlanta Climate Action"'
+              className={`w-full bg-gray-100 rounded-2xl text-sm md:text-base ${name.length > 0 ? '' : 'italic'}`}
             />
           </div>
 
@@ -548,9 +715,15 @@ export default function NewCreateCollectivePage() {
             {/* Selected Causes - Only show if there are selected causes */}
             {selectedCauses.length > 0 && (
               <div className="border border-blue-200 p-3 md:p-4 rounded-2xl bg-gradient-to-br from-blue-50 via-pink-50 to-purple-50">
-                <h3 className="font-bold text-base md:text-lg text-foreground mb-3 md:mb-4">
-                  Selected Causes ({selectedCauses.length})
-                </h3>
+                <div className="flex items-center justify-between mb-3 md:mb-4">
+                  <h3 className="font-bold text-base md:text-lg text-foreground">
+                    Selected Causes ({selectedCauses.length})
+                  </h3>
+                  <Button variant="default" className="text-xs rounded-full md:text-sm px-2 md:px-4 py-1.5 md:py-2 font-[800]">
+                    <Check className="w-4 h-4" strokeWidth={3}/>
+                    Ready
+                  </Button>
+                </div>
                 <div className="space-y-2 md:space-y-3">
                   {selectedCauses.map((cause) => {
                     const causeData = cause.cause || cause;
@@ -611,16 +784,149 @@ export default function NewCreateCollectivePage() {
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 md:w-5 md:h-5 text-gray-400" />
                 <Input
                   type="text"
-                  placeholder="Search nonprofits..."
+                  placeholder="Search causes or nonprofits"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   onKeyPress={handleSearchKeyPress}
-                  className="pl-9 md:pl-10 bg-gray-100 rounded-lg text-sm md:text-base"
+                  className="pl-9 md:pl-10 bg-gray-100 rounded-lg text-sm md:text-base py-5 sm:py-6"
                 />
               </div>
 
+            {/* Your Causes - Only show if there are favorite causes */}
+            {favoriteCauses.length > 0 && (
+              <div className="mb-3 md:mb-4">
+                <button
+                  onClick={() => setIsYourCausesOpen(!isYourCausesOpen)}
+                  className="flex items-center justify-between w-full gap-2 mb-3 md:mb-4 bg-blue-100 p-3 rounded-xl"
+                >
+                  <div className="flex items-center gap-2">
+                    <div className="w-2 h-2 rounded-full bg-blue-500"></div>
+                    <h3 className="font-semibold text-sm  sm:text-base  md:text-lg text-blue-600">
+                      Your Causes ({favoriteCauses.length})
+                    </h3>
+                  </div>
+                  {/* <ChevronDown
+                    className={`w-4 h-4 md:w-5 md:h-5 text-blue-600 transition-transform ${
+                      isYourCausesOpen ? 'rotate-180' : ''
+                    }`}
+                  /> */}
+                  {isYourCausesOpen ? (
+                    <Minus className="w-4 h-4 md:w-5 md:h-5 text-blue-600" />
+                  ) : (
+                    <Plus className="w-4 h-4 md:w-5 md:h-5 text-blue-600" />
+                  )}
+                </button>
+                {isYourCausesOpen && (
+                  <div className="space-y-2 md:space-y-3">
+                  {isLoadingFavoriteCauses ? (
+                    <div className="flex items-center justify-center py-6 md:py-8">
+                      <Loader2 className="w-5 h-5 md:w-6 md:h-6 animate-spin text-gray-400" />
+                    </div>
+                  ) : (
+                    favoriteCauses.map((item: any) => {
+                      const cause = item.cause || item;
+                      const categoryId = cause.category || cause.cause_category;
+                      const category = getCategoryById(categoryId);
+                      const categoryName = category?.name || 'Uncategorized';
+                      const categoryColor = category?.text || '#10B981';
+                      const isSelected = isCauseSelected(cause.id);
+                      const avatarBgColor = getConsistentColor(cause.id, avatarColors);
+                      const initials = getInitials(cause.name || 'N');
+                      
+                      return (
+                        <div
+                          key={cause.id}
+                          className="flex items-center gap-3 md:gap-4 p-3 md:p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors bg-white"
+                        >
+                          <Avatar className="w-10 h-10 md:w-12 md:h-12 rounded-full flex-shrink-0">
+                            <AvatarImage src={cause.image} alt={cause.name} />
+                            <AvatarFallback
+                              style={{ backgroundColor: avatarBgColor }}
+                              className="text-white font-bold text-xs md:text-sm"
+                            >
+                              {initials}
+                            </AvatarFallback>
+                          </Avatar>
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center gap-2 mb-1 flex-wrap">
+                              <h4 className="font-bold text-sm md:text-base text-foreground truncate">{cause.name}</h4>
+                              <span
+                                className="inline-flex items-center rounded-full px-1.5 md:px-2 py-0.5 text-[10px] md:text-xs font-medium flex-shrink-0"
+                                style={{ backgroundColor: `${categoryColor}20`, color: categoryColor }}
+                              >
+                                {categoryName}
+                              </span>
+                            </div>
+                            <p className="text-xs md:text-sm text-muted-foreground line-clamp-2">
+                              {cause.mission || cause.description}
+                            </p>
+                          </div>
+                          <label className="flex items-center cursor-pointer flex-shrink-0">
+                            <input
+                              type="radio"
+                              checked={isSelected}
+                              onChange={() => handleToggleCause(cause)}
+                              className="w-4 h-4 md:w-5 md:h-5 text-[#1600ff] focus:ring-[#1600ff]"
+                            />
+                          </label>
+                        </div>
+                      );
+                    })
+                  )}
+                  </div>
+                )}
+              </div>
+            )}
+
+            
+
+              {/* Suggested Causes List */}
+              {(() => {
+                const causes = searchTrigger > 0 && searchQuery.trim()
+                  ? (causesData?.results || [])
+                  : (defaultCausesData?.results || []);
+                
+                // Get favorite cause IDs to exclude from search results
+                const favoriteCauseIds = new Set(
+                  favoriteCauses.map((item: any) => {
+                    const cause = item.cause || item;
+                    return cause.id;
+                  })
+                );
+                
+                // Filter out favorite causes and already selected causes
+                const filteredCauses = causes.filter((cause: any) => {
+                  const causeId = cause.id;
+                  return causeId && !favoriteCauseIds.has(causeId) && !selectedCauses.some(selected => selected.id === causeId);
+                });
+                
+                if (filteredCauses.length === 0 && !(searchTrigger > 0 && searchQuery.trim()) && defaultCausesData?.results?.length === 0) {
+                  return null;
+                }
+                
+                return (
+                  <button
+                    onClick={() => setIsSuggestedCausesOpen(!isSuggestedCausesOpen)}
+                    className="flex items-center justify-between w-full gap-2 mb-3 md:mb-4 bg-purple-100 p-3 rounded-xl"
+                  >
+                    <div className="flex items-center gap-2">
+                      <div className="w-2 h-2 rounded-full bg-purple-500"></div>
+                      <h4 className="font-semibold text-sm  sm:text-base  md:text-lg text-purple-600">
+                        Suggested Causes ({filteredCauses.length})
+                      </h4>
+                    </div>
+                    {isSuggestedCausesOpen ? (
+                      <Minus className="w-4 h-4 md:w-5 md:h-5 text-purple-600" />
+                    ) : (
+                      <Plus className="w-4 h-4 md:w-5 md:h-5 text-purple-600" />
+                    )}
+                  </button>
+                );
+              })()}
+
               {/* Causes List */}
-              <div className="space-y-2 md:space-y-3 max-h-96 overflow-y-auto">
+              {isSuggestedCausesOpen && (
+                <div className="space-y-2 md:space-y-3 max-h-96 overflow-y-auto">
                 {(isCausesLoading || defaultCausesLoading) ? (
                   <div className="flex items-center justify-center py-6 md:py-8">
                     <Loader2 className="w-5 h-5 md:w-6 md:h-6 animate-spin text-gray-400" />
@@ -631,10 +937,19 @@ export default function NewCreateCollectivePage() {
                       ? (causesData?.results || [])
                       : (defaultCausesData?.results || []);
                     
-                    // Filter out already selected causes
-                    const availableCauses = causes.filter((cause: any) => 
-                      !selectedCauses.some(selected => selected.id === cause.id)
+                    // Get favorite cause IDs to exclude from search results
+                    const favoriteCauseIds = new Set(
+                      favoriteCauses.map((item: any) => {
+                        const cause = item.cause || item;
+                        return cause.id;
+                      })
                     );
+                    
+                    // Filter out favorite causes and already selected causes
+                    const availableCauses = causes.filter((cause: any) => {
+                      const causeId = cause.id;
+                      return causeId && !favoriteCauseIds.has(causeId) && !selectedCauses.some(selected => selected.id === causeId);
+                    });
 
                     if (availableCauses.length === 0) {
                       return (
@@ -697,27 +1012,37 @@ export default function NewCreateCollectivePage() {
                     });
                   })()
                 )}
-              </div>
+                </div>
+              )}
             </div>
           </div>
 
           {/* Footer Buttons */}
           <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-3 md:px-4 py-3 z-10">
             <div className="w-full lg:max-w-[60%] lg:mx-auto">
-              <Button
-                onClick={handleCreateCollective}
-                className="bg-[#1600ff] hover:bg-[#1400cc] text-white font-semibold rounded-full px-4 md:px-6 py-2 md:py-2.5 w-full text-sm md:text-base"
-                disabled={createCollectiveMutation.isPending}
-              >
-                {createCollectiveMutation.isPending ? (
-                  <>
-                    <Loader2 className="w-3.5 h-3.5 md:w-4 md:h-4 mr-1.5 md:mr-2 animate-spin" />
-                    Creating...
-                  </>
-                ) : (
-                  'Create CRWD'
-                )}
-              </Button>
+              {(() => {
+                const isFormComplete = name.trim() !== '' && description.trim() !== '' && selectedCauses.length > 0;
+                
+                if (!isFormComplete) {
+                  return (
+                    <Button
+                      disabled
+                      className="bg-gray-300 text-white font-semibold rounded-full px-4 md:px-6 py-2 md:py-2.5 w-full text-sm md:text-base cursor-not-allowed"
+                    >
+                      Complete Required Fields
+                    </Button>
+                  );
+                }
+                
+                return (
+                  <Button
+                    onClick={handleContinueToReview}
+                    className="bg-[#1600ff] hover:bg-[#1400cc] text-white font-semibold rounded-full px-4 md:px-6 py-5 md:py-6 w-full text-sm md:text-base"
+                  >
+                    Continue to Review
+                  </Button>
+                );
+              })()}
             </div>
           </div>
         

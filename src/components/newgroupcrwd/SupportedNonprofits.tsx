@@ -1,3 +1,4 @@
+import { useNavigate } from 'react-router-dom';
 import { Card, CardContent } from '@/components/ui/card';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { Loader2 } from 'lucide-react';
@@ -24,6 +25,8 @@ export default function SupportedNonprofits({
   nonprofits,
   isLoading = false,
 }: SupportedNonprofitsProps) {
+  const navigate = useNavigate();
+
   if (isLoading) {
     return (
       <div className="px-3 md:px-4 py-4 md:py-6">
@@ -75,8 +78,14 @@ export default function SupportedNonprofits({
           const avatarColorIndex = nonprofitId ? (Number(nonprofitId) % avatarColors.length) : (name?.charCodeAt(0) || 0) % avatarColors.length;
           const avatarBgColor = avatarColors[avatarColorIndex];
 
+          const causeId = cause.id || nonprofit.id;
+
           return (
-            <Card key={nonprofit.id} className="border-gray-200 rounded-lg hover:shadow-md transition-shadow">
+            <Card 
+              key={nonprofit.id} 
+              onClick={() => causeId && navigate(`/cause/${causeId}`)}
+              className="border-gray-200 rounded-lg hover:shadow-md transition-shadow cursor-pointer"
+            >
               <CardContent className="p-0 px-3 md:px-4 py-2.5 md:py-3">
                 <div className="flex items-start gap-3 md:gap-4">
                   <Avatar className="w-10 h-10 md:w-12 md:h-12 rounded-lg flex-shrink-0">
