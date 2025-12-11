@@ -309,6 +309,8 @@ export default function NewGroupCrwdPage() {
       <CollectiveProfile
         name={crwdData.name || 'Collective'}
         image={crwdData.avatar || crwdData.image}
+        logo={crwdData.logo}
+        color={crwdData.color}
         founder={crwdData.created_by}
         description={crwdData.description}
         isJoined={crwdData.is_joined}

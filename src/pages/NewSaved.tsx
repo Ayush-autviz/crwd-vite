@@ -151,11 +151,33 @@ export default function NewSavedPage() {
           )
         ) : favoriteCollectives.length > 0 ? (
           <div className="space-y-4">
-            {favoriteCollectives.map((item: any) => {
+            {favoriteCollectives.map((item: any, index: number) => {
               const collective = item.collective || item;
-              const avatarBgColor = getConsistentColor(collective.id, avatarColors);
-              const firstLetter = collective.name?.charAt(0).toUpperCase() || 'C';
-              const imageUrl = collective.image || collective.avatar;
+              
+              // Generate color for icon if not provided (same logic as NewSuggestedCollectives)
+              const getIconColor = (index: number): string => {
+                const colors = [
+                  "#1600ff", // Blue
+                  "#10B981", // Green
+                  "#EC4899", // Pink
+                  "#F59E0B", // Amber
+                  "#8B5CF6", // Purple
+                  "#EF4444", // Red
+                ];
+                return colors[index % colors.length];
+              };
+
+              // Get first letter of name for icon
+              const getIconLetter = (name: string): string => {
+                return name.charAt(0).toUpperCase();
+              };
+
+              // Priority: 1. Use color (with white text), 2. Use logo (image), 3. Fallback to generated color with letter
+              const hasColor = collective.color;
+              const hasLogo = collective.logo && (collective.logo.startsWith("http") || collective.logo.startsWith("/") || collective.logo.startsWith("data:"));
+              const iconColor = hasColor || (!hasLogo ? getIconColor(index) : undefined);
+              const iconLetter = getIconLetter(collective.name || 'C');
+              
               const founder = collective.created_by;
               const memberCount = collective.member_count || 0;
 
@@ -167,13 +189,13 @@ export default function NewSavedPage() {
                 >
                   <CardContent className="px-4">
                     {/* <div className="flex items-start gap-4"> */}
-                      <Avatar className="w-12 h-12 rounded-lg flex-shrink-0">
-                        <AvatarImage src={imageUrl} alt={collective.name} />
+                      <Avatar className="w-12 h-12 rounded-full flex-shrink-0">
+                        <AvatarImage src={hasLogo ? collective.logo : undefined} alt={collective.name} />
                         <AvatarFallback
-                          style={{ backgroundColor: avatarBgColor }}
+                          style={iconColor ? { backgroundColor: iconColor } : {}}
                           className="text-white font-bold text-xl"
                         >
-                          {firstLetter}
+                          {iconLetter}
                         </AvatarFallback>
                       </Avatar>
                       <div className="flex-1 min-w-0">

@@ -4,6 +4,8 @@ import { useNavigate } from 'react-router-dom';
 interface CollectiveProfileProps {
   name: string;
   image?: string;
+  logo?: string | null;
+  color?: string | null;
   founder?: {
     id?: number;
     first_name?: string;
@@ -18,6 +20,8 @@ interface CollectiveProfileProps {
 export default function CollectiveProfile({
   name,
   image,
+  logo,
+  color,
   founder,
   description,
   isJoined = false,
@@ -33,15 +37,44 @@ export default function CollectiveProfile({
       navigate(`/user-profile/${founder.id}`);
     }
   };
-  
+
+  // Generate color for icon if not provided (same logic as NewSuggestedCollectives)
+  const getIconColor = (name: string): string => {
+    const colors = [
+      "#1600ff", // Blue
+      "#10B981", // Green
+      "#EC4899", // Pink
+      "#F59E0B", // Amber
+      "#8B5CF6", // Purple
+      "#EF4444", // Red
+    ];
+    const hash = name.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
+    return colors[hash % colors.length];
+  };
+
+  // Get first letter of name for icon
+  const getIconLetter = (name: string): string => {
+    return name.charAt(0).toUpperCase();
+  };
+
+  // Priority: 1. Use color (with white text), 2. Use logo (image), 3. Fallback to generated color with letter
+  const hasColor = color;
+  const hasLogo = logo && (logo.startsWith("http") || logo.startsWith("/") || logo.startsWith("data:"));
+  const iconColor = hasColor || (!hasLogo ? getIconColor(name) : undefined);
+  const iconLetter = getIconLetter(name);
+  // Fallback to image prop if logo is not available (for backward compatibility)
+  const imageUrl = hasLogo ? logo : (image || undefined);
 
   return (
     <div className="px-3 md:px-4 py-4 md:py-6">
       <div className="flex items-start gap-3 md:gap-4 mb-2.5 md:mb-3">
         <Avatar className="w-14 h-14 md:w-16 md:h-16 lg:w-20 lg:h-20 rounded-xl flex-shrink-0">
-          <AvatarImage src={image} alt={name} />
-          <AvatarFallback className="bg-gray-200 rounded-xl text-gray-600 font-bold text-2xl md:text-3xl">
-            {name.charAt(0).toUpperCase()}
+          <AvatarImage src={imageUrl} alt={name} />
+          <AvatarFallback 
+            style={iconColor ? { backgroundColor: iconColor } : {}}
+            className="rounded-xl text-white font-bold text-2xl md:text-3xl"
+          >
+            {iconLetter}
           </AvatarFallback>
         </Avatar>
         <div className="flex-1">

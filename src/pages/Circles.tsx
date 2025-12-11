@@ -117,20 +117,33 @@ const Circles = () => {
                   <>
                     {joinCollectiveData?.data?.length > 0 ? (
                       <div className="space-y-3 md:space-y-4">
-                        {joinCollectiveData.data.map((collective: any) => {
+                        {joinCollectiveData.data.map((collective: any, index: number) => {
                           const circle = collective.collective || collective;
-                          // Generate consistent color based on collective name
-                          const colors = [
-                            '#f97316', // orange
-                            '#ec4899', // pink
-                            '#3b82f6', // blue
-                            '#10b981', // green
-                            '#f59e0b', // amber
-                            '#8b5cf6', // purple
-                            '#ef4444', // red
-                          ];
-                          const colorIndex = (circle.name?.charCodeAt(0) || 0) % colors.length;
-                          const circleBgColor = colors[colorIndex];
+                          
+                          // Generate color for icon if not provided (same logic as NewSuggestedCollectives)
+                          const getIconColor = (index: number): string => {
+                            const colors = [
+                              "#1600ff", // Blue
+                              "#10B981", // Green
+                              "#EC4899", // Pink
+                              "#F59E0B", // Amber
+                              "#8B5CF6", // Purple
+                              "#EF4444", // Red
+                            ];
+                            return colors[index % colors.length];
+                          };
+
+                          // Get first letter of name for icon
+                          const getIconLetter = (name: string): string => {
+                            return name.charAt(0).toUpperCase();
+                          };
+
+                          // Priority: 1. Use color (with white text), 2. Use logo (image), 3. Fallback to generated color with letter
+                          const hasColor = circle.color;
+                          const hasLogo = circle.logo && (circle.logo.startsWith("http") || circle.logo.startsWith("/") || circle.logo.startsWith("data:"));
+                          const iconColor = hasColor || (!hasLogo ? getIconColor(index) : undefined);
+                          const iconLetter = getIconLetter(circle.name || 'C');
+                          
                           const founderName = circle.created_by 
                             ? `${circle.created_by.first_name || ''} ${circle.created_by.last_name || ''}`.trim() || circle.created_by.username
                             : 'Unknown';
@@ -144,11 +157,19 @@ const Circles = () => {
                               {/* Collective Icon */}
                               <div
                                 className="w-10 h-10 md:w-12 md:h-12 rounded-full flex items-center justify-center mb-2 md:mb-3"
-                                style={{ backgroundColor: circleBgColor }}
+                                style={iconColor ? { backgroundColor: iconColor } : {}}
                               >
-                                <span className="text-lg md:text-xl font-bold text-white">
-                                  {circle.name?.charAt(0)?.toUpperCase() || 'C'}
-                                </span>
+                                {hasLogo ? (
+                                  <img
+                                    src={circle.logo}
+                                    alt={circle.name}
+                                    className="w-full h-full object-cover rounded-full"
+                                  />
+                                ) : (
+                                  <span className="text-white font-bold text-lg md:text-xl">
+                                    {iconLetter}
+                                  </span>
+                                )}
                               </div>
 
                               <h3 className="font-semibold text-sm md:text-base text-gray-900 mb-1 md:mb-1.5">
@@ -196,19 +217,31 @@ const Circles = () => {
             ) : (
             /* Discover Tab Content */
             <div className="space-y-3 md:space-y-4 pb-12 md:pb-16">
-              {collectiveData?.results?.map((circle: any) => {
-                // Generate consistent color based on collective name
-                const colors = [
-                  '#f97316', // orange
-                  '#ec4899', // pink
-                  '#3b82f6', // blue
-                  '#10b981', // green
-                  '#f59e0b', // amber
-                  '#8b5cf6', // purple
-                  '#ef4444', // red
-                ];
-                const colorIndex = (circle.name?.charCodeAt(0) || 0) % colors.length;
-                const circleBgColor = colors[colorIndex];
+              {collectiveData?.results?.map((circle: any, index: number) => {
+                // Generate color for icon if not provided (same logic as NewSuggestedCollectives)
+                const getIconColor = (index: number): string => {
+                  const colors = [
+                    "#1600ff", // Blue
+                    "#10B981", // Green
+                    "#EC4899", // Pink
+                    "#F59E0B", // Amber
+                    "#8B5CF6", // Purple
+                    "#EF4444", // Red
+                  ];
+                  return colors[index % colors.length];
+                };
+
+                // Get first letter of name for icon
+                const getIconLetter = (name: string): string => {
+                  return name.charAt(0).toUpperCase();
+                };
+
+                // Priority: 1. Use color (with white text), 2. Use logo (image), 3. Fallback to generated color with letter
+                const hasColor = circle.color;
+                const hasLogo = circle.logo && (circle.logo.startsWith("http") || circle.logo.startsWith("/") || circle.logo.startsWith("data:"));
+                const iconColor = hasColor || (!hasLogo ? getIconColor(index) : undefined);
+                const iconLetter = getIconLetter(circle.name || 'C');
+                
                 const founderName = circle.created_by 
                   ? `${circle.created_by.first_name || ''} ${circle.created_by.last_name || ''}`.trim() || circle.created_by.username
                   : 'Unknown';
@@ -222,11 +255,19 @@ const Circles = () => {
                     {/* Collective Icon */}
                     <div
                       className="w-10 h-10 md:w-12 md:h-12 rounded-full flex items-center justify-center mb-2 md:mb-3"
-                      style={{ backgroundColor: circleBgColor }}
+                      style={iconColor ? { backgroundColor: iconColor } : {}}
                     >
-                      <span className="text-lg md:text-xl font-bold text-white">
-                        {circle.name?.charAt(0)?.toUpperCase() || 'C'}
-                      </span>
+                      {hasLogo ? (
+                        <img
+                          src={circle.logo}
+                          alt={circle.name}
+                          className="w-full h-full object-cover rounded-full"
+                        />
+                      ) : (
+                        <span className="text-white font-bold text-lg md:text-xl">
+                          {iconLetter}
+                        </span>
+                      )}
                     </div>
 
                     <h3 className="font-semibold text-sm md:text-base text-gray-900 mb-1 md:mb-1.5">
