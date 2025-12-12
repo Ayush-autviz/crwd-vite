@@ -1,6 +1,6 @@
 import React, { useState, useRef } from "react";
 import { Camera, Loader2, Eye, EyeOff, ArrowRight, Check } from "lucide-react";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate, Link, useSearchParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useMutation } from "@tanstack/react-query";
@@ -38,6 +38,8 @@ export default function NewClaimProfile() {
   });
   const fileInputRef = useRef<HTMLInputElement>(null);
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const redirectTo = searchParams.get('redirectTo') || '/';
   const { setUser, setToken } = useAuthStore();
 
   const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -290,13 +292,13 @@ export default function NewClaimProfile() {
 
       // If last_login_at is null, navigate to nonprofit interests page (new user)
       if (response.user && !response.user.last_login_at) {
-        navigate("/non-profit-interests", {
+        navigate(`/non-profit-interests?redirectTo=${encodeURIComponent(redirectTo)}`, {
           state: { fromAuth: true },
           replace: true,
         });
       } else {
-        // Navigate to home page for existing users
-        navigate("/", { replace: true });
+        // Navigate to redirectTo if available, otherwise home page for existing users
+        navigate(redirectTo, { replace: true });
       }
     },
     onError: (error: any) => {

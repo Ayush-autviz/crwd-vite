@@ -70,6 +70,11 @@ export default function CommunityTestimonials({
   // Limit posts to the specified number
   const posts = postsData?.results?.slice(0, limit) || [];
 
+  // Don't render anything if no posts are available (after loading)
+  if (!isLoading && posts.length === 0) {
+    return null;
+  }
+
   return (
     <div className="bg-gray-50 py-10 px-4 md:px-6">
       <div className="max-w-4xl mx-auto">
@@ -139,11 +144,7 @@ export default function CommunityTestimonials({
               );
             })}
           </div>
-        ) : (
-          <div className="text-center py-12 text-gray-500">
-            No posts available yet
-          </div>
-        )}
+        ) : null}
       </div>
     </div>
   );

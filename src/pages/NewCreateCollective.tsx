@@ -282,7 +282,7 @@ export default function NewCreateCollectivePage() {
         {/* header */}
         <div className="sticky top-0 z-10 w-full flex items-center gap-3 md:gap-4 p-3 md:p-4 border-b bg-white">
           <button
-            onClick={() => navigate(-1)}
+            onClick={() => navigate('/')}
             className="p-1.5 md:p-2 hover:bg-gray-100 rounded-full transition-colors"
             aria-label="Go back"
           >
@@ -302,7 +302,7 @@ export default function NewCreateCollectivePage() {
           You pick the causes. You invite the people. They give monthly. No money touches your hands. You just rally the movement.
         </p>
         <Button
-          onClick={() => navigate('/onboarding')}
+          onClick={() => navigate('/onboarding?redirectTo=/create-crwd')}
           className="bg-[#1600ff] hover:bg-[#1400cc] text-white font-semibold rounded-lg px-4 md:px-6 py-3 md:py-6 text-sm md:text-base w-full max-w-xs mx-4"
         >
           Get Started
@@ -528,7 +528,7 @@ export default function NewCreateCollectivePage() {
         {/* Header */}
         <div className="sticky top-0 z-10 w-full flex items-center gap-3 md:gap-4 p-3 md:p-4 border-b bg-white">
           <button
-            onClick={() => navigate(-1)}
+            onClick={() => navigate('/')}
             className="p-1.5 md:p-2 hover:bg-gray-100 rounded-full transition-colors"
             aria-label="Go back"
           >

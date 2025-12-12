@@ -3,7 +3,7 @@
 import type React from "react"
 import { useState } from "react"
 import { Eye, EyeOff } from "lucide-react"
-import { Link, useNavigate } from "react-router-dom"
+import { Link, useNavigate, useSearchParams } from "react-router-dom"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Checkbox } from "@/components/ui/checkbox"
@@ -15,6 +15,8 @@ import { Toast } from "@/components/ui/toast"
 
 const LoginPage: React.FC = () => {
   const navigate = useNavigate()
+  const [searchParams] = useSearchParams()
+  const redirectTo = searchParams.get('redirectTo') || '/'
   const { setUser, setToken } = useAuthStore()
   const [showPassword, setShowPassword] = useState(false)
   const [rememberMe] = useState(false)
@@ -49,13 +51,13 @@ const LoginPage: React.FC = () => {
       
       // If last_login_at is null, navigate to nonprofit interests page (new user)
       if (response.user && !response.user.last_login_at) {
-        navigate("/non-profit-interests", { 
+        navigate(`/non-profit-interests?redirectTo=${encodeURIComponent(redirectTo)}`, { 
           state: { fromAuth: true },
           replace: true 
         })
       } else {
-        // Navigate to home page for existing users
-        navigate("/", {replace: true})
+        // Navigate to redirectTo if available, otherwise home page for existing users
+        navigate(redirectTo, {replace: true})
       }
     },
     onError: (error: any) => {
@@ -89,6 +91,10 @@ const LoginPage: React.FC = () => {
 
   const handleGoogleLogin = async () => {
     try {
+      // Store redirectTo in sessionStorage before redirecting to Google
+      if (redirectTo && redirectTo !== '/') {
+        sessionStorage.setItem('googleLoginRedirectTo', redirectTo);
+      }
       const result = await googleLoginQuery.refetch()
       if (result.data) {
         console.log('Google login successful:', result.data)

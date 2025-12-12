@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { googleLogin } from "@/services/api/auth";
 import { ArrowRight } from "lucide-react";
@@ -7,6 +7,8 @@ import NewLogo from "@/assets/newLogo/NewLogo";
 
 export default function NewOnboard() {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const redirectTo = searchParams.get('redirectTo') || '/';
 
   const googleLoginQuery = useQuery({
     queryKey: ["googleLogin"],
@@ -16,6 +18,10 @@ export default function NewOnboard() {
 
   const handleGoogleLogin = async () => {
     try {
+      // Store redirectTo in sessionStorage before redirecting to Google
+      if (redirectTo && redirectTo !== '/') {
+        sessionStorage.setItem('googleLoginRedirectTo', redirectTo);
+      }
       const result = await googleLoginQuery.refetch();
       if (result.data) {
         console.log("Google login successful:", result.data);
@@ -30,17 +36,17 @@ export default function NewOnboard() {
     // TODO: Implement Apple login when API is available
     console.log("Apple login clicked");
     // For now, navigate to claim profile
-    navigate("/claim-profile");
+    navigate(`/claim-profile?redirectTo=${encodeURIComponent(redirectTo)}`);
   };
 
   const handleEmailLogin = () => {
     // Navigate to claim profile for email registration
-    navigate("/claim-profile");
+    navigate(`/claim-profile?redirectTo=${encodeURIComponent(redirectTo)}`);
   };
 
   const handleLogin = () => {
     // Navigate to Login page
-    navigate("/login");
+    navigate(`/login?redirectTo=${encodeURIComponent(redirectTo)}`);
   };
 
   return (

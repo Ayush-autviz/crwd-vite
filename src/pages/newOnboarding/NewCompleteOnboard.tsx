@@ -1,6 +1,6 @@
 
 import { useState, useEffect } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate, useLocation, useSearchParams } from "react-router-dom";
 import { Heart, Sparkles, Search, Check, Loader2, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -40,6 +40,8 @@ const getInitials = (name: string) => {
 export default function NewCompleteOnboard() {
   const navigate = useNavigate();
   const location = useLocation();
+  const [searchParams] = useSearchParams();
+  const redirectTo = searchParams.get('redirectTo') || '/';
   const queryClient = useQueryClient();
   const [view, setView] = useState<ViewType>('initial');
   const [selectedCauses, setSelectedCauses] = useState<number[]>([]);
@@ -161,7 +163,8 @@ export default function NewCompleteOnboard() {
   };
 
   const handleSkip = () => {
-    navigate('/new-home');
+    // Navigate to redirectTo if available, otherwise to home
+    navigate(redirectTo);
   };
 
   const getCategoryInfo = (categoryId: string) => {
@@ -422,12 +425,12 @@ export default function NewCompleteOnboard() {
     <div className="min-h-screen bg-gradient-to-br from-blue-100 via-purple-50 to-pink-50">
       <div className="max-w-3xl mx-auto px-4 py-6">
         <div className="bg-white rounded-xl p-6 md:p-8 shadow-lg mt-8">
-        {/* Progress Indicator */}
+        {/* Progress Indicator - Step 4 */}
         <div className="flex items-center justify-center space-x-1.5 sm:space-x-2 mb-6 sm:mb-8">
-          <div className="h-1 w-8 sm:w-10 md:w-12 bg-indigo-500 rounded-full"></div>
-          <div className="h-1 w-8 sm:w-10 md:w-12 bg-indigo-500 rounded-full"></div>
-          <div className="h-1 w-8 sm:w-10 md:w-12 bg-indigo-500 rounded-full"></div>
-          <div className="h-1 w-8 sm:w-10 md:w-12 bg-indigo-500 rounded-full"></div>
+          <div className="h-1 w-8 sm:w-10 md:w-12 bg-gray-300 rounded-full"></div>
+          <div className="h-1 w-8 sm:w-10 md:w-12 bg-gray-300 rounded-full"></div>
+          <div className="h-1 w-8 sm:w-10 md:w-12 bg-gray-300 rounded-full"></div>
+          <div className="h-1 w-8 sm:w-10 md:w-12 bg-gray-800 rounded-full"></div>
         </div>
 
         {/* Header */}

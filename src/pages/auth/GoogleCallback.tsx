@@ -15,6 +15,16 @@ export default function GoogleCallback() {
   const [toastMessage, setToastMessage] = useState("");
 
   const code = searchParams.get('code');
+  // Get redirectTo from URL params or sessionStorage (for Google OAuth)
+  const redirectToFromUrl = searchParams.get('redirectTo');
+  const redirectToFromStorage = sessionStorage.getItem('googleLoginRedirectTo');
+  const redirectTo = redirectToFromUrl || redirectToFromStorage || '/';
+  
+  // Clear sessionStorage after reading
+  if (redirectToFromStorage) {
+    sessionStorage.removeItem('googleLoginRedirectTo');
+  }
+  
   console.log(code, 'code');
 
   const googleCallbackQuery = useQuery({
@@ -40,13 +50,13 @@ export default function GoogleCallback() {
         
         // If last_login_at is null, navigate to nonprofit interests page (new user)
         if (googleCallbackQuery.data.user && !googleCallbackQuery.data.user.last_login_at) {
-          navigate("/non-profit-interests", { 
+          navigate(`/non-profit-interests?redirectTo=${encodeURIComponent(redirectTo)}`, { 
             state: { fromAuth: true },
             replace: true 
           });
         } else {
-          // Navigate to home page for existing users
-          navigate("/", {replace: true});
+          // Navigate to redirectTo if available, otherwise home page for existing users
+          navigate(redirectTo, {replace: true});
         }
       }
     }

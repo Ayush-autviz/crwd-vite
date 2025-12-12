@@ -141,24 +141,20 @@ const Footer = () => {
               >
                 Contact Us
               </Link>
+              <Link
+                to="/settings/privacy"
+                className="block text-white hover:text-gray-300 transition-colors text-xs md:text-sm lg:text-base"
+              >
+                Privacy Policy
+              </Link>
+              <Link
+                to="/settings/terms"
+                className="block text-white hover:text-gray-300 transition-colors text-xs md:text-sm lg:text-base"
+              >
+                Terms of Service
+              </Link>
             </nav>
           </div>
-        </div>
-
-        {/* Privacy Policy and Terms of Service - Separate Links */}
-        <div className="space-y-2 md:space-y-1.5 mb-6 md:mb-8">
-          <Link
-            to="/settings/privacy"
-            className="block text-white hover:text-gray-300 transition-colors text-xs md:text-sm lg:text-base font-bold md:font-normal"
-          >
-            Privacy Policy
-          </Link>
-          <Link
-            to="/settings/terms"
-            className="block text-white hover:text-gray-300 transition-colors text-xs md:text-sm lg:text-base"
-          >
-            Terms of Service
-          </Link>
         </div>
 
         {/* App Download Section - Left Side */}

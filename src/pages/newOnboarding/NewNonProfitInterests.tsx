@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { Heart, ArrowRight, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { categories } from "@/constants/categories";
@@ -9,6 +9,8 @@ import { toast } from "sonner";
 
 export default function NewNonProfitInterests() {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const redirectTo = searchParams.get('redirectTo') || '/';
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
 
   // Only show specific categories from the image
@@ -52,7 +54,7 @@ export default function NewNonProfitInterests() {
     mutationFn: (interests: string[]) => postCauseInterests({ interests }),
     onSuccess: () => {
       // toast.success("Interests saved successfully!");
-      navigate("/complete-onboard", { 
+      navigate(`/complete-onboard?redirectTo=${encodeURIComponent(redirectTo)}`, { 
         state: { selectedCategories } 
       });
     },
@@ -71,7 +73,7 @@ export default function NewNonProfitInterests() {
 
   const handleSkip = () => {
     // TODO: Handle skip action
-    navigate("/complete-onboard");
+    navigate(`/complete-onboard?redirectTo=${encodeURIComponent(redirectTo)}`);
   };
 
   return (

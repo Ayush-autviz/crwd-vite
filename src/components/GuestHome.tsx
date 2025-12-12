@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { Button } from './ui/button'
 import { Card, CardContent } from './ui/card'
 import { ChevronRight, Search, Menu, Users, CheckSquare, Settings, LogIn, X } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import AutomaticImpact from './guest/AutomaticImpact';
 import PopularCollectives from './guest/PopularCollectives';
 import LearnAndGetInspired from './guest/LearnAndGetInspired';
@@ -76,39 +76,36 @@ export default function GuestHome() {
     };
 
     return (
-        <div className="min-h-screen bg-background pb-20 md:pb-24">
+        <div className="min-h-screen bg-background ">
 
 
             {/* Navbar */}
             <div className="sticky top-0 z-10 w-full flex items-center justify-between p-4 md:px-6 border-b bg-background">
                 {/* Logo with colored circles */}
                 
-                <a href="/waitlist">
+                <Link to="/waitlist">
                     <NewLogo />
-                </a>
+                </Link>
 
                 
                 {/* Right side buttons */}
                 <div className="flex items-center gap-3 md:gap-4">
                     {/* Search Icon */}
-
-                    {/* <button
-                        onClick={() => navigate("/search")} */}
-                    <a href="/search"
+                    <button
+                        onClick={() => navigate("/search")}
                         className="p-2 hover:bg-gray-100 rounded-full transition-colors"
                         aria-label="Search"
                     >
                         <Search className="w-5 h-5 md:w-6 md:h-6 text-gray-700" />
-                    </a>
+                    </button>
 
                     {/* Sign In Button */}
-                    {/* <Button
-                        onClick={() => navigate("/login")} */}
-                    <a href="/login"
-                        className="bg-[#ff3366] hover:bg-[#ff0033] text-white font-bold px-3 md:px-6 py-2 rounded-full text-xs md:text-base inline-flex items-center justify-center"
+                    <Button
+                        onClick={() => navigate("/login")}
+                        className="bg-[#ff3366] hover:bg-[#ff0033] text-white font-bold px-3 md:px-6 py-2 rounded-full text-xs md:text-base"
                     >
                         Sign In
-                    </a>
+                    </Button>
 
                     {/* Get the App Button */}
                     <Button
@@ -147,14 +144,12 @@ export default function GuestHome() {
                         What if you could support every cause you care about automatically, affordably, and powerfully?
                     </p>
 
-                    {/* <Button
-                        onClick={() => navigate("/onboarding")} */}
-                        <a href="/onboarding"
-                        // size="lg"
-                        className="h-14 px-10 py-4  rounded-lg bg-[#1600ff] text-white font-bold text-lg"
+                    <Button
+                        onClick={() => navigate("/onboarding")}
+                        className="h-14 px-10 py-4 rounded-lg bg-[#1600ff] text-white font-bold text-lg"
                     >
                         Get started
-                    </a>
+                    </Button>
 
                 </div>
             </div>
@@ -220,14 +215,12 @@ export default function GuestHome() {
                                 One gift. Multiple causes.
                             </p>
 
-                            {/* <Button
+                            <Button
                                 onClick={() => navigate("/waitlist")}
-                                size="lg" */}
-                                <a href="/waitlist"
-                                className="w-full h-11 md:h-12 rounded-full font-bold  text-xs xs:text-sm sm:text-base lg:text-lg px-10 py-4 inline-flex items-center justify-center bg-[#1600ff] text-white"
+                                className="w-full h-11 md:h-12 rounded-full font-bold text-xs xs:text-sm sm:text-base lg:text-lg px-10 py-4 bg-[#1600ff] text-white"
                             >
                                 Start Supporting <ChevronRight className="ml-2 h-4 w-4 md:h-5 md:w-5" />
-                            </a>
+                            </Button>
                             <p className="text-gray-500 text-center mt-4" style={{ fontSize: 'clamp(0.875rem, 2vw, 1rem)' }}>Every dollar makes a difference</p>
                         </CardContent>
                     </Card>
@@ -254,7 +247,7 @@ export default function GuestHome() {
 
             {/* Fixed iOS App Banner */}
             {showAppBanner && (
-              <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-4 md:px-6 py-3 md:py-4 z-40 shadow-lg block sm :hidden">
+              <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-4 md:px-6 py-3 md:py-4 z-40 shadow-lg block sm:hidden">
                 <div className="max-w-7xl mx-auto flex items-center justify-between gap-3 md:gap-4">
                   <NewLogo />
                   <div className="flex-1 flex flex-col md:flex-row md:items-center gap-1 md:gap-2">
@@ -303,41 +296,36 @@ export default function GuestHome() {
 
                         {/* Menu Items */}
                         <div className="px-6 pb-4 space-y-1">
-                            {/* <button
+                            <button
                                 onClick={() => {
                                     navigate("/onboarding");
                                     handleCloseMenu();
-                                }} */}
-
-                                <a href="/onboarding"
+                                }}
                                 className="flex items-center gap-3 py-3 px-2 rounded-lg hover:bg-gray-100 transition-colors w-full text-left"
-
                             >
                                 <LogIn className="h-5 w-5 text-[#1600ff] group-hover:text-white transition-colors" />
                                 <span>Log In/Get Started</span>
-                            </a>
-                            {/* <button
+                            </button>
+                            <button
                                 onClick={() => {
                                     navigate("/circles");
                                     handleCloseMenu();
-                                }} */}
-                                <a href="/circles"
+                                }}
                                 className="flex items-center gap-3 py-3 px-2 rounded-lg hover:bg-gray-100 transition-colors w-full text-left"
                             >
                                 <Users className="h-5 w-5 text-[#1600ff]" />
                                 <span className="text-gray-900 font-medium">Collectives</span>
-                            </a>
-                            {/* <button
+                            </button>
+                            <button
                                 onClick={() => {
                                     navigate("/donation");
                                     handleCloseMenu();
-                                }} */}
-                                <a href="/donation"
+                                }}
                                 className="flex items-center gap-3 py-3 px-2 rounded-lg hover:bg-gray-100 transition-colors w-full text-left"
                             >
                                 <CheckSquare className="h-5 w-5 text-[#1600ff]" />
                                 <span className="text-gray-900 font-medium">Donation Box</span>
-                            </a>
+                            </button>
                         </div>
 
                         {/* Separator */}
@@ -345,17 +333,16 @@ export default function GuestHome() {
 
                         {/* Learn More */}
                         <div className="px-6 py-4">
-                            {/* <button
+                            <button
                                 onClick={() => {
                                     navigate("/waitlist");
                                     handleCloseMenu();
-                                }} */}
-                                <a href="/waitlist"
+                                }}
                                 className="flex items-center gap-3 py-3 px-2 rounded-lg hover:bg-gray-100 transition-colors w-full text-left"
                             >
                                 <Settings className="h-5 w-5 text-[#1600ff]" />
                                 <span className="text-gray-900 font-medium">Learn More</span>
-                            </a>
+                            </button>
                         </div>
                     </div>
                 </div>
