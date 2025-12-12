@@ -1,6 +1,7 @@
+
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import { Heart, Sparkles, Search, Check, Loader2 } from "lucide-react";
+import { useNavigate, useLocation } from "react-router-dom";
+import { Heart, Sparkles, Search, Check, Loader2, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
@@ -38,11 +39,18 @@ const getInitials = (name: string) => {
 
 export default function NewCompleteOnboard() {
   const navigate = useNavigate();
+  const location = useLocation();
   const queryClient = useQueryClient();
   const [view, setView] = useState<ViewType>('initial');
   const [selectedCauses, setSelectedCauses] = useState<number[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [searchTrigger, setSearchTrigger] = useState(0);
+  
+  // Get selected categories from navigation state
+  const selectedCategoryIds = (location.state?.selectedCategories as string[]) || [];
+  const selectedCategoryObjects = selectedCategoryIds
+    .map((id) => categories.find((cat) => cat.id === id))
+    .filter((cat) => cat !== undefined);
 
   // Fetch surprise me causes
   const { data: surpriseData, isLoading: isLoadingSurprise, refetch: refetchSurprise } = useQuery({
@@ -128,6 +136,14 @@ export default function NewCompleteOnboard() {
     navigate('/');
   };
 
+  const handleEditCategories = () => {
+    navigate('/non-profit-interests');
+  };
+
+  const handleSkip = () => {
+    navigate('/new-home');
+  };
+
   const getCategoryInfo = (categoryId: string) => {
     return categories.find((cat) => cat.id === categoryId) || categories[0];
   };
@@ -147,6 +163,14 @@ export default function NewCompleteOnboard() {
     return (
       <div className="min-h-screen bg-gradient-to-br from-blue-100 via-purple-50 to-pink-50 flex flex-col items-center justify-center px-4 py-8">
         <div className="w-full max-w-2xl bg-white rounded-xl p-6 md:p-8 shadow-lg">
+          {/* Progress Indicator - Step 4 */}
+          <div className="flex items-center justify-center space-x-1.5 sm:space-x-2 mb-6 sm:mb-8">
+            <div className="h-1 w-8 sm:w-10 md:w-12 bg-gray-300 rounded-full"></div>
+            <div className="h-1 w-8 sm:w-10 md:w-12 bg-gray-300 rounded-full"></div>
+            <div className="h-1 w-8 sm:w-10 md:w-12 bg-gray-300 rounded-full"></div>
+            <div className="h-1 w-8 sm:w-10 md:w-12 bg-gray-800 rounded-full"></div>
+          </div>
+
           {/* Heart Icon with Gradient */}
           <div className="flex justify-center mb-8">
             <div className="w-20 h-20 rounded-full bg-gradient-to-br from-purple-500 via-pink-500 to-blue-500 flex items-center justify-center shadow-lg">
@@ -160,9 +184,24 @@ export default function NewCompleteOnboard() {
           </h1>
 
           {/* Description */}
-          <p className="text-sm md:text-base text-gray-600 text-center mb-8">
+          <p className="text-sm md:text-base text-gray-600 text-center mb-6">
             Choose nonprofits to support. Your donation gets split evenly among them. You can change these anytime!
           </p>
+
+          {/* Selected Categories Tags */}
+          {selectedCategoryObjects.length > 0 && (
+            <div className="flex flex-wrap justify-center gap-2 mb-8">
+              {selectedCategoryObjects.map((category) => (
+                <div
+                  key={category.id}
+                  className="px-4 py-2 rounded-full text-sm font-medium text-white border border-gray-200"
+                  style={{ backgroundColor: category.background }}
+                >
+                  {category.name}
+                </div>
+              ))}
+            </div>
+          )}
 
           {/* Two Option Cards */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
@@ -198,6 +237,26 @@ export default function NewCompleteOnboard() {
               </p>
             </button>
           </div>
+
+          {/* Bottom Buttons - Show when nothing is selected */}
+          {selectedCauses.length === 0 && (
+            <div className="flex gap-3 justify-center mt-6">
+              <Button
+                onClick={handleEditCategories}
+                variant="outline"
+                className="px-6 py-3 rounded-full border border-gray-300 bg-white text-gray-900 font-bold hover:bg-gray-50 shadow-sm"
+              >
+                Edit Categories
+              </Button>
+              <Button
+                onClick={handleSkip}
+                className="px-6 py-3 rounded-full bg-blue-600 hover:bg-blue-700 text-white font-bold shadow-sm flex items-center gap-2"
+              >
+                Skip for Now
+                <ArrowRight className="w-4 h-4" />
+              </Button>
+            </div>
+          )}
         </div>
       </div>
     );
@@ -209,6 +268,14 @@ export default function NewCompleteOnboard() {
       <div className="min-h-screen bg-gradient-to-br from-blue-100 via-purple-50 to-pink-50">
         <div className="max-w-4xl mx-auto px-4 py-6">
           <div className="bg-white rounded-xl p-6 md:p-8 shadow-lg mt-8">
+          {/* Progress Indicator - Step 4 */}
+          <div className="flex items-center justify-center space-x-1.5 sm:space-x-2 mb-6 sm:mb-8">
+            <div className="h-1 w-8 sm:w-10 md:w-12 bg-gray-300 rounded-full"></div>
+            <div className="h-1 w-8 sm:w-10 md:w-12 bg-gray-300 rounded-full"></div>
+            <div className="h-1 w-8 sm:w-10 md:w-12 bg-gray-300 rounded-full"></div>
+            <div className="h-1 w-8 sm:w-10 md:w-12 bg-gray-800 rounded-full"></div>
+          </div>
+
           {/* Header */}
           <div className="flex justify-center mb-6">
             <div className="w-20 h-20 rounded-full bg-gradient-to-br from-purple-500 via-pink-500 to-blue-500 flex items-center justify-center shadow-lg">
@@ -225,11 +292,11 @@ export default function NewCompleteOnboard() {
 
           {/* Your Random Selection Section */}
           <div className="mb-6">
-            <div className="flex justify-between items-center mb-4">
-              <h2 className="text-lg font-bold text-gray-900">Your Random Selection</h2>
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-0 mb-4">
+              <h2 className="text-base sm:text-lg font-bold text-gray-900">Your Random Selection</h2>
               <button
                 onClick={handleChangeMethod}
-                className="px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg text-sm font-medium text-gray-700"
+                className="px-3 sm:px-4 py-1.5 sm:py-2 border border-gray-300 hover:bg-gray-100 rounded-full text-xs sm:text-sm font-medium text-gray-700"
               >
                 Change Method
               </button>
@@ -241,7 +308,7 @@ export default function NewCompleteOnboard() {
               </div>
             ) : (
               <>
-                <div className="grid grid-cols-2 gap-3 mb-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
                   {surpriseCauses.slice(0, 6).map((cause: any) => {
                     const isSelected = selectedCauses.includes(cause.id);
                     const avatarBgColor = getConsistentColor(cause.id, avatarColors);
@@ -256,29 +323,29 @@ export default function NewCompleteOnboard() {
                         }`}
                         onClick={() => handleCauseToggle(cause.id)}
                       >
-                        <CardContent className="px-3">
-                          <div className="flex items-center gap-3">
+                        <CardContent className="px-3 sm:px-4">
+                          <div className="flex items-center gap-2 sm:gap-3">
                             <div
-                              className="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0"
+                              className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg flex items-center justify-center flex-shrink-0"
                               style={{ backgroundColor: avatarBgColor }}
                             >
-                              <span className="text-white font-bold text-sm">
+                              <span className="text-white font-bold text-xs sm:text-sm">
                                 {initials}
                               </span>
                             </div>
                             <div className="flex-1 min-w-0">
-                              <h3 className="font-bold text-xs text-gray-900 mb-1 line-clamp-3">
+                              <h3 className="font-bold text-xs sm:text-sm text-gray-900 mb-1 line-clamp-2 sm:line-clamp-3">
                                 {cause.name}
                               </h3>
                               <div
-                                className="px-2 py-0.5 rounded-full text-[10px] font-medium text-white inline-block"
+                                className="px-2 py-0.5 rounded-full text-[10px] sm:text-xs font-medium text-white inline-block"
                                 style={{ backgroundColor: categoryInfo.background }}
                               >
                                 {categoryInfo.name}
                               </div>
                             </div>
                             {isSelected && (
-                              <Check className="w-5 h-5 text-blue-500 flex-shrink-0" />
+                              <Check className="w-4 h-4 sm:w-5 sm:h-5 text-blue-500 flex-shrink-0" />
                             )}
                           </div>
                         </CardContent>
@@ -290,7 +357,7 @@ export default function NewCompleteOnboard() {
                 <div className="text-center mb-6">
                   <button
                     onClick={handlePickDifferent}
-                    className="flex items-center gap-1.5 text-purple-600 hover:text-purple-700 font-medium mx-auto"
+                    className="flex items-center gap-1.5 text-purple-600 hover:text-purple-700 font-medium mx-auto text-sm sm:text-base"
                   >
                     <Sparkles className="w-4 h-4" />
                     Pick Different Nonprofits
@@ -301,18 +368,18 @@ export default function NewCompleteOnboard() {
           </div>
 
           {/* Footer Navigation */}
-          <div className="flex gap-3">
+          <div className="flex flex-col sm:flex-row gap-3">
             <Button
               onClick={handleChangeMethod}
               variant="outline"
-              className="flex-1 h-12 border-gray-300 text-gray-900 hover:bg-gray-50"
+              className="flex-1 h-11 sm:h-12 border-gray-300 text-gray-900 hover:bg-gray-50 text-sm sm:text-base"
             >
               Back
             </Button>
             <Button
               onClick={handleStartWithNonprofits}
               disabled={selectedCauses.length === 0 || addToBoxMutation.isPending}
-              className="flex-1 h-12 bg-blue-600 hover:bg-blue-700 text-white"
+              className="flex-1 h-11 sm:h-12 bg-blue-600 hover:bg-blue-700 text-white text-sm sm:text-base"
             >
               {addToBoxMutation.isPending ? (
                 <>
@@ -335,6 +402,14 @@ export default function NewCompleteOnboard() {
     <div className="min-h-screen bg-gradient-to-br from-blue-100 via-purple-50 to-pink-50">
       <div className="max-w-3xl mx-auto px-4 py-6">
         <div className="bg-white rounded-xl p-6 md:p-8 shadow-lg mt-8">
+        {/* Progress Indicator */}
+        <div className="flex items-center justify-center space-x-1.5 sm:space-x-2 mb-6 sm:mb-8">
+          <div className="h-1 w-8 sm:w-10 md:w-12 bg-indigo-500 rounded-full"></div>
+          <div className="h-1 w-8 sm:w-10 md:w-12 bg-indigo-500 rounded-full"></div>
+          <div className="h-1 w-8 sm:w-10 md:w-12 bg-indigo-500 rounded-full"></div>
+          <div className="h-1 w-8 sm:w-10 md:w-12 bg-indigo-500 rounded-full"></div>
+        </div>
+
         {/* Header */}
         <div className="flex justify-center mb-6">
           <div className="w-20 h-20 rounded-full bg-gradient-to-br from-purple-500 via-pink-500 to-blue-500 flex items-center justify-center shadow-lg">
@@ -351,11 +426,11 @@ export default function NewCompleteOnboard() {
 
         {/* Browse Nonprofits Section */}
         <div className="mb-6">
-          <div className="flex justify-between items-center mb-4">
-            <h2 className="text-lg font-bold text-gray-900">Browse Nonprofits</h2>
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-0 mb-4">
+            <h2 className="text-base sm:text-lg font-bold text-gray-900">Browse Nonprofits</h2>
             <button
               onClick={handleChangeMethod}
-              className="px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg text-sm font-medium text-gray-700"
+              className="px-3 sm:px-4 py-1.5 sm:py-2 border border-gray-300 hover:bg-gray-100 rounded-full text-xs sm:text-sm font-medium text-gray-700"
             >
               Change Method
             </button>
@@ -363,7 +438,7 @@ export default function NewCompleteOnboard() {
 
           {/* Search Bar */}
           <div className="relative mb-4">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 sm:w-5 sm:h-5 text-gray-400" />
             <Input
               type="text"
               placeholder="Search for nonprofits..."
@@ -374,13 +449,13 @@ export default function NewCompleteOnboard() {
                   handleSearch();
                 }
               }}
-              className="pl-10 h-12"
+              className="pl-9 sm:pl-10 h-11 sm:h-12 text-sm sm:text-base"
             />
           </div>
 
           {/* Select Nonprofits Count */}
           <div className="mb-4">
-            <h3 className="text-lg font-bold text-gray-900">
+            <h3 className="text-base sm:text-lg font-bold text-gray-900">
               Select Nonprofits ({selectedCauses.length})
             </h3>
           </div>
@@ -401,34 +476,34 @@ export default function NewCompleteOnboard() {
                 return (
                   <Card
                     key={cause.id}
-                    className={`border-2 cursor-pointer transition-all ${
+                    className={`border-2 cursor-pointer transition-all py-3 md:py-6  ${
                       isSelected ? 'border-blue-500' : 'border-gray-200'
                     }`}
                     onClick={() => handleCauseToggle(cause.id)}
                   >
-                    <CardContent className="px-4">
-                      <div className="flex items-center gap-4">
+                    <CardContent className="px-3 sm:px-4">
+                      <div className="flex items-center gap-3 sm:gap-4">
                         <div
-                          className="w-12 h-12 rounded-lg flex items-center justify-center flex-shrink-0"
+                          className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg flex items-center justify-center flex-shrink-0"
                           style={{ backgroundColor: avatarBgColor }}
                         >
-                          <span className="text-white font-bold text-base">
+                          <span className="text-white font-bold text-sm sm:text-base">
                             {initials}
                           </span>
                         </div>
                         <div className="flex-1 min-w-0">
-                          <h3 className="font-bold text-base text-gray-900 mb-1">
+                          <h3 className="font-bold text-sm sm:text-base text-gray-900 mb-1">
                             {cause.name}
                           </h3>
                           <div
-                            className="px-2 py-0.5 rounded-full text-xs font-medium text-white inline-block"
+                            className="px-2 py-0.5 rounded-full text-[10px] sm:text-xs font-medium text-white inline-block"
                             style={{ backgroundColor: categoryInfo.background }}
                           >
                             {categoryInfo.name}
                           </div>
                         </div>
                         {isSelected && (
-                          <Check className="w-6 h-6 text-blue-500 flex-shrink-0" />
+                          <Check className="w-5 h-5 sm:w-6 sm:h-6 text-blue-500 flex-shrink-0" />
                         )}
                       </div>
                     </CardContent>
@@ -440,18 +515,18 @@ export default function NewCompleteOnboard() {
         </div>
 
         {/* Footer Navigation */}
-        <div className="flex gap-3 mt-6">
+        <div className="flex flex-col sm:flex-row gap-3 mt-6">
           <Button
             onClick={handleChangeMethod}
             variant="outline"
-            className="flex-1 h-12 border-gray-300 text-gray-900 hover:bg-gray-50"
+            className="flex-1 h-11 sm:h-12 border-gray-300 text-gray-900 hover:bg-gray-50 text-sm sm:text-base"
           >
             Back
           </Button>
           <Button
             onClick={handleStartWithNonprofits}
             disabled={selectedCauses.length === 0 || addToBoxMutation.isPending}
-            className="flex-1 h-12 bg-blue-600 hover:bg-blue-700 text-white"
+            className="flex-1 h-11 sm:h-12 bg-blue-600 hover:bg-blue-700 text-white text-sm sm:text-base"
           >
             {addToBoxMutation.isPending ? (
               <>

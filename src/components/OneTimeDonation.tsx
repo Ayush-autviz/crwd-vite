@@ -5,6 +5,7 @@ import { useState, useEffect } from "react";
 import DonationCauseSelector from "./DonationCauseSelector";
 import { useMutation } from '@tanstack/react-query';
 import { createOneTimeDonation } from '@/services/api/donation';
+import RequestNonprofitModal from '@/components/newsearch/RequestNonprofitModal';
 
 interface OneTimeDonationProps {
   setCheckout: (value: boolean) => void;
@@ -32,9 +33,10 @@ export default function OneTimeDonation({
   activeTab
 }: OneTimeDonationProps) {
   const [selectedItems, setSelectedItems] = useState<SelectedItem[]>([]);
-  const [donationAmount, setDonationAmount] = useState(7);
-  const [inputValue, setInputValue] = useState("7");
+  const [donationAmount, setDonationAmount] = useState(5);
+  const [inputValue, setInputValue] = useState("5");
   const [preselectedItemAdded, setPreselectedItemAdded] = useState(false);
+  const [showRequestModal, setShowRequestModal] = useState(false);
 
   // Handle preselected item from navigation
   useEffect(() => {
@@ -60,14 +62,14 @@ export default function OneTimeDonation({
   });
 
   const incrementDonation = () => {
-    const newAmount = donationAmount + 1;
+    const newAmount = donationAmount + 5;
     setDonationAmount(newAmount);
     setInputValue(newAmount.toString());
   };
 
   const decrementDonation = () => {
-    if (donationAmount > 1) {
-      const newAmount = donationAmount - 1;
+    if (donationAmount > 5) {
+      const newAmount = donationAmount - 5;
       setDonationAmount(newAmount);
       setInputValue(newAmount.toString());
     }
@@ -155,12 +157,87 @@ export default function OneTimeDonation({
     oneTimeDonationMutation.mutate(requestBody);
   };
 
+  // Calculate capacity - max is 20 causes, and for every $5 you can support 20 causes
+  const maxCapacity = 20;
+  const currentCapacity = selectedItems.length;
+  const capacityPercentage = maxCapacity > 0 ? Math.min(100, (currentCapacity / maxCapacity) * 100) : 0;
+  // For every $5, you can support 20 causes (so $1 = 4 causes, but max is 20)
+  const calculatedCapacity = Math.min(Math.floor(donationAmount * 4), maxCapacity);
+
   return (
-    <div className="p-3 md:p-4 mt-3 md:mt-4 mb-4 rounded-lg">
-      {/* Main container - flex column on mobile, flex row on larger screens */}
-      <div className="flex flex-col md:flex-row md:gap-6 w-full">
-        {/* Left column - Organizations section */}
-        <div className="w-full mb-4 md:mb-0">
+    <div className="w-full h-full bg-white flex flex-col pb-20 md:pb-24">
+      <div className="flex-1 overflow-auto mt-3 md:mt-4 flex flex-col p-3 md:p-4 mb-20 md:mb-24 space-y-3 md:space-y-4">
+        {/* Header Section */}
+        <div>
+          <p className="text-xl md:text-2xl font-bold text-[#1600ff] text-center">Set your one-time gift</p>
+          <p className="text-gray-600 text-xs text-center mt-1.5 md:mt-2">Support multiple causes with one donation, split evenly. Change anytime.</p>
+        </div>
+
+        {/* Donation Box Card */}
+        <div className="bg-white rounded-xl mb-4 md:mb-6 p-4 md:p-6 shadow-sm border border-gray-100">
+          {/* Your One-Time Impact Section */}
+          <div className="mb-4 md:mb-6">
+            <h2 className="text-lg md:text-xl font-bold text-gray-900 text-center mb-4 md:mb-6">
+              Your One-Time Impact
+            </h2>
+            
+            {/* Amount Selector */}
+            <div className="flex items-center justify-center gap-3 md:gap-4">
+              <button
+                onClick={decrementDonation}
+                disabled={donationAmount <= 5}
+                className={`flex items-center justify-center w-10 h-10 md:w-12 md:h-12 rounded-lg transition-colors ${
+                  donationAmount > 5 
+                    ? 'bg-[#1600ff] hover:bg-[#1600ff]' 
+                    : 'bg-gray-200 hover:bg-gray-300 cursor-not-allowed'
+                }`}
+              >
+                <Minus size={18} className="md:w-5 md:h-5 text-white font-bold" strokeWidth={3} />
+              </button>
+              <div className="text-center">
+                <div className="text-[#1600ff] text-3xl md:text-4xl font-bold">
+                  ${donationAmount}
+                </div>
+                <div className="text-gray-900 text-xs md:text-sm mt-1">
+                  per donation
+                </div>
+              </div>
+              <button
+                onClick={incrementDonation}
+                className="flex items-center justify-center w-10 h-10 md:w-12 md:h-12 rounded-lg bg-[#1600ff] hover:bg-[#1600ff] transition-colors"
+              >
+                <Plus size={18} className="md:w-5 md:h-5 text-white font-bold" strokeWidth={3} />
+              </button>
+            </div>
+          </div>
+
+          {/* Donation Box Capacity Section */}
+          <div className="bg-blue-50 rounded-xl p-3 md:p-4">
+            <div className="flex items-center justify-between mb-2 md:mb-3">
+              <h3 className="text-sm md:text-base font-bold text-[#1600ff]">
+                Donation Box Capacity
+              </h3>
+              <span className="text-xs md:text-sm font-medium text-[#1600ff]">
+                {currentCapacity}/{maxCapacity} causes
+              </span>
+            </div>
+            
+            {/* Progress Bar */}
+            <div className="w-full h-1.5 md:h-2 bg-blue-100 rounded-full mb-2 md:mb-3">
+              <div
+                className="h-1.5 md:h-2 bg-[#1600ff] rounded-full transition-all duration-300"
+                style={{ width: `${capacityPercentage}%` }}
+              />
+            </div>
+            
+            <p className="text-xs md:text-sm text-[#1600ff]">
+              For every ${donationAmount}, you can support {calculatedCapacity} cause{calculatedCapacity !== 1 ? 's' : ''}.
+            </p>
+          </div>
+        </div>
+
+        {/* Add More Causes Section */}
+        <div className="w-full">
           <DonationCauseSelector
             selectedItems={selectedItems}
             onSelectItem={handleSelectItem}
@@ -168,94 +245,27 @@ export default function OneTimeDonation({
             onClearAllItems={handleClearAllItems}
             preselectedItem={preselectedItem}
             activeTab={activeTab}
+            onRequestNonprofit={() => setShowRequestModal(true)}
           />
         </div>
-
-        {/* Right column - Donation amount and checkout */}
-        <div className="w-full space-y-4 md:space-y-5">
-          {/* Donation amount section */}
-          <div className="bg-blue-50 rounded-xl w-full p-4 md:p-6">
-            <div className="flex items-center mb-3 md:mb-4 rounded-lg">
-              <h2 className="text-sm md:text-base font-medium text-gray-800">
-                Enter donation amount
-              </h2>
-            </div>
-
-            <div className="bg-blue-50 rounded-lg mb-3 md:mb-4">
-              <div className="bg-white flex items-center rounded-lg border shadow-sm">
-                <button
-                  onClick={decrementDonation}
-                  className="flex items-center justify-center w-10 h-10 md:w-12 md:h-12 rounded-l-lg hover:bg-gray-50 transition-colors"
-                >
-                  <Minus size={16} className="md:w-[18px] md:h-[18px]" />
-                </button>
-                <div className="flex-1 flex justify-center items-center h-10 md:h-12 px-3 md:px-4 border-x">
-                  <span className="text-blue-600 text-xl md:text-2xl font-bold relative">
-                    $
-                    <input
-                      type="text"
-                      value={inputValue}
-                      onChange={handleInputChange}
-                      onBlur={handleInputBlur}
-                      className="bg-transparent w-16 md:w-20 text-center focus:outline-none text-xl md:text-2xl"
-                      aria-label="Donation amount"
-                    />
-                  </span>
-                </div>
-                <button
-                  onClick={incrementDonation}
-                  className="flex items-center justify-center w-10 h-10 md:w-12 md:h-12 rounded-r-lg hover:bg-gray-50 transition-colors"
-                >
-                  <Plus size={16} className="md:w-[18px] md:h-[18px]" />
-                </button>
-              </div>
-
-              <p className="text-xs text-gray-500 mt-1.5 md:mt-2">
-                Input amount over $5
-              </p>
-            </div>
-
-            <div className="flex justify-between items-center p-2.5 md:p-3 border-b border-gray-200">
-              <span className="text-xs md:text-sm font-medium text-gray-700">TOTAL:</span>
-              <span className="text-base md:text-lg font-bold text-blue-600">${donationAmount.toFixed(2)}</span>
-            </div>
-          </div>
-
-          {/* Security message */}
-          <div className="flex items-center p-2.5 md:p-3 bg-gray-50 rounded-lg">
-            <div className="flex items-center justify-center w-5 h-5 md:w-6 md:h-6 rounded-full bg-green-100 text-green-600 mr-1.5 md:mr-2 flex-shrink-0">
-              <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" className="md:w-[14px] md:h-[14px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" /><polyline points="22 4 12 14.01 9 11.01" /></svg>
-            </div>
-            <p className="text-xs md:text-sm text-gray-600">
-              Your donation is protected and guaranteed.{" "}
-              <Link to="/settings/about" className="text-blue-600 font-medium">
-                Learn More
-              </Link>
-            </p>
-          </div>
-
-          {/* Checkout button */}
-          <div className="py-3 md:py-4 w-full">
-            <Button
-              onClick={handleCheckout}
-              disabled={oneTimeDonationMutation.isPending || selectedItems.length === 0}
-              className="bg-green-500 hover:bg-green-600 text-black w-full py-4 md:py-6 rounded-lg font-medium transition-colors flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed text-sm md:text-base"
-            >
-              {oneTimeDonationMutation.isPending ? 'Processing...' : 'Checkout'}
-            </Button>
-          </div>
-          {/* <div className="py-4 w-full">
-            <Button
-              onClick={() => setCheckout(true)}
-              className="bg-green-500 hover:bg-green-600 text-black w-full py-6 md:py-6 rounded-lg font-medium transition-colors flex items-center justify-center"
-            >
-              Complete Donation
-            </Button>
-          </div> */}
-          {/* <PaymentSection setCheckout={setCheckout} amount={7} /> */}
-          <div className="h-10"></div>
-        </div>
       </div>
+
+      {/* Checkout button - Fixed at bottom */}
+      <div className="fixed bottom-0 left-0 right-0 p-4 md:p-6 bg-white border-t border-gray-200 z-10">
+        <Button
+          onClick={handleCheckout}
+          disabled={oneTimeDonationMutation.isPending || selectedItems.length === 0}
+          className="bg-[#aeff30] hover:bg-[#91d11c] text-black w-full py-4 md:py-6 rounded-full font-bold transition-colors flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed text-sm md:text-base"
+        >
+          {oneTimeDonationMutation.isPending ? 'Processing...' : 'Checkout'}
+        </Button>
+      </div>
+
+      {/* Request Nonprofit Modal */}
+      <RequestNonprofitModal
+        isOpen={showRequestModal}
+        onClose={() => setShowRequestModal(false)}
+      />
     </div>
   );
 }

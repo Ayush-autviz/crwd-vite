@@ -43,11 +43,45 @@ export default function NewClaimProfile() {
   const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
+      // Validate file type
+      if (!file.type.startsWith('image/')) {
+        setErrors((prev) => ({
+          ...prev,
+          profileImage: 'Please upload a valid image file.',
+        }));
+        return;
+      }
+      
+      // Validate file size (e.g., max 5MB)
+      const maxSize = 5 * 1024 * 1024; // 5MB
+      if (file.size > maxSize) {
+        setErrors((prev) => ({
+          ...prev,
+          profileImage: 'Image size must be less than 5MB.',
+        }));
+        return;
+      }
+      
+      // Clear any previous errors
+      if (errors.profileImage) {
+        setErrors((prev) => {
+          const newErrors = { ...prev };
+          delete newErrors.profileImage;
+          return newErrors;
+        });
+      }
+      
       const reader = new FileReader();
       reader.onload = (e) => {
         setFormData((prev) => ({
           ...prev,
           profileImage: e.target?.result as string,
+        }));
+      };
+      reader.onerror = () => {
+        setErrors((prev) => ({
+          ...prev,
+          profileImage: 'Failed to read image file. Please try again.',
         }));
       };
       reader.readAsDataURL(file);
@@ -165,9 +199,41 @@ export default function NewClaimProfile() {
       console.error("Registration error:", error);
       console.error("Error response:", error.response?.data);
       console.error("Error status:", error.response?.status);
-      setToastMessage(
-        `Registration failed: ${error.response?.data?.message || error.message}`
-      );
+      
+      // Handle validation errors
+      const errorData = error.response?.data;
+      if (errorData?.errors) {
+        // Check for profile picture error
+        if (errorData.errors.profile_picture_file) {
+          const profileError = Array.isArray(errorData.errors.profile_picture_file)
+            ? errorData.errors.profile_picture_file[0]
+            : errorData.errors.profile_picture_file;
+          setErrors((prev) => ({
+            ...prev,
+            profileImage: profileError,
+          }));
+          setToastMessage(profileError);
+        } else {
+          // Handle other field errors
+          const fieldErrors: Record<string, string> = {};
+          Object.keys(errorData.errors).forEach((field) => {
+            const fieldError = errorData.errors[field];
+            fieldErrors[field] = Array.isArray(fieldError) ? fieldError[0] : fieldError;
+          });
+          setErrors((prev) => ({ ...prev, ...fieldErrors }));
+        }
+      }
+      
+      // Show toast with main message or first error
+      const errorMessage = errorData?.message || error.message;
+      const firstError = errorData?.errors 
+        ? Object.values(errorData.errors)[0] 
+        : null;
+      const displayMessage = Array.isArray(firstError) 
+        ? firstError[0] 
+        : firstError || errorMessage;
+      
+      setToastMessage(displayMessage || "Registration failed");
       setShowToast(true);
     },
   });
@@ -175,8 +241,8 @@ export default function NewClaimProfile() {
   const emailVerificationMutation = useMutation({
     mutationFn: emailVerification,
     onSuccess: async (response) => {
-      setToastMessage("Email verified successfully!");
-      setShowToast(true);
+      // setToastMessage("Email verified successfully!");
+      // setShowToast(true);
       console.log("email verified", response);
 
       // Automatically login after successful email verification
@@ -282,11 +348,12 @@ export default function NewClaimProfile() {
     <div className="min-h-screen bg-gradient-to-br from-blue-100 via-purple-50 to-pink-50 flex flex-col items-center justify-center px-4 py-8">
 
       <div className="w-full max-w-md bg-white rounded-xl p-6">
-        {/* Progress Indicator */}
-        <div className="flex items-center justify-center space-x-2 mb-8">
-          <div className="w-8 h-1 bg-gray-300 rounded-full"></div>
-          <div className="w-10 h-1 bg-gray-900 rounded-full"></div>
-          <div className="w-8 h-1 bg-gray-300 rounded-full"></div>
+        {/* Progress Indicator - Step 2 */}
+        <div className="flex items-center justify-center space-x-1.5 sm:space-x-2 mb-6 sm:mb-8">
+          <div className="h-1 w-8 sm:w-10 md:w-12 bg-gray-300 rounded-full"></div>
+          <div className="h-1 w-8 sm:w-10 md:w-12 bg-gray-800 rounded-full"></div>
+          <div className="h-1 w-8 sm:w-10 md:w-12 bg-gray-300 rounded-full"></div>
+          <div className="h-1 w-8 sm:w-10 md:w-12 bg-gray-300 rounded-full"></div>
         </div>
 
         {/* Title and Subtitle */}
