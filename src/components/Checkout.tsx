@@ -82,10 +82,45 @@ export const Checkout = ({
     return sum + parseFloat(transaction.gross_amount || '0');
   }, 0) || 0;
 
-  // Get capacity from donation box - count unique causes from box_causes array
+  // Calculate fees and capacity using the provided formula
+  const calculateFees = (grossAmount: number) => {
+    const gross = grossAmount;
+    const stripeFee = (gross * 0.029) + 0.30;
+    const crwdFee = (gross - stripeFee) * 0.07;
+    const net = gross - stripeFee - crwdFee;
+    
+    console.log('=== Fee Calculation ===');
+    console.log('Gross Amount:', gross);
+    console.log('Stripe Fee (2.9% + $0.30):', stripeFee);
+    console.log('CRWD Fee (7% of Gross - Stripe):', crwdFee);
+    console.log('Net (Gross - Stripe - CRWD):', net);
+    
+    return {
+      stripeFee: Math.round(stripeFee * 100) / 100,
+      crwdFee: Math.round(crwdFee * 100) / 100,
+      net: Math.round(net * 100) / 100,
+    };
+  };
+
+  const fees = calculateFees(actualDonationAmount);
+  const net = fees.net;
+  const maxCapacity = Math.floor(net / 0.20);
+  
+  console.log('=== Capacity Calculation ===');
+  console.log('Fees object:', fees);
+  console.log('Net amount:', net);
+  console.log('Max Capacity (net / 0.20):', maxCapacity);
+  
+  // Get current capacity from box_causes only
   const uniqueCauseIds = new Set(boxCauses.map((bc: any) => bc.cause?.id).filter(Boolean));
-  const currentCapacity = uniqueCauseIds.size || totalCauses;
-  const maxCapacity = donationBox?.capacity || 30;
+  const currentCapacity = uniqueCauseIds.size;
+  
+  console.log('=== Capacity Info ===');
+  console.log('Box Causes:', boxCauses);
+  console.log('Unique Cause IDs:', Array.from(uniqueCauseIds));
+  console.log('Current Capacity (box_causes count):', currentCapacity);
+  console.log('Max Capacity:', maxCapacity);
+  console.log('Remaining Capacity:', maxCapacity - currentCapacity);
 
   // Helper for consistent avatar colors
   const avatarColors = [

@@ -638,30 +638,70 @@ const DonationBox = ({ tab = "setup", preselectedItem, activeTab, fromPaymentRes
                     </div>
 
                     {/* Donation Box Capacity Section */}
-                    <div className="bg-blue-50 rounded-xl p-3 md:p-4">
-                      <div className="flex items-center justify-between mb-2 md:mb-3">
-                        <h3 className="text-sm md:text-base font-bold text-[#1600ff]">
-                          Donation Box Capacity
-                        </h3>
-                        <span className="text-xs md:text-sm font-medium text-[#1600ff]">
-                          {selectedCauseIds.length + selectedCollectiveIds.length}/20 causes
-                        </span>
-                      </div>
+                    {(() => {
+                      // Calculate fees and capacity using the provided formula
+                      const calculateFees = (grossAmount: number) => {
+                        const gross = grossAmount;
+                        const stripeFee = (gross * 0.029) + 0.30;
+                        const crwdFee = (gross - stripeFee) * 0.07;
+                        const net = gross - stripeFee - crwdFee;
+                        
+                        console.log('=== Fee Calculation (Donationbox Step 1) ===');
+                        console.log('Gross Amount:', gross);
+                        console.log('Stripe Fee (2.9% + $0.30):', stripeFee);
+                        console.log('CRWD Fee (7% of Gross - Stripe):', crwdFee);
+                        console.log('Net (Gross - Stripe - CRWD):', net);
+                        
+                        return {
+                          stripeFee: Math.round(stripeFee * 100) / 100,
+                          crwdFee: Math.round(crwdFee * 100) / 100,
+                          net: Math.round(net * 100) / 100,
+                        };
+                      };
+
+                      const actualDonationAmount = parseFloat(donationAmount.toString());
+                      const fees = calculateFees(actualDonationAmount);
+                      const net = fees.net;
+                      const maxCapacity = Math.floor(net / 0.20);
+                      const currentCapacity = selectedCauseIds.length + selectedCollectiveIds.length;
+                      const capacityPercentage = maxCapacity > 0 ? Math.min(100, (currentCapacity / maxCapacity) * 100) : 0;
                       
-                      {/* Progress Bar */}
-                      <div className="w-full h-1.5 md:h-2 bg-blue-100 rounded-full mb-2 md:mb-3">
-                        <div
-                          className="h-1.5 md:h-2 bg-[#1600ff] rounded-full transition-all duration-300"
-                          style={{
-                            width: `${Math.min(100, ((selectedCauseIds.length + selectedCollectiveIds.length) / 20) * 100)}%`,
-                          }}
-                        />
-                      </div>
+                      console.log('=== Capacity Calculation (Donationbox Step 1) ===');
+                      console.log('Donation Amount:', donationAmount);
+                      console.log('Actual Donation Amount:', actualDonationAmount);
+                      console.log('Fees object:', fees);
+                      console.log('Net amount:', net);
+                      console.log('Max Capacity (net / 0.20):', maxCapacity);
+                      console.log('Current Capacity:', currentCapacity);
+                      console.log('Capacity Percentage:', capacityPercentage);
                       
-                      <p className="text-xs md:text-sm text-[#1600ff]">
-                        For every ${donationAmount}, you can support 20 causes.
-                      </p>
-                    </div>
+                      return (
+                        <div className="bg-blue-50 rounded-xl p-3 md:p-4">
+                          <div className="flex items-center justify-between mb-2 md:mb-3">
+                            <h3 className="text-sm md:text-base font-bold text-[#1600ff]">
+                              Donation Box Capacity
+                            </h3>
+                            <span className="text-xs md:text-sm font-medium text-[#1600ff]">
+                              {currentCapacity}/{maxCapacity} causes
+                            </span>
+                          </div>
+                          
+                          {/* Progress Bar */}
+                          <div className="w-full h-1.5 md:h-2 bg-blue-100 rounded-full mb-2 md:mb-3">
+                            <div
+                              className="h-1.5 md:h-2 bg-[#1600ff] rounded-full transition-all duration-300"
+                              style={{
+                                width: `${capacityPercentage}%`,
+                              }}
+                            />
+                          </div>
+                          
+                          <p className="text-xs md:text-sm text-[#1600ff]">
+                            For every ${donationAmount}, you can support {maxCapacity} cause{maxCapacity !== 1 ? 's' : ''}.
+                          </p>
+                        </div>
+                      );
+                    })()}
                   </div>
 
                   {/* Your Selected Causes */}

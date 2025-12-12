@@ -469,9 +469,48 @@ const ManageDonationBox: React.FC<ManageDonationBoxProps> = ({
   const totalCausesCount = totalCauseIds.length;
   const totalCollectivesCount = totalCollectiveIds.length;
   const currentCapacity = totalCausesCount;
-  const maxCapacity = 30; // Default capacity, could come from donationBox if available
+  
+  // Calculate fees and capacity using the provided formula
+  const calculateFees = (grossAmount: number) => {
+    const gross = grossAmount;
+    const stripeFee = (gross * 0.029) + 0.30;
+    const crwdFee = (gross - stripeFee) * 0.07;
+    const net = gross - stripeFee - crwdFee;
+    
+    console.log('=== Fee Calculation (ManageDonationBox) ===');
+    console.log('Gross Amount:', gross);
+    console.log('Stripe Fee (2.9% + $0.30):', stripeFee);
+    console.log('CRWD Fee (7% of Gross - Stripe):', crwdFee);
+    console.log('Net (Gross - Stripe - CRWD):', net);
+    
+    return {
+      stripeFee: Math.round(stripeFee * 100) / 100,
+      crwdFee: Math.round(crwdFee * 100) / 100,
+      net: Math.round(net * 100) / 100,
+    };
+  };
+
+  const actualDonationAmount = parseFloat(editableAmount.toString());
+  const fees = calculateFees(actualDonationAmount);
+  const net = fees.net;
+  const maxCapacity = Math.floor(net / 0.20);
+  
+  console.log('=== Capacity Calculation (ManageDonationBox) ===');
+  console.log('Editable Amount:', editableAmount);
+  console.log('Actual Donation Amount:', actualDonationAmount);
+  console.log('Fees object:', fees);
+  console.log('Net amount:', net);
+  console.log('Max Capacity (net / 0.20):', maxCapacity);
+  console.log('Current Capacity (totalCausesCount):', currentCapacity);
+  console.log('Total Causes Count:', totalCausesCount);
+  console.log('Total Collectives Count:', totalCollectivesCount);
+  
   const remainingCapacity = maxCapacity - currentCapacity;
   const capacityPercentage = (currentCapacity / maxCapacity) * 100;
+  
+  console.log('=== Capacity Info (ManageDonationBox) ===');
+  console.log('Remaining Capacity:', remainingCapacity);
+  console.log('Capacity Percentage:', capacityPercentage);
 
   // Fetch donation history for lifetime amount
   const { data: donationHistoryData } = useQuery({

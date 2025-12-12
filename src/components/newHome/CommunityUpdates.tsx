@@ -180,7 +180,7 @@ export default function CommunityUpdates({
       {showHeading && (
         <div className="
         mb-4 md:mb-6">
-          <h2 className=" text-base xs:text-sm sm:text-base md:text-lg lg:text-2xl font-bold text-gray-900 mb-1.5 md:mb-2">Community Updates</h2>
+          <h2 className="text-xl sm:text-2xl  md:text-3xl lg:text-3xl xl:text-4xl 2xl:text-5xl font-bold text-gray-900 mb-1.5 md:mb-2">Community Updates</h2>
           <p className="text-xs md:text-sm text-gray-600">
             Activity, updates, and discoveries from your community
           </p>

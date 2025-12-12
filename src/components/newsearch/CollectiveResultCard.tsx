@@ -9,6 +9,8 @@ interface CollectiveResultCardProps {
     description?: string;
     image?: string;
     avatar?: string;
+    logo?: string; // Logo URL from API
+    color?: string; // Color from API
     created_by?: {
       id?: number | string;
       first_name?: string;
@@ -22,15 +24,22 @@ interface CollectiveResultCardProps {
   };
 }
 
-// Avatar colors for collectives
-const avatarColors = [
-  '#3B82F6', '#EC4899', '#8B5CF6', '#10B981', '#F59E0B', '#EF4444', '#06B6D4',
-  '#F97316', '#84CC16', '#A855F7', '#14B8A6', '#F43F5E', '#6366F1', '#22C55E', '#EAB308',
-];
+// Generate color for icon if not provided (same as NewSuggestedCollectives)
+const getIconColor = (index: number): string => {
+  const colors = [
+    "#1600ff", // Blue
+    "#10B981", // Green
+    "#EC4899", // Pink
+    "#F59E0B", // Amber
+    "#8B5CF6", // Purple
+    "#EF4444", // Red
+  ];
+  return colors[index % colors.length];
+};
 
-const getConsistentColor = (id: number | string, colors: string[]) => {
-  const hash = typeof id === 'number' ? id : id.toString().split('').reduce((acc: number, char: string) => acc + char.charCodeAt(0), 0);
-  return colors[hash % colors.length];
+// Get first letter of name for icon
+const getIconLetter = (name: string): string => {
+  return name.charAt(0).toUpperCase();
 };
 
 // Get initials from name
@@ -45,9 +54,13 @@ const getInitials = (name: string): string => {
 
 export default function CollectiveResultCard({ collective }: CollectiveResultCardProps) {
   const navigate = useNavigate();
-  const firstLetter = collective.name?.charAt(0).toUpperCase() || 'C';
-  const imageUrl = collective.image || collective.avatar;
-  const avatarBgColor = getConsistentColor(collective.id, avatarColors);
+  
+  // Priority: 1. Use color (with white text), 2. Use logo (image), 3. Fallback to generated color with letter
+  const hasColor = collective.color;
+  const hasLogo = collective.logo && (collective.logo.startsWith("http") || collective.logo.startsWith("/") || collective.logo.startsWith("data:"));
+  const imageUrl = collective.logo || collective.image || collective.avatar;
+  const iconColor = hasColor || (!hasLogo ? getIconColor(collective.id % 6) : undefined);
+  const iconLetter = getIconLetter(collective.name || 'C');
 
   // Get founder information
   const founder = collective.created_by;
@@ -68,16 +81,23 @@ export default function CollectiveResultCard({ collective }: CollectiveResultCar
     >
       <CardContent className="px-3 md:px-4 py-3 md:py-4">
         <div className="flex items-start gap-3 md:gap-4">
-          {/* Circular avatar with dynamic color */}
-          <Avatar className="w-10 h-10 md:w-12 md:h-12 rounded-full flex-shrink-0">
-            <AvatarImage src={imageUrl} alt={collective.name} />
-            <AvatarFallback
-              style={{ backgroundColor: avatarBgColor }}
-              className="text-white rounded-full font-bold text-sm md:text-base"
-            >
-              {firstLetter}
-            </AvatarFallback>
-          </Avatar>
+          {/* Icon with priority: color > logo > generated color with letter */}
+          <div
+            className="w-10 h-10 md:w-12 md:h-12 rounded-lg flex items-center justify-center flex-shrink-0"
+            style={iconColor ? { backgroundColor: iconColor } : {}}
+          >
+            {hasLogo && imageUrl ? (
+              <img
+                src={imageUrl}
+                alt={collective.name}
+                className="w-full h-full object-cover rounded-lg"
+              />
+            ) : (
+              <span className="text-white font-bold text-lg md:text-xl">
+                {iconLetter}
+              </span>
+            )}
+          </div>
 
           <div className="flex-1 min-w-0">
             {/* Title */}

@@ -42,7 +42,7 @@ export default function NewFeaturedNonprofits({
   return (
     <div className="w-full px-4 mt-6 md:px-0 md:mt-8 lg:mt-10">
       <div className="flex justify-between items-center mb-3 md:mb-4">
-        <h2 className=" text-base xs:text-sm sm:text-base md:text-lg lg:text-2xl font-bold">Featured Nonprofits</h2>
+        <h2 className=" text-xl sm:text-2xl  md:text-3xl lg:text-3xl xl:text-4xl 2xl:text-5xl font-bold">Featured Nonprofits</h2>
         <Link to={seeAllLink}>
           <Button variant="link" className="text-green-600 p-0 h-auto flex items-center text-xs md:text-sm">
             See all
