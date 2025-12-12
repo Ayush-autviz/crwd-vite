@@ -1,7 +1,7 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useQuery, useInfiniteQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { Loader2, X, Check } from 'lucide-react';
+import { Loader2, Check } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -13,7 +13,7 @@ import {
 } from '@/components/ui/dialog';
 import { getCollectiveById, getCollectiveCauses, getCollectiveStats, joinCollective, leaveCollective } from '@/services/api/crwd';
 import { getPosts } from '@/services/api/social';
-import { getDonationBox, addCollectiveToDonation } from '@/services/api/donation';
+import { getDonationBox } from '@/services/api/donation';
 import CollectiveHeader from '@/components/newgroupcrwd/CollectiveHeader';
 import CollectiveProfile from '@/components/newgroupcrwd/CollectiveProfile';
 import CollectiveStats from '@/components/newgroupcrwd/CollectiveStats';
@@ -21,6 +21,7 @@ import DonationInfoBox from '@/components/newgroupcrwd/DonationInfoBox';
 import SupportedNonprofits from '@/components/newgroupcrwd/SupportedNonprofits';
 import CommunityActivity from '@/components/newgroupcrwd/CommunityActivity';
 import CollectiveStatisticsModal from '@/components/newgroupcrwd/CollectiveStatisticsModal';
+import JoinCollectiveBottomSheet from '@/components/newgroupcrwd/JoinCollectiveBottomSheet';
 import { SharePost } from '@/components/ui/SharePost';
 import { useAuthStore } from '@/stores/store';
 import Footer from '@/components/Footer';
@@ -35,7 +36,10 @@ export default function NewGroupCrwdPage() {
   const [statisticsTab, setStatisticsTab] = useState<'Nonprofits' | 'Members' | 'Donations'>('Nonprofits');
   const [showJoinModal, setShowJoinModal] = useState(false);
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
-  const joinModalRef = useRef<HTMLDivElement>(null);
+  const [pendingJoinData, setPendingJoinData] = useState<{
+    selectedNonprofits: any[];
+    collectiveId: string;
+  } | null>(null);
 
   // Fetch collective data
   const { data: crwdData, isLoading: isLoadingCrwd, error: crwdError } = useQuery({
@@ -101,6 +105,8 @@ export default function NewGroupCrwdPage() {
     mutationFn: joinCollective,
     onSuccess: async (response) => {
       console.log('Join collective successful:', response);
+      
+      // Close the modal
       setShowJoinModal(false);
       
       // Invalidate queries to refresh data
@@ -109,62 +115,42 @@ export default function NewGroupCrwdPage() {
       queryClient.invalidateQueries({ queryKey: ['joined-collectives', currentUser?.id] });
       queryClient.invalidateQueries({ queryKey: ['joined-collectives-manage'] });
       queryClient.invalidateQueries({ queryKey: ['joinedCollectives'] });
-      queryClient.invalidateQueries({ queryKey: ['donationBox', currentUser?.id] });
       
-      // Check if donation box exists and add collective
-      try {
-        const donationBoxData = await getDonationBox();
+      // If we have pending join data, navigate to donation page with preselected causes
+      if (pendingJoinData) {
+        const { selectedNonprofits, collectiveId } = pendingJoinData;
         
-        if (!donationBoxData || !donationBoxData.id) {
-          navigate('/donation?tab=setup', {
-            state: {
-              preselectedItem: {
-                id: crwdId,
-                type: 'collective',
-                data: crwdData
-              },
-              activeTab: 'collectives'
-            }
-          });
-        } else {
-          try {
-            if (!crwdId) {
-              throw new Error('Collective ID is missing');
-            }
-            await addCollectiveToDonation(crwdId);
-            await queryClient.invalidateQueries({ queryKey: ['donationBox', currentUser?.id] });
-            await queryClient.refetchQueries({ queryKey: ['donationBox', currentUser?.id] });
-            
-            navigate('/donation?tab=setup', {
-              state: {
-                preselectedItem: {
-                  id: crwdId,
-                  type: 'collective',
-                  data: crwdData
-                },
-                activeTab: 'collectives'
-              }
-            });
-          } catch (addError) {
-            console.error('Error adding collective to donation box:', addError);
-            navigate('/donation?tab=setup', {
-              state: {
-                preselectedItem: {
-                  id: crwdId,
-                  type: 'collective',
-                  data: crwdData
-                },
-                activeTab: 'collectives'
-              }
-            });
-          }
-        }
-      } catch (error) {
-        console.error('Error checking donation box:', error);
+        // Transform selected nonprofits to cause format
+        const preselectedCauses = selectedNonprofits.map((np) => {
+          const cause = np.cause || np;
+          return {
+            id: cause.id || np.id,
+            name: cause.name || np.name || 'Unknown Nonprofit',
+            description: cause.mission || cause.description || np.mission || np.description || '',
+            mission: cause.mission || np.mission || '',
+            logo: cause.image || cause.logo || np.image || np.logo || '',
+          };
+        });
+
+        const preselectedCauseIds = preselectedCauses.map((cause) => cause.id);
+
+        navigate('/donation?tab=setup', {
+          state: {
+            preselectedCauses: preselectedCauseIds,
+            preselectedCausesData: preselectedCauses,
+            preselectedCollectiveId: parseInt(collectiveId),
+          },
+        });
+        
+        // Clear pending join data
+        setPendingJoinData(null);
       }
+      // If no pending join data, do nothing (donation box exists case)
     },
     onError: (error: any) => {
       console.error('Join collective error:', error);
+      // Clear pending join data on error
+      setPendingJoinData(null);
     },
   });
 
@@ -189,25 +175,6 @@ export default function NewGroupCrwdPage() {
     },
   });
 
-  // Handle outside click for join modal
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (
-        joinModalRef.current &&
-        !joinModalRef.current.contains(event.target as Node)
-      ) {
-        setShowJoinModal(false);
-      }
-    };
-
-    if (showJoinModal) {
-      document.addEventListener('mousedown', handleClickOutside);
-    }
-
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, [showJoinModal]);
 
   // Loading state
   if (isLoadingCrwd) {
@@ -261,8 +228,30 @@ export default function NewGroupCrwdPage() {
   // Check if current user is the admin/creator
   const isAdmin = currentUser?.id === crwdData?.created_by?.id;
 
-  const handleJoinConfirm = () => {
-    if (crwdId) {
+  const handleJoinConfirm = async (selectedNonprofits: any[], collectiveId: string) => {
+    if (!crwdId) return;
+
+    // Check if donation box exists BEFORE joining
+    try {
+      const donationBoxData = await getDonationBox();
+      
+      if (!donationBoxData || !donationBoxData.id) {
+        // Donation box doesn't exist - store data and join collective
+        // On success, we'll navigate to donation page with preselected causes
+        setPendingJoinData({
+          selectedNonprofits,
+          collectiveId,
+        });
+        
+        // Trigger the join collective mutation
+        joinCollectiveMutation.mutate(crwdId);
+      } else {
+        // Donation box exists - just join the collective, do nothing else
+        joinCollectiveMutation.mutate(crwdId);
+      }
+    } catch (error) {
+      console.error('Error checking donation box:', error);
+      // On error, still try to join (fallback)
       joinCollectiveMutation.mutate(crwdId);
     }
   };
@@ -408,49 +397,16 @@ export default function NewGroupCrwdPage() {
 
       <Footer />
 
-      {/* Join Modal */}
-      {showJoinModal && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-3 md:p-4">
-          <div
-            ref={joinModalRef}
-            className="bg-white rounded-lg max-w-md w-full mx-3 md:mx-4 p-4 md:p-6 relative"
-          >
-            <button
-              onClick={handleCloseJoinModal}
-              className="absolute top-3 md:top-4 right-3 md:right-4 text-gray-400 hover:text-gray-600 transition-colors"
-              aria-label="Close"
-            >
-              <X className="w-4 h-4 md:w-5 md:h-5" />
-            </button>
-
-            <div className="text-center">
-              <h2 className="text-xl md:text-2xl font-bold text-gray-900 mb-1.5 md:mb-2">
-                Join {crwdData.name}?
-              </h2>
-
-              <p className="text-sm md:text-base text-gray-600 mb-4 md:mb-6">
-                This Collective includes {nonprofitCount} nonprofits.
-              </p>
-
-              <div className="flex items-center justify-center gap-2.5 md:gap-3">
-                <Button onClick={handleCloseJoinModal} variant="outline" className="text-sm md:text-base py-2 md:py-2.5 px-3 md:px-4">
-                  Learn More
-                </Button>
-                <Button onClick={handleJoinConfirm} disabled={joinCollectiveMutation.isPending} className="text-sm md:text-base py-2 md:py-2.5 px-3 md:px-4">
-                  {joinCollectiveMutation.isPending ? (
-                    <>
-                      <Loader2 className="w-3.5 h-3.5 md:w-4 md:h-4 mr-1.5 md:mr-2 animate-spin" />
-                      Joining...
-                    </>
-                  ) : (
-                    'Join'
-                  )}
-                </Button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
+      {/* Join Collective Bottom Sheet */}
+      <JoinCollectiveBottomSheet
+        isOpen={showJoinModal}
+        onClose={handleCloseJoinModal}
+        collectiveName={crwdData.name || 'Collective'}
+        nonprofits={nonprofits}
+        collectiveId={crwdId || ''}
+        onJoin={handleJoinConfirm}
+        isJoining={joinCollectiveMutation.isPending}
+      />
 
       {/* Unjoin Confirmation Dialog */}
       <Dialog open={showConfirmDialog} onOpenChange={setShowConfirmDialog}>

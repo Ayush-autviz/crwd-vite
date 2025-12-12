@@ -150,10 +150,12 @@ const ManageDonationBox: React.FC<ManageDonationBoxProps> = ({
 
   const cancelDonationBoxMutation = useMutation({
     mutationFn: () => cancelDonationBox(),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['donationBox', currentUser?.id] });
+    onSuccess: async () => {
+      // Invalidate and refetch donation box query to get updated state
+      await queryClient.invalidateQueries({ queryKey: ['donationBox', currentUser?.id] });
+      await queryClient.refetchQueries({ queryKey: ['donationBox', currentUser?.id] });
       setShowCancelModal(false);
-      // Navigate to step 3 after successful cancellation
+      // Navigate to step 2 after successful cancellation
       if (onCancelSuccess) {
         onCancelSuccess();
       } else {

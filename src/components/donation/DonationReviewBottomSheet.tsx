@@ -1,12 +1,14 @@
-import { X, Info } from "lucide-react";
+import { X, Info, Loader2 } from "lucide-react";
 import { useState, useEffect } from "react";
+import { useMutation } from "@tanstack/react-query";
+import { activateDonationBox } from "@/services/api/donation";
+import CrwdAnimation from "@/assets/newLogo/CrwdAnimation";
 
 interface DonationReviewBottomSheetProps {
   isOpen: boolean;
   onClose: () => void;
   donationAmount: number;
   selectedCauses: any[];
-  selectedCollectives?: any[];
   onComplete: () => void;
 }
 
@@ -15,11 +17,37 @@ export default function DonationReviewBottomSheet({
   onClose,
   donationAmount,
   selectedCauses,
-  selectedCollectives = [],
   onComplete,
 }: DonationReviewBottomSheetProps) {
   const [isVisible, setIsVisible] = useState(false);
   const [isAnimating, setIsAnimating] = useState(false);
+  const [showLogoAnimation, setShowLogoAnimation] = useState(false);
+
+  // Mutation to activate donation box
+  const activateBoxMutation = useMutation({
+    mutationFn: () => activateDonationBox(),
+    onSuccess: (response) => {
+      console.log('Donation box activated successfully');
+      // Show logo animation
+      setShowLogoAnimation(true);
+      // Wait for animation to complete (3 seconds for one full cycle) before navigating
+      setTimeout(() => {
+        setShowLogoAnimation(false);
+        // Redirect to checkout URL if provided
+        if (response?.checkout_url) {
+          window.location.href = response.checkout_url;
+        } else {
+          // If no checkout URL, call onComplete callback
+          onComplete();
+        }
+      }, 3000);
+    },
+    onError: (error: any) => {
+      console.error('Error activating donation box:', error);
+      setShowLogoAnimation(false);
+      // You might want to show an error toast here
+    },
+  });
 
   useEffect(() => {
     let timer: NodeJS.Timeout;
@@ -36,11 +64,8 @@ export default function DonationReviewBottomSheet({
 
   if (!isVisible) return null;
 
-  // Calculate totals - count causes from collectives too
-  const causesFromCollectives = selectedCollectives.reduce((sum, collective) => {
-    return sum + (collective.causes?.length || 0);
-  }, 0);
-  const totalCauses = selectedCauses.length + causesFromCollectives;
+  // Calculate totals - only count causes (not collectives)
+  const totalCauses = selectedCauses.length;
   const platformFee = donationAmount * 0.1; // 10% platform fee
   const amountToCauses = donationAmount * 0.9; // 90% to causes
   const perCause = totalCauses > 0 ? amountToCauses / totalCauses : 0;
@@ -70,14 +95,22 @@ export default function DonationReviewBottomSheet({
   };
 
   return (
-    <div
-      className={`fixed inset-0 z-50 transition-opacity duration-300 ${
-        isAnimating ? 'opacity-100' : 'opacity-0'
-      }`}
-      onClick={onClose}
-    >
-      {/* Backdrop */}
-      <div className="absolute inset-0 bg-black/50" />
+    <>
+      {/* Logo Animation Overlay */}
+      {showLogoAnimation && (
+        <div className="fixed inset-0 bg-white z-[60] flex items-center justify-center">
+          <CrwdAnimation size="lg" className="items-center justify-center" />
+        </div>
+      )}
+
+      <div
+        className={`fixed inset-0 z-50 transition-opacity duration-300 ${
+          isAnimating ? 'opacity-100' : 'opacity-0'
+        } ${showLogoAnimation ? 'opacity-0 pointer-events-none' : ''}`}
+        onClick={onClose}
+      >
+        {/* Backdrop */}
+        <div className="absolute inset-0 bg-black/50" />
 
       {/* Bottom Sheet */}
       <div
@@ -173,30 +206,6 @@ export default function DonationReviewBottomSheet({
                   </div>
                 );
               })}
-              {selectedCollectives.map((collective: any) => {
-                const avatarBgColor = getConsistentColor(collective.id, avatarColors);
-                const initials = getInitials(collective.name);
-                return (
-                  <div key={collective.id} className="flex items-center gap-2.5 md:gap-3 p-2.5 md:p-3 bg-gray-50 rounded-lg">
-                    <div
-                      className="w-9 h-9 md:w-10 md:h-10 rounded-full flex items-center justify-center flex-shrink-0"
-                      style={{ backgroundColor: avatarBgColor }}
-                    >
-                      <span className="text-white font-bold text-xs md:text-sm">
-                        {initials}
-                      </span>
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <h4 className="font-semibold text-xs md:text-sm text-gray-900 truncate">
-                        {collective.name}
-                      </h4>
-                    </div>
-                    <div className="text-xs md:text-sm font-semibold text-gray-900">
-                      ${perCause.toFixed(2)}
-                    </div>
-                  </div>
-                );
-              })}
             </div>
           </div>
         </div>
@@ -204,14 +213,25 @@ export default function DonationReviewBottomSheet({
         {/* Footer Button */}
         <div className="px-4 md:px-6 py-3 md:py-4 border-t border-gray-200 bg-white">
           <button
-            onClick={onComplete}
-            className="w-full bg-gray-800 hover:bg-gray-900 text-white font-semibold py-3 md:py-4 rounded-full transition-colors text-sm md:text-base"
+            onClick={() => activateBoxMutation.mutate()}
+            disabled={activateBoxMutation.isPending || showLogoAnimation}
+            className={`w-full bg-gray-800 hover:bg-gray-900 text-white font-semibold py-3 md:py-4 rounded-full transition-colors text-sm md:text-base flex items-center justify-center gap-2 ${
+              activateBoxMutation.isPending || showLogoAnimation ? 'opacity-50 cursor-not-allowed' : ''
+            }`}
           >
-            Complete Monthly Gift
+            {activateBoxMutation.isPending ? (
+              <>
+                <Loader2 className="w-4 h-4 md:w-5 md:h-5 animate-spin" />
+                <span>Activating...</span>
+              </>
+            ) : (
+              'Complete Monthly Gift'
+            )}
           </button>
         </div>
       </div>
-    </div>
+      </div>
+    </>
   );
 }
 

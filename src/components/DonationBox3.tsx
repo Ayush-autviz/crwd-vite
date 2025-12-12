@@ -58,9 +58,10 @@ export const DonationBox3 = ({
   const [isEditingAmount, setIsEditingAmount] = useState(false);
   const [editableAmount, setEditableAmount] = useState(parseFloat(donationBox?.monthly_amount || donationAmount.toString()));
 
-  // Get manual causes and attributing collectives from donation box
-  const manualCauses = donationBox?.manual_causes || [];
-  const attributingCollectives = donationBox?.attributing_collectives || [];
+  // Get box_causes from donation box (only causes, no collectives)
+  const boxCauses = donationBox?.box_causes || [];
+  // Extract cause objects from box_causes
+  const causes = boxCauses.map((boxCause: any) => boxCause.cause).filter((cause: any) => cause != null);
   const actualDonationAmount = parseFloat(donationBox?.monthly_amount || donationAmount.toString());
 
   // Helper for consistent avatar colors
@@ -83,7 +84,7 @@ export const DonationBox3 = ({
   };
 
   // Calculate distribution
-  const totalItems = manualCauses.length + attributingCollectives.length;
+  const totalItems = causes.length;
   const distributionPercentage = totalItems > 0 ? Math.floor(100 / totalItems) : 0;
   const amountPerItem = totalItems > 0 ? (actualDonationAmount * 0.9) / totalItems : 0; // 90% after fees, divided equally
   const [selectedPaymentMethod, setSelectedPaymentMethod] =
@@ -108,10 +109,9 @@ export const DonationBox3 = ({
   }, 0) || 0;
 
   // Calculate capacity and counts
-  const currentCapacity = manualCauses.length;
+  const currentCapacity = causes.length;
   const maxCapacity = donationBox?.capacity || 30;
-  const totalCausesCount = manualCauses.length;
-  const totalCollectivesCount = attributingCollectives.length;
+  const totalCausesCount = causes.length;
 
   // Format next charge date
   const formatNextChargeDate = (dateString?: string) => {
@@ -408,7 +408,7 @@ export const DonationBox3 = ({
             {/* Supported Entities */}
             <div className="bg-gray-100 rounded-lg px-3 md:px-4 py-2.5 md:py-3 mb-4 md:mb-6 text-center">
               <p className="text-xs md:text-sm font-bold text-gray-900">
-                {totalCausesCount} Cause{totalCausesCount !== 1 ? 's' : ''} • {totalCollectivesCount} Collective{totalCollectivesCount !== 1 ? 's' : ''}
+                {totalCausesCount} Cause{totalCausesCount !== 1 ? 's' : ''}
               </p>
             </div>
 
@@ -443,14 +443,14 @@ export const DonationBox3 = ({
           <div className="mb-3 md:mb-4">
             <h2 className="text-lg md:text-xl font-bold text-gray-900">Currently Supporting</h2>
             <p className="text-xs md:text-sm text-gray-600 mt-0.5 md:mt-1">
-              Supporting {manualCauses.length} nonprofit{manualCauses.length !== 1 ? 's' : ''}
+              Supporting {causes.length} nonprofit{causes.length !== 1 ? 's' : ''}
             </p>
           </div>
 
-          {/* Manual Causes List */}
+          {/* Causes List from box_causes */}
           <div className="space-y-2.5 md:space-y-3">
-            {manualCauses.length > 0 ? (
-              manualCauses.map((cause: any) => {
+            {causes.length > 0 ? (
+              causes.map((cause: any) => {
                 const avatarBgColor = getConsistentColor(cause.id, avatarColors);
                 const initials = getInitials(cause.name || 'N');
                 return (

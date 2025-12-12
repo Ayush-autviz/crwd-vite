@@ -28,9 +28,10 @@ interface DonationBoxProps {
   fromPaymentResult?: boolean;
   preselectedCauses?: number[]; // Array of cause IDs to pre-select
   preselectedCausesData?: any[]; // Full cause data objects
+  preselectedCollectiveId?: number; // Collective ID for attributed causes
 }
 
-const DonationBox = ({ tab = "setup", preselectedItem, activeTab, fromPaymentResult, preselectedCauses, preselectedCausesData }: DonationBoxProps) => {
+const DonationBox = ({ tab = "setup", preselectedItem, activeTab, fromPaymentResult, preselectedCauses, preselectedCausesData, preselectedCollectiveId }: DonationBoxProps) => {
   // Initialize activeTabState: prioritize tab prop from URL, then check preselectedItem
   // If tab is explicitly "setup", always use setup. Otherwise, if preselectedItem exists, use onetime
   const initialTab = tab === "setup" ? "setup" : (preselectedItem ? "onetime" : (tab as "setup" | "onetime" || "setup"));
@@ -114,11 +115,15 @@ const DonationBox = ({ tab = "setup", preselectedItem, activeTab, fromPaymentRes
   useEffect(() => {
     if (activeTabState === "setup") {
       if (donationBox && donationBox.id) {
-        if(donationBox.is_active) {
+        // If donation box is active, show checkout; if inactive, show step 2
+        if (donationBox.is_active) {
           setCheckout(true);
+        } else {
+          setCheckout(false); // Reset checkout when deactivated
         }
         setStep(2); // Show step 2 if donation box exists
       } else {
+        setCheckout(false); // Reset checkout if no donation box
         setStep(1); // Show step 1 if no donation box
       }
     }
@@ -171,11 +176,25 @@ const DonationBox = ({ tab = "setup", preselectedItem, activeTab, fromPaymentRes
           causes: [],
         };
 
-        // Add causes from selectedCauseIds (standalone causes, no attributed_collective)
+        // Track which causes are from preselected collective to add attributed_collective
+        const preselectedCauseIds = preselectedCauses || [];
+        const hasPreselectedCollective = preselectedCollectiveId !== undefined;
+
+        // Add causes from selectedCauseIds
+        // If they came from preselectedCollectiveId, add attributed_collective
         selectedCauseIds.forEach((causeId) => {
-          requestData.causes.push({
-            cause_id: causeId,
-          });
+          if (hasPreselectedCollective && preselectedCauseIds.includes(causeId)) {
+            // This cause came from the preselected collective
+            requestData.causes.push({
+              cause_id: causeId,
+              attributed_collective: preselectedCollectiveId,
+            });
+          } else {
+            // Standalone cause, no attributed_collective
+            requestData.causes.push({
+              cause_id: causeId,
+            });
+          }
         });
 
         // Add causes from selectedCollectiveIds
@@ -192,7 +211,8 @@ const DonationBox = ({ tab = "setup", preselectedItem, activeTab, fromPaymentRes
               if (collectiveDetailsData?.causes && Array.isArray(collectiveDetailsData.causes)) {
                 collectiveDetailsData.causes.forEach((causeItem: any) => {
                   const causeId = causeItem.cause?.id || causeItem.id;
-                  if (causeId) {
+                  if (causeId && !selectedCauseIds.includes(causeId)) {
+                    // Only add if not already added from selectedCauseIds
                     requestData.causes.push({
                       cause_id: causeId,
                       attributed_collective: collectiveId,
@@ -255,11 +275,17 @@ const DonationBox = ({ tab = "setup", preselectedItem, activeTab, fromPaymentRes
     }
   }, [preselectedItem, preselectedItemAdded, tab, activeTabState]);
 
-  // Handle preselected causes from NewCompleteOnboard
+  // Handle preselected causes from NewCompleteOnboard or JoinCollectiveBottomSheet
   useEffect(() => {
     if (preselectedCauses && preselectedCauses.length > 0 && activeTabState === "setup" && step === 1 && !preselectedCausesProcessed) {
       // Set the selected cause IDs
       setSelectedCauseIds(preselectedCauses);
+      
+      // If we have a preselected collective ID, also add it to selected collectives
+      // This ensures the collective is tracked for attributed_collective in API calls
+      if (preselectedCollectiveId) {
+        setSelectedCollectiveIds([preselectedCollectiveId]);
+      }
       
       // If we have the full cause data, use it directly (preferred method)
       if (preselectedCausesData && preselectedCausesData.length > 0) {
@@ -293,7 +319,7 @@ const DonationBox = ({ tab = "setup", preselectedItem, activeTab, fromPaymentRes
         fetchPreselectedCausesData();
       }
     }
-  }, [preselectedCauses, preselectedCausesData, activeTabState, step, preselectedCausesProcessed]);
+  }, [preselectedCauses, preselectedCausesData, preselectedCollectiveId, activeTabState, step, preselectedCausesProcessed]);
 
   const incrementDonation = () => {
     const newAmount = donationAmount + 5;
@@ -1119,20 +1145,14 @@ const DonationBox = ({ tab = "setup", preselectedItem, activeTab, fromPaymentRes
         selectedCauses={
           (step === 1 || justCreatedBox) && selectedCausesData.length > 0
             ? selectedCausesData 
-            : (donationBox?.manual_causes || []).map((cause: any) => ({
-                id: cause.id || cause.cause?.id,
-                name: cause.name || cause.cause?.name,
-                description: cause.description || cause.mission || cause.cause?.description || cause.cause?.mission,
-              }))
-        }
-        selectedCollectives={
-          (step === 1 || justCreatedBox) && selectedCollectivesData.length > 0
-            ? selectedCollectivesData
-            : (donationBox?.attributing_collectives || []).map((collective: any) => ({
-                id: collective.id || collective.collective?.id,
-                name: collective.name || collective.collective?.name,
-                description: collective.description || collective.collective?.description,
-              }))
+            : (donationBox?.box_causes || []).map((boxCause: any) => {
+                const cause = boxCause.cause || boxCause;
+                return {
+                  id: cause.id,
+                  name: cause.name,
+                  description: cause.description || cause.mission,
+                };
+              }).filter((cause: any) => cause.id != null)
         }
         onComplete={() => {
           setShowReviewBottomSheet(false);

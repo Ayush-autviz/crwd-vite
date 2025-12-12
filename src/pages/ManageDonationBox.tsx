@@ -64,23 +64,35 @@ export default function ManageDonationBoxPage() {
   }
 
   // Prepare causes from donation box data
-  const causes = [
-    ...(donationBox.manual_causes || []).map((cause: any) => ({
+  // Extract causes from box_causes (primary source)
+  const boxCauses = donationBox.box_causes || [];
+  const causes = boxCauses.map((boxCause: any) => boxCause.cause).filter((cause: any) => cause != null);
+
+  // Also get manual_causes for fallback (backward compatibility)
+  const manualCauses = donationBox.manual_causes || [];
+
+  // Convert to Organization objects - use box_causes as primary, fallback to manual_causes
+  const causesAsObjects = [
+    // Primary: causes from box_causes
+    ...causes.map((cause: any) => ({
       id: `cause-${cause.id}`,
       name: cause.name,
-      imageUrl: cause.logo || '',
+      imageUrl: cause.image || cause.logo || '',
       color: '#4F46E5',
       description: cause.mission || cause.description || '',
       type: 'cause' as const,
     })),
-    ...(donationBox.attributing_collectives || []).map((collective: any) => ({
-      id: `collective-${collective.id}`,
-      name: collective.name,
-      imageUrl: collective.cover_image || '',
-      color: '#9333EA',
-      description: collective.description || '',
-      type: 'collective' as const,
-    })),
+    // Fallback: manual_causes if not already in box_causes (for backward compatibility)
+    ...manualCauses
+      .filter((manualCause: any) => !causes.some((c: any) => c.id === manualCause.id))
+      .map((cause: any) => ({
+        id: `cause-${cause.id}`,
+        name: cause.name,
+        imageUrl: cause.logo || '',
+        color: '#4F46E5',
+        description: cause.mission || cause.description || '',
+        type: 'cause' as const,
+      })),
   ];
 
   const amount = donationBox.monthly_amount || 7;
@@ -99,7 +111,7 @@ export default function ManageDonationBoxPage() {
       <ProfileNavbar title="Manage Donation Box" showBackButton={true} showDesktopBackButton={true}/>
       <ManageDonationBox
         amount={amount}
-        causes={causes}
+        causes={causesAsObjects}
         onBack={handleBack}
         isActive={isActive}
         onCancelSuccess={handleCancelSuccess}

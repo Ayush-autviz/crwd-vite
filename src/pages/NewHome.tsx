@@ -362,8 +362,8 @@ export default function NewHome() {
                     )
                 )}
 
-                {/* Collective Carousel Card */}
-                {token?.access_token && (
+                {/* Collective Carousel Card - Only show when donation box is active */}
+                {token?.access_token && isDonationBoxActive && (
                     donationBoxLoading ? (
                         <div className="w-full mt-4 md:mt-6 lg:mt-8 max-w-full md:max-w-[95%] lg:max-w-[70%] mx-auto">
                             <div className="bg-white rounded-xl border border-gray-200 p-4 md:p-6 shadow-sm animate-pulse">

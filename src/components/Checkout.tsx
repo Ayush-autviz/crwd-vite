@@ -25,7 +25,7 @@ interface DonationOverviewProps {
 
 export const Checkout = ({
   donationAmount = 25,
-  onBack = () => {},
+  onBack = () => { },
   selectedOrganizations: selectedOrgIds,
   donationBox,
   initialShowManage = false,
@@ -55,15 +55,20 @@ export const Checkout = ({
     setShowManageDonationBox(initialShowManage);
   }, [initialShowManage]);
 
-  // Get manual causes and attributing collectives from donation box API
+  // Get box_causes from donation box API (main source)
+  const boxCauses = donationBox?.box_causes || [];
+  // Extract cause objects from box_causes
+  const causes = boxCauses.map((boxCause: any) => boxCause.cause).filter((cause: any) => cause != null);
+
+  // Also get manual_causes for backward compatibility
   const manualCauses = donationBox?.manual_causes || [];
   const attributingCollectives = donationBox?.attributing_collectives || [];
   const actualDonationAmount = parseFloat(donationBox?.monthly_amount || donationAmount.toString());
-  
+
   // Use API data if available, otherwise fall back to selectedOrganizations
-  const hasApiData = manualCauses.length > 0 || attributingCollectives.length > 0;
-  const totalCauses = manualCauses.length;
-  const totalCollectives = attributingCollectives.length;
+  const hasApiData = causes.length > 0 || manualCauses.length > 0 || attributingCollectives.length > 0;
+  const totalCauses = causes.length || manualCauses.length;
+  const totalCollectives = 0; // No longer showing collectives
 
   // Fetch donation history to calculate lifetime amount
   const { data: donationHistoryData } = useQuery({
@@ -77,9 +82,7 @@ export const Checkout = ({
     return sum + parseFloat(transaction.gross_amount || '0');
   }, 0) || 0;
 
-  // Get capacity from donation box - count all causes (manual + from collectives)
-  // Count unique causes from box_causes array
-  const boxCauses = donationBox?.box_causes || [];
+  // Get capacity from donation box - count unique causes from box_causes array
   const uniqueCauseIds = new Set(boxCauses.map((bc: any) => bc.cause?.id).filter(Boolean));
   const currentCapacity = uniqueCauseIds.size || totalCauses;
   const maxCapacity = donationBox?.capacity || 30;
@@ -106,7 +109,7 @@ export const Checkout = ({
   // Format next charge date
   const getChargeDay = (dateString?: string) => {
     if (!dateString) return '26th'; // Fallback
-    
+
     try {
       const date = new Date(dateString);
       const day = date.getDate();
@@ -125,24 +128,24 @@ export const Checkout = ({
   };
 
   // Show confetti and refetch donation box when coming from payment result (only once)
-  useEffect(() => {
-    if (fromPaymentResult) {
-      // Show confetti
-      setShowSuccessModal(true);
-      
-      // Refetch donation box data
-      queryClient.invalidateQueries({ queryKey: ['donationBox', currentUser?.id] });
-      queryClient.refetchQueries({ queryKey: ['donationBox', currentUser?.id] });
-      
-      // Immediately clear fromPaymentResult from location state to prevent showing again when switching tabs
-      const newState = { ...location.state };
-      delete newState.fromPaymentResult;
-      navigate(location.pathname + (location.search || ''), { 
-        replace: true, 
-        state: newState
-      });
-    }
-  }, [fromPaymentResult, queryClient, currentUser?.id, navigate, location]);
+  // useEffect(() => {
+  //   if (fromPaymentResult) {
+  //     // Show confetti
+  //     setShowSuccessModal(true);
+
+  //     // Refetch donation box data
+  //     queryClient.invalidateQueries({ queryKey: ['donationBox', currentUser?.id] });
+  //     queryClient.refetchQueries({ queryKey: ['donationBox', currentUser?.id] });
+
+  //     // Immediately clear fromPaymentResult from location state to prevent showing again when switching tabs
+  //     const newState = { ...location.state };
+  //     delete newState.fromPaymentResult;
+  //     navigate(location.pathname + (location.search || ''), {
+  //       replace: true,
+  //       state: newState
+  //     });
+  //   }
+  // }, [fromPaymentResult, queryClient, currentUser?.id, navigate, location]);
 
   // Update window dimensions on resize for confetti
   useEffect(() => {
@@ -160,14 +163,14 @@ export const Checkout = ({
   const handleToggleCollectiveDropdown = async (collectiveId: number) => {
     const isExpanded = expandedCollectives.has(collectiveId);
     const newExpanded = new Set(expandedCollectives);
-    
+
     if (isExpanded) {
       newExpanded.delete(collectiveId);
       setExpandedCollectives(newExpanded);
     } else {
       newExpanded.add(collectiveId);
       setExpandedCollectives(newExpanded);
-      
+
       // Fetch collective details if not already cached
       if (!collectiveDetails[collectiveId]) {
         setLoadingCollectives(prev => new Set(prev).add(collectiveId));
@@ -234,8 +237,8 @@ export const Checkout = ({
   };
 
   // Calculate equal distribution percentage and amount per item
-  const totalItems = hasApiData 
-    ? (totalCauses + totalCollectives)
+  const totalItems = hasApiData
+    ? totalCauses
     : selectedOrganizations.length;
   const distributionPercentage =
     totalItems > 0
@@ -247,9 +250,21 @@ export const Checkout = ({
 
   if (showManageDonationBox) {
     // Convert API data to Organization objects for ManageDonationBox
-    const causesAsObjects = hasApiData 
+    // Use box_causes as primary source, fallback to manual_causes
+    const causesAsObjects = hasApiData
       ? [
-          ...manualCauses.map((cause: any) => ({
+        ...causes.map((cause: any) => ({
+          id: `cause-${cause.id}`,
+          name: cause.name,
+          imageUrl: cause.image || cause.logo || "",
+          color: "#4F46E5",
+          description: cause.mission || cause.description || "",
+          type: 'cause' as const,
+        })),
+        // Also include manual_causes if not already in box_causes (for backward compatibility)
+        ...manualCauses
+          .filter((manualCause: any) => !causes.some((c: any) => c.id === manualCause.id))
+          .map((cause: any) => ({
             id: `cause-${cause.id}`,
             name: cause.name,
             imageUrl: cause.logo || "",
@@ -257,25 +272,17 @@ export const Checkout = ({
             description: cause.mission || cause.description || "",
             type: 'cause' as const,
           })),
-          ...attributingCollectives.map((collective: any) => ({
-            id: `collective-${collective.id}`,
-            name: collective.name,
-            imageUrl: collective.cover_image || "",
-            color: "#9333EA",
-            description: collective.description || "",
-            type: 'collective' as const,
-          })),
-        ]
+      ]
       : selectedOrganizations.map(
-          (orgName: string, index: number) => ({
-            id: `${orgName}-${index}`,
-            name: orgName,
-            imageUrl: "",
-            color: getOrganizationColor(orgName),
-            description: getOrganizationDescription(orgName),
-            type: 'cause' as const,
-          })
-        );
+        (orgName: string, index: number) => ({
+          id: `${orgName}-${index}`,
+          name: orgName,
+          imageUrl: "",
+          color: getOrganizationColor(orgName),
+          description: getOrganizationDescription(orgName),
+          type: 'cause' as const,
+        })
+      );
 
     // Create a wrapper function that converts ID back to organization name
     const handleRemoveFromManageBox = (id: string) => {
@@ -341,7 +348,7 @@ export const Checkout = ({
               {/* Supported Entities */}
               <div className="bg-gray-100 rounded-lg px-3 md:px-4 py-2.5 md:py-3 mb-4 md:mb-6 text-center">
                 <p className="text-xs md:text-sm font-bold text-gray-900">
-                  {totalCauses} Cause{totalCauses !== 1 ? 's' : ''} • {totalCollectives} Collective{totalCollectives !== 1 ? 's' : ''}
+                  {totalCauses} Cause{totalCauses !== 1 ? 's' : ''}
                 </p>
               </div>
 
@@ -375,18 +382,18 @@ export const Checkout = ({
           {/* <p className="text-gray-500 text-sm mb-6">Donation amount is equally distributed across all the nonprofits</p> */}
 
           {/* Currently Supporting Section */}
-          {manualCauses.length > 0 && (
+          {causes.length > 0 && (
             <div className="mb-4 md:mb-6">
               <div className="mb-3 md:mb-4">
                 <h2 className="text-lg md:text-xl font-bold text-gray-900">Currently Supporting</h2>
                 <p className="text-xs md:text-sm text-gray-600 mt-0.5 md:mt-1">
-                  Supporting {manualCauses.length} nonprofit{manualCauses.length !== 1 ? 's' : ''}
+                  Supporting {causes.length} nonprofit{causes.length !== 1 ? 's' : ''}
                 </p>
               </div>
 
-              {/* Manual Causes List */}
+              {/* Causes List from box_causes */}
               <div className="space-y-2.5 md:space-y-3">
-                {manualCauses.map((cause: any) => {
+                {causes.map((cause: any) => {
                   const avatarBgColor = getConsistentColor(cause.id, avatarColors);
                   const initials = getInitials(cause.name || 'N');
                   return (
@@ -551,7 +558,7 @@ export const Checkout = ({
                     <h3 className="font-semibold text-sm md:text-base text-gray-900">
                       Monthly Donation Box
                     </h3>
-                      <div className="flex items-center gap-1.5 md:gap-2 mt-0.5 md:mt-1">
+                    <div className="flex items-center gap-1.5 md:gap-2 mt-0.5 md:mt-1">
                       <span className="text-xs md:text-sm text-gray-600">
                         ${actualDonationAmount}/month
                       </span>
