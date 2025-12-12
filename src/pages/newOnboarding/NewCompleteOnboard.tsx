@@ -130,10 +130,30 @@ export default function NewCompleteOnboard() {
   };
 
   const handleStartWithNonprofits = () => {
-    // if (selectedCauses.length > 0) {
-    //   addToBoxMutation.mutate(selectedCauses);
-    // }
-    navigate('/');
+    if (selectedCauses.length > 0) {
+      // Get full cause data for selected causes based on current view
+      let selectedCausesData: any[] = [];
+      
+      if (view === 'surprise') {
+        selectedCausesData = surpriseCauses.filter((cause: any) => 
+          selectedCauses.includes(cause.id)
+        );
+      } else if (view === 'browse') {
+        selectedCausesData = browseCauses.filter((cause: any) => 
+          selectedCauses.includes(cause.id)
+        );
+      }
+      
+      // Navigate to donation box setup with preselected causes (both IDs and data)
+      navigate('/donation?tab=setup', {
+        state: {
+          preselectedCauses: selectedCauses, // IDs
+          preselectedCausesData: selectedCausesData, // Full cause objects
+        },
+      });
+    } else {
+      navigate('/');
+    }
   };
 
   const handleEditCategories = () => {

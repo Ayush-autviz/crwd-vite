@@ -15,6 +15,8 @@ export default function DonationPage() {
   const preselectedItem = location.state?.preselectedItem;
   const activeTab = location.state?.activeTab;
   const fromPaymentResult = location.state?.fromPaymentResult;
+  const preselectedCauses = location.state?.preselectedCauses;
+  const preselectedCausesData = location.state?.preselectedCausesData;
   
   console.log('Preselected item:', preselectedItem);
   console.log('Active tab:', activeTab);
@@ -74,6 +76,8 @@ export default function DonationPage() {
         preselectedItem={preselectedItem}
         activeTab={activeTab}
         fromPaymentResult={fromPaymentResult}
+        preselectedCauses={preselectedCauses}
+        preselectedCausesData={preselectedCausesData}
       />
       {/* <div className="hidden md:block">
         <Footer />

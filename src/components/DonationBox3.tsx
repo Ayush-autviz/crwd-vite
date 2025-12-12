@@ -946,7 +946,7 @@ export const DonationBox3 = ({
         </div> */}
 
          {/* checkout button */}
-         <div className="space-y-1 fixed bottom-0 p-4 md:p-6 left-0 right-0 border-t border-gray-200 bg-white">
+         {/* <div className="space-y-1 fixed bottom-0 p-4 md:p-6 left-0 right-0 border-t border-gray-200 bg-white">
            <Button 
              className="w-full bg-[#aeff30] hover:bg-[#91d11c] text-black py-4 md:py-6 rounded-full font-bold transition-colors flex items-center justify-center text-sm md:text-base" 
              onClick={handleCheckout}
@@ -954,7 +954,7 @@ export const DonationBox3 = ({
            >
              {activateBoxMutation.isPending ? 'Activating...' : 'Activate Donation Box'}
            </Button>
-         </div>
+         </div> */}
       </div>
 
       {/* Spacer for mobile */}

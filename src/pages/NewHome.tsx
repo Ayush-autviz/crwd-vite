@@ -134,16 +134,26 @@ export default function NewHome() {
     // Check if donation box exists
     // API returns {"status_code":200,"message":"Donation box not found"} when not set up
     const isDonationBoxNotFound = donationBoxData?.message === "Donation box not found";
+    const isDonationBoxActive = donationBoxData?.is_active === true;
 
     // Transform donation box data
-    const donationBoxInfo = donationBoxData && !isDonationBoxNotFound
+    const donationBoxInfo = donationBoxData && !isDonationBoxNotFound && isDonationBoxActive
         ? {
             monthlyAmount: donationBoxData.monthly_amount || donationBoxData.amount || 10,
             causeCount:
-                (donationBoxData.attributing_causes?.length || 0) +
+                (donationBoxData.manual_causes?.length || 0) +
                 (donationBoxData.attributing_collectives?.length || 0),
         }
         : null;
+    
+    // Get cause count for inactive donation box - count unique causes from box_causes
+    const inactiveBoxCauseCount = donationBoxData && !isDonationBoxNotFound && !isDonationBoxActive
+        ? (() => {
+            const boxCauses = donationBoxData.box_causes || [];
+            const uniqueCauseIds = new Set(boxCauses.map((bc: any) => bc.cause?.id).filter(Boolean));
+            return uniqueCauseIds.size || 0;
+          })()
+        : 0;
 
     // Transform attributing collectives from donation box for carousel (priority)
     const transformedAttributingCollectives = useMemo(() => {
@@ -342,6 +352,11 @@ export default function NewHome() {
                                 causeCount={donationBoxInfo.causeCount}
                             />
                         </>
+                    ) : donationBoxData && !isDonationBoxNotFound && !isDonationBoxActive && inactiveBoxCauseCount > 0 ? (
+                        // Donation box exists but is not active - show prompt with cause count
+                        <DonationBoxPrompt 
+                            causeCount={inactiveBoxCauseCount}
+                        />
                     ) : (
                         <DonationBoxPrompt />
                     )

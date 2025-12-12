@@ -15,6 +15,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { useAuthStore } from "@/stores/store";
 import ProfileNavbar from "./profile/ProfileNavbar";
 import RequestNonprofitModal from "./newsearch/RequestNonprofitModal";
+import DonationReviewBottomSheet from "./donation/DonationReviewBottomSheet";
 
 interface DonationBoxProps {
   tab?: string;
@@ -25,9 +26,11 @@ interface DonationBoxProps {
   };
   activeTab?: string;
   fromPaymentResult?: boolean;
+  preselectedCauses?: number[]; // Array of cause IDs to pre-select
+  preselectedCausesData?: any[]; // Full cause data objects
 }
 
-const DonationBox = ({ tab = "setup", preselectedItem, activeTab, fromPaymentResult }: DonationBoxProps) => {
+const DonationBox = ({ tab = "setup", preselectedItem, activeTab, fromPaymentResult, preselectedCauses, preselectedCausesData }: DonationBoxProps) => {
   // Initialize activeTabState: prioritize tab prop from URL, then check preselectedItem
   // If tab is explicitly "setup", always use setup. Otherwise, if preselectedItem exists, use onetime
   const initialTab = tab === "setup" ? "setup" : (preselectedItem ? "onetime" : (tab as "setup" | "onetime" || "setup"));
@@ -61,6 +64,9 @@ const DonationBox = ({ tab = "setup", preselectedItem, activeTab, fromPaymentRes
   const [collectiveDetails, setCollectiveDetails] = useState<Record<number, any>>({});
   const [loadingCollectives, setLoadingCollectives] = useState<Set<number>>(new Set());
   const [showRequestModal, setShowRequestModal] = useState(false);
+  const [showReviewBottomSheet, setShowReviewBottomSheet] = useState(false);
+  const [justCreatedBox, setJustCreatedBox] = useState(false);
+  const [preselectedCausesProcessed, setPreselectedCausesProcessed] = useState(false);
 
   // Avatar colors for consistent coloring
   const avatarColors = [
@@ -145,12 +151,70 @@ const DonationBox = ({ tab = "setup", preselectedItem, activeTab, fromPaymentRes
     onSuccess: () => {
       console.log('Donation box created successfully');
       queryClient.invalidateQueries({ queryKey: ['donationBox', currentUser?.id] });
+      setJustCreatedBox(true); // Flag to indicate we just created the box
       setStep(2);
+      // Open review bottom sheet after creating
+      setShowReviewBottomSheet(true);
     },
     onError: (error: any) => {
       console.error('Error creating donation box:', error);
     },
   });
+
+  // Handle continue to review button
+  const handleContinueToReview = () => {
+    if (step === 1) {
+      // Donation box not setup - create it first
+      const prepareRequestData = async () => {
+        const requestData: any = {
+          monthly_amount: donationAmount.toString(),
+          causes: [],
+        };
+
+        // Add causes from selectedCauseIds (standalone causes, no attributed_collective)
+        selectedCauseIds.forEach((causeId) => {
+          requestData.causes.push({
+            cause_id: causeId,
+          });
+        });
+
+        // Add causes from selectedCollectiveIds
+        if (selectedCollectiveIds.length > 0) {
+          for (const collectiveId of selectedCollectiveIds) {
+            try {
+              let collectiveDetailsData = collectiveDetails[collectiveId];
+              
+              if (!collectiveDetailsData) {
+                collectiveDetailsData = await getCollectiveById(collectiveId.toString());
+                setCollectiveDetails(prev => ({ ...prev, [collectiveId]: collectiveDetailsData }));
+              }
+              
+              if (collectiveDetailsData?.causes && Array.isArray(collectiveDetailsData.causes)) {
+                collectiveDetailsData.causes.forEach((causeItem: any) => {
+                  const causeId = causeItem.cause?.id || causeItem.id;
+                  if (causeId) {
+                    requestData.causes.push({
+                      cause_id: causeId,
+                      attributed_collective: collectiveId,
+                    });
+                  }
+                });
+              }
+            } catch (error) {
+              console.error(`Error fetching collective ${collectiveId} details:`, error);
+            }
+          }
+        }
+
+        createBoxMutation.mutate(requestData);
+      };
+
+      prepareRequestData();
+    } else {
+      // Donation box already setup - just open review bottom sheet
+      setShowReviewBottomSheet(true);
+    }
+  };
 
   // Note: activateDonationBox is handled in DonationBox3 component (step 2)
 
@@ -190,6 +254,46 @@ const DonationBox = ({ tab = "setup", preselectedItem, activeTab, fromPaymentRes
       setPreselectedItemAdded(true);
     }
   }, [preselectedItem, preselectedItemAdded, tab, activeTabState]);
+
+  // Handle preselected causes from NewCompleteOnboard
+  useEffect(() => {
+    if (preselectedCauses && preselectedCauses.length > 0 && activeTabState === "setup" && step === 1 && !preselectedCausesProcessed) {
+      // Set the selected cause IDs
+      setSelectedCauseIds(preselectedCauses);
+      
+      // If we have the full cause data, use it directly (preferred method)
+      if (preselectedCausesData && preselectedCausesData.length > 0) {
+        setSelectedCausesData(preselectedCausesData);
+        setPreselectedCausesProcessed(true);
+      } else {
+        // Fallback: try to fetch cause data from the default causes query
+        // This will only work if the causes are in the first page of results
+        const fetchPreselectedCausesData = async () => {
+          try {
+            const allCausesResponse = await getCausesBySearch('', '', 1);
+            const allCauses = allCausesResponse?.results || [];
+            
+            // Filter to only include preselected causes
+            const foundCauses = allCauses.filter((cause: any) => 
+              preselectedCauses.includes(cause.id)
+            );
+            
+            // Set the causes data if we found any
+            if (foundCauses.length > 0) {
+              setSelectedCausesData(foundCauses);
+            }
+            
+            setPreselectedCausesProcessed(true);
+          } catch (error) {
+            console.error('Error fetching preselected causes data:', error);
+            setPreselectedCausesProcessed(true);
+          }
+        };
+        
+        fetchPreselectedCausesData();
+      }
+    }
+  }, [preselectedCauses, preselectedCausesData, activeTabState, step, preselectedCausesProcessed]);
 
   const incrementDonation = () => {
     const newAmount = donationAmount + 5;
@@ -252,14 +356,116 @@ const DonationBox = ({ tab = "setup", preselectedItem, activeTab, fromPaymentRes
 
   console.log(selectedOrganizations, "ork");
 
-  // Show loading only when setup tab is active and loading donation box
+  // Show skeleton loading only when setup tab is active and loading donation box
   if (activeTabState === "setup" && isLoadingDonationBox) {
-    return <div className="w-full h-full bg-white flex flex-col">
-      <ProfileNavbar title="Donation Box" />
-      <div className="flex items-center justify-center min-h-screen">
-        <Loader2 className="w-8 h-8 animate-spin" />
+    return (
+      <div className="w-full h-full bg-white flex flex-col">
+        <DonationHeader
+          title="Donation Box"
+          step={1}
+          showBackButton={false}
+          showCloseButton={false}
+          onBack={() => {}}
+        />
+        
+        {/* Tabs Skeleton */}
+        <div className="flex border-b border-gray-200 bg-white">
+          <div className="flex-1 py-2.5 md:py-4 bg-gray-50">
+            <div className="h-4 md:h-5 bg-gray-300 rounded w-24 md:w-32 mx-auto animate-pulse"></div>
+          </div>
+          <div className="flex-1 py-2.5 md:py-4 bg-gray-50">
+            <div className="h-4 md:h-5 bg-gray-300 rounded w-28 md:w-36 mx-auto animate-pulse"></div>
+          </div>
+        </div>
+
+        {/* Main Content Skeleton */}
+        <div className="flex-1 overflow-y-auto px-3 md:px-4 pb-20 md:pb-24">
+          <div className="max-w-2xl mx-auto mt-3 md:mt-4 space-y-4 md:space-y-6">
+            {/* Info Card Skeleton */}
+            <div className="bg-gray-50 rounded-xl p-3 md:p-4 animate-pulse">
+              <div className="h-5 md:h-6 bg-gray-300 rounded w-3/4 mb-2"></div>
+              <div className="h-3 md:h-4 bg-gray-300 rounded w-full mb-1"></div>
+              <div className="h-3 md:h-4 bg-gray-300 rounded w-5/6"></div>
+            </div>
+
+            {/* Donation Amount Selector Skeleton */}
+            <div className="bg-gray-50 rounded-lg p-3 md:p-4 animate-pulse">
+              <div className="flex justify-between items-center mb-2">
+                <div className="space-y-2">
+                  <div className="h-4 md:h-5 bg-gray-300 rounded w-40 md:w-48"></div>
+                  <div className="h-3 bg-gray-300 rounded w-32 md:w-40"></div>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="w-8 h-8 md:w-10 md:h-10 bg-gray-300 rounded-full"></div>
+                  <div className="w-16 md:w-20 h-8 md:h-10 bg-gray-300 rounded-full"></div>
+                  <div className="w-8 h-8 md:w-10 md:h-10 bg-gray-300 rounded-full"></div>
+                </div>
+              </div>
+            </div>
+
+            {/* Donation Box Capacity Skeleton */}
+            <div className="bg-gray-50 rounded-xl p-3 md:p-4 animate-pulse">
+              <div className="flex justify-between items-center mb-2 md:mb-3">
+                <div className="h-4 md:h-5 bg-gray-300 rounded w-32 md:w-40"></div>
+                <div className="h-4 bg-gray-300 rounded w-20 md:w-24"></div>
+              </div>
+              <div className="w-full h-1.5 md:h-2 bg-gray-200 rounded-full mb-2 md:mb-3">
+                <div className="h-1.5 md:h-2 bg-gray-300 rounded-full w-1/3"></div>
+              </div>
+              <div className="h-3 md:h-4 bg-gray-300 rounded w-2/3"></div>
+            </div>
+
+            {/* Selected Causes Section Skeleton */}
+            <div className="space-y-3 md:space-y-4">
+              <div className="flex items-center justify-between">
+                <div className="space-y-1">
+                  <div className="h-5 md:h-6 bg-gray-300 rounded w-40 md:w-48 animate-pulse"></div>
+                  <div className="h-3 md:h-4 bg-gray-300 rounded w-56 md:w-64 animate-pulse"></div>
+                </div>
+                <div className="w-7 h-7 md:w-8 md:h-8 bg-gray-300 rounded-full animate-pulse"></div>
+              </div>
+              
+              {/* Cause Item Skeletons */}
+              {[1, 2].map((i) => (
+                <div key={i} className="flex items-center p-2.5 md:p-3 border border-gray-200 rounded-lg animate-pulse">
+                  <div className="w-10 h-10 md:w-12 md:h-12 bg-gray-200 rounded-xl mr-2.5 md:mr-3"></div>
+                  <div className="flex-1 space-y-2">
+                    <div className="h-4 md:h-5 bg-gray-200 rounded w-3/4"></div>
+                    <div className="h-3 md:h-4 bg-gray-200 rounded w-full"></div>
+                  </div>
+                  <div className="w-5 h-5 md:w-6 md:h-6 bg-gray-200 rounded"></div>
+                </div>
+              ))}
+            </div>
+
+            {/* Add More Causes Section Skeleton */}
+            <div className="space-y-3 md:space-y-4">
+              <div className="h-5 md:h-6 bg-gray-300 rounded w-40 md:w-48 animate-pulse"></div>
+              
+              {/* Search Bar Skeleton */}
+              <div className="flex gap-2">
+                <div className="flex-1 h-10 md:h-12 bg-gray-200 rounded-lg animate-pulse"></div>
+                <div className="w-16 md:w-20 h-10 md:h-12 bg-gray-200 rounded-lg animate-pulse"></div>
+              </div>
+
+              {/* Cause Selector Skeleton */}
+              <div className="space-y-2 md:space-y-3">
+                {[1, 2, 3].map((i) => (
+                  <div key={i} className="flex items-center gap-2.5 md:gap-3 p-2.5 md:p-3 border border-gray-200 rounded-lg animate-pulse">
+                    <div className="w-10 h-10 md:w-12 md:h-12 bg-gray-200 rounded-xl"></div>
+                    <div className="flex-1 space-y-2">
+                      <div className="h-4 md:h-5 bg-gray-200 rounded w-2/3"></div>
+                      <div className="h-3 md:h-4 bg-gray-200 rounded w-full"></div>
+                    </div>
+                    <div className="w-6 h-6 md:w-8 md:h-8 bg-gray-200 rounded-full"></div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
-    </div>
+    );
   }
 
   return (
@@ -366,7 +572,7 @@ const DonationBox = ({ tab = "setup", preselectedItem, activeTab, fromPaymentRes
           ) : (
             <>
               {step === 1 ? (
-                <div className="flex-1 mt-3 md:mt-4 flex flex-col p-3 md:p-4 mb-20 md:mb-24 space-y-3 md:space-y-4">
+                <div className="flex-1 mt-3 md:mt-4 flex flex-col p-3 md:p-4 pb-24 md:pb-32 space-y-3 md:space-y-4">
 
                  <div>
                 <p className="text-xl md:text-2xl font-bold text-[#1600ff] text-center">Set your monthly gift</p>
@@ -768,41 +974,26 @@ const DonationBox = ({ tab = "setup", preselectedItem, activeTab, fromPaymentRes
                       </button>
                     </div> */}
 
-                    <button 
-                      onClick={() => {
-                        // Call API to create donation box
-                        createBoxMutation.mutate({
-                          monthly_amount: donationAmount,
-                          cause_ids: selectedCauseIds,
-                          collective_ids: selectedCollectiveIds,
-                        });
-                      }}
-                      disabled={createBoxMutation.isPending || (selectedCauseIds.length === 0 && selectedCollectiveIds.length === 0)}
-                      className={cn(
-                        "w-full bg-[#1600ff] text-white px-4 md:px-6 py-2.5 md:py-2 rounded-full font-medium text-sm md:text-base",
-                        createBoxMutation.isPending || (selectedCauseIds.length === 0 && selectedCollectiveIds.length === 0) ? "cursor-not-allowed opacity-50" : ""
-                      )}
-                    >
-                      Create Donation Box
-                    </button>
                   </div>
 
                   {/* <div className="h-24 md:hidden"></div> */}
                 </div>
               ) : step === 2 ? (
-                //@ts-ignore
-                <DonationBox3
-                  setCheckout={(value: boolean) => {
-                    setCheckout(value);
-                  }}
-                  selectedOrganizations={selectedOrganizations}
-                  setSelectedOrganizations={setSelectedOrganizations}
-                  donationAmount={donationAmount}
-                  donationBox={donationBox}
-                  onManageDonationBox={() => {
-                    navigate("/donation/manage");
-                  }}
-                />
+                <div className="pb-24 md:pb-32">
+                  {/*@ts-ignore*/}
+                  <DonationBox3
+                    setCheckout={(value: boolean) => {
+                      setCheckout(value);
+                    }}
+                    selectedOrganizations={selectedOrganizations}
+                    setSelectedOrganizations={setSelectedOrganizations}
+                    donationAmount={donationAmount}
+                    donationBox={donationBox}
+                    onManageDonationBox={() => {
+                      navigate("/donation/manage");
+                    }}
+                  />
+                </div>
               ) : (
                 <div className="flex-1 mx-3 md:mx-4 mt-3 md:mt-4 mb-4 flex flex-col">
                   {/* Info Card */}
@@ -887,12 +1078,67 @@ const DonationBox = ({ tab = "setup", preselectedItem, activeTab, fromPaymentRes
           )}
         </>
       )}
+
+      {/* Continue to Review Button - Fixed at bottom for both steps */}
+      {activeTabState === "setup" && !checkout && (
+        <div className="fixed bottom-0 left-0 right-0 px-4 md:px-6 bg-white border-t border-gray-200 z-10">
+          <button 
+            onClick={handleContinueToReview}
+            disabled={
+              createBoxMutation.isPending || 
+              (step === 1 && selectedCauseIds.length === 0 && selectedCollectiveIds.length === 0)
+            }
+            className={cn(
+              "w-full bg-[#1600ff] text-white px-4 my-3 md:px-6 py-3 md:py-4 rounded-full font-bold text-sm md:text-base transition-colors",
+              createBoxMutation.isPending || 
+              (step === 1 && selectedCauseIds.length === 0 && selectedCollectiveIds.length === 0)
+                ? "cursor-not-allowed opacity-50" 
+                : "hover:bg-[#1400cc]"
+            )}
+          >
+            {createBoxMutation.isPending ? 'Creating...' : 'Continue to Review'}
+          </button>
+        </div>
+      )}
       </div>
 
       {/* Request Nonprofit Modal */}
       <RequestNonprofitModal
         isOpen={showRequestModal}
         onClose={() => setShowRequestModal(false)}
+      />
+
+      {/* Donation Review Bottom Sheet */}
+      <DonationReviewBottomSheet
+        isOpen={showReviewBottomSheet}
+        onClose={() => {
+          setShowReviewBottomSheet(false);
+          setJustCreatedBox(false); // Reset flag when closing
+        }}
+        donationAmount={step === 2 && donationBox?.monthly_amount && !justCreatedBox ? parseFloat(donationBox.monthly_amount) : donationAmount}
+        selectedCauses={
+          (step === 1 || justCreatedBox) && selectedCausesData.length > 0
+            ? selectedCausesData 
+            : (donationBox?.manual_causes || []).map((cause: any) => ({
+                id: cause.id || cause.cause?.id,
+                name: cause.name || cause.cause?.name,
+                description: cause.description || cause.mission || cause.cause?.description || cause.cause?.mission,
+              }))
+        }
+        selectedCollectives={
+          (step === 1 || justCreatedBox) && selectedCollectivesData.length > 0
+            ? selectedCollectivesData
+            : (donationBox?.attributing_collectives || []).map((collective: any) => ({
+                id: collective.id || collective.collective?.id,
+                name: collective.name || collective.collective?.name,
+                description: collective.description || collective.collective?.description,
+              }))
+        }
+        onComplete={() => {
+          setShowReviewBottomSheet(false);
+          setJustCreatedBox(false); // Reset flag
+          setCheckout(true);
+        }}
       />
     </div>
   );
