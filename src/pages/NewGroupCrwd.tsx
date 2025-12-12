@@ -98,7 +98,7 @@ export default function NewGroupCrwdPage() {
   // Extract stats
   const nonprofitCount = nonprofits.length || 0;
   const memberCount = crwdData?.member_count || statsData?.member_count || 0;
-  const donationCount = statsData?.total_donations || statsData?.donation_count || 0;
+  const donationCount = statsData?.contributions_count || statsData?.donation_count || 0;
 
   // Join collective mutation
   const joinCollectiveMutation = useMutation({

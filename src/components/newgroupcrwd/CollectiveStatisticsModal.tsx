@@ -318,25 +318,162 @@ export default function CollectiveStatisticsModal({
                   <Loader2 className="w-5 h-5 md:w-6 md:h-6 animate-spin text-gray-400" />
                 </div>
               ) : donations.length > 0 ? (
-                <div className="space-y-0">
-                  {donations.map((donation: any, index: number) => (
-                    <div
-                      key={donation.id || index}
-                      className="flex items-center gap-3 md:gap-4 py-3 md:py-4 border-b border-gray-100 last:border-b-0"
-                    >
-                      <div className="flex-1 min-w-0">
-                        <h4 className="font-bold text-sm md:text-base text-foreground mb-0.5 md:mb-1">
-                          ${donation.amount || donation.donation_amount || '0.00'}
-                        </h4>
-                        <p className="text-xs md:text-sm text-muted-foreground">
-                          {donation.created_at
-                            ? new Date(donation.created_at).toLocaleDateString()
-                            : 'Recent donation'}
-                        </p>
-                      </div>
+                <>
+                  {/* Summary Boxes */}
+                  <div className=" mb-4 md:mb-6">
+                    {/* Collective Donations Box */}
+                    <div className="bg-[#f0fdf4] border border-[#86efac] rounded-lg p-3 md:p-4">
+                      <h3 className="text-xs md:text-sm font-semibold text-gray-700 mb-1 md:mb-2">
+                        Collective Donations
+                      </h3>
+                      <p className="text-2xl md:text-3xl font-bold text-blue-600 mb-1">
+                        ${donationHistoryData?.total_donated_to_collective?.toFixed(2) || '0.00'}
+                      </p>
+                      <p className="text-xs md:text-sm text-gray-600">
+                        {donations.filter((d: any) => d.amount_attributed_to_collective > 0).length} donation{donations.filter((d: any) => d.amount_attributed_to_collective > 0).length !== 1 ? 's' : ''} credited to this collective
+                      </p>
                     </div>
-                  ))}
-                </div>
+
+                    {/* All Donations Box */}
+                    {/* <div className="bg-[#f0fdf4] border border-[#86efac] rounded-lg p-3 md:p-4">
+                      <h3 className="text-xs md:text-sm font-semibold text-gray-700 mb-1 md:mb-2">
+                        All Donations
+                      </h3>
+                      <p className="text-2xl md:text-3xl font-bold text-gray-600 mb-1">
+                        ${donations.reduce((sum: number, d: any) => sum + parseFloat(d.gross_amount || '0'), 0).toFixed(2)}
+                      </p>
+                      <p className="text-xs md:text-sm text-gray-600">
+                        {donations.length} total donation{donations.length !== 1 ? 's' : ''} to these nonprofits
+                      </p>
+                    </div> */}
+                  </div>
+
+                  {/* Donations List */}
+                  <div className="space-y-3 md:space-y-4">
+                    {donations.map((donation: any, index: number) => {
+                      const user = donation.user || {};
+                      const firstName = user.first_name || '';
+                      const lastName = user.last_name || '';
+                      const fullName = `${firstName} ${lastName}`.trim() || user.username || 'Unknown User';
+                      const initials = firstName && lastName 
+                        ? `${firstName.charAt(0)}${lastName.charAt(0)}`.toUpperCase()
+                        : fullName.charAt(0).toUpperCase();
+                      
+                      const avatar = user.profile_picture || '';
+                      const isCollectiveDonation = donation.amount_attributed_to_collective > 0;
+                      
+                      // Generate consistent avatar color - use a larger palette for more variety
+                      const avatarColors = [
+                        '#86efac', // Lime green
+                        '#3B82F6', // Blue
+                        '#10B981', // Green
+                        '#8B5CF6', // Purple
+                        '#EC4899', // Pink
+                        '#F97316', // Orange
+                        '#EF4444', // Red
+                        '#06B6D4', // Cyan
+                        '#84CC16', // Lime
+                        '#A855F7', // Violet
+                        '#14B8A6', // Teal
+                        '#F43F5E', // Rose
+                        '#6366F1', // Indigo
+                        '#22C55E', // Emerald
+                        '#EAB308', // Yellow
+                        '#F59E0B', // Amber
+                      ];
+                      
+                      // Use a hash function to get more varied color distribution
+                      const getColorForUser = (id: number | string, colors: string[]) => {
+                        const idStr = id.toString();
+                        let hash = 0;
+                        for (let i = 0; i < idStr.length; i++) {
+                          const char = idStr.charCodeAt(i);
+                          hash = ((hash << 5) - hash) + char;
+                          hash = hash & hash; // Convert to 32-bit integer
+                        }
+                        return colors[Math.abs(hash) % colors.length];
+                      };
+                      
+                      const userId = user.id || index;
+                      const avatarBgColor = getColorForUser(userId, avatarColors);
+
+                      // Format time ago
+                      const formatTimeAgo = (dateString: string) => {
+                        const date = new Date(dateString);
+                        const now = new Date();
+                        const diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000);
+                        
+                        if (diffInSeconds < 60) return 'Just now';
+                        if (diffInSeconds < 3600) {
+                          const minutes = Math.floor(diffInSeconds / 60);
+                          return `${minutes} minute${minutes !== 1 ? 's' : ''} ago`;
+                        }
+                        if (diffInSeconds < 86400) {
+                          const hours = Math.floor(diffInSeconds / 3600);
+                          return `${hours} hour${hours !== 1 ? 's' : ''} ago`;
+                        }
+                        if (diffInSeconds < 604800) {
+                          const days = Math.floor(diffInSeconds / 86400);
+                          return `${days} day${days !== 1 ? 's' : ''} ago`;
+                        }
+                        if (diffInSeconds < 2592000) {
+                          const weeks = Math.floor(diffInSeconds / 604800);
+                          return `${weeks} week${weeks !== 1 ? 's' : ''} ago`;
+                        }
+                        const months = Math.floor(diffInSeconds / 2592000);
+                        return `${months} month${months !== 1 ? 's' : ''} ago`;
+                      };
+
+                      return (
+                        <div
+                          key={donation.id || index}
+                          className="flex items-center gap-3 md:gap-4 py-2 md:py-3"
+                        >
+                          {/* Avatar */}
+                          <div
+                            className="w-10 h-10 md:w-12 md:h-12 rounded-full flex items-center justify-center flex-shrink-0"
+                            style={{ backgroundColor: avatarBgColor }}
+                          >
+                            {avatar ? (
+                              <img
+                                src={avatar}
+                                alt={fullName}
+                                className="w-10 h-10 md:w-12 md:h-12 rounded-full object-cover"
+                              />
+                            ) : (
+                              <span className="text-white font-bold text-sm md:text-base">
+                                {initials}
+                              </span>
+                            )}
+                          </div>
+
+                          {/* User Info */}
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center gap-2 flex-wrap">
+                              <h4 className="font-bold text-sm md:text-base text-gray-900">
+                                {fullName}
+                              </h4>
+                              {isCollectiveDonation && (
+                                <span className="bg-blue-100 text-blue-500 text-xs font-semibold px-2 py-0.5 rounded-full">
+                                  Collective
+                                </span>
+                              )}
+                            </div>
+                            <div className="flex items-center gap-2 flex-wrap mt-0.5 md:mt-1">
+                              {/* <p className="text-xs md:text-sm text-gray-600">
+                                Donated to {causeCount} nonprofit{causeCount !== 1 ? 's' : ''}
+                              </p> */}
+                              {/* <span className="text-gray-400">•</span> */}
+                              <p className="text-xs md:text-sm text-gray-600">
+                                {donation.charged_at ? formatTimeAgo(donation.charged_at) : 'Recently'}
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </>
               ) : (
                 <div className="text-center py-6 md:py-8 text-xs md:text-sm text-muted-foreground">
                   No donations found
