@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { X, Smartphone } from 'lucide-react';
+import { X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 
@@ -28,6 +28,7 @@ interface JoinCollectiveBottomSheetProps {
   collectiveId: string;
   onJoin: (selectedNonprofits: Nonprofit[], collectiveId: string) => void;
   isJoining?: boolean;
+  donationBox?: any;
 }
 
 export default function JoinCollectiveBottomSheet({
@@ -38,20 +39,33 @@ export default function JoinCollectiveBottomSheet({
   collectiveId,
   onJoin,
   isJoining = false,
+  donationBox,
 }: JoinCollectiveBottomSheetProps) {
   const [isVisible, setIsVisible] = useState(false);
   const [isAnimating, setIsAnimating] = useState(false);
   const [selectedNonprofitIds, setSelectedNonprofitIds] = useState<Set<number>>(new Set());
 
-  // Initialize all nonprofits as selected when modal opens
+  // Get existing cause IDs from donation box
+  const existingCauseIds = new Set<number>();
+  if (donationBox?.box_causes && Array.isArray(donationBox.box_causes)) {
+    donationBox.box_causes.forEach((boxCause: any) => {
+      if (boxCause.cause?.id) {
+        existingCauseIds.add(boxCause.cause.id);
+      }
+    });
+  }
+
+  // Initialize all nonprofits as selected when modal opens (excluding those already in donation box)
   useEffect(() => {
     if (isOpen && nonprofits.length > 0) {
       setSelectedNonprofitIds(new Set(nonprofits.map((np) => {
         // Use cause.id if available, otherwise use np.id
-        return np.cause?.id || np.id;
-      })));
+        const causeId = np.cause?.id || np.id;
+        // Only select if not already in donation box
+        return existingCauseIds.has(causeId) ? null : causeId;
+      }).filter((id): id is number => id !== null)));
     }
-  }, [isOpen, nonprofits]);
+  }, [isOpen, nonprofits, existingCauseIds]);
 
   useEffect(() => {
     let timer: NodeJS.Timeout;
@@ -69,6 +83,11 @@ export default function JoinCollectiveBottomSheet({
   if (!isVisible) return null;
 
   const handleToggleNonprofit = (id: number) => {
+    // Don't allow toggling if cause is already in donation box
+    if (existingCauseIds.has(id)) {
+      return;
+    }
+    
     setSelectedNonprofitIds((prev) => {
       const newSet = new Set(prev);
       if (newSet.has(id)) {
@@ -81,12 +100,19 @@ export default function JoinCollectiveBottomSheet({
   };
 
   const handleDeselectAll = () => {
-    if (selectedNonprofitIds.size === nonprofits.length) {
-      // If all selected, deselect all
+    // Get available nonprofits (excluding those already in donation box)
+    const availableNonprofits = nonprofits.filter((np) => {
+      const cause = np.cause || np;
+      const causeId = cause.id || np.id;
+      return !existingCauseIds.has(causeId);
+    });
+    
+    if (selectedNonprofitIds.size === availableNonprofits.length) {
+      // If all available selected, deselect all
       setSelectedNonprofitIds(new Set());
     } else {
-      // If some/none selected, select all
-      setSelectedNonprofitIds(new Set(nonprofits.map((np) => {
+      // If some/none selected, select all available
+      setSelectedNonprofitIds(new Set(availableNonprofits.map((np) => {
         const cause = np.cause || np;
         return cause.id || np.id;
       })));
@@ -214,6 +240,7 @@ export default function JoinCollectiveBottomSheet({
               const nonprofitName = cause.name || nonprofit.name || 'Unknown Nonprofit';
               const nonprofitImage = cause.image || cause.logo || nonprofit.image || nonprofit.logo;
               const isSelected = selectedNonprofitIds.has(nonprofitId);
+              const isDisabled = existingCauseIds.has(nonprofitId);
               const avatarBgColor = getConsistentColor(nonprofitId, avatarColors);
               const initials = getInitials(nonprofitName);
               
@@ -221,22 +248,34 @@ export default function JoinCollectiveBottomSheet({
                 <button
                   key={nonprofit.id}
                   onClick={() => handleToggleNonprofit(nonprofitId)}
-                  className="w-full flex items-center gap-3 md:gap-4 p-3 md:p-4 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors text-left"
+                  disabled={isDisabled}
+                  className={cn(
+                    "w-full flex items-center gap-3 md:gap-4 p-3 md:p-4 bg-white border border-gray-200 rounded-lg transition-colors text-left",
+                    isDisabled 
+                      ? "opacity-50 cursor-not-allowed" 
+                      : "hover:bg-gray-50"
+                  )}
                 >
                   {/* Checkbox */}
                   <div
                     className={cn(
                       "w-5 h-5 md:w-6 md:h-6 rounded border-2 flex items-center justify-center transition-colors flex-shrink-0",
-                      isSelected
+                      isDisabled
+                        ? "bg-gray-200 border-gray-300"
+                        : isSelected
                         ? "bg-[#1600ff] border-[#1600ff]"
                         : "bg-white border-gray-300"
                     )}
                   >
-                    {isSelected && (
+                    {isDisabled ? (
+                      <svg className="w-3 h-3 md:w-4 md:h-4 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                      </svg>
+                    ) : isSelected ? (
                       <svg className="w-3 h-3 md:w-4 md:h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
                       </svg>
-                    )}
+                    ) : null}
                   </div>
 
                   {/* Nonprofit Icon/Avatar */}
@@ -271,6 +310,9 @@ export default function JoinCollectiveBottomSheet({
                     <h4 className="font-semibold text-sm md:text-base text-gray-900 truncate">
                       {nonprofitName}
                     </h4>
+                    {isDisabled && (
+                      <p className="text-xs text-gray-500 mt-0.5">Already in your donation box</p>
+                    )}
                   </div>
                 </button>
               );

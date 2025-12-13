@@ -13,7 +13,7 @@ import {
 } from '@/components/ui/dialog';
 import { getCollectiveById, getCollectiveCauses, getCollectiveStats, joinCollective, leaveCollective } from '@/services/api/crwd';
 import { getPosts } from '@/services/api/social';
-import { getDonationBox } from '@/services/api/donation';
+import { getDonationBox, addCausesToBox } from '@/services/api/donation';
 import CollectiveHeader from '@/components/newgroupcrwd/CollectiveHeader';
 import CollectiveProfile from '@/components/newgroupcrwd/CollectiveProfile';
 import CollectiveStats from '@/components/newgroupcrwd/CollectiveStats';
@@ -55,6 +55,13 @@ export default function NewGroupCrwdPage() {
     queryKey: ['collective-causes', crwdId],
     queryFn: () => getCollectiveCauses(crwdId || ''),
     enabled: !!crwdId,
+  });
+
+  // Fetch donation box to check for existing causes
+  const { data: donationBoxData } = useQuery({
+    queryKey: ['donationBox'],
+    queryFn: getDonationBox,
+    enabled: showJoinModal, // Only fetch when join modal is open
   });
 
   // Fetch collective stats
@@ -116,36 +123,64 @@ export default function NewGroupCrwdPage() {
       queryClient.invalidateQueries({ queryKey: ['joined-collectives-manage'] });
       queryClient.invalidateQueries({ queryKey: ['joinedCollectives'] });
       
-      // If we have pending join data, navigate to donation page with preselected causes
-      if (pendingJoinData) {
+      // If we have pending join data with selected causes, add them to donation box
+      if (pendingJoinData && pendingJoinData.selectedNonprofits.length > 0) {
         const { selectedNonprofits, collectiveId } = pendingJoinData;
         
-        // Transform selected nonprofits to cause format
-        const preselectedCauses = selectedNonprofits.map((np) => {
-          const cause = np.cause || np;
-          return {
-            id: cause.id || np.id,
-            name: cause.name || np.name || 'Unknown Nonprofit',
-            description: cause.mission || cause.description || np.mission || np.description || '',
-            mission: cause.mission || np.mission || '',
-            logo: cause.image || cause.logo || np.image || np.logo || '',
-          };
-        });
+        // Check if donation box exists
+        try {
+          const donationBoxData = await getDonationBox();
+          
+          if (donationBoxData && donationBoxData.id) {
+            // Donation box exists - add causes to box using new format
+            const causes = selectedNonprofits.map((np) => {
+              const cause = np.cause || np;
+              const causeId = cause.id || np.id;
+              const causeEntry: { cause_id: number; attributed_collective?: number } = {
+                cause_id: causeId,
+                attributed_collective: parseInt(collectiveId),
+              };
+              return causeEntry;
+            });
+            
+            try {
+              await addCausesToBox({ causes });
+              queryClient.invalidateQueries({ queryKey: ['donationBox'] });
+              console.log('Causes added to donation box successfully');
+            } catch (error) {
+              console.error('Error adding causes to donation box:', error);
+            }
+          } else {
+            // Donation box doesn't exist - navigate to donation page with preselected causes
+            const preselectedCauses = selectedNonprofits.map((np) => {
+              const cause = np.cause || np;
+              return {
+                id: cause.id || np.id,
+                name: cause.name || np.name || 'Unknown Nonprofit',
+                description: cause.mission || cause.description || np.mission || np.description || '',
+                mission: cause.mission || np.mission || '',
+                logo: cause.image || cause.logo || np.image || np.logo || '',
+              };
+            });
 
-        const preselectedCauseIds = preselectedCauses.map((cause) => cause.id);
+            const preselectedCauseIds = preselectedCauses.map((cause) => cause.id);
 
-        navigate('/donation?tab=setup', {
-          state: {
-            preselectedCauses: preselectedCauseIds,
-            preselectedCausesData: preselectedCauses,
-            preselectedCollectiveId: parseInt(collectiveId),
-          },
-        });
+            navigate('/donation?tab=setup', {
+              state: {
+                preselectedCauses: preselectedCauseIds,
+                preselectedCausesData: preselectedCauses,
+                preselectedCollectiveId: parseInt(collectiveId),
+              },
+            });
+          }
+        } catch (error) {
+          console.error('Error checking donation box:', error);
+        }
         
         // Clear pending join data
         setPendingJoinData(null);
       }
-      // If no pending join data, do nothing (donation box exists case)
+      // If no pending join data or no causes selected, do nothing (just joined)
     },
     onError: (error: any) => {
       console.error('Join collective error:', error);
@@ -231,29 +266,16 @@ export default function NewGroupCrwdPage() {
   const handleJoinConfirm = async (selectedNonprofits: any[], collectiveId: string) => {
     if (!crwdId) return;
 
-    // Check if donation box exists BEFORE joining
-    try {
-      const donationBoxData = await getDonationBox();
-      
-      if (!donationBoxData || !donationBoxData.id) {
-        // Donation box doesn't exist - store data and join collective
-        // On success, we'll navigate to donation page with preselected causes
-        setPendingJoinData({
-          selectedNonprofits,
-          collectiveId,
-        });
-        
-        // Trigger the join collective mutation
-        joinCollectiveMutation.mutate(crwdId);
-      } else {
-        // Donation box exists - just join the collective, do nothing else
-        joinCollectiveMutation.mutate(crwdId);
-      }
-    } catch (error) {
-      console.error('Error checking donation box:', error);
-      // On error, still try to join (fallback)
-      joinCollectiveMutation.mutate(crwdId);
-    }
+    // Store selected nonprofits and collective ID (even if empty array)
+    // This will be used in onSuccess to either add to box or navigate
+    setPendingJoinData({
+      selectedNonprofits,
+      collectiveId,
+    });
+    
+    // Trigger the join collective mutation
+    // The onSuccess handler will handle adding causes if selected
+    joinCollectiveMutation.mutate(crwdId);
   };
 
   const handleCloseJoinModal = () => {
@@ -406,6 +428,7 @@ export default function NewGroupCrwdPage() {
         collectiveId={crwdId || ''}
         onJoin={handleJoinConfirm}
         isJoining={joinCollectiveMutation.isPending}
+        donationBox={donationBoxData}
       />
 
       {/* Unjoin Confirmation Dialog */}

@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import ProfileActivityCard from "@/components/profile/ProfileActivityCard";
 import { X, Loader2 } from "lucide-react";
 import ProfileNavbar from "@/components/profile/ProfileNavbar";
@@ -28,7 +28,20 @@ export default function PostById() {
   const [expandedComments, setExpandedComments] = useState<Set<number>>(new Set());
   const [loadingReplies, setLoadingReplies] = useState<Set<number>>(new Set());
   const navigate = useNavigate();
-  const { user: currentUser } = useAuthStore();
+  const { token } = useAuthStore();
+
+  // Redirect to login if no token
+  useEffect(() => {
+    if (!token?.access_token) {
+      navigate('/login', { replace: true });
+    }
+  }, [token, navigate]);
+
+  // Show nothing if no token (redirect will happen)
+  if (!token?.access_token) {
+    return null;
+  }
+
   // Fetch post data using API
   const { data: postData, isLoading, error } = useQuery({
     queryKey: ['post', id],
@@ -233,51 +246,6 @@ export default function PostById() {
     setShowDialog(false);
   };
 
-  if (!currentUser?.id) {
-    return (
-      <div className="w-full flex flex-col items-center justify-center min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
-        <div className="text-center max-w-md mx-auto p-4 md:p-8">
-          {/* Icon */}
-          <div className="w-16 h-16 md:w-20 md:h-20 mx-auto mb-4 md:mb-6 bg-blue-100 rounded-full flex items-center justify-center">
-            <svg className="w-8 h-8 md:w-10 md:h-10 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-            </svg>
-          </div>
-          
-          {/* Title */}
-          <h2 className="text-xl md:text-2xl font-bold text-gray-900 mb-2 md:mb-3">
-            Sign in to view this post
-          </h2>
-          
-          {/* Description */}
-          <p className="text-sm md:text-base text-gray-600 mb-6 md:mb-8 leading-relaxed">
-            Sign in to view your profile, manage your causes, and connect with your community.
-          </p>
-          
-          {/* CTA Button */}
-          <Button 
-            size="lg" 
-            className="bg-blue-600 hover:bg-blue-700 text-white px-6 md:px-8 py-2.5 md:py-3 rounded-lg font-medium transition-colors duration-200 shadow-lg hover:shadow-xl text-sm md:text-base"
-          >
-            <Link to="/onboarding" className="flex items-center gap-1.5 md:gap-2">
-              <svg className="w-4 h-4 md:w-5 md:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
-              </svg>
-              Sign In to Continue
-            </Link>
-          </Button>
-          
-          {/* Additional Info */}
-          <p className="text-xs md:text-sm text-gray-500 mt-4 md:mt-6">
-            Don't have an account? 
-            <Link to="/claim-profile" className="text-blue-600 hover:text-blue-700 font-medium ml-1">
-              Create one here
-            </Link>
-          </p>
-        </div>
-      </div>
-    );
-  }
 
   // Loading state
   if (isLoading) {

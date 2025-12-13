@@ -146,36 +146,36 @@ export default function OneTimeDonation({
 
   const handleCheckout = () => {
     // Prepare request body according to API specification
-    const causeIds: number[] = [];
-    let collectiveIds: number[] = [];
+    // Format: { amount: string, causes: [{ cause_id: number, attributed_collective?: number }] }
+    const causes: Array<{ cause_id: number; attributed_collective?: number }> = [];
 
-    // Separate causes and collectives from selected items
+    // Process selected items and build causes array
     selectedItems.forEach(item => {
       if (item.type === 'cause') {
-        causeIds.push(parseInt(item.id));
-      } else if (item.type === 'collective') {
-        collectiveIds.push(parseInt(item.id));
+        const causeId = parseInt(item.id);
+        // Check if this cause is from a collective (has attributed_collective)
+        // For now, we'll set attributed_collective to 0 if not from a collective
+        // You may need to track collective info if causes can be attributed to collectives
+        const causeEntry: { cause_id: number; attributed_collective?: number } = {
+          cause_id: causeId,
+        };
+        
+        // Only include attributed_collective if it exists and is not 0
+        // For now, we'll omit it if it's 0 (as per user's instruction)
+        // If you need to track which collective a cause belongs to, add that logic here
+        causes.push(causeEntry);
       }
+      // Note: For one-time donations, we're only handling causes, not collectives directly
     });
 
-    // Build request body - only include the relevant field based on what's selected
-    let requestBody: any = {
+    // Build request body
+    const requestBody: {
+      amount: string;
+      causes: Array<{ cause_id: number; attributed_collective?: number }>;
+    } = {
       amount: donationAmount.toString(),
+      causes: causes.length > 0 ? causes : [{ cause_id: 0 }], // Fallback if no causes selected
     };
-
-    if (causeIds.length > 0) {
-      // If causes are selected, send cause_ids and set collective_id to 0
-      requestBody.cause_ids = causeIds;
-      // requestBody.collective_id = 0;
-    } else if (collectiveIds.length > 0) {
-      // If a collective is selected, send collective_id and set cause_ids to [0]
-      requestBody.collective_ids = collectiveIds;
-      // requestBody.cause_ids = [0];
-    } else {
-      // Fallback if nothing is selected (shouldn't happen due to button disabled state)
-      requestBody.cause_ids = [];
-      requestBody.collective_ids = [];
-    }
 
     console.log('Sending one-time donation request:', requestBody);
     oneTimeDonationMutation.mutate(requestBody);
