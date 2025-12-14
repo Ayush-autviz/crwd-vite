@@ -49,11 +49,10 @@ export default function SupportedNonprofits({
       <h3 className="font-bold text-base md:text-lg lg:text-xl text-foreground mb-3 md:mb-4">
         Supported Nonprofits
       </h3>
-      <div className="space-y-2.5 md:space-y-3">
-        {nonprofits.map((nonprofit) => {
+      <div className="flex overflow-x-auto pb-2 md:pb-3 gap-2 md:gap-3 scrollbar-hide -mx-3 md:-mx-4 px-3 md:px-4">
+        {nonprofits.map((nonprofit, index) => {
           const cause = nonprofit.cause || nonprofit;
           const name = cause.name || nonprofit.name || 'Unknown Nonprofit';
-          const mission = cause.mission || nonprofit.mission || '';
           const image = cause.image || nonprofit.image || '';
 
           // Generate vibrant avatar colors based on nonprofit ID for consistent colors
@@ -81,35 +80,37 @@ export default function SupportedNonprofits({
           const causeId = cause.id || nonprofit.id;
 
           return (
-            <Card 
-              key={nonprofit.id} 
+            <div
+              key={nonprofit.id}
               onClick={() => causeId && navigate(`/cause/${causeId}`)}
-              className="border-gray-200 rounded-lg hover:shadow-md transition-shadow cursor-pointer"
+              className="flex-shrink-0 w-[120px] sm:w-[140px] md:w-[160px] cursor-pointer"
             >
-              <CardContent className="p-0 px-3 md:px-4 py-2.5 md:py-3">
-                <div className="flex items-start gap-3 md:gap-4">
-                  <Avatar className="w-10 h-10 md:w-12 md:h-12 rounded-lg flex-shrink-0">
+              <div className="bg-white border border-gray-200 rounded-lg p-1.5 sm:p-2 md:p-3 flex flex-col items-center justify-between h-[90px] sm:h-[100px] md:h-[120px] hover:shadow-md transition-shadow">
+                {image ? (
+                  <Avatar className="w-9 h-9 sm:w-10 sm:h-10 md:w-12 md:h-12 rounded-lg mb-1.5 md:mb-2 flex-shrink-0">
                     <AvatarImage src={image} alt={name} />
                     <AvatarFallback 
                       style={{ backgroundColor: avatarBgColor }}
-                      className="text-white rounded-lg font-semibold text-2xl md:text-3xl"
+                      className="text-white rounded-lg font-semibold text-[10px] sm:text-xs md:text-sm"
                     >
                       {name.charAt(0).toUpperCase()}
                     </AvatarFallback>
                   </Avatar>
-                  <div className="flex-1 min-w-0">
-                    <h4 className="font-bold text-sm md:text-base lg:text-lg text-foreground mb-0.5 md:mb-1">
-                      {name}
-                    </h4>
-                    {mission && (
-                      <p className="text-xs md:text-sm lg:text-base text-muted-foreground">
-                        {mission}
-                      </p>
-                    )}
+                ) : (
+                  <div
+                    className="w-9 h-9 sm:w-10 sm:h-10 md:w-12 md:h-12 rounded-lg mb-1.5 md:mb-2 flex items-center justify-center flex-shrink-0"
+                    style={{ backgroundColor: avatarBgColor }}
+                  >
+                    <span className="text-base sm:text-lg md:text-xl font-semibold text-white">
+                      {name.charAt(0).toUpperCase()}
+                    </span>
                   </div>
-                </div>
-              </CardContent>
-            </Card>
+                )}
+                <p className="text-[10px] sm:text-xs font-semibold text-gray-900 text-center line-clamp-2 flex-grow flex items-center justify-center">
+                  {name}
+                </p>
+              </div>
+            </div>
           );
         })}
       </div>

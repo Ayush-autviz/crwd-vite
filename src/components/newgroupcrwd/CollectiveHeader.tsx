@@ -134,7 +134,7 @@ export default function CollectiveHeader({
   return (
     <div className="sticky top-0 z-10 w-full flex items-center justify-between p-3 md:p-4 border-b bg-white">
       <button
-        onClick={() => navigate(-1)}
+        onClick={() => navigate('/')}
         className="p-1.5 md:p-2 hover:bg-gray-100 rounded-full transition-colors"
         aria-label="Go back"
       >

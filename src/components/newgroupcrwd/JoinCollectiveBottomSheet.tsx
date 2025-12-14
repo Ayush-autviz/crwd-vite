@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
@@ -26,7 +26,7 @@ interface JoinCollectiveBottomSheetProps {
   collectiveName: string;
   nonprofits: Nonprofit[];
   collectiveId: string;
-  onJoin: (selectedNonprofits: Nonprofit[], collectiveId: string) => void;
+  onJoin: (selectedNonprofits: Nonprofit[], collectiveId: string, shouldSetupDonationBox: boolean) => void;
   isJoining?: boolean;
   donationBox?: any;
 }
@@ -44,28 +44,60 @@ export default function JoinCollectiveBottomSheet({
   const [isVisible, setIsVisible] = useState(false);
   const [isAnimating, setIsAnimating] = useState(false);
   const [selectedNonprofitIds, setSelectedNonprofitIds] = useState<Set<number>>(new Set());
+  const [hasInitialized, setHasInitialized] = useState(false);
 
-  // Get existing cause IDs from donation box
-  const existingCauseIds = new Set<number>();
-  if (donationBox?.box_causes && Array.isArray(donationBox.box_causes)) {
-    donationBox.box_causes.forEach((boxCause: any) => {
-      if (boxCause.cause?.id) {
-        existingCauseIds.add(boxCause.cause.id);
-      }
-    });
-  }
-
-  // Initialize all nonprofits as selected when modal opens (excluding those already in donation box)
-  useEffect(() => {
-    if (isOpen && nonprofits.length > 0) {
-      setSelectedNonprofitIds(new Set(nonprofits.map((np) => {
-        // Use cause.id if available, otherwise use np.id
-        const causeId = np.cause?.id || np.id;
-        // Only select if not already in donation box
-        return existingCauseIds.has(causeId) ? null : causeId;
-      }).filter((id): id is number => id !== null)));
+  // Get existing cause IDs from donation box - memoized to prevent unnecessary re-renders
+  const existingCauseIds = useMemo(() => {
+    const ids = new Set<number>();
+    if (donationBox?.box_causes && Array.isArray(donationBox.box_causes)) {
+      donationBox.box_causes.forEach((boxCause: any) => {
+        if (boxCause.cause?.id) {
+          ids.add(boxCause.cause.id);
+        }
+      });
     }
-  }, [isOpen, nonprofits, existingCauseIds]);
+    return ids;
+  }, [donationBox?.box_causes]);
+
+  // Check if donation box exists
+  const hasDonationBox = donationBox && donationBox.id;
+  
+  // Check capacity: compare box_causes.length with capacity
+  const currentCapacity = donationBox?.box_causes?.length || 0;
+  const maxCapacity = donationBox?.capacity || 0;
+  const isAtCapacity = hasDonationBox && currentCapacity >= maxCapacity;
+  
+  // Get available nonprofits (excluding those already in donation box)
+  const availableNonprofits = nonprofits.filter((np) => {
+    const cause = np.cause || np;
+    const causeId = cause.id || np.id;
+    return !existingCauseIds.has(causeId);
+  });
+
+  // Initialize all nonprofits as selected when modal first opens (excluding those already in donation box)
+  // Only if not at capacity - only run once when modal opens
+  useEffect(() => {
+    if (isOpen && !hasInitialized) {
+      if (nonprofits.length > 0 && !isAtCapacity) {
+        const availableIds = nonprofits
+          .map((np) => {
+            const causeId = np.cause?.id || np.id;
+            return existingCauseIds.has(causeId) ? null : causeId;
+          })
+          .filter((id): id is number => id !== null);
+        
+        setSelectedNonprofitIds(new Set(availableIds));
+      } else if (isAtCapacity) {
+        // Clear selection if at capacity
+        setSelectedNonprofitIds(new Set());
+      }
+      setHasInitialized(true);
+    } else if (!isOpen && hasInitialized) {
+      // Reset initialization flag and selection when modal closes
+      setHasInitialized(false);
+      setSelectedNonprofitIds(new Set());
+    }
+  }, [isOpen, hasInitialized, nonprofits, existingCauseIds, isAtCapacity]);
 
   useEffect(() => {
     let timer: NodeJS.Timeout;
@@ -83,8 +115,8 @@ export default function JoinCollectiveBottomSheet({
   if (!isVisible) return null;
 
   const handleToggleNonprofit = (id: number) => {
-    // Don't allow toggling if cause is already in donation box
-    if (existingCauseIds.has(id)) {
+    // Don't allow toggling if at capacity or cause is already in donation box
+    if (isAtCapacity || existingCauseIds.has(id)) {
       return;
     }
     
@@ -100,12 +132,10 @@ export default function JoinCollectiveBottomSheet({
   };
 
   const handleDeselectAll = () => {
-    // Get available nonprofits (excluding those already in donation box)
-    const availableNonprofits = nonprofits.filter((np) => {
-      const cause = np.cause || np;
-      const causeId = cause.id || np.id;
-      return !existingCauseIds.has(causeId);
-    });
+    // Don't allow if at capacity
+    if (isAtCapacity) {
+      return;
+    }
     
     if (selectedNonprofitIds.size === availableNonprofits.length) {
       // If all available selected, deselect all
@@ -119,18 +149,18 @@ export default function JoinCollectiveBottomSheet({
     }
   };
 
-  const handleJoin = () => {
+  const handleJoin = (shouldSetupDonationBox: boolean = false) => {
     // Get full nonprofit objects for selected IDs
     const selectedNonprofits = nonprofits.filter((np) => {
       const cause = np.cause || np;
       const nonprofitId = cause.id || np.id;
       return selectedNonprofitIds.has(nonprofitId);
     });
-    onJoin(selectedNonprofits, collectiveId);
+    onJoin(selectedNonprofits, collectiveId, shouldSetupDonationBox);
   };
 
   const selectedCount = selectedNonprofitIds.size;
-  const allSelected = selectedCount === nonprofits.length;
+  const allSelected = selectedCount === availableNonprofits.length && availableNonprofits.length > 0;
 
   // Avatar colors for consistent coloring
   const avatarColors = [
@@ -185,10 +215,15 @@ export default function JoinCollectiveBottomSheet({
           <div className="flex items-start justify-between">
             <div className="flex-1 pr-2">
               <h2 className="text-xl md:text-2xl font-bold text-foreground mb-1">
-                Join {collectiveName}
+                You've joined {collectiveName}!
               </h2>
               <p className="text-xs md:text-sm text-gray-600">
-                Optionally add these nonprofits to your donation box. You can manage them anytime from your profile.
+                {isAtCapacity 
+                  ? "Your donation box is at capacity. Increase your donation to add more nonprofits."
+                  : hasDonationBox
+                  ? "Optionally add these nonprofits to your donation box. You can manage them anytime from your profile."
+                  : "Would you like to set up your donation box to support these nonprofits?"
+                }
               </p>
             </div>
             <button
@@ -203,34 +238,45 @@ export default function JoinCollectiveBottomSheet({
 
         {/* Content - Scrollable */}
         <div className="flex-1 overflow-y-auto px-4 md:px-6 py-4 md:py-6">
-          {/* Deselect All / Select All */}
-          <button
-            onClick={handleDeselectAll}
-            className="w-full flex items-center justify-between p-3 md:p-4 mb-2 md:mb-3 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
-          >
-            <div className="flex items-center gap-3 md:gap-4">
-              <div
-                className={cn(
-                  "w-5 h-5 md:w-6 md:h-6 rounded border-2 flex items-center justify-center transition-colors",
-                  allSelected
-                    ? "bg-[#1600ff] border-[#1600ff]"
-                    : "bg-white border-gray-300"
-                )}
-              >
-                {allSelected && (
-                  <svg className="w-3 h-3 md:w-4 md:h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
-                  </svg>
-                )}
-              </div>
-              <span className="text-sm md:text-base font-medium text-gray-900">
-                {allSelected ? 'Deselect All' : 'Select All'}
-              </span>
+          {/* Capacity Error Message */}
+          {isAtCapacity && (
+            <div className="bg-red-50 border border-red-200 rounded-lg p-3 md:p-4 mb-4 md:mb-6">
+              <p className="text-sm md:text-base text-red-800 font-medium">
+                Amazing! Your donation box is at capacity. Increase your donation to add more nonprofits.
+              </p>
             </div>
-            <span className="text-sm md:text-base font-medium text-[#1600ff]">
-              {selectedCount} of {nonprofits.length} selected
-            </span>
-          </button>
+          )}
+
+          {/* Deselect All / Select All - Only show if not at capacity and has donation box */}
+          {!isAtCapacity && hasDonationBox && (
+            <button
+              onClick={handleDeselectAll}
+              className="w-full flex items-center justify-between p-3 md:p-4 mb-2 md:mb-3 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
+            >
+              <div className="flex items-center gap-3 md:gap-4">
+                <div
+                  className={cn(
+                    "w-5 h-5 md:w-6 md:h-6 rounded border-2 flex items-center justify-center transition-colors",
+                    allSelected
+                      ? "bg-[#1600ff] border-[#1600ff]"
+                      : "bg-white border-gray-300"
+                  )}
+                >
+                  {allSelected && (
+                    <svg className="w-3 h-3 md:w-4 md:h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                    </svg>
+                  )}
+                </div>
+                <span className="text-sm md:text-base font-medium text-gray-900">
+                  {allSelected ? 'Deselect All' : 'Select All'}
+                </span>
+              </div>
+              <span className="text-sm md:text-base font-medium text-[#1600ff]">
+                {selectedCount} of {availableNonprofits.length} selected
+              </span>
+            </button>
+          )}
 
           {/* Nonprofits List */}
           <div className="space-y-2 md:space-y-2.5 mb-4 md:mb-6">
@@ -248,10 +294,10 @@ export default function JoinCollectiveBottomSheet({
                 <button
                   key={nonprofit.id}
                   onClick={() => handleToggleNonprofit(nonprofitId)}
-                  disabled={isDisabled}
+                  disabled={isDisabled || isAtCapacity}
                   className={cn(
                     "w-full flex items-center gap-3 md:gap-4 p-3 md:p-4 bg-white border border-gray-200 rounded-lg transition-colors text-left",
-                    isDisabled 
+                    (isDisabled || isAtCapacity)
                       ? "opacity-50 cursor-not-allowed" 
                       : "hover:bg-gray-50"
                   )}
@@ -260,14 +306,14 @@ export default function JoinCollectiveBottomSheet({
                   <div
                     className={cn(
                       "w-5 h-5 md:w-6 md:h-6 rounded border-2 flex items-center justify-center transition-colors flex-shrink-0",
-                      isDisabled
+                      (isDisabled || isAtCapacity)
                         ? "bg-gray-200 border-gray-300"
                         : isSelected
                         ? "bg-[#1600ff] border-[#1600ff]"
                         : "bg-white border-gray-300"
                     )}
                   >
-                    {isDisabled ? (
+                    {(isDisabled || isAtCapacity) ? (
                       <svg className="w-3 h-3 md:w-4 md:h-4 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                       </svg>
@@ -310,8 +356,11 @@ export default function JoinCollectiveBottomSheet({
                     <h4 className="font-semibold text-sm md:text-base text-gray-900 truncate">
                       {nonprofitName}
                     </h4>
-                    {isDisabled && (
+                    {isDisabled && !isAtCapacity && (
                       <p className="text-xs text-gray-500 mt-0.5">Already in your donation box</p>
+                    )}
+                    {isAtCapacity && (
+                      <p className="text-xs text-red-600 mt-0.5">At capacity</p>
                     )}
                   </div>
                 </button>
@@ -319,45 +368,78 @@ export default function JoinCollectiveBottomSheet({
             })}
           </div>
 
-          {/* Info Banner */}
-          <div className="bg-[#fff3c7] border border-yellow-200 rounded-lg p-3 md:p-4 mb-4 md:mb-6">
-            <p className="text-xs md:text-sm text-yellow-900 leading-relaxed">
-              Selected nonprofits will be added to your donation box. You can manage them anytime from your profile.
-            </p>
-          </div>
+          {/* Info Banner - Only show if not at capacity */}
+          {!isAtCapacity && (
+            <div className="bg-[#fff3c7] border border-yellow-200 rounded-lg p-3 md:p-4 mb-4 md:mb-6">
+              <p className="text-xs md:text-sm text-yellow-900 leading-relaxed">
+                {hasDonationBox
+                  ? "Selected nonprofits will be added to your donation box. You can manage them anytime from your profile."
+                  : "Set up your donation box to start supporting these nonprofits with a monthly donation."
+                }
+              </p>
+            </div>
+          )}
         </div>
 
         {/* Footer Buttons */}
         <div className="px-4 md:px-6 py-4 md:py-5 border-t border-gray-200 bg-white space-y-2.5 md:space-y-3">
-          <Button
-            onClick={handleJoin}
-            disabled={isJoining || selectedCount === 0}
-            className={cn(
-              "w-full text-white font-semibold py-4 md:py-6 rounded-lg transition-all text-sm md:text-base flex items-center justify-center gap-2 shadow-lg hover:shadow-xl",
-              isJoining || selectedCount === 0
-                ? "bg-gray-400 cursor-not-allowed"
-                : "bg-[#1600ff] hover:bg-[#1400cc]"
-            )}
-          >
-            {isJoining ? (
-              <>
-                <div className="w-4 h-4 md:w-5 md:h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                <span>Joining...</span>
-              </>
-            ) : (
-              <>
-                <span>Join Collective</span>
-            
-              </>
-            )}
-          </Button>
-          <Button
-            onClick={onClose}
-            variant="ghost"
-            className="w-full text-gray-700 hover:text-gray-900 hover:bg-gray-50 font-medium py-2.5 md:py-3 rounded-lg text-sm md:text-base"
-          >
-            Cancel
-          </Button>
+          {!hasDonationBox ? (
+            <>
+              {/* No donation box - Show setup button and "Not now" */}
+              <Button
+                onClick={() => handleJoin(true)}
+                disabled={isJoining || selectedCount === 0}
+                className={cn(
+                  "w-full text-white font-semibold py-4 md:py-6 rounded-lg transition-all text-sm md:text-base flex items-center justify-center gap-2 shadow-lg hover:shadow-xl",
+                  isJoining || selectedCount === 0
+                    ? "bg-gray-400 cursor-not-allowed"
+                    : "bg-[#1600ff] hover:bg-[#1400cc]"
+                )}
+              >
+                Set Up Donation Box
+              </Button>
+              <Button
+                onClick={onClose}
+                variant="ghost"
+                className="w-full text-gray-700 hover:text-gray-900 hover:bg-gray-50 font-medium py-2.5 md:py-3 rounded-lg text-sm md:text-base"
+              >
+                Not Now
+              </Button>
+            </>
+          ) : isAtCapacity ? (
+            <>
+              {/* At capacity - Just close button */}
+              <Button
+                onClick={onClose}
+                className="w-full bg-[#1600ff] hover:bg-[#1400cc] text-white font-semibold py-4 md:py-6 rounded-lg text-sm md:text-base"
+              >
+                Got It
+              </Button>
+            </>
+          ) : (
+            <>
+              {/* Has donation box and not at capacity - Add to box */}
+              <Button
+                onClick={() => handleJoin(false)}
+                disabled={isJoining || selectedCount === 0}
+                className={cn(
+                  "w-full text-white font-semibold py-4 md:py-6 rounded-lg transition-all text-sm md:text-base flex items-center justify-center gap-2 shadow-lg hover:shadow-xl",
+                  isJoining || selectedCount === 0
+                    ? "bg-gray-400 cursor-not-allowed"
+                    : "bg-[#1600ff] hover:bg-[#1400cc]"
+                )}
+              >
+                Add to Donation Box
+              </Button>
+              <Button
+                onClick={onClose}
+                variant="ghost"
+                className="w-full text-gray-700 hover:text-gray-900 hover:bg-gray-50 font-medium py-2.5 md:py-3 rounded-lg text-sm md:text-base"
+              >
+                Skip
+              </Button>
+            </>
+          )}
         </div>
       </div>
     </div>
