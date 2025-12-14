@@ -65,11 +65,11 @@ export default function NewCreateCollectivePage() {
   const [createdCollective, setCreatedCollective] = useState<any>(null);
   const [step, setStep] = useState(1);
 
-  // Logo customization state
-  const [logo, setLogo] = useState<string | File>('');
+  // Logo customization state - separate states for letter and upload
   const [logoType, setLogoType] = useState<'letter' | 'upload'>('letter');
-  const [logoColor, setLogoColor] = useState('#1600ff');
-  const [logoPreview, setLogoPreview] = useState<string | null>(null);
+  const [letterLogoColor, setLetterLogoColor] = useState('#1600ff'); // State for letter logo background color
+  const [uploadedLogo, setUploadedLogo] = useState<File | null>(null); // State for uploaded file
+  const [uploadedLogoPreview, setUploadedLogoPreview] = useState<string | null>(null); // State for uploaded image preview
   const [showLogoCustomization, setShowLogoCustomization] = useState(false);
   
   // Dropdown state for sections
@@ -161,6 +161,28 @@ export default function NewCreateCollectivePage() {
     },
     onError: (error: any) => {
       console.error('Create collective error:', error);
+      
+      // Check for logo_file validation error
+      if (error.response?.data?.logo_file && Array.isArray(error.response.data.logo_file) && error.response.data.logo_file.length > 0) {
+        toast.error(error.response.data.logo_file[0]);
+        return;
+      }
+      
+      // Check for other field-specific errors
+      const errorData = error.response?.data;
+      if (errorData) {
+        // Check for any field errors (like logo_file, name, description, etc.)
+        const fieldErrors = Object.keys(errorData).filter(key => Array.isArray(errorData[key]) && errorData[key].length > 0);
+        if (fieldErrors.length > 0) {
+          const firstFieldError = errorData[fieldErrors[0]];
+          if (Array.isArray(firstFieldError) && firstFieldError.length > 0) {
+            toast.error(firstFieldError[0]);
+            return;
+          }
+        }
+      }
+      
+      // Fallback to general error message
       const errorMessage =
         error.response?.data?.message ||
         error.message ||
@@ -204,19 +226,16 @@ export default function NewCreateCollectivePage() {
   };
 
   const handleColorSelect = (color: string) => {
-    setLogoColor(color);
-    if (logoType === 'letter') {
-      setLogo(color);
-    }
+    setLetterLogoColor(color);
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      setLogo(file);
+      setUploadedLogo(file);
       const reader = new FileReader();
       reader.onloadend = () => {
-        setLogoPreview(reader.result as string);
+        setUploadedLogoPreview(reader.result as string);
       };
       reader.readAsDataURL(file);
     }
@@ -244,7 +263,7 @@ export default function NewCreateCollectivePage() {
   const handleCreateCollective = () => {
     // Create collective via API
     // Use FormData if there's a file upload, otherwise use JSON
-    if (logoType === 'upload' && logo instanceof File) {
+    if (logoType === 'upload' && uploadedLogo) {
       const formData = new FormData();
       formData.append('name', name.trim());
       formData.append('description', description.trim());
@@ -252,11 +271,8 @@ export default function NewCreateCollectivePage() {
       selectedCauses.forEach(cause => {
         formData.append('cause_ids', cause.id.toString());
       });
-      formData.append('logo_file', logo);
-      // Add color even when uploading file (for fallback)
-      if (logoColor) {
-        formData.append('color', logoColor);
-      }
+      formData.append('logo_file', uploadedLogo);
+      // Do not send color when upload tab is active
       createCollectiveMutation.mutate(formData);
     } else {
       // Use JSON for letter logo or no logo
@@ -266,9 +282,9 @@ export default function NewCreateCollectivePage() {
         cause_ids: selectedCauses.map(c => c.id),
       };
 
-      // Add color if logo type is letter
-      if (logoType === 'letter' && logoColor) {
-        requestData.color = logoColor;
+      // Add color only if logo type is letter (do not send image)
+      if (logoType === 'letter' && letterLogoColor) {
+        requestData.color = letterLogoColor;
       }
 
       createCollectiveMutation.mutate(requestData);
@@ -312,9 +328,6 @@ export default function NewCreateCollectivePage() {
   }
 
   const logoLetter = name?.charAt(0).toUpperCase() || 'C';
-  const displayLogo = logoPreview || (logoType === 'upload' && typeof logo === 'string' && (logo.startsWith('http') || logo.startsWith('/') || logo.startsWith('data:'))
-    ? logo 
-    : null);
 
   // Review/Confirmation Step
   if (step === 2 && !createdCollective) {
@@ -337,11 +350,20 @@ export default function NewCreateCollectivePage() {
             {/* Collective Info Section */}
             <div className="flex items-start gap-3 md:gap-4 mb-4 md:mb-6">
               <Avatar className="w-16 h-16 md:w-20 md:h-20 rounded-lg flex-shrink-0">
-                {displayLogo ? (
-                  <AvatarImage src={displayLogo} alt={name} />
+                {logoType === 'upload' ? (
+                  uploadedLogoPreview ? (
+                    <AvatarImage src={uploadedLogoPreview} alt={name} />
+                  ) : (
+                    <AvatarFallback
+                      style={{ backgroundColor: '#f3f4f6' }}
+                      className="text-gray-400 rounded-lg font-bold text-2xl md:text-3xl flex items-center justify-center"
+                    >
+                      <Camera className="w-8 h-8 md:w-10 md:h-10" />
+                    </AvatarFallback>
+                  )
                 ) : (
                   <AvatarFallback
-                    style={{ backgroundColor: logoColor }}
+                    style={{ backgroundColor: letterLogoColor }}
                     className="text-white rounded-lg font-bold text-2xl md:text-3xl"
                   >
                     {logoLetter}
@@ -586,15 +608,27 @@ export default function NewCreateCollectivePage() {
           <div className="border border-gray-200 rounded-lg p-3 md:p-4 mb-3 md:mb-4">
             <div className="flex items-center gap-3 md:gap-4">
               <Avatar className="w-12 h-12 md:w-16 md:h-16 rounded-lg flex-shrink-0">
-                {displayLogo ? (
-                  <AvatarImage src={displayLogo} alt={name} />
+                {logoType === 'upload' ? (
+                  uploadedLogoPreview ? (
+                    <AvatarImage src={uploadedLogoPreview} alt={name} />
+                  ) : (
+                    <AvatarFallback
+                      style={{ backgroundColor: '#f3f4f6' }}
+                      className="text-gray-400 rounded-lg font-bold text-lg md:text-2xl flex items-center justify-center"
+                    >
+                      <Camera className="w-6 h-6 md:w-8 md:h-8" />
+                    </AvatarFallback>
+                  )
                 ) : (
-                  <AvatarFallback
-                    style={{ backgroundColor: logoColor }}
-                    className="text-white rounded-lg font-bold text-lg md:text-2xl"
-                  >
+                  // <AvatarFallback
+                  //   style={{ backgroundColor: letterLogoColor }}
+                  //   className="text-white rounded-lg font-bold text-lg md:text-2xl"
+                  // >
+                  //   {logoLetter}
+                  // </AvatarFallback>
+                  <div style={{ backgroundColor: letterLogoColor }} className="text-white rounded-lg font-bold text-lg md:text-2xl w-12 h-12 md:w-16 md:h-16 flex items-center justify-center">
                     {logoLetter}
-                  </AvatarFallback>
+                  </div>
                 )}
               </Avatar>
               <div className="flex-1">
@@ -635,8 +669,7 @@ export default function NewCreateCollectivePage() {
                       <Button
                         onClick={() => {
                           setLogoType('letter');
-                          setLogoPreview(null);
-                          setLogo(logoColor);
+                          // Don't clear uploaded logo - keep it for when switching back to upload
                         }}
                         className={`flex-1 font-semibold rounded-lg py-2.5 md:py-3 text-sm md:text-base ${
                           logoType === 'letter'
@@ -664,13 +697,14 @@ export default function NewCreateCollectivePage() {
                     {logoType === 'letter' && (
                       <div>
                         <h4 className="font-semibold text-foreground mb-3 text-sm md:text-base">Background Color</h4>
-                        <div className="grid grid-cols-4 md:flex md:gap-3 gap-2">
+                        {/* <div className="grid grid-cols-4 md:grid-cols-6 lg:grid-cols-8 sm:flex sm:gap-3 gap-2"> */}
+                        <div className="flex flex-wrap gap-3">
                           {colorSwatches.map((color) => (
                             <button
                               key={color}
                               onClick={() => handleColorSelect(color)}
                               className={`w-10 h-10 md:w-12 md:h-12 rounded-lg transition-transform hover:scale-110 ${
-                                logoColor === color ? 'ring-2 ring-gray-900' : ''
+                                letterLogoColor === color ? 'ring-2 ring-gray-900' : ''
                               }`}
                               style={{ backgroundColor: color }}
                               aria-label={`Select color ${color}`}

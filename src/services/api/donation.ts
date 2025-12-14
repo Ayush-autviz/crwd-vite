@@ -96,3 +96,9 @@ export const addCollectiveToDonation = async (collective_id: string) => {
     const response = await axiosClient.post(`/donations/box/add-collective/${collective_id}/`);
     return response.data;
 };
+
+
+export const getTransactionReceipt = async (donation_id: string) => {
+    const response = await axiosClient.get(`/donations/receipt/${donation_id}/`);
+    return response.data;
+};

@@ -6,15 +6,35 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
-import { getCollectiveById, updateCollective, getCollectiveCauses, createCollectiveCause, deleteCollectiveCause } from '@/services/api/crwd';
+import { getCollectiveById, patchCollective, getCollectiveCauses, createCollectiveCause, deleteCollectiveCause } from '@/services/api/crwd';
 import { getCausesBySearch } from '@/services/api/crwd';
 import { useAuthStore } from '@/stores/store';
 import { categories } from '@/constants/categories';
+import { toast } from 'sonner';
 
 // Helper function to get category by ID
 const getCategoryById = (categoryId: string | undefined) => {
   if (!categoryId) return null;
   return categories.find(cat => cat.id === categoryId) || null;
+};
+
+// Avatar colors for consistent fallback styling
+const avatarColors = [
+  '#FF6B6B', '#4CAF50', '#FF9800', '#9C27B0', '#2196F3',
+  '#FFC107', '#E91E63', '#00BCD4', '#8BC34A', '#FF5722',
+  '#673AB7', '#009688', '#FFEB3B', '#795548', '#607D8B',
+];
+
+const getConsistentColor = (id: number | string, colors: string[]) => {
+  const hash = typeof id === 'number' ? id : id.split('').reduce((acc: number, char: string) => acc + char.charCodeAt(0), 0);
+  return colors[hash % colors.length];
+};
+
+const getInitials = (name: string) => {
+  const words = name.split(' ').filter(Boolean);
+  if (words.length === 0) return 'N';
+  if (words.length === 1) return words[0].charAt(0).toUpperCase();
+  return (words[0].charAt(0) + words[words.length - 1].charAt(0)).toUpperCase();
 };
 
 export default function EditCollectivePage() {
@@ -24,26 +44,35 @@ export default function EditCollectivePage() {
   const { user: currentUser } = useAuthStore();
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
-  const [logo, setLogo] = useState<string | File>('');
+  // Logo customization state - separate states for letter and upload
   const [logoType, setLogoType] = useState<'letter' | 'upload'>('letter');
-  const [logoColor, setLogoColor] = useState('#EC4899');
-  const [logoPreview, setLogoPreview] = useState<string | null>(null);
+  const [letterLogoColor, setLetterLogoColor] = useState('#1600ff'); // State for letter logo background color
+  const [uploadedLogo, setUploadedLogo] = useState<File | null>(null); // State for uploaded file
+  const [uploadedLogoPreview, setUploadedLogoPreview] = useState<string | null>(null); // State for uploaded image preview
   const [showLogoCustomization, setShowLogoCustomization] = useState(false);
+  
+  // Store default values from API
+  const [defaultColor, setDefaultColor] = useState<string>('');
+  const [defaultLogo, setDefaultLogo] = useState<string | null>(null);
+  const [initialName, setInitialName] = useState<string>('');
+  const [initialDescription, setInitialDescription] = useState<string>('');
+  const [initialCauseIds, setInitialCauseIds] = useState<number[]>([]);
   
   // Causes management state
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCauses, setSelectedCauses] = useState<any[]>([]);
   const [searchTrigger, setSearchTrigger] = useState(0);
+  const [initialCauseCount, setInitialCauseCount] = useState(0); // Track initial cause count
 
   const colorSwatches = [
-    '#3B82F6', // Blue
-    '#EC4899', // Pink/Red
-    '#84CC16', // Lime Green
-    '#8B5CF6', // Purple
-    '#14B8A6', // Teal
-    '#F97316', // Orange
+    '#0000FF', // Blue
+    '#FF3366', // Pink/Red
+    '#ADFF2F', // Lime Green
+    '#A855F7', // Purple
+    '#10B981', // Teal
+    '#FF6B35', // Orange
     '#EF4444', // Red
-    '#06B6D4', // Light Blue/Periwinkle
+    '#6366F1', // Indigo
   ];
 
   // Fetch collective data
@@ -77,21 +106,33 @@ export default function EditCollectivePage() {
   // Initialize form data when collective data loads
   useEffect(() => {
     if (crwdData) {
-      setName(crwdData.name || '');
-      setDescription(crwdData.description || '');
+      const apiName = crwdData.name || '';
+      const apiDescription = crwdData.description || '';
       
-      // Determine logo type
-      if (crwdData.avatar || crwdData.image) {
-        const logoUrl = crwdData.avatar || crwdData.image;
-        if (logoUrl.startsWith('http') || logoUrl.startsWith('/') || logoUrl.startsWith('data:')) {
-          setLogoType('upload');
-          setLogo(logoUrl);
-          setLogoPreview(logoUrl);
-        } else {
-          setLogoType('letter');
-          setLogoColor(logoUrl);
-          setLogo(logoUrl);
+      setName(apiName);
+      setDescription(apiDescription);
+      
+      // Store initial values
+      setInitialName(apiName);
+      setInitialDescription(apiDescription);
+      
+      // Store default values from API
+      setDefaultColor(crwdData.color || '');
+      setDefaultLogo(crwdData.logo || null);
+      
+      // Determine logo type - prioritize logo (image) over color
+      if (crwdData.logo) {
+        // Has logo image
+        setLogoType('upload');
+        setUploadedLogoPreview(crwdData.logo);
+        // Keep color as fallback if provided
+        if (crwdData.color) {
+          setLetterLogoColor(crwdData.color);
         }
+      } else if (crwdData.color) {
+        // Has color but no logo
+        setLogoType('letter');
+        setLetterLogoColor(crwdData.color);
       }
     }
   }, [crwdData]);
@@ -101,19 +142,29 @@ export default function EditCollectivePage() {
     if (collectiveCausesData) {
       const causes = collectiveCausesData.results || collectiveCausesData || [];
       // Map causes from the API response structure
-      setSelectedCauses(causes.map((item: any) => {
+      const mappedCauses = causes.map((item: any) => {
         // The API returns { id, cause: { id, name, description, category, ... }, ... }
         // We want to store the cause object with the category ID
         return item.cause || item;
-      }));
+      });
+      setSelectedCauses(mappedCauses);
+      // Store initial cause count
+      setInitialCauseCount(mappedCauses.length);
+      // Store initial cause IDs
+      const initialIds = mappedCauses.map((cause: any) => cause.id);
+      setInitialCauseIds(initialIds);
     }
   }, [collectiveCausesData]);
 
   // Update collective mutation
   const updateMutation = useMutation({
-    mutationFn: (data: any) => updateCollective(crwdId || '', data),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['crwd', crwdId] });
+    mutationFn: (data: any) => patchCollective(crwdId || '', data),
+    onSuccess: async () => {
+      // Invalidate and refetch queries to ensure fresh data
+      await queryClient.invalidateQueries({ queryKey: ['crwd', crwdId] });
+      await queryClient.invalidateQueries({ queryKey: ['collective-causes', crwdId] });
+      await queryClient.refetchQueries({ queryKey: ['crwd', crwdId] });
+      await queryClient.refetchQueries({ queryKey: ['collective-causes', crwdId] });
       navigate(`/groupcrwd/${crwdId}`);
     },
     onError: (error: any) => {
@@ -126,33 +177,57 @@ export default function EditCollectivePage() {
       return; // Name is required
     }
 
-    // Check if we have a file upload, then use FormData, otherwise use JSON
-    const hasFileUpload = logo instanceof File;
+    // Prepare cause_ids array
+    const causeIds = selectedCauses.map(cause => cause.id);
 
-    if (hasFileUpload) {
+    // Check what has changed
+    const nameChanged = name.trim() !== initialName;
+    const descriptionChanged = description.trim() !== initialDescription;
+    const causeIdsChanged = JSON.stringify(causeIds.sort()) !== JSON.stringify(initialCauseIds.sort());
+    const hasNewLogo = logoType === 'upload' && uploadedLogo !== null;
+    const colorChanged = logoType === 'letter' && letterLogoColor !== defaultColor;
+
+    // Use FormData if there's a file upload, otherwise use JSON
+    if (hasNewLogo) {
+      // New file uploaded - use FormData
       const formData = new FormData();
-      formData.append('name', name);
-      if (description) {
-        formData.append('description', description);
+      
+      // Only add changed fields
+      if (nameChanged) {
+        formData.append('name', name.trim());
       }
-      formData.append('image', logo);
+      if (descriptionChanged) {
+        formData.append('description', description.trim());
+      }
+      if (causeIdsChanged) {
+        // Append each cause_id separately (backend should handle this as an array)
+        causeIds.forEach(causeId => {
+          formData.append('cause_ids', causeId.toString());
+        });
+      }
+      formData.append('logo_file', uploadedLogo);
+      // Only send color if it changed
+      if (colorChanged) {
+        formData.append('color', letterLogoColor);
+      }
+      
       updateMutation.mutate(formData);
     } else {
-      // Use JSON for regular updates
-      const updateData: any = {
-        name: name.trim(),
-      };
+      // Use JSON - no file upload
+      const updateData: any = {};
       
-      if (description) {
+      // Only add changed fields
+      if (nameChanged) {
+        updateData.name = name.trim();
+      }
+      if (descriptionChanged) {
         updateData.description = description.trim();
       }
-
-      // Handle logo
-      if (logoType === 'letter') {
-        updateData.avatar = logoColor;
-      } else if (logo && typeof logo === 'string') {
-        // Keep existing logo URL
-        updateData.avatar = logo;
+      if (causeIdsChanged) {
+        updateData.cause_ids = causeIds;
+      }
+      if (colorChanged) {
+        updateData.color = letterLogoColor;
       }
 
       updateMutation.mutate(updateData);
@@ -162,18 +237,18 @@ export default function EditCollectivePage() {
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      setLogo(file);
-      const url = URL.createObjectURL(file);
-      setLogoPreview(url);
+      setUploadedLogo(file);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setUploadedLogoPreview(reader.result as string);
+      };
+      reader.readAsDataURL(file);
       setLogoType('upload');
     }
   };
 
   const handleColorSelect = (color: string) => {
-    setLogoColor(color);
-    setLogo(color);
-    setLogoType('letter');
-    setLogoPreview(null);
+    setLetterLogoColor(color);
   };
 
   // Causes management handlers
@@ -195,8 +270,14 @@ export default function EditCollectivePage() {
 
   const handleToggleCause = (cause: any) => {
     if (isCauseSelected(cause.id)) {
+      // Allow removing causes
       setSelectedCauses(prev => prev.filter(c => c.id !== cause.id));
     } else {
+      // Check if adding would exceed initial count
+      if (selectedCauses.length >= initialCauseCount) {
+        toast.error(`You cannot add more than ${initialCauseCount} cause${initialCauseCount === 1 ? '' : 's'}. You can only remove causes.`);
+        return; // Prevent adding the cause
+      }
       setSelectedCauses(prev => [...prev, cause]);
     }
   };
@@ -206,19 +287,19 @@ export default function EditCollectivePage() {
   };
 
   // Mutations for causes
-  const addCauseMutation = useMutation({
-    mutationFn: (causeId: number) => createCollectiveCause(crwdId || '', { cause: causeId }),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['collective-causes', crwdId] });
-    },
-  });
+  // const addCauseMutation = useMutation({
+  //   mutationFn: (causeId: number) => createCollectiveCause(crwdId || '', { cause: causeId }),
+  //   onSuccess: () => {
+  //     queryClient.invalidateQueries({ queryKey: ['collective-causes', crwdId] });
+  //   },
+  // });
 
-  const removeCauseMutation = useMutation({
-    mutationFn: (causePk: string) => deleteCollectiveCause(crwdId || '', causePk),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['collective-causes', crwdId] });
-    },
-  });
+  // const removeCauseMutation = useMutation({
+  //   mutationFn: (causePk: string) => deleteCollectiveCause(crwdId || '', causePk),
+  //   onSuccess: () => {
+  //     queryClient.invalidateQueries({ queryKey: ['collective-causes', crwdId] });
+  //   },
+  // });
 
   const handleSaveCauses = async () => {
     if (!crwdId) return;
@@ -229,20 +310,20 @@ export default function EditCollectivePage() {
     const selectedCauseIds = new Set(selectedCauses.map(c => c.id));
 
     // Add new causes
-    for (const cause of selectedCauses) {
-      if (!currentCauseIds.has(cause.id)) {
-        await addCauseMutation.mutateAsync(cause.id);
-      }
-    }
+    // for (const cause of selectedCauses) {
+    //   if (!currentCauseIds.has(cause.id)) {
+    //     await addCauseMutation.mutateAsync(cause.id);
+    //   }
+    // }
 
     // Remove causes that are no longer selected
-    for (const item of currentCauses) {
-      const cause = item.cause || item;
-      if (!selectedCauseIds.has(cause.id)) {
-        const causePk = item.id || cause.id;
-        await removeCauseMutation.mutateAsync(causePk.toString());
-      }
-    }
+    // for (const item of currentCauses) {
+    //   const cause = item.cause || item;
+    //   if (!selectedCauseIds.has(cause.id)) {
+    //     const causePk = item.id || cause.id;
+    //     await removeCauseMutation.mutateAsync(causePk.toString());
+    //   }
+    // }
 
     queryClient.invalidateQueries({ queryKey: ['collective-causes', crwdId] });
     queryClient.invalidateQueries({ queryKey: ['crwd', crwdId] });
@@ -271,9 +352,6 @@ export default function EditCollectivePage() {
   }
 
   const logoLetter = crwdData.name?.charAt(0).toUpperCase() || 'C';
-  const displayLogo = logoPreview || (logoType === 'upload' && typeof logo === 'string' && (logo.startsWith('http') || logo.startsWith('/') || logo.startsWith('data:'))
-    ? logo 
-    : null);
 
   return (
     <div className="min-h-screen bg-white">
@@ -346,15 +424,27 @@ export default function EditCollectivePage() {
         <div className="border border-gray-200 rounded-lg p-3 md:p-4">
           <div className="flex items-center gap-3 md:gap-4">
             <Avatar className="w-12 h-12 md:w-16 md:h-16 rounded-lg flex-shrink-0">
-              {displayLogo ? (
-                <AvatarImage src={displayLogo} alt={name} />
+              {logoType === 'upload' ? (
+                uploadedLogoPreview ? (
+                  <AvatarImage src={uploadedLogoPreview} alt={name} />
+                ) : (
+                  <AvatarFallback
+                    style={{ backgroundColor: '#f3f4f6' }}
+                    className="text-gray-400 rounded-lg font-bold text-lg md:text-2xl flex items-center justify-center"
+                  >
+                    <Camera className="w-6 h-6 md:w-8 md:h-8" />
+                  </AvatarFallback>
+                )
               ) : (
-                <AvatarFallback
-                  style={{ backgroundColor: logoColor }}
-                  className="text-white rounded-lg font-bold text-lg md:text-2xl"
-                >
+                // <AvatarFallback
+                //   style={{ backgroundColor: letterLogoColor }}
+                //   className="text-white rounded-lg font-bold text-lg md:text-2xl"
+                // >
+                //   {logoLetter}
+                // </AvatarFallback>
+                <div style={{ backgroundColor: letterLogoColor }} className="text-white rounded-lg font-bold text-lg md:text-2xl w-12 h-12 md:w-16 md:h-16 flex items-center justify-center">
                   {logoLetter}
-                </AvatarFallback>
+                </div>
               )}
             </Avatar>
             <div className="flex-1">
@@ -398,7 +488,7 @@ export default function EditCollectivePage() {
                     <Button
                       onClick={() => {
                         setLogoType('letter');
-                        setLogoPreview(null);
+                        // Don't clear uploaded logo - keep it for when switching back to upload
                       }}
                       className={`flex-1 font-semibold rounded-lg py-2.5 md:py-3 text-sm md:text-base ${
                         logoType === 'letter'
@@ -426,13 +516,13 @@ export default function EditCollectivePage() {
                   {logoType === 'letter' && (
                     <div>
                       <h4 className="font-semibold text-foreground mb-3 text-sm md:text-base">Background Color</h4>
-                      <div className="grid grid-cols-4 md:flex md:gap-3 gap-2">
+                      <div className="flex flex-wrap gap-3">
                         {colorSwatches.map((color) => (
                           <button
                             key={color}
                             onClick={() => handleColorSelect(color)}
                             className={`w-10 h-10 md:w-12 md:h-12 rounded-lg transition-transform hover:scale-110 ${
-                              logoColor === color ? 'ring-2 ring-gray-900' : ''
+                              letterLogoColor === color ? 'ring-2 ring-gray-900' : ''
                             }`}
                             style={{ backgroundColor: color }}
                             aria-label={`Select color ${color}`}
@@ -488,13 +578,19 @@ export default function EditCollectivePage() {
                   const categoryName = category?.name || 'Uncategorized';
                   const categoryColor = category?.text || '#10B981';
                   
+                  const avatarBgColor = getConsistentColor(causeData.id, avatarColors);
+                  const initials = getInitials(causeData.name || 'N');
+                  
                   return (
                     <div key={cause.id} className="bg-white rounded-lg p-3 md:p-4 shadow-sm hover:shadow-md transition-shadow">
                       <div className="flex items-center gap-3 md:gap-4">
                         <Avatar className="w-10 h-10 md:w-12 md:h-12 rounded-full flex-shrink-0">
                           <AvatarImage src={causeData.image} alt={causeData.name} />
-                          <AvatarFallback className="bg-gray-200 text-gray-600 font-bold text-xs md:text-sm">
-                            {causeData.name?.charAt(0).toUpperCase()}
+                          <AvatarFallback
+                            style={{ backgroundColor: avatarBgColor }}
+                            className="text-white font-bold text-xs md:text-sm"
+                          >
+                            {initials}
                           </AvatarFallback>
                         </Avatar>
                         <div className="flex-1 min-w-0">
@@ -576,6 +672,8 @@ export default function EditCollectivePage() {
                     const categoryName = category?.name || 'Uncategorized';
                     const categoryColor = category?.text || '#10B981';
                     const isSelected = isCauseSelected(cause.id);
+                    const avatarBgColor = getConsistentColor(cause.id, avatarColors);
+                    const initials = getInitials(cause.name || 'N');
 
                     return (
                       <div
@@ -584,8 +682,11 @@ export default function EditCollectivePage() {
                       >
                         <Avatar className="w-10 h-10 md:w-12 md:h-12 rounded-full flex-shrink-0">
                           <AvatarImage src={cause.image} alt={cause.name} />
-                          <AvatarFallback className="bg-gray-200 text-gray-600 font-bold text-xs md:text-sm">
-                            {cause.name?.charAt(0).toUpperCase()}
+                          <AvatarFallback
+                            style={{ backgroundColor: avatarBgColor }}
+                            className="text-white font-bold text-xs md:text-sm"
+                          >
+                            {initials}
                           </AvatarFallback>
                         </Avatar>
                         <div className="flex-1 min-w-0">
@@ -637,9 +738,9 @@ export default function EditCollectivePage() {
             await handleSaveCauses();
           }}
           className="bg-[#1600ff] hover:bg-[#1400cc] text-white font-semibold rounded-full px-4 md:px-6 w-[48%] py-2 md:py-2.5 text-xs md:text-sm"
-          disabled={updateMutation.isPending || addCauseMutation.isPending || removeCauseMutation.isPending}
+          disabled={updateMutation.isPending }
         >
-          {updateMutation.isPending || addCauseMutation.isPending || removeCauseMutation.isPending ? (
+          {updateMutation.isPending ? (
             <>
               <Loader2 className="w-3.5 h-3.5 md:w-4 md:h-4 mr-1.5 md:mr-2 animate-spin" />
               Saving...

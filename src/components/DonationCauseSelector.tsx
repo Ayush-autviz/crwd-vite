@@ -146,26 +146,26 @@ export default function DonationCauseSelector({
               className="pl-10 pr-4 py-2 md:py-2.5"
             />
           </div>
-          <Button 
+          {/* <Button 
             onClick={handleSearch} 
             disabled={!searchQuery.trim()}
             className="bg-[#1600ff] hover:bg-[#1400cc] text-white px-4 md:px-6 rounded-lg"
           >
             All
-          </Button>
+          </Button> */}
         </div>
-        {onRequestNonprofit ? (
+        {/* {onRequestNonprofit ? ( */}
           <button
             onClick={onRequestNonprofit}
-            className="text-[#1600ff] text-sm md:text-base underline"
+            className="text-[#1600ff] text-sm md:text-base underline flex justify-center w-full"
           >
             Can't find your nonprofit? Request it here
           </button>
-        ) : (
+        {/* ) : (
           <Link to="/request-nonprofit" className="text-[#1600ff] text-sm md:text-base underline">
             Can't find your nonprofit? Request it here
           </Link>
-        )}
+        )} */}
       </div>
 
       {/* Causes List */}

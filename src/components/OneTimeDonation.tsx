@@ -1,3 +1,4 @@
+
 import { Minus, Plus, Trash2 } from "lucide-react";
 import { Link } from 'react-router-dom';
 import { Button } from "./ui/button";
@@ -6,6 +7,7 @@ import DonationCauseSelector from "./DonationCauseSelector";
 import { useMutation } from '@tanstack/react-query';
 import { createOneTimeDonation } from '@/services/api/donation';
 import RequestNonprofitModal from '@/components/newsearch/RequestNonprofitModal';
+import { toast } from 'sonner';
 
 interface OneTimeDonationProps {
   setCheckout: (value: boolean) => void;
@@ -17,6 +19,9 @@ interface OneTimeDonationProps {
     data: any;
   };
   activeTab?: string;
+  preselectedCauses?: number[];
+  preselectedCausesData?: any[];
+  preselectedCollectiveId?: number;
 }
 
 interface SelectedItem {
@@ -30,12 +35,16 @@ export default function OneTimeDonation({
   selectedOrganizations,
   setSelectedOrganizations,
   preselectedItem,
-  activeTab
+  activeTab,
+  preselectedCauses,
+  preselectedCausesData,
+  preselectedCollectiveId,
 }: OneTimeDonationProps) {
   const [selectedItems, setSelectedItems] = useState<SelectedItem[]>([]);
   const [donationAmount, setDonationAmount] = useState(5);
   const [inputValue, setInputValue] = useState("5");
   const [preselectedItemAdded, setPreselectedItemAdded] = useState(false);
+  const [preselectedCausesProcessed, setPreselectedCausesProcessed] = useState(false);
   const [showRequestModal, setShowRequestModal] = useState(false);
 
   // Avatar colors for consistent coloring
@@ -72,6 +81,37 @@ export default function OneTimeDonation({
     }
   }, [preselectedItem, setSelectedOrganizations, preselectedItemAdded]);
 
+  // Handle preselected causes from collective (multiple causes)
+  useEffect(() => {
+    if (preselectedCauses && preselectedCauses.length > 0 && !preselectedCausesProcessed) {
+      console.log('OneTimeDonation: Setting preselected causes:', preselectedCauses, preselectedCausesData);
+      
+      // If we have the full cause data, use it directly
+      if (preselectedCausesData && preselectedCausesData.length > 0) {
+        const causesAsItems: SelectedItem[] = preselectedCausesData.map((cause: any) => ({
+          id: cause.id.toString(),
+          type: 'cause' as const,
+          data: cause,
+        }));
+        
+        setSelectedItems(causesAsItems);
+        setSelectedOrganizations(causesAsItems.map(item => item.id));
+        setPreselectedCausesProcessed(true);
+      } else {
+        // Fallback: create items from IDs only
+        const causesAsItems: SelectedItem[] = preselectedCauses.map((causeId: number) => ({
+          id: causeId.toString(),
+          type: 'cause' as const,
+          data: { id: causeId },
+        }));
+        
+        setSelectedItems(causesAsItems);
+        setSelectedOrganizations(causesAsItems.map(item => item.id));
+        setPreselectedCausesProcessed(true);
+      }
+    }
+  }, [preselectedCauses, preselectedCausesData, preselectedCausesProcessed, setSelectedOrganizations]);
+
   // One-time donation mutation
   const oneTimeDonationMutation = useMutation({
     mutationFn: createOneTimeDonation,
@@ -94,6 +134,30 @@ export default function OneTimeDonation({
   const decrementDonation = () => {
     if (donationAmount > 5) {
       const newAmount = donationAmount - 5;
+      
+      // Calculate max capacity for new amount
+      const calculateFees = (grossAmount: number) => {
+        const gross = grossAmount;
+        const stripeFee = (gross * 0.029) + 0.30;
+        const crwdFee = (gross - stripeFee) * 0.07;
+        const net = gross - stripeFee - crwdFee;
+        return {
+          stripeFee: Math.round(stripeFee * 100) / 100,
+          crwdFee: Math.round(crwdFee * 100) / 100,
+          net: Math.round(net * 100) / 100,
+        };
+      };
+      const fees = calculateFees(newAmount);
+      const net = fees.net;
+      const newMaxCapacity = Math.floor(net / 0.20);
+      const currentCapacity = selectedItems.length;
+      
+      // Check if new amount would reduce capacity below current causes
+      if (currentCapacity > newMaxCapacity) {
+        toast.error(`You have ${currentCapacity} cause${currentCapacity !== 1 ? 's' : ''} selected. Please remove ${currentCapacity - newMaxCapacity} cause${currentCapacity - newMaxCapacity !== 1 ? 's' : ''} to lower the donation amount to $${newAmount}.`);
+        return;
+      }
+      
       setDonationAmount(newAmount);
       setInputValue(newAmount.toString());
     }
@@ -110,6 +174,35 @@ export default function OneTimeDonation({
     const numValue = parseInt(inputValue) || 1;
     // Ensure minimum donation is $5
     const finalValue = numValue < 5 ? 5 : numValue;
+    
+    // Only validate if the amount is being lowered
+    if (finalValue < donationAmount) {
+      // Calculate max capacity for new amount
+      const calculateFees = (grossAmount: number) => {
+        const gross = grossAmount;
+        const stripeFee = (gross * 0.029) + 0.30;
+        const crwdFee = (gross - stripeFee) * 0.07;
+        const net = gross - stripeFee - crwdFee;
+        return {
+          stripeFee: Math.round(stripeFee * 100) / 100,
+          crwdFee: Math.round(crwdFee * 100) / 100,
+          net: Math.round(net * 100) / 100,
+        };
+      };
+      const fees = calculateFees(finalValue);
+      const net = fees.net;
+      const newMaxCapacity = Math.floor(net / 0.20);
+      const currentCapacity = selectedItems.length;
+      
+      // Check if new amount would reduce capacity below current causes
+      if (currentCapacity > newMaxCapacity) {
+        toast.error(`You have ${currentCapacity} cause${currentCapacity !== 1 ? 's' : ''} selected. Please remove ${currentCapacity - newMaxCapacity} cause${currentCapacity - newMaxCapacity !== 1 ? 's' : ''} to lower the donation amount to $${finalValue}.`);
+        // Revert to current donation amount
+        setInputValue(donationAmount.toString());
+        return;
+      }
+    }
+    
     setDonationAmount(finalValue);
     setInputValue(finalValue.toString());
   };
@@ -121,6 +214,30 @@ export default function OneTimeDonation({
     );
     
     if (!isAlreadySelected) {
+      // Calculate max capacity before adding
+      const calculateFees = (grossAmount: number) => {
+        const gross = grossAmount;
+        const stripeFee = (gross * 0.029) + 0.30;
+        const crwdFee = (gross - stripeFee) * 0.07;
+        const net = gross - stripeFee - crwdFee;
+        return {
+          stripeFee: Math.round(stripeFee * 100) / 100,
+          crwdFee: Math.round(crwdFee * 100) / 100,
+          net: Math.round(net * 100) / 100,
+        };
+      };
+      const actualDonationAmount = parseFloat(donationAmount.toString());
+      const fees = calculateFees(actualDonationAmount);
+      const net = fees.net;
+      const maxCapacity = Math.floor(net / 0.20);
+      const currentCapacity = selectedItems.length;
+      
+      // Check if adding this item would exceed capacity
+      if (currentCapacity >= maxCapacity) {
+        toast.error(`You can only add up to ${maxCapacity} cause${maxCapacity !== 1 ? 's' : ''} for $${donationAmount}. Increase your donation amount to support more causes.`);
+        return;
+      }
+      
       setSelectedItems((prev: SelectedItem[]) => [...prev, item]);
       // Also update the legacy selectedOrganizations for backward compatibility
       setSelectedOrganizations([...selectedOrganizations, item.id]);
@@ -331,7 +448,7 @@ export default function OneTimeDonation({
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
-                          handleRemoveItem(item.id);
+                          handleRemoveItem(`${item.type}-${item.id}`);
                         }}
                         className="p-1.5 md:p-2 text-gray-400 hover:text-red-500 transition-colors flex-shrink-0"
                       >
@@ -363,9 +480,9 @@ export default function OneTimeDonation({
         <Button
           onClick={handleCheckout}
           disabled={oneTimeDonationMutation.isPending || selectedItems.length === 0}
-          className="bg-[#aeff30] hover:bg-[#91d11c] text-black w-full py-4 md:py-6 rounded-full font-bold transition-colors flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed text-sm md:text-base"
+          className="bg-[#1600ff] hover:bg-[#1400cc] text-white w-full py-4 md:py-6 rounded-full font-bold transition-colors flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed text-sm md:text-base"
         >
-          {oneTimeDonationMutation.isPending ? 'Processing...' : 'Checkout'}
+          {oneTimeDonationMutation.isPending ? 'Processing...' : 'Continue to Review'}
         </Button>
       </div>
 

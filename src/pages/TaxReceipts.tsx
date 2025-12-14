@@ -1,12 +1,12 @@
 import { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useQuery } from '@tanstack/react-query';
-import { ArrowLeft, Download, FileText, CheckCircle2 } from 'lucide-react';
+import { useQuery, useMutation } from '@tanstack/react-query';
+import { ArrowLeft, Download, FileText, CheckCircle2, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { getDonationHistory } from '@/services/api/donation';
-import { Loader2 } from 'lucide-react';
+import { getDonationHistory, getTransactionReceipt } from '@/services/api/donation';
 import { format } from 'date-fns';
+import { toast } from 'sonner';
 
 interface Transaction {
   id: number;
@@ -93,10 +93,34 @@ export default function TaxReceiptsPage() {
     console.log('Download all receipts for', selectedYear);
   };
 
+  // Open Stripe receipt in new tab
+  const openStripeReceipt = (url: string) => {
+    window.open(url, "_blank", "noopener,noreferrer");
+  };
+
+  // Download receipt mutation
+  const downloadReceiptMutation = useMutation({
+    mutationFn: (donationId: string) => getTransactionReceipt(donationId),
+    onSuccess: (response) => {
+      if (response.receipt_url || response.url || response.file_url) {
+        const receiptUrl = response.receipt_url || response.url || response.file_url;
+        openStripeReceipt(receiptUrl);
+        toast.success('Receipt opened successfully!');
+      } else {
+        toast.error('Failed to get receipt URL.');
+      }
+    },
+    onError: (error) => {
+      console.error('Error fetching receipt:', error);
+      toast.error('Failed to fetch receipt. Please try again.');
+    },
+  });
+
   // Handle download single receipt
   const handleDownloadReceipt = (transaction: Transaction) => {
-    // TODO: Implement download single receipt functionality
-    console.log('Download receipt for transaction', transaction.id);
+    if (transaction.id) {
+      downloadReceiptMutation.mutate(transaction.id.toString());
+    }
   };
 
   if (isLoading) {
@@ -195,7 +219,7 @@ export default function TaxReceiptsPage() {
                         </div>
                         <div>
                           <div className="font-semibold text-sm text-gray-500">{formattedDate}</div>
-                          <div className="text-sm text-gray-500">Receipt #{receiptNumber}</div>
+                          {/* <div className="text-sm text-gray-500">Receipt #{receiptNumber}</div> */}
                         </div>
                       </div>
                       <div className="text-right">
@@ -254,9 +278,19 @@ export default function TaxReceiptsPage() {
                         onClick={() => handleDownloadReceipt(transaction)}
                         variant="outline"
                         className="text-sm"
+                        disabled={downloadReceiptMutation.isPending}
                       >
-                        <Download className="w-4 h-4 mr-2" />
-                        Download
+                        {downloadReceiptMutation.isPending ? (
+                          <>
+                            <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                            Loading...
+                          </>
+                        ) : (
+                          <>
+                            <Download className="w-4 h-4 mr-2" />
+                            View Receipt
+                          </>
+                        )}
                       </Button>
                     </div>
                   </CardContent>

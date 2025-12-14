@@ -289,8 +289,34 @@ export default function NewGroupCrwdPage() {
   };
 
   const handleOneTimeDonation = () => {
-    // Navigate to one-time donation flow
-    navigate(`/donation?collective=${crwdId}`);
+    // Get causes from the collective
+    const collectiveCauses = nonprofits.map((np: any) => {
+      const cause = np.cause || np;
+      return {
+        id: cause.id || np.id,
+        name: cause.name || np.name || 'Unknown Nonprofit',
+        description: cause.mission || cause.description || np.mission || np.description || '',
+        mission: cause.mission || np.mission || '',
+        logo: cause.image || cause.logo || np.image || np.logo || '',
+      };
+    });
+
+    const causeIds = collectiveCauses.map((cause: any) => cause.id);
+
+    // Navigate to one-time donation tab with preselected causes
+    navigate('/donation?tab=onetime', {
+      state: {
+        preselectedItem: {
+          id: crwdId,
+          type: 'collective',
+          data: crwdData,
+        },
+        activeTab: 'onetime',
+        preselectedCauses: causeIds,
+        preselectedCausesData: collectiveCauses,
+        preselectedCollectiveId: parseInt(crwdId || '0'),
+      },
+    });
   };
 
   const handleShare = () => {

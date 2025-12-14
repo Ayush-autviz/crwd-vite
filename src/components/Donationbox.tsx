@@ -16,6 +16,7 @@ import { useAuthStore } from "@/stores/store";
 import ProfileNavbar from "./profile/ProfileNavbar";
 import RequestNonprofitModal from "./newsearch/RequestNonprofitModal";
 import DonationReviewBottomSheet from "./donation/DonationReviewBottomSheet";
+import { toast } from "sonner";
 
 interface DonationBoxProps {
   tab?: string;
@@ -330,6 +331,30 @@ const DonationBox = ({ tab = "setup", preselectedItem, activeTab, fromPaymentRes
   const decrementDonation = () => {
     if (donationAmount > 5) {
       const newAmount = Math.max(5, donationAmount - 5);
+      
+      // Calculate max capacity for new amount
+      const calculateFees = (grossAmount: number) => {
+        const gross = grossAmount;
+        const stripeFee = (gross * 0.029) + 0.30;
+        const crwdFee = (gross - stripeFee) * 0.07;
+        const net = gross - stripeFee - crwdFee;
+        return {
+          stripeFee: Math.round(stripeFee * 100) / 100,
+          crwdFee: Math.round(crwdFee * 100) / 100,
+          net: Math.round(net * 100) / 100,
+        };
+      };
+      const fees = calculateFees(newAmount);
+      const net = fees.net;
+      const newMaxCapacity = Math.floor(net / 0.20);
+      const currentCapacity = selectedCauseIds.length + selectedCollectiveIds.length;
+      
+      // Check if new amount would reduce capacity below current causes
+      if (currentCapacity > newMaxCapacity) {
+        toast.error(`You have ${currentCapacity} cause${currentCapacity !== 1 ? 's' : ''} selected. Please remove ${currentCapacity - newMaxCapacity} cause${currentCapacity - newMaxCapacity !== 1 ? 's' : ''} to lower the donation amount to $${newAmount}.`);
+        return;
+      }
+      
       setDonationAmount(newAmount);
       setInputValue(newAmount.toString());
     }
@@ -346,6 +371,35 @@ const DonationBox = ({ tab = "setup", preselectedItem, activeTab, fromPaymentRes
     const numValue = parseInt(inputValue) || 1;
     // Ensure minimum donation is $5
     const finalValue = numValue < 5 ? 5 : numValue;
+    
+    // Only validate if the amount is being lowered
+    if (finalValue < donationAmount) {
+      // Calculate max capacity for new amount
+      const calculateFees = (grossAmount: number) => {
+        const gross = grossAmount;
+        const stripeFee = (gross * 0.029) + 0.30;
+        const crwdFee = (gross - stripeFee) * 0.07;
+        const net = gross - stripeFee - crwdFee;
+        return {
+          stripeFee: Math.round(stripeFee * 100) / 100,
+          crwdFee: Math.round(crwdFee * 100) / 100,
+          net: Math.round(net * 100) / 100,
+        };
+      };
+      const fees = calculateFees(finalValue);
+      const net = fees.net;
+      const newMaxCapacity = Math.floor(net / 0.20);
+      const currentCapacity = selectedCauseIds.length + selectedCollectiveIds.length;
+      
+      // Check if new amount would reduce capacity below current causes
+      if (currentCapacity > newMaxCapacity) {
+        toast.error(`You have ${currentCapacity} cause${currentCapacity !== 1 ? 's' : ''} selected. Please remove ${currentCapacity - newMaxCapacity} cause${currentCapacity - newMaxCapacity !== 1 ? 's' : ''} to lower the donation amount to $${finalValue}.`);
+        // Revert to current donation amount
+        setInputValue(donationAmount.toString());
+        return;
+      }
+    }
+    
     setDonationAmount(finalValue);
     setInputValue(finalValue.toString());
   };
@@ -593,6 +647,9 @@ const DonationBox = ({ tab = "setup", preselectedItem, activeTab, fromPaymentRes
                 setSelectedOrganizations={setSelectedOrganizations}
                 preselectedItem={preselectedItem}
                 activeTab={activeTab}
+                preselectedCauses={preselectedCauses}
+                preselectedCausesData={preselectedCausesData}
+                preselectedCollectiveId={preselectedCollectiveId}
               />
             </>
           ) : (
@@ -824,6 +881,30 @@ const DonationBox = ({ tab = "setup", preselectedItem, activeTab, fromPaymentRes
                                 <button
                                   onClick={(e) => {
                                     e.stopPropagation();
+                                    // Calculate max capacity
+                                    const calculateFees = (grossAmount: number) => {
+                                      const gross = grossAmount;
+                                      const stripeFee = (gross * 0.029) + 0.30;
+                                      const crwdFee = (gross - stripeFee) * 0.07;
+                                      const net = gross - stripeFee - crwdFee;
+                                      return {
+                                        stripeFee: Math.round(stripeFee * 100) / 100,
+                                        crwdFee: Math.round(crwdFee * 100) / 100,
+                                        net: Math.round(net * 100) / 100,
+                                      };
+                                    };
+                                    const actualDonationAmount = parseFloat(donationAmount.toString());
+                                    const fees = calculateFees(actualDonationAmount);
+                                    const net = fees.net;
+                                    const maxCapacity = Math.floor(net / 0.20);
+                                    const currentCapacity = selectedCauseIds.length + selectedCollectiveIds.length;
+                                    
+                                    // Check if adding this cause would exceed capacity
+                                    if (currentCapacity >= maxCapacity) {
+                                      toast.error(`You can only add up to ${maxCapacity} cause${maxCapacity !== 1 ? 's' : ''} for $${donationAmount}. Increase your donation amount to support more causes.`);
+                                      return;
+                                    }
+                                    
                                     setSelectedCauseIds([...selectedCauseIds, cause.id]);
                                     setSelectedCausesData([...selectedCausesData, cause]);
                                   }}
@@ -895,6 +976,30 @@ const DonationBox = ({ tab = "setup", preselectedItem, activeTab, fromPaymentRes
                                       setSelectedCollectiveIds(selectedCollectiveIds.filter(id => id !== collective.id));
                                       setSelectedCollectivesData(selectedCollectivesData.filter(c => c.id !== collective.id));
                                     } else {
+                                      // Calculate max capacity before adding collective
+                                      const calculateFees = (grossAmount: number) => {
+                                        const gross = grossAmount;
+                                        const stripeFee = (gross * 0.029) + 0.30;
+                                        const crwdFee = (gross - stripeFee) * 0.07;
+                                        const net = gross - stripeFee - crwdFee;
+                                        return {
+                                          stripeFee: Math.round(stripeFee * 100) / 100,
+                                          crwdFee: Math.round(crwdFee * 100) / 100,
+                                          net: Math.round(net * 100) / 100,
+                                        };
+                                      };
+                                      const actualDonationAmount = parseFloat(donationAmount.toString());
+                                      const fees = calculateFees(actualDonationAmount);
+                                      const net = fees.net;
+                                      const maxCapacity = Math.floor(net / 0.20);
+                                      const currentCapacity = selectedCauseIds.length + selectedCollectiveIds.length;
+                                      
+                                      // Check if adding this collective would exceed capacity
+                                      if (currentCapacity >= maxCapacity) {
+                                        toast.error(`You can only add up to ${maxCapacity} cause${maxCapacity !== 1 ? 's' : ''} for $${donationAmount}. Increase your donation amount to support more causes.`);
+                                        return;
+                                      }
+                                      
                                       setSelectedCollectiveIds([...selectedCollectiveIds, collective.id]);
                                       setSelectedCollectivesData([...selectedCollectivesData, collective]);
                                     }
@@ -996,8 +1101,8 @@ const DonationBox = ({ tab = "setup", preselectedItem, activeTab, fromPaymentRes
                     {/* </div> */}
 
                   {/* Summary and Next Button */}
-                <div className="bg-white rounded-xl p-4 md:p-6 shadow-sm border border-gray-100 fixed bottom-0 w-full left-0 right-0 md:relative md:rounded-t-xl md:mt-4">
-                    {/* <div className="flex justify-between items-center">
+                {/* <div className="bg-white rounded-xl p-4 md:p-6 shadow-sm border border-gray-100 fixed bottom-0 w-full left-0 right-0 md:relative md:rounded-t-xl md:mt-4">
+                    <div className="flex justify-between items-center">
                       <div>
                         <p className="text-lg font-semibold text-gray-800">
                           ${donationAmount} per month
@@ -1038,9 +1143,9 @@ const DonationBox = ({ tab = "setup", preselectedItem, activeTab, fromPaymentRes
                           <path d="m12 5 7 7-7 7" />
                         </svg>
                       </button>
-                    </div> */}
+                    </div>
 
-                  </div>
+                  </div> */}
 
                   {/* <div className="h-24 md:hidden"></div> */}
                 </div>
