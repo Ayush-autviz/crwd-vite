@@ -22,7 +22,7 @@ import {
 } from "@/components/ui/dialog";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { getCausesBySearch, getJoinCollective, getCollectiveById } from "@/services/api/crwd";
-import { updateDonationBox, cancelDonationBox, getDonationHistory } from "@/services/api/donation";
+import { updateDonationBox, cancelDonationBox, getDonationHistory, getDonationBox } from "@/services/api/donation";
 import { useAuthStore } from "@/stores/store";
 import { cn } from "@/lib/utils";
 import { Toast } from "./ui/toast";
@@ -107,6 +107,13 @@ const ManageDonationBox: React.FC<ManageDonationBoxProps> = ({
     queryKey: ['joined-collectives-manage'],
     queryFn: () => getJoinCollective(currentUser?.id),
     enabled: activeTab === 'collectives',
+  });
+
+  // Fetch donation box data to get box_causes with attributed_collectives
+  const { data: donationBoxData } = useQuery({
+    queryKey: ['donationBox', currentUser?.id],
+    queryFn: () => getDonationBox(),
+    enabled: !!currentUser?.id,
   });
 
   // Mutation to add causes/collectives to box
@@ -342,18 +349,86 @@ const ManageDonationBox: React.FC<ManageDonationBoxProps> = ({
         return;
       }
 
-      // Prepare payload with amount and all causes/collectives
-      const payload: any = {
-        monthly_amount: editableAmount,
+      // Build causes array with cause_id and optional attributed_collective
+      const causesArray: Array<{ cause_id: number; attributed_collective?: number }> = [];
+
+      // Get box_causes from donation box data to map attributed_collectives
+      const boxCauses = donationBoxData?.box_causes || [];
+      const causeToAttributedCollective = new Map<number, number>();
+      
+      // Map existing causes to their attributed_collective from box_causes
+      boxCauses.forEach((boxCause: any) => {
+        const causeId = boxCause.cause?.id;
+        if (causeId) {
+          // Check if attributed_collectives exists and is not "manual"
+          const attributedCollectives = boxCause.attributed_collectives || [];
+          // Find the first numeric collective ID (not "manual")
+          const numericCollectiveId = attributedCollectives.find((ac: any) => 
+            typeof ac === 'number' && ac !== 0
+          );
+          if (numericCollectiveId) {
+            causeToAttributedCollective.set(causeId, numericCollectiveId);
+          }
+        }
+      });
+
+      // Add existing causes (not removed) with their attributed_collective from box_causes
+      remainingExistingCauseIds.forEach((causeId) => {
+        const attributedCollective = causeToAttributedCollective.get(causeId);
+        const causeEntry: { cause_id: number; attributed_collective?: number } = {
+          cause_id: causeId,
+        };
+        // Only add attributed_collective if it exists and is not 0
+        if (attributedCollective && attributedCollective !== 0) {
+          causeEntry.attributed_collective = attributedCollective;
+        }
+        causesArray.push(causeEntry);
+      });
+
+      // Add newly selected causes (standalone, no attributed_collective)
+      selectedCauses.forEach((causeId) => {
+        causesArray.push({
+          cause_id: causeId,
+        });
+      });
+
+      // Add causes from newly selected collectives
+      // When a collective is selected, we need to get its causes and add them with attributed_collective
+      for (const collectiveId of selectedCollectives) {
+        try {
+          const collectiveData = collectiveDetails[collectiveId] || await getCollectiveById(collectiveId.toString());
+          if (collectiveData?.causes) {
+            collectiveData.causes.forEach((collectiveCause: any) => {
+              const causeId = collectiveCause.cause?.id || collectiveCause.id;
+              if (causeId) {
+                // Check if this cause is already in the array (shouldn't happen for newly selected, but just in case)
+                const alreadyExists = causesArray.some(c => c.cause_id === causeId);
+                if (!alreadyExists) {
+                  const causeEntry: { cause_id: number; attributed_collective?: number } = {
+                    cause_id: causeId,
+                    attributed_collective: collectiveId,
+                  };
+                  causesArray.push(causeEntry);
+                }
+              }
+            });
+          }
+        } catch (error) {
+          console.error(`Error fetching collective ${collectiveId} details:`, error);
+        }
+      }
+
+      // Note: Causes from existing collectives are already included in remainingExistingCauseIds
+      // with their attributed_collective mapped from box_causes above, so we don't need to add them separately
+
+      // Prepare payload with new format
+      const payload: {
+        monthly_amount: string;
+        causes: Array<{ cause_id: number; attributed_collective?: number }>;
+      } = {
+        monthly_amount: editableAmount.toString(),
+        causes: causesArray,
       };
-
-      if (allCauseIds.length > 0) {
-        payload.cause_ids = allCauseIds;
-      }
-
-      if (allCollectiveIds.length > 0) {
-        payload.collective_ids = allCollectiveIds;
-      }
 
       // Send single update call with all data
       await updateDonationBoxMutation.mutateAsync(payload);
@@ -364,9 +439,9 @@ const ManageDonationBox: React.FC<ManageDonationBoxProps> = ({
       setSelectedCollectives([]);
       setSelectedCausesData([]);
 
-      // Refresh data but stay on the page (don't navigate away)
+      // Refresh data and navigate back to donation page
       queryClient.invalidateQueries({ queryKey: ['donationBox', currentUser?.id] });
-      // Removed onBack() to stay on the ManageDonationBox page
+      onBack();
     } catch (error) {
       console.error('Error updating donation box:', error);
       // You might want to show an error toast here

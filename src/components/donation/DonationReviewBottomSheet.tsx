@@ -64,11 +64,29 @@ export default function DonationReviewBottomSheet({
 
   if (!isVisible) return null;
 
+  // Calculate fees using the provided formula
+  const calculateFees = (grossAmount: number) => {
+    const gross = grossAmount;
+    const stripeFee = (gross * 0.029) + 0.30;
+    const crwdFee = (gross - stripeFee) * 0.07;
+    const net = gross - stripeFee - crwdFee;
+    
+    return {
+      stripeFee: Math.round(stripeFee * 100) / 100,
+      crwdFee: Math.round(crwdFee * 100) / 100,
+      net: Math.round(net * 100) / 100,
+    };
+  };
+
+  const actualDonationAmount = parseFloat(donationAmount.toString());
+  const fees = calculateFees(actualDonationAmount);
+  
+  // Platform fee = CRWD fee + Stripe fee (sum of both)
+  const platformFee = fees.stripeFee + fees.crwdFee;
+  
   // Calculate totals - only count causes (not collectives)
   const totalCauses = selectedCauses.length;
-  const platformFee = donationAmount * 0.1; // 10% platform fee
-  const amountToCauses = donationAmount * 0.9; // 90% to causes
-  const perCause = totalCauses > 0 ? amountToCauses / totalCauses : 0;
+  const perCause = totalCauses > 0 ? fees.net / totalCauses : 0;
 
   // Avatar colors for consistent coloring
   const avatarColors = [
