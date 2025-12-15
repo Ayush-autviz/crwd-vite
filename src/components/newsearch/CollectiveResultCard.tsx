@@ -55,12 +55,13 @@ const getInitials = (name: string): string => {
 export default function CollectiveResultCard({ collective }: CollectiveResultCardProps) {
   const navigate = useNavigate();
   
-  // Priority: 1. Use color (with white text), 2. Use logo (image), 3. Fallback to generated color with letter
+  // Priority: 1. If color is available, show color with letter, 2. If no color, show image, 3. Fallback to generated color with letter
   const hasColor = collective.color;
   const hasLogo = collective.logo && (collective.logo.startsWith("http") || collective.logo.startsWith("/") || collective.logo.startsWith("data:"));
   const imageUrl = collective.logo || collective.image || collective.avatar;
-  const iconColor = hasColor || (!hasLogo ? getIconColor(collective.id % 6) : undefined);
+  const iconColor = hasColor ? collective.color : (!hasLogo ? getIconColor(collective.id % 6) : undefined);
   const iconLetter = getIconLetter(collective.name || 'C');
+  const showImage = !hasColor && hasLogo;
 
   // Get founder information
   const founder = collective.created_by;
@@ -86,7 +87,7 @@ export default function CollectiveResultCard({ collective }: CollectiveResultCar
             className="w-10 h-10 md:w-12 md:h-12 rounded-lg flex items-center justify-center flex-shrink-0"
             style={iconColor ? { backgroundColor: iconColor } : {}}
           >
-            {hasLogo && imageUrl ? (
+            {showImage && imageUrl ? (
               <img
                 src={imageUrl}
                 alt={collective.name}

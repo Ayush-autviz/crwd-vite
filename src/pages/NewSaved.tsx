@@ -172,11 +172,12 @@ export default function NewSavedPage() {
                 return name.charAt(0).toUpperCase();
               };
 
-              // Priority: 1. Use color (with white text), 2. Use logo (image), 3. Fallback to generated color with letter
+              // Priority: 1. If color is available, show color with letter, 2. If no color, show image, 3. Fallback to generated color with letter
               const hasColor = collective.color;
               const hasLogo = collective.logo && (collective.logo.startsWith("http") || collective.logo.startsWith("/") || collective.logo.startsWith("data:"));
-              const iconColor = hasColor || (!hasLogo ? getIconColor(index) : undefined);
+              const iconColor = hasColor ? collective.color : (!hasLogo ? getIconColor(index) : undefined);
               const iconLetter = getIconLetter(collective.name || 'C');
+              const showImage = !hasColor && hasLogo;
               
               const founder = collective.created_by;
               const memberCount = collective.member_count || 0;
@@ -190,7 +191,9 @@ export default function NewSavedPage() {
                   <CardContent className="px-4">
                     {/* <div className="flex items-start gap-4"> */}
                       <Avatar className="w-12 h-12 rounded-full flex-shrink-0">
-                        <AvatarImage src={hasLogo ? collective.logo : undefined} alt={collective.name} />
+                        {showImage ? (
+                          <AvatarImage src={collective.logo} alt={collective.name} />
+                        ) : null}
                         <AvatarFallback
                           style={iconColor ? { backgroundColor: iconColor } : {}}
                           className="text-white font-bold text-xl"

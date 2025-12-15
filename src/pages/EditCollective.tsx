@@ -206,10 +206,8 @@ export default function EditCollectivePage() {
         });
       }
       formData.append('logo_file', uploadedLogo);
-      // Only send color if it changed
-      if (colorChanged) {
-        formData.append('color', letterLogoColor);
-      }
+      // When logo is being displayed, send empty color string to clear the color
+      formData.append('color', '');
       
       updateMutation.mutate(formData);
     } else {
@@ -226,7 +224,12 @@ export default function EditCollectivePage() {
       if (causeIdsChanged) {
         updateData.cause_ids = causeIds;
       }
-      if (colorChanged) {
+      
+      // If logo is being displayed (logoType === 'upload'), send empty color to clear it
+      // Otherwise, send color if it changed
+      if (logoType === 'upload') {
+        updateData.color = '';
+      } else if (colorChanged) {
         updateData.color = letterLogoColor;
       }
 

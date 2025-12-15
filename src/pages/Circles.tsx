@@ -138,11 +138,12 @@ const Circles = () => {
                             return name.charAt(0).toUpperCase();
                           };
 
-                          // Priority: 1. Use color (with white text), 2. Use logo (image), 3. Fallback to generated color with letter
+                          // Priority: 1. If color is available, show color with letter, 2. If no color, show image, 3. Fallback to generated color with letter
                           const hasColor = circle.color;
                           const hasLogo = circle.logo && (circle.logo.startsWith("http") || circle.logo.startsWith("/") || circle.logo.startsWith("data:"));
-                          const iconColor = hasColor || (!hasLogo ? getIconColor(index) : undefined);
+                          const iconColor = hasColor ? circle.color : (!hasLogo ? getIconColor(index) : undefined);
                           const iconLetter = getIconLetter(circle.name || 'C');
+                          const showImage = !hasColor && hasLogo;
                           
                           const founderName = circle.created_by 
                             ? `${circle.created_by.first_name || ''} ${circle.created_by.last_name || ''}`.trim() || circle.created_by.username
@@ -159,7 +160,7 @@ const Circles = () => {
                                 className="w-10 h-10 md:w-12 md:h-12 rounded-full flex items-center justify-center mb-2 md:mb-3"
                                 style={iconColor ? { backgroundColor: iconColor } : {}}
                               >
-                                {hasLogo ? (
+                                {showImage ? (
                                   <img
                                     src={circle.logo}
                                     alt={circle.name}
@@ -236,11 +237,12 @@ const Circles = () => {
                   return name.charAt(0).toUpperCase();
                 };
 
-                // Priority: 1. Use color (with white text), 2. Use logo (image), 3. Fallback to generated color with letter
+                // Priority: 1. If color is available, show color with letter, 2. If no color, show image, 3. Fallback to generated color with letter
                 const hasColor = circle.color;
                 const hasLogo = circle.logo && (circle.logo.startsWith("http") || circle.logo.startsWith("/") || circle.logo.startsWith("data:"));
-                const iconColor = hasColor || (!hasLogo ? getIconColor(index) : undefined);
+                const iconColor = hasColor ? circle.color : (!hasLogo ? getIconColor(index) : undefined);
                 const iconLetter = getIconLetter(circle.name || 'C');
+                const showImage = !hasColor && hasLogo;
                 
                 const founderName = circle.created_by 
                   ? `${circle.created_by.first_name || ''} ${circle.created_by.last_name || ''}`.trim() || circle.created_by.username
@@ -253,22 +255,22 @@ const Circles = () => {
                     className="flex flex-col p-3 md:p-4 rounded-lg border border-gray-200 bg-white hover:bg-gray-50 transition-colors"
                   >
                     {/* Collective Icon */}
-                    <div
-                      className="w-10 h-10 md:w-12 md:h-12 rounded-full flex items-center justify-center mb-2 md:mb-3"
-                      style={iconColor ? { backgroundColor: iconColor } : {}}
-                    >
-                      {hasLogo ? (
-                        <img
-                          src={circle.logo}
-                          alt={circle.name}
-                          className="w-full h-full object-cover rounded-full"
-                        />
-                      ) : (
-                        <span className="text-white font-bold text-lg md:text-xl">
-                          {iconLetter}
-                        </span>
-                      )}
-                    </div>
+                      <div
+                        className="w-10 h-10 md:w-12 md:h-12 rounded-full flex items-center justify-center mb-2 md:mb-3"
+                        style={iconColor ? { backgroundColor: iconColor } : {}}
+                      >
+                        {showImage ? (
+                          <img
+                            src={circle.logo}
+                            alt={circle.name}
+                            className="w-full h-full object-cover rounded-full"
+                          />
+                        ) : (
+                          <span className="text-white font-bold text-lg md:text-xl">
+                            {iconLetter}
+                          </span>
+                        )}
+                      </div>
 
                     <h3 className="font-semibold text-sm md:text-base text-gray-900 mb-1 md:mb-1.5">
                       {circle.name}

@@ -57,19 +57,22 @@ export default function CollectiveProfile({
     return name.charAt(0).toUpperCase();
   };
 
-  // Priority: 1. Use color (with white text), 2. Use logo (image), 3. Fallback to generated color with letter
+  // Priority: 1. If color is available, show color with letter, 2. If no color, show image, 3. Fallback to generated color with letter
   const hasColor = color;
   const hasLogo = logo && (logo.startsWith("http") || logo.startsWith("/") || logo.startsWith("data:"));
-  const iconColor = hasColor || (!hasLogo ? getIconColor(name) : undefined);
+  const iconColor = hasColor ? color : (!hasLogo ? getIconColor(name) : undefined);
   const iconLetter = getIconLetter(name);
   // Fallback to image prop if logo is not available (for backward compatibility)
-  const imageUrl = hasLogo ? logo : (image || undefined);
+  const imageUrl = !hasColor && hasLogo ? logo : (!hasColor ? (image || undefined) : undefined);
+  const showImage = !hasColor && hasLogo;
 
   return (
     <div className="px-3 md:px-4 py-4 md:py-6">
       <div className="flex items-start gap-3 md:gap-4 mb-2.5 md:mb-3">
         <Avatar className="w-14 h-14 md:w-16 md:h-16 lg:w-20 lg:h-20 rounded-xl flex-shrink-0">
-          <AvatarImage src={imageUrl} alt={name} />
+          {showImage ? (
+            <AvatarImage src={imageUrl} alt={name} />
+          ) : null}
           <AvatarFallback 
             style={iconColor ? { backgroundColor: iconColor } : {}}
             className="rounded-xl text-white font-bold text-2xl md:text-3xl"

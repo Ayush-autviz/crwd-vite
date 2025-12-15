@@ -60,11 +60,13 @@ export default function NewSuggestedCollectives({
       <div className="overflow-x-auto pb-2 -mx-4 px-4 md:mx-0 md:px-0">
         <div className="flex gap-3 md:gap-4 w-max">
           {collectives.map((collective, index) => {
-            // Priority: 1. Use color (with white text), 2. Use logo (image), 3. Fallback to generated color with letter
+            // Priority: 1. If color is available, show color with letter, 2. If no color, show image, 3. Fallback to generated color with letter
             const hasColor = collective.iconColor;
             const hasLogo = collective.icon && (collective.icon.startsWith("http") || collective.icon.startsWith("/") || collective.icon.startsWith("data:"));
-            const iconColor = hasColor || (!hasLogo ? getIconColor(index) : undefined);
+            const iconColor = hasColor ? collective.iconColor : (!hasLogo ? getIconColor(index) : undefined);
             const iconLetter = getIconLetter(collective.name);
+            const showColorWithLetter = hasColor || !hasLogo;
+            const showImage = !hasColor && hasLogo;
 
             return (
               <Link
@@ -78,7 +80,7 @@ export default function NewSuggestedCollectives({
                     className="w-10 h-10 md:w-12 md:h-12 rounded-lg flex items-center justify-center"
                     style={iconColor ? { backgroundColor: iconColor } : {}}
                   >
-                    {hasLogo ? (
+                    {showImage ? (
                       <img
                         src={collective.icon}
                         alt={collective.name}
