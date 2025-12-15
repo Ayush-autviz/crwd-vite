@@ -172,7 +172,7 @@ const VerifyPage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-100 via-purple-50 to-pink-50 flex flex-col items-center justify-center px-4 py-8">
-      <div className="w-full max-w-md bg-white rounded-xl p-6">
+      <div className="w-full max-w-md bg-white rounded-xl p-4 sm:p-6">
         {/* Back Button */}
         <div className="mb-6">
           <Link
@@ -206,7 +206,7 @@ const VerifyPage: React.FC = () => {
             <label className="text-sm font-medium text-gray-900 block text-center">
               Enter verification code
             </label>
-            <div className="flex gap-2 justify-center">
+            <div className="flex gap-1.5 sm:gap-2 justify-center px-2">
               {code.map((digit, index) => (
                 <input
                   key={index}
@@ -229,7 +229,9 @@ const VerifyPage: React.FC = () => {
                     }
                   }}
                   className={cn(
-                    "w-12 h-12 text-center text-lg font-semibold border rounded-lg",
+                    "w-10 h-10 xs:w-12 xs:h-12 md:w-14 md:h-14",
+                    "text-base sm:text-lg md:text-xl text-center font-semibold",
+                    "border rounded-lg",
                     "focus:outline-none focus:ring-2 focus:ring-gray-400 focus:border-gray-400",
                     "transition-colors duration-200 bg-gray-50",
                     digit ? "border-gray-400" : "border-gray-300"

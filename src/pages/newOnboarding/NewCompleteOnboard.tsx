@@ -549,7 +549,7 @@ export default function NewCompleteOnboard() {
           <Button
             onClick={handleStartWithNonprofits}
             disabled={selectedCauses.length === 0 || addToBoxMutation.isPending}
-            className="flex-1 h-11 sm:h-12 bg-blue-600 hover:bg-blue-700 text-white text-sm sm:text-base"
+            className="flex-1 h-11 sm:h-12 bg-[#1600ff] hover:bg-[#0039CC] text-white text-sm sm:text-base"
           >
             {addToBoxMutation.isPending ? (
               <>

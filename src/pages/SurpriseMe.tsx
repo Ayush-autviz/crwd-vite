@@ -3,9 +3,10 @@ import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, Sparkles, Phone, HelpCircle } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import { getSurpriseMe } from '@/services/api/crwd';
-import { addCausesToBox } from '@/services/api/donation';
+import { addCausesToBox, getDonationBox } from '@/services/api/donation';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
+import { useAuthStore } from '@/stores/store';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -33,6 +34,7 @@ const getConsistentColor = (id: number | string, colors: string[]) => {
 export default function SurpriseMePage() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+  const { user, token } = useAuthStore();
   const [surpriseCauses, setSurpriseCauses] = useState<any[]>([]);
 
   // Fetch random causes using the surprise me API
@@ -40,6 +42,13 @@ export default function SurpriseMePage() {
     queryKey: ['surprise-me'],
     queryFn: () => getSurpriseMe(),
     enabled: true,
+  });
+
+  // Fetch donation box data to check if it's set up
+  const { data: donationBoxData } = useQuery({
+    queryKey: ['donationBox', user?.id],
+    queryFn: getDonationBox,
+    enabled: !!user?.id && !!token?.access_token,
   });
 
   // Set causes when data is loaded
@@ -56,10 +65,10 @@ export default function SurpriseMePage() {
     }
   }, [surpriseData]);
 
-  // Add all causes to donation box mutation
+  // Add all causes to donation box mutation (only used when donation box is already set up)
   const addToBoxMutation = useMutation({
-    mutationFn: async (causeIds: number[]) => {
-      return await addCausesToBox({ cause_ids: causeIds });
+    mutationFn: async (causes: Array<{ cause_id: number }>) => {
+      return await addCausesToBox({ causes });
     },
     onSuccess: () => {
       toast.success('All nonprofits added to donation box!');
@@ -75,9 +84,28 @@ export default function SurpriseMePage() {
   };
 
   const handleAddAllToBox = () => {
-    if (surpriseCauses.length > 0) {
+    if (surpriseCauses.length === 0) return;
+
+    // Check if donation box exists and is active
+    const isDonationBoxNotFound = donationBoxData?.message === 'Donation box not found';
+    const hasDonationBox = donationBoxData && !isDonationBoxNotFound && donationBoxData.id;
+
+    if (!hasDonationBox) {
+    
+      // Donation box not set up - navigate to donation box setup with preselected causes
       const causeIds = surpriseCauses.map((cause) => cause.id);
-      addToBoxMutation.mutate(causeIds);
+      navigate('/donation?tab=setup', {
+        state: {
+          preselectedCauses: causeIds, // IDs
+          preselectedCausesData: surpriseCauses, // Full cause objects
+        },
+      });
+    } else {
+      // Donation box is set up - add causes using API
+      const causes = surpriseCauses.map((cause) => ({
+        cause_id: cause.id,
+      }));
+      addToBoxMutation.mutate(causes);
     }
   };
 
