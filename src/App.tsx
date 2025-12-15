@@ -136,6 +136,10 @@ function App() {
         <div className="bg-background min-h-screen">
           {/* <AuthRouteHandler /> */}
           <Routes>
+            {/* Public routes - accessible without authentication */}
+            <Route path="/terms" element={<SettingsTerms />} />
+            <Route path="/privacy" element={<SettingsPrivacy />} />
+            
             {/* Auth routes - only render if no token */}
             {!token?.access_token && (
               <>

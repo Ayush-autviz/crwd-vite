@@ -9,6 +9,7 @@ export default function NewOnboard() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const redirectTo = searchParams.get('redirectTo') || '/';
+  const isFromCreateCollective = redirectTo === '/create-crwd';
 
   const googleLoginQuery = useQuery({
     queryKey: ["googleLogin"],
@@ -58,12 +59,25 @@ export default function NewOnboard() {
 
       {/* Headings */}
       <div className="text-center my-12 space-y-3">
-        <h1 className="text-3xl md:text-4xl lg:text-5xl font-[800] text-gray-900">
-          Stop Wishing You Made a Difference.
-        </h1>
-        <h2 className="text-3xl md:text-4xl lg:text-5xl font-[800] text-[#1600ff]">
-          Start Being Someone Who Does.
-        </h2>
+        {isFromCreateCollective ? (
+          <>
+            <h1 className="text-3xl md:text-4xl lg:text-5xl font-[800] text-[#1600ff]">
+              Start Your Movement.
+            </h1>
+            <h2 className="text-2xl md:text-3xl lg:text-4xl font-[800] text-gray-900">
+              Create Your Collective & Lead Change
+            </h2>
+          </>
+        ) : (
+          <>
+            <h1 className="text-3xl md:text-4xl lg:text-5xl font-[800] text-gray-900">
+              Stop Wishing You Made a Difference.
+            </h1>
+            <h2 className="text-3xl md:text-4xl lg:text-5xl font-[800] text-[#1600ff]">
+              Start Being Someone Who Does.
+            </h2>
+          </>
+        )}
       </div>
 
       {/* Auth Buttons */}
@@ -130,7 +144,7 @@ export default function NewOnboard() {
       </div>
 
       {/* Terms and Privacy */}
-      {/* <p className="text-sm text-gray-500 text-center mb-8 max-w-md">
+      <p className="text-sm text-gray-500 text-center mb-8 max-w-md">
         By continuing, you agree to our{" "}
         <a href="/terms" className="text-[#1600ff] hover:underline">
           Terms
@@ -139,7 +153,7 @@ export default function NewOnboard() {
         <a href="/privacy" className="text-[#1600ff] hover:underline">
           Privacy Policy
         </a>
-      </p> */}
+      </p>
 
       {/* Login Link */}
       <p className="text-sm text-gray-500 text-center">

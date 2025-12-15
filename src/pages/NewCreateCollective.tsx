@@ -317,12 +317,20 @@ export default function NewCreateCollectivePage() {
         <p className="text-sm md:text-base text-gray-700 text-center max-w-md mb-8 md:mb-12 leading-relaxed px-4">
           You pick the causes. You invite the people. They give monthly. No money touches your hands. You just rally the movement.
         </p>
-        <Button
-          onClick={() => navigate('/onboarding?redirectTo=/create-crwd')}
-          className="bg-[#1600ff] hover:bg-[#1400cc] text-white font-semibold rounded-lg px-4 md:px-6 py-3 md:py-6 text-sm md:text-base w-full max-w-xs mx-4"
-        >
-          Get Started
-        </Button>
+        <div className="w-full max-w-xs mx-4 flex gap-3">
+          <Button
+            onClick={() => navigate('/onboarding?redirectTo=/create-crwd')}
+            className="bg-[#1600ff] hover:bg-[#1400cc] text-white font-semibold rounded-lg px-4 md:px-6 py-3 md:py-6 text-sm md:text-base flex-1"
+          >
+            Get Started
+          </Button>
+          <Button
+            onClick={() => navigate(`/login?redirectTo=/create-crwd`)}
+            className="bg-[#1600ff] hover:bg-[#1400cc] text-white font-semibold rounded-lg px-4 md:px-6 py-3 md:py-6 text-sm md:text-base flex-1"
+          >
+            Log in
+          </Button>
+        </div>
       </div>
     );
   }
