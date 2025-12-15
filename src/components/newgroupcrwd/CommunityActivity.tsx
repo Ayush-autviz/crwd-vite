@@ -44,7 +44,7 @@ export default function CommunityActivity({
             variant="default"
             className="px-4 md:px-6 py-1.5 md:py-2 rounded-full text-xs md:text-sm"
           >
-            Start a Conversation
+            Create Post
           </Button>
         )}
       </div>

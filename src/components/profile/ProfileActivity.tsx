@@ -69,7 +69,7 @@ const ProfileActivity: React.FC<ProfileActivityProps> = ({
             variant="outline"
             className="px-4 md:px-6 py-1.5 md:py-2 text-xs md:text-sm"
           >
-            Start a Conversation
+            Create Post
           </Button>
         )}
       </div>

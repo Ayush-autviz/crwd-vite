@@ -368,7 +368,7 @@ export default function NewGroupCrwdPage() {
             {/* Joined Button - Non-clickable for admin */}
             <Button
               disabled
-              className="w-full sm:flex-1 font-bold py-4 md:py-5 rounded-lg text-sm md:text-base bg-white border-2 border-green-500 text-green-500 cursor-not-allowed"
+              className="w-full sm:flex-1 font-semibold py-4 md:py-5 rounded-lg text-sm md:text-base bg-white border-2 border-green-500 text-green-500 cursor-not-allowed"
             >
               <Check className="w-3.5 h-3.5 md:w-4 md:h-4 mr-1.5 md:mr-2 inline" />
               Joined
@@ -376,7 +376,36 @@ export default function NewGroupCrwdPage() {
             {/* Share Button */}
             <Button
               onClick={handleShare}
-              className="w-full sm:flex-1 font-bold py-4 md:py-5 rounded-lg text-sm md:text-base bg-[#1600ff] hover:bg-[#1400cc] text-white shadow-sm"
+              className="w-full sm:flex-1 font-semibold py-4 md:py-5 rounded-lg text-sm md:text-base bg-[#1600ff] hover:bg-[#1400cc] text-white shadow-sm"
+            >
+              <Share2 className="w-3.5 h-3.5 md:w-4 md:h-4 mr-1.5 md:mr-2 inline" />
+              Share
+            </Button>
+          </>
+        ) : crwdData.is_joined ? (
+          <>
+            {/* Joined Button - Clickable for non-admin, prompts to unjoin */}
+            <Button
+              onClick={handleJoinCollective}
+              disabled={leaveCollectiveMutation.isPending}
+              className="w-full sm:flex-1 font-semibold py-4 md:py-5 rounded-lg text-sm md:text-base bg-white border-2 border-green-500 text-green-500 hover:bg-green-50"
+            >
+              {leaveCollectiveMutation.isPending ? (
+                <>
+                  <Loader2 className="w-3.5 h-3.5 md:w-4 md:h-4 mr-1.5 md:mr-2 animate-spin inline" />
+                  Leaving...
+                </>
+              ) : (
+                <>
+                  <Check className="w-3.5 h-3.5 md:w-4 md:h-4 mr-1.5 md:mr-2 inline" />
+                  Joined
+                </>
+              )}
+            </Button>
+            {/* Share Button */}
+            <Button
+              onClick={handleShare}
+              className="w-full sm:flex-1 font-semibold py-4 md:py-5 rounded-lg text-sm md:text-base bg-[#1600ff] hover:bg-[#1400cc] text-white shadow-sm"
             >
               <Share2 className="w-3.5 h-3.5 md:w-4 md:h-4 mr-1.5 md:mr-2 inline" />
               Share
@@ -386,27 +415,13 @@ export default function NewGroupCrwdPage() {
           <>
             <Button
               onClick={handleJoinCollective}
-              disabled={joinCollectiveMutation.isPending || leaveCollectiveMutation.isPending}
-              className={`w-full sm:flex-1 font-bold py-4 md:py-5 rounded-lg text-sm md:text-base ${
-                crwdData.is_joined
-                  ? 'bg-gray-100 text-gray-500 hover:bg-gray-200'
-                  : 'bg-[#1600ff] hover:bg-[#1400cc] text-white'
-              }`}
+              disabled={joinCollectiveMutation.isPending}
+              className="w-full sm:flex-1 font-semibold py-4 md:py-5 rounded-lg text-sm md:text-base bg-[#1600ff] hover:bg-[#1400cc] text-white"
             >
               {joinCollectiveMutation.isPending ? (
                 <>
                   <Loader2 className="w-3.5 h-3.5 md:w-4 md:h-4 mr-1.5 md:mr-2 animate-spin inline" />
                   Joining...
-                </>
-              ) : leaveCollectiveMutation.isPending ? (
-                <>
-                  <Loader2 className="w-3.5 h-3.5 md:w-4 md:h-4 mr-1.5 md:mr-2 animate-spin inline" />
-                  Leaving...
-                </>
-              ) : crwdData.is_joined ? (
-                <>
-                  <Check className="w-3.5 h-3.5 md:w-4 md:h-4 mr-1.5 md:mr-2 inline" />
-                  Joined
                 </>
               ) : (
                 'Join Collective'
@@ -415,7 +430,7 @@ export default function NewGroupCrwdPage() {
             <Button
               onClick={handleOneTimeDonation}
               variant="outline"
-              className="w-full sm:flex-1 border-[#1600ff] text-[#1600ff] hover:bg-[#1600ff] hover:text-white font-bold py-4 md:py-5 rounded-lg text-sm md:text-base"
+              className="w-full sm:flex-1 border-[#1600ff] text-[#1600ff] hover:bg-[#1600ff] hover:text-white font-semibold py-4 md:py-5 rounded-lg text-sm md:text-base"
             >
               Make a One-Time Donation
             </Button>
