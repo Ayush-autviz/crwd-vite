@@ -724,11 +724,11 @@ export default function EditCollectivePage() {
       </div>
 
       {/* Footer Buttons */}
-      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 p-3 md:p-4 flex items-center justify-between gap-3 md:gap-4 z-10 lg:max-w-[60%] lg:left-1/2 lg:transform lg:-translate-x-1/2">
+      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 p-3 md:p-4 flex items-center justify-between gap-3 md:gap-4 z-10">
         <Button
           onClick={() => navigate(-1)}
           variant="outline"
-          className="border-gray-300 rounded-full font-semibold text-xs md:text-sm text-foreground w-[48%] py-2 md:py-2.5"
+          className="border-gray-300 rounded-full font-semibold text-xs md:text-sm text-foreground w-[48%] py-2 md:py-3"
         >
           Cancel
         </Button>
@@ -737,7 +737,7 @@ export default function EditCollectivePage() {
             await handleSave();
             await handleSaveCauses();
           }}
-          className="bg-[#1600ff] hover:bg-[#1400cc] text-white font-semibold rounded-full px-4 md:px-6 w-[48%] py-2 md:py-2.5 text-xs md:text-sm"
+          className="bg-[#1600ff] hover:bg-[#1400cc] text-white font-semibold rounded-full px-4 md:px-6 w-[48%] py-2 md:py-3 text-xs md:text-sm"
           disabled={updateMutation.isPending }
         >
           {updateMutation.isPending ? (

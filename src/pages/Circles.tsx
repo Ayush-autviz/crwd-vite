@@ -67,7 +67,7 @@ const Circles = () => {
           {/* Create New Crwd Button */}
           <Link
             to={`/create-crwd`}
-            className="flex items-center gap-1.5 md:gap-2 justify-center w-fit bg-green-600 hover:bg-green-700 text-white px-3 md:px-4 py-1.5 md:py-2 rounded-full text-sm md:text-base font-semibold shadow-lg"
+            className="flex items-center gap-1.5 md:gap-2 justify-center w-fit bg-[#00c854] hover:bg-green-700 text-white px-3 md:px-4 py-1.5 md:py-2 rounded-full text-sm md:text-base font-semibold shadow-lg"
           >
             <Plus className="w-4 h-4 md:w-5 md:h-5" strokeWidth={3} />
             <p> Start a Collective</p>
