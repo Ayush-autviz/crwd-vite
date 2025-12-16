@@ -17,33 +17,33 @@ export default function DonationBoxPrompt({ causeCount, hasJoinedCollectives = f
   const showAlmostThereCard = causeCount !== undefined && causeCount > 0;
 
   return (
-    <div className="w-full py-4 md:py-6">
+    <div className="w-full py-2 md:py-6">
       {/* Greeting - Only show if not showing "Almost There" card */}
       {!showAlmostThereCard && (
-        <h2 className="text-xl md:text-2xl font-bold text-foreground mb-4 md:mb-6">
+        <h2 className="text-lg md:text-2xl font-bold text-foreground mb-3 md:mb-6">
           Hi {firstName}, ready to make an impact?
         </h2>
       )}
 
       {/* Action Cards */}
-      <div className="space-y-3 md:space-y-4">
+      <div className="space-y-2 md:space-y-4">
         {/* You're Almost There Card - Show when donation box exists but is not active */}
         {showAlmostThereCard ? (
           <Card
             onClick={() => navigate('/donation?tab=setup')}
             className="cursor-pointer hover:shadow-md transition-shadow border border-orange-300 bg-yellow-50"
           >
-            <CardContent className="p-4 md:p-6">
-              <div className="flex items-start gap-3 md:gap-4">
+            <CardContent className="p-3 md:p-6">
+              <div className="flex items-start gap-2.5 md:gap-4">
                 {/* Orange Clock Icon */}
-                <div className="w-10 h-10 md:w-12 md:h-12 rounded-full bg-orange-500 flex items-center justify-center flex-shrink-0">
-                  <Clock className="w-5 h-5 md:w-6 md:h-6 text-white" />
+                <div className="w-8 h-8 md:w-12 md:h-12 rounded-full bg-orange-500 flex items-center justify-center flex-shrink-0">
+                  <Clock className="w-4 h-4 md:w-6 md:h-6 text-white" />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <h3 className="font-bold text-base md:text-lg text-gray-900 mb-1">
+                  <h3 className="font-bold text-sm md:text-lg text-gray-900 mb-0.5 md:mb-1">
                     You're Almost There!
                   </h3>
-                  <p className="text-sm md:text-base text-gray-900 mb-3">
+                  <p className="text-xs md:text-base text-gray-900 mb-2 md:mb-3">
                     You selected <span className="font-bold">{causeCount} cause{causeCount !== 1 ? 's' : ''}</span> but haven't started donating yet
                   </p>
                   <button
@@ -51,12 +51,10 @@ export default function DonationBoxPrompt({ causeCount, hasJoinedCollectives = f
                       e.stopPropagation();
                       navigate('/donation?tab=setup');
                     }}
-                    // className="p-0 m-0 self-start text-orange-600 font-semibold text-sm md:text-base hover:underline flex items-center gap-1"
-                    className="p-0 self-start text-left text-orange-600 font-semibold text-sm md:text-base hover:underline flex items-center gap-1"
-
+                    className="p-0 self-start text-left text-orange-600 font-semibold text-xs md:text-base hover:underline flex items-center gap-1"
                   >
                     Complete Setup - Just 2 minutes!
-                    <ArrowRight className="w-4 h-4" />
+                    <ArrowRight className="w-3.5 h-3.5 md:w-4 md:h-4" />
                   </button>
                 </div>
               </div>
@@ -68,17 +66,17 @@ export default function DonationBoxPrompt({ causeCount, hasJoinedCollectives = f
             onClick={() => navigate('/donation')}
             className="cursor-pointer hover:shadow-md transition-shadow border border-gray-200"
           >
-            <CardContent className="p-4 md:p-6">
-              <div className="flex items-start gap-3 md:gap-4">
+            <CardContent className="p-3 md:p-6">
+              <div className="flex items-start gap-2.5 md:gap-4">
                 {/* Blue Icon */}
-                <div className="w-10 h-10 md:w-12 md:h-12 rounded-full bg-[#1600ff] flex items-center justify-center flex-shrink-0">
-                  <ShoppingBag className="w-5 h-5 md:w-6 md:h-6 text-white" />
+                <div className="w-8 h-8 md:w-12 md:h-12 rounded-full bg-[#1600ff] flex items-center justify-center flex-shrink-0">
+                  <ShoppingBag className="w-4 h-4 md:w-6 md:h-6 text-white" />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <h3 className="font-bold text-base md:text-lg text-foreground">
+                  <h3 className="font-bold text-sm md:text-lg text-foreground">
                     Create a Donation Box
                   </h3>
-                  <p className="text-xs md:text-sm text-gray-600 mb-2 mt-1">
+                  <p className="text-xs md:text-sm text-gray-600 mb-1.5 md:mb-2 mt-0.5 md:mt-1">
                     Support multiple causes with one donation
                   </p>
                   <button
@@ -102,17 +100,17 @@ export default function DonationBoxPrompt({ causeCount, hasJoinedCollectives = f
             onClick={() => navigate('/create-crwd')}
             className="cursor-pointer hover:shadow-md transition-shadow border border-gray-200 bg-white"
           >
-            <CardContent className="p-4 md:p-6">
-              <div className="flex items-start gap-3 md:gap-4">
+            <CardContent className="p-3 md:p-6">
+              <div className="flex items-start gap-2.5 md:gap-4">
                 {/* Green Icon */}
-                <div className="w-10 h-10 md:w-12 md:h-12 rounded-full bg-[#aeff30] flex items-center justify-center flex-shrink-0">
-                  <Plus className="w-5 h-5 md:w-6 md:h-6 text-black" strokeWidth={3}/>
+                <div className="w-8 h-8 md:w-12 md:h-12 rounded-full bg-[#aeff30] flex items-center justify-center flex-shrink-0">
+                  <Plus className="w-4 h-4 md:w-6 md:h-6 text-black" strokeWidth={3}/>
                 </div>
                 <div className="flex-1 min-w-0">
-                  <h3 className="font-bold text-base md:text-lg text-foreground">
+                  <h3 className="font-bold text-sm md:text-lg text-foreground">
                     Start Your Own Collective
                   </h3>
-                  <p className="text-xs md:text-sm text-gray-600 mb-2 mt-1">
+                  <p className="text-xs md:text-sm text-gray-600 mb-1.5 md:mb-2 mt-0.5 md:mt-1">
                     Bring people together around causes you care about.
                   </p>
                   <button

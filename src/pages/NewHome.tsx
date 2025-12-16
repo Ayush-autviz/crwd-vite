@@ -355,24 +355,24 @@ export default function NewHome() {
                 showBackButton={false}
             />
             {/* Main Content - Takes full width on mobile, 12 columns on desktop */}
-            <div className="bg-gradient-to-r from-blue-50 via-purple-50 to-pink-50 px-4 md:px-6 lg:px-10 py-4 md:py-6">
+            <div className="bg-gradient-to-r from-blue-50 via-purple-50 to-pink-50 px-4 md:px-6 lg:px-10 py-2 md:py-6">
                 {/* Personalized Greeting */}
 
                 {/* My Donation Box Card or Prompt */}
                 {token?.access_token && (
                     donationBoxLoading ? (
-                        <div className="w-full max-w-md mx-auto mt-4 md:mt-6">
-                            <div className="bg-white rounded-xl border border-gray-200 p-4 md:p-6 shadow-sm animate-pulse">
-                                <div className="flex items-center gap-3 md:gap-4">
-                                    <div className="w-12 h-12 md:w-16 md:h-16 bg-gray-200 rounded-lg"></div>
+                        <div className="w-full max-w-md mx-auto mt-2 md:mt-6">
+                            <div className="bg-white rounded-xl border border-gray-200 p-3 md:p-6 shadow-sm animate-pulse">
+                                <div className="flex items-center gap-2.5 md:gap-4">
+                                    <div className="w-10 h-10 md:w-16 md:h-16 bg-gray-200 rounded-lg"></div>
                                     <div className="flex-1 space-y-2">
-                                        <div className="h-4 bg-gray-200 rounded w-3/4"></div>
-                                        <div className="h-3 bg-gray-200 rounded w-1/2"></div>
+                                        <div className="h-3.5 bg-gray-200 rounded w-3/4"></div>
+                                        <div className="h-2.5 bg-gray-200 rounded w-1/2"></div>
                                     </div>
                                 </div>
-                                <div className="mt-4 md:mt-6 space-y-2">
-                                    <div className="h-3 bg-gray-200 rounded"></div>
-                                    <div className="h-3 bg-gray-200 rounded w-5/6"></div>
+                                <div className="mt-3 md:mt-6 space-y-1.5">
+                                    <div className="h-2.5 bg-gray-200 rounded"></div>
+                                    <div className="h-2.5 bg-gray-200 rounded w-5/6"></div>
                                 </div>
                             </div>
                         </div>
@@ -400,11 +400,11 @@ export default function NewHome() {
                 {/* Collective Carousel Card - Show joined collectives */}
                 {token?.access_token && (
                     joinedCollectivesLoading ? (
-                        <div className="w-full mt-4 md:mt-6">
-                            <div className="bg-white rounded-xl border border-gray-200 p-4 md:p-6 shadow-sm animate-pulse">
-                                <div className="space-y-4">
-                                    <div className="h-6 bg-gray-200 rounded w-1/3"></div>
-                                    <div className="h-32 md:h-40 bg-gray-200 rounded-lg"></div>
+                        <div className="w-full mt-2 md:mt-6">
+                            <div className="bg-white rounded-xl border border-gray-200 p-3 md:p-6 shadow-sm animate-pulse">
+                                <div className="space-y-3">
+                                    <div className="h-5 bg-gray-200 rounded w-1/3"></div>
+                                    <div className="h-24 md:h-40 bg-gray-200 rounded-lg"></div>
                                     <div className="flex gap-2 justify-center">
                                         <div className="w-2 h-2 bg-gray-200 rounded-full"></div>
                                         <div className="w-2 h-2 bg-gray-300 rounded-full"></div>
