@@ -102,7 +102,33 @@ export default function NewSuggestedCollectives({
                   <div className="flex items-center gap-1.5 md:gap-2 flex-shrink-0">
                     <Avatar className="h-5 w-5 md:h-6 md:w-6">
                       <AvatarImage src={collective.founder.profile_picture} />
-                      <AvatarFallback className="text-xs">
+                      <AvatarFallback 
+                        style={{ 
+                          backgroundColor: (() => {
+                            const avatarColors = [
+                              '#EF4444', // Red
+                              '#10B981', // Green
+                              '#3B82F6', // Blue
+                              '#8B5CF6', // Purple
+                              '#84CC16', // Lime Green
+                              '#EC4899', // Pink
+                              '#F59E0B', // Amber
+                              '#06B6D4', // Cyan
+                              '#F97316', // Orange
+                              '#A855F7', // Violet
+                              '#14B8A6', // Teal
+                              '#F43F5E', // Rose
+                              '#6366F1', // Indigo
+                              '#22C55E', // Emerald
+                              '#EAB308', // Yellow
+                            ];
+                            const founderId = collective.founder.name || collective.id;
+                            const colorIndex = founderId ? (String(founderId).split('').reduce((acc, char) => acc + char.charCodeAt(0), 0) % avatarColors.length) : 0;
+                            return avatarColors[colorIndex];
+                          })()
+                        }}
+                        className="text-white text-xs font-semibold"
+                      >
                         {collective.founder.name
                           .split(" ")
                           .map((n) => n.charAt(0))

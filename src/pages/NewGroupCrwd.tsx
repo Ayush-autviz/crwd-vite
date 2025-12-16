@@ -294,8 +294,8 @@ export default function NewGroupCrwdPage() {
 
     const causeIds = collectiveCauses.map((cause: any) => cause.id);
 
-    // Navigate to one-time donation tab with preselected causes
-    navigate('/donation?tab=onetime', {
+    // Navigate to one-time donation page with preselected causes
+    navigate('/one-time-donation', {
       state: {
         preselectedItem: {
           id: crwdId,

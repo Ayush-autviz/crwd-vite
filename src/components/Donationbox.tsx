@@ -555,7 +555,8 @@ const DonationBox = ({ tab = "setup", preselectedItem, activeTab, fromPaymentRes
         title="Donation Box"
         step={step}
         showBackButton={false}
-        showCloseButton={!checkout && step === 1}
+        showCloseButton={true}
+        onClose={() => navigate('/')}
         onBack={() => {
           if (checkout) {
             setCheckout(false);
