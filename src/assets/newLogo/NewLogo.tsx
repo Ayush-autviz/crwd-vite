@@ -32,7 +32,7 @@ const NewLogo: React.FC<NewLogoProps> = ({
   const currentSize = sizeClasses[size];
 
   return (
-    <div className={`flex items-center gap-3 ${className}`}>
+    <div className={`flex items-center gap-2 md:gap-3 ${className}`}>
       <div className={`grid grid-cols-2 gap-1 ${currentSize.grid}`}>
         <div 
           className={`${currentSize.dot} rounded-full`}

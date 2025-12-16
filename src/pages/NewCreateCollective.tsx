@@ -64,6 +64,7 @@ export default function NewCreateCollectivePage() {
   const [showShareModal, setShowShareModal] = useState(false);
   const [createdCollective, setCreatedCollective] = useState<any>(null);
   const [step, setStep] = useState(1);
+  const [hasStarted, setHasStarted] = useState(false);
 
   // Logo customization state - separate states for letter and upload
   const [logoType, setLogoType] = useState<'letter' | 'upload'>('letter');
@@ -329,6 +330,55 @@ export default function NewCreateCollectivePage() {
             className="bg-[#1600ff] hover:bg-[#1400cc] text-white font-semibold rounded-lg px-4 md:px-6 py-3 md:py-6 text-sm md:text-base flex-1"
           >
             Log in
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
+  // Show "Lead a Giving Community" view as first step for logged-in users (only if form is empty and hasn't started)
+  const isFormEmpty = !name && !description && selectedCauses.length === 0;
+  if (step === 1 && isFormEmpty && !hasStarted) {
+    return (
+      <div className="min-h-screen bg-white flex flex-col items-center">
+        {/* header */}
+        <div className="sticky top-0 z-10 w-full flex items-center gap-3 md:gap-4 p-3 md:p-4 border-b bg-white">
+          <button
+            onClick={() => navigate('/')}
+            className="p-1.5 md:p-2 hover:bg-gray-100 rounded-full transition-colors"
+            aria-label="Go back"
+          >
+            <ArrowLeft className="w-4 h-4 md:w-5 md:h-5 text-gray-700" />
+          </button>
+          <h1 className="font-bold text-lg md:text-xl text-foreground">Create a CRWD Collective</h1>
+        </div>
+        <div className="mb-6 md:mb-8">
+          <div className="w-12 h-12 md:w-16 md:h-16 rounded-full mt-4 md:mt-5 bg-blue-100 flex items-center justify-center">
+            <Users className="w-6 h-6 md:w-8 md:h-8 text-purple-400" />
+          </div>
+        </div>
+        <h2 className="text-xl md:text-2xl font-bold text-foreground text-center mb-4 md:mb-6 px-4">
+          Lead a Giving Community
+        </h2>
+        <p className="text-sm md:text-base text-gray-700 text-center max-w-md mb-8 md:mb-12 leading-relaxed px-4">
+          You pick the causes. You invite the people. They give monthly. No money touches your hands. You just rally the movement.
+        </p>
+        <div className="w-full max-w-xs mx-4">
+          <Button
+            onClick={() => {
+              // Clear any saved form data and proceed to form
+              if (typeof window !== 'undefined') {
+                localStorage.removeItem('createCrwd_name');
+                localStorage.removeItem('createCrwd_desc');
+              }
+              setName('');
+              setDescription('');
+              setSelectedCauses([]);
+              setHasStarted(true);
+            }}
+            className="bg-[#1600ff] hover:bg-[#1400cc] text-white font-semibold rounded-lg px-4 md:px-6 py-3 md:py-6 text-sm md:text-base w-full"
+          >
+            Get Started
           </Button>
         </div>
       </div>

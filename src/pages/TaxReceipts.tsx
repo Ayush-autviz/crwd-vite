@@ -175,7 +175,7 @@ export default function TaxReceiptsPage() {
         {/* Total Donated Summary */}
         <Card className="mb-6 border-1 border-gray-200 rounded-lg">
           <CardContent className="p-6">
-            <div className="text-sm text-gray-600 mb-1">Total Donateds</div>
+            <div className="text-sm text-gray-600 mb-1">Total Donated</div>
             <div className="text-3xl font-bold text-[#1600ff]">
               ${totalDonated.toFixed(2)}
             </div>

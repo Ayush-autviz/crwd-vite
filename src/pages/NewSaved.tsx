@@ -72,7 +72,7 @@ export default function NewSavedPage() {
         <h1 className="font-bold text-xl text-foreground flex-1">Favorites</h1>
       </div>
 
-<div className="max-w-[60%] mx-auto">
+<div className="md:max-w-[60%]  md:mx-auto">
       {/* Tabs */}
       <div className="border-b border-gray-200 px-4 mt-4">
         <div className="flex gap-6">

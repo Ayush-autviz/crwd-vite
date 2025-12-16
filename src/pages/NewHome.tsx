@@ -1,5 +1,5 @@
 import { useQuery, useQueries } from "@tanstack/react-query";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import NewSuggestedCollectives from "@/components/newHome/NewSuggestedCollectives";
 import NewFeaturedNonprofits from "@/components/newHome/NewFeaturedNonprofits";
 import HelloGreeting from "@/components/newHome/HelloGreeting";
@@ -16,9 +16,12 @@ import { getUserProfileById } from "@/services/api/social";
 import { useAuthStore } from "@/stores/store";
 import GuestHome from "@/components/GuestHome";
 import Footer from "@/components/Footer";
+import { X } from "lucide-react";
+import { NewLogo } from "@/assets/newLogo";
 
 export default function NewHome() {
     const { user, token } = useAuthStore();
+    const [showAppBanner, setShowAppBanner] = useState(true);
 
     // Fetch collectives data using React Query
     const { data: collectivesData, isLoading: collectivesLoading } = useQuery({
@@ -501,6 +504,30 @@ export default function NewHome() {
             <ExploreCards />
 
             <Footer />
+
+            {/* Fixed iOS App Banner */}
+            {showAppBanner && (
+              <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-4 md:px-6 py-3 md:py-4 z-40 shadow-lg block sm:hidden">
+                <div className="max-w-7xl mx-auto flex items-center justify-between gap-2 md:gap-4">
+                  <NewLogo size="sm" />
+                  <div className="flex-1 flex flex-col md:flex-row md:items-center gap-1 md:gap-2">
+                    <p className="text-xs xs:text-sm md:text-base font-bold text-gray-900">
+                      Get the full experience on iOS
+                    </p>
+                    <p className="text-xs xs:text-sm md:text-sm text-gray-500">
+                      Easily manage all of your giving
+                    </p>
+                  </div>
+                  <button
+                    onClick={() => setShowAppBanner(false)}
+                    className="text-gray-400 hover:text-gray-600 transition-colors flex-shrink-0"
+                    aria-label="Close banner"
+                  >
+                    <X className="w-4 h-4 md:w-5 md:h-5" />
+                  </button>
+                </div>
+              </div>
+            )}
 
         </div>
     );

@@ -68,7 +68,7 @@ export default function CauseResultCard({ cause }: CauseResultCardProps) {
             {location && (
               <p className="text-xs md:text-sm text-gray-600 mb-1.5 md:mb-2">{location}</p>
             )}
-            <p className="text-xs md:text-sm text-gray-700">
+            <p className="text-xs md:text-sm text-gray-700 line-clamp-1">
               {cause.mission || cause.description || 'No description available'}
             </p>
           </div>

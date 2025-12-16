@@ -1,4 +1,4 @@
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { Card, CardContent } from '@/components/ui/card';
 
@@ -23,7 +23,10 @@ export default function SimilarNonprofits({ similarCauses, isLoading }: SimilarN
   if (isLoading) {
     return (
       <div className="px-3 md:px-4 py-4 md:py-6">
-        <h2 className="text-base md:text-lg font-bold text-foreground mb-3 md:mb-4">Similar Nonprofits</h2>
+        <div className="flex items-center justify-between mb-3 md:mb-4">
+          <h2 className="text-base md:text-lg font-bold text-foreground mb-3 md:mb-4">Similar Nonprofits</h2>     
+            <Link to="/search" className="text-xs md:text-sm text-[#1600ff] p-0 h-auto flex items-center">See all</Link>
+        </div>
         <div className="space-y-3 md:space-y-4">
           {[1, 2].map((i) => (
             <Card key={i} className="animate-pulse">
@@ -49,7 +52,10 @@ export default function SimilarNonprofits({ similarCauses, isLoading }: SimilarN
 
   return (
     <div className="px-3 md:px-4 py-4 md:py-6">
-      <h2 className="text-base md:text-lg font-bold text-foreground mb-3 md:mb-4">Similar Nonprofits</h2>
+      <div className="flex items-center justify-between mb-3 md:mb-4">
+          <h2 className="text-base md:text-lg font-bold text-foreground">Similar Nonprofits</h2>     
+            <Link to="/search" className="text-xs md:text-sm text-[#1600ff] p-0 h-auto flex items-center">See all</Link>
+        </div>
       <div className="space-y-3 md:space-y-4">
         {similarCauses.map((cause) => {
           const avatarBgColor = getConsistentColor(cause.id || cause.name, avatarColors);

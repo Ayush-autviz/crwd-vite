@@ -248,13 +248,13 @@ export default function GuestHome() {
             {/* Fixed iOS App Banner */}
             {showAppBanner && (
               <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-4 md:px-6 py-3 md:py-4 z-40 shadow-lg block sm:hidden">
-                <div className="max-w-7xl mx-auto flex items-center justify-between gap-3 md:gap-4">
-                  <NewLogo />
+                <div className="max-w-7xl mx-auto flex items-center justify-between gap-2 md:gap-4">
+                  <NewLogo size="sm" />
                   <div className="flex-1 flex flex-col md:flex-row md:items-center gap-1 md:gap-2">
-                    <p className="text-sm md:text-base font-bold text-gray-900">
+                    <p className="text-xs xs:text-sm md:text-base font-bold text-gray-900">
                       Get the full experience on iOS
                     </p>
-                    <p className="text-xs md:text-sm text-gray-500">
+                    <p className="text-xs xs:text-sm md:text-sm text-gray-500">
                       Easily manage all of your giving
                     </p>
                   </div>
