@@ -23,6 +23,8 @@ interface CommentsBottomSheetProps {
 interface CommentData {
   id: number;
   username: string;
+  firstName?: string;
+  lastName?: string;
   avatarUrl: string;
   content: string;
   timestamp: Date;
@@ -71,11 +73,24 @@ export default function CommentsBottomSheet({
     enabled: isOpen && !!post.id,
   });
 
+  // Get display name helper
+  const getDisplayName = (user: any) => {
+    if (user?.first_name && user?.last_name) {
+      return `${user.first_name} ${user.last_name}`;
+    }
+    if (user?.first_name) {
+      return user.first_name;
+    }
+    return user?.username || user?.full_name || 'Unknown User';
+  };
+
   // Transform API comments to CommentData format - memoized to prevent infinite loops
   const apiComments = useMemo(() => {
     return commentsData?.results?.map((comment: any) => ({
       id: comment.id,
-      username: comment.user?.username || comment.user?.full_name || 'Unknown User',
+      username: getDisplayName(comment.user),
+      firstName: comment.user?.first_name,
+      lastName: comment.user?.last_name,
       avatarUrl: comment.user?.profile_picture || '/placeholder.svg',
       content: comment.content,
       timestamp: new Date(comment.created_at),
@@ -154,7 +169,9 @@ export default function CommentsBottomSheet({
       
       const transformedReplies: CommentData[] = repliesArray.map((reply: any) => ({
         id: reply.id,
-        username: reply.user?.username || reply.user?.full_name || 'Unknown User',
+        username: getDisplayName(reply.user),
+        firstName: reply.user?.first_name,
+        lastName: reply.user?.last_name,
         avatarUrl: reply.user?.profile_picture || '/placeholder.svg',
         content: reply.content,
         timestamp: new Date(reply.created_at),
@@ -228,6 +245,11 @@ export default function CommentsBottomSheet({
 
   if (!isVisible) return null;
 
+  // Get post display name
+  const postDisplayName = post.firstName && post.lastName
+    ? `${post.firstName} ${post.lastName}`
+    : post.username;
+  
   const postUserInitials = post.firstName && post.lastName
     ? `${post.firstName.charAt(0)}${post.lastName.charAt(0)}`.toUpperCase()
     : post.username.charAt(0).toUpperCase();
@@ -266,7 +288,7 @@ export default function CommentsBottomSheet({
           <div className="flex items-center justify-between">
             <div className="flex-1 min-w-0">
               <p className="text-xs md:text-sm text-muted-foreground truncate">
-                Commenting on <span className="font-semibold text-foreground">@{post.username}</span>'s {truncatedText}
+                Commenting on <span className="font-semibold text-foreground">{postDisplayName}</span>'s {truncatedText}
               </p>
             </div>
             <button
@@ -283,7 +305,7 @@ export default function CommentsBottomSheet({
         <div className="px-3 md:px-4 py-3 md:py-4 border-b border-gray-200">
           <div className="flex gap-2.5 md:gap-3">
             <Avatar className="w-9 h-9 md:w-10 md:h-10 flex-shrink-0">
-              <AvatarImage src={post.avatarUrl} alt={post.username} />
+              <AvatarImage src={post.avatarUrl} alt={postDisplayName} />
               <AvatarFallback
                 style={{ backgroundColor: postAvatarColor }}
                 className="text-white font-bold text-xs md:text-sm"
@@ -293,7 +315,7 @@ export default function CommentsBottomSheet({
             </Avatar>
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-1.5 md:gap-2 mb-0.5 md:mb-1">
-                <span className="font-bold text-xs md:text-sm text-foreground">{post.username}</span>
+                <span className="font-bold text-xs md:text-sm text-foreground">{postDisplayName}</span>
               </div>
               <p className="text-xs md:text-sm text-foreground whitespace-pre-line">{post.text}</p>
             </div>
@@ -325,6 +347,8 @@ export default function CommentsBottomSheet({
                   const commentWithReplies: CommentData = {
                     id: comment.id,
                     username: comment.username,
+                    firstName: comment.firstName,
+                    lastName: comment.lastName,
                     avatarUrl: comment.avatarUrl,
                     content: comment.content,
                     timestamp: comment.timestamp,
@@ -342,6 +366,8 @@ export default function CommentsBottomSheet({
                       <Comment
                         id={commentWithReplies.id}
                         username={commentWithReplies.username}
+                        firstName={commentWithReplies.firstName}
+                        lastName={commentWithReplies.lastName}
                         avatarUrl={commentWithReplies.avatarUrl}
                         content={commentWithReplies.content}
                         timestamp={commentWithReplies.timestamp}

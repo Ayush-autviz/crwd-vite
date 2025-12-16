@@ -18,6 +18,8 @@ import { useAuthStore } from '@/stores/store';
 export interface CommentData {
   id: number;
   username: string;
+  firstName?: string;
+  lastName?: string;
   avatarUrl: string;
   content: string;
   timestamp: Date;
@@ -41,6 +43,8 @@ interface CommentProps extends CommentData {
 export const Comment: React.FC<CommentProps> = ({
   id,
   username,
+  firstName,
+  lastName,
   avatarUrl,
   content,
   timestamp,
@@ -55,6 +59,23 @@ export const Comment: React.FC<CommentProps> = ({
   userId,
   onDelete,
 }) => {
+  // Get display name (first name + last name, or fallback to username)
+  const displayName = firstName && lastName
+    ? `${firstName} ${lastName}`
+    : firstName || username;
+  
+  // Get initials for avatar fallback
+  const getInitials = () => {
+    if (firstName && lastName) {
+      return `${firstName.charAt(0)}${lastName.charAt(0)}`.toUpperCase();
+    }
+    if (firstName) {
+      return firstName.charAt(0).toUpperCase();
+    }
+    return username.charAt(0).toUpperCase();
+  };
+  
+  const initials = getInitials();
   const [isReplying, setIsReplying] = useState(false);
   const [replyContent, setReplyContent] = useState('');
   const [showMenu, setShowMenu] = useState(false);
@@ -115,15 +136,15 @@ export const Comment: React.FC<CommentProps> = ({
     <div className="space-y-4">
       <div className="flex gap-3">
         <Avatar className="h-8 w-8">
-          <AvatarImage src={avatarUrl} alt={username} />
+          <AvatarImage src={avatarUrl} alt={displayName} />
           <AvatarFallback>
-            {username.charAt(0).toUpperCase()}
+            {initials}
           </AvatarFallback>
         </Avatar>
         <div className="flex-1">
           <div className="bg-muted p-3 rounded-lg">
             <div className="flex items-center justify-between mb-1">
-              <span className="font-medium text-sm">@{username}</span>
+              <span className="font-medium text-sm">{displayName}</span>
               {isOwnComment && (
                 <div className="relative" ref={menuRef}>
                   <button
@@ -202,7 +223,10 @@ export const Comment: React.FC<CommentProps> = ({
             <form onSubmit={handleReplySubmit} className="mt-3">
               <div className="flex gap-2">
                 <Avatar className="h-6 w-6">
-                  <img src={avatarUrl} alt={username} className="rounded-full" />
+                  <AvatarImage src={avatarUrl} alt={displayName} />
+                  <AvatarFallback>
+                    {initials}
+                  </AvatarFallback>
                 </Avatar>
                 <input
                   type="text"

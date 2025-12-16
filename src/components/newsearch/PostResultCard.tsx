@@ -180,13 +180,19 @@ export default function PostResultCard({ post }: PostResultCardProps) {
             
             if (isImage) {
               return (
-                <div className="w-full rounded-lg overflow-hidden mb-2.5 md:mb-3 border border-gray-200">
+                <a
+                  href={post.media}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={(e) => e.stopPropagation()}
+                  className="block w-full rounded-lg overflow-hidden mb-2.5 md:mb-3 border border-gray-200 cursor-pointer hover:opacity-90 transition-opacity"
+                >
                   <img
                     src={post.media}
                     alt="Post"
                     className="w-full h-[180px] md:h-[200px] object-cover"
                   />
-                </div>
+                </a>
               );
             } else {
               // It's a link URL, show as preview-style card (even without preview_details)

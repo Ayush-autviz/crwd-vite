@@ -315,13 +315,18 @@ const CommunityUpdates: React.FC<CommunityUpdatesProps> = ({
                   </div>
 
                   {post.imageUrl && (
-                    <div className="w-full h-40 md:h-48 rounded-lg overflow-hidden mb-2 md:mb-3 lg:max-w-[600px]">
+                    <a
+                      href={post.imageUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="block w-full h-40 md:h-48 rounded-lg overflow-hidden mb-2 md:mb-3 lg:max-w-[600px] cursor-pointer hover:opacity-90 transition-opacity"
+                    >
                       <img
                         src={post.imageUrl}
                         alt="Post"
                         className="w-full h-full object-cover"
                       />
-                    </div>
+                    </a>
                   )}
 
                   {post.linkPreview && (

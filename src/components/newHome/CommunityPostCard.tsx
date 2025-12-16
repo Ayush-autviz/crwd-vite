@@ -134,13 +134,18 @@ export default function CommunityPostCard({ post }: CommunityPostCardProps) {
 
       {/* Post Image */}
       {post.imageUrl && (
-        <div className="mb-3 md:mb-4 rounded-lg overflow-hidden">
+        <a
+          href={post.imageUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="block mb-3 md:mb-4 rounded-lg overflow-hidden cursor-pointer hover:opacity-90 transition-opacity"
+        >
           <img
             src={post.imageUrl}
             alt="Post content"
             className="w-full h-auto object-cover"
           />
-        </div>
+        </a>
       )}
 
       {/* Engagement Section */}
