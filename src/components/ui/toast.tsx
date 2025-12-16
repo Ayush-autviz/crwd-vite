@@ -13,7 +13,7 @@ export const Toast: React.FC<ToastProps> = ({
   message,
   show,
   onHide,
-  duration = 1500,
+  duration = 3000,
   className,
 }) => {
   useEffect(() => {
@@ -29,9 +29,9 @@ export const Toast: React.FC<ToastProps> = ({
   return (
     <div
       className={cn(
-        "fixed bottom-20 left-1/2 transform -translate-x-1/2 z-50",
+        "fixed top-20 left-1/2 transform -translate-x-1/2 z-50",
         "w-[90%] md:w-auto md:px-32 md:mx-8",
-        "bg-black/90 text-white px-4 py-2 rounded-full",
+        "bg-white text-black px-4 py-2 rounded-xl",
         "text-sm font-medium shadow-lg text-center",
         "transition-all duration-300",
         show

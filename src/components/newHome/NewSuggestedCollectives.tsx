@@ -50,7 +50,7 @@ export default function NewSuggestedCollectives({
   return (
     <div className="w-full px-4 mt-6 md:px-0 md:mt-8 lg:mt-10">
       <div className="flex justify-between items-center mb-3 md:mb-4">
-        <h2 className="text-xl sm:text-2xl  md:text-3xl lg:text-3xl xl:text-4xl 2xl:text-5xl font-bold">Suggested Collectives</h2>
+        <h2 className="text-base xs:text-lg sm:text-2xl  md:text-3xl lg:text-3xl xl:text-4xl  font-bold">Suggested Collectives</h2>
         <Link to={seeAllLink}>
           <Button variant="link" className="text-[#1600ff] p-0 h-auto flex items-center text-xs md:text-sm">
             See all
@@ -72,10 +72,11 @@ export default function NewSuggestedCollectives({
                 key={collective.id}
                 className="block"
               >
-                <div className="flex flex-col gap-2.5 md:gap-3 p-3 md:p-4 rounded-lg hover:bg-gray-100 cursor-pointer transition-colors bg-gray-50 min-w-[240px] md:min-w-[280px] max-w-[280px] md:max-w-[320px]">
+                <div className="flex flex-col gap-2.5 md:gap-3 p-3 md:p-4 rounded-lg border border-gray-200 hover:bg-gray-50 cursor-pointer transition-colors min-w-[240px] md:min-w-[280px] max-w-[280px] md:max-w-[320px] h-[220px] md:h-[240px]">
                   {/* Icon */}
+                  <div className="flex items-center gap-2 ">
                   <div
-                    className="w-10 h-10 md:w-12 md:h-12 rounded-lg flex items-center justify-center"
+                    className="w-10 h-10 md:w-12 md:h-12 rounded-lg flex items-center justify-center flex-shrink-0"
                     style={iconColor ? { backgroundColor: iconColor } : {}}
                   >
                     {hasLogo ? (
@@ -92,12 +93,13 @@ export default function NewSuggestedCollectives({
                   </div>
 
                   {/* Title */}
-                  <h3 className="font-bold text-sm md:text-base text-black">
+                  <h3 className="font-bold text-sm md:text-base text-black flex-shrink-0">
                     {collective.name}
                   </h3>
+                  </div>
 
                   {/* Founder */}
-                  <div className="flex items-center gap-1.5 md:gap-2">
+                  <div className="flex items-center gap-1.5 md:gap-2 flex-shrink-0">
                     <Avatar className="h-5 w-5 md:h-6 md:w-6">
                       <AvatarImage src={collective.founder.profile_picture} />
                       <AvatarFallback className="text-xs">
@@ -109,18 +111,18 @@ export default function NewSuggestedCollectives({
                       </AvatarFallback>
                     </Avatar>
                     <p className="text-xs text-muted-foreground">
-                      Founded by {collective.founder.name}
+                      Founded by <span className="font-semibold text-gray-600">{collective.founder.name}</span>
                     </p>
                   </div>
 
                   {/* Nonprofits count */}
-                  <p className="text-xs text-muted-foreground">
+                  <p className="text-xs text-muted-foreground flex-shrink-0">
                     Supporting {collective.nonprofit_count} nonprofit
                     {collective.nonprofit_count !== 1 ? "s" : ""}
                   </p>
 
                   {/* Description */}
-                  <p className="text-xs md:text-sm text-muted-foreground leading-relaxed line-clamp-2 md:line-clamp-none">
+                  <p className="text-xs md:text-sm text-muted-foreground leading-relaxed line-clamp-2 flex-1">
                     {collective.description}
                   </p>
                 </div>

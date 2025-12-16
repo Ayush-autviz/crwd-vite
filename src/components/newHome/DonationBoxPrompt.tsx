@@ -5,9 +5,10 @@ import { useAuthStore } from '@/stores/store';
 
 interface DonationBoxPromptProps {
   causeCount?: number;
+  hasJoinedCollectives?: boolean; // Hide "Start Your Own Collective" if user has joined collectives
 }
 
-export default function DonationBoxPrompt({ causeCount }: DonationBoxPromptProps) {
+export default function DonationBoxPrompt({ causeCount, hasJoinedCollectives = false }: DonationBoxPromptProps) {
   const navigate = useNavigate();
   const { user } = useAuthStore();
   const firstName = user?.first_name || 'there';
@@ -50,7 +51,9 @@ export default function DonationBoxPrompt({ causeCount }: DonationBoxPromptProps
                       e.stopPropagation();
                       navigate('/donation?tab=setup');
                     }}
-                    className="text-orange-600 font-semibold text-sm md:text-base hover:underline flex items-center gap-1"
+                    // className="p-0 m-0 self-start text-orange-600 font-semibold text-sm md:text-base hover:underline flex items-center gap-1"
+                    className="p-0 self-start text-left text-orange-600 font-semibold text-sm md:text-base hover:underline flex items-center gap-1"
+
                   >
                     Complete Setup - Just 2 minutes!
                     <ArrowRight className="w-4 h-4" />
@@ -93,38 +96,40 @@ export default function DonationBoxPrompt({ causeCount }: DonationBoxPromptProps
           </Card>
         )}
 
-        {/* Start Collective Card */}
-        <Card
-          onClick={() => navigate('/create-crwd')}
-          className="cursor-pointer hover:shadow-md transition-shadow border border-gray-200 bg-white"
-        >
-          <CardContent className="p-4 md:p-6">
-            <div className="flex items-start gap-3 md:gap-4">
-              {/* Green Icon */}
-              <div className="w-10 h-10 md:w-12 md:h-12 rounded-full bg-[#aeff30] flex items-center justify-center flex-shrink-0">
-                <Plus className="w-5 h-5 md:w-6 md:h-6 text-black" strokeWidth={3}/>
+        {/* Start Collective Card - Only show if user hasn't joined any collectives */}
+        {!hasJoinedCollectives && (
+          <Card
+            onClick={() => navigate('/create-crwd')}
+            className="cursor-pointer hover:shadow-md transition-shadow border border-gray-200 bg-white"
+          >
+            <CardContent className="p-4 md:p-6">
+              <div className="flex items-start gap-3 md:gap-4">
+                {/* Green Icon */}
+                <div className="w-10 h-10 md:w-12 md:h-12 rounded-full bg-[#aeff30] flex items-center justify-center flex-shrink-0">
+                  <Plus className="w-5 h-5 md:w-6 md:h-6 text-black" strokeWidth={3}/>
+                </div>
+                <div className="flex-1 min-w-0">
+                  <h3 className="font-bold text-base md:text-lg text-foreground">
+                    Start Your Own Collective
+                  </h3>
+                  <p className="text-xs md:text-sm text-gray-600 mb-2 mt-1">
+                    Bring people together around causes you care about.
+                  </p>
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      navigate('/create-crwd');
+                    }}
+                    className="text-foreground font-semibold text-xs md:text-sm hover:underline flex items-center gap-1"
+                  >
+                    Create collective
+                    <ArrowRight className="w-3 h-3" />
+                  </button>
+                </div>
               </div>
-              <div className="flex-1 min-w-0">
-                <h3 className="font-bold text-base md:text-lg text-foreground">
-                  Start Your Own Collective
-                </h3>
-                <p className="text-xs md:text-sm text-gray-600 mb-2 mt-1">
-                  Bring people together around causes you care about.
-                </p>
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    navigate('/create-crwd');
-                  }}
-                  className="text-foreground font-semibold text-xs md:text-sm hover:underline flex items-center gap-1"
-                >
-                  Create collective
-                  <ArrowRight className="w-3 h-3" />
-                </button>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+            </CardContent>
+          </Card>
+        )}
       </div>
     </div>
   );

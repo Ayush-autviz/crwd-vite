@@ -611,16 +611,37 @@ export default function ProfilePage() {
                   <div className="space-y-0">
                     {statsCollectivesData.data.map((item: any, index: number) => {
                       const collective = item.collective || item;
+                      
+                      // Generate consistent color for avatar fallback
+                      const avatarColors = [
+                        '#3B82F6', '#EC4899', '#8B5CF6', '#10B981', '#F59E0B', '#EF4444', '#06B6D4',
+                        '#F97316', '#84CC16', '#A855F7', '#14B8A6', '#F43F5E', '#6366F1', '#22C55E', '#EAB308',
+                      ];
+                      const getConsistentColor = (id: number | string, colors: string[]) => {
+                        const hash = typeof id === 'number' ? id : id.toString().split('').reduce((acc: number, char: string) => acc + char.charCodeAt(0), 0);
+                        return colors[hash % colors.length];
+                      };
+                      
+                      // Priority: 1. Use color from API, 2. Use logo, 3. Fallback to generated color with letter
+                      const hasColor = collective.color;
+                      const hasLogo = collective.logo && (collective.logo.startsWith("http") || collective.logo.startsWith("/") || collective.logo.startsWith("data:"));
+                      const iconColor = hasColor || (!hasLogo ? getConsistentColor(collective.id || collective.name, avatarColors) : undefined);
+                      const iconLetter = collective.name?.charAt(0)?.toUpperCase() || 'N';
+                      const imageUrl = hasLogo ? collective.logo : (collective.image || collective.avatar || undefined);
+                      
                       return (
                         <div
                           key={collective.id || index}
                           className="flex items-center justify-between py-3 border-b border-gray-100"
                         >
                           <div className="flex items-center gap-3 flex-1 min-w-0">
-                            <Avatar className="w-10 h-10 flex-shrink-0">
-                              <AvatarImage src={collective.created_by?.profile_picture || collective.avatar || collective.image} />
-                              <AvatarFallback className="bg-green-100 text-green-600">
-                                {collective.name?.charAt(0)?.toUpperCase() || 'N'}
+                            <Avatar className="w-10 h-10 flex-shrink-0 rounded-lg">
+                              <AvatarImage src={imageUrl} alt={collective.name} />
+                              <AvatarFallback 
+                                style={iconColor ? { backgroundColor: iconColor } : {}}
+                                className="rounded-lg text-white font-bold"
+                              >
+                                {iconLetter}
                               </AvatarFallback>
                             </Avatar>
                             <div className="flex-1 min-w-0">

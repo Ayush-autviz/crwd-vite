@@ -23,14 +23,14 @@ export default function MyDonationBoxCard({
           <h3 className="font-bold text-base md:text-lg text-gray-900 mb-1">My Donation Box</h3>
           <p className="text-sm md:text-base text-gray-600 mb-3">
             You are currently donating{" "}
-            <span className="font-bold text-gray-900">${monthlyAmount} per month</span> to{" "}
-            <span className="font-bold text-gray-900">{causeCount} causes</span>.
+            <span className="font-semibold text-gray-600">${monthlyAmount} per month</span> to{" "}
+            <span className="font-semibold text-gray-600">{causeCount} causes</span>.
           </p>
           <Link
             to="/donation"
             className="text-[#1600ff] text-sm md:text-base font-semibold inline-flex items-center gap-1 hover:underline"
           >
-            Manage box <ChevronRight className="h-4 w-4" />
+            Manage your donation box <ChevronRight className="h-4 w-4" />
           </Link>
         </div>
       </div>

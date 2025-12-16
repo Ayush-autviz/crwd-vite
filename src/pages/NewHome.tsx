@@ -9,7 +9,7 @@ import CollectiveCarouselCard from "@/components/newHome/CollectiveCarouselCard"
 import CommunityUpdates from "@/components/newHome/CommunityUpdates";
 import ExploreCards from "@/components/newHome/ExploreCards";
 import ProfileNavbar from "@/components/profile/ProfileNavbar";
-import { getCollectives, getCauses } from "@/services/api/crwd";
+import { getCollectives, getCauses, getJoinCollective } from "@/services/api/crwd";
 import { getDonationBox } from "@/services/api/donation";
 import { getNotifications } from "@/services/api/notification";
 import { getUserProfileById } from "@/services/api/social";
@@ -41,7 +41,12 @@ export default function NewHome() {
         enabled: !!user?.id && !!token?.access_token,
     });
 
-    // Note: Joined collectives query removed - only using attributing collectives from donation box
+    // Fetch joined collectives
+    const { data: joinedCollectivesData, isLoading: joinedCollectivesLoading } = useQuery({
+        queryKey: ["joinedCollectives", user?.id],
+        queryFn: () => getJoinCollective(user?.id?.toString() || ''),
+        enabled: !!user?.id && !!token?.access_token,
+    });
 
     // Fetch community updates (notifications)
     const { data: notificationsData, isLoading: notificationsLoading } = useQuery({
@@ -121,6 +126,19 @@ export default function NewHome() {
             };
         }) || [];
 
+    // Get list of joined collective IDs to filter them out from suggested collectives
+    const joinedCollectiveIds = useMemo(() => {
+        if (joinedCollectivesData?.data) {
+            return new Set(joinedCollectivesData.data.map((item: any) => item.collective.id));
+        }
+        return new Set();
+    }, [joinedCollectivesData]);
+
+    // Filter out collectives that user has already joined
+    const filteredSuggestedCollectives = useMemo(() => {
+        return transformedCollectives.filter((collective: any) => !joinedCollectiveIds.has(collective.id));
+    }, [transformedCollectives, joinedCollectiveIds]);
+
     // Transform nonprofits data to match component's expected format
     const transformedNonprofits =
         nonprofitsData?.results?.map((nonprofit: any) => ({
@@ -135,6 +153,23 @@ export default function NewHome() {
     // API returns {"status_code":200,"message":"Donation box not found"} when not set up
     const isDonationBoxNotFound = donationBoxData?.message === "Donation box not found";
     const isDonationBoxActive = donationBoxData?.is_active === true;
+
+    // Get list of cause IDs from donation box to filter them out from featured nonprofits
+    const donationBoxCauseIds = useMemo(() => {
+        if (donationBoxData && !isDonationBoxNotFound && donationBoxData.box_causes) {
+            return new Set(
+                donationBoxData.box_causes
+                    .map((boxCause: any) => boxCause.cause?.id)
+                    .filter((id: any) => id != null)
+            );
+        }
+        return new Set();
+    }, [donationBoxData, isDonationBoxNotFound]);
+
+    // Filter out nonprofits that are already in the donation box
+    const filteredFeaturedNonprofits = useMemo(() => {
+        return transformedNonprofits.filter((nonprofit: any) => !donationBoxCauseIds.has(nonprofit.id));
+    }, [transformedNonprofits, donationBoxCauseIds]);
 
     // Transform donation box data
     const donationBoxInfo = donationBoxData && !isDonationBoxNotFound && isDonationBoxActive
@@ -155,32 +190,29 @@ export default function NewHome() {
           })()
         : 0;
 
-    // Transform attributing collectives from donation box for carousel (priority)
+    // Transform joined collectives for carousel
     const transformedAttributingCollectives = useMemo(() => {
-        if (donationBoxData && !isDonationBoxNotFound && donationBoxData.attributing_collectives) {
-            return donationBoxData.attributing_collectives.map((collective: any) => {
-                // Calculate cause count from box_causes that have this collective in attributed_collectives
-                const attributedCauseCount = donationBoxData.box_causes?.filter((boxCause: any) => 
-                    boxCause.attributed_collectives?.includes(collective.id) || 
-                    boxCause.attributed_collectives?.includes(collective.id.toString())
-                ).length || 0;
-
-                // Check if current user is the creator
-                const isAdmin = collective.creator?.id === user?.id;
+        if (joinedCollectivesData?.data) {
+            return joinedCollectivesData.data.map((item: any) => {
+                const collective = item.collective;
+                // Check if user is admin (role is "admin" from API)
+                const isAdmin = item.role === "admin";
 
                 return {
                     id: collective.id,
                     name: collective.name || "Unknown Collective",
                     memberCount: collective.member_count || 0,
                     yearlyAmount: parseFloat(collective.total_donated || "0") * 12, // Convert monthly to yearly estimate
-                    causeCount: attributedCauseCount || 0,
+                    causeCount: collective.causes_count || 0,
                     role: isAdmin ? "Admin" : "Member",
-                    image: collective.logo || collective.creator?.profile_picture || "",
+                    image: collective.logo || collective.created_by?.profile_picture || "",
+                    logo: collective.logo || undefined,
+                    color: collective.color || undefined,
                 };
             });
         }
         return [];
-    }, [donationBoxData, isDonationBoxNotFound, user?.id]);
+    }, [joinedCollectivesData]);
 
     // Use only attributing collectives from donation box
 
@@ -356,16 +388,19 @@ export default function NewHome() {
                         // Donation box exists but is not active - show prompt with cause count
                         <DonationBoxPrompt 
                             causeCount={inactiveBoxCauseCount}
+                            hasJoinedCollectives={transformedAttributingCollectives.length > 0}
                         />
                     ) : (
-                        <DonationBoxPrompt />
+                        <DonationBoxPrompt 
+                            hasJoinedCollectives={transformedAttributingCollectives.length > 0}
+                        />
                     )
                 )}
 
-                {/* Collective Carousel Card - Only show when donation box is active */}
-                {token?.access_token && isDonationBoxActive && (
-                    donationBoxLoading ? (
-                        <div className="w-full mt-4 md:mt-6 lg:mt-8 max-w-full md:max-w-[95%] lg:max-w-[70%] mx-auto">
+                {/* Collective Carousel Card - Show joined collectives */}
+                {token?.access_token && (
+                    joinedCollectivesLoading ? (
+                        <div className="w-full mt-4 md:mt-6">
                             <div className="bg-white rounded-xl border border-gray-200 p-4 md:p-6 shadow-sm animate-pulse">
                                 <div className="space-y-4">
                                     <div className="h-6 bg-gray-200 rounded w-1/3"></div>
@@ -439,7 +474,7 @@ export default function NewHome() {
                         </div>
                     ) : (
                         <NewFeaturedNonprofits
-                            nonprofits={transformedNonprofits}
+                            nonprofits={filteredFeaturedNonprofits}
                             seeAllLink="/search"
                         />
                     )}
@@ -479,7 +514,7 @@ export default function NewHome() {
                         </div>
                     ) : (
                         <NewSuggestedCollectives
-                            collectives={transformedCollectives}
+                            collectives={filteredSuggestedCollectives}
                             seeAllLink="/search"
                         />
                     )}

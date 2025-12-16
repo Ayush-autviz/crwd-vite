@@ -185,7 +185,7 @@ export default function CollectiveHeader({
                     onClick={handleManageCollective}
                     className="w-full font-semibold flex items-center gap-2 md:gap-3 px-3 md:px-4 py-1.5 md:py-2 text-xs md:text-sm text-foreground hover:bg-gray-100 transition-colors"
                   >
-                    <Edit className="w-3.5 h-3.5 md:w-4 md:h-4" strokeWidth={2.5} />
+                    <Edit className="w-3 h-3 md:w-4 md:h-4" strokeWidth={2.5} />
                     Manage collective
                   </button>
                   <div className="border-t border-gray-200 my-1"></div>
@@ -195,7 +195,7 @@ export default function CollectiveHeader({
                 onClick={handleShareClick}
                 className="w-full font-semibold flex items-center gap-2 md:gap-3 px-3 md:px-4 py-1.5 md:py-2 text-xs md:text-sm text-foreground hover:bg-gray-100 transition-colors"
               >
-                <Share2 className="w-3.5 h-3.5 md:w-4 md:h-4" strokeWidth={2.5} />
+                <Share2 className="w-3 h-3 md:w-4 md:h-4" strokeWidth={2.5} />
                 Share
               </button>
              
@@ -203,7 +203,7 @@ export default function CollectiveHeader({
                 onClick={handleCopyLink}
                 className="w-full font-semibold flex items-center gap-2 md:gap-3 px-3 md:px-4 py-1.5 md:py-2 text-xs md:text-sm text-foreground hover:bg-gray-100 transition-colors"
               >
-                <Link2 className="w-3.5 h-3.5 md:w-4 md:h-4" strokeWidth={2.5} />
+                <Link2 className="w-3 h-3 md:w-4 md:h-4" strokeWidth={2.5} />
                 Copy link
               </button>
               
@@ -212,7 +212,7 @@ export default function CollectiveHeader({
                 disabled={isLoading || !currentUser}
                 className="w-full font-semibold flex items-center gap-2 md:gap-3 px-3 md:px-4 py-1.5 md:py-2 text-xs md:text-sm text-foreground hover:bg-gray-100 transition-colors disabled:opacity-50"
               >
-                <Star className={`w-3.5 h-3.5 md:w-4 md:h-4 ${isFavorite ? 'fill-yellow-500 text-yellow-500' : ''}`} strokeWidth={2.5} />
+                <Star className={`w-3 h-3 md:w-4 md:h-4 ${isFavorite ? 'fill-yellow-500 text-yellow-500' : ''}`} strokeWidth={2.5} />
                 {isFavorite ? 'Remove favorite' : 'Add to favorites'}
               </button>
               <div className="border-t border-gray-200 my-1"></div>
@@ -220,7 +220,7 @@ export default function CollectiveHeader({
                 onClick={handleReport}
                 className="w-full font-semibold flex items-center gap-2 md:gap-3 px-3 md:px-4 py-1.5 md:py-2 text-xs md:text-sm text-foreground hover:bg-gray-100 transition-colors"
               >
-                <Flag className="w-3.5 h-3.5 md:w-4 md:h-4" strokeWidth={2.5} />
+                <Flag className="w-3 h-3 md:w-4 md:h-4" strokeWidth={2.5} />
                 Report
               </button>
             </div>

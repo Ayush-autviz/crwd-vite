@@ -1,8 +1,10 @@
 import { useState, useRef, useEffect } from 'react';
-import { X, Send } from 'lucide-react';
+import { X, Send, Loader2 } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
+import { requestCause } from '@/services/api/crwd';
+import { Toast } from '@/components/ui/toast';
 
 interface RequestNonprofitModalProps {
   isOpen: boolean;
@@ -17,6 +19,8 @@ export default function RequestNonprofitModal({
   const [ein, setEin] = useState('');
   const [reason, setReason] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showToast, setShowToast] = useState(false);
+  const [toastMessage, setToastMessage] = useState('');
   const modalRef = useRef<HTMLDivElement>(null);
 
   // Handle click outside to close
@@ -62,26 +66,30 @@ export default function RequestNonprofitModal({
 
     setIsSubmitting(true);
     try {
-      // TODO: Implement API call to submit nonprofit request
-      console.log('Submitting nonprofit request:', {
-        nonprofitName,
-        ein,
-        reason,
+      await requestCause({
+        name: nonprofitName.trim(),
+        ein_number: ein.trim(),
+        description: reason.trim(),
       });
       
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      // Show success toast
+      setToastMessage('Request submitted successfully!');
+      setShowToast(true);
       
-      // Reset form and close modal
+      // Reset form and close modal after showing toast
       setNonprofitName('');
       setEin('');
       setReason('');
-      onClose();
       
-      // TODO: Show success toast
-    } catch (error) {
+      // Close modal after a brief delay to ensure toast is visible
+      setTimeout(() => {
+        onClose();
+      }, 500);
+    } catch (error: any) {
       console.error('Error submitting nonprofit request:', error);
-      // TODO: Show error toast
+      const errorMessage = error?.response?.data?.message || error?.message || 'Failed to submit request. Please try again.';
+      setToastMessage(errorMessage);
+      setShowToast(true);
     } finally {
       setIsSubmitting(false);
     }
@@ -202,8 +210,17 @@ export default function RequestNonprofitModal({
                     : 'bg-gray-200 text-gray-400 cursor-not-allowed'
                 }`}
               >
-                <Send className="w-3.5 h-3.5 md:w-4 md:h-4" />
-                Submit Request
+                {isSubmitting ? (
+                  <>
+                    <Loader2 className="w-3.5 h-3.5 md:w-4 md:h-4 animate-spin" />
+                    Submitting...
+                  </>
+                ) : (
+                  <>
+                    <Send className="w-3.5 h-3.5 md:w-4 md:h-4" />
+                    Submit Request
+                  </>
+                )}
               </Button>
             </div>
           </form>
@@ -227,6 +244,14 @@ export default function RequestNonprofitModal({
           animation: slideUp 0.3s ease-out;
         }
       `}</style>
+
+      {/* Toast notification */}
+      <Toast
+        message={toastMessage}
+        show={showToast}
+        onHide={() => setShowToast(false)}
+        duration={3000}
+      />
     </>
   );
 }
