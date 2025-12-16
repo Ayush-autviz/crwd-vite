@@ -6,6 +6,9 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { likePost, unlikePost } from "@/services/api/social";
 import CommentsBottomSheet from "@/components/post/CommentsBottomSheet";
 import { SharePost } from "@/components/ui/SharePost";
+import { Card, CardContent } from "@/components/ui/card";
+import { cn } from "@/lib/utils";
+import { Loader2 } from "lucide-react";
 
 interface CommunityPostCardProps {
   post: {
@@ -28,6 +31,14 @@ interface CommunityPostCardProps {
     comments: number;
     isLiked?: boolean;
     timestamp?: string;
+    previewDetails?: {
+      url?: string;
+      title?: string;
+      description?: string;
+      image?: string;
+      site_name?: string;
+      domain?: string;
+    };
   };
 }
 
@@ -64,7 +75,9 @@ export default function CommunityPostCard({ post }: CommunityPostCardProps) {
     },
   });
 
-  const handleLikeClick = () => {
+  const handleLikeClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
     if (isLiked) {
       unlikeMutation.mutate();
     } else {
@@ -76,108 +89,242 @@ export default function CommunityPostCard({ post }: CommunityPostCardProps) {
     ? `${post.user.firstName} ${post.user.lastName}`
     : post.user.name || post.user.username;
 
-  return (
-    <div className="bg-white rounded-lg border border-gray-200 p-3 md:p-4 hover:shadow-md transition-shadow">
-      {/* Header Section */}
-      <div className="flex items-start justify-between mb-3 md:mb-4">
-        <div className="flex items-center gap-2.5 md:gap-3 flex-1">
-          {/* Avatar */}
-          <Avatar className="h-10 w-10 md:h-12 md:w-12 flex-shrink-0">
-            <AvatarImage src={post.user.avatar} />
-            <AvatarFallback className="bg-[#1600ff] text-white text-xs md:text-sm">
-              {displayName
-                .split(" ")
-                .map((n) => n.charAt(0))
-                .join("")
-                .toUpperCase()}
-            </AvatarFallback>
-          </Avatar>
+  // Get user initials
+  const getUserInitials = () => {
+    if (post.user.firstName && post.user.lastName) {
+      return `${post.user.firstName.charAt(0)}${post.user.lastName.charAt(0)}`.toUpperCase();
+    }
+    if (post.user.firstName) {
+      return post.user.firstName.charAt(0).toUpperCase();
+    }
+    if (post.user.username) {
+      return post.user.username.charAt(0).toUpperCase();
+    }
+    return "U";
+  };
 
-          {/* User Info */}
+  // Generate vibrant avatar colors
+  const avatarColors = [
+    '#3B82F6', // Blue
+    '#EC4899', // Pink
+    '#8B5CF6', // Purple
+    '#10B981', // Green
+    '#F59E0B', // Amber
+    '#EF4444', // Red
+    '#06B6D4', // Cyan
+    '#F97316', // Orange
+    '#84CC16', // Lime
+    '#A855F7', // Violet
+    '#14B8A6', // Teal
+    '#F43F5E', // Rose
+    '#6366F1', // Indigo
+    '#22C55E', // Emerald
+    '#EAB308', // Yellow
+  ];
+  // Use post ID to generate a consistent random color for each post
+  const avatarColorIndex = post.id ? (Number(post.id) % avatarColors.length) : Math.floor(Math.random() * avatarColors.length);
+  const avatarBgColor = avatarColors[avatarColorIndex];
+  const initials = getUserInitials();
+
+  // Format timestamp if available
+  const formatPostTime = (timeString?: string): string => {
+    if (!timeString) return '';
+    
+    // Check if it's already a relative time string
+    if (timeString.includes('ago') || timeString.includes('just now')) {
+      return timeString;
+    }
+    
+    let date: Date;
+    
+    // Handle DD/MM/YYYY format
+    const ddmmyyyyMatch = timeString.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+    if (ddmmyyyyMatch) {
+      const [, day, month, year] = ddmmyyyyMatch;
+      date = new Date(`${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`);
+    } else {
+      date = new Date(timeString);
+    }
+    
+    if (isNaN(date.getTime())) {
+      return timeString;
+    }
+    
+    const now = new Date();
+    const diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000);
+    const diffInMinutes = Math.floor(diffInSeconds / 60);
+    const diffInHours = Math.floor(diffInSeconds / 3600);
+    
+    if (diffInSeconds < 60) {
+      return 'just now';
+    } else if (diffInMinutes < 60) {
+      return `${diffInMinutes} minute${diffInMinutes === 1 ? '' : 's'} ago`;
+    } else if (diffInHours < 24) {
+      return `${diffInHours} hour${diffInHours === 1 ? '' : 's'} ago`;
+    } else {
+      const currentYear = now.getFullYear();
+      const postYear = date.getFullYear();
+      
+      const options: Intl.DateTimeFormatOptions = {
+        month: 'long',
+        day: 'numeric',
+      };
+      
+      if (postYear !== currentYear) {
+        options.year = 'numeric';
+      }
+      
+      return date.toLocaleDateString('en-US', options);
+    }
+  };
+
+  const formattedTime = formatPostTime(post.timestamp);
+
+  return (
+    <Card
+      className={cn(
+        "bg-white rounded-xl shadow-sm border-0 mb-4 overflow-hidden",
+        "shadow-[0_2px_2px_rgba(89,89,89,0.15)]"
+      )}
+    >
+      <CardContent className="p-3 md:p-4">
+        <div className="flex gap-2.5 md:gap-3">
+          <Link to={`/user-profile/${post.user.id}`}>
+            <Avatar className="h-9 w-9 md:h-10 md:w-10 flex-shrink-0">
+              <AvatarImage
+                src={post.user.avatar}
+                alt={displayName}
+              />
+              <AvatarFallback 
+                style={{ backgroundColor: avatarBgColor }}
+                className="text-white font-bold text-xs md:text-sm"
+              >
+                {initials}
+              </AvatarFallback>
+            </Avatar>
+          </Link>
           <div className="flex-1 min-w-0">
-            <div className="flex items-center gap-1.5 md:gap-2 flex-wrap">
-            <Link
-              to={`/user-profile/${post.user.id}`}
-              className="font-bold text-sm md:text-base text-gray-900 hover:underline block"
-            >
-              {displayName}
-            </Link>
-            <p className="text-xs md:text-sm text-gray-500">@{post.user.username}</p>
+            <div className="flex items-start justify-between mb-2 md:mb-3">
+              <div className="flex-1 flex-wrap items-center">
+                <span className="text-xs md:text-sm font-semibold text-gray-900">{displayName}</span>
+                <div className="flex items-center gap-1">
+                  <span className="text-[10px] md:text-xs text-gray-500">{formattedTime}</span>
+                </div>
+              </div>
             </div>
-            {post.collective && (
-              <p className="text-xs md:text-sm text-gray-500 mt-0.5">{post.collective.name}</p>
-            )}
+
+            <Link to={`/post/${post.id}`} className="block">
+              <div className="text-xs md:text-sm text-gray-900 leading-5 mb-2 md:mb-3 whitespace-pre-line">
+                {post.content}
+              </div>
+
+              {/* Show preview card if previewDetails exists, otherwise show image */}
+              {post.previewDetails ? (
+                <a
+                  href={post.previewDetails.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={(e) => e.stopPropagation()}
+                  className="block w-full rounded-lg overflow-hidden mb-3 border border-gray-200 bg-white hover:opacity-90 transition-opacity cursor-pointer"
+                >
+                  <div className="flex flex-col md:flex-row bg-white">
+                    {/* Preview Image */}
+                    {post.previewDetails.image && (
+                      <div className="w-full md:w-48 h-[200px] md:h-auto flex-shrink-0">
+                        <img
+                          src={post.previewDetails.image}
+                          alt={post.previewDetails.title || 'Link preview'}
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+                    )}
+                    {/* Preview Content */}
+                    <div className="flex-1 p-2.5 md:p-3">
+                      {post.previewDetails.site_name && (
+                        <div className="text-[9px] md:text-[10px] text-gray-500 uppercase tracking-wide mb-0.5 md:mb-1">
+                          {post.previewDetails.site_name}
+                        </div>
+                      )}
+                      {post.previewDetails.title && (
+                        <h3 className="text-xs md:text-sm font-semibold text-gray-900 mb-0.5 md:mb-1 line-clamp-2">
+                          {post.previewDetails.title}
+                        </h3>
+                      )}
+                      {post.previewDetails.description && (
+                        <p className="text-[10px] md:text-xs text-gray-500 mb-0.5 md:mb-1 line-clamp-2">
+                          {post.previewDetails.description}
+                        </p>
+                      )}
+                      {post.previewDetails.domain && (
+                        <div className="text-[10px] md:text-[11px] text-gray-500 truncate">
+                          {post.previewDetails.domain}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </a>
+              ) : post.imageUrl ? (
+                <a
+                  href={post.imageUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={(e) => e.stopPropagation()}
+                  className="block w-full rounded-lg overflow-hidden mb-2 md:mb-3 border border-gray-200 cursor-pointer hover:opacity-90 transition-opacity"
+                >
+                  <img
+                    src={post.imageUrl}
+                    alt="Post"
+                    className="w-full h-[180px] md:h-[200px] object-cover"
+                  />
+                </a>
+              ) : null}
+
+              {/* Footer */}
+              <div className="flex items-center justify-between pt-2 md:pt-3">
+                <div className="flex items-center gap-3 md:gap-4">
+                  <button
+                    onClick={handleLikeClick}
+                    disabled={likeMutation.isPending || unlikeMutation.isPending}
+                    className="flex items-center gap-1 md:gap-1.5 hover:opacity-80 transition-opacity disabled:opacity-50"
+                  >
+                    {likeMutation.isPending || unlikeMutation.isPending ? (
+                      <Loader2 className="w-4 h-4 md:w-[18px] md:h-[18px] animate-spin text-gray-500" />
+                    ) : (
+                      <Heart
+                        className={`w-4 h-4 md:w-[18px] md:h-[18px] ${
+                          isLiked ? "fill-[#ef4444] text-[#ef4444]" : "text-gray-500"
+                        }`}
+                      />
+                    )}
+                    <span className="text-xs md:text-sm text-gray-500">{likesCount}</span>
+                  </button>
+                  <button
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      setShowCommentsSheet(true);
+                    }}
+                    className="flex items-center gap-1 md:gap-1.5 hover:opacity-80 transition-opacity"
+                  >
+                    <MessageCircle className="w-4 h-4 md:w-[18px] md:h-[18px] text-gray-500" />
+                    <span className="text-xs md:text-sm text-gray-500">{post.comments || 0}</span>
+                  </button>
+                </div>
+                <button
+                  className="p-0.5 md:p-1 hover:opacity-80 transition-opacity"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    setShowShareModal(true);
+                  }}
+                >
+                  <Share2 className="w-4 h-4 md:w-[18px] md:h-[18px] text-gray-500" />
+                </button>
+              </div>
+            </Link>
           </div>
         </div>
-
-        {/* Join Button - Only show if not own post and collective exists */}
-        {/* {!isOwnPost && post.collective && (
-          <Button
-            onClick={() => {
-              if (post.collective?.id) {
-                window.location.href = `/newgroupcrwd/${post.collective.id}`;
-              }
-            }}
-            className="bg-[#1600ff] hover:bg-[#1400cc] text-white px-4 py-1.5 rounded-full text-sm font-medium"
-          >
-            Join
-          </Button>
-        )} */}
-      </div>
-
-      {/* Post Content */}
-      <div className="mb-3 md:mb-4">
-        <p className="text-gray-900 text-xs md:text-sm leading-relaxed whitespace-pre-wrap">
-          {post.content}
-        </p>
-      </div>
-
-      {/* Post Image */}
-      {post.imageUrl && (
-        <a
-          href={post.imageUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="block mb-3 md:mb-4 rounded-lg overflow-hidden cursor-pointer hover:opacity-90 transition-opacity"
-        >
-          <img
-            src={post.imageUrl}
-            alt="Post content"
-            className="w-full h-auto object-cover"
-          />
-        </a>
-      )}
-
-      {/* Engagement Section */}
-      <div className="flex items-center justify-between pt-2.5 md:pt-3 border-t border-gray-200">
-        <div className="flex items-center gap-3 md:gap-4">
-          <button
-            onClick={handleLikeClick}
-            disabled={likeMutation.isPending || unlikeMutation.isPending}
-            className="flex items-center gap-1 md:gap-1.5 hover:opacity-70 transition-opacity disabled:opacity-50"
-          >
-            <Heart
-              className={`h-3.5 w-3.5 md:h-4 md:w-4 ${
-                isLiked ? "fill-red-500 text-red-500" : "text-gray-600"
-              }`}
-            />
-            <span className="text-xs md:text-sm text-gray-600">{likesCount}</span>
-          </button>
-          <button
-            onClick={() => setShowCommentsSheet(true)}
-            className="flex items-center gap-1 md:gap-1.5 hover:opacity-70 transition-opacity"
-          >
-            <MessageCircle className="h-3.5 w-3.5 md:h-4 md:w-4 text-gray-600" />
-            <span className="text-xs md:text-sm text-gray-600">{post.comments || 0}</span>
-          </button>
-        </div>
-        <button
-          onClick={() => setShowShareModal(true)}
-          className="hover:opacity-70 transition-opacity"
-        >
-          <Share2 className="h-3.5 w-3.5 md:h-4 md:w-4 text-gray-600" />
-        </button>
-      </div>
+      </CardContent>
 
       {/* Comments Bottom Sheet */}
       <CommentsBottomSheet
@@ -201,7 +348,7 @@ export default function CommunityPostCard({ post }: CommunityPostCardProps) {
         title={post.collective?.name || `${post.user.firstName} ${post.user.lastName}` || post.user.name}
         description={post.content}
       />
-    </div>
+    </Card>
   );
 }
 

@@ -7,6 +7,7 @@ import MyDonationBoxCard from "@/components/newHome/MyDonationBoxCard";
 import DonationBoxPrompt from "@/components/newHome/DonationBoxPrompt";
 import CollectiveCarouselCard from "@/components/newHome/CollectiveCarouselCard";
 import CommunityUpdates from "@/components/newHome/CommunityUpdates";
+import CommunityPosts from "@/components/newHome/CommunityPosts";
 import ExploreCards from "@/components/newHome/ExploreCards";
 import ProfileNavbar from "@/components/profile/ProfileNavbar";
 import { getCollectives, getCauses, getJoinCollective } from "@/services/api/crwd";
@@ -218,10 +219,14 @@ export default function NewHome() {
 
     // Transform notifications data for community updates
     // Only show type "community" (not "community_post")
+    // Filter out items with postId (post type items)
     // Use useMemo to make it reactive to userProfilesMap changes
     const transformedCommunityUpdates = useMemo(() => {
         return notificationsData?.results
-            ?.filter((notification: any) => notification.type === "community")
+            ?.filter((notification: any) => 
+                notification.type === "community" && 
+                !notification.data?.post_id // Filter out post type items
+            )
             .map((notification: any) => {
                 // Extract username from body if it contains @username pattern
                 // Example: "@drake_ji donated $7.0 to test" -> "drake_ji"
@@ -336,10 +341,8 @@ export default function NewHome() {
             }) || [];
     }, [notificationsData, userProfilesMap]);
 
-    // Split community updates into three sections
-    const firstTwoUpdates = transformedCommunityUpdates.slice(0, 2);
-    const nextTwoUpdates = transformedCommunityUpdates.slice(2, 4);
-    const remainingUpdates = transformedCommunityUpdates.slice(4);
+    // All community updates (no splitting needed - show all below suggested collectives)
+    const allCommunityUpdates = transformedCommunityUpdates;
 
 
     if (!user?.id) {
@@ -427,27 +430,9 @@ export default function NewHome() {
 
                 <div className="w-full max-w-6xl mx-auto">
                 <div className="mx-4 md:mx-6 lg:mx-8">
-                    {/* First 2 Community Updates - Above Featured Nonprofits */}
+                    {/* 2 Posts - Above Featured Nonprofits */}
                     {token?.access_token && (
-                        notificationsLoading ? (
-                            <div className="space-y-4 py-4 md:py-6">
-                                <div className="h-6 bg-gray-200 rounded w-1/4 animate-pulse"></div>
-                                {[1, 2].map((i) => (
-                                    <div key={i} className="bg-white rounded-lg border border-gray-200 p-4 md:p-5 animate-pulse">
-                                        <div className="flex items-start gap-3 md:gap-4">
-                                            <div className="w-10 h-10 md:w-12 md:h-12 bg-gray-200 rounded-full flex-shrink-0"></div>
-                                            <div className="flex-1 space-y-2">
-                                                <div className="h-4 bg-gray-200 rounded w-3/4"></div>
-                                                <div className="h-3 bg-gray-200 rounded w-full"></div>
-                                                <div className="h-3 bg-gray-200 rounded w-5/6"></div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                ))}
-                            </div>
-                        ) : firstTwoUpdates.length > 0 ? (
-                            <CommunityUpdates updates={firstTwoUpdates} showHeading={true} />
-                        ) : null
+                        <CommunityPosts limit={2} startIndex={0} showHeading={true} />
                     )}
 
                     {/* Featured Nonprofits Section */}
@@ -479,13 +464,9 @@ export default function NewHome() {
                         />
                     )}
 
-                    {/* Next 2 Community Updates - Above Suggested Collectives */}
+                    {/* 1 Post - After Featured Nonprofits */}
                     {token?.access_token && (
-                        notificationsLoading ? (
-                            null
-                        ) : nextTwoUpdates.length > 0 ? (
-                            <CommunityUpdates updates={nextTwoUpdates} showHeading={false} />
-                        ) : null
+                        <CommunityPosts limit={1} startIndex={2} showHeading={false} />
                     )}
 
                     {/* Suggested Collectives Section */}
@@ -519,12 +500,12 @@ export default function NewHome() {
                         />
                     )}
 
-                    {/* Remaining Community Updates - Below Suggested Collectives */}
+                    {/* All Community Updates - Below Suggested Collectives */}
                     {token?.access_token && (
                         notificationsLoading ? (
                             null
-                        ) : remainingUpdates.length > 0 ? (
-                            <CommunityUpdates updates={remainingUpdates} showHeading={false} />
+                        ) : allCommunityUpdates.length > 0 ? (
+                            <CommunityUpdates updates={allCommunityUpdates} showHeading={false} />
                         ) : null
                     )}
 
