@@ -54,9 +54,15 @@ export default function NewNonProfitInterests() {
     mutationFn: (interests: string[]) => postCauseInterests({ interests }),
     onSuccess: () => {
       // toast.success("Interests saved successfully!");
-      navigate(`/complete-onboard?redirectTo=${encodeURIComponent(redirectTo)}`, { 
-        state: { selectedCategories } 
-      });
+      // If redirectTo is present and not just '/', navigate to that page
+      // Otherwise, navigate to complete-onboard
+      if (redirectTo && redirectTo !== '/') {
+        navigate(redirectTo);
+      } else {
+        navigate(`/complete-onboard?redirectTo=${encodeURIComponent(redirectTo)}`, { 
+          state: { selectedCategories } 
+        });
+      }
     },
     onError: (error: any) => {
       toast.error(error?.response?.data?.message || "Failed to save interests");
@@ -72,8 +78,13 @@ export default function NewNonProfitInterests() {
   };
 
   const handleSkip = () => {
-    // TODO: Handle skip action
-    navigate(`/complete-onboard?redirectTo=${encodeURIComponent(redirectTo)}`);
+    // If came from create-crwd or groupcrwd, navigate directly to that page
+    // Otherwise, navigate to complete-onboard
+    if (redirectTo.includes('/create-crwd') || redirectTo.includes('/groupcrwd/')) {
+      navigate(redirectTo);
+    } else {
+      navigate(`/complete-onboard?redirectTo=${encodeURIComponent(redirectTo)}`);
+    }
   };
 
   return (

@@ -539,7 +539,7 @@ export default function NewCreateCollectivePage() {
               {/* Heading */}
               <div className="text-center mb-3 md:mb-4">
                 <h2 className="text-xl md:text-2xl font-bold text-gray-900">
-                  🎉 Your Collective is <span className="font-bold">Live!</span>
+                  {name} is <span className="font-bold">Live!</span>
                 </h2>
               </div>
 
@@ -636,7 +636,7 @@ export default function NewCreateCollectivePage() {
               value={name}
               onChange={(e) => setName(e.target.value)}
               placeholder='"Atlanta Climate Action"'
-              className={`w-full bg-gray-100 rounded-2xl text-sm md:text-base ${name.length > 0 ? '' : 'italic'}`}
+              className={`w-full bg-gray-50 rounded-2xl text-sm md:text-base ${name.length > 0 ? '' : 'italic'}`}
             />
           </div>
 
@@ -658,7 +658,7 @@ export default function NewCreateCollectivePage() {
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               placeholder={`"We're classmates giving back to Atlanta."\n"Our office team supporting local families."\n"A community of friends passionate about clean water."`}
-              className="w-full min-h-[100px] bg-gray-100 rounded-2xl text-sm md:text-base"
+              className={`w-full min-h-[100px] bg-gray-50 rounded-2xl text-sm md:text-base ${description.length > 0 ? '' : 'italic'}`}
             />
           </div>
 

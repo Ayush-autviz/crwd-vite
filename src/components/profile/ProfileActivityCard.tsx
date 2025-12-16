@@ -25,6 +25,63 @@ import { Loader2 } from "lucide-react";
 import { useAuthStore } from "@/stores/store";
 import CommentsBottomSheet from "../post/CommentsBottomSheet";
 
+// Format date to relative time or full date
+const formatPostTime = (timeString: string): string => {
+  // Check if it's already a relative time string (like "1h ago", "2d ago")
+  if (timeString.includes('ago') || timeString.includes('just now')) {
+    return timeString;
+  }
+  
+  let date: Date;
+  
+  // Handle DD/MM/YYYY or DD/MM/YYYY format (e.g., "15/12/2025")
+  const ddmmyyyyMatch = timeString.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+  if (ddmmyyyyMatch) {
+    const [, day, month, year] = ddmmyyyyMatch;
+    // Create date in YYYY-MM-DD format for proper parsing
+    date = new Date(`${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`);
+  } else {
+    // Try to parse as ISO date string or other date formats
+    date = new Date(timeString);
+  }
+  
+  // Check if date is valid
+  if (isNaN(date.getTime())) {
+    // If parsing fails, return the original string
+    return timeString;
+  }
+  
+  const now = new Date();
+  const diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000);
+  const diffInMinutes = Math.floor(diffInSeconds / 60);
+  const diffInHours = Math.floor(diffInSeconds / 3600);
+  
+  // Show relative time for recent posts (within 24 hours)
+  if (diffInSeconds < 60) {
+    return 'just now';
+  } else if (diffInMinutes < 60) {
+    return `${diffInMinutes} minute${diffInMinutes === 1 ? '' : 's'} ago`;
+  } else if (diffInHours < 24) {
+    return `${diffInHours} hour${diffInHours === 1 ? '' : 's'} ago`;
+  } else {
+    // For older posts, show full date
+    const currentYear = now.getFullYear();
+    const postYear = date.getFullYear();
+    
+    const options: Intl.DateTimeFormatOptions = {
+      month: 'long',
+      day: 'numeric',
+    };
+    
+    // Add year only if it's not the current year
+    if (postYear !== currentYear) {
+      options.year = 'numeric';
+    }
+    
+    return date.toLocaleDateString('en-US', options);
+  }
+};
+
 export default function ProfileActivityCard({
   post,
   className,
@@ -175,9 +232,22 @@ export default function ProfileActivityCard({
   const avatarColorIndex = post.id ? (Number(post.id) % avatarColors.length) : Math.floor(Math.random() * avatarColors.length);
   const avatarBgColor = avatarColors[avatarColorIndex];
 
+  // Get post data with any additional fields
+  const postAny = post as any;
+  
+  // Get user display name (first name + last name, or fallback to username)
+  const getDisplayName = () => {
+    if (postAny.firstName && postAny.lastName) {
+      return `${postAny.firstName} ${postAny.lastName}`;
+    }
+    if (postAny.firstName) {
+      return postAny.firstName;
+    }
+    return post.username || 'Unknown User';
+  };
+  
   // Get user initials following the same pattern as ProfileNavbar
   const getUserInitials = () => {
-    const postAny = post as any;
     if (postAny.firstName && postAny.lastName) {
       return `${postAny.firstName.charAt(0)}${postAny.lastName.charAt(0)}`.toUpperCase();
     }
@@ -190,7 +260,15 @@ export default function ProfileActivityCard({
     return "U";
   };
   
+  const displayName = getDisplayName();
   const initials = getUserInitials();
+  
+  // Format the post time
+  const formattedTime = formatPostTime(post.time);
+  
+  // Check if post has created_at or timestamp for more accurate date
+  const actualDate = postAny.created_at || postAny.timestamp || postAny.time;
+  const finalFormattedTime = actualDate ? formatPostTime(actualDate) : formattedTime;
 
   return (
     <>
@@ -209,7 +287,7 @@ export default function ProfileActivityCard({
               <Avatar className="h-9 w-9 md:h-10 md:w-10 flex-shrink-0">
                 <AvatarImage
                   src={imageUrl ?? post.avatarUrl}
-                  alt={post.username}
+                  alt={displayName}
                 />
                 <AvatarFallback 
                   style={{ backgroundColor: avatarBgColor }}
@@ -223,17 +301,17 @@ export default function ProfileActivityCard({
             <div className="flex-1 min-w-0">
               <div className="flex items-start justify-between mb-2 md:mb-3">
                 <div className="flex-1 flex-wrap items-center">
-                  <span className="text-xs md:text-sm font-semibold text-gray-900">{post.username}</span>
+                  <span className="text-xs md:text-sm font-semibold text-gray-900">{displayName}</span>
                   <div className="flex items-center gap-1">
-                    <span className="text-[10px] md:text-xs text-gray-500">{post.time}</span>
-                    {post.org && (
+                    <span className="text-[10px] md:text-xs text-gray-500">{finalFormattedTime}</span>
+                    {/* {post.org && (
                       <span 
                         className="px-2 md:px-2.5 py-0.5 md:py-1 rounded-xl text-[10px] md:text-[11px] font-medium text-white"
                         style={{ backgroundColor: tagBgColor }}
                       >
                         {post.org}
                       </span>
-                    )}
+                    )} */}
                   </div>
                 </div>
                 {isOwnPost && (
@@ -333,13 +411,19 @@ export default function ProfileActivityCard({
                     </div>
                   </a>
                 ) : post.imageUrl ? (
-                  <div className="w-full rounded-lg overflow-hidden mb-2 md:mb-3 border border-gray-200">
+                  <a
+                    href={post.imageUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={(e) => e.stopPropagation()}
+                    className="block w-full rounded-lg overflow-hidden mb-2 md:mb-3 border border-gray-200 cursor-pointer hover:opacity-90 transition-opacity"
+                  >
                     <img
                       src={post.imageUrl}
                       alt="Post"
                       className="w-full h-[180px] md:h-[200px] object-cover"
                     />
-                  </div>
+                  </a>
                 ) : null}
 
                 {/* Footer */}
@@ -393,8 +477,8 @@ export default function ProfileActivityCard({
 
       <SharePost
         url={window.location.origin + `/post/${post.id}`}
-        title={`${post.username} shared a post in ${post.org}`}
-        description={post.text || `Check out this post from ${post.username} in the ${post.org} collective.`}
+        title={`${displayName} shared a post in ${post.org}`}
+        description={post.text || `Check out this post from ${displayName} in the ${post.org} collective.`}
         isOpen={showShareModal}
         onClose={() => setShowShareModal(false)}
       />
@@ -450,11 +534,11 @@ export default function ProfileActivityCard({
         onClose={() => setShowCommentsSheet(false)}
         post={{
           id: post.id,
-          username: post.username,
+          username: displayName,
           text: post.text,
           avatarUrl: post.avatarUrl,
-          firstName: (post as any).firstName,
-          lastName: (post as any).lastName,
+          firstName: postAny.firstName,
+          lastName: postAny.lastName,
         }}
       />
     </>

@@ -51,6 +51,8 @@ export const DonationBox3 = ({
 
   // State for confirmation modal
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [isDeleteModalVisible, setIsDeleteModalVisible] = useState(false);
+  const [isDeleteModalAnimating, setIsDeleteModalAnimating] = useState(false);
   const [itemToDelete, setItemToDelete] = useState<{ id: string; name: string; type: 'cause' | 'collective' } | null>(null);
   const [expandedCollectives, setExpandedCollectives] = useState<Set<number>>(new Set());
   const [collectiveDetails, setCollectiveDetails] = useState<Record<number, any>>({});
@@ -96,6 +98,20 @@ export const DonationBox3 = ({
       setEditableAmount(Math.round(parseFloat(donationBox.monthly_amount)));
     }
   }, [donationBox?.monthly_amount]);
+
+  // Handle delete modal animation
+  useEffect(() => {
+    let timer: NodeJS.Timeout;
+    if (showDeleteModal) {
+      setIsDeleteModalVisible(true);
+      setIsDeleteModalAnimating(false);
+      timer = setTimeout(() => setIsDeleteModalAnimating(true), 20);
+    } else if (isDeleteModalVisible) {
+      setIsDeleteModalAnimating(false);
+      timer = setTimeout(() => setIsDeleteModalVisible(false), 300);
+    }
+    return () => clearTimeout(timer);
+  }, [showDeleteModal, isDeleteModalVisible]);
 
   // Fetch donation history for lifetime amount
   const { data: donationHistoryData } = useQuery({
@@ -482,6 +498,16 @@ export const DonationBox3 = ({
                         <p className="font-bold text-sm md:text-base text-gray-900">{distributionPercentage}%</p>
                         <p className="text-xs md:text-sm text-gray-600">${amountPerItem.toFixed(2)}/mo</p>
                       </div>
+                      <button
+                        onClick={() => {
+                          setItemToDelete({ id: cause.id.toString(), name: cause.name, type: 'cause' });
+                          setShowDeleteModal(true);
+                        }}
+                        className="p-1.5 md:p-2 hover:bg-red-50 rounded-lg transition-colors flex-shrink-0"
+                        aria-label="Remove cause"
+                      >
+                        <Trash2 className="w-4 h-4 md:w-5 md:h-5 text-red-500" />
+                      </button>
                     </div>
                   </div>
                 );
@@ -960,36 +986,72 @@ export const DonationBox3 = ({
       {/* Spacer for mobile */}
       {/* <div className="h-24 md:hidden"></div> */}
 
-      {/* Delete Confirmation Modal */}
-      <Dialog open={showDeleteModal} onOpenChange={setShowDeleteModal}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Confirm Removal</DialogTitle>
-            <DialogDescription>
-              Are you sure you want to remove {itemToDelete?.name} from your donation box? This action cannot be undone.
-            </DialogDescription>
-          </DialogHeader>
-          <DialogFooter>
-            <Button 
-              variant="outline" 
-              onClick={() => {
-                setShowDeleteModal(false);
-                setItemToDelete(null);
-              }}
-              disabled={removeCauseMutation.isPending || removeCollectiveMutation.isPending}
-            >
-              Cancel
-            </Button>
-            <Button 
-              variant="destructive" 
-              onClick={handleDelete}
-              disabled={removeCauseMutation.isPending || removeCollectiveMutation.isPending}
-            >
-              {removeCauseMutation.isPending || removeCollectiveMutation.isPending ? 'Removing...' : 'Remove'}
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      {/* Remove Cause Bottom Sheet Modal */}
+      {isDeleteModalVisible && (
+        <div
+          className={`fixed inset-0 z-50 transition-opacity duration-300 ${
+            isDeleteModalAnimating ? 'opacity-100' : 'opacity-0'
+          }`}
+          onClick={() => {
+            setShowDeleteModal(false);
+            setItemToDelete(null);
+          }}
+        >
+          {/* Backdrop */}
+          <div className="absolute inset-0 bg-black/50" />
+          
+          {/* Bottom Sheet */}
+          <div
+            className={`absolute bottom-0 left-0 right-0 bg-white rounded-t-2xl md:rounded-t-3xl shadow-2xl max-h-[90vh] md:max-h-[85vh] overflow-hidden flex flex-col transition-transform duration-300 ${
+              isDeleteModalAnimating ? 'translate-y-0' : 'translate-y-full'
+            }`}
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Handle Bar */}
+            <div className="flex justify-center pt-2 md:pt-3 pb-1.5 md:pb-2">
+              <div className="w-10 md:w-12 h-1 md:h-1.5 bg-gray-300 rounded-full" />
+            </div>
+
+            {/* Content */}
+            <div className="flex-1 overflow-y-auto px-4 md:px-6 py-4 md:py-6">
+              <h2 className="text-xl md:text-2xl font-bold text-gray-900 mb-2 md:mb-3">
+                Remove Cause?
+              </h2>
+              <p className="text-sm md:text-base text-gray-600 mb-4 md:mb-6">
+                Are you sure you want to remove <span className="font-semibold">{itemToDelete?.name}</span> from your donation box? This action cannot be undone.
+              </p>
+            </div>
+
+            {/* Footer Buttons */}
+            <div className="px-4 md:px-6 py-3 md:py-4 border-t border-gray-200 bg-white flex flex-col sm:flex-row gap-2 sm:gap-3">
+              <button
+                onClick={() => {
+                  setShowDeleteModal(false);
+                  setItemToDelete(null);
+                }}
+                disabled={removeCauseMutation.isPending || removeCollectiveMutation.isPending}
+                className="w-full sm:flex-1 bg-gray-200 hover:bg-gray-300 text-gray-900 font-semibold py-3 md:py-4 rounded-full transition-colors text-sm md:text-base disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleDelete}
+                disabled={removeCauseMutation.isPending || removeCollectiveMutation.isPending}
+                className="w-full sm:flex-1 bg-red-500 hover:bg-red-600 text-white font-semibold py-3 md:py-4 rounded-full transition-colors text-sm md:text-base flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {removeCauseMutation.isPending || removeCollectiveMutation.isPending ? (
+                  <>
+                    <div className="w-4 h-4 md:w-5 md:h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                    <span>Removing...</span>
+                  </>
+                ) : (
+                  'Remove'
+                )}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

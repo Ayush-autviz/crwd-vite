@@ -23,7 +23,7 @@ import OrganizationMission from '@/components/newcause/OrganizationMission';
 import SimilarNonprofits from '@/components/newcause/SimilarNonprofits';
 import { SharePost } from '@/components/ui/SharePost';
 import { useAuthStore } from '@/stores/store';
-import { toast } from 'sonner';
+import { Toast } from '@/components/ui/toast';
 import { getCausesBySearch } from '@/services/api/crwd';
 import Footer from '@/components/Footer';
 
@@ -35,6 +35,8 @@ export default function NewCausePage() {
   const [showShareModal, setShowShareModal] = useState(false);
   const [showAddToBoxModal, setShowAddToBoxModal] = useState(false);
   const addToBoxModalRef = useRef<HTMLDivElement>(null);
+  const [showToast, setShowToast] = useState(false);
+  const [toastMessage, setToastMessage] = useState('');
 
   // Fetch cause data
   const { data: causeData, isLoading: isLoadingCause, error: causeError } = useQuery({
@@ -57,55 +59,50 @@ export default function NewCausePage() {
     ?.filter((cause: any) => cause.id.toString() !== causeId)
     .slice(0, 2) || [];
 
+  // Fetch donation box to check if cause is already added
+  const { data: donationBoxData } = useQuery({
+    queryKey: ['donationBox', currentUser?.id],
+    queryFn: getDonationBox,
+    enabled: !!currentUser?.id,
+  });
+
+  // Check if current cause is already in the donation box
+  const isCauseInBox = donationBoxData?.box_causes?.some((boxCause: any) => {
+    const cause = boxCause.cause || boxCause;
+    return cause?.id?.toString() === causeId || boxCause.cause_id?.toString() === causeId;
+  }) || false;
+
   // Add cause to donation box mutation
   const addToDonationBoxMutation = useMutation({
     mutationFn: async () => {
       if (!causeId) throw new Error('Cause ID is missing');
-      return addCausesToBox({ cause_ids: [parseInt(causeId)] });
+      // Use correct API format: { causes: [{ cause_id: 0 }] } without attributed_collective
+      return addCausesToBox({ 
+        causes: [{ 
+          cause_id: parseInt(causeId) 
+        }] 
+      });
     },
     onSuccess: async () => {
       setShowAddToBoxModal(false);
       queryClient.invalidateQueries({ queryKey: ['donationBox', currentUser?.id] });
-      toast.success('Cause added to donation box!');
       
-      // Check if donation box exists and navigate accordingly
-      try {
-        const donationBoxData = await getDonationBox();
-        if (!donationBoxData || !donationBoxData.id) {
-          // Navigate to donation box setup
-          navigate('/donation?tab=setup', {
-            state: {
-              preselectedItem: {
-                id: causeId,
-                type: 'cause',
-                data: causeData,
-              },
-              activeTab: 'nonprofits',
-            },
-          });
-        } else {
-          // Navigate to donation box with cause preselected
-          navigate('/donation', {
-            state: {
-              preselectedItem: {
-                id: causeId,
-                type: 'cause',
-                data: causeData,
-              },
-              activeTab: 'nonprofits',
-            },
-          });
-        }
-      } catch (error) {
-        console.error('Error checking donation box:', error);
-      }
+      // Show custom toast
+      setToastMessage('Cause added to donation box!');
+      setShowToast(true);
+      
+      // Always navigate to setup tab explicitly
+      navigate('/donation?tab=setup', {
+        replace: true,
+      });
     },
     onError: (error: any) => {
       console.error('Error adding cause to donation box:', error);
       if (error.response?.status === 403) {
         navigate('/onboarding');
       } else {
-        toast.error('Failed to add cause to donation box.');
+        setToastMessage('Failed to add cause to donation box.');
+        setShowToast(true);
       }
     },
   });
@@ -166,8 +163,89 @@ export default function NewCausePage() {
     setShowAddToBoxModal(true);
   };
 
-  const handleConfirmAddToBox = () => {
-    addToDonationBoxMutation.mutate();
+  const handleConfirmAddToBox = async () => {
+    // Check if donation box exists first
+    try {
+      const donationBox = await getDonationBox();
+      
+      // If donation box is not set up, navigate to donation page with cause preselected
+      if (!donationBox || !donationBox.id || donationBox.message === "Donation box not found") {
+        setShowAddToBoxModal(false);
+        navigate('/donation?tab=setup', {
+          state: {
+            preselectedItem: {
+              id: causeId || '',
+              type: 'cause',
+              data: causeData,
+            },
+            preselectedCauses: causeId ? [parseInt(causeId)] : [],
+            preselectedCausesData: causeData ? [{
+              id: causeData.id,
+              name: causeData.name,
+              description: causeData.description || causeData.mission || '',
+              mission: causeData.mission || '',
+              logo: causeData.image || causeData.logo || '',
+            }] : [],
+          },
+        });
+        return;
+      }
+      
+      // If donation box exists, check capacity before adding cause
+      // Calculate fees and capacity
+      const calculateFees = (grossAmount: number) => {
+        const gross = grossAmount;
+        const stripeFee = (gross * 0.029) + 0.30;
+        const crwdFee = (gross - stripeFee) * 0.07;
+        const net = gross - stripeFee - crwdFee;
+        return {
+          stripeFee: Math.round(stripeFee * 100) / 100,
+          crwdFee: Math.round(crwdFee * 100) / 100,
+          net: Math.round(net * 100) / 100,
+        };
+      };
+
+      const monthlyAmount = parseFloat(donationBox.monthly_amount || '0');
+      const fees = calculateFees(monthlyAmount);
+      const net = fees.net;
+      const maxCapacity = Math.floor(net / 0.20);
+      
+      // Count current causes in the box
+      const boxCauses = donationBox.box_causes || [];
+      const currentCapacity = boxCauses.length;
+      
+      // Check if adding this cause would exceed capacity
+      if (currentCapacity >= maxCapacity) {
+        setToastMessage(`Your donation box is full. You can only support up to ${maxCapacity} cause${maxCapacity !== 1 ? 's' : ''} for $${monthlyAmount} per month. Please increase your donation amount or remove a cause to add this one.`);
+        setShowToast(true);
+        setShowAddToBoxModal(false);
+        return;
+      }
+      
+      // If capacity check passes, proceed with adding
+      addToDonationBoxMutation.mutate();
+    } catch (error) {
+      console.error('Error checking donation box:', error);
+      // If there's an error (might be "Donation box not found"), navigate to setup with preselected cause
+      setShowAddToBoxModal(false);
+      navigate('/donation?tab=setup', {
+        state: {
+          preselectedItem: {
+            id: causeId || '',
+            type: 'cause',
+            data: causeData,
+          },
+          preselectedCauses: causeId ? [parseInt(causeId)] : [],
+          preselectedCausesData: causeData ? [{
+            id: causeData.id,
+            name: causeData.name,
+            description: causeData.description || causeData.mission || '',
+            mission: causeData.mission || '',
+            logo: causeData.image || causeData.logo || '',
+          }] : [],
+        },
+      });
+    }
   };
 
   const handleDonate = () => {
@@ -208,6 +286,7 @@ export default function NewCausePage() {
       <CauseActionButtons
         onAddToDonationBox={handleAddToDonationBox}
         onDonate={handleDonate}
+        isAlreadyInBox={isCauseInBox}
       />
       
 
@@ -270,6 +349,13 @@ export default function NewCausePage() {
         description={causeData?.mission || causeData?.description || 'Join us in supporting this important cause.'}
         isOpen={showShareModal}
         onClose={() => setShowShareModal(false)}
+      />
+
+      {/* Custom Toast */}
+      <Toast
+        message={toastMessage}
+        show={showToast}
+        onHide={() => setShowToast(false)}
       />
     </div>
   );

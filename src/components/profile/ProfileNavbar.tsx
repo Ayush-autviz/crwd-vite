@@ -151,7 +151,7 @@ export default function ProfileNavbar({
                 </Link>
                 <button
                   onClick={() => navigate("/notifications")}
-                  className="relative p-1.5 bg-red-50 rounded-full"
+                  className="relative p-1.5  rounded-full"
                 >
                   <Bell size={20} className="text-gray-900" />
                   {unreadCount?.data > 0 && (

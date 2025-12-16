@@ -86,13 +86,18 @@ export default function Post({
             </div>
 
             {imageUrl && (
-              <div className="w-full h-48 rounded-lg overflow-hidden mb-3">
+              <a
+                href={imageUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="block w-full h-48 rounded-lg overflow-hidden mb-3 cursor-pointer hover:opacity-90 transition-opacity"
+              >
                 <img
                   src={imageUrl}
                   alt="Post"
                   className="w-full h-full object-cover"
                 />
-              </div>
+              </a>
             )}
 
             <div className="flex items-center gap-4 text-muted-foreground mt-2">

@@ -10,12 +10,15 @@ export default function NewOnboard() {
   const [searchParams] = useSearchParams();
   const redirectTo = searchParams.get('redirectTo') || '/';
   const isFromCreateCollective = redirectTo === '/create-crwd';
+  const isFromCollective = redirectTo.includes('/groupcrwd/');
 
   const googleLoginQuery = useQuery({
     queryKey: ["googleLogin"],
     queryFn: googleLogin,
     enabled: false, // Don't run automatically
   });
+
+
 
   const handleGoogleLogin = async () => {
     try {
@@ -33,12 +36,7 @@ export default function NewOnboard() {
     }
   };
 
-  const handleAppleLogin = async () => {
-    // TODO: Implement Apple login when API is available
-    console.log("Apple login clicked");
-    // For now, navigate to claim profile
-    navigate(`/claim-profile?redirectTo=${encodeURIComponent(redirectTo)}`);
-  };
+
 
   const handleEmailLogin = () => {
     // Navigate to claim profile for email registration
@@ -61,19 +59,28 @@ export default function NewOnboard() {
       <div className="text-center my-12 space-y-3">
         {isFromCreateCollective ? (
           <>
-            <h1 className="text-3xl md:text-4xl lg:text-5xl font-[800] text-[#1600ff]">
+            <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-[800] text-[#1600ff]">
               Start Your Movement.
             </h1>
-            <h2 className="text-2xl md:text-3xl lg:text-4xl font-[800] text-gray-900">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-[800] text-gray-900">
               Create Your Collective & Lead Change
+            </h2>
+          </>
+        ) : isFromCollective ? (
+          <>
+            <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-[800] text-[#1600ff]">
+              Join a Movement.
+            </h1>
+            <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-[800] text-gray-900">
+              Connect with a Collective
             </h2>
           </>
         ) : (
           <>
-            <h1 className="text-3xl md:text-4xl lg:text-5xl font-[800] text-gray-900">
+            <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-[800] text-gray-900">
               Stop Wishing You Made a Difference.
             </h1>
-            <h2 className="text-3xl md:text-4xl lg:text-5xl font-[800] text-[#1600ff]">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-[800] text-[#1600ff]">
               Start Being Someone Who Does.
             </h2>
           </>
@@ -83,21 +90,17 @@ export default function NewOnboard() {
       {/* Auth Buttons */}
       <div className="w-full max-w-md space-y-4 mb-6">
         {/* Apple Button */}
-        {/* <Button
+        <Button
           type="button"
-          onClick={handleAppleLogin}
+          onClick={() => {}}
+          disabled={false}
           className="w-full h-12 bg-black hover:bg-gray-900 text-white font-medium rounded-lg flex items-center justify-center gap-2"
         >
-          <svg
-            className="w-5 h-5"
-            viewBox="0 0 24 24"
-            fill="currentColor"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path d="M17.05 20.28c-.98.95-2.05.88-3.08.4-1.09-.5-2.08-.48-3.24 0-1.44.62-2.2.44-3.06-.4C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09l.01-.01zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z" />
-          </svg>
+<svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="20" height="20" viewBox="0 0 30 30" style={{fill:"#FFFFFF"}}>
+    <path d="M25.565,9.785c-0.123,0.077-3.051,1.702-3.051,5.305c0.138,4.109,3.695,5.55,3.756,5.55 c-0.061,0.077-0.537,1.963-1.947,3.94C23.204,26.283,21.962,28,20.076,28c-1.794,0-2.438-1.135-4.508-1.135 c-2.223,0-2.852,1.135-4.554,1.135c-1.886,0-3.22-1.809-4.4-3.496c-1.533-2.208-2.836-5.673-2.882-9 c-0.031-1.763,0.307-3.496,1.165-4.968c1.211-2.055,3.373-3.45,5.734-3.496c1.809-0.061,3.419,1.242,4.523,1.242 c1.058,0,3.036-1.242,5.274-1.242C21.394,7.041,23.97,7.332,25.565,9.785z M15.001,6.688c-0.322-1.61,0.567-3.22,1.395-4.247 c1.058-1.242,2.729-2.085,4.17-2.085c0.092,1.61-0.491,3.189-1.533,4.339C18.098,5.937,16.488,6.872,15.001,6.688z"></path>
+</svg>
           Continue with Apple
-        </Button> */}
+        </Button>
 
         {/* Google Button */}
         <Button
@@ -144,7 +147,7 @@ export default function NewOnboard() {
       </div>
 
       {/* Terms and Privacy */}
-      <p className="text-sm text-gray-500 text-center mb-8 max-w-md">
+      <p className="text-xs sm:text-sm md:text-base  text-gray-500 text-center mb-8 max-w-md">
         By continuing, you agree to our{" "}
         <a href="/terms" className="text-[#1600ff] hover:underline">
           Terms

@@ -1,8 +1,10 @@
 import { useState, useRef, useEffect } from 'react';
-import { X, Send } from 'lucide-react';
+import { X, Send, Loader2 } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
+import { requestCause } from '@/services/api/crwd';
+import { Toast } from '@/components/ui/toast';
 
 interface RequestNonprofitModalProps {
   isOpen: boolean;
@@ -17,7 +19,21 @@ export default function RequestNonprofitModal({
   const [ein, setEin] = useState('');
   const [reason, setReason] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showToast, setShowToast] = useState(false);
+  const [toastMessage, setToastMessage] = useState('');
   const modalRef = useRef<HTMLDivElement>(null);
+
+  // Reset toast state when modal closes
+  useEffect(() => {
+    if (!isOpen) {
+      // Reset toast after a delay to allow it to show if it was just triggered
+      const timer = setTimeout(() => {
+        setShowToast(false);
+        setToastMessage('');
+      }, 3500); // Slightly longer than toast duration
+      return () => clearTimeout(timer);
+    }
+  }, [isOpen]);
 
   // Handle click outside to close
   useEffect(() => {
@@ -62,26 +78,30 @@ export default function RequestNonprofitModal({
 
     setIsSubmitting(true);
     try {
-      // TODO: Implement API call to submit nonprofit request
-      console.log('Submitting nonprofit request:', {
-        nonprofitName,
-        ein,
-        reason,
+      await requestCause({
+        name: nonprofitName.trim(),
+        ein_number: ein.trim(),
+        description: reason.trim(),
       });
       
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      
-      // Reset form and close modal
+      // Reset form first
       setNonprofitName('');
       setEin('');
       setReason('');
+      
+      // Close modal first
       onClose();
       
-      // TODO: Show success toast
-    } catch (error) {
+      // Show success toast after modal closes
+      setTimeout(() => {
+        setToastMessage('Request submitted successfully!');
+        setShowToast(true);
+      }, 300);
+    } catch (error: any) {
       console.error('Error submitting nonprofit request:', error);
-      // TODO: Show error toast
+      const errorMessage = error?.response?.data?.message || error?.message || 'Failed to submit request. Please try again.';
+      setToastMessage(errorMessage);
+      setShowToast(true);
     } finally {
       setIsSubmitting(false);
     }
@@ -89,24 +109,32 @@ export default function RequestNonprofitModal({
 
   const isFormValid = nonprofitName.trim() && ein.trim() && reason.trim();
 
-  if (!isOpen) return null;
-
   return (
     <>
-      {/* Backdrop */}
-      <div
-        className="fixed inset-0 bg-black/50 z-50 transition-opacity"
-        onClick={onClose}
+      {/* Toast notification - render outside modal so it persists */}
+      <Toast
+        message={toastMessage}
+        show={showToast}
+        onHide={() => setShowToast(false)}
+        duration={3000}
       />
 
-      {/* Bottom Sheet Modal */}
-      <div
-        ref={modalRef}
-        className="fixed bottom-0 left-0 right-0 bg-white rounded-t-3xl shadow-2xl z-50 max-h-[90vh] overflow-y-auto animate-slide-up"
-        style={{
-          animation: 'slideUp 0.3s ease-out',
-        }}
-      >
+      {isOpen && (
+        <>
+          {/* Backdrop */}
+          <div
+            className="fixed inset-0 bg-black/50 z-50 transition-opacity"
+            onClick={onClose}
+          />
+
+          {/* Bottom Sheet Modal */}
+          <div
+            ref={modalRef}
+            className="fixed bottom-0 left-0 right-0 bg-white rounded-t-3xl shadow-2xl z-50 max-h-[90vh] overflow-y-auto animate-slide-up"
+            style={{
+              animation: 'slideUp 0.3s ease-out',
+            }}
+          >
         {/* Header */}
         <div className="sticky top-0 bg-white  px-4 md:px-6 py-3 md:py-4 flex items-center justify-between z-10">
           <h2 className="text-xl md:text-2xl font-bold text-foreground">Request a Nonprofit</h2>
@@ -202,14 +230,25 @@ export default function RequestNonprofitModal({
                     : 'bg-gray-200 text-gray-400 cursor-not-allowed'
                 }`}
               >
-                <Send className="w-3.5 h-3.5 md:w-4 md:h-4" />
-                Submit Request
+                {isSubmitting ? (
+                  <>
+                    <Loader2 className="w-3.5 h-3.5 md:w-4 md:h-4 animate-spin" />
+                    Submitting...
+                  </>
+                ) : (
+                  <>
+                    <Send className="w-3.5 h-3.5 md:w-4 md:h-4" />
+                    Submit Request
+                  </>
+                )}
               </Button>
             </div>
           </form>
         </div>
 
-      </div>
+          </div>
+        </>
+      )}
 
       {/* Add slide-up animation */}
       <style>{`

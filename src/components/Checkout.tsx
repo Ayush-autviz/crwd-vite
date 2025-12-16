@@ -7,9 +7,10 @@ import ManageDonationBox from "./ManageDonationBox";
 import { CROWDS, RECENTS, SUGGESTED } from "@/constants";
 import ReactConfetti from "react-confetti";
 import { getCollectiveById } from "@/services/api/crwd";
-import { useQueryClient, useQuery } from "@tanstack/react-query";
+import { useQueryClient, useQuery, useMutation } from "@tanstack/react-query";
 import { useAuthStore } from "@/stores/store";
-import { getDonationHistory } from "@/services/api/donation";
+import { getDonationHistory, removeCauseFromBox } from "@/services/api/donation";
+import RequestNonprofitModal from "@/components/newsearch/RequestNonprofitModal";
 
 interface DonationOverviewProps {
   donationAmount?: number;
@@ -45,6 +46,11 @@ export const Checkout = ({
   const [expandedCollectives, setExpandedCollectives] = useState<Set<number>>(new Set());
   const [collectiveDetails, setCollectiveDetails] = useState<Record<number, any>>({});
   const [loadingCollectives, setLoadingCollectives] = useState<Set<number>>(new Set());
+  const [showRequestModal, setShowRequestModal] = useState(false);
+  const [showRemoveModal, setShowRemoveModal] = useState(false);
+  const [isRemoveModalVisible, setIsRemoveModalVisible] = useState(false);
+  const [isRemoveModalAnimating, setIsRemoveModalAnimating] = useState(false);
+  const [causeToRemove, setCauseToRemove] = useState<{ id: number; name: string } | null>(null);
   const [windowDimensions, setWindowDimensions] = useState({
     width: window.innerWidth,
     height: window.innerHeight,
@@ -271,6 +277,45 @@ export const Checkout = ({
     setShowSuccessModal(false);
   };
 
+  // Mutation to remove cause from box
+  const removeCauseMutation = useMutation({
+    mutationFn: (causeId: string) => removeCauseFromBox(causeId),
+    onSuccess: () => {
+      console.log('Cause removed successfully');
+      queryClient.invalidateQueries({ queryKey: ['donationBox', currentUser?.id] });
+      setShowRemoveModal(false);
+      setCauseToRemove(null);
+    },
+    onError: (error: any) => {
+      console.error('Error removing cause:', error);
+    },
+  });
+
+  const handleRemoveCause = (cause: any) => {
+    setCauseToRemove({ id: cause.id, name: cause.name });
+    setShowRemoveModal(true);
+  };
+
+  const handleConfirmRemove = () => {
+    if (causeToRemove) {
+      removeCauseMutation.mutate(causeToRemove.id.toString());
+    }
+  };
+
+  // Handle remove modal animation
+  useEffect(() => {
+    let timer: NodeJS.Timeout;
+    if (showRemoveModal) {
+      setIsRemoveModalVisible(true);
+      setIsRemoveModalAnimating(false);
+      timer = setTimeout(() => setIsRemoveModalAnimating(true), 20);
+    } else if (isRemoveModalVisible) {
+      setIsRemoveModalAnimating(false);
+      timer = setTimeout(() => setIsRemoveModalVisible(false), 300);
+    }
+    return () => clearTimeout(timer);
+  }, [showRemoveModal, isRemoveModalVisible]);
+
   // Calculate equal distribution percentage and amount per item
   const totalItems = hasApiData
     ? totalCauses
@@ -454,12 +499,19 @@ export const Checkout = ({
                         </p>
                       </div>
 
-                      {/* Donation Info */}
+                      {/* Donation Info & Remove Button */}
                       <div className="flex items-center gap-3 md:gap-4 ml-2 md:ml-4">
                         <div className="text-right">
                           <p className="font-bold text-sm md:text-base text-gray-900">{distributionPercentage}%</p>
                           <p className="text-xs md:text-sm text-gray-600">${amountPerItem.toFixed(2)}/mo</p>
                         </div>
+                        <button
+                          onClick={() => handleRemoveCause(cause)}
+                          className="p-1.5 md:p-2 hover:bg-red-50 rounded-lg transition-colors flex-shrink-0"
+                          aria-label="Remove cause"
+                        >
+                          <Trash2 className="w-4 h-4 md:w-5 md:h-5 text-red-500" />
+                        </button>
                       </div>
                     </div>
                   );
@@ -541,6 +593,16 @@ export const Checkout = ({
               </Link>
             </div>
           </div> */}
+
+          {/* Can't see your nonprofit? Section */}
+          <div className="mt-4 md:mt-6 mb-4 md:mb-6 text-center">
+            <button
+              onClick={() => setShowRequestModal(true)}
+              className="text-sm md:text-base text-[#1600ff] hover:text-[#1400cc] underline font-medium"
+            >
+              Don't see your nonprofit? Request it
+            </button>
+          </div>
         </div>
       </div>
 
@@ -620,6 +682,79 @@ export const Checkout = ({
                   MANAGE DONATIONS
                 </Button>
               </div> */}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Request Nonprofit Modal */}
+      <RequestNonprofitModal
+        isOpen={showRequestModal}
+        onClose={() => setShowRequestModal(false)}
+      />
+
+      {/* Remove Cause Bottom Sheet Modal */}
+      {isRemoveModalVisible && (
+        <div
+          className={`fixed inset-0 z-50 transition-opacity duration-300 ${
+            isRemoveModalAnimating ? 'opacity-100' : 'opacity-0'
+          }`}
+          onClick={() => {
+            setShowRemoveModal(false);
+            setCauseToRemove(null);
+          }}
+        >
+          {/* Backdrop */}
+          <div className="absolute inset-0 bg-black/50" />
+          
+          {/* Bottom Sheet */}
+          <div
+            className={`absolute bottom-0 left-0 right-0 bg-white rounded-t-2xl md:rounded-t-3xl shadow-2xl max-h-[90vh] md:max-h-[85vh] overflow-hidden flex flex-col transition-transform duration-300 ${
+              isRemoveModalAnimating ? 'translate-y-0' : 'translate-y-full'
+            }`}
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Handle Bar */}
+            <div className="flex justify-center pt-2 md:pt-3 pb-1.5 md:pb-2">
+              <div className="w-10 md:w-12 h-1 md:h-1.5 bg-gray-300 rounded-full" />
+            </div>
+
+            {/* Content */}
+            <div className="flex-1 overflow-y-auto px-4 md:px-6 py-4 md:py-6">
+              <h2 className="text-xl md:text-2xl font-bold text-gray-900 mb-2 md:mb-3">
+                Remove Cause?
+              </h2>
+              <p className="text-sm md:text-base text-gray-600 mb-4">
+                Are you sure you want to remove <span className="font-semibold">{causeToRemove?.name}</span> from your donation box? This action cannot be undone.
+              </p>
+            </div>
+
+            {/* Footer Buttons */}
+            <div className="px-4 md:px-6 py-3 md:py-4 border-t border-gray-200 bg-white flex flex-col sm:flex-row gap-2 sm:gap-3">
+              <button
+                onClick={() => {
+                  setShowRemoveModal(false);
+                  setCauseToRemove(null);
+                }}
+                disabled={removeCauseMutation.isPending}
+                className="w-full sm:flex-1 bg-gray-200 hover:bg-gray-300 text-gray-900 font-semibold py-3 rounded-full transition-colors text-sm md:text-base disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleConfirmRemove}
+                disabled={removeCauseMutation.isPending}
+                className="w-full sm:flex-1 bg-red-500 hover:bg-red-600 text-white font-semibold py-3 rounded-full transition-colors text-sm md:text-base flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {removeCauseMutation.isPending ? (
+                  <>
+                    <div className="w-4 h-4 md:w-5 md:h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                    <span>Removing...</span>
+                  </>
+                ) : (
+                  'Remove'
+                )}
+              </button>
             </div>
           </div>
         </div>

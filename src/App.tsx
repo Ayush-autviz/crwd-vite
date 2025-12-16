@@ -77,6 +77,7 @@ import NewCompleteOnboard from "./pages/newOnboarding/NewCompleteOnboard";
 import SurpriseMe from "./pages/SurpriseMe";
 import NewSaved from "./pages/NewSaved";
 import NewCreateCollective from "./pages/NewCreateCollective";
+import OneTimeDonationPage from "./pages/OneTimeDonationPage";
 
 // ScrollToTop component that works for all pages
 function ScrollToTop() {
@@ -176,6 +177,7 @@ function App() {
                  <Route path="/search2" element={<Search2 />} />
                     <Route path="/donation" element={<Donation />} />
                     <Route path="/donation/manage" element={<ManageDonationBox />} />
+                    <Route path="/one-time-donation" element={<OneTimeDonationPage />} />
                     <Route path="/notifications" element={<Notifications />} />
                     {/* <Route
                   path="/non-profit-interests"
