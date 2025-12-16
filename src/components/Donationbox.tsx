@@ -567,55 +567,57 @@ const DonationBox = ({ tab = "setup", preselectedItem, activeTab, fromPaymentRes
 
       {/* Content Container with max-width */}
       <div className="w-full md:max-w-[60%] mx-auto">
-        {/* Tab Navigation - Always Visible */}
-        <div className="mx-3 md:mx-4 mt-3 md:mt-4">
-        <div className="flex rounded-full overflow-hidden border bg-white shadow-sm">
-          <button
-            className={cn(
-              "flex-1 py-2.5 md:py-4 text-xs md:text-sm font-medium transition-all relative",
-              activeTabState === "setup"
-                ? "text-white bg-[#1600ff]"
-                : "text-gray-500 hover:text-gray-700 hover:bg-gray-50"
-            )}
-            onClick={() => {
-              if (checkout) {
-                setCheckout(false);
-              }
-              setActiveTabState("setup");
-              setStep(1);
-            }}
-          >
-            <div className="flex items-center justify-center">
-              {/* {donationBox?.id ? 'Donation Box' : 'Set up donation box'} */}
-              Monthly Giving
+        {/* Tab Navigation - Hide when in checkout */}
+        {!checkout && (
+          <div className="mx-3 md:mx-4 mt-3 md:mt-4">
+            <div className="flex rounded-full overflow-hidden border bg-white shadow-sm">
+              <button
+                className={cn(
+                  "flex-1 py-2.5 md:py-4 text-xs md:text-sm font-medium transition-all relative",
+                  activeTabState === "setup"
+                    ? "text-white bg-[#1600ff]"
+                    : "text-gray-500 hover:text-gray-700 hover:bg-gray-50"
+                )}
+                onClick={() => {
+                  if (checkout) {
+                    setCheckout(false);
+                  }
+                  setActiveTabState("setup");
+                  setStep(1);
+                }}
+              >
+                <div className="flex items-center justify-center">
+                  {/* {donationBox?.id ? 'Donation Box' : 'Set up donation box'} */}
+                  Monthly Giving
+                </div>
+                {activeTabState === "setup" && (
+                  <div className="absolute bottom-0 left-0 w-full h-0.5 bg-[#1600ff]"></div>
+                )}
+              </button>
+              <button
+                className={cn(
+                  "flex-1 py-2.5 md:py-4 text-xs md:text-sm font-medium transition-all relative",
+                  activeTabState === "onetime"
+                    ? "text-white bg-[#1600ff]"
+                    : "text-gray-500 hover:text-gray-700 hover:bg-gray-50"
+                )}
+                onClick={() => {
+                  if (checkout) {
+                    setCheckout(false);
+                  }
+                  setActiveTabState("onetime");
+                }}
+              >
+                <div className="flex items-center justify-center">
+                  One-Time Donation
+                </div>
+                {activeTabState === "onetime" && (
+                  <div className="absolute bottom-0 left-0 w-full h-0.5 bg-[#1600ff]"></div>
+                )}
+              </button>
             </div>
-            {activeTabState === "setup" && (
-              <div className="absolute bottom-0 left-0 w-full h-0.5 bg-[#1600ff]"></div>
-            )}
-          </button>
-          <button
-            className={cn(
-              "flex-1 py-2.5 md:py-4 text-xs md:text-sm font-medium transition-all relative",
-              activeTabState === "onetime"
-                ? "text-white bg-[#1600ff]"
-                : "text-gray-500 hover:text-gray-700 hover:bg-gray-50"
-            )}
-            onClick={() => {
-              if (checkout) {
-                setCheckout(false);
-              }
-              setActiveTabState("onetime");
-            }}
-          >
-            <div className="flex items-center justify-center">
-              One-Time Donation
-            </div>
-            {activeTabState === "onetime" && (
-              <div className="absolute bottom-0 left-0 w-full h-0.5 bg-[#1600ff]"></div>
-            )}
-          </button>
-        </div>
-      </div>
+          </div>
+        )}
 
       {/* Main Content */}
       {checkout ? (
@@ -1264,14 +1266,31 @@ const DonationBox = ({ tab = "setup", preselectedItem, activeTab, fromPaymentRes
               createBoxMutation.isPending || 
               (step === 1 && selectedCauseIds.length === 0 && selectedCollectiveIds.length === 0)
                 ? "cursor-not-allowed opacity-50" 
-                : "hover:bg-[#1400cc]"
+                : "hover:bg-gray-300"
             )}
           >
             {createBoxMutation.isPending ? 'Creating...' : 'Continue to Review'}
           </button>
+          <div className="text-center mb-3 md:mb-4">
+            <button
+              onClick={() => navigate('/')}
+              className="text-sm md:text-base text-gray-600 hover:text-gray-900"
+            >
+              Skip for now, I'll set this up later
+            </button>
+          </div>
         </div>
       )}
       </div>
+
+      {/* Legal Disclaimer - Full Width (Outside max-width constraint) */}
+      {checkout && (
+        <div className="w-full px-3 md:px-4 py-4 md:py-6 border-t border-gray-200 bg-gray-50">
+          <p className="text-[10px] md:text-xs text-gray-500 text-center leading-relaxed max-w-4xl mx-auto">
+            All donations are made to CRWD Foundation Inc. (EIN: XX-XXXXXXX), a 501(c)(3) nonprofit organization. CRWD Foundation grants funds to qualified 501(c)(3) organizations selected by donors.
+          </p>
+        </div>
+      )}
 
       {/* Request Nonprofit Modal */}
       <RequestNonprofitModal

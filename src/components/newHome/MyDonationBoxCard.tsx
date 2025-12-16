@@ -30,7 +30,7 @@ export default function MyDonationBoxCard({
             to="/donation"
             className="text-[#1600ff] text-sm md:text-base font-semibold inline-flex items-center gap-1 hover:underline"
           >
-            Manage your donation box <ChevronRight className="h-4 w-4" />
+            Manage <ChevronRight className="h-4 w-4" />
           </Link>
         </div>
       </div>
