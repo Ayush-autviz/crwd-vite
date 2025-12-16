@@ -13,7 +13,7 @@ export const Toast: React.FC<ToastProps> = ({
   message,
   show,
   onHide,
-  duration = 3000,
+  duration = 1500,
   className,
 }) => {
   useEffect(() => {

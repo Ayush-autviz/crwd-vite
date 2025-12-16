@@ -10,6 +10,7 @@ export default function NewOnboard() {
   const [searchParams] = useSearchParams();
   const redirectTo = searchParams.get('redirectTo') || '/';
   const isFromCreateCollective = redirectTo === '/create-crwd';
+  const isFromCollective = redirectTo.includes('/groupcrwd/');
 
   const googleLoginQuery = useQuery({
     queryKey: ["googleLogin"],
@@ -63,6 +64,15 @@ export default function NewOnboard() {
             </h1>
             <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-[800] text-gray-900">
               Create Your Collective & Lead Change
+            </h2>
+          </>
+        ) : isFromCollective ? (
+          <>
+            <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-[800] text-[#1600ff]">
+              Join a Movement.
+            </h1>
+            <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-[800] text-gray-900">
+              Connect with a Collective
             </h2>
           </>
         ) : (

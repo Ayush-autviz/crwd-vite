@@ -23,6 +23,18 @@ export default function RequestNonprofitModal({
   const [toastMessage, setToastMessage] = useState('');
   const modalRef = useRef<HTMLDivElement>(null);
 
+  // Reset toast state when modal closes
+  useEffect(() => {
+    if (!isOpen) {
+      // Reset toast after a delay to allow it to show if it was just triggered
+      const timer = setTimeout(() => {
+        setShowToast(false);
+        setToastMessage('');
+      }, 3500); // Slightly longer than toast duration
+      return () => clearTimeout(timer);
+    }
+  }, [isOpen]);
+
   // Handle click outside to close
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -72,19 +84,19 @@ export default function RequestNonprofitModal({
         description: reason.trim(),
       });
       
-      // Show success toast
-      setToastMessage('Request submitted successfully!');
-      setShowToast(true);
-      
-      // Reset form and close modal after showing toast
+      // Reset form first
       setNonprofitName('');
       setEin('');
       setReason('');
       
-      // Close modal after a brief delay to ensure toast is visible
+      // Close modal first
+      onClose();
+      
+      // Show success toast after modal closes
       setTimeout(() => {
-        onClose();
-      }, 500);
+        setToastMessage('Request submitted successfully!');
+        setShowToast(true);
+      }, 300);
     } catch (error: any) {
       console.error('Error submitting nonprofit request:', error);
       const errorMessage = error?.response?.data?.message || error?.message || 'Failed to submit request. Please try again.';
@@ -97,24 +109,32 @@ export default function RequestNonprofitModal({
 
   const isFormValid = nonprofitName.trim() && ein.trim() && reason.trim();
 
-  if (!isOpen) return null;
-
   return (
     <>
-      {/* Backdrop */}
-      <div
-        className="fixed inset-0 bg-black/50 z-50 transition-opacity"
-        onClick={onClose}
+      {/* Toast notification - render outside modal so it persists */}
+      <Toast
+        message={toastMessage}
+        show={showToast}
+        onHide={() => setShowToast(false)}
+        duration={3000}
       />
 
-      {/* Bottom Sheet Modal */}
-      <div
-        ref={modalRef}
-        className="fixed bottom-0 left-0 right-0 bg-white rounded-t-3xl shadow-2xl z-50 max-h-[90vh] overflow-y-auto animate-slide-up"
-        style={{
-          animation: 'slideUp 0.3s ease-out',
-        }}
-      >
+      {isOpen && (
+        <>
+          {/* Backdrop */}
+          <div
+            className="fixed inset-0 bg-black/50 z-50 transition-opacity"
+            onClick={onClose}
+          />
+
+          {/* Bottom Sheet Modal */}
+          <div
+            ref={modalRef}
+            className="fixed bottom-0 left-0 right-0 bg-white rounded-t-3xl shadow-2xl z-50 max-h-[90vh] overflow-y-auto animate-slide-up"
+            style={{
+              animation: 'slideUp 0.3s ease-out',
+            }}
+          >
         {/* Header */}
         <div className="sticky top-0 bg-white  px-4 md:px-6 py-3 md:py-4 flex items-center justify-between z-10">
           <h2 className="text-xl md:text-2xl font-bold text-foreground">Request a Nonprofit</h2>
@@ -226,7 +246,9 @@ export default function RequestNonprofitModal({
           </form>
         </div>
 
-      </div>
+          </div>
+        </>
+      )}
 
       {/* Add slide-up animation */}
       <style>{`
@@ -244,14 +266,6 @@ export default function RequestNonprofitModal({
           animation: slideUp 0.3s ease-out;
         }
       `}</style>
-
-      {/* Toast notification */}
-      <Toast
-        message={toastMessage}
-        show={showToast}
-        onHide={() => setShowToast(false)}
-        duration={3000}
-      />
     </>
   );
 }
