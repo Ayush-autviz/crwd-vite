@@ -265,6 +265,26 @@ const DonationBox = ({ tab = "setup", preselectedItem, activeTab, fromPaymentRes
             return prev;
           });
         }
+      } else if (tab === "setup" && preselectedItem.type === 'cause') {
+        // If tab is "setup" and preselectedItem is a cause, add to selectedCauseIds
+        setActiveTabState("setup");
+        const causeId = parseInt(preselectedItem.id);
+        setSelectedCauseIds(prev => {
+          if (!prev.includes(causeId)) {
+            return [...prev, causeId];
+          }
+          return prev;
+        });
+        // Also add to selectedCausesData so it shows in the UI
+        if (preselectedItem.data) {
+          setSelectedCausesData(prev => {
+            const exists = prev.some(c => c.id === causeId);
+            if (!exists) {
+              return [...prev, preselectedItem.data];
+            }
+            return prev;
+          });
+        }
       } else {
         // For onetime tab or non-collective items, switch to onetime and add to selectedOrganizations
         if (activeTabState !== "onetime") {

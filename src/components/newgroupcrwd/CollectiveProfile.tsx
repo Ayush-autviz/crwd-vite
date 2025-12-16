@@ -94,7 +94,33 @@ export default function CollectiveProfile({
         <div className="flex items-center gap-1.5 md:gap-2">
           <Avatar className="w-5 h-5 md:w-6 md:h-6 rounded-full flex-shrink-0">
             <AvatarImage src={founder?.profile_picture || undefined} alt={founderName || 'Founder'} />
-            <AvatarFallback className="bg-gray-200 text-gray-600 font-semibold text-xs md:text-sm">
+            <AvatarFallback 
+              style={{ 
+                backgroundColor: (() => {
+                  const avatarColors = [
+                    '#EF4444', // Red
+                    '#10B981', // Green
+                    '#3B82F6', // Blue
+                    '#8B5CF6', // Purple
+                    '#84CC16', // Lime Green
+                    '#EC4899', // Pink
+                    '#F59E0B', // Amber
+                    '#06B6D4', // Cyan
+                    '#F97316', // Orange
+                    '#A855F7', // Violet
+                    '#14B8A6', // Teal
+                    '#F43F5E', // Rose
+                    '#6366F1', // Indigo
+                    '#22C55E', // Emerald
+                    '#EAB308', // Yellow
+                  ];
+                  const founderId = founder.id || founderName || 'Founder';
+                  const colorIndex = founderId ? (String(founderId).split('').reduce((acc, char) => acc + char.charCodeAt(0), 0) % avatarColors.length) : 0;
+                  return avatarColors[colorIndex];
+                })()
+              }}
+              className="text-white font-semibold text-xs md:text-sm"
+            >
               {(founderName || 'F').charAt(0).toUpperCase()}
             </AvatarFallback>
           </Avatar>
