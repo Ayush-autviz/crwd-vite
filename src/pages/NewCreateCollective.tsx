@@ -20,6 +20,61 @@ const getCategoryById = (categoryId: string | undefined) => {
   return categories.find(cat => cat.id === categoryId) || null;
 };
 
+// Get category names as an array for multi-letter categories (e.g., "MK" -> ["Relief", "Food"])
+const getCategoryNames = (categoryId: string | undefined): string[] => {
+  if (!categoryId) return ['Uncategorized'];
+  
+  // If category is multiple letters, split and get names for each
+  if (categoryId.length > 1) {
+    const categoryNames = categoryId
+      .split('')
+      .map(char => {
+        const category = getCategoryById(char);
+        return category?.name || char;
+      })
+      .filter(Boolean);
+    
+    return categoryNames.length > 0 ? categoryNames : ['Uncategorized'];
+  }
+  
+  // Single letter category
+  const category = getCategoryById(categoryId);
+  return category?.name ? [category.name] : ['Uncategorized'];
+};
+
+// Get category IDs as an array (for getting individual colors)
+const getCategoryIds = (categoryId: string | undefined): string[] => {
+  if (!categoryId) return [];
+  
+  // If category is multiple letters, split into individual IDs
+  if (categoryId.length > 1) {
+    return categoryId.split('');
+  }
+  
+  // Single letter category
+  return [categoryId];
+};
+
+// Get category background color for display (use first category's background for multi-letter)
+const getCategoryColor = (categoryId: string | undefined): string => {
+  if (!categoryId) return '#10B981';
+  
+  // For multi-letter categories, use the first category's background color
+  const firstChar = categoryId.charAt(0);
+  const category = getCategoryById(firstChar);
+  return category?.background || '#10B981';
+};
+
+// Get category text color for display
+const getCategoryTextColor = (categoryId: string | undefined): string => {
+  if (!categoryId) return '#FFFFFF';
+  
+  // For multi-letter categories, use the first category's text color
+  const firstChar = categoryId.charAt(0);
+  const category = getCategoryById(firstChar);
+  return category?.text || '#FFFFFF';
+};
+
 // Avatar colors for consistent fallback styling
 const avatarColors = [
   '#FF6B6B', '#4CAF50', '#FF9800', '#9C27B0', '#2196F3',
@@ -446,11 +501,11 @@ export default function NewCreateCollectivePage() {
                 {selectedCauses.map((cause) => {
                   const causeData = cause.cause || cause;
                   const categoryId = causeData.category || causeData.cause_category;
-                  const category = getCategoryById(categoryId);
-                  const categoryName = category?.name || 'Uncategorized';
-                  const categoryColor = category?.text || '#10B981';
+                  const categoryNames = getCategoryNames(categoryId);
+                  const categoryIds = getCategoryIds(categoryId);
                   const avatarBgColor = getConsistentColor(causeData.id, avatarColors);
                   const initials = getInitials(causeData.name || 'N');
+                  
                   
                   return (
                     <div key={cause.id} className="bg-white border border-gray-200 rounded-lg p-3 md:p-4">
@@ -469,12 +524,22 @@ export default function NewCreateCollectivePage() {
                           <p className="text-xs md:text-sm text-gray-600 line-clamp-2 mb-2">
                             {causeData.mission || causeData.description}
                           </p>
-                          <span
-                            className="inline-flex items-center rounded-full px-2 py-0.5 text-[10px] md:text-xs font-medium"
-                            style={{ backgroundColor: `${categoryColor}20`, color: categoryColor }}
-                          >
-                            {categoryName}
-                          </span>
+                          <div className="flex flex-wrap gap-1.5 md:gap-2">
+                            {categoryNames.map((name, index) => {
+                              const singleCategoryId = categoryIds[index];
+                              const bgColor = getCategoryColor(singleCategoryId);
+                              const textColor = getCategoryTextColor(singleCategoryId);
+                              return (
+                                <span
+                                  key={index}
+                                  className="inline-flex items-center rounded-full px-2 py-0.5 text-[10px] md:text-xs font-medium"
+                                  style={{ backgroundColor: bgColor, color: textColor }}
+                                >
+                                  {name}
+                                </span>
+                              );
+                            })}
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -824,11 +889,10 @@ export default function NewCreateCollectivePage() {
                 <div className="space-y-2 md:space-y-3">
                   {selectedCauses.map((cause) => {
                     const causeData = cause.cause || cause;
-                    // Get category ID from cause (it's a single letter like "X", "G")
+                    // Get category ID from cause (can be single letter like "F" or multi-letter like "MK")
                     const categoryId = causeData.category || causeData.cause_category;
-                    const category = getCategoryById(categoryId);
-                    const categoryName = category?.name || 'Uncategorized';
-                    const categoryColor = category?.text || '#10B981';
+                    const categoryNames = getCategoryNames(categoryId);
+                    const categoryIds = getCategoryIds(categoryId);
                     const avatarBgColor = getConsistentColor(causeData.id, avatarColors);
                     const initials = getInitials(causeData.name || 'N');
                     
@@ -847,12 +911,20 @@ export default function NewCreateCollectivePage() {
                           <div className="flex-1 min-w-0">
                             <div className="flex items-center gap-2 mb-1 flex-wrap">
                               <h4 className="font-bold text-sm md:text-base text-foreground truncate">{causeData.name}</h4>
-                              <span
-                                className="inline-flex items-center rounded-full px-1.5 md:px-2 py-0.5 text-[10px] md:text-xs font-medium flex-shrink-0"
-                                style={{ backgroundColor: `${categoryColor}20`, color: categoryColor }}
-                              >
-                                {categoryName}
-                              </span>
+                              {categoryNames.map((name, index) => {
+                                const singleCategoryId = categoryIds[index];
+                                const bgColor = getCategoryColor(singleCategoryId);
+                                const textColor = getCategoryTextColor(singleCategoryId);
+                                return (
+                                  <span
+                                    key={index}
+                                    className="inline-flex items-center rounded-full px-1.5 md:px-2 py-0.5 text-[10px] md:text-xs font-medium flex-shrink-0"
+                                    style={{ backgroundColor: bgColor, color: textColor }}
+                                  >
+                                    {name}
+                                  </span>
+                                );
+                              })}
                             </div>
                             <p className="text-xs md:text-sm text-muted-foreground line-clamp-2">{causeData.mission || causeData.description}</p>
                           </div>
@@ -923,9 +995,8 @@ export default function NewCreateCollectivePage() {
                     favoriteCauses.map((item: any) => {
                       const cause = item.cause || item;
                       const categoryId = cause.category || cause.cause_category;
-                      const category = getCategoryById(categoryId);
-                      const categoryName = category?.name || 'Uncategorized';
-                      const categoryColor = category?.text || '#10B981';
+                      const categoryName = getCategoryNames(categoryId);
+                      const categoryColor = getCategoryColor(categoryId);
                       const isSelected = isCauseSelected(cause.id);
                       const avatarBgColor = getConsistentColor(cause.id, avatarColors);
                       const initials = getInitials(cause.name || 'N');
@@ -933,7 +1004,8 @@ export default function NewCreateCollectivePage() {
                       return (
                         <div
                           key={cause.id}
-                          className="flex items-center gap-3 md:gap-4 p-3 md:p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors bg-white"
+                          onClick={() => handleToggleCause(cause)}
+                          className="flex items-center gap-3 md:gap-4 p-3 md:p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors bg-white cursor-pointer"
                         >
                           <Avatar className="w-10 h-10 md:w-12 md:h-12 rounded-full flex-shrink-0">
                             <AvatarImage src={cause.image} alt={cause.name} />
@@ -947,25 +1019,30 @@ export default function NewCreateCollectivePage() {
                           <div className="flex-1 min-w-0">
                             <div className="flex items-center gap-2 mb-1 flex-wrap">
                               <h4 className="font-bold text-sm md:text-base text-foreground truncate">{cause.name}</h4>
-                              <span
-                                className="inline-flex items-center rounded-full px-1.5 md:px-2 py-0.5 text-[10px] md:text-xs font-medium flex-shrink-0"
-                                style={{ backgroundColor: `${categoryColor}20`, color: categoryColor }}
-                              >
-                                {categoryName}
-                              </span>
+                          <span
+                            className="inline-flex items-center rounded-full px-1.5 md:px-2 py-0.5 text-[10px] md:text-xs font-medium flex-shrink-0"
+                            style={{ backgroundColor: categoryColor, color: getCategoryTextColor(cause.category || cause.cause_category) }}
+                          >
+                            {categoryName}
+                          </span>
                             </div>
                             <p className="text-xs md:text-sm text-muted-foreground line-clamp-2">
                               {cause.mission || cause.description}
                             </p>
                           </div>
-                          <label className="flex items-center cursor-pointer flex-shrink-0">
-                            <input
-                              type="radio"
-                              checked={isSelected}
-                              onChange={() => handleToggleCause(cause)}
-                              className="w-4 h-4 md:w-5 md:h-5 text-[#1600ff] focus:ring-[#1600ff]"
-                            />
-                          </label>
+                          <div className="flex items-center cursor-pointer flex-shrink-0">
+                            <div
+                              className={`w-4 h-4 md:w-5 md:h-5 rounded-full border-2 flex items-center justify-center ${
+                                isSelected
+                                  ? 'border-[#1600ff] bg-[#1600ff]'
+                                  : 'border-gray-300 bg-white'
+                              }`}
+                            >
+                              {isSelected && (
+                                <div className="w-2 h-2 md:w-2.5 md:h-2.5 rounded-full bg-white" />
+                              )}
+                            </div>
+                          </div>
                         </div>
                       );
                     })
@@ -1057,11 +1134,10 @@ export default function NewCreateCollectivePage() {
                     }
 
                     return availableCauses.map((cause: any) => {
-                      // Get category ID from cause (it's a single letter like "X", "G")
+                      // Get category ID from cause (can be single letter like "F" or multi-letter like "MK")
                       const categoryId = cause.category || cause.cause_category;
-                      const category = getCategoryById(categoryId);
-                      const categoryName = category?.name || 'Uncategorized';
-                      const categoryColor = category?.text || '#10B981';
+                      const categoryNames = getCategoryNames(categoryId);
+                      const categoryIds = getCategoryIds(categoryId);
                       const isSelected = isCauseSelected(cause.id);
 
                       const avatarBgColor = getConsistentColor(cause.id, avatarColors);
@@ -1070,7 +1146,8 @@ export default function NewCreateCollectivePage() {
                       return (
                         <div
                           key={cause.id}
-                          className="flex items-center gap-3 md:gap-4 p-3 md:p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
+                          onClick={() => handleToggleCause(cause)}
+                          className="flex items-center gap-3 md:gap-4 p-3 md:p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors cursor-pointer"
                         >
                           <Avatar className="w-10 h-10 md:w-12 md:h-12 rounded-full flex-shrink-0">
                             <AvatarImage src={cause.image} alt={cause.name} />
@@ -1084,26 +1161,39 @@ export default function NewCreateCollectivePage() {
                           <div className="flex-1 min-w-0">
                             <div className="flex items-center gap-2 mb-1 flex-wrap">
                               <h4 className="font-bold text-sm md:text-base text-foreground truncate">{cause.name}</h4>
-                              <span
-                                className="inline-flex items-center rounded-full px-1.5 md:px-2 py-0.5 text-[10px] md:text-xs font-medium flex-shrink-0"
-                                style={{ backgroundColor: `${categoryColor}20`, color: categoryColor }}
-                              >
-                                {categoryName}
-                              </span>
+                              {categoryNames.map((name, index) => {
+                                const singleCategoryId = categoryIds[index];
+                                const bgColor = getCategoryColor(singleCategoryId);
+                                const textColor = getCategoryTextColor(singleCategoryId);
+                                return (
+                                  <span
+                                    key={index}
+                                    className="inline-flex items-center rounded-full px-1.5 md:px-2 py-0.5 text-[10px] md:text-xs font-medium flex-shrink-0"
+                                    style={{ backgroundColor: bgColor, color: textColor }}
+                                  >
+                                    {name}
+                                  </span>
+                                );
+                              })}
                             </div>
                             <p className="text-xs md:text-sm text-muted-foreground line-clamp-2">
                               {cause.mission || cause.description}
                             </p>
                           </div>
                           
-                          <label className="flex items-center cursor-pointer flex-shrink-0">
-                            <input
-                              type="radio"
-                              checked={isSelected}
-                              onChange={() => handleToggleCause(cause)}
-                              className="w-4 h-4 md:w-5 md:h-5 text-[#1600ff] focus:ring-[#1600ff]"
-                            />
-                          </label>
+                          <div className="flex items-center cursor-pointer flex-shrink-0">
+                            <div
+                              className={`w-4 h-4 md:w-5 md:h-5 rounded-full border-2 flex items-center justify-center ${
+                                isSelected
+                                  ? 'border-[#1600ff] bg-[#1600ff]'
+                                  : 'border-gray-300 bg-white'
+                              }`}
+                            >
+                              {isSelected && (
+                                <div className="w-2 h-2 md:w-2.5 md:h-2.5 rounded-full bg-white" />
+                              )}
+                            </div>
+                          </div>
                         </div>
                       );
                     });

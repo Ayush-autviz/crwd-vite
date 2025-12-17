@@ -6,6 +6,18 @@ import { Link } from "react-router-dom";
 import { Toast } from "../ui/toast";
 import ImageModal from "../ui/ImageModal";
 
+// Avatar colors for consistent fallback styling (same as NewCreateCollective.tsx)
+const avatarColors = [
+  '#FF6B6B', '#4CAF50', '#FF9800', '#9C27B0', '#2196F3',
+  '#FFC107', '#E91E63', '#00BCD4', '#8BC34A', '#FF5722',
+  '#673AB7', '#009688', '#FFEB3B', '#795548', '#607D8B',
+];
+
+const getConsistentColor = (id: number | string, colors: string[]) => {
+  const hash = typeof id === 'number' ? id : id.toString().split('').reduce((acc: number, char: string) => acc + char.charCodeAt(0), 0);
+  return colors[hash % colors.length];
+};
+
 interface ProfileHeaderProps {
   avatarUrl: string;
   name: string;
@@ -25,6 +37,9 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
 }) => {
   const [isFollowing, setIsFollowing] = useState(false);
   const [toastState, setToastState] = useState({ show: false, message: "" });
+  
+  // Get consistent color for avatar fallback based on name
+  const avatarBgColor = getConsistentColor(name || link || 'U', avatarColors);
 
   const showToast = (message: string) => {
     setToastState({ show: true, message });
@@ -73,7 +88,12 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
         <ImageModal src={avatarUrl} alt={name}>
           <Avatar className="w-12 h-12 md:w-14 md:h-14 rounded-full object-contain cursor-pointer hover:opacity-80 transition-opacity">
             <AvatarImage src={avatarUrl} alt={name} />
-            <AvatarFallback className="text-sm md:text-base">{name.split(' ').map(word => word[0]).join('').toUpperCase()}</AvatarFallback>
+            <AvatarFallback 
+              style={{ backgroundColor: avatarBgColor }}
+              className="text-white text-sm md:text-base font-semibold"
+            >
+              {name.split(' ').map(word => word[0]).join('').toUpperCase()}
+            </AvatarFallback>
           </Avatar>
         </ImageModal>
         <div className="font-bold text-base md:text-lg leading-tight">{name}</div>

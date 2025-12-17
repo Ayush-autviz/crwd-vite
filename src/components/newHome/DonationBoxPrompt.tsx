@@ -34,12 +34,12 @@ export default function DonationBoxPrompt({ causeCount, hasJoinedCollectives = f
             className="cursor-pointer hover:shadow-md transition-shadow border border-orange-300 bg-yellow-50"
           >
             <CardContent className="p-3 md:p-6">
-              <div className="flex items-start gap-2.5 md:gap-4">
+              <div className="flex flex-col items-start gap-2.5 md:flex-row md:items-start md:gap-4">
                 {/* Orange Clock Icon */}
                 <div className="w-8 h-8 md:w-12 md:h-12 rounded-full bg-orange-500 flex items-center justify-center flex-shrink-0">
                   <Clock className="w-4 h-4 md:w-6 md:h-6 text-white" />
                 </div>
-                <div className="flex-1 min-w-0">
+                <div className="flex-1 min-w-0 text-left w-full md:w-auto">
                   <h3 className="font-bold text-sm md:text-lg text-gray-900 mb-0.5 md:mb-1">
                     You're Almost There!
                   </h3>
@@ -67,12 +67,12 @@ export default function DonationBoxPrompt({ causeCount, hasJoinedCollectives = f
             className="cursor-pointer hover:shadow-md transition-shadow border border-gray-200"
           >
             <CardContent className="p-3 md:p-6">
-              <div className="flex items-start gap-2.5 md:gap-4">
+              <div className="flex flex-col items-start gap-2.5 md:flex-row md:items-start md:gap-4">
                 {/* Blue Icon */}
                 <div className="w-8 h-8 md:w-12 md:h-12 rounded-full bg-[#1600ff] flex items-center justify-center flex-shrink-0">
                   <ShoppingBag className="w-4 h-4 md:w-6 md:h-6 text-white" />
                 </div>
-                <div className="flex-1 min-w-0">
+                <div className="flex-1 min-w-0 text-left w-full md:w-auto">
                   <h3 className="font-bold text-sm md:text-lg text-foreground">
                     Create a Donation Box
                   </h3>
@@ -101,12 +101,12 @@ export default function DonationBoxPrompt({ causeCount, hasJoinedCollectives = f
             className="cursor-pointer hover:shadow-md transition-shadow border border-gray-200 bg-white"
           >
             <CardContent className="p-3 md:p-6">
-              <div className="flex items-start gap-2.5 md:gap-4">
+              <div className="flex flex-col items-start gap-2.5 md:flex-row md:items-start md:gap-4">
                 {/* Green Icon */}
                 <div className="w-8 h-8 md:w-12 md:h-12 rounded-full bg-[#aeff30] flex items-center justify-center flex-shrink-0">
                   <Plus className="w-4 h-4 md:w-6 md:h-6 text-black" strokeWidth={3}/>
                 </div>
-                <div className="flex-1 min-w-0">
+                <div className="flex-1 min-w-0 text-left w-full md:w-auto">
                   <h3 className="font-bold text-sm md:text-lg text-foreground">
                     Start Your Own Collective
                   </h3>
@@ -118,7 +118,7 @@ export default function DonationBoxPrompt({ causeCount, hasJoinedCollectives = f
                       e.stopPropagation();
                       navigate('/create-crwd');
                     }}
-                    className="text-foreground font-semibold text-xs md:text-sm hover:underline flex items-center gap-1"
+                    className="text-foreground font-semibold text-xs md:text-sm hover:underline flex items-center gap-1 self-start"
                   >
                     Create collective
                     <ArrowRight className="w-3 h-3" />

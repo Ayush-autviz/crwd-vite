@@ -1,5 +1,6 @@
 import { useQuery, useQueries } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
+import CommentsBottomSheet from "@/components/post/CommentsBottomSheet";
 import NewSuggestedCollectives from "@/components/newHome/NewSuggestedCollectives";
 import NewFeaturedNonprofits from "@/components/newHome/NewFeaturedNonprofits";
 import HelloGreeting from "@/components/newHome/HelloGreeting";
@@ -23,6 +24,8 @@ import { NewLogo } from "@/assets/newLogo";
 export default function NewHome() {
     const { user, token } = useAuthStore();
     const [showAppBanner, setShowAppBanner] = useState(true);
+    const [showCommentsSheet, setShowCommentsSheet] = useState(false);
+    const [selectedPost, setSelectedPost] = useState<any>(null);
 
     // Fetch collectives data using React Query
     const { data: collectivesData, isLoading: collectivesLoading } = useQuery({
@@ -435,7 +438,22 @@ export default function NewHome() {
                 <div className="mx-4 md:mx-6 lg:mx-8">
                     {/* 2 Posts - Above Featured Nonprofits */}
                     {token?.access_token && (
-                        <CommunityPosts limit={2} startIndex={0} showHeading={true} />
+                        <CommunityPosts 
+                            limit={2} 
+                            startIndex={0} 
+                            showHeading={true}
+                            onCommentPress={(post) => {
+                                setSelectedPost({
+                                    id: typeof post.id === 'string' ? parseInt(post.id) : post.id,
+                                    username: post.user.username,
+                                    text: post.content,
+                                    avatarUrl: post.user.avatar,
+                                    firstName: post.user.firstName,
+                                    lastName: post.user.lastName,
+                                });
+                                setShowCommentsSheet(true);
+                            }}
+                        />
                     )}
 
                     {/* Featured Nonprofits Section */}
@@ -469,7 +487,22 @@ export default function NewHome() {
 
                     {/* 1 Post - After Featured Nonprofits */}
                     {token?.access_token && (
-                        <CommunityPosts limit={1} startIndex={2} showHeading={false} />
+                        <CommunityPosts 
+                            limit={1} 
+                            startIndex={2} 
+                            showHeading={false}
+                            onCommentPress={(post) => {
+                                setSelectedPost({
+                                    id: typeof post.id === 'string' ? parseInt(post.id) : post.id,
+                                    username: post.user.username,
+                                    text: post.content,
+                                    avatarUrl: post.user.avatar,
+                                    firstName: post.user.firstName,
+                                    lastName: post.user.lastName,
+                                });
+                                setShowCommentsSheet(true);
+                            }}
+                        />
                     )}
 
                     {/* Suggested Collectives Section */}
@@ -520,6 +553,18 @@ export default function NewHome() {
             <ExploreCards />
 
             <Footer />
+
+            {/* Comments Bottom Sheet */}
+            {selectedPost && (
+                <CommentsBottomSheet
+                    isOpen={showCommentsSheet}
+                    onClose={() => {
+                        setShowCommentsSheet(false);
+                        setSelectedPost(null);
+                    }}
+                    post={selectedPost}
+                />
+            )}
 
             {/* Fixed iOS App Banner */}
             {showAppBanner && (

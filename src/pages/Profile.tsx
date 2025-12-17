@@ -41,6 +41,34 @@ import {
   SheetDescription,
 } from "@/components/ui/sheet";
 
+// Avatar colors for consistent fallback styling (same as NewCreateCollective.tsx)
+const avatarColors = [
+  '#FF6B6B', '#4CAF50', '#FF9800', '#9C27B0', '#2196F3',
+  '#FFC107', '#E91E63', '#00BCD4', '#8BC34A', '#FF5722',
+  '#673AB7', '#009688', '#FFEB3B', '#795548', '#607D8B',
+];
+
+const getConsistentColor = (id: number | string, colors: string[]) => {
+  const hash = typeof id === 'number' ? id : id.toString().split('').reduce((acc: number, char: string) => acc + char.charCodeAt(0), 0);
+  return colors[hash % colors.length];
+};
+
+const getInitials = (firstName?: string, lastName?: string, name?: string, username?: string) => {
+  if (firstName && lastName) {
+    return `${firstName.charAt(0)}${lastName.charAt(0)}`.toUpperCase();
+  }
+  if (firstName) {
+    return firstName.charAt(0).toUpperCase();
+  }
+  if (name) {
+    const words = name.split(' ').filter(Boolean);
+    if (words.length >= 2) {
+      return (words[0].charAt(0) + words[words.length - 1].charAt(0)).toUpperCase();
+    }
+    return words[0]?.charAt(0).toUpperCase() || 'U';
+  }
+  return username?.charAt(0).toUpperCase() || 'U';
+};
 
 export default function ProfilePage() {
   const [showMenu, setShowMenu] = useState(false);
@@ -464,16 +492,8 @@ export default function ProfilePage() {
                   {/* Grid Layout - Responsive: 2 cols mobile, 3 cols tablet, 4 cols desktop */}
                   <div className="flex flex-wrap -mx-1 sm:-mx-1.5 md:-mx-2">
                     {profileData.recently_supported_causes.slice(0, 6).map((cause: any, i: number) => {
-                      // Generate consistent color based on cause name
-                      const colors = [
-                        '#f97316', // orange
-                        '#ec4899', // pink
-                        '#3b82f6', // blue
-                        '#ef4444', // red
-                        '#10b981', // green
-                        '#f97316', // orange (repeat)
-                      ];
-                      const bgColor = colors[i % colors.length];
+                      // Generate consistent color based on cause ID
+                      const bgColor = getConsistentColor(cause.id || cause.name || 'N', avatarColors);
                       
                       return (
                         <Link 
@@ -618,11 +638,7 @@ export default function ProfilePage() {
                   <div className="space-y-0">
                     {statsCausesData.results.map((item: any, index: number) => {
                       const cause = item.cause || item;
-                      const causeColors = [
-                        '#f97316', '#ec4899', '#3b82f6', '#10b981', '#f59e0b', '#8b5cf6',
-                      ];
-                      const colorIndex = (cause.name?.charCodeAt(0) || 0) % causeColors.length;
-                      const causeBgColor = causeColors[colorIndex];
+                      const causeBgColor = getConsistentColor(cause.id || cause.name || 'N', avatarColors);
                       
                       return (
                         <Link
@@ -670,16 +686,6 @@ export default function ProfilePage() {
                   <div className="space-y-0">
                     {statsCollectivesData.data.map((item: any, index: number) => {
                       const collective = item.collective || item;
-                      
-                      // Generate consistent color for avatar fallback
-                      const avatarColors = [
-                        '#3B82F6', '#EC4899', '#8B5CF6', '#10B981', '#F59E0B', '#EF4444', '#06B6D4',
-                        '#F97316', '#84CC16', '#A855F7', '#14B8A6', '#F43F5E', '#6366F1', '#22C55E', '#EAB308',
-                      ];
-                      const getConsistentColor = (id: number | string, colors: string[]) => {
-                        const hash = typeof id === 'number' ? id : id.toString().split('').reduce((acc: number, char: string) => acc + char.charCodeAt(0), 0);
-                        return colors[hash % colors.length];
-                      };
                       
                       // Priority: 1. Use color from API, 2. Use logo, 3. Fallback to generated color with letter
                       const hasColor = collective.color;
@@ -756,10 +762,11 @@ export default function ProfilePage() {
                           <div className="flex items-center gap-2.5 md:gap-3 flex-1 min-w-0">
                             <Avatar className="w-9 h-9 md:w-10 md:h-10 flex-shrink-0">
                               <AvatarImage src={userData.profile_picture || userData.avatar} />
-                              <AvatarFallback className="text-xs md:text-sm">
-                                {userData.first_name && userData.last_name
-                                  ? `${userData.first_name[0]}${userData.last_name[0]}`
-                                  : (userData.name || 'U').charAt(0)}
+                              <AvatarFallback 
+                                style={{ backgroundColor: getConsistentColor(userData.id || userData.username || 'U', avatarColors) }}
+                                className="text-white text-xs md:text-sm font-semibold"
+                              >
+                                {getInitials(userData.first_name, userData.last_name, userData.name, userData.username)}
                               </AvatarFallback>
                             </Avatar>
                             <div className="flex-1 min-w-0">
@@ -816,10 +823,11 @@ export default function ProfilePage() {
                           <div className="flex items-center gap-2.5 md:gap-3 flex-1 min-w-0">
                             <Avatar className="w-9 h-9 md:w-10 md:h-10 flex-shrink-0">
                               <AvatarImage src={userData.profile_picture || userData.avatar} />
-                              <AvatarFallback className="text-xs md:text-sm">
-                                {userData.first_name && userData.last_name
-                                  ? `${userData.first_name[0]}${userData.last_name[0]}`
-                                  : (userData.name || 'U').charAt(0)}
+                              <AvatarFallback 
+                                style={{ backgroundColor: getConsistentColor(userData.id || userData.username || 'U', avatarColors) }}
+                                className="text-white text-xs md:text-sm font-semibold"
+                              >
+                                {getInitials(userData.first_name, userData.last_name, userData.name, userData.username)}
                               </AvatarFallback>
                             </Avatar>
                             <div className="flex-1 min-w-0">

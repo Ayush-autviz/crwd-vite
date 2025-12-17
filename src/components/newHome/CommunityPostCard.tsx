@@ -40,9 +40,10 @@ interface CommunityPostCardProps {
       domain?: string;
     };
   };
+  onCommentPress?: (post: CommunityPostCardProps['post']) => void;
 }
 
-export default function CommunityPostCard({ post }: CommunityPostCardProps) {
+export default function CommunityPostCard({ post, onCommentPress }: CommunityPostCardProps) {
   const queryClient = useQueryClient();
   const [isLiked, setIsLiked] = useState(post.isLiked || false);
   const [likesCount, setLikesCount] = useState(post.likes || 0);
@@ -200,8 +201,8 @@ export default function CommunityPostCard({ post }: CommunityPostCardProps) {
                 className="text-white font-bold text-xs md:text-sm"
               >
                 {initials}
-              </AvatarFallback>
-            </Avatar>
+            </AvatarFallback>
+          </Avatar>
           </Link>
           <div className="flex-1 min-w-0">
             <div className="flex items-start justify-between mb-2 md:mb-3">
@@ -209,14 +210,14 @@ export default function CommunityPostCard({ post }: CommunityPostCardProps) {
                 <span className="text-xs md:text-sm font-semibold text-gray-900">{displayName}</span>
                 <div className="flex items-center gap-1">
                   <span className="text-[10px] md:text-xs text-gray-500">{formattedTime}</span>
-                </div>
-              </div>
             </div>
+          </div>
+        </div>
 
             <Link to={`/post/${post.id}`} className="block">
               <div className="text-xs md:text-sm text-gray-900 leading-5 mb-2 md:mb-3 whitespace-pre-line">
-                {post.content}
-              </div>
+          {post.content}
+      </div>
 
               {/* Show preview card if previewDetails exists, otherwise show image */}
               {post.previewDetails ? (
@@ -235,9 +236,9 @@ export default function CommunityPostCard({ post }: CommunityPostCardProps) {
                           src={post.previewDetails.image}
                           alt={post.previewDetails.title || 'Link preview'}
                           className="w-full h-full object-cover"
-                        />
-                      </div>
-                    )}
+          />
+        </div>
+      )}
                     {/* Preview Content */}
                     <div className="flex-1 p-2.5 md:p-3">
                       {post.previewDetails.site_name && (
@@ -281,46 +282,50 @@ export default function CommunityPostCard({ post }: CommunityPostCardProps) {
 
               {/* Footer */}
               <div className="flex items-center justify-between pt-2 md:pt-3">
-                <div className="flex items-center gap-3 md:gap-4">
-                  <button
-                    onClick={handleLikeClick}
-                    disabled={likeMutation.isPending || unlikeMutation.isPending}
+        <div className="flex items-center gap-3 md:gap-4">
+          <button
+            onClick={handleLikeClick}
+            disabled={likeMutation.isPending || unlikeMutation.isPending}
                     className="flex items-center gap-1 md:gap-1.5 hover:opacity-80 transition-opacity disabled:opacity-50"
-                  >
+          >
                     {likeMutation.isPending || unlikeMutation.isPending ? (
                       <Loader2 className="w-4 h-4 md:w-[18px] md:h-[18px] animate-spin text-gray-500" />
                     ) : (
-                      <Heart
+            <Heart
                         className={`w-4 h-4 md:w-[18px] md:h-[18px] ${
                           isLiked ? "fill-[#ef4444] text-[#ef4444]" : "text-gray-500"
-                        }`}
-                      />
+              }`}
+            />
                     )}
                     <span className="text-xs md:text-sm text-gray-500">{likesCount}</span>
-                  </button>
-                  <button
+          </button>
+          <button
                     onClick={(e) => {
                       e.preventDefault();
                       e.stopPropagation();
-                      setShowCommentsSheet(true);
+                      if (onCommentPress) {
+                        onCommentPress(post);
+                      } else {
+                        setShowCommentsSheet(true);
+                      }
                     }}
                     className="flex items-center gap-1 md:gap-1.5 hover:opacity-80 transition-opacity"
-                  >
+          >
                     <MessageCircle className="w-4 h-4 md:w-[18px] md:h-[18px] text-gray-500" />
                     <span className="text-xs md:text-sm text-gray-500">{post.comments || 0}</span>
-                  </button>
-                </div>
-                <button
+          </button>
+        </div>
+        <button
                   className="p-0.5 md:p-1 hover:opacity-80 transition-opacity"
                   onClick={(e) => {
                     e.preventDefault();
                     e.stopPropagation();
                     setShowShareModal(true);
                   }}
-                >
+        >
                   <Share2 className="w-4 h-4 md:w-[18px] md:h-[18px] text-gray-500" />
-                </button>
-              </div>
+        </button>
+      </div>
             </Link>
           </div>
         </div>

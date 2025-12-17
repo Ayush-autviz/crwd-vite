@@ -91,44 +91,51 @@ export default function CollectiveCarouselCard({
             </div>
           )}
 
-          <div className="flex items-start gap-2.5 md:gap-4">
-            {/* Circular Icon */}
-            <div 
-              className="w-8 h-8 md:w-12 md:h-12 rounded-full flex items-center justify-center flex-shrink-0"
-              style={iconColor ? { backgroundColor: iconColor } : {}}
-            >
-              {showImage ? (
-                <img
-                  src={currentCollective.logo}
-                  alt={currentCollective.name}
-                  className="w-full h-full object-cover rounded-full"
-                />
-              ) : (
-                <span className="text-white font-bold text-base md:text-xl">
-                  {iconLetter}
-                </span>
-              )}
+          <div className="flex flex-col items-start gap-2.5 md:flex-row md:items-start md:gap-4">
+            {/* Icon and Title/Badge Row */}
+            <div className="flex flex-row items-center gap-2.5 md:gap-4 w-full md:w-auto">
+              {/* Circular Icon */}
+              <div 
+                className="w-8 h-8 md:w-12 md:h-12 rounded-full flex items-center justify-center flex-shrink-0"
+                style={iconColor ? { backgroundColor: iconColor } : {}}
+              >
+                {showImage ? (
+                  <img
+                    src={currentCollective.logo}
+                    alt={currentCollective.name}
+                    className="w-full h-full object-cover rounded-full"
+                  />
+                ) : (
+                  <span className="text-white font-bold text-base md:text-xl">
+                    {iconLetter}
+                  </span>
+                )}
+              </div>
+
+              {/* Title and Badge */}
+              <div className="flex-1 min-w-0">
+                <h3 className="font-bold text-sm md:text-lg text-gray-900 mb-0.5 md:mb-1">{currentCollective.name}</h3>
+                {currentCollective.role && (
+                  <p className={`${currentCollective.role === 'Admin' ? 'bg-pink-100 text-red-600' : 'bg-[#a955f7] text-white'} text-xs font-medium px-1.5 md:px-2 py-0.5 rounded-md whitespace-nowrap w-fit`}>
+                    {currentCollective.role === 'Admin' ? 'Founder' : currentCollective.role}
+                  </p>
+                )}
+              </div>
             </div>
 
             {/* Content */}
-            <div className="flex-1 min-w-0 pr-10 md:pr-20">
-              <h3 className="font-bold text-sm md:text-lg text-gray-900 mb-0.5 md:mb-1">{currentCollective.name}</h3>
-              {currentCollective.role && (
-                <p className={`${currentCollective.role === 'Admin' ? 'bg-pink-100 text-red-600' : 'bg-[#a955f7] text-white'} text-xs font-medium px-1.5 md:px-2 py-0.5 rounded-md whitespace-nowrap w-fit mb-1.5 md:mb-2`}>
-                  {currentCollective.role === 'Admin' ? 'Founder' : currentCollective.role}
-                </p>
-              )}
-              <p className="text-xs md:text-base text-gray-700 mb-2 md:mb-4 leading-relaxed">
+            <div className="flex-1 min-w-0 pr-0 md:pr-20 text-left w-full md:w-auto">
+              <p className="text-xs md:text-base text-gray-700 mb-2 md:mb-4 leading-relaxed text-left">
                 <span className="font-bold text-gray-900">{currentCollective.memberCount}</span> members are currently donating{" "}
                 to <span className="font-bold text-gray-900">{currentCollective.causeCount} causes</span>.
               </p>
 
               {/* Action Buttons */}
-              <div className="flex items-center gap-1.5 md:gap-3">
+              <div className="flex items-center gap-1.5 md:gap-3 w-full md:w-auto">
                 <Button 
                   variant="outline" 
                   size="sm" 
-                  className="bg-white border-gray-300 text-gray-900 hover:bg-gray-50 flex items-center gap-1 md:gap-2 text-xs md:text-sm h-8 md:h-10 px-2.5 md:px-4 font-semibold"
+                  className="bg-white border-gray-300 text-gray-900 hover:bg-gray-50 flex items-center justify-center gap-1 md:gap-2 text-xs md:text-sm h-8 md:h-10 px-2.5 md:px-4 font-semibold flex-1 md:flex-initial"
                   onClick={handleButtonClick}
                 >
                   {isFounder ? (
@@ -145,7 +152,7 @@ export default function CollectiveCarouselCard({
                 </Button>
                 <Button 
                   size="sm" 
-                  className="bg-[#1600ff] hover:bg-[#1400cc] text-white flex items-center gap-1 md:gap-2 text-xs md:text-sm h-8 md:h-10 px-2.5 md:px-4 font-semibold"
+                  className="bg-[#1600ff] hover:bg-[#1400cc] text-white flex items-center justify-center gap-1 md:gap-2 text-xs md:text-sm h-8 md:h-10 px-2.5 md:px-4 font-semibold flex-1 md:flex-initial"
                   onClick={() => setShowShareModal(true)}
                 >
                   <Share2 className="h-3 w-3 md:h-4 md:w-4" />

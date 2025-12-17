@@ -7,12 +7,14 @@ interface CommunityPostsProps {
   limit?: number;
   startIndex?: number;
   showHeading?: boolean;
+  onCommentPress?: (post: any) => void;
 }
 
 export default function CommunityPosts({ 
   limit = 3,
   startIndex = 0,
-  showHeading = true 
+  showHeading = true,
+  onCommentPress,
 }: CommunityPostsProps) {
   const { data: postsData, isLoading } = useQuery({
     queryKey: ['posts', 'home'],
@@ -109,7 +111,7 @@ export default function CommunityPosts({
 
       <div className="space-y-3 md:space-y-4">
         {transformedPosts.map((post) => (
-          <CommunityPostCard key={post.id} post={post} />
+          <CommunityPostCard key={post.id} post={post} onCommentPress={onCommentPress} />
         ))}
       </div>
     </div>
