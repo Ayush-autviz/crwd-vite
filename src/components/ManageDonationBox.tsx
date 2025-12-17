@@ -331,20 +331,27 @@ const ManageDonationBox: React.FC<ManageDonationBoxProps> = ({
         .filter(id => !isNaN(id));
 
       // Get existing collective IDs that are NOT removed
-      const remainingExistingCollectiveIds = existingCollectives
-        .filter(c => !temporarilyRemovedCauses.includes(c.id))
-        .map(c => {
-          const id = c.id.replace('collective-', '');
-          return parseInt(id);
-        })
-        .filter(id => !isNaN(id));
+      // Include collectives from both causes prop and donationBoxData
+      const attributingCollectivesFromBoxUpdate = donationBoxData?.attributing_collectives || [];
+      const existingCollectiveIdsUpdate = existingCollectives.map(c => {
+        const id = c.id.replace('collective-', '');
+        return parseInt(id);
+      }).filter(id => !isNaN(id));
+      const attributingCollectiveIdsUpdate = attributingCollectivesFromBoxUpdate.map((collective: any) => collective.id).filter((id: any) => id != null);
+      const allCollectiveIdsUpdate = [...existingCollectiveIdsUpdate, ...attributingCollectiveIdsUpdate];
+      const uniqueCollectiveIdsUpdate = Array.from(new Set(allCollectiveIdsUpdate));
+      
+      const remainingExistingCollectiveIds = uniqueCollectiveIdsUpdate.filter((collectiveId: number) => {
+        const collectiveIdString = `collective-${collectiveId}`;
+        return !temporarilyRemovedCauses.includes(collectiveIdString);
+      });
 
       // Combine existing (not removed) + newly selected causes/collectives
       const allCauseIds = [...remainingExistingCauseIds, ...selectedCauses];
-      const allCollectiveIds = [...remainingExistingCollectiveIds, ...selectedCollectives];
+      const allCollectiveIdsForUpdate = [...remainingExistingCollectiveIds, ...selectedCollectives];
 
       // Validate that at least one nonprofit or collective exists
-      if (allCauseIds.length === 0 && allCollectiveIds.length === 0) {
+      if (allCauseIds.length === 0 && allCollectiveIdsForUpdate.length === 0) {
         alert('Please add at least one nonprofit or collective to your donation box.');
         return;
       }
@@ -462,7 +469,7 @@ const ManageDonationBox: React.FC<ManageDonationBoxProps> = ({
     .filter(id => !isNaN(id));
 
   // Get existing collective IDs to filter them out
-  const existingCollectiveIds = existingCollectives
+  const existingCollectiveIdsForFilter = existingCollectives
     .map(c => {
       const id = c.id.replace('collective-', '');
       return parseInt(id);
@@ -473,7 +480,12 @@ const ManageDonationBox: React.FC<ManageDonationBoxProps> = ({
   const allSelectedCauseIds = [...existingCauseIds, ...selectedCauses];
   
   // Get all selected collective IDs (existing + newly selected)
-  const allSelectedCollectiveIds = [...existingCollectiveIds, ...selectedCollectives];
+  // Also include collectives from donationBoxData
+  const attributingCollectivesForFilter = donationBoxData?.attributing_collectives || [];
+  const attributingCollectiveIdsForFilter = attributingCollectivesForFilter.map((collective: any) => collective.id).filter((id: any) => id != null);
+  const allExistingCollectiveIdsForFilter = [...existingCollectiveIdsForFilter, ...attributingCollectiveIdsForFilter];
+  const uniqueExistingCollectiveIdsForFilter = Array.from(new Set(allExistingCollectiveIdsForFilter));
+  const allSelectedCollectiveIds = [...uniqueExistingCollectiveIdsForFilter, ...selectedCollectives];
 
   // Format next charge date
   const formatNextChargeDate = (dateString?: string) => {
@@ -523,13 +535,22 @@ const ManageDonationBox: React.FC<ManageDonationBoxProps> = ({
     })
     .filter(id => !isNaN(id));
 
-  const remainingExistingCollectiveIdsForValidation = existingCollectives
-    .filter(c => !temporarilyRemovedCauses.includes(c.id))
-    .map(c => {
-      const id = c.id.replace('collective-', '');
-      return parseInt(id);
-    })
-    .filter(id => !isNaN(id));
+  // Also get collectives directly from donation box data (attributing_collectives)
+  // This ensures we count collectives even if they're not in the causes prop
+  const attributingCollectivesFromBoxValidation = donationBoxData?.attributing_collectives || [];
+  const existingCollectiveIdsValidation = existingCollectives.map(c => {
+    const id = c.id.replace('collective-', '');
+    return parseInt(id);
+  }).filter(id => !isNaN(id));
+  const attributingCollectiveIdsValidation = attributingCollectivesFromBoxValidation.map((collective: any) => collective.id).filter((id: any) => id != null);
+  const allCollectiveIdsForValidation = [...existingCollectiveIdsValidation, ...attributingCollectiveIdsValidation];
+  // Remove duplicates
+  const uniqueCollectiveIdsForValidation = Array.from(new Set(allCollectiveIdsForValidation));
+  
+  const remainingExistingCollectiveIdsForValidation = uniqueCollectiveIdsForValidation.filter((collectiveId: number) => {
+    const collectiveIdString = `collective-${collectiveId}`;
+    return !temporarilyRemovedCauses.includes(collectiveIdString);
+  });
 
   const totalCauseIds = [...remainingExistingCauseIdsForValidation, ...selectedCauses];
   const totalCollectiveIds = [...remainingExistingCollectiveIdsForValidation, ...selectedCollectives];

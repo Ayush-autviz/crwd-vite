@@ -466,6 +466,15 @@ export const Checkout = ({
             description: cause.mission || cause.description || "",
             type: 'cause' as const,
           })),
+        // Include collectives from attributing_collectives
+        ...(attributingCollectives || []).map((collective: any) => ({
+          id: `collective-${collective.id}`,
+          name: collective.name,
+          imageUrl: collective.cover_image || "",
+          color: "#9333EA",
+          description: collective.description || "",
+          type: 'collective' as const,
+        })),
       ]
       : selectedOrganizations.map(
         (orgName: string, index: number) => ({

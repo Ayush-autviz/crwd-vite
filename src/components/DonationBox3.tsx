@@ -65,6 +65,8 @@ export const DonationBox3 = ({
   const boxCauses = donationBox?.box_causes || [];
   // Extract cause objects from box_causes
   const causes = boxCauses.map((boxCause: any) => boxCause.cause).filter((cause: any) => cause != null);
+  // Get attributing collectives from donation box
+  const attributingCollectives = donationBox?.attributing_collectives || [];
   const actualDonationAmount = parseFloat(donationBox?.monthly_amount || donationAmount.toString());
 
   // Helper for consistent avatar colors
@@ -129,6 +131,7 @@ export const DonationBox3 = ({
   const currentCapacity = causes.length;
   const maxCapacity = donationBox?.capacity || 30;
   const totalCausesCount = causes.length;
+  const totalCollectivesCount = attributingCollectives.length;
 
   // Format next charge date
   const formatNextChargeDate = (dateString?: string) => {
@@ -525,7 +528,7 @@ export const DonationBox3 = ({
             {/* Supported Entities */}
             <div className="bg-gray-100 rounded-lg px-3 md:px-4 py-2.5 md:py-3 mb-4 md:mb-6 text-center">
               <p className="text-xs md:text-sm font-bold text-gray-900">
-                {totalCausesCount} Cause{totalCausesCount !== 1 ? 's' : ''}
+                {totalCausesCount} Cause{totalCausesCount !== 1 ? 's' : ''} • {totalCollectivesCount} Collective{totalCollectivesCount !== 1 ? 's' : ''}
               </p>
             </div>
 
