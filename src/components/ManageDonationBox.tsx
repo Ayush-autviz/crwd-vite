@@ -1342,7 +1342,7 @@ const ManageDonationBox: React.FC<ManageDonationBoxProps> = ({
         />
         
         {/* Deactivate Subscription Button - Only show if subscription is active */}
-        {isActive && (
+        {/* {isActive && (
           <Button
             onClick={() => setShowCancelModal(true)}
             disabled={cancelDonationBoxMutation.isPending}
@@ -1353,7 +1353,7 @@ const ManageDonationBox: React.FC<ManageDonationBoxProps> = ({
               ? 'Deactivating...'
               : 'Deactivate Subscription'}
           </Button>
-        )}
+        )} */}
       </div>
 
       {/* Payment Method Section */}

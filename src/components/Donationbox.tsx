@@ -116,11 +116,11 @@ const DonationBox = ({ tab = "setup", preselectedItem, activeTab, fromPaymentRes
   useEffect(() => {
     if (activeTabState === "setup") {
       if (donationBox && donationBox.id) {
-        // If donation box is active, show checkout; if inactive, show step 2
-        if (donationBox.is_active) {
+        // Only show checkout if donation box is explicitly active
+        if (donationBox.is_active === true) {
           setCheckout(true);
         } else {
-          setCheckout(false); // Reset checkout when deactivated
+          setCheckout(false); // Reset checkout when deactivated or inactive
         }
         setStep(2); // Show step 2 if donation box exists
       } else {
@@ -130,10 +130,16 @@ const DonationBox = ({ tab = "setup", preselectedItem, activeTab, fromPaymentRes
     }
   }, [donationBox, activeTabState]);
 
-  // Show checkout screen when coming from payment result
+  // Show checkout screen when coming from payment result - only if donation box is active
   useEffect(() => {
     if (fromPaymentResult && donationBox && donationBox.id) {
-      setCheckout(true);
+      // Only show checkout if donation box is explicitly active
+      if (donationBox.is_active === true) {
+        setCheckout(true);
+      } else {
+        // If coming from payment result but donation box is inactive, don't show checkout
+        setCheckout(false);
+      }
     }
   }, [fromPaymentResult, donationBox]);
 

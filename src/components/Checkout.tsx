@@ -1,4 +1,4 @@
-import { HelpCircle, Settings, X, ChevronDown, ChevronUp, Trash2, Pencil } from "lucide-react";
+import { Settings, X, ChevronDown, ChevronUp, Trash2, Pencil, Plus, Minus } from "lucide-react";
 import { useState, useEffect } from "react";
 
 import { Button } from "@/components/ui/button";
@@ -9,8 +9,9 @@ import ReactConfetti from "react-confetti";
 import { getCollectiveById } from "@/services/api/crwd";
 import { useQueryClient, useQuery, useMutation } from "@tanstack/react-query";
 import { useAuthStore } from "@/stores/store";
-import { getDonationHistory, removeCauseFromBox } from "@/services/api/donation";
+import { getDonationHistory, removeCauseFromBox, updateDonationBox, cancelDonationBox } from "@/services/api/donation";
 import RequestNonprofitModal from "@/components/newsearch/RequestNonprofitModal";
+import { toast } from "sonner";
 
 interface DonationOverviewProps {
   donationAmount?: number;
@@ -55,11 +56,24 @@ export const Checkout = ({
     width: window.innerWidth,
     height: window.innerHeight,
   });
+  const [isEditingAmount, setIsEditingAmount] = useState(false);
+  const [editableAmount, setEditableAmount] = useState(parseFloat(donationBox?.monthly_amount || donationAmount.toString()));
+  const [showPauseModal, setShowPauseModal] = useState(false);
+  const [isPauseModalVisible, setIsPauseModalVisible] = useState(false);
+  const [isPauseModalAnimating, setIsPauseModalAnimating] = useState(false);
+  const [selectedPauseOption, setSelectedPauseOption] = useState<number | null>(null);
 
   // Update showManageDonationBox when initialShowManage changes
   useEffect(() => {
     setShowManageDonationBox(initialShowManage);
   }, [initialShowManage]);
+
+  // Update editableAmount when donation box data changes
+  useEffect(() => {
+    if (donationBox?.monthly_amount) {
+      setEditableAmount(Math.round(parseFloat(donationBox.monthly_amount)));
+    }
+  }, [donationBox?.monthly_amount]);
 
   // Get box_causes from donation box API (main source)
   const boxCauses = donationBox?.box_causes || [];
@@ -302,6 +316,106 @@ export const Checkout = ({
     }
   };
 
+  // Calculate fees and capacity for amount editing
+  const calculateFeesForAmount = (grossAmount: number) => {
+    const gross = grossAmount;
+    const stripeFee = (gross * 0.029) + 0.30;
+    const crwdFee = (gross - stripeFee) * 0.07;
+    const net = gross - stripeFee - crwdFee;
+    return {
+      stripeFee: Math.round(stripeFee * 100) / 100,
+      crwdFee: Math.round(crwdFee * 100) / 100,
+      net: Math.round(net * 100) / 100,
+    };
+  };
+
+  const incrementAmount = () => {
+    setEditableAmount(prev => Math.round(prev) + 5);
+  };
+
+  const decrementAmount = () => {
+    if (editableAmount > 5) {
+      setEditableAmount(prev => Math.max(5, Math.round(prev) - 5));
+    }
+  };
+
+  // Mutation to update donation box
+  const updateAmountMutation = useMutation({
+    mutationFn: (amount: number) => updateDonationBox({ monthly_amount: amount }),
+    onSuccess: () => {
+      console.log('Donation box amount updated successfully');
+      queryClient.invalidateQueries({ queryKey: ['donationBox', currentUser?.id] });
+      setIsEditingAmount(false);
+    },
+    onError: (error: any) => {
+      console.error('Error updating donation box amount:', error);
+      // Revert on error
+      if (donationBox?.monthly_amount) {
+        setEditableAmount(Math.round(parseFloat(donationBox.monthly_amount)));
+      }
+    },
+  });
+
+  const handleSaveAmount = () => {
+    // Calculate capacity for the new amount
+    const fees = calculateFeesForAmount(editableAmount);
+    const net = fees.net;
+    const maxCapacity = Math.floor(net / 0.20);
+    
+    // Check if current causes exceed the new capacity
+    if (currentCapacity > maxCapacity) {
+      // Show error toast
+      toast.error(`You can only support up to ${maxCapacity} cause${maxCapacity !== 1 ? 's' : ''} with $${editableAmount}. Please remove some causes or increase the amount.`);
+      return;
+    }
+    
+    // If capacity check passes, update the amount
+    updateAmountMutation.mutate(editableAmount);
+  };
+
+  const handleCancelEdit = () => {
+    if (donationBox?.monthly_amount) {
+      setEditableAmount(Math.round(parseFloat(donationBox.monthly_amount)));
+    }
+    setIsEditingAmount(false);
+  };
+
+  // Handle pause modal animation
+  useEffect(() => {
+    let timer: NodeJS.Timeout;
+    if (showPauseModal) {
+      setIsPauseModalVisible(true);
+      setIsPauseModalAnimating(false);
+      timer = setTimeout(() => setIsPauseModalAnimating(true), 20);
+    } else if (isPauseModalVisible) {
+      setIsPauseModalAnimating(false);
+      timer = setTimeout(() => setIsPauseModalVisible(false), 300);
+    }
+    return () => clearTimeout(timer);
+  }, [showPauseModal, isPauseModalVisible]);
+
+  // Mutation to cancel donation box
+  const cancelDonationBoxMutation = useMutation({
+    mutationFn: () => cancelDonationBox(),
+    onSuccess: () => {
+      console.log('Donation box cancelled successfully');
+      queryClient.invalidateQueries({ queryKey: ['donationBox', currentUser?.id] });
+      setShowPauseModal(false);
+      setSelectedPauseOption(null);
+      if (onCancelSuccess) {
+        onCancelSuccess();
+      }
+    },
+    onError: (error: any) => {
+      console.error('Error cancelling donation box:', error);
+      toast.error('Failed to cancel subscription. Please try again.');
+    },
+  });
+
+  const handleCancelSubscription = () => {
+    cancelDonationBoxMutation.mutate();
+  };
+
   // Handle remove modal animation
   useEffect(() => {
     let timer: NodeJS.Timeout;
@@ -402,26 +516,101 @@ export const Checkout = ({
               {/* Monthly Donation Section */}
               <div className="mb-4 md:mb-6">
                 <h2 className="text-sm md:text-base font-medium text-gray-900 mb-2 md:mb-3">Monthly Donation</h2>
+                
+                {/* Amount Display with Controls */}
                 <div className="flex items-center justify-between mb-1.5 md:mb-2">
                   <div className="flex items-baseline gap-1.5 md:gap-2">
-                    <span className="text-3xl md:text-4xl font-bold text-gray-900">${Math.round(actualDonationAmount)}</span>
-                    <span className="text-sm md:text-base text-gray-600">/   month</span>
+                    {isEditingAmount ? (
+                      <input
+                        type="number"
+                        value={Math.round(editableAmount)}
+                        onChange={(e) => {
+                          const value = parseInt(e.target.value) || 5;
+                          setEditableAmount(Math.max(5, value));
+                        }}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter') {
+                            handleSaveAmount();
+                          } else if (e.key === 'Escape') {
+                            handleCancelEdit();
+                          }
+                        }}
+                        autoFocus
+                        className="text-3xl md:text-4xl font-bold text-gray-900 w-20 md:w-24 border-none focus:outline-none"
+                      />
+                    ) : (
+                      <span className="text-3xl md:text-4xl font-bold text-gray-900">${Math.round(editableAmount)}</span>
+                    )}
+                    <span className="text-sm md:text-base text-gray-600">/month</span>
                   </div>
-                  <button
-                    onClick={() => {
-                      setShowManageDonationBox(true);
-                      if (onShowManage) {
-                        onShowManage();
-                      }
-                    }}
-                    className="w-9 h-9 md:w-10 md:h-10 rounded-lg bg-gray-100 hover:bg-gray-200 flex items-center justify-center transition-colors"
-                    aria-label="Edit amount"
-                  >
-                    <Pencil className="w-3.5 h-3.5 md:w-4 md:h-4 text-gray-600" />
-                  </button>
+                  
+                  {/* +/- Buttons - Only show when editing */}
+                  {isEditingAmount && (
+                    <div className="flex items-center gap-2">
+                      <button
+                        onClick={decrementAmount}
+                        disabled={editableAmount <= 5}
+                        className={`flex items-center justify-center w-10 h-10 md:w-12 md:h-12 rounded-lg transition-colors ${
+                          editableAmount > 5 
+                            ? 'bg-gray-100 hover:bg-gray-200' 
+                            : 'bg-gray-200 cursor-not-allowed opacity-50'
+                        }`}
+                      >
+                        <Minus size={20} className="text-gray-600 font-bold" strokeWidth={3} />
+                      </button>
+                      <button
+                        onClick={incrementAmount}
+                        className="flex items-center justify-center w-10 h-10 md:w-12 md:h-12 rounded-lg bg-gray-100 hover:bg-gray-200 transition-colors"
+                      >
+                        <Plus size={20} className="text-gray-600" strokeWidth={3} />
+                      </button>
+                    </div>
+                  )}
+                  
+                  {/* Pencil Icon - Only show when not editing */}
+                  {!isEditingAmount && (
+                    <button
+                      onClick={() => setIsEditingAmount(true)}
+                      className="w-9 h-9 md:w-10 md:h-10 rounded-lg bg-gray-100 hover:bg-gray-200 flex items-center justify-center transition-colors"
+                      aria-label="Edit amount"
+                    >
+                      <Pencil className="w-3.5 h-3.5 md:w-4 md:h-4 text-gray-600" />
+                    </button>
+                  )}
                 </div>
+                
+                {/* Lifetime Amount */}
                 {lifetimeAmount > 0 && (
-                  <p className="text-xs md:text-sm text-gray-600">${lifetimeAmount.toLocaleString()} lifetime</p>
+                  <p className="text-xs md:text-sm text-gray-600 mb-3 md:mb-4">${lifetimeAmount.toLocaleString()} lifetime</p>
+                )}
+                
+                {/* Billing Cycle Info - Only show when editing and donation box is active */}
+                {isEditingAmount && donationBox?.is_active && donationBox?.next_charge_date && (
+                  <div className="bg-blue-50 rounded-lg p-3 md:p-4 mb-4 md:mb-6">
+                    <p className="text-xs md:text-sm text-blue-600 text-center">
+                      Changes take effect on your next billing cycle ({getChargeDay(donationBox.next_charge_date)} of the month)
+                    </p>
+                  </div>
+                )}
+                
+                {/* Action Buttons - Only show when editing */}
+                {isEditingAmount && (
+                  <div className="flex items-center gap-2 md:gap-3">
+                    <button
+                      onClick={handleCancelEdit}
+                      disabled={updateAmountMutation.isPending}
+                      className="flex-1 bg-white border border-gray-300 text-gray-900 font-semibold py-3 rounded-lg transition-colors disabled:opacity-50 hover:bg-gray-50"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      onClick={handleSaveAmount}
+                      disabled={updateAmountMutation.isPending}
+                      className="flex-1 bg-[#1600ff] hover:bg-[#1400cc] text-white font-semibold py-3 rounded-lg transition-colors disabled:opacity-50"
+                    >
+                      {updateAmountMutation.isPending ? 'Saving...' : 'Save'}
+                    </button>
+                  </div>
                 )}
               </div>
 
@@ -449,12 +638,14 @@ export const Checkout = ({
                 </p>
               </div>
 
-              {/* Payment Schedule */}
-              {donationBox?.next_charge_date && (
-                <p className="text-xs md:text-sm text-gray-600 text-center mb-3 md:mb-4">
-                  on the {getChargeDay(donationBox.next_charge_date)} of every month
-                </p>
-              )}
+              {/* Add Causes Button */}
+              <button
+                onClick={() => navigate('/donation/manage')}
+                className="w-full bg-[#1600ff] hover:bg-[#1400cc] text-white font-semibold py-3 rounded-lg transition-colors flex items-center justify-center gap-2"
+              >
+                <Plus size={18} className="text-white" />
+                <span>Add Causes</span>
+              </button>
             </div>
           </div>
 
@@ -603,6 +794,18 @@ export const Checkout = ({
               Don't see your nonprofit? Request it
             </button>
           </div>
+
+
+
+          <div>
+            <button
+              onClick={() => setShowPauseModal(true)}
+              className="text-sm md:text-base text-gray-600 text-center cursor-pointer hover:text-[#1600ff] w-full"
+            >
+              Pause Donations
+            </button>
+          </div>
+
         </div>
       </div>
 
@@ -755,6 +958,116 @@ export const Checkout = ({
                   'Remove'
                 )}
               </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Pause Donations Bottom Sheet Modal */}
+      {isPauseModalVisible && (
+        <div
+          className={`fixed inset-0 z-50 transition-opacity duration-300 ${
+            isPauseModalAnimating ? 'opacity-100' : 'opacity-0'
+          }`}
+          onClick={() => {
+            setShowPauseModal(false);
+            setSelectedPauseOption(null);
+          }}
+        >
+          {/* Backdrop */}
+          <div className="absolute inset-0 bg-black/50" />
+          
+          {/* Bottom Sheet */}
+          <div
+            className={`absolute bottom-0 left-0 right-0 bg-white rounded-t-2xl md:rounded-t-3xl shadow-2xl max-h-[90vh] md:max-h-[85vh] overflow-hidden flex flex-col transition-transform duration-300 ${
+              isPauseModalAnimating ? 'translate-y-0' : 'translate-y-full'
+            }`}
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Header */}
+            <div className="px-4 pt-4 pb-3 border-b border-gray-200">
+              <div className="flex items-start justify-between mb-2">
+                <div className="flex-1">
+                  <h2 className="text-lg font-bold text-gray-900 mb-1">
+                    Pause Your Donations
+                  </h2>
+                  <p className="text-xs text-gray-600">
+                    We understand that life happens. Choose how long you'd like to pause your recurring donations.
+                  </p>
+                </div>
+                <button
+                  onClick={() => {
+                    setShowPauseModal(false);
+                    setSelectedPauseOption(null);
+                  }}
+                  className="ml-3 p-1 hover:bg-gray-100 rounded-full transition-colors"
+                  aria-label="Close"
+                >
+                  <X size={18} className="text-gray-500" />
+                </button>
+              </div>
+            </div>
+
+            {/* Content */}
+            <div className="flex-1 overflow-y-auto px-4 py-3">
+              {/* Pause Options */}
+              <div className="space-y-2">
+                {/* Option 1: Skip this month */}
+                <button
+                  onClick={() => setSelectedPauseOption(1)}
+                  className={`w-full p-3 rounded-lg border-2 transition-all text-left ${
+                    selectedPauseOption === 1
+                      ? 'border-[#1600ff] bg-blue-50'
+                      : 'border-gray-200 hover:border-gray-300 bg-white'
+                  }`}
+                >
+                  <div className="flex items-center justify-between">
+                    <span className="font-semibold text-sm text-gray-900">Skip this month</span>
+                    <span className="text-xs text-gray-600">Resume next month</span>
+                  </div>
+                </button>
+
+                {/* Option 2: Pause for 2 months */}
+                <button
+                  onClick={() => setSelectedPauseOption(2)}
+                  className={`w-full p-3 rounded-lg border-2 transition-all text-left ${
+                    selectedPauseOption === 2
+                      ? 'border-[#1600ff] bg-blue-50'
+                      : 'border-gray-200 hover:border-gray-300 bg-white'
+                  }`}
+                >
+                  <div className="flex items-center justify-between">
+                    <span className="font-semibold text-sm text-gray-900">Pause for 2 months</span>
+                    <span className="text-xs text-gray-600">Resume in 2 months</span>
+                  </div>
+                </button>
+
+                {/* Option 3: Pause for 3 months */}
+                <button
+                  onClick={() => setSelectedPauseOption(3)}
+                  className={`w-full p-3 rounded-lg border-2 transition-all text-left ${
+                    selectedPauseOption === 3
+                      ? 'border-[#1600ff] bg-blue-50'
+                      : 'border-gray-200 hover:border-gray-300 bg-white'
+                  }`}
+                >
+                  <div className="flex items-center justify-between">
+                    <span className="font-semibold text-sm text-gray-900">Pause for 3 months</span>
+                    <span className="text-xs text-gray-600">Resume in 3 months</span>
+                  </div>
+                </button>
+              </div>
+
+              {/* Cancel Subscription Link */}
+              <div className="mt-4 pt-3 border-t border-gray-200">
+                <button
+                  onClick={handleCancelSubscription}
+                  disabled={cancelDonationBoxMutation.isPending}
+                  className="w-full text-xs text-red-600 hover:text-red-700 font-medium py-1.5 transition-colors disabled:opacity-50"
+                >
+                  {cancelDonationBoxMutation.isPending ? 'Cancelling...' : 'Cancel subscription completely'}
+                </button>
+              </div>
             </div>
           </div>
         </div>
