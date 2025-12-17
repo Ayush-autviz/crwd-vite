@@ -2,11 +2,12 @@
 import { useState, useEffect } from "react";
 import { CROWDS, RECENTS, SUGGESTED } from "@/constants";
 import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
-import { removeCauseFromBox, removeCollectiveFromBox, activateDonationBox, getDonationHistory } from "@/services/api/donation";
+import { removeCauseFromBox, removeCollectiveFromBox, activateDonationBox, getDonationHistory, updateDonationBox } from "@/services/api/donation";
 import { useAuthStore } from "@/stores/store";
 import { getCollectiveById } from "@/services/api/crwd";
 import { ChevronDown, ChevronUp, Pencil, FileText, Plus, Minus, Trash2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 import {
   Select,
   SelectContent,
@@ -176,6 +177,60 @@ export const DonationBox3 = ({
     if (editableAmount > 5) {
       setEditableAmount(prev => Math.max(5, Math.round(prev) - 5));
     }
+  };
+
+  // Calculate fees and capacity
+  const calculateFees = (grossAmount: number) => {
+    const gross = grossAmount;
+    const stripeFee = (gross * 0.029) + 0.30;
+    const crwdFee = (gross - stripeFee) * 0.07;
+    const net = gross - stripeFee - crwdFee;
+    return {
+      stripeFee: Math.round(stripeFee * 100) / 100,
+      crwdFee: Math.round(crwdFee * 100) / 100,
+      net: Math.round(net * 100) / 100,
+    };
+  };
+
+  // Mutation to update donation box
+  const updateAmountMutation = useMutation({
+    mutationFn: (amount: number) => updateDonationBox({ monthly_amount: amount }),
+    onSuccess: () => {
+      console.log('Donation box amount updated successfully');
+      queryClient.invalidateQueries({ queryKey: ['donationBox', currentUser?.id] });
+      setIsEditingAmount(false);
+    },
+    onError: (error: any) => {
+      console.error('Error updating donation box amount:', error);
+      // Revert on error
+      if (donationBox?.monthly_amount) {
+        setEditableAmount(Math.round(parseFloat(donationBox.monthly_amount)));
+      }
+    },
+  });
+
+  const handleSaveAmount = () => {
+    // Calculate capacity for the new amount
+    const fees = calculateFees(editableAmount);
+    const net = fees.net;
+    const maxCapacity = Math.floor(net / 0.20);
+    
+    // Check if current causes exceed the new capacity
+    if (currentCapacity > maxCapacity) {
+      // Show error toast
+      toast.error(`You can only support up to ${maxCapacity} cause${maxCapacity !== 1 ? 's' : ''} with $${editableAmount}. Please remove some causes or increase the amount.`);
+      return;
+    }
+    
+    // If capacity check passes, update the amount
+    updateAmountMutation.mutate(editableAmount);
+  };
+
+  const handleCancelEdit = () => {
+    if (donationBox?.monthly_amount) {
+      setEditableAmount(Math.round(parseFloat(donationBox.monthly_amount)));
+    }
+    setIsEditingAmount(false);
   };
 
   // Mutation to remove cause from box
@@ -358,7 +413,7 @@ export const DonationBox3 = ({
   };
 
   return (
-    <div className="w-full h-full bg-white flex flex-col pb-20 md:pb-24">
+    <div className="w-full h-full bg-gray-50 flex flex-col pb-20 md:pb-24">
       <div className="flex-1 overflow-auto mt-2 mx-3 md:mx-4">
         {/* Donation Box Summary Card */}
         <div className="bg-white rounded-xl mb-4 md:mb-6 shadow-sm border border-gray-200 overflow-hidden">
@@ -369,55 +424,101 @@ export const DonationBox3 = ({
             {/* Monthly Donation Section */}
             <div className="mb-4 md:mb-6">
               <h2 className="text-sm md:text-base font-medium text-gray-900 mb-2 md:mb-3">Monthly Donation</h2>
+              
+              {/* Amount Display with Controls */}
               <div className="flex items-center justify-between mb-1.5 md:mb-2">
-                <div className="flex items-center gap-3 md:gap-4">
-                  {/* <button
-                    onClick={decrementAmount}
-                    disabled={editableAmount <= 5}
-                    className={`flex items-center justify-center w-8 h-8 rounded-lg ${editableAmount > 5 ? 'bg-gray-100 hover:bg-gray-200' : 'bg-gray-200 cursor-not-allowed'} transition-colors`}
-                  >
-                    <Minus size={16} className="text-gray-600 font-bold" strokeWidth={3} />
-                  </button> */}
-                  <div className="flex items-baseline gap-1.5 md:gap-2">
-                    {isEditingAmount ? (
-                      <input
-                        type="number"
-                        value={Math.round(editableAmount)}
-                        onChange={(e) => {
-                          const value = parseInt(e.target.value) || 5;
-                          setEditableAmount(Math.max(5, value));
-                        }}
-                        onBlur={() => {
-                          setIsEditingAmount(false);
-                          setEditableAmount(prev => Math.round(prev));
-                        }}
-                        autoFocus
-                        className="text-3xl md:text-4xl font-bold text-gray-900 w-20 md:w-24 border-b-2 border-gray-300 focus:outline-none focus:border-blue-500"
-                      />
-                    ) : (
-                      <>
-                        <span className="text-3xl md:text-4xl font-bold text-gray-900">${Math.round(editableAmount)}</span>
-                        <span className="text-sm md:text-base text-gray-600">/   month</span>
-                      </>
-                    )}
-                  </div>
-                  {/* <button
-                    onClick={incrementAmount}
-                    className="flex items-center justify-center w-8 h-8 rounded-lg bg-gray-100 hover:bg-gray-200 transition-colors"
-                  >
-                    <Plus size={16} className="text-gray-600" />
-                  </button> */}
+                <div className="flex items-baseline gap-1.5 md:gap-2">
+                  {isEditingAmount ? (
+                    <input
+                      type="number"
+                      value={Math.round(editableAmount)}
+                      onChange={(e) => {
+                        const value = parseInt(e.target.value) || 5;
+                        setEditableAmount(Math.max(5, value));
+                      }}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter') {
+                          handleSaveAmount();
+                        } else if (e.key === 'Escape') {
+                          handleCancelEdit();
+                        }
+                      }}
+                      autoFocus
+                      className="text-3xl md:text-4xl font-bold text-gray-900 w-20 md:w-24 border-none focus:outline-none"
+                    />
+                  ) : (
+                    <span className="text-3xl md:text-4xl font-bold text-gray-900">${Math.round(editableAmount)}</span>
+                  )}
+                  <span className="text-sm md:text-base text-gray-600">/month</span>
                 </div>
-                <button
-                  onClick={() => navigate('/donation/manage')}
-                  className="w-9 h-9 md:w-10 md:h-10 rounded-lg bg-gray-100 hover:bg-gray-200 flex items-center justify-center transition-colors"
-                  aria-label="Edit amount"
-                >
-                  <Pencil className="w-3.5 h-3.5 md:w-4 md:h-4 text-gray-600" />
-                </button>
+                
+                {/* +/- Buttons - Only show when editing */}
+                {isEditingAmount && (
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={decrementAmount}
+                      disabled={editableAmount <= 5}
+                      className={`flex items-center justify-center w-10 h-10 md:w-12 md:h-12 rounded-lg transition-colors ${
+                        editableAmount > 5 
+                          ? 'bg-gray-100 hover:bg-gray-200' 
+                          : 'bg-gray-200 cursor-not-allowed opacity-50'
+                      }`}
+                    >
+                      <Minus size={20} className="text-gray-600 font-bold" strokeWidth={3} />
+                    </button>
+                    <button
+                      onClick={incrementAmount}
+                      className="flex items-center justify-center w-10 h-10 md:w-12 md:h-12 rounded-lg bg-gray-100 hover:bg-gray-200 transition-colors"
+                    >
+                      <Plus size={20} className="text-gray-600" strokeWidth={3} />
+                    </button>
+                  </div>
+                )}
+                
+                {/* Pencil Icon - Only show when not editing */}
+                {!isEditingAmount && (
+                  <button
+                    onClick={() => setIsEditingAmount(true)}
+                    className="w-9 h-9 md:w-10 md:h-10 rounded-lg bg-gray-100 hover:bg-gray-200 flex items-center justify-center transition-colors"
+                    aria-label="Edit amount"
+                  >
+                    <Pencil className="w-3.5 h-3.5 md:w-4 md:h-4 text-gray-600" />
+                  </button>
+                )}
               </div>
+              
+              {/* Lifetime Amount */}
               {lifetimeAmount > 0 && (
-                <p className="text-xs md:text-sm text-gray-600">${lifetimeAmount.toLocaleString()} lifetime</p>
+                <p className="text-xs md:text-sm text-gray-600 mb-3 md:mb-4">${lifetimeAmount.toLocaleString()} lifetime</p>
+              )}
+              
+              {/* Billing Cycle Info - Only show when editing and donation box is active */}
+              {isEditingAmount && donationBox?.is_active && donationBox?.next_charge_date && (
+                <div className="bg-blue-50 rounded-lg p-3 md:p-4 mb-4 md:mb-6">
+                  <p className="text-xs md:text-sm text-blue-600 text-center">
+                    Changes take effect on your next billing cycle ({getChargeDay(donationBox.next_charge_date)} of the month)
+                  </p>
+                </div>
+              )}
+              
+              {/* Action Buttons - Only show when editing */}
+              {isEditingAmount && (
+                <div className="flex items-center gap-2 md:gap-3">
+                  <button
+                    onClick={handleCancelEdit}
+                    disabled={updateAmountMutation.isPending}
+                    className="flex-1 bg-white border border-gray-300 text-gray-900 font-semibold py-3  rounded-lg transition-colors disabled:opacity-50 hover:bg-gray-50"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={handleSaveAmount}
+                    disabled={updateAmountMutation.isPending}
+                    className="flex-1 bg-[#1600ff] hover:bg-[#1400cc] text-white font-semibold py-3  rounded-lg transition-colors disabled:opacity-50"
+                  >
+                    {updateAmountMutation.isPending ? 'Saving...' : 'Save'}
+                  </button>
+                </div>
               )}
             </div>
 
@@ -445,12 +546,14 @@ export const DonationBox3 = ({
               </p>
             </div>
 
-            {/* Payment Schedule */}
-            {donationBox?.next_charge_date && (
-              <p className="text-xs md:text-sm text-gray-600 text-center mb-3 md:mb-4">
-                on the {getChargeDay(donationBox.next_charge_date)} of every month
-              </p>
-            )}
+            {/* Add Causes Button */}
+            <button
+              onClick={() => navigate('/donation/manage')}
+              className="w-full bg-[#1600ff] hover:bg-[#1400cc] text-white font-semibold py-3 rounded-lg transition-colors flex items-center justify-center gap-2"
+            >
+              <Plus size={18} className="text-white" />
+              <span>Add Causes</span>
+            </button>
           </div>
         </div>
 

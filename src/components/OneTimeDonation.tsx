@@ -335,7 +335,7 @@ export default function OneTimeDonation({
   console.log('Capacity Percentage:', capacityPercentage);
 
   return (
-    <div className="w-full h-full bg-white flex flex-col pb-20 md:pb-24">
+    <div className="w-full h-full bg-gray-50 flex flex-col pb-20 md:pb-24">
       <div className="flex-1 overflow-auto mt-3 md:mt-4 flex flex-col p-3 md:p-4 mb-20 md:mb-24 space-y-3 md:space-y-4">
         {/* Header Section */}
         <div>

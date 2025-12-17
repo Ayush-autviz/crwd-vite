@@ -587,7 +587,7 @@ const DonationBox = ({ tab = "setup", preselectedItem, activeTab, fromPaymentRes
       />
 
       {/* Content Container with max-width */}
-      <div className="w-full md:max-w-[60%] mx-auto">
+      <div className="w-full md:max-w-[60%] mx-auto bg-gray-50">
         {/* Tab Navigation - Hide when in checkout */}
         {!checkout && (
           <div className="mx-3 md:mx-4 mt-3 md:mt-4">
@@ -678,7 +678,7 @@ const DonationBox = ({ tab = "setup", preselectedItem, activeTab, fromPaymentRes
           ) : (
             <>
               {step === 1 ? (
-                <div className="flex-1 mt-3 md:mt-4 flex flex-col p-3 md:p-4 pb-24 md:pb-32 space-y-3 md:space-y-4">
+                <div className="flex-1 mt-3 md:mt-4 flex flex-col p-3 md:p-4 pb-24 md:pb-32 space-y-3 md:space-y-4 bg-gray-50">
 
                  <div>
                 <p className="text-xl md:text-2xl font-bold text-[#1600ff] text-center">Set your monthly gift</p>
