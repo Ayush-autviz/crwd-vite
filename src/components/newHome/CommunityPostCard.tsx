@@ -184,8 +184,8 @@ export default function CommunityPostCard({ post, onCommentPress }: CommunityPos
   return (
     <Card
       className={cn(
-        "bg-white rounded-xl shadow-sm border-0 mb-4 overflow-hidden",
-        "shadow-[0_2px_2px_rgba(89,89,89,0.15)]"
+        "bg-white rounded-xl border-1 border-gray-200 mb-4 overflow-hidden shadow-none",
+       
       )}
     >
       <CardContent className="p-3 md:p-4">
@@ -207,7 +207,13 @@ export default function CommunityPostCard({ post, onCommentPress }: CommunityPos
           <div className="flex-1 min-w-0">
             <div className="flex items-start justify-between mb-2 md:mb-3">
               <div className="flex-1 flex-wrap items-center">
-                <span className="text-xs md:text-sm font-semibold text-gray-900">{displayName}</span>
+                <Link
+                  to={`/user-profile/${post.user.id}`}
+                  onClick={(e) => e.stopPropagation()}
+                  className="text-xs md:text-sm font-semibold text-gray-900 hover:text-blue-600 transition-colors cursor-pointer"
+                >
+                  {displayName}
+                </Link>
                 <div className="flex items-center gap-1">
                   <span className="text-[10px] md:text-xs text-gray-500">{formattedTime}</span>
             </div>

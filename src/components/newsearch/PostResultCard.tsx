@@ -1,4 +1,4 @@
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { Card, CardContent } from '@/components/ui/card';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { Heart, MessageCircle } from 'lucide-react';
@@ -104,9 +104,15 @@ export default function PostResultCard({ post }: PostResultCardProps) {
           )}
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-1.5 md:gap-2 flex-wrap">
-              <h3 className="font-bold text-xs md:text-sm text-gray-900">
-                {fullName}
-              </h3>
+              {user && (
+                <Link
+                  to={`/user-profile/${user.id}`}
+                  onClick={(e) => e.stopPropagation()}
+                  className="font-bold text-xs md:text-sm text-gray-900 hover:text-blue-600 transition-colors cursor-pointer"
+                >
+                  {fullName}
+                </Link>
+              )}
               {post.collective && (
                 <>
                   <span className="text-gray-400">•</span>

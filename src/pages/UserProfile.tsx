@@ -462,11 +462,12 @@ export default function ProfilePage() {
                     </div>
                   )}
                 </div>
+            <div className="h-px bg-gray-200 mx-2 mt-4"></div>
+
               </>
             )}
 
             {/* Divider */}
-            <div className="h-px bg-gray-200 mx-2 mt-4"></div>
 
             <ProfileBio bio={userProfile.bio} />
 

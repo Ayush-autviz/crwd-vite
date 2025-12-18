@@ -1,6 +1,34 @@
 import React, { useMemo } from 'react';
 import { Loader2, HandHeart, Users, Mountain } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Link } from "react-router-dom";
+import { useQueries } from "@tanstack/react-query";
+import { getUserProfileById } from "@/services/api/social";
+
+// Avatar colors for consistent coloring
+const avatarColors = [
+  '#EF4444', // Red
+  '#8B5CF6', // Purple
+  '#EC4899', // Pink
+  '#F97316', // Orange
+  '#10B981', // Green
+  '#3B82F6', // Blue
+];
+
+const getConsistentColor = (id: number | string, colors: string[]) => {
+  const hash = typeof id === 'number' ? id : id.toString().split('').reduce((acc: number, char: string) => acc + char.charCodeAt(0), 0);
+  return colors[hash % colors.length];
+};
+
+const getInitials = (firstName?: string, lastName?: string, username?: string) => {
+  if (firstName) {
+    return firstName.charAt(0).toUpperCase();
+  }
+  if (username) {
+    return username.charAt(0).toUpperCase();
+  }
+  return 'U';
+};
 
 interface RegularNotificationsProps {
   notifications?: any[];
@@ -37,13 +65,60 @@ const RegularNotifications: React.FC<RegularNotificationsProps> = ({
   notifications = [], 
   isLoading = false 
 }) => {
+  // Filter personal notifications first
+  const personalNotifications = useMemo(() => {
+    return (notifications || []).filter((notification: any) => notification.type === "personal");
+  }, [notifications]);
+
+  // Extract unique user IDs from personal notifications for profile fetching
+  const uniqueUserIdsFromPersonal = useMemo(() => {
+    if (!personalNotifications || personalNotifications.length === 0) return [];
+    return Array.from(
+      new Set(
+        personalNotifications
+          .map((notification: any) => {
+            const userId = 
+              notification.data?.liker_id || 
+              notification.data?.commenter_id || 
+              notification.data?.mentioner_id ||
+              notification.data?.follower_id ||
+              notification.data?.donor_id || 
+              notification.data?.new_member_id || 
+              notification.user?.id || 
+              notification.data?.user_id;
+            return userId;
+          })
+          .filter((id: any) => id !== null && id !== undefined)
+      )
+    ) as (string | number)[];
+  }, [personalNotifications]);
+
+  // Fetch user profiles for personal notifications
+  const userProfileQueries = useQueries({
+    queries: uniqueUserIdsFromPersonal.map((userId: string | number) => ({
+      queryKey: ["userProfile", userId],
+      queryFn: () => getUserProfileById(userId.toString()),
+      enabled: !!userId,
+    })),
+  });
+
+  // Create a map of user ID to user profile
+  const userProfilesMap = useMemo(() => {
+    const map = new Map();
+    userProfileQueries.forEach((query: any, index: number) => {
+      if (query.data && uniqueUserIdsFromPersonal[index]) {
+        const profileUser = query.data?.user || query.data;
+        map.set(uniqueUserIdsFromPersonal[index].toString(), profileUser);
+      }
+    });
+    return map;
+  }, [userProfileQueries, uniqueUserIdsFromPersonal]);
+
   // Transform API notifications to match the new UI design
   const transformedNotifications = useMemo(() => {
-    if (!notifications || notifications.length === 0) return [];
+    if (!personalNotifications || personalNotifications.length === 0) return [];
 
-    return notifications
-      .filter((notification: any) => notification.type === "personal")
-      .map((notification: any) => {
+    return personalNotifications.map((notification: any) => {
         // Determine notification type and extract data
         const isDonation = notification.title?.toLowerCase().includes('donation') || 
                           notification.body?.toLowerCase().includes('donation') ||
@@ -84,6 +159,46 @@ const RegularNotifications: React.FC<RegularNotificationsProps> = ({
           }
         }
 
+        // Extract user info for avatar - get the user who triggered the notification
+        // For likes, comments, mentions, etc., check liker_id, commenter_id, mentioner_id, etc.
+        const userId = 
+          notification.data?.liker_id || 
+          notification.data?.commenter_id || 
+          notification.data?.mentioner_id ||
+          notification.data?.follower_id ||
+          notification.data?.donor_id || 
+          notification.data?.new_member_id || 
+          notification.user?.id || 
+          notification.data?.user_id;
+        
+        // Extract username from body if it contains @username pattern (e.g., "@jake_long liked your post")
+        let username = '';
+        if (notification.body) {
+          const usernameMatch = notification.body.match(/@(\w+)/);
+          if (usernameMatch) {
+            username = usernameMatch[1];
+          }
+        }
+        
+        // Get user profile from fetched profiles map if available
+        const userProfile = userId ? userProfilesMap.get(userId.toString()) : null;
+        const profileUser = userProfile?.user || userProfile;
+        
+        // Get user info from fetched profile, notification.user, or notification.data
+        const firstName = 
+          profileUser?.first_name || 
+          notification.user?.first_name || 
+          notification.data?.first_name || '';
+        const lastName = 
+          profileUser?.last_name || 
+          notification.user?.last_name || 
+          notification.data?.last_name || '';
+        const extractedUsername = 
+          username || 
+          profileUser?.username || 
+          notification.user?.username || 
+          notification.data?.username || '';
+
         return {
           id: notification.id,
           type: isDonation ? 'donation' : isNewMember ? 'new_member' : 'other',
@@ -95,9 +210,13 @@ const RegularNotifications: React.FC<RegularNotificationsProps> = ({
           time: formatTimeAgo(notification.created_at || notification.updated_at),
           avatarUrl: notification.user?.profile_picture || notification.data?.profile_picture || '',
           collectiveId: notification.data?.collective_id,
+          userId: userId,
+          firstName: firstName,
+          lastName: lastName,
+          username: extractedUsername,
         };
       });
-  }, [notifications]);
+  }, [personalNotifications, userProfilesMap]);
 
   if (isLoading) {
     return (
@@ -130,41 +249,85 @@ const RegularNotifications: React.FC<RegularNotificationsProps> = ({
         <div key={notification.id || `regular-${idx}`} className="px-3 md:px-4 py-4 md:py-6 border-b border-gray-100 last:border-b-0">
           <div className="flex items-start gap-3 md:gap-4">
             {/* Avatar with overlay icon */}
-            <div className="relative flex-shrink-0">
-              {notification.type === 'donation' ? (
-                <>
-                  {/* Green circle with 'C' */}
-                  <div className="w-12 h-12 md:w-14 md:h-14 rounded-full bg-green-500 flex items-center justify-center">
-                    <span className="text-white font-bold text-base md:text-lg">C</span>
-                  </div>
-                  {/* Hand icon overlay */}
-                  <div className="absolute -bottom-0.5 md:-bottom-1 -right-0.5 md:-right-1 w-5 h-5 md:w-6 md:h-6 rounded-full bg-blue-400 flex items-center justify-center border-2 border-white">
-                    <HandHeart className="w-3 h-3 md:w-3.5 md:h-3.5 text-white" />
-                  </div>
-                </>
-              ) : notification.type === 'new_member' ? (
-                <>
-                  {/* Gray circle with landscape icon */}
-                  <div className="w-12 h-12 md:w-14 md:h-14 rounded-full bg-gray-200 flex items-center justify-center border-2 border-gray-300">
-                    <Mountain className="w-6 h-6 md:w-7 md:h-7 text-gray-500" />
-                  </div>
-                  {/* People icon overlay */}
-                  <div className="absolute -bottom-0.5 md:-bottom-1 -right-0.5 md:-right-1 w-5 h-5 md:w-6 md:h-6 rounded-full bg-green-400 flex items-center justify-center border-2 border-white">
-                    <Users className="w-3 h-3 md:w-3.5 md:h-3.5 text-white" />
-                  </div>
-                </>
-              ) : (
-                <>
-                  {/* Default avatar */}
-                  <Avatar className="w-12 h-12 md:w-14 md:h-14">
-                    <AvatarImage src={notification.avatarUrl} />
-                    <AvatarFallback className="bg-gray-200 text-gray-600 text-sm md:text-base">
-                      {notification.title.charAt(0)}
-                    </AvatarFallback>
-                  </Avatar>
-                </>
-              )}
-            </div>
+            {notification.userId ? (
+              <Link to={`/user-profile/${notification.userId}`} className="relative flex-shrink-0">
+                {notification.type === 'donation' ? (
+                  <>
+                    {/* Green circle with 'C' */}
+                    <div className="w-12 h-12 md:w-14 md:h-14 rounded-full bg-green-500 flex items-center justify-center">
+                      <span className="text-white font-bold text-base md:text-lg">C</span>
+                    </div>
+                    {/* Hand icon overlay */}
+                    <div className="absolute -bottom-0.5 md:-bottom-1 -right-0.5 md:-right-1 w-5 h-5 md:w-6 md:h-6 rounded-full bg-blue-400 flex items-center justify-center border-2 border-white">
+                      <HandHeart className="w-3 h-3 md:w-3.5 md:h-3.5 text-white" />
+                    </div>
+                  </>
+                ) : notification.type === 'new_member' ? (
+                  <>
+                    {/* Gray circle with landscape icon */}
+                    <div className="w-12 h-12 md:w-14 md:h-14 rounded-full bg-gray-200 flex items-center justify-center border-2 border-gray-300">
+                      <Mountain className="w-6 h-6 md:w-7 md:h-7 text-gray-500" />
+                    </div>
+                    {/* People icon overlay */}
+                    <div className="absolute -bottom-0.5 md:-bottom-1 -right-0.5 md:-right-1 w-5 h-5 md:w-6 md:h-6 rounded-full bg-green-400 flex items-center justify-center border-2 border-white">
+                      <Users className="w-3 h-3 md:w-3.5 md:h-3.5 text-white" />
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    {/* Default avatar */}
+                    <Avatar className="w-12 h-12 md:w-14 md:h-14">
+                      <AvatarImage src={notification.avatarUrl} />
+                      <AvatarFallback
+                        style={{ backgroundColor: notification.userId ? getConsistentColor(notification.userId, avatarColors) : '#E5E7EB' }}
+                        className="text-white text-sm md:text-base font-bold"
+                      >
+                        {getInitials(notification.firstName, notification.lastName, notification.username)}
+                      </AvatarFallback>
+                    </Avatar>
+                  </>
+                )}
+              </Link>
+            ) : (
+              <div className="relative flex-shrink-0">
+                {notification.type === 'donation' ? (
+                  <>
+                    {/* Green circle with 'C' */}
+                    <div className="w-12 h-12 md:w-14 md:h-14 rounded-full bg-green-500 flex items-center justify-center">
+                      <span className="text-white font-bold text-base md:text-lg">C</span>
+                    </div>
+                    {/* Hand icon overlay */}
+                    <div className="absolute -bottom-0.5 md:-bottom-1 -right-0.5 md:-right-1 w-5 h-5 md:w-6 md:h-6 rounded-full bg-blue-400 flex items-center justify-center border-2 border-white">
+                      <HandHeart className="w-3 h-3 md:w-3.5 md:h-3.5 text-white" />
+                    </div>
+                  </>
+                ) : notification.type === 'new_member' ? (
+                  <>
+                    {/* Gray circle with landscape icon */}
+                    <div className="w-12 h-12 md:w-14 md:h-14 rounded-full bg-gray-200 flex items-center justify-center border-2 border-gray-300">
+                      <Mountain className="w-6 h-6 md:w-7 md:h-7 text-gray-500" />
+                    </div>
+                    {/* People icon overlay */}
+                    <div className="absolute -bottom-0.5 md:-bottom-1 -right-0.5 md:-right-1 w-5 h-5 md:w-6 md:h-6 rounded-full bg-green-400 flex items-center justify-center border-2 border-white">
+                      <Users className="w-3 h-3 md:w-3.5 md:h-3.5 text-white" />
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    {/* Default avatar */}
+                    <Avatar className="w-12 h-12 md:w-14 md:h-14">
+                      <AvatarImage src={notification.avatarUrl} />
+                      <AvatarFallback
+                        style={{ backgroundColor: notification.userId ? getConsistentColor(notification.userId, avatarColors) : '#E5E7EB' }}
+                        className="text-white text-sm md:text-base font-bold"
+                      >
+                        {getInitials(notification.firstName, notification.lastName, notification.username)}
+                      </AvatarFallback>
+                    </Avatar>
+                  </>
+                )}
+              </div>
+            )}
 
             {/* Content */}
             <div className="flex-1 min-w-0">

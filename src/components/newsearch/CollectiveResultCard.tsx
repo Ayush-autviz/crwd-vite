@@ -1,4 +1,4 @@
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { Card, CardContent } from '@/components/ui/card';
 
@@ -52,6 +52,20 @@ const getInitials = (name: string): string => {
   return name.charAt(0).toUpperCase();
 };
 
+// Get consistent color for avatar
+const avatarColors = [
+  '#3B82F6', '#EC4899', '#8B5CF6', '#10B981', '#F59E0B', '#EF4444', '#06B6D4',
+  '#F97316', '#84CC16', '#A855F7', '#14B8A6', '#F43F5E', '#6366F1', '#22C55E', '#EAB308',
+];
+
+const getConsistentColor = (id: number | string, colors: string[]) => {
+  const hash =
+    typeof id === 'number'
+      ? id
+      : id.toString().split('').reduce((acc: number, char: string) => acc + char.charCodeAt(0), 0);
+  return colors[hash % colors.length];
+};
+
 export default function CollectiveResultCard({ collective }: CollectiveResultCardProps) {
   const navigate = useNavigate();
   
@@ -68,9 +82,16 @@ export default function CollectiveResultCard({ collective }: CollectiveResultCar
   const founderName = founder
     ? `${founder.first_name || ''} ${founder.last_name || ''}`.trim() || founder.username || 'Unknown'
     : 'Unknown';
+  // Get founder initials from first name and last name
   const founderInitials = founder
-    ? getInitials(`${founder.first_name || ''} ${founder.last_name || ''}`.trim() || founder.username || 'U')
+    ? (founder.first_name && founder.last_name
+        ? `${founder.first_name.charAt(0)}${founder.last_name.charAt(0)}`.toUpperCase()
+        : founder.first_name
+        ? founder.first_name.charAt(0).toUpperCase()
+        : getInitials(founderName))
     : 'U';
+  
+  const founderAvatarBgColor = founder ? getConsistentColor(founder.id || founderName, avatarColors) : '#9CA3AF';
 
   // Get nonprofit count
   const nonprofitCount = collective.causes_count || collective.supported_causes_count || collective.nonprofit_count || 0;
@@ -118,7 +139,7 @@ export default function CollectiveResultCard({ collective }: CollectiveResultCar
                   <AvatarImage src={founder.profile_picture} alt={founderName} />
                   <AvatarFallback
                     style={{
-                      backgroundColor: '#9CA3AF',
+                      backgroundColor: founderAvatarBgColor,
                     }}
                     className="text-white text-[10px] md:text-xs font-bold"
                   >
@@ -126,7 +147,18 @@ export default function CollectiveResultCard({ collective }: CollectiveResultCar
                   </AvatarFallback>
                 </Avatar>
                 <span className="text-xs md:text-sm text-gray-600">
-                  Founded by {founderName}
+                  Founded by{' '}
+                  {founder.id ? (
+                    <Link
+                      to={`/user-profile/${founder.id}`}
+                      onClick={(e) => e.stopPropagation()}
+                      className="text-blue-600 hover:text-blue-700 font-semibold"
+                    >
+                      {founderName}
+                    </Link>
+                  ) : (
+                    founderName
+                  )}
                 </span>
               </div>
             )}

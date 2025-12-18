@@ -275,8 +275,7 @@ export default function ProfileActivityCard({
       <Card
         key={post.id}
         className={cn(
-          "bg-white rounded-xl shadow-sm border-0 mb-4 overflow-hidden",
-          "shadow-[0_2px_2px_rgba(89,89,89,0.15)]",
+          "bg-white rounded-xl border-1 border-gray-200 mb-4 overflow-hidden shadow-none",
           className
         )}
       >
