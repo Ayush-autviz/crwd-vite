@@ -24,6 +24,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 
 interface DonationSummaryProps {
   selectedOrganizations: string[];
@@ -581,14 +582,15 @@ export const DonationBox3 = ({
                     className="flex items-center p-3 md:p-4 bg-white border border-gray-200 rounded-lg shadow-sm"
                   >
                     {/* Avatar */}
-                    <div
-                      className="w-10 h-10 md:w-12 md:h-12 rounded-xl flex items-center justify-center mr-3 md:mr-4 flex-shrink-0"
-                      style={{ backgroundColor: avatarBgColor }}
-                    >
-                      <span className="text-white font-bold text-base md:text-lg">
+                    <Avatar className="w-10 h-10 md:w-12 md:h-12 rounded-lg flex-shrink-0 border border-gray-200 mr-3 md:mr-4">
+                      <AvatarImage src={cause.image} />
+                      <AvatarFallback
+                        style={{ backgroundColor: avatarBgColor }}
+                        className="font-semibold rounded-lg text-white text-base md:text-lg"
+                      >
                         {initials}
-                      </span>
-                    </div>
+                      </AvatarFallback>
+                    </Avatar>
 
                     {/* Cause Info */}
                     <div className="flex-1 min-w-0">

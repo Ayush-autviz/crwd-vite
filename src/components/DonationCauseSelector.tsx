@@ -3,6 +3,7 @@ import { Search, Plus } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
+import { Avatar, AvatarImage, AvatarFallback } from './ui/avatar';
 import { useQuery } from '@tanstack/react-query';
 import { getCausesBySearch } from '@/services/api/crwd';
 
@@ -203,14 +204,15 @@ export default function DonationCauseSelector({
                   className="flex items-center gap-3 md:gap-4 p-3 md:p-4 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer transition-colors"
                   onClick={() => handleItemSelect(cause)}
                 >
-                  <div
-                    className="w-10 h-10 md:w-12 md:h-12 rounded-lg flex items-center justify-center flex-shrink-0"
-                    style={{ backgroundColor: avatarBgColor }}
-                  >
-                    <span className="text-white font-bold text-base md:text-lg">
+                  <Avatar className="w-10 h-10 md:w-12 md:h-12 rounded-lg flex-shrink-0 border border-gray-200">
+                    <AvatarImage src={cause.image} />
+                    <AvatarFallback
+                      style={{ backgroundColor: avatarBgColor }}
+                      className="font-semibold rounded-lg text-white text-base md:text-lg"
+                    >
                       {initials}
-                    </span>
-                  </div>
+                    </AvatarFallback>
+                  </Avatar>
                   <div className="flex-1 min-w-0">
                     <h4 className="font-bold text-sm md:text-base text-gray-900 mb-0.5 md:mb-1">{cause.name}</h4>
                     <p className="text-xs md:text-sm text-gray-600 line-clamp-1">
@@ -261,14 +263,15 @@ export default function DonationCauseSelector({
                   className="flex items-center gap-3 md:gap-4 p-3 md:p-4 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer transition-colors"
                   onClick={() => handleItemSelect(cause)}
                 >
-                  <div
-                    className="w-10 h-10 md:w-12 md:h-12 rounded-lg flex items-center justify-center flex-shrink-0"
-                    style={{ backgroundColor: avatarBgColor }}
-                  >
-                    <span className="text-white font-bold text-base md:text-lg">
+                  <Avatar className="w-10 h-10 md:w-12 md:h-12 rounded-lg flex-shrink-0 border border-gray-200">
+                    <AvatarImage src={cause.image} />
+                    <AvatarFallback
+                      style={{ backgroundColor: avatarBgColor }}
+                      className="font-semibold rounded-lg text-white text-base md:text-lg"
+                    >
                       {initials}
-                    </span>
-                  </div>
+                    </AvatarFallback>
+                  </Avatar>
                   <div className="flex-1 min-w-0">
                     <h4 className="font-bold text-sm md:text-base text-gray-900 mb-0.5 md:mb-1">{cause.name}</h4>
                     <p className="text-xs md:text-sm text-gray-600 line-clamp-1">

@@ -27,6 +27,7 @@ import { useAuthStore } from "@/stores/store";
 import { cn } from "@/lib/utils";
 import { Toast } from "./ui/toast";
 import { getNonprofitColor } from "@/lib/getNonprofitColor";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 
 // Define Organization type locally to avoid import issues
 type Organization = {
@@ -886,17 +887,15 @@ const ManageDonationBox: React.FC<ManageDonationBoxProps> = ({
                           className="bg-white rounded-xl px-3 md:px-4 py-3 md:py-4 shadow-sm border border-gray-200"
                         >
                           <div className="flex gap-3 md:gap-4 items-center">
-                            <div 
-                              className="w-10 h-10 md:w-12 md:h-12 flex-shrink-0 rounded-lg flex items-center justify-center"
-                              style={{ backgroundColor: colors.bgColor }}
-                            >
-                              <span 
-                                className="text-lg md:text-xl font-bold"
-                                style={{ color: colors.textColor }}
+                            <Avatar className="w-10 h-10 md:w-12 md:h-12 rounded-lg flex-shrink-0 border border-gray-200">
+                              <AvatarImage src={org.imageUrl} />
+                              <AvatarFallback
+                                style={{ backgroundColor: colors.bgColor }}
+                                className="font-semibold rounded-lg text-lg md:text-xl"
                               >
                                 {org.name.charAt(0).toUpperCase()}
-                              </span>
-                            </div>
+                              </AvatarFallback>
+                            </Avatar>
                             <div className="flex-1 min-w-0">
                               <h3 className="font-bold text-gray-900 text-sm md:text-base mb-0.5 md:mb-1">
                                 {org.name}
@@ -988,17 +987,15 @@ const ManageDonationBox: React.FC<ManageDonationBoxProps> = ({
                           className="flex items-center gap-3 md:gap-4 bg-white rounded-xl px-3 md:px-4 py-3 md:py-4 shadow-sm border border-gray-200 hover:bg-gray-50 transition-colors cursor-pointer"
                           onClick={() => handleToggleCause(cause.id)}
                         >
-                          <div 
-                            className="w-10 h-10 md:w-12 md:h-12 flex-shrink-0 rounded-lg flex items-center justify-center"
-                            style={{ backgroundColor: colors.bgColor }}
-                          >
-                            <span 
-                              className="text-lg md:text-xl font-bold"
-                              style={{ color: colors.textColor }}
+                          <Avatar className="w-10 h-10 md:w-12 md:h-12 rounded-lg flex-shrink-0 border border-gray-200">
+                            <AvatarImage src={cause.image} />
+                            <AvatarFallback
+                              style={{ backgroundColor: colors.bgColor }}
+                              className="font-semibold rounded-lg text-lg md:text-xl"
                             >
                               {cause.name?.charAt(0)?.toUpperCase() || 'C'}
-                            </span>
-                          </div>
+                            </AvatarFallback>
+                          </Avatar>
                           <div className="flex-1 min-w-0">
                             <h3 className="font-bold text-gray-900 text-sm md:text-base mb-0.5 md:mb-1">{cause.name}</h3>
                             <p className="text-xs md:text-sm text-gray-500 line-clamp-1">{cause.mission || cause.description}</p>

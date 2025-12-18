@@ -1,4 +1,4 @@
-import { Settings, X, ChevronDown, ChevronUp, Trash2, Pencil, Plus, Minus } from "lucide-react";
+import { Settings, X, ChevronDown, ChevronUp, Trash2, Pencil, Plus, Minus, Loader2 } from "lucide-react";
 import { useState, useEffect } from "react";
 
 import { Button } from "@/components/ui/button";
@@ -12,6 +12,7 @@ import { useAuthStore } from "@/stores/store";
 import { getDonationHistory, removeCauseFromBox, updateDonationBox, cancelDonationBox } from "@/services/api/donation";
 import RequestNonprofitModal from "@/components/newsearch/RequestNonprofitModal";
 import { toast } from "sonner";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 
 interface DonationOverviewProps {
   donationAmount?: number;
@@ -88,7 +89,7 @@ export const Checkout = ({
   // Use API data if available, otherwise fall back to selectedOrganizations
   const hasApiData = causes.length > 0 || manualCauses.length > 0 || attributingCollectives.length > 0;
   const totalCauses = causes.length || manualCauses.length;
-  const totalCollectives = 0; // No longer showing collectives
+  const totalCollectives = attributingCollectives.length;
 
   // Fetch donation history to calculate lifetime amount
   const { data: donationHistoryData } = useQuery({
@@ -626,7 +627,7 @@ export const Checkout = ({
               {/* Supported Entities */}
               <div className="bg-gray-100 rounded-lg px-3 md:px-4 py-2.5 md:py-3 mb-4 md:mb-6 text-center">
                 <p className="text-xs md:text-sm font-bold text-gray-900">
-                  {totalCauses} Cause{totalCauses !== 1 ? 's' : ''}
+                  {totalCauses} Cause{totalCauses !== 1 ? 's' : ''} • {totalCollectives} Collective{totalCollectives !== 1 ? 's' : ''}
                 </p>
               </div>
 
@@ -682,14 +683,15 @@ export const Checkout = ({
                       className="flex items-center p-3 md:p-4 bg-white border border-gray-200 rounded-lg shadow-sm"
                     >
                       {/* Avatar */}
-                      <div
-                        className="w-10 h-10 md:w-12 md:h-12 rounded-xl flex items-center justify-center mr-3 md:mr-4 flex-shrink-0"
-                        style={{ backgroundColor: avatarBgColor }}
-                      >
-                        <span className="text-white font-bold text-base md:text-lg">
+                      <Avatar className="w-10 h-10 md:w-12 md:h-12 rounded-lg flex-shrink-0 border border-gray-200 mr-3 md:mr-4">
+                        <AvatarImage src={cause.image} />
+                        <AvatarFallback
+                          style={{ backgroundColor: avatarBgColor }}
+                          className="font-semibold rounded-lg text-white text-base md:text-lg"
+                        >
                           {initials}
-                        </span>
-                      </div>
+                        </AvatarFallback>
+                      </Avatar>
 
                       {/* Cause Info */}
                       <div className="flex-1 min-w-0">
@@ -720,19 +722,112 @@ export const Checkout = ({
             </div>
           )}
 
-          {/* Collectives Section - Commented out like DonationBox3 */}
-          {/* {attributingCollectives.length > 0 && (
-            <div className="mb-6">
-              <div className="mb-4">
-                <h2 className="text-xl font-bold text-gray-900">Collectives</h2>
+          {/* Collectives Section */}
+          {attributingCollectives.length > 0 && (
+            <div className="mb-4 md:mb-6">
+              <div className="mb-3 md:mb-4">
+                <h2 className="text-lg md:text-xl font-bold text-gray-900">Collectives</h2>
+                <p className="text-xs md:text-sm text-gray-600 mt-0.5 md:mt-1">
+                  Supporting {attributingCollectives.length} collective{attributingCollectives.length !== 1 ? 's' : ''}
+                </p>
               </div>
-              <div className="space-y-3">
+
+              {/* Collectives List */}
+              <div className="space-y-2.5 md:space-y-3">
                 {attributingCollectives.map((collective: any) => {
-                  // ... collective rendering code
+                  const isExpanded = expandedCollectives.has(collective.id);
+                  const details = collectiveDetails[collective.id];
+                  const isLoading = loadingCollectives.has(collective.id);
+                  
+                  // Generate consistent color for collective
+                  const collectiveColors = [
+                    { bg: '#dbeafe', text: '#1e40af' }, // blue
+                    { bg: '#fce7f3', text: '#831843' }, // pink
+                    { bg: '#e9d5ff', text: '#6b21a8' }, // purple
+                    { bg: '#d1fae5', text: '#065f46' }, // green
+                    { bg: '#fed7aa', text: '#9a3412' }, // orange
+                  ];
+                  const colorIndex = (collective.name?.charCodeAt(0) || 0) % collectiveColors.length;
+                  const collectiveColor = collectiveColors[colorIndex];
+                  
+                  return (
+                    <div key={collective.id}>
+                      <div className="flex items-center p-3 md:p-4 bg-white border border-gray-200 rounded-lg shadow-sm">
+                        <div
+                          className="flex gap-3 md:gap-4 items-center cursor-pointer flex-1 min-w-0"
+                          onClick={() => handleToggleCollectiveDropdown(collective.id)}
+                        >
+                          <Avatar className="w-10 h-10 md:w-12 md:h-12 rounded-lg flex-shrink-0 border border-gray-200">
+                            <AvatarImage src={collective.cover_image || collective.logo} />
+                            <AvatarFallback
+                              style={{ backgroundColor: collectiveColor.bg }}
+                              className="font-semibold rounded-lg text-lg md:text-xl"
+                            >
+                              {collective.name?.charAt(0)?.toUpperCase() || 'C'}
+                            </AvatarFallback>
+                          </Avatar>
+                          <div className="flex-1 min-w-0">
+                            <h3 className="font-bold text-sm md:text-base text-gray-900 mb-0.5 md:mb-1">{collective.name}</h3>
+                            <p className="text-xs md:text-sm text-gray-600 line-clamp-1">
+                              {collective.description || 'Community collective'}
+                            </p>
+                          </div>
+                          <div className="ml-2 md:ml-4">
+                            {isLoading ? (
+                              <Loader2 className="w-4 h-4 md:w-5 md:h-5 animate-spin text-gray-400" />
+                            ) : (
+                              <ChevronDown 
+                                className={`w-4 h-4 md:w-5 md:h-5 text-gray-500 transition-transform ${isExpanded ? 'rotate-180' : ''}`}
+                              />
+                            )}
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-3 md:gap-4 ml-2 md:ml-4">
+                          <div className="text-right">
+                            <p className="font-bold text-sm md:text-base text-gray-900">{distributionPercentage}%</p>
+                            <p className="text-xs md:text-sm text-gray-600">${amountPerItem.toFixed(2)}/mo</p>
+                          </div>
+                        </div>
+                      </div>
+                      {isExpanded && details && details.causes && details.causes.length > 0 && (
+                        <div className="bg-gray-50 border border-gray-200 rounded-lg p-3 md:p-4 mt-2 ml-4 md:ml-6">
+                          <h4 className="text-xs md:text-sm font-semibold text-gray-900 mb-2 md:mb-3">
+                            Nonprofits ({details.causes.length})
+                          </h4>
+                          <div className="space-y-2 md:space-y-3">
+                            {details.causes.map((causeItem: any) => {
+                              const cause = causeItem.cause || causeItem;
+                              const causeAvatarBgColor = getConsistentColor(cause.id, avatarColors);
+                              const causeInitials = getInitials(cause.name || 'N');
+                              return (
+                                <div key={causeItem.id || cause.id} className="flex items-center gap-2 md:gap-3 py-2 border-b border-gray-200 last:border-0">
+                                  <Avatar className="w-8 h-8 md:w-10 md:h-10 rounded-lg flex-shrink-0 border border-gray-200">
+                                    <AvatarImage src={cause.image} />
+                                    <AvatarFallback
+                                      style={{ backgroundColor: causeAvatarBgColor }}
+                                      className="font-semibold rounded-lg text-white text-xs md:text-sm"
+                                    >
+                                      {causeInitials}
+                                    </AvatarFallback>
+                                  </Avatar>
+                                  <div className="flex-1 min-w-0">
+                                    <p className="text-xs md:text-sm font-medium text-gray-900">{cause.name}</p>
+                                    {cause.description && (
+                                      <p className="text-xs text-gray-500 line-clamp-1">{cause.description}</p>
+                                    )}
+                                  </div>
+                                </div>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  );
                 })}
               </div>
             </div>
-          )} */}
+          )}
 
           {/* Fallback to selectedOrganizations if no API data */}
           {!hasApiData && selectedOrganizations.length > 0 && (

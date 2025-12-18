@@ -809,14 +809,15 @@ const DonationBox = ({ tab = "setup", preselectedItem, activeTab, fromPaymentRes
                           const initials = getInitials(cause.name);
                           return (
                             <div key={cause.id} className="flex items-center p-2.5 md:p-3 border border-gray-200 rounded-lg">
-                              <div
-                                className="w-10 h-10 md:w-12 md:h-12 rounded-xl flex items-center justify-center mr-2.5 md:mr-3 flex-shrink-0"
-                                style={{ backgroundColor: avatarBgColor }}
-                              >
-                                <span className="text-white font-bold text-sm md:text-base">
+                              <Avatar className="w-10 h-10 md:w-12 md:h-12 rounded-lg flex-shrink-0 border border-gray-200 mr-2.5 md:mr-3">
+                                <AvatarImage src={cause.image} />
+                                <AvatarFallback
+                                  style={{ backgroundColor: avatarBgColor }}
+                                  className="font-semibold rounded-lg text-white text-sm md:text-base"
+                                >
                                   {initials}
-                                </span>
-                              </div>
+                                </AvatarFallback>
+                              </Avatar>
                               <div className="flex-1 min-w-0">
                                 <div className="flex items-center gap-1.5 md:gap-2 mb-0.5 md:mb-1">
                                   <h3 className="font-bold text-sm md:text-base text-gray-900">{cause.name}</h3>
@@ -893,14 +894,15 @@ const DonationBox = ({ tab = "setup", preselectedItem, activeTab, fromPaymentRes
                                 key={cause.id}
                                 className="flex items-center p-2.5 md:p-3 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
                               >
-                                <div
-                                  className="w-10 h-10 md:w-12 md:h-12 rounded-xl flex items-center justify-center mr-2.5 md:mr-3 flex-shrink-0"
-                                  style={{ backgroundColor: avatarBgColor }}
-                                >
-                                  <span className="text-white font-bold text-sm md:text-base">
+                                <Avatar className="w-10 h-10 md:w-12 md:h-12 rounded-lg flex-shrink-0 border border-gray-200 mr-2.5 md:mr-3">
+                                  <AvatarImage src={cause.image} />
+                                  <AvatarFallback
+                                    style={{ backgroundColor: avatarBgColor }}
+                                    className="font-semibold rounded-lg text-white text-sm md:text-base"
+                                  >
                                     {initials}
-                                  </span>
-                                </div>
+                                  </AvatarFallback>
+                                </Avatar>
                                 <div className="flex-1 min-w-0">
                                   <h3 className="font-bold text-sm md:text-base text-gray-900 mb-0.5 md:mb-1">{cause.name}</h3>
                                   <p className="text-xs md:text-sm text-gray-600 line-clamp-1">
@@ -1342,6 +1344,7 @@ const DonationBox = ({ tab = "setup", preselectedItem, activeTab, fromPaymentRes
                   id: cause.id,
                   name: cause.name,
                   description: cause.description || cause.mission,
+                  image: cause.image,
                 };
               }).filter((cause: any) => cause.id != null)
         }

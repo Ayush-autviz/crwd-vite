@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { activateDonationBox } from "@/services/api/donation";
 import CrwdAnimation from "@/assets/newLogo/CrwdAnimation";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 
 interface DonationReviewBottomSheetProps {
   isOpen: boolean;
@@ -205,14 +206,15 @@ export default function DonationReviewBottomSheet({
                 const initials = getInitials(cause.name);
                 return (
                   <div key={cause.id} className="flex items-center gap-2.5 md:gap-3 p-2.5 md:p-3 bg-gray-50 rounded-lg">
-                    <div
-                      className="w-9 h-9 md:w-10 md:h-10 rounded-full flex items-center justify-center flex-shrink-0"
-                      style={{ backgroundColor: avatarBgColor }}
-                    >
-                      <span className="text-white font-bold text-xs md:text-sm">
+                    <Avatar className="w-9 h-9 md:w-10 md:h-10 rounded-lg flex-shrink-0 border border-gray-200">
+                      <AvatarImage src={cause.image} />
+                      <AvatarFallback
+                        style={{ backgroundColor: avatarBgColor }}
+                        className="font-semibold rounded-lg text-white text-xs md:text-sm"
+                      >
                         {initials}
-                      </span>
-                    </div>
+                      </AvatarFallback>
+                    </Avatar>
                     <div className="flex-1 min-w-0">
                       <h4 className="font-semibold text-xs md:text-sm text-gray-900 truncate">
                         {cause.name}
