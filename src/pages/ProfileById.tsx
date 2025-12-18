@@ -41,7 +41,13 @@ export default function ProfileById() {
     },
     onError: (error: any) => {
       console.error('Profile update error:', error);
-      setToastMessage(`Failed to update profile: ${error.response?.data?.message || error.message}`);
+      // Check for image validation error
+      const errorMessage = error?.response?.data?.message || error?.message || '';
+      if (errorMessage.includes('profile_picture_file') || errorMessage.includes('invalid_image') || errorMessage.includes('corrupted image')) {
+        setToastMessage('Please upload a valid image file. The file may be corrupted or not a valid image format.');
+      } else {
+        setToastMessage(errorMessage || 'Failed to update profile. Please try again.');
+      }
       setShowToast(true);
       setLoadingField(null); // Clear loading field
     },

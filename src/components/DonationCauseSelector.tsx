@@ -187,7 +187,15 @@ export default function DonationCauseSelector({
                 return avatarColors[hash];
               };
               const avatarBgColor = getConsistentColor(cause.id);
-              const initials = cause.name.split(' ').map(n => n.charAt(0)).join('').substring(0, 2).toUpperCase();
+              const getInitials = (name: string) => {
+                if (!name) return 'N';
+                const words = name.trim().split(' ');
+                if (words.length >= 2) {
+                  return (words[0].charAt(0) + words[1].charAt(0)).toUpperCase();
+                }
+                return name.charAt(0).toUpperCase();
+              };
+              const initials = getInitials(cause.name || '');
 
               return (
                 <div
@@ -199,13 +207,9 @@ export default function DonationCauseSelector({
                     className="w-10 h-10 md:w-12 md:h-12 rounded-lg flex items-center justify-center flex-shrink-0"
                     style={{ backgroundColor: avatarBgColor }}
                   >
-                    {cause.image ? (
-                      <img src={cause.image} alt={cause.name} className="w-full h-full object-cover rounded-lg" />
-                    ) : (
-                      <span className="text-white font-bold text-base md:text-lg">
-                        {initials}
-                      </span>
-                    )}
+                    <span className="text-white font-bold text-base md:text-lg">
+                      {initials}
+                    </span>
                   </div>
                   <div className="flex-1 min-w-0">
                     <h4 className="font-bold text-sm md:text-base text-gray-900 mb-0.5 md:mb-1">{cause.name}</h4>
@@ -241,7 +245,15 @@ export default function DonationCauseSelector({
                 return avatarColors[hash];
               };
               const avatarBgColor = getConsistentColor(cause.id);
-              const initials = cause.name.split(' ').map(n => n.charAt(0)).join('').substring(0, 2).toUpperCase();
+              const getInitials = (name: string) => {
+                if (!name) return 'N';
+                const words = name.trim().split(' ');
+                if (words.length >= 2) {
+                  return (words[0].charAt(0) + words[1].charAt(0)).toUpperCase();
+                }
+                return name.charAt(0).toUpperCase();
+              };
+              const initials = getInitials(cause.name || '');
 
               return (
                 <div
@@ -253,13 +265,9 @@ export default function DonationCauseSelector({
                     className="w-10 h-10 md:w-12 md:h-12 rounded-lg flex items-center justify-center flex-shrink-0"
                     style={{ backgroundColor: avatarBgColor }}
                   >
-                    {cause.image ? (
-                      <img src={cause.image} alt={cause.name} className="w-full h-full object-cover rounded-lg" />
-                    ) : (
-                      <span className="text-white font-bold text-base md:text-lg">
-                        {initials}
-                      </span>
-                    )}
+                    <span className="text-white font-bold text-base md:text-lg">
+                      {initials}
+                    </span>
                   </div>
                   <div className="flex-1 min-w-0">
                     <h4 className="font-bold text-sm md:text-base text-gray-900 mb-0.5 md:mb-1">{cause.name}</h4>

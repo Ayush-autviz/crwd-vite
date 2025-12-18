@@ -119,9 +119,16 @@ export default function NewSettings() {
       setSelectedImageFile(null)
       setSelectedImageUrl(null)
     },
-    onError: () => {
-      setShowToast(true)
-      setToastMessage('Failed to update profile. Please try again.')
+    onError: (error: any) => {
+      // Check for image validation error
+      const errorMessage = error?.response?.data?.message || error?.message || '';
+      if (errorMessage.includes('profile_picture_file') || errorMessage.includes('invalid_image') || errorMessage.includes('corrupted image')) {
+        setShowToast(true)
+        setToastMessage('Please upload a valid image file. The file may be corrupted or not a valid image format.')
+      } else {
+        setShowToast(true)
+        setToastMessage(errorMessage || 'Failed to update profile. Please try again.')
+      }
     },
   })
 
