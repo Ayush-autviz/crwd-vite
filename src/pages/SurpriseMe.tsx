@@ -228,7 +228,7 @@ export default function SurpriseMePage() {
                 onClick={() => navigate(`/cause/${cause.id}`)}
                 className="cursor-pointer hover:shadow-md transition-shadow border border-gray-200"
               >
-                <CardContent className="px-3 md:px-4 py-3 md:py-4">
+                <CardContent className="px-3 md:px-4 ">
                   <div className="flex items-start gap-3 md:gap-4">
                     <Avatar className="w-10 h-10 md:w-12 md:h-12 rounded-lg flex-shrink-0">
                       <AvatarImage src={cause.image || undefined} alt={cause.name} />
@@ -243,7 +243,12 @@ export default function SurpriseMePage() {
                       <h3 className="font-bold text-sm md:text-base text-foreground mb-0.5 md:mb-1">
                         {cause.name}
                       </h3>
-                      <p className="text-xs md:text-sm text-gray-600">
+                      {(cause.city || cause.state) && (
+                        <p className="text-xs md:text-sm text-gray-600 mb-1.5 md:mb-2">
+                          {[cause.city, cause.state].filter(Boolean).join(', ')}
+                        </p>
+                      )}
+                      <p className="text-xs md:text-sm text-gray-700 line-clamp-1">
                         {cause.mission || cause.description || 'No description available'}
                       </p>
                     </div>
