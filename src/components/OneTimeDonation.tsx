@@ -2,6 +2,7 @@
 import { Minus, Plus, Trash2 } from "lucide-react";
 import { Link } from 'react-router-dom';
 import { Button } from "./ui/button";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { useState, useEffect } from "react";
 import DonationCauseSelector from "./DonationCauseSelector";
 import { useMutation } from '@tanstack/react-query';
@@ -429,14 +430,15 @@ export default function OneTimeDonation({
                   const initials = getInitials(cause.name || '');
                   return (
                     <div key={item.id} className="flex items-center p-2.5 md:p-3 border border-gray-200 rounded-lg">
-                      <div
-                        className="w-10 h-10 md:w-12 md:h-12 rounded-xl flex items-center justify-center mr-2.5 md:mr-3 flex-shrink-0"
-                        style={{ backgroundColor: avatarBgColor }}
-                      >
-                        <span className="text-white font-bold text-sm md:text-base">
+                      <Avatar className="w-10 h-10 md:w-12 md:h-12 rounded-lg flex-shrink-0 border border-gray-200 mr-2.5 md:mr-3">
+                        <AvatarImage src={cause.image} />
+                        <AvatarFallback
+                          style={{ backgroundColor: avatarBgColor }}
+                          className="font-semibold rounded-lg text-white text-sm md:text-base"
+                        >
                           {initials}
-                        </span>
-                      </div>
+                        </AvatarFallback>
+                      </Avatar>
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-1.5 md:gap-2 mb-0.5 md:mb-1">
                           <h3 className="font-bold text-sm md:text-base text-gray-900">{cause.name}</h3>
