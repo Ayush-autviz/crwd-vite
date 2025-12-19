@@ -19,6 +19,7 @@ import CollectiveProfile from '@/components/newgroupcrwd/CollectiveProfile';
 import CollectiveStats from '@/components/newgroupcrwd/CollectiveStats';
 import DonationInfoBox from '@/components/newgroupcrwd/DonationInfoBox';
 import SupportedNonprofits from '@/components/newgroupcrwd/SupportedNonprofits';
+import PreviouslySupported from '@/components/newgroupcrwd/PreviouslySupported';
 import CommunityActivity from '@/components/newgroupcrwd/CommunityActivity';
 import CollectiveStatisticsModal from '@/components/newgroupcrwd/CollectiveStatisticsModal';
 import JoinCollectiveBottomSheet from '@/components/newgroupcrwd/JoinCollectiveBottomSheet';
@@ -98,6 +99,9 @@ export default function NewGroupCrwdPage() {
 
   // Transform causes data for SupportedNonprofits component
   const nonprofits = causesData?.results || causesData || [];
+  
+  // Transform inactive causes data for PreviouslySupported component
+  const inactiveCauses = crwdData?.inactive_causes || [];
 
   // Extract stats
   const nonprofitCount = nonprofits.length || 0;
@@ -440,6 +444,7 @@ export default function NewGroupCrwdPage() {
 
       <SupportedNonprofits nonprofits={nonprofits} isLoading={isLoadingCauses} />
 
+
       <CommunityActivity
         posts={posts?.results || []}
         isLoading={isLoadingPosts}
@@ -473,6 +478,10 @@ export default function NewGroupCrwdPage() {
         collectiveName={crwdData.name}
         initialTab={statisticsTab}
       />
+
+<PreviouslySupported nonprofits={inactiveCauses} isLoading={isLoadingCauses} />
+
+
       </div>
 
       <Footer />

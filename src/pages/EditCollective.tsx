@@ -276,9 +276,9 @@ export default function EditCollectivePage() {
       // Allow removing causes
       setSelectedCauses(prev => prev.filter(c => c.id !== cause.id));
     } else {
-      // Check if adding would exceed initial count
-      if (selectedCauses.length >= initialCauseCount) {
-        toast.error(`You cannot add more than ${initialCauseCount} cause${initialCauseCount === 1 ? '' : 's'}. You can only remove causes.`);
+      // Check if adding would exceed the limit of 10
+      if (selectedCauses.length >= 10) {
+        toast.error('You cannot select more than 10 causes.');
         return; // Prevent adding the cause
       }
       setSelectedCauses(prev => [...prev, cause]);
@@ -569,8 +569,15 @@ export default function EditCollectivePage() {
           {/* Selected Causes */}
           <div className='border border-blue-200 p-3 md:p-4 rounded-2xl bg-gradient-to-br from-blue-50 via-pink-50 to-purple-50'>
             <h3 className="font-bold text-base md:text-lg text-foreground mb-3 md:mb-4">
-              Selected Causes ({selectedCauses.length})
+              Selected Causes ({selectedCauses.length}/10)
             </h3>
+            {selectedCauses.length >= 10 && (
+              <div className="mb-3 md:mb-4 p-2 md:p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
+                <p className="text-xs md:text-sm text-yellow-800">
+                  Maximum of 10 causes reached. Remove a cause to add another.
+                </p>
+              </div>
+            )}
             {selectedCauses.length > 0 ? (
               <div className="space-y-2 md:space-y-3">
                 {selectedCauses.map((cause) => {
@@ -707,12 +714,13 @@ export default function EditCollectivePage() {
                           </p>
                         </div>
                         
-                        <label className="flex items-center cursor-pointer flex-shrink-0">
+                        <label className={`flex items-center flex-shrink-0 ${selectedCauses.length >= 10 && !isSelected ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'}`}>
                           <input
                             type="radio"
                             checked={isSelected}
                             onChange={() => handleToggleCause(cause)}
-                            className="w-4 h-4 md:w-5 md:h-5 text-[#1600ff] focus:ring-[#1600ff]"
+                            disabled={selectedCauses.length >= 10 && !isSelected}
+                            className="w-4 h-4 md:w-5 md:h-5 text-[#1600ff] focus:ring-[#1600ff] disabled:cursor-not-allowed"
                           />
                         </label>
                       </div>
