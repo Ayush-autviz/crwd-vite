@@ -66,7 +66,9 @@ export const PopularPosts = ({
                 firstName: post.user?.first_name || '',
                 lastName: post.user?.last_name || '',
                 userId: post.user?.id,
-                time: new Date(post.created_at).toLocaleDateString(),
+                time: post.created_at || new Date().toISOString(), // Pass raw timestamp for proper relative time calculation
+                created_at: post.created_at, // Also include created_at for ProfileActivityCard to use
+                timestamp: post.created_at, // Include timestamp as well
                 org: post.collective?.name || 'Unknown Collective',
                 orgUrl: post.collective?.id,
                 text: post.content || '',

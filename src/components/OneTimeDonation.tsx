@@ -271,16 +271,15 @@ export default function OneTimeDonation({
     selectedItems.forEach(item => {
       if (item.type === 'cause') {
         const causeId = parseInt(item.id);
-        // Check if this cause is from a collective (has attributed_collective)
-        // For now, we'll set attributed_collective to 0 if not from a collective
-        // You may need to track collective info if causes can be attributed to collectives
         const causeEntry: { cause_id: number; attributed_collective?: number } = {
           cause_id: causeId,
         };
         
-        // Only include attributed_collective if it exists and is not 0
-        // For now, we'll omit it if it's 0 (as per user's instruction)
-        // If you need to track which collective a cause belongs to, add that logic here
+        // Only include attributed_collective if preselectedCollectiveId exists, is not 0, and cause_id is not 0
+        if (preselectedCollectiveId && preselectedCollectiveId > 0 && causeId > 0) {
+          causeEntry.attributed_collective = preselectedCollectiveId;
+        }
+        
         causes.push(causeEntry);
       }
       // Note: For one-time donations, we're only handling causes, not collectives directly
@@ -292,7 +291,7 @@ export default function OneTimeDonation({
       causes: Array<{ cause_id: number; attributed_collective?: number }>;
     } = {
       amount: donationAmount.toString(),
-      causes: causes.length > 0 ? causes : [{ cause_id: 0 }], // Fallback if no causes selected
+      causes: causes.length > 0 ? causes : [{ cause_id: 0 }], // Fallback if no causes selected (no attributed_collective for fallback)
     };
 
     console.log('Sending one-time donation request:', requestBody);
@@ -431,7 +430,7 @@ export default function OneTimeDonation({
                   return (
                     <div key={item.id} className="flex items-center p-2.5 md:p-3 border border-gray-200 rounded-lg">
                       <Avatar className="w-10 h-10 md:w-12 md:h-12 rounded-lg flex-shrink-0 border border-gray-200 mr-2.5 md:mr-3">
-                        <AvatarImage src={cause.image} />
+                        <AvatarImage src={cause.image || cause.logo} />
                         <AvatarFallback
                           style={{ backgroundColor: avatarBgColor }}
                           className="font-semibold rounded-lg text-white text-sm md:text-base"
