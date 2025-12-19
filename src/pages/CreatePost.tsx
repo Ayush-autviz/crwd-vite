@@ -1,13 +1,13 @@
 "use client";
 
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useNavigate, useLocation } from "react-router-dom";
 import { ImageIcon, X, Loader2, ArrowLeft, Lightbulb, Paperclip } from "lucide-react";
 import { Toast } from "@/components/ui/toast";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { createPost } from "@/services/api/social";
+import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
+import { createPost, getLinkPreview } from "@/services/api/social";
 import { useAuthStore } from "@/stores/store";
 
 
@@ -41,6 +41,35 @@ export default function CreatePostPage() {
 
   // Track URL validation
   const [urlError, setUrlError] = useState<string | null>(null);
+  
+  // Track link preview
+  const [showPreview, setShowPreview] = useState(false);
+  
+  // Validate URL format - defined before useQuery
+  const validateUrl = (url: string): boolean => {
+    try {
+      new URL(url);
+      return true;
+    } catch {
+      return false;
+    }
+  };
+  
+  // Fetch link preview automatically when URL is valid
+  const { data: previewData, isLoading: isLoadingPreview, refetch: fetchPreview } = useQuery({
+    queryKey: ['link-preview', form.url],
+    queryFn: () => getLinkPreview(form.url),
+    enabled: form.url.trim().length > 0 && validateUrl(form.url) && !urlError,
+  });
+  
+  // Show preview when data is available
+  useEffect(() => {
+    if (previewData && form.url && validateUrl(form.url) && !urlError) {
+      setShowPreview(true);
+    } else if (!form.url || !validateUrl(form.url) || urlError) {
+      setShowPreview(false);
+    }
+  }, [previewData, form.url, urlError]);
 
   // Create post mutation
   const createPostMutation = useMutation({
@@ -79,16 +108,6 @@ export default function CreatePostPage() {
     // Clear URL error when user starts typing
     if (name === "url" && urlError) {
       setUrlError(null);
-    }
-  };
-
-  // Validate URL format
-  const validateUrl = (url: string): boolean => {
-    try {
-      new URL(url);
-      return true;
-    } catch {
-      return false;
     }
   };
 
@@ -312,22 +331,23 @@ export default function CreatePostPage() {
         {/* Link Input Field - Show when link is selected or URL is entered */}
         {(postType === "link" || form.url) && (
           <div className="mb-4">
-            <div className="relative">
+            <div className="relative border border-gray-300 rounded-lg">
               <Input
                 name="url"
                 value={form.url}
                 onChange={handleInputChange}
                 onBlur={handleUrlBlur}
                 placeholder="https://example.com/article"
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1600ff] focus:border-transparent"
+                className={`px-4 py-3 border-0 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1600ff] focus:border-transparent w-full ${form.url ? 'pr-10' : ''}`}
               />
               {form.url && (
                 <button
                   onClick={() => {
                     setForm((prev) => ({ ...prev, url: "" }));
                     if (postType === "link") setPostType(null);
+                    setShowPreview(false);
                   }}
-                  className="absolute right-3 top-1/2 transform -translate-y-1/2 w-6 h-6 flex items-center justify-center text-gray-500 hover:text-gray-700"
+                  className="absolute right-3 top-1/2 transform -translate-y-1/2 w-6 h-6 flex items-center justify-center text-gray-500 hover:text-gray-700 z-10"
                 >
                   <X size={16} />
                 </button>
@@ -336,6 +356,65 @@ export default function CreatePostPage() {
             {urlError && (
               <div className="text-red-500 text-sm mt-2">
                 {urlError}
+              </div>
+            )}
+            {/* Preview Button - Manual refresh */}
+            {form.url && validateUrl(form.url) && !urlError && (
+              <button
+                onClick={() => {
+                  fetchPreview();
+                }}
+                disabled={isLoadingPreview}
+                className="mt-2 flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {isLoadingPreview ? (
+                  <>
+                    <Loader2 size={16} className="animate-spin" />
+                    <span className="text-sm font-medium text-gray-700">Loading Preview...</span>
+                  </>
+                ) : (
+                  <span className="text-sm font-medium text-gray-700">Refresh Preview</span>
+                )}
+              </button>
+            )}
+            {/* Link Preview Card */}
+            {showPreview && previewData && !isLoadingPreview && (
+              <div className="mt-4 w-full rounded-lg overflow-hidden border border-gray-200 bg-white">
+                <div className="flex flex-col md:flex-row bg-white">
+                  {/* Preview Image */}
+                  {previewData.image && (
+                    <div className="w-full md:w-48 h-[180px] md:h-[200px] lg:h-auto flex-shrink-0">
+                      <img
+                        src={previewData.image}
+                        alt={previewData.title || 'Link preview'}
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                  )}
+                  {/* Preview Content */}
+                  <div className="flex-1 p-2.5 md:p-3">
+                    {previewData.site_name && (
+                      <div className="text-[9px] md:text-[10px] text-gray-500 uppercase tracking-wide mb-0.5 md:mb-1">
+                        {previewData.site_name}
+                      </div>
+                    )}
+                    {previewData.title && (
+                      <h3 className="text-xs md:text-sm font-semibold text-gray-900 mb-0.5 md:mb-1 line-clamp-2">
+                        {previewData.title}
+                      </h3>
+                    )}
+                    {previewData.description && (
+                      <p className="text-[10px] md:text-xs text-gray-500 mb-0.5 md:mb-1 line-clamp-2">
+                        {previewData.description}
+                      </p>
+                    )}
+                    {previewData.domain && (
+                      <div className="text-[10px] md:text-[11px] text-gray-500 truncate">
+                        {previewData.domain}
+                      </div>
+                    )}
+                  </div>
+                </div>
               </div>
             )}
           </div>
