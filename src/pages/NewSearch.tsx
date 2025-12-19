@@ -68,7 +68,15 @@ export default function NewSearchPage() {
   };
 
   const handleSurpriseMe = () => {
-    navigate('/surprise-me');
+    // Get categories from URL params if available
+    const categoriesParam = new URLSearchParams(window.location.search).get('categories');
+    const categories = categoriesParam ? categoriesParam.split(',').filter(Boolean) : undefined;
+    
+    if (categories && categories.length > 0) {
+      navigate(`/surprise-me?categories=${categories.join(',')}`);
+    } else {
+      navigate('/surprise-me');
+    }
   };
 
   // Get results based on active tab from the unified search API response

@@ -7,6 +7,7 @@ import HelloGreeting from "@/components/newHome/HelloGreeting";
 import MyDonationBoxCard from "@/components/newHome/MyDonationBoxCard";
 import DonationBoxPrompt from "@/components/newHome/DonationBoxPrompt";
 import CollectiveCarouselCard from "@/components/newHome/CollectiveCarouselCard";
+import CreateCollectiveCard from "@/components/newHome/CreateCollectiveCard";
 import CommunityUpdates from "@/components/newHome/CommunityUpdates";
 import CommunityPosts from "@/components/newHome/CommunityPosts";
 import ExploreCards from "@/components/newHome/ExploreCards";
@@ -406,7 +407,7 @@ export default function NewHome() {
                     )
                 )}
 
-                {/* Collective Carousel Card - Show joined collectives */}
+                {/* Collective Carousel Card - Show joined collectives or Create Collective Card */}
                 {token?.access_token && (
                     joinedCollectivesLoading ? (
                         <div className="w-full mt-2 md:mt-6">
@@ -424,7 +425,9 @@ export default function NewHome() {
                         </div>
                     ) : transformedAttributingCollectives.length > 0 ? (
                         <CollectiveCarouselCard collectives={transformedAttributingCollectives} />
-                    ) : null
+                    ) : (
+                        <CreateCollectiveCard />
+                    )
                 )}
 
                 {/* Explore Cards */}

@@ -57,8 +57,8 @@ export default function NewCompleteOnboard() {
 
   // Fetch surprise me causes
   const { data: surpriseData, isLoading: isLoadingSurprise, refetch: refetchSurprise } = useQuery({
-    queryKey: ['surprise-me-onboard'],
-    queryFn: () => getSurpriseMe(),
+    queryKey: ['surprise-me-onboard', selectedCategoryIds],
+    queryFn: () => getSurpriseMe(selectedCategoryIds.length > 0 ? selectedCategoryIds : undefined),
     enabled: view === 'surprise',
   });
 

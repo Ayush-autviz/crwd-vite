@@ -249,7 +249,7 @@ export default function CommentsBottomSheet({
   const postDisplayName = post.firstName && post.lastName
     ? `${post.firstName} ${post.lastName}`
     : post.username;
-  
+
   const postUserInitials = post.firstName && post.lastName
     ? `${post.firstName.charAt(0)}${post.lastName.charAt(0)}`.toUpperCase()
     : post.username.charAt(0).toUpperCase();

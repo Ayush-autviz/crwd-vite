@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation, useSearchParams } from 'react-router-dom';
 import { ArrowLeft, Sparkles, Phone, HelpCircle } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import { getSurpriseMe } from '@/services/api/crwd';
@@ -33,14 +33,23 @@ const getConsistentColor = (id: number | string, colors: string[]) => {
 
 export default function SurpriseMePage() {
   const navigate = useNavigate();
+  const location = useLocation();
+  const [searchParams] = useSearchParams();
   const queryClient = useQueryClient();
   const { user, token } = useAuthStore();
   const [surpriseCauses, setSurpriseCauses] = useState<any[]>([]);
 
+  // Get categories from URL params or location state
+  const categoriesFromParams = searchParams.get('categories');
+  const categoriesFromState = (location.state as any)?.categories;
+  const categories = categoriesFromParams 
+    ? categoriesFromParams.split(',').filter(Boolean)
+    : categoriesFromState || undefined;
+
   // Fetch random causes using the surprise me API
   const { data: surpriseData, isLoading, refetch } = useQuery({
-    queryKey: ['surprise-me'],
-    queryFn: () => getSurpriseMe(),
+    queryKey: ['surprise-me', categories],
+    queryFn: () => getSurpriseMe(categories),
     enabled: true,
   });
 

@@ -32,6 +32,20 @@ export default function PopularCollectives({
     enabled: true,
   });
 
+  // Generate color for icon if not provided
+  const getIconColor = (name: string): string => {
+    const colors = [
+      "#1600ff", // Blue
+      "#10B981", // Green
+      "#EC4899", // Pink
+      "#F59E0B", // Amber
+      "#8B5CF6", // Purple
+      "#EF4444", // Red
+    ];
+    const hash = name.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
+    return colors[hash % colors.length];
+  };
+
   // Transform API data to match component's expected format
   const transformedCollectives: Collective[] =
     collectivesData?.results?.slice(0, 4).map((collective: any, index: number) => {
@@ -39,13 +53,12 @@ export default function PopularCollectives({
         ? `${collective.created_by.first_name || ""} ${collective.created_by.last_name || ""}`.trim() || "Unknown"
         : "Unknown";
 
-      // Generate icon colors based on index
-      const iconColors = ["#3B82F6", "#8B5CF6", "#10B981", "#F59E0B"]; // Blue, Purple, Green, Orange
-
       return {
         id: collective.id,
         name: collective.name || "Unknown Collective",
-        iconColor: iconColors[index % iconColors.length],
+        color: collective.color, // Use color from API if available
+        logo: collective.logo, // Use logo from API if available
+        iconColor: collective.color || getIconColor(collective.name || "C"), // Fallback to generated color
         founder: {
           name: founderName,
           profile_picture: collective.created_by?.profile_picture || "",
@@ -96,8 +109,12 @@ export default function PopularCollectives({
         {/* Grid Layout: 3 cards top row, 1 card bottom left */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 mb-6 md:mb-8">
           {displayCollectives.slice(0, 4).map((collective) => {
-            const iconColor = collective.iconColor || "#1600ff";
+            // Priority: 1. If color is available, show color with letter, 2. If no color, show image, 3. Fallback to generated color with letter
+            const hasColor = collective.color;
+            const hasLogo = collective.logo && (collective.logo.startsWith("http") || collective.logo.startsWith("/") || collective.logo.startsWith("data:"));
+            const iconColor = hasColor ? collective.color : (!hasLogo ? collective.iconColor : undefined);
             const iconLetter = getIconLetter(collective.name);
+            const showImage = !hasColor && hasLogo;
 
             return (
               <Card key={collective.id} className="rounded-xl shadow-sm hover:shadow-lg transition-shadow duration-300">
@@ -105,12 +122,20 @@ export default function PopularCollectives({
                     <div className="flex items-center gap-4">
                   {/* Icon */}
                   <div
-                    className="w-15 h-15 md:w-18 md:h-18 rounded-xl flex items-center justify-center mb-4"
-                    style={{ backgroundColor: iconColor }}
+                    className="w-15 h-15 md:w-18 md:h-18 rounded-xl flex items-center justify-center mb-4 overflow-hidden"
+                    style={iconColor ? { backgroundColor: iconColor } : {}}
                   >
-                    <span className="text-white font-bold text-xl md:text-2xl">
-                      {iconLetter}
-                    </span>
+                    {showImage ? (
+                      <img
+                        src={collective.logo}
+                        alt={collective.name}
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <span className="text-white font-bold text-xl md:text-2xl">
+                        {iconLetter}
+                      </span>
+                    )}
                   </div>
 
                   {/* Title */}
