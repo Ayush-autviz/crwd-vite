@@ -44,7 +44,7 @@ export default function DonationBoxPrompt({ causeCount, hasJoinedCollectives = f
                     You're Almost There!
                   </h3>
                   <p className="text-xs md:text-base text-gray-900 mb-2 md:mb-3">
-                    You selected <span className="font-bold">{causeCount} cause{causeCount !== 1 ? 's' : ''}</span> but haven't started donating yet
+                    You selected <span className="font-bold">{causeCount} {causeCount === 1 ? 'cause' : 'causes'}</span> but haven't started donating yet
                   </p>
                   <button
                     onClick={(e) => {
