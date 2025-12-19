@@ -121,8 +121,8 @@ export default function NewSavedPage() {
                   >
                     <CardContent className="px-4">
                       <div className="flex items-start gap-4">
-                        <Avatar className="w-12 h-12 rounded-lg flex-shrink-0">
-                          <AvatarImage src={cause.image || undefined} alt={cause.name} />
+                        <Avatar className="w-12 h-12 rounded-lg flex-shrink-0 border border-gray-200">
+                          <AvatarImage src={cause.image} alt={cause.name} />
                           <AvatarFallback
                             style={{ backgroundColor: avatarBgColor }}
                             className="text-white rounded-lg font-bold text-base"

@@ -5,6 +5,7 @@ import { Heart, Sparkles, Search, Check, Loader2, ArrowRight } from "lucide-reac
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { getSurpriseMe, getCausesBySearch } from "@/services/api/crwd";
 import { addCausesToBox } from "@/services/api/donation";
@@ -348,14 +349,15 @@ export default function NewCompleteOnboard() {
                       >
                         <CardContent className="px-3 sm:px-4">
                           <div className="flex items-center gap-2 sm:gap-3">
-                            <div
-                              className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg flex items-center justify-center flex-shrink-0"
-                              style={{ backgroundColor: avatarBgColor }}
-                            >
-                              <span className="text-white font-bold text-xs sm:text-sm">
+                            <Avatar className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg flex-shrink-0 border border-gray-200">
+                              <AvatarImage src={cause.image} />
+                              <AvatarFallback
+                                style={{ backgroundColor: avatarBgColor }}
+                                className="font-bold text-white text-xs sm:text-sm"
+                              >
                                 {initials}
-                              </span>
-                            </div>
+                              </AvatarFallback>
+                            </Avatar>
                             <div className="flex-1 min-w-0">
                               <h3 className="font-bold text-xs sm:text-sm text-gray-900 mb-1 line-clamp-2 sm:line-clamp-3">
                                 {cause.name}
@@ -506,14 +508,15 @@ export default function NewCompleteOnboard() {
                   >
                     <CardContent className="px-3 sm:px-4">
                       <div className="flex items-center gap-3 sm:gap-4">
-                        <div
-                          className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg flex items-center justify-center flex-shrink-0"
-                          style={{ backgroundColor: avatarBgColor }}
-                        >
-                          <span className="text-white font-bold text-sm sm:text-base">
+                        <Avatar className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg flex-shrink-0 border border-gray-200">
+                          <AvatarImage src={cause.image} />
+                          <AvatarFallback
+                            style={{ backgroundColor: avatarBgColor }}
+                            className="font-bold text-white text-sm sm:text-base"
+                          >
                             {initials}
-                          </span>
-                        </div>
+                          </AvatarFallback>
+                        </Avatar>
                         <div className="flex-1 min-w-0">
                           <h3 className="font-bold text-sm sm:text-base text-gray-900 mb-1">
                             {cause.name}
