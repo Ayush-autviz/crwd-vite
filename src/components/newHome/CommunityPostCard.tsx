@@ -127,65 +127,11 @@ export default function CommunityPostCard({ post, onCommentPress }: CommunityPos
   const avatarBgColor = avatarColors[avatarColorIndex];
   const initials = getUserInitials();
 
-  // Format timestamp if available
-  const formatPostTime = (timeString?: string): string => {
-    if (!timeString) return '';
-    
-    // Check if it's already a relative time string
-    if (timeString.includes('ago') || timeString.includes('just now')) {
-      return timeString;
-    }
-    
-    let date: Date;
-    
-    // Handle DD/MM/YYYY format
-    const ddmmyyyyMatch = timeString.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
-    if (ddmmyyyyMatch) {
-      const [, day, month, year] = ddmmyyyyMatch;
-      date = new Date(`${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`);
-    } else {
-      date = new Date(timeString);
-    }
-    
-    if (isNaN(date.getTime())) {
-      return timeString;
-    }
-    
-    const now = new Date();
-    const diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000);
-    const diffInMinutes = Math.floor(diffInSeconds / 60);
-    const diffInHours = Math.floor(diffInSeconds / 3600);
-    
-    if (diffInSeconds < 60) {
-      return 'just now';
-    } else if (diffInMinutes < 60) {
-      return `${diffInMinutes} minute${diffInMinutes === 1 ? '' : 's'} ago`;
-    } else if (diffInHours < 24) {
-      return `${diffInHours} hour${diffInHours === 1 ? '' : 's'} ago`;
-    } else {
-      const currentYear = now.getFullYear();
-      const postYear = date.getFullYear();
-      
-      const options: Intl.DateTimeFormatOptions = {
-        month: 'long',
-        day: 'numeric',
-      };
-      
-      if (postYear !== currentYear) {
-        options.year = 'numeric';
-      }
-      
-      return date.toLocaleDateString('en-US', options);
-    }
-  };
-
-  const formattedTime = formatPostTime(post.timestamp);
-
   return (
     <Card
       className={cn(
         "bg-white rounded-xl border-0 mb-4 overflow-hidden shadow-none",
-       
+
       )}
     >
       <CardContent className="p-3 md:p-4">
@@ -196,34 +142,39 @@ export default function CommunityPostCard({ post, onCommentPress }: CommunityPos
                 src={post.user.avatar}
                 alt={displayName}
               />
-              <AvatarFallback 
+              <AvatarFallback
                 style={{ backgroundColor: avatarBgColor }}
                 className="text-white font-bold text-xs md:text-sm"
               >
                 {initials}
-            </AvatarFallback>
-          </Avatar>
+              </AvatarFallback>
+            </Avatar>
           </Link>
           <div className="flex-1 min-w-0">
-            <div className="flex items-start justify-between mb-2 md:mb-3">
-              <div className="flex-1 flex-wrap items-center">
+            <div className="mb-2 md:mb-3">
+              <div className="flex items-center gap-1.5 md:gap-2 mb-1">
                 <Link
                   to={`/user-profile/${post.user.id}`}
                   onClick={(e) => e.stopPropagation()}
-                  className="text-xs md:text-sm font-semibold text-gray-900 hover:text-blue-600 transition-colors cursor-pointer"
+                  className="text-sm md:text-base font-bold text-gray-900 hover:underline cursor-pointer"
                 >
                   {displayName}
                 </Link>
-                <div className="flex items-center gap-1">
-                  <span className="text-[10px] md:text-xs text-gray-500">{formattedTime}</span>
+                <span className="text-xs md:text-sm text-gray-500">@{post.user.username}</span>
+              </div>
+              {post.collective?.name && (
+                <div className="text-xs md:text-sm text-gray-500 mb-1">
+                  {post.collective.name}
+                </div>
+              )}
             </div>
-          </div>
-        </div>
+            </div>
+            </div>
 
             <Link to={`/post/${post.id}`} className="block">
-              <div className="text-xs md:text-sm text-gray-900 leading-5 mb-2 md:mb-3 whitespace-pre-line">
-          {post.content}
-      </div>
+              <div className="text-sm md:text-base text-gray-900 leading-relaxed mb-3 md:mb-4 whitespace-pre-line">
+                {post.content}
+              </div>
 
               {/* Show preview card if previewDetails exists, otherwise show image */}
               {post.previewDetails ? (
@@ -242,9 +193,9 @@ export default function CommunityPostCard({ post, onCommentPress }: CommunityPos
                           src={post.previewDetails.image}
                           alt={post.previewDetails.title || 'Link preview'}
                           className="w-full h-full object-cover"
-          />
-        </div>
-      )}
+                        />
+                      </div>
+                    )}
                     {/* Preview Content */}
                     <div className="flex-1 p-2.5 md:p-3">
                       {post.previewDetails.site_name && (
@@ -287,54 +238,56 @@ export default function CommunityPostCard({ post, onCommentPress }: CommunityPos
               ) : null}
 
               {/* Footer */}
-              <div className="flex items-center justify-between py-2 md:py-3 border-y border-gray-100">
-        <div className="flex items-center gap-3 md:gap-4">
-          <button
-            onClick={handleLikeClick}
-            disabled={likeMutation.isPending || unlikeMutation.isPending}
-                    className="flex items-center gap-1 md:gap-1.5 hover:opacity-80 transition-opacity disabled:opacity-50"
-          >
-                    {likeMutation.isPending || unlikeMutation.isPending ? (
-                      <Loader2 className="w-4 h-4 md:w-[18px] md:h-[18px] animate-spin text-gray-500" />
-                    ) : (
-            <Heart
-                        className={`w-4 h-4 md:w-[18px] md:h-[18px] ${
-                          isLiked ? "fill-[#ef4444] text-[#ef4444]" : "text-gray-500"
-              }`}
-            />
-                    )}
-                    <span className="text-xs md:text-sm text-gray-500">{likesCount}</span>
-          </button>
-          <button
+              <div className="border-y border-gray-100 py-3 md:py-4">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-4 md:gap-6">
+                    <button
+                      onClick={handleLikeClick}
+                      disabled={likeMutation.isPending || unlikeMutation.isPending}
+                      className="flex items-center gap-1.5 hover:opacity-80 transition-opacity disabled:opacity-50"
+                    >
+                      {/* {likeMutation.isPending || unlikeMutation.isPending ? (
+                        <Loader2 className="w-4 h-4 md:w-5 md:h-5 animate-spin text-gray-400" />
+                      ) : ( */}
+                      <Heart
+                        className={`w-4 h-4 md:w-5 md:h-5 ${isLiked ? "fill-[#ef4444] text-[#ef4444]" : "text-gray-400"
+                          }`}
+                        strokeWidth={2}
+                      />
+                      {/* )} */}
+                      <span className="text-sm md:text-base text-gray-400">{likesCount}</span>
+                    </button>
+                    <button
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        if (onCommentPress) {
+                          onCommentPress(post);
+                        } else {
+                          setShowCommentsSheet(true);
+                        }
+                      }}
+                      className="flex items-center gap-1.5 hover:opacity-80 transition-opacity"
+                    >
+                      <MessageCircle className="w-4 h-4 md:w-5 md:h-5 text-gray-400" strokeWidth={2} />
+                      <span className="text-sm md:text-base text-gray-400">{post.comments || 0}</span>
+                    </button>
+                  </div>
+                  <button
+                    className="p-1 hover:opacity-80 transition-opacity"
                     onClick={(e) => {
                       e.preventDefault();
                       e.stopPropagation();
-                      if (onCommentPress) {
-                        onCommentPress(post);
-                      } else {
-                        setShowCommentsSheet(true);
-                      }
+                      setShowShareModal(true);
                     }}
-                    className="flex items-center gap-1 md:gap-1.5 hover:opacity-80 transition-opacity"
-          >
-                    <MessageCircle className="w-4 h-4 md:w-[18px] md:h-[18px] text-gray-500" />
-                    <span className="text-xs md:text-sm text-gray-500">{post.comments || 0}</span>
-          </button>
-        </div>
-        <button
-                  className="p-0.5 md:p-1 hover:opacity-80 transition-opacity"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    setShowShareModal(true);
-                  }}
-        >
-                  <Share2 className="w-4 h-4 md:w-[18px] md:h-[18px] text-gray-500" />
-        </button>
-      </div>
+                  >
+                    <Share2 className="w-4 h-4 md:w-5 md:h-5 text-gray-400" strokeWidth={2} />
+                  </button>
+                </div>
+              </div>
             </Link>
-          </div>
-        </div>
+          {/* </div> */}
+        {/* </div> */}
       </CardContent>
 
       {/* Comments Bottom Sheet */}

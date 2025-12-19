@@ -135,12 +135,12 @@ export default function GuestHome() {
                 <div className="max-w-4xl mx-auto text-center mt-10 md:mt-20  mb-6 md:mb-8">
 
 
-                    <h1 className="font-[900] text-foreground mb-3 md:mb-4 leading-tight" style={{ fontSize: 'clamp(2rem, 5vw, 4.5rem)' }}>
+                    <h1 className="font-[900] text-foreground mb-3 md:mb-4 leading-tight" style={{ fontSize: 'clamp(1.5rem, 5vw, 4.5rem)' }}>
                         Stop Wishing You Made a Difference.
                         <span className="text-[#1600ff]"> Start Being Someone Who Does.</span>
                     </h1>
 
-                    <p className="text-muted-foreground mb-6 md:mb-8 max-w-2xl mx-auto" style={{ fontSize: 'clamp(1rem, 2vw, 1.5rem)' }}>
+                    <p className="text-muted-foreground mb-6 md:mb-8 max-w-2xl mx-auto" style={{ fontSize: 'clamp(0.875rem, 2vw, 1.5rem)' }}>
                         What if you could support every cause you care about automatically, affordably, and powerfully?
                     </p>
 
@@ -157,18 +157,18 @@ export default function GuestHome() {
             {/* See the Magic in Action Section */}
             <div className="bg-gradient-to-br from-[#f1f6ff] via-[#f7f6ff] to-[#fdf3f8] py-10 md:py-16 px-4 md:px-6">
                 <div className="max-w-4xl mx-auto">
-                    <h2 className="font-[800] text-foreground mb-3 md:mb-4 text-center" style={{ fontSize: 'clamp(1.5rem, 4vw, 2.5rem)' }}>
+                    <h2 className="font-[800] text-foreground mb-3 md:mb-4 text-center" style={{ fontSize: 'clamp(1.25rem, 4vw, 2.5rem)' }}>
                         See the <span className="text-[#1600ff]">Magic</span> in Action
                     </h2>
-                    <p className="text-muted-foreground mb-8 md:mb-12 text-center" style={{ fontSize: 'clamp(1rem, 2vw, 1.25rem)' }}>
+                    <p className="text-muted-foreground mb-8 md:mb-12 text-center" style={{ fontSize: 'clamp(0.875rem, 2vw, 1.25rem)' }}>
                         Pick your causes. Give once. Multiply your impact.
                     </p>
 
                     {/* Demo Card */}
                     <Card className="max-w-[80%] lg:max-w-3xl mx-auto">
                         <CardContent className="p-4 md:p-8 lg:p-12">
-                            <div className="text-gray-500 mb-4 text-center" style={{ fontSize: 'clamp(0.875rem, 2vw, 1.125rem)' }}>
-                                You can give <span className="text-[#1600ff] font-[900]" style={{ fontSize: 'clamp(2rem, 5vw, 3rem)' }}>${donationAmount}</span>/month to
+                            <div className="text-gray-500 mb-4 text-center" style={{ fontSize: 'clamp(0.75rem, 2vw, 1.125rem)' }}>
+                                You can give <span className="text-[#1600ff] font-[900]" style={{ fontSize: 'clamp(1.5rem, 5vw, 3rem)' }}>${donationAmount}</span>/month to
                             </div>
 
                             {/* Slider */}
@@ -199,8 +199,8 @@ export default function GuestHome() {
                                 ))}
                             </div>
 
-                            <div className="font-bold text-[#1600ff] mb-3 md:mb-4 text-center" style={{ fontSize: 'clamp(1.125rem, 2.5vw, 1.25rem)' }}>
-                                <span className="font-[700]" style={{ fontSize: 'clamp(1.25rem, 3vw, 1.875rem)' }}>= ${donationAmount * 12}</span> /year of impact
+                            <div className="font-bold text-[#1600ff] mb-3 md:mb-4 text-center" style={{ fontSize: 'clamp(0.875rem, 2.5vw, 1.25rem)' }}>
+                                <span className="font-[700]" style={{ fontSize: 'clamp(1rem, 3vw, 1.875rem)' }}>= ${donationAmount * 12}</span> /year of impact
                             </div>
 
                             {/* Distribution Bar */}
@@ -211,7 +211,7 @@ export default function GuestHome() {
                                 <div className="bg-[#1600ff] flex-1" />
                             </div>
 
-                            <p className="text-gray-700 mb-6 md:mb-8 text-center font-[600] mt-6" style={{ fontSize: 'clamp(0.875rem, 2vw, 1rem)' }}>
+                            <p className="text-gray-700 mb-6 md:mb-8 text-center font-[600] mt-6" style={{ fontSize: 'clamp(0.75rem, 2vw, 1rem)' }}>
                                 One gift. Multiple causes.
                             </p>
 
@@ -221,7 +221,7 @@ export default function GuestHome() {
                             >
                                 Start Supporting <ChevronRight className="ml-2 h-4 w-4 md:h-5 md:w-5" />
                             </Button>
-                            <p className="text-gray-500 text-center mt-4" style={{ fontSize: 'clamp(0.875rem, 2vw, 1rem)' }}>Every dollar makes a difference</p>
+                            <p className="text-gray-500 text-center mt-4" style={{ fontSize: 'clamp(0.75rem, 2vw, 1rem)' }}>Every dollar makes a difference</p>
                         </CardContent>
                     </Card>
                 </div>
