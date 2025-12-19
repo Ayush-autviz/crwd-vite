@@ -66,7 +66,7 @@ export default function CollectiveCarouselCard({
 
   return (
     <div className="w-full mt-2 md:mt-6">
-      <Card className="cursor-pointer hover:shadow-md transition-shadow border border-gray-200 bg-white relative">
+      <Card className="cursor-pointer shadow-none border border-gray-200 bg-white relative">
         <CardContent className="px-3 md:px-6 py-3 md:py-6">
           {/* Carousel Navigation */}
           {totalCollectives > 1 && (

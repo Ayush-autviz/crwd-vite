@@ -31,7 +31,7 @@ export default function DonationBoxPrompt({ causeCount, hasJoinedCollectives = f
         {showAlmostThereCard ? (
           <Card
             onClick={() => navigate('/donation?tab=setup')}
-            className="cursor-pointer hover:shadow-md transition-shadow border border-orange-300 bg-yellow-50"
+            className="cursor-pointer shadow-none border border-orange-300 bg-yellow-50"
           >
             <CardContent className="p-3 md:p-6">
               <div className="flex flex-col items-start gap-2.5 md:flex-row md:items-start md:gap-4">
@@ -64,7 +64,7 @@ export default function DonationBoxPrompt({ causeCount, hasJoinedCollectives = f
           /* Create Donation Box Card - Show when no donation box exists */
           <Card
             onClick={() => navigate('/donation')}
-            className="cursor-pointer hover:shadow-md transition-shadow border border-gray-200"
+            className="cursor-pointer shadow-none border border-gray-200"
           >
             <CardContent className="p-3 md:p-6">
               <div className="flex flex-col items-start gap-2.5 md:flex-row md:items-start md:gap-4">

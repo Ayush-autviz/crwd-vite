@@ -255,7 +255,7 @@ export default function CommunityPostCard({ post, onCommentPress }: CommunityPos
                         strokeWidth={2}
                       />
                       {/* )} */}
-                      <span className="text-sm md:text-base text-gray-400">{likesCount}</span>
+                      <span className="text-sm md:text-base font-medium text-gray-500">{likesCount}</span>
                     </button>
                     <button
                       onClick={(e) => {
@@ -270,7 +270,7 @@ export default function CommunityPostCard({ post, onCommentPress }: CommunityPos
                       className="flex items-center gap-1.5 hover:opacity-80 transition-opacity"
                     >
                       <MessageCircle className="w-4 h-4 md:w-5 md:h-5 text-gray-400" strokeWidth={2} />
-                      <span className="text-sm md:text-base text-gray-400">{post.comments || 0}</span>
+                      <span className="text-sm md:text-base font-medium text-gray-500">{post.comments || 0}</span>
                     </button>
                   </div>
                   <button

@@ -411,7 +411,7 @@ export default function NewHome() {
                 {token?.access_token && (
                     joinedCollectivesLoading ? (
                         <div className="w-full mt-2 md:mt-6">
-                            <div className="bg-white rounded-xl border border-gray-200 p-3 md:p-6 shadow-sm animate-pulse">
+                            <div className="bg-white rounded-xl border border-gray-200 p-3 md:p-6 shadow-none animate-pulse">
                                 <div className="space-y-3">
                                     <div className="h-5 bg-gray-200 rounded w-1/3"></div>
                                     <div className="h-24 md:h-40 bg-gray-200 rounded-lg"></div>
