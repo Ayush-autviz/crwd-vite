@@ -103,7 +103,7 @@ function NotificationSummary({ update }: { update: CommunityUpdate }) {
   const isJoinNotification = update.isJoinNotification || false;
 
   return (
-    <div className="bg-white rounded-lg border border-gray-200 p-3 md:p-4 hover:shadow-md transition-shadow">
+    <div className="bg-white rounded-lg border-0 p-3 md:p-4 ">
       {/* Top Section: Profile and Follow Button */}
       <div className="flex items-start justify-between mb-2.5 md:mb-3">
         <div className="flex items-center gap-2.5 md:gap-3">

@@ -184,7 +184,7 @@ export default function CommunityPostCard({ post, onCommentPress }: CommunityPos
   return (
     <Card
       className={cn(
-        "bg-white rounded-xl border-1 border-gray-200 mb-4 overflow-hidden shadow-none",
+        "bg-white rounded-xl border-0 mb-4 overflow-hidden shadow-none",
        
       )}
     >
@@ -287,7 +287,7 @@ export default function CommunityPostCard({ post, onCommentPress }: CommunityPos
               ) : null}
 
               {/* Footer */}
-              <div className="flex items-center justify-between pt-2 md:pt-3">
+              <div className="flex items-center justify-between py-2 md:py-3 border-y border-gray-100">
         <div className="flex items-center gap-3 md:gap-4">
           <button
             onClick={handleLikeClick}

@@ -432,7 +432,7 @@ export default function NewGroupCrwdPage() {
               variant="outline"
               className="w-full sm:flex-1 border-[#1600ff] text-[#1600ff] hover:bg-[#1600ff] hover:text-white font-semibold py-4 md:py-5 rounded-lg text-sm md:text-base"
             >
-              Make a One-Time Donation
+              One-Time Donation
             </Button>
           </>
         )}
