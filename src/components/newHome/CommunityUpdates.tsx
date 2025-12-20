@@ -108,7 +108,7 @@ function NotificationSummary({ update }: { update: CommunityUpdate }) {
       <div className="flex items-start justify-between mb-2.5 md:mb-3">
         <div className="flex items-center gap-2.5 md:gap-3">
           {/* Avatar */}
-          <Avatar className="h-10 w-10 md:h-12 md:w-12 flex-shrink-0 rounded-full">
+          <Avatar className="h-9 w-9 md:h-11 md:w-11 flex-shrink-0 rounded-full">
             <AvatarImage src={update.user.avatar} />
             <AvatarFallback className="bg-[#1600ff] text-white text-xs md:text-sm">
               {update.user.name
@@ -140,21 +140,21 @@ function NotificationSummary({ update }: { update: CommunityUpdate }) {
       </div>
 
       {/* Content Box */}
-      <div className={`rounded-lg p-2.5 md:p-3 mb-2.5 md:mb-3 flex items-center gap-2.5 md:gap-3 ${
+      <div className={`rounded-lg p-2 md:p-2.5 mb-2.5 md:mb-3 flex items-center gap-2.5 md:gap-3 ${
         isJoinNotification 
-          ? 'bg-blue-50' 
-          : 'bg-green-50'
+          ? 'bg-gray-50' 
+          : 'bg-gray-50'
       }`}>
         {/* Icon */}
-        <div className={`h-8 w-8 md:h-10 md:w-10 rounded-full flex items-center justify-center flex-shrink-0 ${
+        <div className={`h-7 w-7 md:h-8 md:w-8 rounded-full flex items-center justify-center flex-shrink-0 ${
           isJoinNotification 
             ? 'bg-blue-500' 
             : 'bg-[#13b981]'
         }`}>
           {isJoinNotification ? (
-            <UserPlus className="h-4 w-4 md:h-5 md:w-5 text-white" />
+            <UserPlus className="h-3 w-3 md:h-4 md:w-4 text-white" />
           ) : (
-            <HandHeart className="h-4 w-4 md:h-5 md:w-5 text-white" />
+            <HandHeart className="h-3 w-3 md:h-4 md:w-4 text-white" />
           )}
         </div>
         {/* Action Text */}
