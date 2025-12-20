@@ -31,6 +31,13 @@ const getConsistentColor = (id: number | string, colors: string[]) => {
   return colors[hash % colors.length];
 };
 
+// Helper function to truncate description at first period
+const truncateAtFirstPeriod = (text: string): string => {
+  if (!text) return text;
+  const periodIndex = text.indexOf('.');
+  return periodIndex !== -1 ? text.substring(0, periodIndex + 1) : text;
+};
+
 export default function SurpriseMePage() {
   const navigate = useNavigate();
   const location = useLocation();
@@ -248,8 +255,8 @@ export default function SurpriseMePage() {
                           {[cause.city, cause.state].filter(Boolean).join(', ')}
                         </p>
                       )}
-                      <p className="text-xs md:text-sm text-gray-700 line-clamp-1">
-                        {cause.mission || cause.description || 'No description available'}
+                      <p className="text-xs md:text-sm text-gray-700">
+                        {truncateAtFirstPeriod(cause.mission || cause.description || 'No description available')}
                       </p>
                     </div>
                   </div>

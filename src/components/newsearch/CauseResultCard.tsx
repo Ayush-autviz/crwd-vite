@@ -33,6 +33,13 @@ const getConsistentColor = (id: number | string, colors: string[]) => {
   return colors[hash % colors.length];
 };
 
+// Helper function to truncate description at first period
+const truncateAtFirstPeriod = (text: string): string => {
+  if (!text) return text;
+  const periodIndex = text.indexOf('.');
+  return periodIndex !== -1 ? text.substring(0, periodIndex + 1) : text;
+};
+
 export default function CauseResultCard({ cause }: CauseResultCardProps) {
   const navigate = useNavigate();
   const avatarBgColor = getConsistentColor(cause.id, avatarColors);
@@ -44,6 +51,8 @@ export default function CauseResultCard({ cause }: CauseResultCardProps) {
     .toUpperCase() || 'N';
 
   const location = [cause.city, cause.state].filter(Boolean).join(', ');
+  const description = cause.mission || cause.description || 'No description available';
+  const truncatedDescription = truncateAtFirstPeriod(description);
 
   return (
     <Card
@@ -68,8 +77,8 @@ export default function CauseResultCard({ cause }: CauseResultCardProps) {
             {location && (
               <p className="text-xs md:text-sm text-gray-600 mb-1.5 md:mb-2">{location}</p>
             )}
-            <p className="text-xs md:text-sm text-gray-700 line-clamp-1">
-              {cause.mission || cause.description || 'No description available'}
+            <p className="text-xs md:text-sm text-gray-700">
+              {truncatedDescription}
             </p>
           </div>
         </div>

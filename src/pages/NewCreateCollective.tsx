@@ -620,7 +620,7 @@ export default function NewCreateCollectivePage() {
                   className="w-full bg-[#1600ff] hover:bg-[#1400cc] text-white font-semibold rounded-lg py-3 md:py-4 text-sm md:text-base flex items-center justify-center gap-2"
                 >
                   <Heart className="w-4 h-4 md:w-5 md:h-5" />
-                  Set Up My Donation Box
+                  Add to Donation Box
                 </Button>
                 
                 <Button

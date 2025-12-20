@@ -27,7 +27,7 @@ export default function CommunityPosts({
       <div className="w-full px-4 my-6 mb-8 md:px-0 md:my-8 md:mb-10">
         {showHeading && (
           <div className="mb-4 md:mb-6">
-            <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-3xl xl:text-4xl 2xl:text-5xl font-bold text-gray-900 mb-1.5 md:mb-2">
+            <h2 className="text-base xs:text-lg sm:text-2xl  md:text-3xl lg:text-3xl xl:text-4xl  font-bold text-gray-900 mb-1.5 md:mb-2">
               Community Updates
             </h2>
             <p className="text-xs md:text-sm text-gray-600">
@@ -100,7 +100,7 @@ export default function CommunityPosts({
     <div className="w-full px-4 my-6 mb-8 md:px-0 md:my-8 md:mb-10">
       {showHeading && (
         <div className="mb-4 md:mb-6">
-          <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-3xl xl:text-4xl 2xl:text-5xl font-bold text-gray-900 mb-1.5 md:mb-2">
+          <h2 className="text-base xs:text-lg sm:text-2xl  md:text-3xl lg:text-3xl xl:text-4xl  font-bold text-gray-900 mb-1.5 md:mb-2">
             Community Updates
           </h2>
           <p className="text-xs md:text-sm text-gray-600">

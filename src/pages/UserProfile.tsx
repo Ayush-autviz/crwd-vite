@@ -424,10 +424,13 @@ export default function ProfilePage() {
                           className="w-1/2 sm:w-1/3 lg:w-1/4 px-1.5 sm:px-2 mb-3"
                         >
                           <div className="bg-white border border-gray-200 rounded-lg p-2 sm:p-3 flex flex-col items-center justify-between h-[100px] sm:h-[120px]">
-                            {cause.logo ? (
+                            {cause.image || cause.logo ? (
                               <Avatar className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg mb-2 flex-shrink-0">
-                                <AvatarImage src={cause.logo} alt={cause.name} />
-                                <AvatarFallback className="bg-blue-100 text-blue-600 text-xs sm:text-sm font-semibold rounded-lg">
+                                <AvatarImage src={cause.image || cause.logo} alt={cause.name} />
+                                <AvatarFallback 
+                                  style={{ backgroundColor: bgColor }}
+                                  className="text-white text-xs sm:text-sm font-semibold rounded-lg"
+                                >
                                   {cause.name?.charAt(0)?.toUpperCase() || 'N'}
                                 </AvatarFallback>
                               </Avatar>
@@ -575,14 +578,26 @@ export default function ProfilePage() {
                           onClick={() => setShowStatsSheet(false)}
                           className="flex items-center gap-3 py-4 border-b border-gray-100 hover:bg-gray-50 transition-colors"
                         >
-                          <div
-                            className="w-12 h-12 rounded-lg flex items-center justify-center flex-shrink-0"
-                            style={{ backgroundColor: causeBgColor }}
-                          >
-                            <span className="text-xl font-bold text-white">
-                              {cause.name?.charAt(0)?.toUpperCase() || 'N'}
-                            </span>
-                          </div>
+                          {cause.image || cause.logo ? (
+                            <Avatar className="w-12 h-12 rounded-lg flex-shrink-0">
+                              <AvatarImage src={cause.image || cause.logo} alt={cause.name} />
+                              <AvatarFallback 
+                                style={{ backgroundColor: causeBgColor }}
+                                className="text-white rounded-lg font-bold text-lg"
+                              >
+                                {cause.name?.charAt(0)?.toUpperCase() || 'N'}
+                              </AvatarFallback>
+                            </Avatar>
+                          ) : (
+                            <div
+                              className="w-12 h-12 rounded-lg flex items-center justify-center flex-shrink-0"
+                              style={{ backgroundColor: causeBgColor }}
+                            >
+                              <span className="text-xl font-bold text-white">
+                                {cause.name?.charAt(0)?.toUpperCase() || 'N'}
+                              </span>
+                            </div>
+                          )}
                           <div className="flex-1 min-w-0">
                             <p className="text-sm font-semibold text-gray-900 mb-1">
                               {cause.name || 'Unknown Cause'}

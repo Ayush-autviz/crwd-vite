@@ -96,7 +96,7 @@ export default function CollectiveCarouselCard({
             <div className="flex flex-row items-center gap-2.5 md:gap-4 w-full md:w-auto">
               {/* Circular Icon */}
               <div 
-                className="w-8 h-8 md:w-12 md:h-12 rounded-full flex items-center justify-center flex-shrink-0"
+                className="w-8 h-8 md:w-12 md:h-12 rounded-lg flex items-center justify-center flex-shrink-0"
                 style={iconColor ? { backgroundColor: iconColor } : {}}
               >
                 {showImage ? (

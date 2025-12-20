@@ -108,7 +108,7 @@ function NotificationSummary({ update }: { update: CommunityUpdate }) {
       <div className="flex items-start justify-between mb-2.5 md:mb-3">
         <div className="flex items-center gap-2.5 md:gap-3">
           {/* Avatar */}
-          <Avatar className="h-10 w-10 md:h-12 md:w-12 flex-shrink-0 rounded-xl">
+          <Avatar className="h-10 w-10 md:h-12 md:w-12 flex-shrink-0 rounded-full">
             <AvatarImage src={update.user.avatar} />
             <AvatarFallback className="bg-[#1600ff] text-white text-xs md:text-sm">
               {update.user.name
