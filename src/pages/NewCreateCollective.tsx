@@ -4,11 +4,12 @@ import { ArrowLeft, HelpCircle, Search, X, Loader2, Edit2, Palette, Camera, User
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { createCollective, getCausesBySearch } from '@/services/api/crwd';
 import { getFavoriteCauses } from '@/services/api/social';
+import { getDonationBox, addCausesToBox } from '@/services/api/donation';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
-import { toast } from 'sonner';
+import { Toast } from '@/components/ui/toast';
 import { categories } from '@/constants/categories';
 import Confetti from 'react-confetti';
 import { SharePost } from '@/components/ui/SharePost';
@@ -120,6 +121,8 @@ export default function NewCreateCollectivePage() {
   const [createdCollective, setCreatedCollective] = useState<any>(null);
   const [step, setStep] = useState(1);
   const [hasStarted, setHasStarted] = useState(false);
+  const [showToast, setShowToast] = useState(false);
+  const [toastMessage, setToastMessage] = useState('');
 
   // Logo customization state - separate states for letter and upload
   const [logoType, setLogoType] = useState<'letter' | 'upload'>('letter');
@@ -192,6 +195,31 @@ export default function NewCreateCollectivePage() {
     enabled: searchTrigger > 0 && searchQuery.trim().length > 0,
   });
 
+  // Fetch donation box to check which causes are already added (only when on success step)
+  const { data: donationBoxData } = useQuery({
+    queryKey: ['donationBox', currentUser?.id],
+    queryFn: getDonationBox,
+    enabled: !!currentUser?.id && step === 3 && !!createdCollective,
+  });
+
+  // Get causes that are already in the donation box
+  const boxCauseIds = new Set(
+    (donationBoxData?.box_causes || []).map((boxCause: any) => {
+      const cause = boxCause.cause || boxCause;
+      return cause?.id?.toString() || boxCause.cause_id?.toString();
+    })
+  );
+
+  // Filter selected causes to only include those not already in the donation box
+  const causesToAdd = selectedCauses.filter((cause: any) => {
+    const causeData = cause.cause || cause;
+    const causeId = (causeData.id || cause.id)?.toString();
+    return causeId && !boxCauseIds.has(causeId);
+  });
+
+  // Check if all causes are already in the donation box
+  const allCausesAlreadyAdded = selectedCauses.length > 0 && causesToAdd.length === 0;
+
   // Create collective mutation
   const createCollectiveMutation = useMutation({
     mutationFn: createCollective,
@@ -220,7 +248,8 @@ export default function NewCreateCollectivePage() {
       
       // Check for logo_file validation error
       if (error.response?.data?.logo_file && Array.isArray(error.response.data.logo_file) && error.response.data.logo_file.length > 0) {
-        toast.error(error.response.data.logo_file[0]);
+        setToastMessage(error.response.data.logo_file[0]);
+        setShowToast(true);
         return;
       }
       
@@ -232,7 +261,8 @@ export default function NewCreateCollectivePage() {
         if (fieldErrors.length > 0) {
           const firstFieldError = errorData[fieldErrors[0]];
           if (Array.isArray(firstFieldError) && firstFieldError.length > 0) {
-            toast.error(firstFieldError[0]);
+            setToastMessage(firstFieldError[0]);
+            setShowToast(true);
             return;
           }
         }
@@ -243,7 +273,8 @@ export default function NewCreateCollectivePage() {
         error.response?.data?.message ||
         error.message ||
         'Failed to create collective';
-      toast.error(errorMessage);
+      setToastMessage(errorMessage);
+      setShowToast(true);
     },
   });
 
@@ -300,15 +331,18 @@ export default function NewCreateCollectivePage() {
   const handleContinueToReview = () => {
     // Validation
     if (name.trim() === '') {
-      toast.error('Please enter a name for your CRWD');
+      setToastMessage('Please enter a name for your CRWD');
+      setShowToast(true);
       return;
     }
     if (description.trim() === '') {
-      toast.error('Please enter a description for your CRWD');
+      setToastMessage('Please enter a description for your CRWD');
+      setShowToast(true);
       return;
     }
     if (selectedCauses.length === 0) {
-      toast.error('Please select at least one cause');
+      setToastMessage('Please select at least one cause');
+      setShowToast(true);
       return;
     }
 
@@ -344,6 +378,101 @@ export default function NewCreateCollectivePage() {
       }
 
       createCollectiveMutation.mutate(requestData);
+    }
+  };
+
+  // Handle adding collective to donation box
+  const handleAddToDonationBox = async () => {
+    if (!createdCollective?.id) {
+      setToastMessage('Collective ID is missing');
+      setShowToast(true);
+      return;
+    }
+
+    if (!causesToAdd || causesToAdd.length === 0) {
+      setToastMessage('No causes to add');
+      setShowToast(true);
+      return;
+    }
+
+    try {
+      // Check if donation box exists
+      const donationBox = await getDonationBox();
+      
+      // If donation box doesn't exist or has no ID, navigate to setup with props
+      if (!donationBox || !donationBox.id) {
+        navigate('/donation?tab=setup', {
+          state: {
+            preselectedItem: {
+              id: createdCollective.id,
+              type: 'collective',
+              data: createdCollective
+            },
+            activeTab: 'collectives'
+          }
+        });
+      } else {
+        // Donation box exists, add only causes that are not already in the donation box
+        try {
+          // Build causes array with attributed_collective (only for causes not already in box)
+          const causes = causesToAdd.map((cause: any) => {
+            const causeData = cause.cause || cause;
+            const causeId = causeData.id || cause.id;
+            return {
+              cause_id: causeId,
+              attributed_collective: createdCollective.id
+            };
+          });
+
+          await addCausesToBox({ causes });
+          setToastMessage('Nonprofits added to your donation box!');
+          setShowToast(true);
+          
+          // Invalidate and refetch donation box query to refresh data
+          await queryClient.invalidateQueries({ queryKey: ['donationBox', currentUser?.id] });
+          await queryClient.refetchQueries({ queryKey: ['donationBox', currentUser?.id] });
+          
+          // Navigate to donation box setup tab with collective preselected
+          navigate('/donation?tab=setup', {
+            state: {
+              preselectedItem: {
+                id: createdCollective.id,
+                type: 'collective',
+                data: createdCollective
+              },
+              activeTab: 'collectives'
+            }
+          });
+        } catch (addError: any) {
+          console.error('Error adding causes to donation box:', addError);
+          setToastMessage(addError?.response?.data?.message || 'Failed to add nonprofits to donation box');
+          setShowToast(true);
+          // On error, still navigate to setup tab
+          navigate('/donation?tab=setup', {
+            state: {
+              preselectedItem: {
+                id: createdCollective.id,
+                type: 'collective',
+                data: createdCollective
+              },
+              activeTab: 'collectives'
+            }
+          });
+        }
+      }
+    } catch (error: any) {
+      console.error('Error checking donation box:', error);
+      // On error, navigate to setup tab
+      navigate('/donation?tab=setup', {
+        state: {
+          preselectedItem: {
+            id: createdCollective.id,
+            type: 'collective',
+            data: createdCollective
+          },
+          activeTab: 'collectives'
+        }
+      });
     }
   };
 
@@ -615,13 +744,15 @@ export default function NewCreateCollectivePage() {
 
               {/* Action Buttons */}
               <div className="space-y-3 md:space-y-4">
-                <Button
-                  onClick={() => navigate('/donation?tab=setup')}
-                  className="w-full bg-[#1600ff] hover:bg-[#1400cc] text-white font-semibold rounded-lg py-3 md:py-4 text-sm md:text-base flex items-center justify-center gap-2"
-                >
-                  <Heart className="w-4 h-4 md:w-5 md:h-5" />
-                  Add to Donation Box
-                </Button>
+                {!allCausesAlreadyAdded && (
+                  <Button
+                    onClick={handleAddToDonationBox}
+                    className="w-full bg-[#1600ff] hover:bg-[#1400cc] text-white font-semibold rounded-lg py-3 md:py-4 text-sm md:text-base flex items-center justify-center gap-2"
+                  >
+                    <Heart className="w-4 h-4 md:w-5 md:h-5" />
+                    Add to Donation Box
+                  </Button>
+                )}
                 
                 <Button
                   onClick={() => navigate(`/groupcrwd/${createdCollective.id}`)}
@@ -662,6 +793,13 @@ export default function NewCreateCollectivePage() {
           description={description}
           isOpen={showShareModal}
           onClose={() => setShowShareModal(false)}
+        />
+
+        {/* Custom Toast */}
+        <Toast
+          message={toastMessage}
+          show={showToast}
+          onHide={() => setShowToast(false)}
         />
       </>
     );
@@ -1235,6 +1373,13 @@ export default function NewCreateCollectivePage() {
         
         </div>
       </div>
+
+      {/* Custom Toast */}
+      <Toast
+        message={toastMessage}
+        show={showToast}
+        onHide={() => setShowToast(false)}
+      />
     </>
   );
 }
