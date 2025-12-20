@@ -11,7 +11,7 @@ export default function MyDonationBoxCard({
   causeCount = 5,
 }: MyDonationBoxCardProps) {
   return (
-    <div className="w-full py-2 md:py-6">
+    <div className="w-full py-2 md:py-6 md:max-w-2xl md:mx-auto">
       <div className="bg-white rounded-lg border border-gray-200 p-3 md:p-6 flex items-start gap-2.5 md:gap-4 hover:shadow-md transition-shadow">
         {/* Icon */}
         <div className="w-8 h-8 md:w-12 md:h-12 bg-[#8B5CF6] rounded-lg flex items-center justify-center flex-shrink-0">

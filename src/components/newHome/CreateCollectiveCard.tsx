@@ -6,7 +6,7 @@ export default function CreateCollectiveCard() {
   const navigate = useNavigate();
 
   return (
-    <div className="w-full py-2 md:py-6">
+    <div className="w-full py-2 md:py-6 md:max-w-2xl md:mx-auto">
       <Card
         onClick={() => navigate('/create-crwd')}
         className="cursor-pointer hover:shadow-md transition-shadow border border-gray-200 bg-white"

@@ -17,7 +17,7 @@ export default function DonationBoxPrompt({ causeCount, hasJoinedCollectives = f
   const showAlmostThereCard = causeCount !== undefined && causeCount > 0;
 
   return (
-    <div className="w-full py-2 md:py-6">
+    <div className="w-full py-2 md:py-6 md:max-w-2xl md:mx-auto">
       {/* Greeting - Only show if not showing "Almost There" card */}
       {!showAlmostThereCard && (
         <h2 className="text-lg md:text-2xl font-bold text-foreground mb-3 md:mb-6">
