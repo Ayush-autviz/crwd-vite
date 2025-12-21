@@ -404,6 +404,19 @@ export default function NewCreateCollectivePage() {
       
       // If donation box doesn't exist or has no ID, navigate to setup with props
       if (!donationBox || !donationBox.id) {
+        // Prepare causes data for preselection
+        const preselectedCauses = selectedCauses.map((cause: any) => {
+          const causeData = cause.cause || cause;
+          return {
+            id: causeData.id || cause.id,
+            name: causeData.name || cause.name || 'Unknown Nonprofit',
+            description: causeData.mission || causeData.description || cause.mission || cause.description || '',
+            mission: causeData.mission || cause.mission || '',
+            logo: causeData.image || causeData.logo || cause.image || cause.logo || '',
+          };
+        });
+        const preselectedCauseIds = preselectedCauses.map((cause: any) => cause.id);
+
         navigate('/donation?tab=setup', {
           state: {
             preselectedItem: {
@@ -411,7 +424,10 @@ export default function NewCreateCollectivePage() {
               type: 'collective',
               data: createdCollective
             },
-            activeTab: 'collectives'
+            activeTab: 'collectives',
+            preselectedCauses: preselectedCauseIds,
+            preselectedCausesData: preselectedCauses,
+            preselectedCollectiveId: createdCollective.id,
           }
         });
       } else {
@@ -420,7 +436,19 @@ export default function NewCreateCollectivePage() {
       }
     } catch (error: any) {
       console.error('Error checking donation box:', error);
-      // On error, navigate to setup tab
+      // On error, navigate to setup tab with causes
+      const preselectedCauses = selectedCauses.map((cause: any) => {
+        const causeData = cause.cause || cause;
+        return {
+          id: causeData.id || cause.id,
+          name: causeData.name || cause.name || 'Unknown Nonprofit',
+          description: causeData.mission || causeData.description || cause.mission || cause.description || '',
+          mission: causeData.mission || cause.mission || '',
+          logo: causeData.image || causeData.logo || cause.image || cause.logo || '',
+        };
+      });
+      const preselectedCauseIds = preselectedCauses.map((cause: any) => cause.id);
+
       navigate('/donation?tab=setup', {
         state: {
           preselectedItem: {
@@ -428,7 +456,10 @@ export default function NewCreateCollectivePage() {
             type: 'collective',
             data: createdCollective
           },
-          activeTab: 'collectives'
+          activeTab: 'collectives',
+          preselectedCauses: preselectedCauseIds,
+          preselectedCausesData: preselectedCauses,
+          preselectedCollectiveId: createdCollective.id,
         }
       });
     }
@@ -767,7 +798,20 @@ export default function NewCreateCollectivePage() {
 
               {/* Description */}
               <p className="text-sm md:text-base text-gray-600 text-center mb-6 md:mb-8 leading-relaxed">
-                Your collective is ready to go! Set up your donation box to support your causes, or start sharing to grow your community.
+                {allCausesAlreadyAdded ? (
+                  <>
+                    Your collective is ready to go! All causes are already in your donation box.{' '}
+                    Start sharing to grow your community.
+                  </>
+                ) : donationBoxData && donationBoxData.id ? (
+                  <>
+                    Your collective is ready to go! Add causes to your donation box or start sharing to grow your community.
+                  </>
+                ) : (
+                  <>
+                    Your collective is ready to go! Set up your donation box to support your causes, or start sharing to grow your community.
+                  </>
+                )}
               </p>
 
               {/* Action Buttons */}
@@ -778,7 +822,7 @@ export default function NewCreateCollectivePage() {
                     className="w-full bg-[#1600ff] hover:bg-[#1400cc] text-white font-semibold rounded-lg py-3 md:py-4 text-sm md:text-base flex items-center justify-center gap-2"
                   >
                     <Heart className="w-4 h-4 md:w-5 md:h-5" />
-                    Add to Donation Box
+                   {donationBoxData && donationBoxData.id ? 'Add to Donation Box' : 'Set Up Donation Box'}
                   </Button>
                 )}
                 
