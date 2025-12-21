@@ -1,6 +1,7 @@
 import { Button } from '@/components/ui/button';
 import PopularPosts from '@/components/PopularPosts';
 import { useNavigate } from 'react-router-dom';
+import ActivityCard from './ActivityCard';
 
 interface CommunityActivityProps {
   posts: any[];
@@ -18,6 +19,9 @@ export default function CommunityActivity({
   collectiveData,
 }: CommunityActivityProps) {
   const navigate = useNavigate();
+  
+  // Get recent activities from collective data
+  const recentActivities = collectiveData?.recent_activities || [];
 
   return (
     <div className="px-3 md:px-4 py-4 md:py-6">
@@ -53,18 +57,32 @@ export default function CommunityActivity({
         <div className="flex items-center justify-center py-6 md:py-8">
           <p className="text-xs md:text-sm text-muted-foreground">Loading activity...</p>
         </div>
-      ) : posts && posts.length > 0 ? (
-        <PopularPosts
-          posts={{ results: posts }}
-          title="no title"
-          showLoadMore={false}
-        />
       ) : (
-        <div className="text-center py-6 md:py-8">
-          <p className="text-xs md:text-sm text-muted-foreground">
-            No community activity yet. Be the first to post!
-          </p>
-        </div>
+        <>
+          {/* Posts Section */}
+          {posts && posts.length > 0 ? (
+            <PopularPosts
+              posts={{ results: posts }}
+              title="no title"
+              showLoadMore={false}
+            />
+          ) : (
+            <div className="text-center py-6 md:py-8">
+              <p className="text-xs md:text-sm text-muted-foreground">
+                No community activity yet. Be the first to post!
+              </p>
+            </div>
+          )}
+          
+          {/* Recent Activities Section */}
+          {recentActivities.length > 0 && (
+            <div className="mt-4 md:mt-6 space-y-0">
+              {recentActivities.map((activity: any) => (
+                <ActivityCard key={activity.id} activity={activity} />
+              ))}
+            </div>
+          )}
+        </>
       )}
     </div>
   );

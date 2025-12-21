@@ -15,6 +15,7 @@ import Confetti from 'react-confetti';
 import { SharePost } from '@/components/ui/SharePost';
 import { useAuthStore } from '@/stores/store';
 import { CrwdAnimation } from '@/assets/newLogo';
+import JoinCollectiveBottomSheet from '@/components/newgroupcrwd/JoinCollectiveBottomSheet';
 // CreateCollectivePrompt will be created if needed
 
 const getCategoryById = (categoryId: string | undefined) => {
@@ -123,6 +124,7 @@ export default function NewCreateCollectivePage() {
   const [hasStarted, setHasStarted] = useState(false);
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState('');
+  const [showAddToBoxModal, setShowAddToBoxModal] = useState(false);
 
   // Logo customization state - separate states for letter and upload
   const [logoType, setLogoType] = useState<'letter' | 'upload'>('letter');
@@ -256,7 +258,14 @@ export default function NewCreateCollectivePage() {
       // Check for other field-specific errors
       const errorData = error.response?.data;
       if (errorData) {
-        // Check for any field errors (like logo_file, name, description, etc.)
+        // Check for name field error specifically (it's an array)
+        if (errorData.name && Array.isArray(errorData.name) && errorData.name.length > 0) {
+          setToastMessage(errorData.name[0]);
+          setShowToast(true);
+          return;
+        }
+        
+        // Check for any other field errors (like description, etc.)
         const fieldErrors = Object.keys(errorData).filter(key => Array.isArray(errorData[key]) && errorData[key].length > 0);
         if (fieldErrors.length > 0) {
           const firstFieldError = errorData[fieldErrors[0]];
@@ -389,12 +398,6 @@ export default function NewCreateCollectivePage() {
       return;
     }
 
-    if (!causesToAdd || causesToAdd.length === 0) {
-      setToastMessage('No causes to add');
-      setShowToast(true);
-      return;
-    }
-
     try {
       // Check if donation box exists
       const donationBox = await getDonationBox();
@@ -412,53 +415,8 @@ export default function NewCreateCollectivePage() {
           }
         });
       } else {
-        // Donation box exists, add only causes that are not already in the donation box
-        try {
-          // Build causes array with attributed_collective (only for causes not already in box)
-          const causes = causesToAdd.map((cause: any) => {
-            const causeData = cause.cause || cause;
-            const causeId = causeData.id || cause.id;
-            return {
-              cause_id: causeId,
-              attributed_collective: createdCollective.id
-            };
-          });
-
-          await addCausesToBox({ causes });
-          setToastMessage('Nonprofits added to your donation box!');
-          setShowToast(true);
-          
-          // Invalidate and refetch donation box query to refresh data
-          await queryClient.invalidateQueries({ queryKey: ['donationBox', currentUser?.id] });
-          await queryClient.refetchQueries({ queryKey: ['donationBox', currentUser?.id] });
-          
-          // Navigate to donation box setup tab with collective preselected
-          navigate('/donation?tab=setup', {
-            state: {
-              preselectedItem: {
-                id: createdCollective.id,
-                type: 'collective',
-                data: createdCollective
-              },
-              activeTab: 'collectives'
-            }
-          });
-        } catch (addError: any) {
-          console.error('Error adding causes to donation box:', addError);
-          setToastMessage(addError?.response?.data?.message || 'Failed to add nonprofits to donation box');
-          setShowToast(true);
-          // On error, still navigate to setup tab
-          navigate('/donation?tab=setup', {
-            state: {
-              preselectedItem: {
-                id: createdCollective.id,
-                type: 'collective',
-                data: createdCollective
-              },
-              activeTab: 'collectives'
-            }
-          });
-        }
+        // Donation box exists, show bottom sheet to let user select causes
+        setShowAddToBoxModal(true);
       }
     } catch (error: any) {
       console.error('Error checking donation box:', error);
@@ -474,6 +432,69 @@ export default function NewCreateCollectivePage() {
         }
       });
     }
+  };
+
+  // Handle confirm from bottom sheet - add selected causes to donation box
+  const handleAddToBoxConfirm = async (selectedNonprofits: any[], collectiveId: string, shouldSetupDonationBox: boolean) => {
+    if (!createdCollective?.id) return;
+
+    // If no donation box and user wants to set it up
+    if (shouldSetupDonationBox) {
+      const preselectedCauses = selectedNonprofits.map((np) => {
+        const cause = np.cause || np;
+        return {
+          id: cause.id || np.id,
+          name: cause.name || np.name || 'Unknown Nonprofit',
+          description: cause.mission || cause.description || np.mission || np.description || '',
+          mission: cause.mission || np.mission || '',
+          logo: cause.image || cause.logo || np.image || np.logo || '',
+        };
+      });
+
+      const preselectedCauseIds = preselectedCauses.map((cause) => cause.id);
+
+      // Close the modal
+      setShowAddToBoxModal(false);
+      
+      // Navigate to donation setup with preselected causes
+      navigate('/donation?tab=setup', {
+        state: {
+          preselectedCauses: preselectedCauseIds,
+          preselectedCausesData: preselectedCauses,
+          preselectedCollectiveId: parseInt(collectiveId),
+          returnTo: `/groupcrwd/${createdCollective.id}`,
+        },
+      });
+      return;
+    }
+
+    // If donation box exists and causes are selected, add them
+    if (selectedNonprofits.length > 0) {
+      const causes = selectedNonprofits.map((np) => {
+        const cause = np.cause || np;
+        const causeId = cause.id || np.id;
+        const causeEntry: { cause_id: number; attributed_collective?: number } = {
+          cause_id: causeId,
+          attributed_collective: parseInt(collectiveId),
+        };
+        return causeEntry;
+      });
+      
+      try {
+        await addCausesToBox({ causes });
+        queryClient.invalidateQueries({ queryKey: ['donationBox', currentUser?.id] });
+        await queryClient.refetchQueries({ queryKey: ['donationBox', currentUser?.id] });
+        setToastMessage('Nonprofits added to your donation box!');
+        setShowToast(true);
+      } catch (error: any) {
+        console.error('Error adding causes to donation box:', error);
+        setToastMessage(error?.response?.data?.message || 'Failed to add nonprofits to donation box. Please try again.');
+        setShowToast(true);
+      }
+    }
+
+    // Close the modal
+    setShowAddToBoxModal(false);
   };
 
   // Show prompt if user is not logged in
@@ -698,6 +719,13 @@ export default function NewCreateCollectivePage() {
             </Button>
           </div>
         </div>
+
+        {/* Custom Toast */}
+        <Toast
+          message={toastMessage}
+          show={showToast}
+          onHide={() => setShowToast(false)}
+        />
       </div>
     );
   }
@@ -793,6 +821,29 @@ export default function NewCreateCollectivePage() {
           description={description}
           isOpen={showShareModal}
           onClose={() => setShowShareModal(false)}
+        />
+
+        {/* Add to Donation Box Bottom Sheet */}
+        <JoinCollectiveBottomSheet
+          isOpen={showAddToBoxModal}
+          onClose={() => setShowAddToBoxModal(false)}
+          collectiveName={name}
+          nonprofits={selectedCauses.map((cause: any) => {
+            const causeData = cause.cause || cause;
+            return {
+              id: causeData.id || cause.id,
+              name: causeData.name || cause.name,
+              image: causeData.image || cause.image,
+              logo: causeData.logo || cause.logo,
+              description: causeData.description || cause.description,
+              mission: causeData.mission || cause.mission,
+              cause: causeData
+            };
+          })}
+          collectiveId={createdCollective.id.toString()}
+          onJoin={handleAddToBoxConfirm}
+          isJoining={false}
+          donationBox={donationBoxData}
         />
 
         {/* Custom Toast */}
