@@ -723,7 +723,7 @@ export const Checkout = ({
           )}
 
           {/* Collectives Section */}
-          {attributingCollectives.length > 0 && (
+          {/* {attributingCollectives.length > 0 && (
             <div className="mb-4 md:mb-6">
               <div className="mb-3 md:mb-4">
                 <h2 className="text-lg md:text-xl font-bold text-gray-900">Collectives</h2>
@@ -732,7 +732,7 @@ export const Checkout = ({
                 </p>
               </div>
 
-              {/* Collectives List */}
+              
               <div className="space-y-2.5 md:space-y-3">
                 {attributingCollectives.map((collective: any) => {
                   const isExpanded = expandedCollectives.has(collective.id);
@@ -827,7 +827,7 @@ export const Checkout = ({
                 })}
               </div>
             </div>
-          )}
+          )} */}
 
           {/* Fallback to selectedOrganizations if no API data */}
           {!hasApiData && selectedOrganizations.length > 0 && (
