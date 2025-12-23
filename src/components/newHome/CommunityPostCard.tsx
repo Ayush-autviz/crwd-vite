@@ -134,36 +134,36 @@ export default function CommunityPostCard({ post, onCommentPress }: CommunityPos
 
       )}
     >
-      <CardContent className="p-3 md:p-4 lg:p-5 xl:p-6">
-        <div className="flex gap-2.5 md:gap-3 lg:gap-4 xl:gap-5">
+      <CardContent className="p-3 md:p-4">
+        <div className="flex gap-2.5 md:gap-3">
           <Link to={`/user-profile/${post.user.id}`}>
-            <Avatar className="h-9 w-9 md:h-10 md:w-10 lg:h-12 lg:w-12 xl:h-14 xl:w-14 flex-shrink-0">
+            <Avatar className="h-9 w-9 md:h-10 md:w-10 flex-shrink-0">
               <AvatarImage
                 src={post.user.avatar}
                 alt={displayName}
               />
               <AvatarFallback
                 style={{ backgroundColor: avatarBgColor }}
-                className="text-white font-bold text-xs md:text-sm lg:text-base xl:text-lg"
+                className="text-white font-bold text-xs md:text-sm"
               >
                 {initials}
               </AvatarFallback>
             </Avatar>
           </Link>
           <div className="flex-1 min-w-0">
-            <div className="mb-2 md:mb-3 lg:mb-4 xl:mb-5">
-              <div className="flex items-center gap-1.5 md:gap-2 lg:gap-3 mb-1">
+            <div className="mb-2 md:mb-3">
+              <div className="flex items-center gap-1.5 md:gap-2 mb-1">
                 <Link
                   to={`/user-profile/${post.user.id}`}
                   onClick={(e) => e.stopPropagation()}
-                  className="text-sm md:text-base lg:text-lg xl:text-xl font-bold text-gray-900 hover:underline cursor-pointer"
+                  className="text-sm md:text-base font-bold text-gray-900 hover:underline cursor-pointer"
                 >
                   {displayName}
                 </Link>
-                <span className="text-xs md:text-sm lg:text-base xl:text-lg text-gray-500">@{post.user.username}</span>
+                <span className="text-xs md:text-sm text-gray-500">@{post.user.username}</span>
               </div>
               {post.collective?.name && (
-                <div className="text-xs md:text-sm lg:text-base xl:text-lg text-gray-500 mb-1">
+                <div className="text-xs md:text-sm text-gray-500 mb-1">
                   {post.collective.name}
                 </div>
               )}
@@ -172,7 +172,7 @@ export default function CommunityPostCard({ post, onCommentPress }: CommunityPos
             </div>
 
             <Link to={`/post/${post.id}`} className="block">
-              <div className="text-sm md:text-base lg:text-lg xl:text-xl text-gray-900 leading-relaxed mb-3 md:mb-4 lg:mb-5 xl:mb-6 whitespace-pre-line">
+              <div className="text-sm md:text-base text-gray-900 leading-relaxed mb-3 md:mb-4 whitespace-pre-line">
                 {post.content}
               </div>
 
@@ -232,30 +232,30 @@ export default function CommunityPostCard({ post, onCommentPress }: CommunityPos
                   <img
                     src={post.imageUrl}
                     alt="Post"
-                    className="w-full h-[180px] md:h-[200px] lg:h-[240px] xl:h-[280px] object-cover"
+                    className="w-full h-[180px] md:h-[200px] object-cover"
                   />
                 </a>
               ) : null}
 
               {/* Footer */}
-              <div className="border-y border-gray-100 py-3 md:py-4 lg:py-5 xl:py-6">
+              <div className="border-y border-gray-100 py-3 md:py-4">
                 <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-4 md:gap-6 lg:gap-8 xl:gap-10">
+                  <div className="flex items-center gap-4 md:gap-6">
                     <button
                       onClick={handleLikeClick}
                       disabled={likeMutation.isPending || unlikeMutation.isPending}
-                      className="flex items-center gap-1.5 lg:gap-2 hover:opacity-80 transition-opacity disabled:opacity-50"
+                      className="flex items-center gap-1.5 hover:opacity-80 transition-opacity disabled:opacity-50"
                     >
                       {/* {likeMutation.isPending || unlikeMutation.isPending ? (
                         <Loader2 className="w-4 h-4 md:w-5 md:h-5 animate-spin text-gray-400" />
                       ) : ( */}
                       <Heart
-                        className={`w-4 h-4 md:w-5 md:h-5 lg:w-6 lg:h-6 xl:w-7 xl:h-7 ${isLiked ? "fill-[#ef4444] text-[#ef4444]" : "text-gray-400"
+                        className={`w-4 h-4 md:w-5 md:h-5 ${isLiked ? "fill-[#ef4444] text-[#ef4444]" : "text-gray-400"
                           }`}
                         strokeWidth={2}
                       />
                       {/* )} */}
-                      <span className="text-sm md:text-base lg:text-lg xl:text-xl font-medium text-gray-500">{likesCount}</span>
+                      <span className="text-sm md:text-base font-medium text-gray-500">{likesCount}</span>
                     </button>
                     <button
                       onClick={(e) => {
@@ -267,10 +267,10 @@ export default function CommunityPostCard({ post, onCommentPress }: CommunityPos
                           setShowCommentsSheet(true);
                         }
                       }}
-                      className="flex items-center gap-1.5 lg:gap-2 hover:opacity-80 transition-opacity"
+                      className="flex items-center gap-1.5 hover:opacity-80 transition-opacity"
                     >
-                      <MessageCircle className="w-4 h-4 md:w-5 md:h-5 lg:w-6 lg:h-6 xl:w-7 xl:h-7 text-gray-400" strokeWidth={2} />
-                      <span className="text-sm md:text-base lg:text-lg xl:text-xl font-medium text-gray-500">{post.comments || 0}</span>
+                      <MessageCircle className="w-4 h-4 md:w-5 md:h-5 text-gray-400" strokeWidth={2} />
+                      <span className="text-sm md:text-base font-medium text-gray-500">{post.comments || 0}</span>
                     </button>
                   </div>
                   <button
@@ -281,7 +281,7 @@ export default function CommunityPostCard({ post, onCommentPress }: CommunityPos
                       setShowShareModal(true);
                     }}
                   >
-                    <Share2 className="w-4 h-4 md:w-5 md:h-5 lg:w-6 lg:h-6 xl:w-7 xl:h-7 text-gray-400" strokeWidth={2} />
+                    <Share2 className="w-4 h-4 md:w-5 md:h-5 text-gray-400" strokeWidth={2} />
                   </button>
                 </div>
               </div>

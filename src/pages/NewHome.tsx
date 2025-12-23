@@ -372,7 +372,7 @@ export default function NewHome() {
                 showBackButton={false}
             />
             {/* Main Content - Takes full width on mobile, 12 columns on desktop */}
-            <div className="bg-gradient-to-r from-blue-50 via-purple-50 to-pink-50 px-4 md:px-6 lg:px-10 py-2 md:py-6">
+            <div className="bg-gradient-to-r from-blue-50 via-purple-50 to-pink-50 px-4 md:px-6 py-2 md:py-6">
                 {/* Personalized Greeting */}
 
                 {/* My Donation Box Card or Prompt */}
@@ -445,7 +445,7 @@ export default function NewHome() {
                 <div className="md:col-span-12"> */}
 
                 <div className="w-full max-w-7xl mx-auto">
-                <div className="mx-4 md:mx-6 lg:mx-8">
+                <div className="mx-4 md:mx-6">
                     {/* 2 Posts - Above Featured Nonprofits */}
                     {token?.access_token && (
                         <CommunityPosts 

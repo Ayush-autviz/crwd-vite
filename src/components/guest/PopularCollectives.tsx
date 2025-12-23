@@ -122,7 +122,7 @@ export default function PopularCollectives({
                     <div className="flex items-center gap-4">
                   {/* Icon */}
                   <div
-                    className="w-15 h-15 md:w-18 md:h-18 lg:w-16 lg:h-16 xl:w-16 xl:h-16 rounded-xl flex items-center justify-center mb-4 overflow-hidden"
+                    className="w-15 h-15 md:w-18 md:h-18 rounded-xl flex items-center justify-center mb-4 overflow-hidden"
                     style={iconColor ? { backgroundColor: iconColor } : {}}
                   >
                     {showImage ? (
@@ -132,14 +132,14 @@ export default function PopularCollectives({
                         className="w-full h-full object-cover"
                       />
                     ) : (
-                      <span className="text-white font-bold text-xl md:text-2xl lg:text-2xl xl:text-2xl">
+                      <span className="text-white font-bold text-xl md:text-2xl">
                         {iconLetter}
                       </span>
                     )}
                   </div>
 
                   {/* Title */}
-                  <h3 className="font-bold text-lg sm:text-xl md:text-2xl lg:text-2xl xl:text-2xl text-foreground mb-3">
+                  <h3 className="font-bold text-lg sm:text-xl md:text-2xl text-foreground mb-3">
                     {collective.name}
                   </h3>
                     </div>
@@ -155,18 +155,18 @@ export default function PopularCollectives({
                           .toUpperCase()}
                       </AvatarFallback>
                     </Avatar>
-                    <p className="text-xs md:text-sm lg:text-sm xl:text-sm text-muted-foreground">
+                    <p className="text-xs md:text-sm text-muted-foreground">
                       Founded by {collective.founder.name}
                     </p>
                   </div>
 
                   {/* Nonprofits count */}
-                  <p className="text-xs md:text-sm lg:text-sm xl:text-sm text-muted-foreground mb-3">
+                  <p className="text-xs md:text-sm text-muted-foreground mb-3">
                     Supporting {collective.nonprofit_count} nonprofit{collective.nonprofit_count !== 1 ? "s" : ""}
                   </p>
 
                   {/* Description */}
-                  <p className="text-sm md:text-base lg:text-base xl:text-base text-muted-foreground leading-relaxed mb-4 line-clamp-3">
+                  <p className="text-sm md:text-base text-muted-foreground leading-relaxed mb-4 line-clamp-3">
                     {collective.description}
                   </p>
 
