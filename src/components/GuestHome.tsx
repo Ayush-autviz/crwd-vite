@@ -100,12 +100,12 @@ export default function GuestHome() {
                     </button>
 
                     {/* Sign In Button */}
-                    <Button
+                    <button
                         onClick={() => navigate("/login")}
-                        className="bg-[#ff3366] hover:bg-[#ff0033] text-white font-bold px-3 md:px-6 py-2 rounded-full text-xs md:text-base"
+                        className="bg-[#ff3366] hover:bg-[#ff0033] text-white font-bold px-3 md:px-6 py-1.5 md:py-2 rounded-full text-xs md:text-base"
                     >
                         Sign In
-                    </Button>
+                    </button>
 
                     {/* Get the App Button */}
                     <Button
@@ -124,7 +124,7 @@ export default function GuestHome() {
                         <Menu className="w-6 h-6 text-gray-700" />
                     </button> */}
                     <button onClick={() => setMenuOpen(true)}>
-                        <Menu className="w-9 h-9 text-gray-700" />
+                        <Menu className="h-7 w-7 md:h-9 md:w-9 text-gray-700" />
                     </button>
                 </div>
             </div>

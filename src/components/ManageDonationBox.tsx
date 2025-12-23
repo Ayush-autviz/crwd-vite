@@ -100,7 +100,8 @@ const ManageDonationBox: React.FC<ManageDonationBoxProps> = ({
   const { data: defaultCausesData, isLoading: defaultCausesLoading } = useQuery({
     queryKey: ['default-causes-manage'],
     queryFn: () => getCausesBySearch('', '', 1),
-    enabled: activeTab === 'nonprofits' && !showSearchResults,
+    enabled: activeTab === 'nonprofits', // Always enable when on nonprofits tab to allow adding causes after reload
+    refetchOnMount: true,
   });
 
   // Fetch joined collectives
@@ -273,8 +274,9 @@ const ManageDonationBox: React.FC<ManageDonationBoxProps> = ({
       setSelectedCauses((prev) => prev.filter(id => id !== causeId));
       setSelectedCausesData((prev) => prev.filter(c => c.id !== causeId));
     } else {
-      // Selecting - find the cause data from search results
-      const causeData = causesData?.results?.find((c: any) => c.id === causeId);
+      // Selecting - find the cause data from search results or default causes
+      const causeData = causesData?.results?.find((c: any) => c.id === causeId) ||
+                        defaultCausesData?.results?.find((c: any) => c.id === causeId);
       if (causeData) {
         setSelectedCauses((prev) => [...prev, causeId]);
         setSelectedCausesData((prev) => [...prev, causeData]);
@@ -559,7 +561,7 @@ const ManageDonationBox: React.FC<ManageDonationBoxProps> = ({
 
   // Calculate equal distribution percentage and amount per item
   const totalItems = totalCauseIds.length + totalCollectiveIds.length;
-  const distributionPercentage = totalItems > 0 ? Math.floor(100 / totalItems) : 0;
+  const distributionPercentage = totalItems > 0 ? 100 / totalItems : 0;
   const amountPerItem = totalItems > 0 ? (editableAmount * 0.9) / totalItems : 0; // 90% after fees, divided equally
 
   // Calculate capacity and counts for summary card
@@ -650,7 +652,7 @@ const ManageDonationBox: React.FC<ManageDonationBoxProps> = ({
     })), ...newlySelectedCauses.map((cause: any) => ({
       id: `cause-${cause.id}`,
       name: cause.name,
-      imageUrl: cause.logo || '',
+      imageUrl: cause.image || cause.logo || cause.imageUrl || '',
       description: cause.mission || cause.description || '',
       isExisting: false,
       isNewlySelected: true,
@@ -918,7 +920,7 @@ const ManageDonationBox: React.FC<ManageDonationBoxProps> = ({
                             <div className="flex items-center gap-3 md:gap-4">
                               <div className="text-right">
                                 <div className="font-bold text-gray-900 text-sm md:text-base">
-                                  {distributionPercentage}%
+                                  {distributionPercentage.toFixed(1)}%
                                 </div>
                                 <div className="text-xs md:text-sm text-gray-500">
                                   ${amountPerItem.toFixed(2)}/mo
@@ -1159,7 +1161,7 @@ const ManageDonationBox: React.FC<ManageDonationBoxProps> = ({
                               <div className="flex items-center gap-3 md:gap-4">
                                 <div className="text-right">
                                   <div className="font-bold text-gray-900 text-sm md:text-base">
-                                    {distributionPercentage}%
+                                    {distributionPercentage.toFixed(1)}%
                                   </div>
                                   <div className="text-xs md:text-sm text-gray-500">
                                     ${amountPerItem.toFixed(2)}/mo

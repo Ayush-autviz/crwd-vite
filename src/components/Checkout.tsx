@@ -457,7 +457,7 @@ export const Checkout = ({
     : selectedOrganizations.length;
   const distributionPercentage =
     totalItems > 0
-      ? Math.floor(100 / totalItems)
+      ? 100 / totalItems
       : 0;
   const amountPerItem = totalItems > 0
     ? (actualDonationAmount * 0.9) / totalItems // 90% after fees, divided equally
@@ -724,7 +724,7 @@ export const Checkout = ({
                       {/* Donation Info & Remove Button */}
                       <div className="flex items-center gap-3 md:gap-4 ml-2 md:ml-4">
                         <div className="text-right">
-                          <p className="font-bold text-sm md:text-base text-gray-900">{distributionPercentage}%</p>
+                          <p className="font-bold text-sm md:text-base text-gray-900">{distributionPercentage.toFixed(1)}%</p>
                           <p className="text-xs md:text-sm text-gray-600">${amountPerItem.toFixed(2)}/mo</p>
                         </div>
                         <button
@@ -804,7 +804,7 @@ export const Checkout = ({
                         </div>
                         <div className="flex items-center gap-3 md:gap-4 ml-2 md:ml-4">
                           <div className="text-right">
-                            <p className="font-bold text-sm md:text-base text-gray-900">{distributionPercentage}%</p>
+                            <p className="font-bold text-sm md:text-base text-gray-900">{distributionPercentage.toFixed(1)}%</p>
                             <p className="text-xs md:text-sm text-gray-600">${amountPerItem.toFixed(2)}/mo</p>
                           </div>
                         </div>
@@ -883,7 +883,7 @@ export const Checkout = ({
                       </div>
                       <div className="flex items-center gap-3 md:gap-4 ml-2 md:ml-4">
                         <div className="text-right">
-                          <p className="font-bold text-sm md:text-base text-gray-900">{distributionPercentage}%</p>
+                          <p className="font-bold text-sm md:text-base text-gray-900">{distributionPercentage.toFixed(1)}%</p>
                           <p className="text-xs md:text-sm text-gray-600">${amountPerItem.toFixed(2)}/mo</p>
                         </div>
                       </div>

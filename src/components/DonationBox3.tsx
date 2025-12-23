@@ -91,7 +91,7 @@ export const DonationBox3 = ({
 
   // Calculate distribution
   const totalItems = causes.length;
-  const distributionPercentage = totalItems > 0 ? Math.floor(100 / totalItems) : 0;
+  const distributionPercentage = totalItems > 0 ? 100 / totalItems : 0;
   const amountPerItem = totalItems > 0 ? (actualDonationAmount * 0.9) / totalItems : 0; // 90% after fees, divided equally
   const [selectedPaymentMethod, setSelectedPaymentMethod] =
     useState<string>("");
@@ -614,7 +614,7 @@ export const DonationBox3 = ({
                     {/* Donation Info & Action */}
                     <div className="flex items-center gap-3 md:gap-4 ml-2 md:ml-4">
                       <div className="text-right">
-                        <p className="font-bold text-sm md:text-base text-gray-900">{distributionPercentage}%</p>
+                        <p className="font-bold text-sm md:text-base text-gray-900">{distributionPercentage.toFixed(1)}%</p>
                         <p className="text-xs md:text-sm text-gray-600">${amountPerItem.toFixed(2)}/mo</p>
                       </div>
                       <button
