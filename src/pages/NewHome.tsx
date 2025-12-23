@@ -323,6 +323,12 @@ export default function NewHome() {
                     notification.data?.new_member_id !== undefined ||
                     notification.title?.toLowerCase().includes('new member');
 
+                // Extract collective ID from notification data if available
+                const collectiveId = notification.data?.collective_id || 
+                                   notification.data?.collectiveId || 
+                                   notification.data?.crwd_id ||
+                                   null;
+
                 return {
                     id: notification.id,
                     user: {
@@ -336,6 +342,7 @@ export default function NewHome() {
                     collective: collectiveName
                         ? {
                             name: collectiveName,
+                            id: collectiveId,
                         }
                         : undefined,
                     content: actionText,
@@ -437,7 +444,7 @@ export default function NewHome() {
             {/* <div className="md:grid md:grid-cols-12 md:gap-6 md:pt-6 md:px-6">
                 <div className="md:col-span-12"> */}
 
-                <div className="w-full max-w-6xl mx-auto">
+                <div className="w-full max-w-7xl mx-auto">
                 <div className="mx-4 md:mx-6 lg:mx-8">
                     {/* 2 Posts - Above Featured Nonprofits */}
                     {token?.access_token && (

@@ -118,11 +118,11 @@ export default function PopularCollectives({
 
             return (
               <Card key={collective.id} className="rounded-xl shadow-sm hover:shadow-lg transition-shadow duration-300">
-                <CardContent className="p-4 md:p-6">
+                <CardContent className="p-4 md:p-6 lg:p-6 xl:p-6">
                     <div className="flex items-center gap-4">
                   {/* Icon */}
                   <div
-                    className="w-15 h-15 md:w-18 md:h-18 rounded-xl flex items-center justify-center mb-4 overflow-hidden"
+                    className="w-15 h-15 md:w-18 md:h-18 lg:w-16 lg:h-16 xl:w-16 xl:h-16 rounded-xl flex items-center justify-center mb-4 overflow-hidden"
                     style={iconColor ? { backgroundColor: iconColor } : {}}
                   >
                     {showImage ? (
@@ -132,20 +132,20 @@ export default function PopularCollectives({
                         className="w-full h-full object-cover"
                       />
                     ) : (
-                      <span className="text-white font-bold text-xl md:text-2xl">
+                      <span className="text-white font-bold text-xl md:text-2xl lg:text-2xl xl:text-2xl">
                         {iconLetter}
                       </span>
                     )}
                   </div>
 
                   {/* Title */}
-                  <h3 className="font-bold text-lg sm:text-xl md:text-2xl text-foreground mb-3">
+                  <h3 className="font-bold text-lg sm:text-xl md:text-2xl lg:text-2xl xl:text-2xl text-foreground mb-3">
                     {collective.name}
                   </h3>
                     </div>
                   {/* Founder */}
                   <div className="flex items-center gap-2 mb-2">
-                    <Avatar className="h-5 w-5 md:h-6 md:w-6">
+                    <Avatar className="h-5 w-5 md:h-6 md:w-6 lg:h-6 lg:w-6 xl:h-6 xl:w-6">
                       <AvatarImage src={collective.founder.profile_picture} />
                       <AvatarFallback className="text-[10px]">
                         {collective.founder.name
@@ -155,18 +155,18 @@ export default function PopularCollectives({
                           .toUpperCase()}
                       </AvatarFallback>
                     </Avatar>
-                    <p className="text-xs md:text-sm text-muted-foreground">
+                    <p className="text-xs md:text-sm lg:text-sm xl:text-sm text-muted-foreground">
                       Founded by {collective.founder.name}
                     </p>
                   </div>
 
                   {/* Nonprofits count */}
-                  <p className="text-xs md:text-sm text-muted-foreground mb-3">
+                  <p className="text-xs md:text-sm lg:text-sm xl:text-sm text-muted-foreground mb-3">
                     Supporting {collective.nonprofit_count} nonprofit{collective.nonprofit_count !== 1 ? "s" : ""}
                   </p>
 
                   {/* Description */}
-                  <p className="text-sm md:text-base text-muted-foreground leading-relaxed mb-4 line-clamp-3">
+                  <p className="text-sm md:text-base lg:text-base xl:text-base text-muted-foreground leading-relaxed mb-4 line-clamp-3">
                     {collective.description}
                   </p>
 

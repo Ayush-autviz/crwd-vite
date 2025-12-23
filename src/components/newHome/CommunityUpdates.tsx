@@ -1,9 +1,12 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { HandHeart, UserPlus } from "lucide-react";
-import { useQuery } from "@tanstack/react-query";
-import { getPostById } from "@/services/api/social";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { getPostById, followUser } from "@/services/api/social";
 import CommunityPostCard from "@/components/newHome/CommunityPostCard";
+import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
+import { useAuthStore } from "@/stores/store";
 
 interface CommunityUpdate {
   id: string | number;
@@ -17,6 +20,7 @@ interface CommunityUpdate {
   };
   collective?: {
     name: string;
+    id?: string | number;
   };
   content: string;
   timestamp?: string;
@@ -99,18 +103,51 @@ function PostWithData({ update }: { update: CommunityUpdate }) {
 
 // Component to display notification summary
 function NotificationSummary({ update }: { update: CommunityUpdate }) {
+  const navigate = useNavigate();
+  const queryClient = useQueryClient();
+  const { user: currentUser } = useAuthStore();
   const actionText = update.content || "";
   const isJoinNotification = update.isJoinNotification || false;
+  const isDonationNotification = !isJoinNotification && actionText.toLowerCase().includes('donated');
+
+  // Follow user mutation
+  const followMutation = useMutation({
+    mutationFn: (userId: string) => followUser(userId),
+    onSuccess: () => {
+      toast.success('Following user');
+      queryClient.invalidateQueries({ queryKey: ['userProfile', update.user.id] });
+    },
+    onError: (error: any) => {
+      console.error('Error following user:', error);
+      toast.error('Failed to follow user. Please try again.');
+    },
+  });
+
+  const handleJoinClick = () => {
+    if (update.collective?.id) {
+      navigate(`/groupcrwd/${update.collective.id}`);
+    } else if (update.collective?.name) {
+      // If no ID, try to navigate by name (might need to search first)
+      // For now, we'll try to construct the URL - this might need adjustment based on routing
+      navigate(`/search?q=${encodeURIComponent(update.collective.name)}&type=collective`);
+    }
+  };
+
+  const handleFollowClick = () => {
+    if (update.user.id && currentUser?.id !== update.user.id) {
+      followMutation.mutate(update.user.id.toString());
+    }
+  };
 
   return (
-    <div className="bg-white rounded-lg border-0 p-3 md:p-4 ">
-      {/* Top Section: Profile and Follow Button */}
-      <div className="flex items-start justify-between mb-2.5 md:mb-3">
-        <div className="flex items-center gap-2.5 md:gap-3">
+    <div className="bg-white rounded-lg border-0 p-3 md:p-4 lg:p-5 xl:p-6">
+      {/* Top Section: Profile and Action Button */}
+      <div className="flex items-start justify-between mb-2.5 md:mb-3 lg:mb-4 xl:mb-5">
+        <div className="flex items-center gap-2.5 md:gap-3 lg:gap-4 xl:gap-5">
           {/* Avatar */}
-          <Avatar className="h-9 w-9 md:h-11 md:w-11 flex-shrink-0 rounded-full">
+          <Avatar className="h-9 w-9 md:h-11 md:w-11 lg:h-12 lg:w-12 xl:h-14 xl:w-14 flex-shrink-0 rounded-full">
             <AvatarImage src={update.user.avatar} />
-            <AvatarFallback className="bg-[#1600ff] text-white text-xs md:text-sm">
+            <AvatarFallback className="bg-[#1600ff] text-white text-xs md:text-sm lg:text-base xl:text-lg">
               {update.user.name
                 .split(" ")
                 .map((n) => n.charAt(0))
@@ -121,44 +158,63 @@ function NotificationSummary({ update }: { update: CommunityUpdate }) {
 
           {/* User Info */}
           <div className="flex-1 min-w-0">
-            <div className="flex items-center gap-1.5 md:gap-2 flex-wrap">
+            <div className="flex items-center gap-1.5 md:gap-2 lg:gap-3 flex-wrap">
               <Link
                 to={`/user-profile/${update.user.id}`}
-                className="font-bold text-sm md:text-base text-gray-900 hover:underline block"
+                className="font-bold text-sm md:text-base lg:text-lg xl:text-xl text-gray-900 hover:underline block"
               >
                 {update.user.firstName && update.user.lastName 
                   ? `${update.user.firstName} ${update.user.lastName}`
                   : update.user.name || update.user.username}
               </Link>
-              <p className="text-xs md:text-sm text-gray-500">@{update.user.username}</p>
+              <p className="text-xs md:text-sm lg:text-base xl:text-lg text-gray-500">@{update.user.username}</p>
             </div>
             {update.collective && (
-              <p className="text-xs md:text-sm text-gray-500">{update.collective.name}</p>
+              <p className="text-xs md:text-sm lg:text-base xl:text-lg text-gray-500">{update.collective.name}</p>
             )}
           </div>
         </div>
+        
+        {/* Action Button - Join for join notifications, Follow for donation notifications */}
+        {isJoinNotification && update.collective && (
+          <Button
+            onClick={handleJoinClick}
+            className="ml-2 md:ml-3 lg:ml-4 xl:ml-5 bg-[#1600ff] hover:bg-[#1400cc] text-white text-xs md:text-sm lg:text-base xl:text-lg font-semibold px-3 md:px-4 lg:px-5 xl:px-6 py-1.5 md:py-2 lg:py-2.5 xl:py-3 rounded-lg flex-shrink-0"
+          >
+            Join
+          </Button>
+        )}
+        {isDonationNotification && update.user.id && currentUser?.id !== update.user.id && (
+          <Button
+            onClick={handleFollowClick}
+            disabled={followMutation.isPending}
+            className="ml-2 md:ml-3 lg:ml-4 xl:ml-5 bg-white border border-gray-300 hover:bg-gray-50 text-gray-900 text-xs md:text-sm lg:text-base xl:text-lg font-semibold px-3 md:px-4 lg:px-5 xl:px-6 py-1.5 md:py-2 lg:py-2.5 xl:py-3 rounded-lg flex-shrink-0"
+          >
+            {followMutation.isPending ? 'Following...' : 'Follow'}
+          </Button>
+        )}
       </div>
 
       {/* Content Box */}
-      <div className={`rounded-lg p-2 md:p-2.5 mb-2.5 md:mb-3 flex items-center gap-2.5 md:gap-3 ${
+      <div className={`rounded-lg p-2 md:p-2.5 lg:p-3 xl:p-4 mb-2.5 md:mb-3 lg:mb-4 xl:mb-5 flex items-center gap-2.5 md:gap-3 lg:gap-4 xl:gap-5 ${
         isJoinNotification 
           ? 'bg-gray-50' 
           : 'bg-gray-50'
       }`}>
         {/* Icon */}
-        <div className={`h-7 w-7 md:h-8 md:w-8 rounded-full flex items-center justify-center flex-shrink-0 ${
+        <div className={`h-7 w-7 md:h-8 md:w-8 lg:h-10 lg:w-10 xl:h-12 xl:w-12 rounded-full flex items-center justify-center flex-shrink-0 ${
           isJoinNotification 
             ? 'bg-blue-500' 
             : 'bg-[#13b981]'
         }`}>
           {isJoinNotification ? (
-            <UserPlus className="h-3 w-3 md:h-4 md:w-4 text-white" />
+            <UserPlus className="h-3 w-3 md:h-4 md:w-4 lg:h-5 lg:w-5 xl:h-6 xl:w-6 text-white" />
           ) : (
-            <HandHeart className="h-3 w-3 md:h-4 md:w-4 text-white" />
+            <HandHeart className="h-3 w-3 md:h-4 md:w-4 lg:h-5 lg:w-5 xl:h-6 xl:w-6 text-white" />
           )}
         </div>
         {/* Action Text */}
-        <p className="text-xs md:text-sm font-semibold text-gray-900 flex-1">
+        <p className="text-xs md:text-sm lg:text-base xl:text-lg font-semibold text-gray-900 flex-1">
           {actionText}
         </p>
       </div>
@@ -176,18 +232,17 @@ export default function CommunityUpdates({
   }
 
   return (
-    <div className="w-full px-4 my-6 mb-8 md:px-0 md:my-8 md:mb-10">
+    <div className="w-full px-4 my-6 mb-8 md:px-0 md:my-8 md:mb-10 lg:my-10 lg:mb-12 xl:my-12 xl:mb-14">
       {showHeading && (
-        <div className="
-        mb-4 md:mb-6">
-          <h2 className="text-xl sm:text-2xl  md:text-3xl lg:text-3xl xl:text-4xl 2xl:text-5xl font-bold text-gray-900 mb-1.5 md:mb-2">Community Updates</h2>
-          <p className="text-xs md:text-sm text-gray-600">
+        <div className="mb-4 md:mb-6 lg:mb-8 xl:mb-10">
+          <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-3xl xl:text-4xl 2xl:text-5xl font-bold text-gray-900 mb-1.5 md:mb-2 lg:mb-3 xl:mb-4">Community Updates</h2>
+          <p className="text-xs md:text-sm lg:text-base xl:text-lg text-gray-600">
             Activity, updates, and discoveries from your community
           </p>
         </div>
       )}
 
-      <div className="space-y-3 md:space-y-4">
+      <div className="space-y-3 md:space-y-4 lg:space-y-6 xl:space-y-8">
         {updates.map((update) => {
           // If postId exists, fetch and display the full post
           const PostContent = update.postId ? PostWithData : NotificationSummary;
