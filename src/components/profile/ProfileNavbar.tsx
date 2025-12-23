@@ -18,6 +18,7 @@ interface ProfileNavbarProps {
   readonly showBackButton?: boolean;
   readonly showDesktopBackButton?: boolean;
   readonly showPostButton?: boolean;
+  readonly backPath?: string;
 }
 
 export default function ProfileNavbar({
@@ -28,6 +29,7 @@ export default function ProfileNavbar({
   showBackButton = true,
   showDesktopBackButton = false,
   showPostButton = false,
+  backPath,
 }: ProfileNavbarProps) {
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
@@ -94,7 +96,7 @@ export default function ProfileNavbar({
           <div className="flex items-center gap-3">
             {showBackButton && (
               <button
-                onClick={() => navigate(-1)}
+                onClick={() => backPath ? navigate(backPath) : navigate(-1)}
                 className="flex items-center justify-center h-8 w-8 rounded-full bg-gray-100 text-gray-700 hover:bg-gray-200 transition-colors mr-2 cursor-pointer"
                 aria-label="Go back"
               >
@@ -444,7 +446,7 @@ export default function ProfileNavbar({
           <div className="flex items-center gap-3">
             {showDesktopBackButton && (
               <button
-                onClick={() => navigate(-1)}
+                onClick={() => backPath ? navigate(backPath) : navigate(-1)}
                 className="flex items-center justify-center h-8 w-8 rounded-full bg-gray-100 text-gray-700 hover:bg-gray-200 transition-colors cursor-pointer"
                 aria-label="Go back"
               >

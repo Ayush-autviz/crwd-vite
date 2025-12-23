@@ -535,7 +535,7 @@ export default function NewCreateCollectivePage() {
         {/* header */}
         <div className="sticky top-0 z-10 w-full flex items-center gap-3 md:gap-4 p-3 md:p-4 border-b bg-white">
           <button
-            onClick={() => navigate('/')}
+            onClick={() => navigate('/circles')}
             className="p-1.5 md:p-2 hover:bg-gray-100 rounded-full transition-colors"
             aria-label="Go back"
           >
@@ -580,7 +580,7 @@ export default function NewCreateCollectivePage() {
         {/* header */}
         <div className="sticky top-0 z-10 w-full flex items-center gap-3 md:gap-4 p-3 md:p-4 border-b bg-white">
           <button
-            onClick={() => navigate('/')}
+            onClick={() => navigate('/circles')}
             className="p-1.5 md:p-2 hover:bg-gray-100 rounded-full transition-colors"
             aria-label="Go back"
           >
@@ -906,7 +906,7 @@ export default function NewCreateCollectivePage() {
         {/* Header */}
         <div className="sticky top-0 z-10 w-full flex items-center gap-3 md:gap-4 p-3 md:p-4 border-b bg-white">
           <button
-            onClick={() => navigate('/')}
+            onClick={() => navigate('/circles')}
             className="p-1.5 md:p-2 hover:bg-gray-100 rounded-full transition-colors"
             aria-label="Go back"
           >

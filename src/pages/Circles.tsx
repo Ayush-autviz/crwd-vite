@@ -69,6 +69,7 @@ const Circles = () => {
         showDesktopMenu={true}
         showBackButton={true}
         showPostButton={false}
+        backPath="/"
       />
 
       <div className="md:min-h-screen">
