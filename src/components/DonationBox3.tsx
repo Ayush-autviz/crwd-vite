@@ -184,13 +184,24 @@ export const DonationBox3 = ({
   };
 
   // Calculate fees and capacity
+  // For donations < $10.00: Flat fee of $1.00
+  // For donations ≥ $10.00: 10% of total (covers all platform + processing costs)
   const calculateFees = (grossAmount: number) => {
     const gross = grossAmount;
-    const stripeFee = (gross * 0.029) + 0.30;
-    const crwdFee = (gross - stripeFee) * 0.07;
-    const net = gross - stripeFee - crwdFee;
+    let crwdFee: number;
+    let net: number;
+    
+    if (gross < 10.00) {
+      // Flat fee of $1.00
+      crwdFee = 1.00;
+      net = gross - crwdFee;
+    } else {
+      // 10% of total
+      crwdFee = gross * 0.10;
+      net = gross - crwdFee;
+    }
+    
     return {
-      stripeFee: Math.round(stripeFee * 100) / 100,
       crwdFee: Math.round(crwdFee * 100) / 100,
       net: Math.round(net * 100) / 100,
     };

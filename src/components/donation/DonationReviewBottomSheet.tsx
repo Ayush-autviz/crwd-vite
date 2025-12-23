@@ -66,14 +66,24 @@ export default function DonationReviewBottomSheet({
   if (!isVisible) return null;
 
   // Calculate fees using the provided formula
+  // For donations < $10.00: Flat fee of $1.00
+  // For donations ≥ $10.00: 10% of total (covers all platform + processing costs)
   const calculateFees = (grossAmount: number) => {
     const gross = grossAmount;
-    const stripeFee = (gross * 0.029) + 0.30;
-    const crwdFee = (gross - stripeFee) * 0.07;
-    const net = gross - stripeFee - crwdFee;
+    let crwdFee: number;
+    let net: number;
+    
+    if (gross < 10.00) {
+      // Flat fee of $1.00
+      crwdFee = 1.00;
+      net = gross - crwdFee;
+    } else {
+      // 10% of total
+      crwdFee = gross * 0.10;
+      net = gross - crwdFee;
+    }
     
     return {
-      stripeFee: Math.round(stripeFee * 100) / 100,
       crwdFee: Math.round(crwdFee * 100) / 100,
       net: Math.round(net * 100) / 100,
     };
@@ -82,8 +92,8 @@ export default function DonationReviewBottomSheet({
   const actualDonationAmount = parseFloat(donationAmount.toString());
   const fees = calculateFees(actualDonationAmount);
   
-  // Platform fee = CRWD fee + Stripe fee (sum of both)
-  const platformFee = fees.stripeFee + fees.crwdFee;
+  // Platform fee = CRWD fee (covers all platform + processing costs)
+  const platformFee = fees.crwdFee;
   
   // Calculate totals - only count causes (not collectives)
   const totalCauses = selectedCauses.length;

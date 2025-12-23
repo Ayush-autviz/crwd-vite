@@ -568,20 +568,29 @@ const ManageDonationBox: React.FC<ManageDonationBoxProps> = ({
   const currentCapacity = totalCausesCount;
   
   // Calculate fees and capacity using the provided formula
+  // For donations < $10.00: Flat fee of $1.00
+  // For donations ≥ $10.00: 10% of total (covers all platform + processing costs)
   const calculateFees = (grossAmount: number) => {
     const gross = grossAmount;
-    const stripeFee = (gross * 0.029) + 0.30;
-    const crwdFee = (gross - stripeFee) * 0.07;
-    const net = gross - stripeFee - crwdFee;
+    let crwdFee: number;
+    let net: number;
+    
+    if (gross < 10.00) {
+      // Flat fee of $1.00
+      crwdFee = 1.00;
+      net = gross - crwdFee;
+    } else {
+      // 10% of total
+      crwdFee = gross * 0.10;
+      net = gross - crwdFee;
+    }
     
     console.log('=== Fee Calculation (ManageDonationBox) ===');
     console.log('Gross Amount:', gross);
-    console.log('Stripe Fee (2.9% + $0.30):', stripeFee);
-    console.log('CRWD Fee (7% of Gross - Stripe):', crwdFee);
-    console.log('Net (Gross - Stripe - CRWD):', net);
+    console.log('CRWD Fee:', crwdFee);
+    console.log('Net (Gross - CRWD Fee):', net);
     
     return {
-      stripeFee: Math.round(stripeFee * 100) / 100,
       crwdFee: Math.round(crwdFee * 100) / 100,
       net: Math.round(net * 100) / 100,
     };
