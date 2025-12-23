@@ -1,7 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { getPosts } from "@/services/api/social";
 import CommunityPostCard from "@/components/newHome/CommunityPostCard";
-import { Loader2 } from "lucide-react";
 
 interface CommunityPostsProps {
   limit?: number;
@@ -24,22 +23,22 @@ export default function CommunityPosts({
 
   if (isLoading) {
     return (
-      <div className="w-full px-4 my-6 mb-8 md:px-0 md:my-8 md:mb-10 lg:my-10 lg:mb-12 xl:my-12 xl:mb-14">
+      <div className="w-full px-4 my-4 mb-6 md:px-0 md:my-8 md:mb-10">
         {showHeading && (
-          <div className="mb-4 md:mb-6 lg:mb-8 xl:mb-10">
-            <h2 className="text-base xs:text-lg sm:text-2xl md:text-3xl lg:text-3xl xl:text-4xl 2xl:text-5xl font-bold text-gray-900 mb-1.5 md:mb-2 lg:mb-3 xl:mb-4">
+          <div className="mb-3 md:mb-6">
+            <h2 className="text-sm xs:text-base sm:text-xl md:text-3xl font-bold text-gray-900 mb-1 md:mb-2">
               Community Updates
             </h2>
-            <p className="text-xs md:text-sm lg:text-base xl:text-lg text-gray-600">
+            <p className="text-[10px] sm:text-xs md:text-sm text-gray-600">
               Activity, updates, and discoveries from your community
             </p>
           </div>
         )}
-        <div className="space-y-3 md:space-y-4 lg:space-y-6 xl:space-y-8">
+        <div className="space-y-2.5 md:space-y-4">
           {[1, 2].slice(0, limit).map((i) => (
-            <div key={i} className="bg-white rounded-lg border border-gray-200 p-3 md:p-4 lg:p-5 xl:p-6 animate-pulse">
-              <div className="flex items-start gap-3 md:gap-4">
-                <div className="w-10 h-10 md:w-12 md:h-12 bg-gray-200 rounded-full flex-shrink-0"></div>
+            <div key={i} className="bg-white rounded-lg border border-gray-200 p-2.5 md:p-4 animate-pulse">
+              <div className="flex items-start gap-2 md:gap-4">
+                <div className="w-8 h-8 md:w-12 md:h-12 bg-gray-200 rounded-full flex-shrink-0"></div>
                 <div className="flex-1 space-y-2">
                   <div className="h-4 bg-gray-200 rounded w-3/4"></div>
                   <div className="h-3 bg-gray-200 rounded w-full"></div>
@@ -97,20 +96,20 @@ export default function CommunityPosts({
   }));
 
   return (
-    <div className="w-full px-4 my-6 mb-8 md:px-0 md:my-8 md:mb-10 lg:my-10 lg:mb-12 xl:my-12 xl:mb-14">
+    <div className="w-full px-4 my-4 mb-6 md:px-0 md:my-8 md:mb-10">
       {showHeading && (
-        <div className="mb-4 md:mb-6 lg:mb-8 xl:mb-10">
-          <h2 className="text-base xs:text-lg sm:text-2xl md:text-3xl lg:text-3xl xl:text-4xl 2xl:text-5xl font-bold text-gray-900 mb-1.5 md:mb-2 lg:mb-3 xl:mb-4">
+        <div className="mb-3 md:mb-6">
+          <h2 className="text-sm xs:text-base sm:text-xl md:text-3xl font-bold text-gray-900 mb-1 md:mb-2">
             Community Updates
           </h2>
-          <p className="text-xs md:text-sm lg:text-base xl:text-lg text-gray-600">
+          <p className="text-[10px] sm:text-xs md:text-sm text-gray-600">
             Activity, updates, and discoveries from your community
           </p>
         </div>
       )}
 
-      <div className="space-y-3 md:space-y-4 lg:space-y-6 xl:space-y-8">
-        {transformedPosts.map((post) => (
+      <div className="space-y-2.5 md:space-y-4">
+        {transformedPosts.map((post: any) => (
           <CommunityPostCard key={post.id} post={post} onCommentPress={onCommentPress} />
         ))}
       </div>

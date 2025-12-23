@@ -445,7 +445,7 @@ export default function NewHome() {
                 <div className="md:col-span-12"> */}
 
                 <div className="w-full max-w-7xl mx-auto">
-                <div className="mx-4 md:mx-6">
+                <div className="mx-0 md:mx-6">
                     {/* 2 Posts - Above Featured Nonprofits */}
                     {token?.access_token && (
                         <CommunityPosts 
