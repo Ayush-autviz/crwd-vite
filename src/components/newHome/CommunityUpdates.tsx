@@ -2,7 +2,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Link, useNavigate } from "react-router-dom";
 import { HandHeart, UserPlus } from "lucide-react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { getPostById, followUser } from "@/services/api/social";
+import { getPostById, followUser, unfollowUser, getUserProfileById } from "@/services/api/social";
 import CommunityPostCard from "@/components/newHome/CommunityPostCard";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
@@ -105,10 +105,20 @@ function PostWithData({ update }: { update: CommunityUpdate }) {
 function NotificationSummary({ update }: { update: CommunityUpdate }) {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
-  const { user: currentUser } = useAuthStore();
+  const { user: currentUser, token } = useAuthStore();
   const actionText = update.content || "";
   const isJoinNotification = update.isJoinNotification || false;
   const isDonationNotification = !isJoinNotification && actionText.toLowerCase().includes('donated');
+
+  // Fetch user profile to check follow status
+  const { data: userProfile, isLoading: isLoadingProfile } = useQuery({
+    queryKey: ['userProfile', update.user.id],
+    queryFn: () => getUserProfileById(update.user.id?.toString() || ''),
+    enabled: !!update.user.id && !!token?.access_token && isDonationNotification && currentUser?.id !== update.user.id,
+  });
+
+  // Check if user is being followed
+  const isFollowing = userProfile?.is_following || false;
 
   // Follow user mutation
   const followMutation = useMutation({
@@ -120,6 +130,19 @@ function NotificationSummary({ update }: { update: CommunityUpdate }) {
     onError: (error: any) => {
       console.error('Error following user:', error);
       toast.error('Failed to follow user. Please try again.');
+    },
+  });
+
+  // Unfollow user mutation
+  const unfollowMutation = useMutation({
+    mutationFn: (userId: string) => unfollowUser(userId),
+    onSuccess: () => {
+      toast.success('Unfollowed user');
+      queryClient.invalidateQueries({ queryKey: ['userProfile', update.user.id] });
+    },
+    onError: (error: any) => {
+      console.error('Error unfollowing user:', error);
+      toast.error('Failed to unfollow user. Please try again.');
     },
   });
 
@@ -135,7 +158,11 @@ function NotificationSummary({ update }: { update: CommunityUpdate }) {
 
   const handleFollowClick = () => {
     if (update.user.id && currentUser?.id !== update.user.id) {
-      followMutation.mutate(update.user.id.toString());
+      if (isFollowing) {
+        unfollowMutation.mutate(update.user.id.toString());
+      } else {
+        followMutation.mutate(update.user.id.toString());
+      }
     }
   };
 
@@ -179,7 +206,7 @@ function NotificationSummary({ update }: { update: CommunityUpdate }) {
         {isJoinNotification && update.collective && (
           <Button
             onClick={handleJoinClick}
-            className="ml-2 md:ml-3 lg:ml-4 xl:ml-5 bg-[#1600ff] hover:bg-[#1400cc] text-white text-xs md:text-sm lg:text-base xl:text-lg font-semibold px-3 md:px-4 lg:px-5 xl:px-6 py-1.5 md:py-2 lg:py-2.5 xl:py-3 rounded-lg flex-shrink-0"
+            className="ml-2 md:ml-3 lg:ml-4 xl:ml-5 bg-white text-[#1600ff] border border-[#1600ff] hover:bg-[#1600ff] hover:text-white text-xs md:text-sm lg:text-base xl:text-lg font-semibold px-3 md:px-4 lg:px-5 xl:px-6 py-1.5 md:py-2 lg:py-2.5 xl:py-3 rounded-full flex-shrink-0"
           >
             Join
           </Button>
@@ -187,10 +214,14 @@ function NotificationSummary({ update }: { update: CommunityUpdate }) {
         {isDonationNotification && update.user.id && currentUser?.id !== update.user.id && (
           <Button
             onClick={handleFollowClick}
-            disabled={followMutation.isPending}
-            className="ml-2 md:ml-3 lg:ml-4 xl:ml-5 bg-white border border-gray-300 hover:bg-gray-50 text-gray-900 text-xs md:text-sm lg:text-base xl:text-lg font-semibold px-3 md:px-4 lg:px-5 xl:px-6 py-1.5 md:py-2 lg:py-2.5 xl:py-3 rounded-lg flex-shrink-0"
+            disabled={followMutation.isPending || unfollowMutation.isPending || isLoadingProfile}
+            className={`ml-2 md:ml-3 lg:ml-4 xl:ml-5 text-xs md:text-sm lg:text-base xl:text-lg font-semibold px-3 md:px-4 lg:px-5 xl:px-6 py-1.5 md:py-2 lg:py-2.5 xl:py-3 rounded-full flex-shrink-0 ${
+              isFollowing
+                ? 'bg-[#1600ff] text-white border border-[#1600ff] hover:bg-[#1400cc]'
+                : 'bg-white text-[#1600ff] border border-[#1600ff] hover:bg-[#1600ff] hover:text-white'
+            }`}
           >
-            {followMutation.isPending ? 'Following...' : 'Follow'}
+            {followMutation.isPending || unfollowMutation.isPending ? 'Loading...' : isLoadingProfile ? 'Loading...' : isFollowing ? 'Following' : 'Follow'}
           </Button>
         )}
       </div>
