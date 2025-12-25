@@ -17,7 +17,6 @@ import { getDonationBox, addCausesToBox } from '@/services/api/donation';
 import CollectiveHeader from '@/components/newgroupcrwd/CollectiveHeader';
 import CollectiveProfile from '@/components/newgroupcrwd/CollectiveProfile';
 import CollectiveStats from '@/components/newgroupcrwd/CollectiveStats';
-import DonationInfoBox from '@/components/newgroupcrwd/DonationInfoBox';
 import SupportedNonprofits from '@/components/newgroupcrwd/SupportedNonprofits';
 import CommunityActivity from '@/components/newgroupcrwd/CommunityActivity';
 import CollectiveStatisticsModal from '@/components/newgroupcrwd/CollectiveStatisticsModal';
@@ -369,16 +368,16 @@ export default function NewGroupCrwdPage() {
         }}
       />
 
-      <DonationInfoBox nonprofitCount={nonprofitCount} />
+      {/* <DonationInfoBox nonprofitCount={nonprofitCount} /> */}
 
       {/* Action Buttons */}
-      <div className="px-3 md:px-4 mb-4 md:mb-6 flex flex-col sm:flex-row gap-2.5 md:gap-3">
+      <div className="px-3 md:px-4 mb-4 md:mb-6 flex flex-row gap-2.5 md:gap-3">
         {isAdmin ? (
           <>
             {/* Joined Button - Non-clickable for admin */}
             <Button
               disabled
-              className="w-full sm:flex-1 font-semibold py-4 md:py-5 rounded-lg text-sm md:text-base bg-white border-2 border-green-500 text-green-500 cursor-not-allowed"
+              className="flex-1 font-semibold py-4 md:py-5 rounded-lg text-sm md:text-base bg-[#1600ff] text-white cursor-not-allowed opacity-75"
             >
               <Check className="w-3.5 h-3.5 md:w-4 md:h-4 mr-1.5 md:mr-2 inline" />
               Joined
@@ -386,7 +385,7 @@ export default function NewGroupCrwdPage() {
             {/* Share Button */}
             <Button
               onClick={handleShare}
-              className="w-full sm:flex-1 font-semibold py-4 md:py-5 rounded-lg text-sm md:text-base bg-[#1600ff] hover:bg-[#1400cc] text-white shadow-sm"
+              className="flex-1 font-semibold py-4 md:py-5 rounded-lg text-sm md:text-base bg-[#1600ff] hover:bg-[#1400cc] text-white shadow-sm"
             >
               <Share2 className="w-3.5 h-3.5 md:w-4 md:h-4 mr-1.5 md:mr-2 inline" />
               Share
@@ -398,7 +397,7 @@ export default function NewGroupCrwdPage() {
             <Button
               onClick={handleJoinCollective}
               disabled={leaveCollectiveMutation.isPending}
-              className="w-full sm:flex-1 font-semibold py-4 md:py-5 rounded-lg text-sm md:text-base bg-white border-2 border-green-500 text-green-500 hover:bg-green-50"
+              className="flex-1 font-semibold py-4 md:py-5 rounded-lg text-sm md:text-base bg-[#1600ff] hover:bg-[#1400cc] text-white"
             >
               {leaveCollectiveMutation.isPending ? (
                 <>
@@ -415,7 +414,7 @@ export default function NewGroupCrwdPage() {
             {/* Share Button */}
             <Button
               onClick={handleShare}
-              className="w-full sm:flex-1 font-semibold py-4 md:py-5 rounded-lg text-sm md:text-base bg-[#1600ff] hover:bg-[#1400cc] text-white shadow-sm"
+              className="flex-1 font-semibold py-4 md:py-5 rounded-lg text-sm md:text-base bg-[#1600ff] hover:bg-[#1400cc] text-white shadow-sm"
             >
               <Share2 className="w-3.5 h-3.5 md:w-4 md:h-4 mr-1.5 md:mr-2 inline" />
               Share
@@ -426,7 +425,7 @@ export default function NewGroupCrwdPage() {
             <Button
               onClick={handleJoinCollective}
               disabled={joinCollectiveMutation.isPending}
-              className="w-full sm:flex-1 font-semibold py-4 md:py-5 rounded-lg text-sm md:text-base bg-[#1600ff] hover:bg-[#1400cc] text-white"
+              className="flex-1 font-semibold py-4 md:py-5 rounded-lg text-sm md:text-base bg-[#1600ff] hover:bg-[#1400cc] text-white"
             >
               {joinCollectiveMutation.isPending ? (
                 <>
@@ -440,7 +439,7 @@ export default function NewGroupCrwdPage() {
             <Button
               onClick={handleOneTimeDonation}
               variant="outline"
-              className="w-full sm:flex-1 border-[#1600ff] text-[#1600ff] hover:bg-[#1600ff] hover:text-white font-semibold py-4 md:py-5 rounded-lg text-sm md:text-base"
+              className="flex-1 border-[#1600ff] text-[#1600ff] hover:bg-[#1600ff] hover:text-white font-semibold py-4 md:py-5 rounded-lg text-sm md:text-base"
             >
               One-Time Donation
             </Button>
