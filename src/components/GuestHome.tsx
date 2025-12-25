@@ -80,51 +80,47 @@ export default function GuestHome() {
 
 
             {/* Navbar */}
-            <div className="sticky top-0 z-10 w-full flex items-center justify-between p-4 md:px-6 border-b bg-background">
+            <div className="sticky top-0 z-10 w-full flex items-center justify-between px-2 py-2.5 sm:p-4 md:px-6 border-b bg-background">
                 {/* Logo with colored circles */}
                 
-                <Link to="/waitlist">
-                    <NewLogo />
+                <Link to="/waitlist" className="flex-shrink-0">
+                    <NewLogo size="sm" />
                 </Link>
 
                 
                 {/* Right side buttons */}
-                <div className="flex items-center gap-3 md:gap-4">
+                <div className="flex items-center gap-1 sm:gap-2 md:gap-4">
                     {/* Search Icon */}
                     <button
                         onClick={() => navigate("/search")}
-                        className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+                        className="p-1.5 sm:p-2 hover:bg-gray-100 rounded-full transition-colors flex-shrink-0"
                         aria-label="Search"
                     >
-                        <Search className="w-5 h-5 md:w-6 md:h-6 text-gray-700" />
+                        <Search className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 text-gray-700" />
                     </button>
 
                     {/* Sign In Button */}
                     <button
                         onClick={() => navigate("/login")}
-                        className="bg-[#ff3366] hover:bg-[#ff0033] text-white font-bold px-3 md:px-6 py-1.5 md:py-2 rounded-full text-xs md:text-base"
+                        className="bg-[#ff3366] hover:bg-[#ff0033] text-white font-bold px-2 py-1 sm:px-3 sm:py-1.5 md:px-6 md:py-2 rounded-full text-[10px] xs:text-xs sm:text-sm md:text-base whitespace-nowrap"
                     >
                         Sign In
                     </button>
 
                     {/* Get the App Button */}
-                    <Button
-                        variant="outline"
-                        className="border-[#1600ff] text-[#1600ff] hover:bg-[#1600ff] hover:text-white font-bold px-4 md:px-6 py-2 rounded-full text-sm md:text-base hidden md:inline-flex"
+                    <button
+                        className="border-[#1600ff] border text-[#1600ff] hover:bg-[#1600ff] hover:text-white font-bold px-2 py-0.5 sm:px-3 rounded-full text-[10px] xs:text-xs sm:text-sm md:text-base md:hidden whitespace-nowrap"
                     >
                         Get the App
-                    </Button>
+                    </button>
 
                     {/* Hamburger Menu */}
-                    {/* <button
+                    <button 
                         onClick={() => setMenuOpen(true)}
-                        className="p-2 hover:bg-gray-100 rounded-full transition-colors md:hidden"
+                        className="p-1 sm:p-1.5 hover:bg-gray-100 rounded-full transition-colors flex-shrink-0"
                         aria-label="Menu"
                     >
-                        <Menu className="w-6 h-6 text-gray-700" />
-                    </button> */}
-                    <button onClick={() => setMenuOpen(true)}>
-                        <Menu className="h-7 w-7 md:h-9 md:w-9 text-gray-700" />
+                        <Menu className="h-5 w-5 sm:h-6 sm:w-6 md:h-7 md:w-7 lg:h-9 lg:w-9 text-gray-700" />
                     </button>
                 </div>
             </div>

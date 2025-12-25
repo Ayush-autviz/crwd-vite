@@ -2,15 +2,24 @@ import { useNavigate, useParams } from "react-router-dom";
 import { ArrowLeft, Lightbulb, Check, TrendingUp, Calendar, Target, Building2, Droplet, BookOpen, UtensilsCrossed, Stethoscope, BarChart3, Clock, Hand, Users, Zap, Gem } from "lucide-react";
 // import Footer from "@/components/Footer";
 
+// Helper function to generate slug from title
+const generateSlug = (title: string): string => {
+  return title
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/(^-|-$)/g, '');
+};
+
 const ArticleDetail = () => {
   const navigate = useNavigate();
-  const { id } = useParams();
+  const { slug } = useParams();
 
-  // Get article data based on ID
-  const getArticleData = (articleId: string | undefined) => {
+  // Get article data based on slug
+  const getArticleData = (articleSlug: string | undefined) => {
     const articles: Record<string, any> = {
-      "1": {
+      "how-to-donate-to-multiple-charities-at-once": {
         id: "1",
+        slug: "how-to-donate-to-multiple-charities-at-once",
         title: "How to Donate to Multiple Charities at Once",
         date: "November 9, 2025",
         readTime: "8 min read",
@@ -65,8 +74,9 @@ const ArticleDetail = () => {
           },
         },
       },
-      "2": {
+      "why-small-donations-matter": {
         id: "2",
+        slug: "why-small-donations-matter",
         title: "Why Small Donations Matter",
         date: "November 10, 2025",
         readTime: "4 min read",
@@ -207,8 +217,9 @@ const ArticleDetail = () => {
           },
         },
       },
-      "3": {
+      "what-is-a-crwd-collective": {
         id: "3",
+        slug: "what-is-a-crwd-collective",
         title: "What is a CRWD Collective?",
         date: "November 11, 2025",
         readTime: "5 min read",
@@ -360,10 +371,10 @@ const ArticleDetail = () => {
       },
     };
 
-    return articles[articleId || "1"] || articles["1"];
+    return articles[articleSlug || "how-to-donate-to-multiple-charities-at-once"] || articles["how-to-donate-to-multiple-charities-at-once"];
   };
 
-  const article = getArticleData(id);
+  const article = getArticleData(slug);
 
   return (
     <div className="min-h-screen bg-white">
@@ -1260,17 +1271,17 @@ const ArticleDetail = () => {
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
               {[
-                { id: "1", title: "How to Donate to Multiple Charities at Once", description: "Learn how to support multiple causes with one decision..." },
-                { id: "2", title: "Why Small Donations Matter", description: "Learn how small donations make a big impact..." },
-                { id: "3", title: "What is a CRWD collective?", description: "Learn how collectives amplify your impact through community giving..." },
+                { slug: "how-to-donate-to-multiple-charities-at-once", title: "How to Donate to Multiple Charities at Once", description: "Learn how to support multiple causes with one decision..." },
+                { slug: "why-small-donations-matter", title: "Why Small Donations Matter", description: "Learn how small donations make a big impact..." },
+                { slug: "what-is-a-crwd-collective", title: "What is a CRWD collective?", description: "Learn how collectives amplify your impact through community giving..." },
               ].map((relatedArticle) => {
-                const isCurrentArticle = relatedArticle.id === id;
+                const isCurrentArticle = relatedArticle.slug === slug;
                 return (
                   <div
-                    key={relatedArticle.id}
+                    key={relatedArticle.slug}
                     onClick={() => {
                       if (!isCurrentArticle) {
-                        navigate(`/article/${relatedArticle.id}`);
+                        navigate(`/article/${relatedArticle.slug}`);
                       }
                     }}
                     className={`bg-white border border-gray-200 rounded-xl p-4 md:p-6 shadow-sm transition-shadow ${

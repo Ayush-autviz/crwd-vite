@@ -2,6 +2,14 @@ import { Link } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
 import { Clock } from "lucide-react";
 
+// Helper function to generate slug from title
+const generateSlug = (title: string): string => {
+  return title
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/(^-|-$)/g, '');
+};
+
 interface Article {
   id: string | number;
   title: string;
@@ -28,6 +36,7 @@ export default function LearnAndGetInspired({
       description: "Learn how CRWD's donation box makes it easy to support all your favorite causes",
       readTime: "5 min read",
       image: "https://images.unsplash.com/photo-1532629345422-7515f3d16bb6?w=1200&h=600&fit=crop",
+      slug: "how-to-donate-to-multiple-charities-at-once",
     },
     {
       id: 2,
@@ -35,6 +44,7 @@ export default function LearnAndGetInspired({
       description: "Every contribution counts toward lasting change",
       readTime: "4 min read",
       image: "https://images.unsplash.com/photo-1733809701005-0b1c0ad53c90?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxkb25hdGlvbiUyMGltcGFjdCUyMGNoYXJpdHl8ZW58MXx8fHwxNzYxODAzMDA4fDA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral",
+      slug: "why-small-donations-matter",
     },
     {
       id: 3,
@@ -42,6 +52,7 @@ export default function LearnAndGetInspired({
       description: "Learn how collectives amplify your giving power",
       readTime: "5 min read",
       image: "https://images.unsplash.com/photo-1758599668125-e154250f24bd?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHx2b2x1bnRlZXJzJTIwaGVscGluZyUyMGNvbW11bml0eXxlbnwxfHx8fDE3NjE3NTE1NTF8MA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral",
+      slug: "what-is-a-crwd-collective",
     },
   ];
 
@@ -67,10 +78,12 @@ export default function LearnAndGetInspired({
 
         {/* Article Cards Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 md:gap-6">
-          {displayArticles.map((article) => (
+          {displayArticles.map((article) => {
+            const articleSlug = article.slug || generateSlug(article.title);
+            return (
             <Link
               key={article.id}
-              to={`/article/${article.id}`}
+              to={`/article/${articleSlug}`}
               className="rounded-xl shadow-sm hover:shadow-lg transition-shadow duration-300 overflow-hidden cursor-pointer"
             >
               <div className="p-0">
@@ -105,7 +118,8 @@ export default function LearnAndGetInspired({
                 </div>
               </div>
             </Link>
-          ))}
+            );
+          })}
         </div>
       </div>
     </div>

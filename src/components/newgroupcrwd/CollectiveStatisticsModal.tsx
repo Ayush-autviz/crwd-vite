@@ -12,6 +12,7 @@ interface CollectiveStatisticsModalProps {
   collectiveId?: string;
   collectiveName?: string;
   initialTab?: 'Nonprofits' | 'Members' | 'Donations';
+  previouslySupported?: any[];
 }
 
 type TabType = 'Nonprofits' | 'Members' | 'Donations';
@@ -21,6 +22,7 @@ export default function CollectiveStatisticsModal({
   onClose,
   collectiveId,
   initialTab = 'Nonprofits',
+  previouslySupported = [],
 }: CollectiveStatisticsModalProps) {
   const [activeTab, setActiveTab] = useState<TabType>(initialTab);
   const [isVisible, setIsVisible] = useState(false);
@@ -216,6 +218,116 @@ export default function CollectiveStatisticsModal({
               ) : (
                 <div className="text-center py-6 md:py-8 text-xs md:text-sm text-muted-foreground">
                   No nonprofits found
+                </div>
+              )}
+
+              {/* Previously Supported Section */}
+              {previouslySupported && previouslySupported.length > 0 && (
+                <div className="mt-6 md:mt-8 pt-6 md:pt-8 border-t border-gray-200">
+                  <h3 className="text-[10px] md:text-xs font-bold text-muted-foreground uppercase tracking-wide mb-3 md:mb-4">
+                    PREVIOUSLY SUPPORTED
+                  </h3>
+                  <div className="space-y-2 md:space-y-3">
+                    {previouslySupported.map((nonprofit) => {
+                      const cause = nonprofit.cause || nonprofit;
+                      const name = cause.name || nonprofit.name || 'Unknown Nonprofit';
+                      const image = cause.image || nonprofit.image || '';
+                      const causeId = cause.id || nonprofit.id;
+
+                      // Generate vibrant avatar colors based on nonprofit ID for consistent colors
+                      const avatarColors = [
+                        '#EF4444', // Red
+                        '#10B981', // Green
+                        '#3B82F6', // Blue
+                        '#8B5CF6', // Purple
+                        '#84CC16', // Lime Green
+                        '#EC4899', // Pink
+                        '#F59E0B', // Amber
+                        '#06B6D4', // Cyan
+                        '#F97316', // Orange
+                        '#A855F7', // Violet
+                        '#14B8A6', // Teal
+                        '#F43F5E', // Rose
+                        '#6366F1', // Indigo
+                        '#22C55E', // Emerald
+                        '#EAB308', // Yellow
+                      ];
+                      const nonprofitId = cause.id || nonprofit.id || name;
+                      const avatarColorIndex = nonprofitId ? (Number(nonprofitId) % avatarColors.length) : (name?.charCodeAt(0) || 0) % avatarColors.length;
+                      const avatarBgColor = avatarColors[avatarColorIndex];
+
+                      // Calculate months ago
+                      const getMonthsAgo = (dateString?: string): string => {
+                        if (!dateString) {
+                          return '2 months ago';
+                        }
+                        try {
+                          const date = new Date(dateString);
+                          const now = new Date();
+                          const diffInMs = now.getTime() - date.getTime();
+                          const diffInMonths = Math.floor(diffInMs / (1000 * 60 * 60 * 24 * 30));
+                          if (diffInMonths < 1) {
+                            return 'Less than a month ago';
+                          } else if (diffInMonths === 1) {
+                            return '1 month ago';
+                          } else {
+                            return `${diffInMonths} months ago`;
+                          }
+                        } catch (error) {
+                          return '2 months ago';
+                        }
+                      };
+                      const lastSupported = getMonthsAgo(nonprofit.removed_at || nonprofit.last_supported);
+
+                      return (
+                        <div
+                          key={nonprofit.id}
+                          className="bg-white border border-gray-200 rounded-lg p-3 md:p-4 flex items-center gap-3 md:gap-4 hover:shadow-md transition-shadow"
+                        >
+                          {/* Avatar/Image */}
+                          {image ? (
+                            <Avatar className="w-12 h-12 md:w-14 md:h-14 rounded-lg flex-shrink-0">
+                              <AvatarImage src={image} alt={name} />
+                              <AvatarFallback 
+                                style={{ backgroundColor: avatarBgColor }}
+                                className="text-white rounded-lg font-semibold text-base md:text-lg"
+                              >
+                                {name.charAt(0).toUpperCase()}
+                              </AvatarFallback>
+                            </Avatar>
+                          ) : (
+                            <div
+                              className="w-12 h-12 md:w-14 md:h-14 rounded-lg flex items-center justify-center flex-shrink-0"
+                              style={{ backgroundColor: avatarBgColor }}
+                            >
+                              <span className="text-lg md:text-xl font-semibold text-white">
+                                {name.charAt(0).toUpperCase()}
+                              </span>
+                            </div>
+                          )}
+
+                          {/* Name and Last Supported */}
+                          <div className="flex-1 min-w-0">
+                            <h4 className="font-bold text-sm md:text-base text-gray-900 mb-0.5 md:mb-1">
+                              {name}
+                            </h4>
+                            <p className="text-xs md:text-sm text-gray-500">
+                              Last supported {lastSupported}
+                            </p>
+                          </div>
+
+                          {/* View Button */}
+                          <Button
+                            onClick={() => causeId && handleViewNonprofit(causeId)}
+                            variant="outline"
+                            className="flex-shrink-0 text-xs md:text-sm px-3 md:px-4 py-1.5 md:py-2 border-gray-300 hover:bg-gray-50"
+                          >
+                            View
+                          </Button>
+                        </div>
+                      );
+                    })}
+                  </div>
                 </div>
               )}
             </div>

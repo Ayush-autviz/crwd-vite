@@ -245,7 +245,7 @@ function App() {
                     <Route path="/user-profile/:userId" element={<UserProfile />} />
                     <Route path="/circles" element={<Circles />} />
                     <Route path="/articles" element={<Articles />} />
-                    <Route path="/article/:id" element={<ArticleDetail />} />
+                    <Route path="/article/:slug" element={<ArticleDetail />} />
                     {/* <Route path="/complete-onboard" element={<CompleteOnboard />} /> */}
                     <Route path="/complete-onboard" element={<NewCompleteOnboard />} />
                     

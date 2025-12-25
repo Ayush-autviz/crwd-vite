@@ -29,11 +29,11 @@ export default function SimilarNonprofits({ similarCauses, isLoading }: SimilarN
         </div>
         <div className="space-y-3 md:space-y-4">
           {[1, 2].map((i) => (
-            <Card key={i} className="animate-pulse">
-              <CardContent className="p-3 md:p-4">
-                <div className="flex gap-3 md:gap-4">
-                  <div className="w-12 h-12 md:w-16 md:h-16 bg-gray-200 rounded-lg"></div>
-                  <div className="flex-1 space-y-1.5 md:space-y-2">
+            <Card key={i} className="animate-pulse h-[80px] md:h-[96px]">
+              <CardContent className="p-3 md:p-4 h-full flex items-center">
+                <div className="flex gap-3 md:gap-4 w-full">
+                  <div className="w-12 h-12 md:w-14 md:h-14 bg-gray-200 rounded-lg flex-shrink-0"></div>
+                  <div className="flex-1 space-y-1.5 md:space-y-2 flex flex-col justify-center">
                     <div className="h-3 md:h-4 bg-gray-200 rounded w-3/4"></div>
                     <div className="h-2.5 md:h-3 bg-gray-200 rounded w-full"></div>
                   </div>
@@ -64,11 +64,11 @@ export default function SimilarNonprofits({ similarCauses, isLoading }: SimilarN
           return (
             <Card
               key={cause.id}
-              className="cursor-pointer hover:shadow-md transition-shadow"
+              className="cursor-pointer hover:shadow-md transition-shadow h-[80px] md:h-[96px]"
               onClick={() => navigate(`/cause/${cause.id}`)}
             >
-              <CardContent className="px-3 md:px-4 py-2.5 md:py-3">
-                <div className="flex gap-3 md:gap-4">
+              <CardContent className="px-3 md:px-4 py-2.5 md:py-3 h-full flex items-center">
+                <div className="flex gap-3 md:gap-4 w-full">
                   <Avatar className="w-12 h-12 md:w-14 md:h-14 rounded-lg flex-shrink-0">
                     <AvatarImage src={cause.image} alt={cause.name} />
                     <AvatarFallback
@@ -78,8 +78,8 @@ export default function SimilarNonprofits({ similarCauses, isLoading }: SimilarN
                       {firstLetter}
                     </AvatarFallback>
                   </Avatar>
-                  <div className="flex-1 min-w-0">
-                    <h3 className="font-bold text-sm md:text-base text-foreground mb-0.5 md:mb-1">
+                  <div className="flex-1 min-w-0 flex flex-col justify-center">
+                    <h3 className="font-bold text-sm md:text-base text-foreground mb-0.5 md:mb-1 line-clamp-1">
                       {cause.name}
                     </h3>
                     <p className="text-xs md:text-sm text-muted-foreground line-clamp-2">

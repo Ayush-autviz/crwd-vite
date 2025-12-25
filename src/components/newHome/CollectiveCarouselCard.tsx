@@ -140,12 +140,10 @@ export default function CollectiveCarouselCard({
                 >
                   {isFounder ? (
                     <>
-                      <Settings className="h-3 w-3 md:h-4 md:w-4" />
                       Manage
                     </>
                   ) : (
-                    <>
-                      <Eye className="h-3 w-3 md:h-4 md:w-4" />
+                      <>
                       View
                     </>
                   )}

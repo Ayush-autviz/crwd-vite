@@ -438,7 +438,7 @@ export default function WaitlistPage() {
             <div className="relative">
               <div className="relative rounded-xl overflow-hidden shadow-lg">
                 <img
-                  src="https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=800&h=600&fit=crop"
+                  src="http://images.unsplash.com/photo-1758599668209-783bd3691ec8?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHx5b3VuZyUyMHBlb3BsZSUyMHZvbHVudGVlcmluZyUyMGNvbW11bml0eXxlbnwxfHx8fDE3NjM4ODQ0NTJ8MA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral"
                   alt="People volunteering and making a difference"
                   className="w-full h-auto"
                 />

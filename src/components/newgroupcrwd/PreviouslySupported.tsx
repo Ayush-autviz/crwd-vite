@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom';
-import { Card, CardContent } from '@/components/ui/card';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
+import { Button } from '@/components/ui/button';
 import { Loader2 } from 'lucide-react';
 
 interface Nonprofit {
@@ -8,6 +8,8 @@ interface Nonprofit {
   name: string;
   mission?: string;
   image?: string;
+  removed_at?: string;
+  last_supported?: string;
   cause?: {
     id: number;
     name: string;
@@ -21,6 +23,30 @@ interface PreviouslySupportedProps {
   isLoading?: boolean;
 }
 
+// Helper function to calculate months ago from a date
+const getMonthsAgo = (dateString?: string): string => {
+  if (!dateString) {
+    return '2 months ago'; // Default fallback
+  }
+  
+  try {
+    const date = new Date(dateString);
+    const now = new Date();
+    const diffInMs = now.getTime() - date.getTime();
+    const diffInMonths = Math.floor(diffInMs / (1000 * 60 * 60 * 24 * 30));
+    
+    if (diffInMonths < 1) {
+      return 'Less than a month ago';
+    } else if (diffInMonths === 1) {
+      return '1 month ago';
+    } else {
+      return `${diffInMonths} months ago`;
+    }
+  } catch (error) {
+    return '2 months ago'; // Fallback on error
+  }
+};
+
 export default function PreviouslySupported({
   nonprofits,
   isLoading = false,
@@ -30,8 +56,8 @@ export default function PreviouslySupported({
   if (isLoading) {
     return (
       <div className="px-3 md:px-4 py-4 md:py-6">
-        <h3 className="font-bold text-base md:text-lg lg:text-xl text-foreground mb-3 md:mb-4">
-          Previously Supported
+        <h3 className="text-[10px] md:text-xs font-bold text-muted-foreground uppercase tracking-wide mb-3 md:mb-4">
+          PREVIOUSLY SUPPORTED
         </h3>
         <div className="flex items-center justify-center py-6 md:py-8">
           <Loader2 className="w-5 h-5 md:w-6 md:h-6 animate-spin text-gray-400" />
@@ -44,72 +70,86 @@ export default function PreviouslySupported({
     return null;
   }
 
+  // Generate vibrant avatar colors based on nonprofit ID for consistent colors
+  const avatarColors = [
+    '#EF4444', // Red
+    '#10B981', // Green
+    '#3B82F6', // Blue
+    '#8B5CF6', // Purple
+    '#84CC16', // Lime Green
+    '#EC4899', // Pink
+    '#F59E0B', // Amber
+    '#06B6D4', // Cyan
+    '#F97316', // Orange
+    '#A855F7', // Violet
+    '#14B8A6', // Teal
+    '#F43F5E', // Rose
+    '#6366F1', // Indigo
+    '#22C55E', // Emerald
+    '#EAB308', // Yellow
+  ];
+
   return (
     <div className="px-3 md:px-4 py-4 md:py-6">
-      <h3 className="font-bold text-base md:text-lg lg:text-xl text-foreground mb-3 md:mb-4">
-        Previously Supported
+      <h3 className="text-[10px] md:text-xs font-bold text-muted-foreground uppercase tracking-wide mb-3 md:mb-4">
+        PREVIOUSLY SUPPORTED
       </h3>
-      <div className="flex overflow-x-auto pb-2 md:pb-3 gap-2 md:gap-3 scrollbar-hide -mx-3 md:-mx-4 px-3 md:px-4">
-        {nonprofits.map((nonprofit, index) => {
+      <div className="space-y-2 md:space-y-3">
+        {nonprofits.map((nonprofit) => {
           const cause = nonprofit.cause || nonprofit;
           const name = cause.name || nonprofit.name || 'Unknown Nonprofit';
           const image = cause.image || nonprofit.image || '';
-
-          // Generate vibrant avatar colors based on nonprofit ID for consistent colors
-          const avatarColors = [
-            '#EF4444', // Red
-            '#10B981', // Green
-            '#3B82F6', // Blue
-            '#8B5CF6', // Purple
-            '#84CC16', // Lime Green
-            '#EC4899', // Pink
-            '#F59E0B', // Amber
-            '#06B6D4', // Cyan
-            '#F97316', // Orange
-            '#A855F7', // Violet
-            '#14B8A6', // Teal
-            '#F43F5E', // Rose
-            '#6366F1', // Indigo
-            '#22C55E', // Emerald
-            '#EAB308', // Yellow
-          ];
+          const causeId = cause.id || nonprofit.id;
           const nonprofitId = cause.id || nonprofit.id || name;
           const avatarColorIndex = nonprofitId ? (Number(nonprofitId) % avatarColors.length) : (name?.charCodeAt(0) || 0) % avatarColors.length;
           const avatarBgColor = avatarColors[avatarColorIndex];
-
-          const causeId = cause.id || nonprofit.id;
+          const lastSupported = getMonthsAgo(nonprofit.removed_at || nonprofit.last_supported);
 
           return (
             <div
               key={nonprofit.id}
-              onClick={() => causeId && navigate(`/cause/${causeId}`)}
-              className="flex-shrink-0 w-[120px] sm:w-[140px] md:w-[160px] cursor-pointer"
+              className="bg-white border border-gray-200 rounded-lg p-3 md:p-4 flex items-center gap-3 md:gap-4 hover:shadow-md transition-shadow"
             >
-              <div className="bg-white border border-gray-200 rounded-lg p-1.5 sm:p-2 md:p-3 flex flex-col items-center justify-between h-[90px] sm:h-[100px] md:h-[120px] hover:shadow-md transition-shadow opacity-75">
-                {image ? (
-                  <Avatar className="w-9 h-9 sm:w-10 sm:h-10 md:w-12 md:h-12 rounded-lg mb-1.5 md:mb-2 flex-shrink-0">
-                    <AvatarImage src={image} alt={name} />
-                    <AvatarFallback 
-                      style={{ backgroundColor: avatarBgColor }}
-                      className="text-white rounded-lg font-semibold text-[10px] sm:text-xs md:text-sm"
-                    >
-                      {name.charAt(0).toUpperCase()}
-                    </AvatarFallback>
-                  </Avatar>
-                ) : (
-                  <div
-                    className="w-9 h-9 sm:w-10 sm:h-10 md:w-12 md:h-12 rounded-lg mb-1.5 md:mb-2 flex items-center justify-center flex-shrink-0"
+              {/* Avatar/Image */}
+              {image ? (
+                <Avatar className="w-12 h-12 md:w-14 md:h-14 rounded-lg flex-shrink-0">
+                  <AvatarImage src={image} alt={name} />
+                  <AvatarFallback 
                     style={{ backgroundColor: avatarBgColor }}
+                    className="text-white rounded-lg font-semibold text-base md:text-lg"
                   >
-                    <span className="text-base sm:text-lg md:text-xl font-semibold text-white">
-                      {name.charAt(0).toUpperCase()}
-                    </span>
-                  </div>
-                )}
-                <p className="text-[10px] sm:text-xs font-semibold text-gray-900 text-center line-clamp-2 flex-grow flex items-center justify-center">
+                    {name.charAt(0).toUpperCase()}
+                  </AvatarFallback>
+                </Avatar>
+              ) : (
+                <div
+                  className="w-12 h-12 md:w-14 md:h-14 rounded-lg flex items-center justify-center flex-shrink-0"
+                  style={{ backgroundColor: avatarBgColor }}
+                >
+                  <span className="text-lg md:text-xl font-semibold text-white">
+                    {name.charAt(0).toUpperCase()}
+                  </span>
+                </div>
+              )}
+
+              {/* Name and Last Supported */}
+              <div className="flex-1 min-w-0">
+                <h4 className="font-bold text-sm md:text-base text-gray-900 mb-0.5 md:mb-1">
                   {name}
-                </p>
+                </h4>
+                {/* <p className="text-xs md:text-sm text-gray-500">
+                  Last supported {lastSupported}
+                </p> */}
               </div>
+
+              {/* View Button */}
+              <Button
+                onClick={() => causeId && navigate(`/cause/${causeId}`)}
+                variant="outline"
+                className="flex-shrink-0 text-xs md:text-sm px-3 md:px-4 py-1.5 md:py-2 border-gray-300 hover:bg-gray-50"
+              >
+                View
+              </Button>
             </div>
           );
         })}
