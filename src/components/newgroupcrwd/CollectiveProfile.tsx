@@ -81,7 +81,7 @@ export default function CollectiveProfile({
           </AvatarFallback>
         </Avatar>
         <div className="flex-1">
-          <div className="flex items-center gap-1.5 md:gap-2 flex-wrap">
+          <div className="flex items-center gap-1.5 md:gap-2 flex-wrap mb-1 md:mb-1.5">
             <h2 className="font-[800] text-xl md:text-2xl lg:text-3xl text-foreground">
               {name}
             </h2>
@@ -91,53 +91,53 @@ export default function CollectiveProfile({
               </span>
             )}
           </div>
+          {founder && (
+            <div className="flex items-center gap-1.5 md:gap-2">
+              <Avatar className="w-5 h-5 md:w-6 md:h-6 rounded-full flex-shrink-0">
+                <AvatarImage src={founder?.profile_picture || undefined} alt={founderName || 'Founder'} />
+                <AvatarFallback 
+                  style={{ 
+                    backgroundColor: (() => {
+                      const avatarColors = [
+                        '#EF4444', // Red
+                        '#10B981', // Green
+                        '#3B82F6', // Blue
+                        '#8B5CF6', // Purple
+                        '#84CC16', // Lime Green
+                        '#EC4899', // Pink
+                        '#F59E0B', // Amber
+                        '#06B6D4', // Cyan
+                        '#F97316', // Orange
+                        '#A855F7', // Violet
+                        '#14B8A6', // Teal
+                        '#F43F5E', // Rose
+                        '#6366F1', // Indigo
+                        '#22C55E', // Emerald
+                        '#EAB308', // Yellow
+                      ];
+                      const founderId = founder.id || founderName || 'Founder';
+                      const colorIndex = founderId ? (String(founderId).split('').reduce((acc, char) => acc + char.charCodeAt(0), 0) % avatarColors.length) : 0;
+                      return avatarColors[colorIndex];
+                    })()
+                  }}
+                  className="text-white font-semibold text-xs md:text-sm"
+                >
+                  {(founderName || 'F').charAt(0).toUpperCase()}
+                </AvatarFallback>
+              </Avatar>
+              <p className="text-muted-foreground text-xs md:text-sm lg:text-base">
+                Founded by{' '}
+                <button
+                  onClick={handleFounderClick}
+                  className="text-[#1600ff] hover:underline font-medium"
+                >
+                  {founderName}
+                </button>
+              </p>
+            </div>
+          )}
         </div>
       </div>
-      {founder && (
-        <div className="flex items-center gap-1.5 md:gap-2">
-          <Avatar className="w-5 h-5 md:w-6 md:h-6 rounded-full flex-shrink-0">
-            <AvatarImage src={founder?.profile_picture || undefined} alt={founderName || 'Founder'} />
-            <AvatarFallback 
-              style={{ 
-                backgroundColor: (() => {
-                  const avatarColors = [
-                    '#EF4444', // Red
-                    '#10B981', // Green
-                    '#3B82F6', // Blue
-                    '#8B5CF6', // Purple
-                    '#84CC16', // Lime Green
-                    '#EC4899', // Pink
-                    '#F59E0B', // Amber
-                    '#06B6D4', // Cyan
-                    '#F97316', // Orange
-                    '#A855F7', // Violet
-                    '#14B8A6', // Teal
-                    '#F43F5E', // Rose
-                    '#6366F1', // Indigo
-                    '#22C55E', // Emerald
-                    '#EAB308', // Yellow
-                  ];
-                  const founderId = founder.id || founderName || 'Founder';
-                  const colorIndex = founderId ? (String(founderId).split('').reduce((acc, char) => acc + char.charCodeAt(0), 0) % avatarColors.length) : 0;
-                  return avatarColors[colorIndex];
-                })()
-              }}
-              className="text-white font-semibold text-xs md:text-sm"
-            >
-              {(founderName || 'F').charAt(0).toUpperCase()}
-            </AvatarFallback>
-          </Avatar>
-          <p className="text-muted-foreground text-xs md:text-sm lg:text-base">
-            Founded by{' '}
-            <button
-              onClick={handleFounderClick}
-              className="text-[#1600ff] hover:underline font-medium"
-            >
-              {founderName}
-            </button>
-          </p>
-        </div>
-      )}
       {description && (
         <p className="text-foreground text-xs md:text-sm lg:text-base leading-relaxed mt-4 md:mt-5">
           {description}

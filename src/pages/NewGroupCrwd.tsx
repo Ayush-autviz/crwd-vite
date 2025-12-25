@@ -23,6 +23,7 @@ import CommunityActivity from '@/components/newgroupcrwd/CommunityActivity';
 import CollectiveStatisticsModal from '@/components/newgroupcrwd/CollectiveStatisticsModal';
 import JoinCollectiveBottomSheet from '@/components/newgroupcrwd/JoinCollectiveBottomSheet';
 import { SharePost } from '@/components/ui/SharePost';
+import { Toast } from '@/components/ui/toast';
 import { useAuthStore } from '@/stores/store';
 import Footer from '@/components/Footer';
 import { toast } from 'sonner';
@@ -37,6 +38,8 @@ export default function NewGroupCrwdPage() {
   const [statisticsTab, setStatisticsTab] = useState<'Nonprofits' | 'Members' | 'Donations'>('Nonprofits');
   const [showJoinModal, setShowJoinModal] = useState(false);
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
+  const [showToast, setShowToast] = useState(false);
+  const [toastMessage, setToastMessage] = useState('');
 
   // Fetch collective data
   const { data: crwdData, isLoading: isLoadingCrwd, error: crwdError } = useQuery({
@@ -122,6 +125,10 @@ export default function NewGroupCrwdPage() {
       
       // Refetch donation box to get latest data including capacity
       await refetchDonationBox();
+      
+      // Show custom toast
+      setToastMessage('You\'ve joined the collective!');
+      setShowToast(true);
       
       // Always show the drawer sheet after joining
       setShowJoinModal(true);
@@ -441,7 +448,18 @@ export default function NewGroupCrwdPage() {
         )}
       </div>
 
-      <SupportedNonprofits nonprofits={nonprofits} isLoading={isLoadingCauses} />
+      <SupportedNonprofits 
+        nonprofits={nonprofits} 
+        isLoading={isLoadingCauses}
+        onSeeAllClick={() => {
+          if (!currentUser || !token?.access_token) {
+            navigate(`/onboarding?redirectTo=/groupcrwd/${crwdId}`);
+            return;
+          }
+          setStatisticsTab('Nonprofits');
+          setShowStatisticsModal(true);
+        }}
+      />
 
 
       <CommunityActivity
@@ -529,6 +547,13 @@ export default function NewGroupCrwdPage() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* Custom Toast */}
+      <Toast
+        message={toastMessage}
+        show={showToast}
+        onHide={() => setShowToast(false)}
+      />
     </div>
   );
 }

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { ChevronLeft, ChevronRight, Share2, Settings, Eye } from "lucide-react";
+import { ChevronLeft, ChevronRight, Share2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { SharePost } from "@/components/ui/SharePost";
 import { Card, CardContent } from "@/components/ui/card";
@@ -93,7 +93,7 @@ export default function CollectiveCarouselCard({
 
           <div className="flex flex-col items-start gap-2.5 md:gap-4">
             {/* Icon and Title/Badge Row */}
-            <div className="flex flex-row items-center gap-2.5 md:gap-4 w-full">
+            <div onClick={() => navigate(`/groupcrwd/${currentCollective.id}`)} className="flex flex-row items-center gap-2.5 md:gap-4 w-full">
               {/* Circular Icon */}
               <div 
                 className="w-8 h-8 md:w-12 md:h-12 rounded-lg flex items-center justify-center flex-shrink-0"
@@ -126,8 +126,8 @@ export default function CollectiveCarouselCard({
             {/* Content */}
             <div className="w-full text-left">
               <p className="text-xs md:text-base text-gray-700 mb-2 md:mb-4 leading-relaxed text-left">
-                <span className="font-bold text-gray-900">{currentCollective.memberCount}</span> members are currently donating{" "}
-                to <span className="font-bold text-gray-900">{currentCollective.causeCount} causes</span>.
+                <span className="font-semibold text-gray-600">{currentCollective.memberCount} {currentCollective.memberCount === 1 ? 'member' : 'members'}</span> {currentCollective.memberCount === 1 ? 'is' : 'are'} currently donating{" "}
+                to <span className="font-semibold text-gray-600">{currentCollective.causeCount} {currentCollective.causeCount === 1 ? 'cause' : 'causes'}</span>.
               </p>
 
               {/* Action Buttons */}
@@ -166,7 +166,7 @@ export default function CollectiveCarouselCard({
       <SharePost
         url={window.location.origin + `/groupcrwd/${currentCollective.id}`}
         title={`Join ${currentCollective.name}`}
-        description={`${currentCollective.memberCount} members are currently donating $${currentCollective.yearlyAmount.toLocaleString()} per year to ${currentCollective.causeCount} causes.`}
+        description={`${currentCollective.memberCount} ${currentCollective.memberCount === 1 ? 'member' : 'members'} ${currentCollective.memberCount === 1 ? 'is' : 'are'} currently donating $${currentCollective.yearlyAmount.toLocaleString()} per year to ${currentCollective.causeCount} ${currentCollective.causeCount === 1 ? 'cause' : 'causes'}.`}
         isOpen={showShareModal}
         onClose={() => setShowShareModal(false)}
       />
