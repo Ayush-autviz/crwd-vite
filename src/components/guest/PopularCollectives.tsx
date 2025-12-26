@@ -99,15 +99,15 @@ export default function PopularCollectives({
   }
 
   return (
-    <div className="bg-card py-10 md:py-16 px-4 md:px-6">
+    <div className="bg-card py-6 md:py-16 px-4 md:px-6">
       <div className="max-w-6xl mx-auto">
         {/* Title */}
-        <h2 className="font-[800] text-foreground mb-6 md:mb-8" style={{ fontSize: 'clamp(1.5rem, 4vw, 2.5rem)' }}>
+        <h2 className="font-[800] text-foreground mb-4 md:mb-8 text-lg md:text-2xl" style={{ fontSize: 'clamp(1.125rem, 3vw, 2.5rem)' }}>
           Popular Collectives
         </h2>
 
         {/* Grid Layout: 3 cards top row, 1 card bottom left */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 mb-6 md:mb-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-6 mb-4 md:mb-8">
           {displayCollectives.slice(0, 4).map((collective) => {
             // Priority: 1. If color is available, show color with letter, 2. If no color, show image, 3. Fallback to generated color with letter
             const hasColor = collective.color;
@@ -118,11 +118,11 @@ export default function PopularCollectives({
 
             return (
               <Card key={collective.id} className="rounded-xl shadow-sm hover:shadow-lg transition-shadow duration-300">
-                <CardContent className="p-4 md:p-6 lg:p-6 xl:p-6">
-                    <div className="flex items-center gap-4">
+                <CardContent className="p-3 md:p-6 lg:p-6 xl:p-6">
+                    <div className="flex items-center gap-2 md:gap-4 mb-2 md:mb-3">
                   {/* Icon */}
                   <div
-                    className="w-15 h-15 md:w-18 md:h-18 rounded-xl flex items-center justify-center mb-4 overflow-hidden"
+                    className="w-10 h-10 md:w-16 md:h-16 rounded-xl flex items-center justify-center overflow-hidden flex-shrink-0"
                     style={iconColor ? { backgroundColor: iconColor } : {}}
                   >
                     {showImage ? (
@@ -132,22 +132,22 @@ export default function PopularCollectives({
                         className="w-full h-full object-cover"
                       />
                     ) : (
-                      <span className="text-white font-bold text-xl md:text-2xl">
+                      <span className="text-white font-bold text-base md:text-2xl">
                         {iconLetter}
                       </span>
                     )}
                   </div>
 
                   {/* Title */}
-                  <h3 className="font-bold text-lg sm:text-xl md:text-2xl text-foreground mb-3">
+                  <h3 className="font-bold text-sm md:text-xl lg:text-2xl text-foreground">
                     {collective.name}
                   </h3>
                     </div>
                   {/* Founder */}
-                  <div className="flex items-center gap-2 mb-2">
-                    <Avatar className="h-5 w-5 md:h-6 md:w-6 lg:h-6 lg:w-6 xl:h-6 xl:w-6">
+                  <div className="flex items-center gap-1.5 md:gap-2 mb-1.5 md:mb-2">
+                    <Avatar className="h-4 w-4 md:h-6 md:w-6 lg:h-6 lg:w-6 xl:h-6 xl:w-6">
                       <AvatarImage src={collective.founder.profile_picture} />
-                      <AvatarFallback className="text-[10px]">
+                      <AvatarFallback className="text-[8px] md:text-[10px]">
                         {collective.founder.name
                           .split(" ")
                           .map((n) => n.charAt(0))
@@ -155,18 +155,18 @@ export default function PopularCollectives({
                           .toUpperCase()}
                       </AvatarFallback>
                     </Avatar>
-                    <p className="text-xs md:text-sm text-muted-foreground">
+                    <p className="text-[10px] md:text-sm text-muted-foreground">
                       Founded by {collective.founder.name}
                     </p>
                   </div>
 
                   {/* Nonprofits count */}
-                  <p className="text-xs md:text-sm text-muted-foreground mb-3">
+                  <p className="text-[10px] md:text-sm text-muted-foreground mb-2 md:mb-3">
                     Supporting {collective.nonprofit_count} nonprofit{collective.nonprofit_count !== 1 ? "s" : ""}
                   </p>
 
                   {/* Description */}
-                  <p className="text-sm md:text-base text-muted-foreground leading-relaxed mb-4 line-clamp-3">
+                  <p className="text-xs md:text-base text-muted-foreground leading-relaxed mb-3 md:mb-4 line-clamp-3">
                     {collective.description}
                   </p>
 
@@ -175,7 +175,7 @@ export default function PopularCollectives({
                   <a href={`/groupcrwd/${collective.id}`}>
                     <Button
                       variant="outline"
-                      className="w-full border-[#a854f7] text-[#a854f7] hover:bg-[#a854f7] hover:text-white"
+                      className="w-full border-[#a854f7] text-[#a854f7] hover:bg-[#a854f7] hover:text-white text-xs md:text-sm py-1.5 md:py-2"
                     >
                       View Collective
                     </Button>
@@ -194,7 +194,7 @@ export default function PopularCollectives({
           <a href={seeAllLink}>
             <Button
               variant="outline"
-              className="border-[#a854f7] rounded-full text-[#a854f7] hover:bg-[#a854f7] hover:text-white px-6 md:px-8 py-2 md:py-3 text-base md:text-lg font-medium"
+              className="border-[#a854f7] rounded-full text-[#a854f7] hover:bg-[#a854f7] hover:text-white px-4 md:px-8 py-1.5 md:py-3 text-xs md:text-lg font-medium"
             >
               See All Collectives
             </Button>
