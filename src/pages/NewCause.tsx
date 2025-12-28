@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Loader2 } from 'lucide-react';
@@ -26,6 +26,7 @@ import { useAuthStore } from '@/stores/store';
 import { Toast } from '@/components/ui/toast';
 import { getCausesBySearch } from '@/services/api/crwd';
 import Footer from '@/components/Footer';
+import AddToDonationBoxBottomSheet from '@/components/newcause/AddToDonationBoxBottomSheet';
 
 export default function NewCausePage() {
   const { causeId } = useParams<{ causeId: string }>();
@@ -34,7 +35,6 @@ export default function NewCausePage() {
   const queryClient = useQueryClient();
   const [showShareModal, setShowShareModal] = useState(false);
   const [showAddToBoxModal, setShowAddToBoxModal] = useState(false);
-  const addToBoxModalRef = useRef<HTMLDivElement>(null);
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState('');
 
@@ -106,26 +106,6 @@ export default function NewCausePage() {
       }
     },
   });
-
-  // Handle outside click for add to box modal
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (
-        addToBoxModalRef.current &&
-        !addToBoxModalRef.current.contains(event.target as Node)
-      ) {
-        setShowAddToBoxModal(false);
-      }
-    };
-
-    if (showAddToBoxModal) {
-      document.addEventListener('mousedown', handleClickOutside);
-    }
-
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, [showAddToBoxModal]);
 
   // Loading state
   if (isLoadingCause) {
@@ -313,45 +293,16 @@ export default function NewCausePage() {
 
       <Footer />
 
-      {/* Add to Donation Box Confirmation Modal */}
-      {showAddToBoxModal && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-3 md:p-4">
-          <div
-            ref={addToBoxModalRef}
-            className="bg-white rounded-lg max-w-md w-full mx-3 md:mx-4 p-4 md:p-6 relative"
-          >
-            <h2 className="text-xl md:text-2xl font-bold text-gray-900 mb-1.5 md:mb-2">
-              Add to Donation Box?
-            </h2>
-            <p className="text-sm md:text-base text-gray-600 mb-4 md:mb-6">
-              This will add {causeData?.name} to your donation box. You can manage your donations anytime.
-            </p>
-            <div className="flex items-center justify-center gap-2.5 md:gap-3">
-              <Button
-                onClick={() => setShowAddToBoxModal(false)}
-                variant="outline"
-                disabled={addToDonationBoxMutation.isPending}
-                className="text-sm md:text-base py-2 md:py-2.5 px-3 md:px-4"
-              >
-                Cancel
-              </Button>
-              <Button
-                onClick={handleConfirmAddToBox}
-                disabled={addToDonationBoxMutation.isPending}
-                className="bg-[#84CC16] hover:bg-[#6BB00F] text-white text-sm md:text-base py-2 md:py-2.5 px-3 md:px-4"
-              >
-                {addToDonationBoxMutation.isPending ? (
-                  <>
-                    <Loader2 className="w-3.5 h-3.5 md:w-4 md:h-4 mr-1.5 md:mr-2 animate-spin" />
-                    Adding...
-                  </>
-                ) : (
-                  'Add to Box'
-                )}
-              </Button>
-            </div>
-          </div>
-        </div>
+      {/* Add to Donation Box Bottom Sheet */}
+      {causeData && (
+        <AddToDonationBoxBottomSheet
+          isOpen={showAddToBoxModal}
+          onClose={() => setShowAddToBoxModal(false)}
+          causeData={causeData}
+          donationBoxCount={donationBoxData?.box_causes?.length || 0}
+          onConfirm={handleConfirmAddToBox}
+          isPending={addToDonationBoxMutation.isPending}
+        />
       )}
 
       <SharePost
