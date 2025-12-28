@@ -38,7 +38,7 @@ export default function CommunityActivity({
         </div>
         {!isJoined ? (
           <div
-            className="bg-[#1600ff] hover:bg-[#1400cc] text-white font-bold px-3 md:px-4 py-1.5 md:py-2 rounded-full text-xs md:text-sm"
+            className="bg-[#1600ff] hover:bg-[#1400cc] text-white font-bold px-2 md:px-3 lg:px-4 py-1 md:py-1.5 lg:py-2 rounded-full text-[10px] md:text-xs lg:text-sm"
           >
             Join to post updates
           </div>
@@ -46,7 +46,7 @@ export default function CommunityActivity({
           <Button
             onClick={() => navigate("/create-post", { state: { collectiveData } })}
             variant="default"
-            className="px-4 md:px-6 py-1.5 md:py-2 rounded-full text-xs md:text-sm"
+            className="px-2 md:px-4 lg:px-6 py-1 md:py-1.5 lg:py-2 rounded-full text-[10px] md:text-xs lg:text-sm"
           >
             Create Post
           </Button>

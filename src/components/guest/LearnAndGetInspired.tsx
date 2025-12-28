@@ -68,11 +68,11 @@ export default function LearnAndGetInspired({
           </h2>
           {/* <Link
             to={seeAllLink} */}
-            <a href={seeAllLink}
+            {/* <a href={seeAllLink}
             className="text-[#1600ff] font-[600] hover:underline flex items-center gap-1 text-xs md:text-lg"
           >
             All articles <span>→</span>
-            </a>
+            </a> */}
           {/* </Link> */}
         </div>
 

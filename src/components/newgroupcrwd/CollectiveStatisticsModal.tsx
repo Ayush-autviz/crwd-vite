@@ -91,7 +91,7 @@ export default function CollectiveStatisticsModal({
       onClick={handleClose}
     >
       <div
-        className={`bg-white rounded-t-3xl w-full h-[70vh] flex flex-col transform transition-transform duration-300 ${
+        className={`bg-white rounded-t-3xl w-full h-[60vh] md:h-[70vh] flex flex-col transform transition-transform duration-300 ${
           isAnimating ? 'translate-y-0' : 'translate-y-full'
         }`}
         style={{
@@ -105,30 +105,30 @@ export default function CollectiveStatisticsModal({
         </div>
 
         {/* Header */}
-        <div className="px-4 md:px-6 pt-3 md:pt-4 pb-4 md:pb-6 border-b border-gray-200">
-          <div className="flex items-center justify-between mb-3 md:mb-4">
-            <h2 className="text-xl md:text-2xl font-bold text-foreground">Collective Statistics</h2>
+        <div className="px-3 md:px-4 lg:px-6 pt-2 md:pt-3 lg:pt-4 pb-3 md:pb-4 lg:pb-6 border-b border-gray-200">
+          <div className="flex items-center justify-between mb-2 md:mb-3 lg:mb-4">
+            <h2 className="text-lg md:text-xl lg:text-2xl font-bold text-foreground">Collective Statistics</h2>
             <button
               onClick={handleClose}
-              className="p-1.5 md:p-2 hover:bg-gray-100 rounded-full transition-colors"
+              className="p-1 md:p-1.5 lg:p-2 hover:bg-gray-100 rounded-full transition-colors"
               aria-label="Close"
             >
-              <X className="w-4 h-4 md:w-5 md:h-5 text-gray-700" />
+              <X className="w-4 h-4 md:w-4 md:h-4 lg:w-5 lg:h-5 text-gray-700" />
             </button>
           </div>
-          <p className="text-xs md:text-sm text-muted-foreground">
+          <p className="text-[10px] md:text-xs lg:text-sm text-muted-foreground">
             View detailed information about nonprofits, members, and donations
           </p>
         </div>
 
         {/* Tabs */}
-        <div className="px-4 md:px-6 pt-3 md:pt-4 border-b border-gray-200">
-          <div className="flex justify-around gap-3 md:gap-6">
+        <div className="px-3 md:px-4 lg:px-6 pt-2 md:pt-3 lg:pt-4 border-b border-gray-200">
+          <div className="flex justify-around gap-2 md:gap-3 lg:gap-6">
             {(['Nonprofits', 'Members', 'Donations'] as TabType[]).map((tab) => (
               <button
                 key={tab}
                 onClick={() => setActiveTab(tab)}
-                className={`pb-2 md:pb-3 px-0.5 md:px-1 font-semibold text-sm md:text-md transition-colors relative ${
+                className={`pb-1.5 md:pb-2 lg:pb-3 px-0.5 md:px-1 font-semibold text-xs md:text-sm lg:text-base transition-colors relative ${
                   activeTab === tab
                     ? 'text-foreground'
                     : 'text-muted-foreground'
@@ -144,10 +144,10 @@ export default function CollectiveStatisticsModal({
         </div>
 
         {/* Content */}
-        <div className="px-4 md:px-6 py-4 md:py-6 flex-1 overflow-y-auto">
+        <div className="px-3 md:px-4 lg:px-6 py-3 md:py-4 lg:py-6 flex-1 overflow-y-auto">
           {activeTab === 'Nonprofits' && (
             <div>
-              <h3 className="text-[10px] md:text-xs font-bold text-muted-foreground uppercase tracking-wide mb-3 md:mb-4">
+              <h3 className="text-[10px] md:text-xs font-bold text-muted-foreground uppercase tracking-wide mb-2 md:mb-3 lg:mb-4">
                 Currently Active
               </h3>
               {isLoadingCauses ? (
@@ -186,28 +186,28 @@ export default function CollectiveStatisticsModal({
                     return (
                       <div
                         key={nonprofit.id || cause.id}
-                        className="flex items-center gap-3 md:gap-4 mb-3 md:mb-4 p-3 md:p-4 border border-gray-100 rounded-lg shadow-md hover:shadow-lg transition-shadow cursor-pointer"
+                        className="flex items-center gap-2 md:gap-3 lg:gap-4 mb-2 md:mb-3 lg:mb-4 p-2 md:p-3 lg:p-4 border border-gray-100 rounded-lg shadow-md hover:shadow-lg transition-shadow cursor-pointer"
                       >
-                        <Avatar className="w-10 h-10 md:w-12 md:h-12 rounded-lg flex-shrink-0">
+                        <Avatar className="w-8 h-8 md:w-10 md:h-10 lg:w-12 lg:h-12 rounded-lg flex-shrink-0">
                           <AvatarImage src={image} alt={name} />
                           <AvatarFallback 
                             style={{ backgroundColor: avatarBgColor }}
-                            className="text-white rounded-lg font-semibold text-base md:text-lg"
+                            className="text-white rounded-lg font-semibold text-sm md:text-base lg:text-lg"
                           >
                             {name.charAt(0).toUpperCase()}
                           </AvatarFallback>
                         </Avatar>
                         <div className="flex-1 min-w-0">
-                          <h4 className="font-bold text-sm md:text-base text-foreground mb-0.5 md:mb-1">
+                          <h4 className="font-bold text-xs md:text-sm lg:text-base text-foreground mb-0.5 md:mb-1">
                             {name}
                           </h4>
-                          <p className="text-xs md:text-sm text-muted-foreground">
+                          <p className="text-[10px] md:text-xs lg:text-sm text-muted-foreground line-clamp-3">
                             {cause.mission || 'No description available'}
                           </p>
                         </div>
                         <Button
                           onClick={() => handleViewNonprofit(cause.id || nonprofit.id)}
-                          className="bg-[#1600ff] hover:bg-[#1400cc] text-white font-semibold px-3 md:px-4 py-1.5 md:py-2 rounded-lg text-xs md:text-sm"
+                          className="bg-[#1600ff] hover:bg-[#1400cc] text-white font-semibold px-2 md:px-3 lg:px-4 py-1 md:py-1.5 lg:py-2 rounded-lg text-[10px] md:text-xs lg:text-sm flex-shrink-0"
                         >
                           View
                         </Button>
@@ -216,15 +216,15 @@ export default function CollectiveStatisticsModal({
                   })}
                 </div>
               ) : (
-                <div className="text-center py-6 md:py-8 text-xs md:text-sm text-muted-foreground">
+                <div className="text-center py-4 md:py-6 lg:py-8 text-[10px] md:text-xs lg:text-sm text-muted-foreground">
                   No nonprofits found
                 </div>
               )}
 
               {/* Previously Supported Section */}
               {previouslySupported && previouslySupported.length > 0 && (
-                <div className="mt-6 md:mt-8 pt-6 md:pt-8 border-t border-gray-200">
-                  <h3 className="text-[10px] md:text-xs font-bold text-muted-foreground uppercase tracking-wide mb-3 md:mb-4">
+                <div className="mt-4 md:mt-6 lg:mt-8 pt-4 md:pt-6 lg:pt-8 border-t border-gray-200">
+                  <h3 className="text-[10px] md:text-xs font-bold text-muted-foreground uppercase tracking-wide mb-2 md:mb-3 lg:mb-4">
                     PREVIOUSLY SUPPORTED
                   </h3>
                   <div className="space-y-2 md:space-y-3">
@@ -282,25 +282,25 @@ export default function CollectiveStatisticsModal({
                       return (
                         <div
                           key={nonprofit.id}
-                          className="bg-white border border-gray-200 rounded-lg p-3 md:p-4 flex items-center gap-3 md:gap-4 hover:shadow-md transition-shadow"
+                          className="bg-white border border-gray-200 rounded-lg p-2 md:p-3 lg:p-4 flex items-center gap-2 md:gap-3 lg:gap-4 hover:shadow-md transition-shadow"
                         >
                           {/* Avatar/Image */}
                           {image ? (
-                            <Avatar className="w-12 h-12 md:w-14 md:h-14 rounded-lg flex-shrink-0">
+                            <Avatar className="w-10 h-10 md:w-12 md:h-12 lg:w-14 lg:h-14 rounded-lg flex-shrink-0">
                               <AvatarImage src={image} alt={name} />
                               <AvatarFallback 
                                 style={{ backgroundColor: avatarBgColor }}
-                                className="text-white rounded-lg font-semibold text-base md:text-lg"
+                                className="text-white rounded-lg font-semibold text-sm md:text-base lg:text-lg"
                               >
                                 {name.charAt(0).toUpperCase()}
                               </AvatarFallback>
                             </Avatar>
                           ) : (
                             <div
-                              className="w-12 h-12 md:w-14 md:h-14 rounded-lg flex items-center justify-center flex-shrink-0"
+                              className="w-10 h-10 md:w-12 md:h-12 lg:w-14 lg:h-14 rounded-lg flex items-center justify-center flex-shrink-0"
                               style={{ backgroundColor: avatarBgColor }}
                             >
-                              <span className="text-lg md:text-xl font-semibold text-white">
+                              <span className="text-sm md:text-lg lg:text-xl font-semibold text-white">
                                 {name.charAt(0).toUpperCase()}
                               </span>
                             </div>
@@ -308,10 +308,10 @@ export default function CollectiveStatisticsModal({
 
                           {/* Name and Last Supported */}
                           <div className="flex-1 min-w-0">
-                            <h4 className="font-bold text-sm md:text-base text-gray-900 mb-0.5 md:mb-1">
+                            <h4 className="font-bold text-xs md:text-sm lg:text-base text-gray-900 mb-0.5 md:mb-1">
                               {name}
                             </h4>
-                            <p className="text-xs md:text-sm text-gray-500">
+                            <p className="text-[10px] md:text-xs lg:text-sm text-gray-500">
                               Last supported {lastSupported}
                             </p>
                           </div>
@@ -320,7 +320,7 @@ export default function CollectiveStatisticsModal({
                           <Button
                             onClick={() => causeId && handleViewNonprofit(causeId)}
                             variant="outline"
-                            className="flex-shrink-0 text-xs md:text-sm px-3 md:px-4 py-1.5 md:py-2 border-gray-300 hover:bg-gray-50"
+                            className="flex-shrink-0 text-[10px] md:text-xs lg:text-sm px-2 md:px-3 lg:px-4 py-1 md:py-1.5 lg:py-2 border-gray-300 hover:bg-gray-50"
                           >
                             View
                           </Button>
@@ -336,8 +336,8 @@ export default function CollectiveStatisticsModal({
           {activeTab === 'Members' && (
             <div>
               {isLoadingMembers ? (
-                <div className="flex items-center justify-center py-6 md:py-8">
-                  <Loader2 className="w-5 h-5 md:w-6 md:h-6 animate-spin text-gray-400" />
+                <div className="flex items-center justify-center py-4 md:py-6 lg:py-8">
+                  <Loader2 className="w-4 h-4 md:w-5 md:h-5 lg:w-6 lg:h-6 animate-spin text-gray-400" />
                 </div>
               ) : members.length > 0 ? (
                 <div className="space-y-0">
@@ -379,7 +379,7 @@ export default function CollectiveStatisticsModal({
                     return (
                       <div
                         key={member.id || user.id}
-                        className="flex items-center gap-3 md:gap-4 py-3 md:py-4 border-b border-gray-100 last:border-b-0 cursor-pointer hover:bg-gray-50 transition-colors"
+                        className="flex items-center gap-2 md:gap-3 lg:gap-4 py-2 md:py-3 lg:py-4 border-b border-gray-100 last:border-b-0 cursor-pointer hover:bg-gray-50 transition-colors"
                         onClick={() => {
                           if (user.id) {
                             navigate(`/user-profile/${user.id}`);
@@ -387,27 +387,27 @@ export default function CollectiveStatisticsModal({
                           }
                         }}
                       >
-                        <Avatar className="w-10 h-10 md:w-12 md:h-12 rounded-full flex-shrink-0">
+                        <Avatar className="w-8 h-8 md:w-10 md:h-10 lg:w-12 lg:h-12 rounded-full flex-shrink-0">
                           <AvatarImage src={avatar} alt={name} />
                           <AvatarFallback 
                             style={{ backgroundColor: avatarBgColor }}
-                            className="text-white font-bold text-base md:text-lg"
+                            className="text-white font-bold text-sm md:text-base lg:text-lg"
                           >
                             {initial}
                           </AvatarFallback>
                         </Avatar>
                         <div className="flex-1 min-w-0">
-                          <div className="flex items-center gap-1.5 md:gap-2 flex-wrap">
-                            <h4 className="font-bold text-sm md:text-base text-foreground">
+                          <div className="flex items-center gap-1 md:gap-1.5 lg:gap-2 flex-wrap">
+                            <h4 className="font-bold text-xs md:text-sm lg:text-base text-foreground">
                               @{username || name.toLowerCase().replace(/\s+/g, '_')}
                             </h4>
                             {isFounder && (
-                              <span className="bg-red-500 text-white text-[10px] md:text-xs font-semibold px-1.5 md:px-2 py-0.5 rounded-full">
+                              <span className="bg-red-500 text-white text-[9px] md:text-[10px] lg:text-xs font-semibold px-1 md:px-1.5 lg:px-2 py-0.5 rounded-full">
                                 Founder
                               </span>
                             )}
                           </div>
-                          <p className="text-xs md:text-sm text-gray-500 mt-0.5 md:mt-1">
+                          <p className="text-[10px] md:text-xs lg:text-sm text-gray-500 mt-0.5 md:mt-1">
                             Active member
                           </p>
                         </div>
@@ -416,7 +416,7 @@ export default function CollectiveStatisticsModal({
                   })}
                 </div>
               ) : (
-                <div className="text-center py-6 md:py-8 text-xs md:text-sm text-muted-foreground">
+                <div className="text-center py-4 md:py-6 lg:py-8 text-[10px] md:text-xs lg:text-sm text-muted-foreground">
                   No members found
                 </div>
               )}
@@ -426,22 +426,22 @@ export default function CollectiveStatisticsModal({
           {activeTab === 'Donations' && (
             <div>
               {isLoadingDonations ? (
-                <div className="flex items-center justify-center py-6 md:py-8">
-                  <Loader2 className="w-5 h-5 md:w-6 md:h-6 animate-spin text-gray-400" />
+                <div className="flex items-center justify-center py-4 md:py-6 lg:py-8">
+                  <Loader2 className="w-4 h-4 md:w-5 md:h-5 lg:w-6 lg:h-6 animate-spin text-gray-400" />
                 </div>
               ) : donations.length > 0 ? (
                 <>
                   {/* Summary Boxes */}
-                  <div className=" mb-4 md:mb-6">
+                  <div className="mb-3 md:mb-4 lg:mb-6">
                     {/* Collective Donations Box */}
-                    <div className="bg-[#f0fdf4] border border-[#86efac] rounded-lg p-3 md:p-4">
-                      <h3 className="text-xs md:text-sm font-semibold text-gray-700 mb-1 md:mb-2">
+                    <div className="bg-[#f0fdf4] border border-[#86efac] rounded-lg p-2 md:p-3 lg:p-4">
+                      <h3 className="text-[10px] md:text-xs lg:text-sm font-semibold text-gray-700 mb-1 md:mb-2">
                         Collective Donations
                       </h3>
-                      <p className="text-2xl md:text-3xl font-bold text-blue-600 mb-1">
+                      <p className="text-xl md:text-2xl lg:text-3xl font-bold text-blue-600 mb-1">
                         ${donationHistoryData?.total_donated_to_collective?.toFixed(2) || '0.00'}
                       </p>
-                      <p className="text-xs md:text-sm text-gray-600">
+                      <p className="text-[10px] md:text-xs lg:text-sm text-gray-600">
                         {donations.filter((d: any) => d.amount_attributed_to_collective > 0).length} donation{donations.filter((d: any) => d.amount_attributed_to_collective > 0).length !== 1 ? 's' : ''} credited to this collective
                       </p>
                     </div>
@@ -461,7 +461,7 @@ export default function CollectiveStatisticsModal({
                   </div>
 
                   {/* Donations List */}
-                  <div className="space-y-3 md:space-y-4">
+                  <div className="space-y-2 md:space-y-3 lg:space-y-4">
                     {donations.map((donation: any, index: number) => {
                       const user = donation.user || {};
                       const firstName = user.first_name || '';
@@ -539,21 +539,21 @@ export default function CollectiveStatisticsModal({
                       return (
                         <div
                           key={donation.id || index}
-                          className="flex items-center gap-3 md:gap-4 py-2 md:py-3"
+                          className="flex items-center gap-2 md:gap-3 lg:gap-4 py-1.5 md:py-2 lg:py-3"
                         >
                           {/* Avatar */}
                           <div
-                            className="w-10 h-10 md:w-12 md:h-12 rounded-full flex items-center justify-center flex-shrink-0"
+                            className="w-8 h-8 md:w-10 md:h-10 lg:w-12 lg:h-12 rounded-full flex items-center justify-center flex-shrink-0"
                             style={{ backgroundColor: avatarBgColor }}
                           >
                             {avatar ? (
                               <img
                                 src={avatar}
                                 alt={fullName}
-                                className="w-10 h-10 md:w-12 md:h-12 rounded-full object-cover"
+                                className="w-8 h-8 md:w-10 md:h-10 lg:w-12 lg:h-12 rounded-full object-cover"
                               />
                             ) : (
-                              <span className="text-white font-bold text-sm md:text-base">
+                              <span className="text-white font-bold text-xs md:text-sm lg:text-base">
                                 {initials}
                               </span>
                             )}
@@ -561,22 +561,22 @@ export default function CollectiveStatisticsModal({
 
                           {/* User Info */}
                           <div className="flex-1 min-w-0">
-                            <div className="flex items-center gap-2 flex-wrap">
-                              <h4 className="font-bold text-sm md:text-base text-gray-900">
+                            <div className="flex items-center gap-1.5 md:gap-2 flex-wrap">
+                              <h4 className="font-bold text-xs md:text-sm lg:text-base text-gray-900">
                                 {fullName}
                               </h4>
                               {isCollectiveDonation && (
-                                <span className="bg-blue-100 text-blue-500 text-xs font-semibold px-2 py-0.5 rounded-full">
+                                <span className="bg-blue-100 text-blue-500 text-[9px] md:text-xs font-semibold px-1.5 md:px-2 py-0.5 rounded-full">
                                   Collective
                                 </span>
                               )}
                             </div>
-                            <div className="flex items-center gap-2 flex-wrap mt-0.5 md:mt-1">
-                              {/* <p className="text-xs md:text-sm text-gray-600">
+                            <div className="flex items-center gap-1.5 md:gap-2 flex-wrap mt-0.5 md:mt-1">
+                              {/* <p className="text-[10px] md:text-xs lg:text-sm text-gray-600">
                                 Donated to {causeCount} nonprofit{causeCount !== 1 ? 's' : ''}
                               </p> */}
                               {/* <span className="text-gray-400">•</span> */}
-                              <p className="text-xs md:text-sm text-gray-600">
+                              <p className="text-[10px] md:text-xs lg:text-sm text-gray-600">
                                 {donation.charged_at ? formatTimeAgo(donation.charged_at) : 'Recently'}
                               </p>
                             </div>
@@ -587,7 +587,7 @@ export default function CollectiveStatisticsModal({
                   </div>
                 </>
               ) : (
-                <div className="text-center py-6 md:py-8 text-xs md:text-sm text-muted-foreground">
+                <div className="text-center py-4 md:py-6 lg:py-8 text-[10px] md:text-xs lg:text-sm text-muted-foreground">
                   No donations found
                 </div>
               )}
