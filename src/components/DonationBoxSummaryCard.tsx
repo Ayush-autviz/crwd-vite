@@ -61,7 +61,7 @@ export const DonationBoxSummaryCard = ({
         </div>
 
         {/* Donation Box Capacity */}
-        <div className="bg-blue-50 rounded-lg p-4 mb-6">
+        {/* <div className="bg-blue-50 rounded-lg p-4 mb-6">
           <div className="flex items-center justify-between mb-2">
             <h3 className="text-sm font-bold text-blue-600">Donation Box Capacity</h3>
             <span className="text-sm text-gray-900">{currentCapacity}/{maxCapacity} causes</span>
@@ -75,7 +75,7 @@ export const DonationBoxSummaryCard = ({
           <p className="text-sm text-blue-600">
             You can support {remainingCapacity} more cause{remainingCapacity !== 1 ? 's' : ''} with this donation amount.
           </p>
-        </div>
+        </div> */}
 
         {/* Action Buttons */}
         {/* <div className="flex gap-3">

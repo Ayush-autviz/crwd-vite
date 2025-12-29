@@ -798,7 +798,7 @@ const ManageDonationBox: React.FC<ManageDonationBoxProps> = ({
             </div>
 
             {/* Donation Box Capacity */}
-            <div className="bg-gradient-to-br from-blue-50 to-purple-50 rounded-lg p-3 md:p-4 mb-4 md:mb-6">
+            {/* <div className="bg-gradient-to-br from-blue-50 to-purple-50 rounded-lg p-3 md:p-4 mb-4 md:mb-6">
               <div className="flex items-center justify-between mb-1.5 md:mb-2">
                 <h3 className="text-xs md:text-sm font-bold text-blue-600">Donation Box Capacity</h3>
                 <span className="text-xs md:text-sm text-gray-900">{currentCapacity}/{maxCapacity} causes</span>
@@ -812,7 +812,7 @@ const ManageDonationBox: React.FC<ManageDonationBoxProps> = ({
               <p className="text-xs md:text-sm text-blue-600">
                 You can support {remainingCapacity} more cause{remainingCapacity !== 1 ? 's' : ''} with this donation amount.
               </p>
-            </div>
+            </div> */}
 
             {/* Payment Schedule and Action Buttons */}
             {/* <div className="text-sm text-gray-600 mb-4 text-center">

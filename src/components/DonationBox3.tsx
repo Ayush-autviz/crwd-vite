@@ -545,7 +545,7 @@ export const DonationBox3 = ({
             </div>
 
             {/* Donation Box Capacity */}
-            <div className="bg-gradient-to-br from-blue-50 to-purple-50 rounded-lg p-3 md:p-4 mb-4 md:mb-6">
+            {/* <div className="bg-gradient-to-br from-blue-50 to-purple-50 rounded-lg p-3 md:p-4 mb-4 md:mb-6">
               <div className="flex items-center justify-between mb-1.5 md:mb-2">
                 <h3 className="text-xs md:text-sm font-bold text-blue-600">Donation Box Capacity</h3>
                 <span className="text-xs md:text-sm text-gray-900">{currentCapacity}/{maxCapacity} causes</span>
@@ -559,7 +559,7 @@ export const DonationBox3 = ({
               <p className="text-xs md:text-sm text-blue-600">
                 You can support {maxCapacity - currentCapacity} more cause{(maxCapacity - currentCapacity) !== 1 ? 's' : ''} with this donation amount.
               </p>
-            </div>
+            </div> */}
 
             {/* Add Causes Button */}
             <button

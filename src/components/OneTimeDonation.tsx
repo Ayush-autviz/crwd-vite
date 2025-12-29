@@ -434,7 +434,7 @@ export default function OneTimeDonation({
           </div>
 
           {/* Donation Box Capacity Section */}
-          <div className="bg-blue-50 rounded-xl p-3 md:p-4">
+          {/* <div className="bg-blue-50 rounded-xl p-3 md:p-4">
             <div className="flex items-center justify-between mb-2 md:mb-3">
               <h3 className="text-sm md:text-base font-bold text-[#1600ff]">
                 Donation Box Capacity
@@ -444,7 +444,7 @@ export default function OneTimeDonation({
               </span>
             </div>
             
-            {/* Progress Bar */}
+            
             <div className="w-full h-1.5 md:h-2 bg-blue-100 rounded-full mb-2 md:mb-3">
               <div
                 className="h-1.5 md:h-2 bg-[#1600ff] rounded-full transition-all duration-300"
@@ -455,7 +455,7 @@ export default function OneTimeDonation({
             <p className="text-xs md:text-sm text-[#1600ff]">
               For every ${donationAmount}, you can support {maxCapacity} cause{maxCapacity !== 1 ? 's' : ''}.
             </p>
-          </div>
+          </div> */}
         </div>
 
         {/* Your Selected Causes */}
