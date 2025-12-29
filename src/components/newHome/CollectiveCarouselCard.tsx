@@ -153,7 +153,6 @@ export default function CollectiveCarouselCard({
                   className="bg-[#1600ff] hover:bg-[#1400cc] text-white flex items-center justify-center gap-1 md:gap-1.5 text-xs md:text-sm h-7 md:h-9 px-2 md:px-3 font-semibold w-[30%]"
                   onClick={() => setShowShareModal(true)}
                 >
-                  <Share2 className="h-3 w-3 md:h-4 md:w-4" />
                   Share
                 </Button>
               </div>

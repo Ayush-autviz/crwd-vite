@@ -1,7 +1,7 @@
 import { useEffect, useState, useRef } from "react";
 import ProfileHeader from "../components/profile/ProfileHeader";
 import ProfileBio from "../components/profile/ProfileBio";
-import ProfileActivity from "../components/profile/ProfileActivity";
+import CommunityPostCard from "../components/newHome/CommunityPostCard";
 import ProfileSidebar from "../components/profile/ProfileSidebar";
 import ProfileStats from "../components/profile/ProfileStats";
 import { useLocation, useNavigate, useParams, Link } from "react-router-dom";
@@ -227,24 +227,39 @@ export default function ProfilePage() {
     }
   }, [userProfile]);
 
-  // Transform posts data to match PostDetail interface
+  // Transform posts data to match CommunityPostCard format
   const userPosts = posts?.results?.map((post: any) => ({
     id: post.id,
-    userId: post.user?.id,
-    avatarUrl: post.user?.profile_picture || '/placeholder.svg',
-    username: post.user?.username || post.user?.full_name || 'Unknown User',
-    time: post.created_at || new Date().toISOString(), // Pass raw timestamp for proper relative time calculation
-    created_at: post.created_at, // Also include created_at for ProfileActivityCard to use
-    timestamp: post.created_at, // Include timestamp as well
-    org: post.collective?.name || 'Unknown Collective',
-    orgUrl: post.collective?.id,
-    text: post.content || '',
+    user: {
+      id: post.user?.id,
+      name: post.user?.first_name && post.user?.last_name
+        ? `${post.user.first_name} ${post.user.last_name}`
+        : post.user?.username || 'Unknown User',
+      firstName: post.user?.first_name,
+      lastName: post.user?.last_name,
+      username: post.user?.username || '',
+      avatar: post.user?.profile_picture || '',
+    },
+    collective: post.collective
+      ? {
+          name: post.collective.name,
+          id: post.collective.id,
+        }
+      : undefined,
+    content: post.content || '',
     imageUrl: post.media || undefined,
-    previewDetails: post.preview_details || null,
     likes: post.likes_count || 0,
     comments: post.comments_count || 0,
-    shares: 0, // API doesn't provide shares count
     isLiked: post.is_liked || false,
+    timestamp: post.created_at,
+    previewDetails: post.preview_details || post.previewDetails ? {
+      url: post.preview_details?.url || post.previewDetails?.url,
+      title: post.preview_details?.title || post.previewDetails?.title,
+      description: post.preview_details?.description || post.previewDetails?.description,
+      image: post.preview_details?.image || post.previewDetails?.image,
+      site_name: post.preview_details?.site_name || post.previewDetails?.site_name,
+      domain: post.preview_details?.domain || post.previewDetails?.domain,
+    } : undefined,
   })) || [];
 
   // Redirect to own profile if viewing own profile
@@ -477,16 +492,63 @@ export default function ProfilePage() {
             <ProfileBio bio={userProfile.bio} />
 
             <div className="py-4">
-              <ProfileActivity
-                title="Recent Activity"
-                posts={userPosts}
-                showLoadMore={true}
-                onLoadMore={() => fetchNextPage()}
-                hasMore={hasNextPage}
-                isLoadingMore={isFetchingNextPage}
-                isLoading={postsLoading}
-                error={null}
-              />
+              <div className="w-full px-4 my-4 mb-6 md:px-0 md:my-8 md:mb-10">
+                <div className="mb-3 md:mb-6">
+                  <h2 className="text-sm xs:text-base sm:text-xl md:text-3xl font-bold text-gray-900 mb-1 md:mb-2">
+                    Recent Activity
+                  </h2>
+                  <p className="text-[10px] sm:text-xs md:text-sm text-gray-600">
+                    Activity, updates, and discoveries from your community
+                  </p>
+                </div>
+
+                {postsLoading ? (
+                  <div className="space-y-2.5 md:space-y-4">
+                    {[1, 2].map((i) => (
+                      <div key={i} className="bg-white rounded-lg border border-gray-200 p-2.5 md:p-4 animate-pulse">
+                        <div className="flex items-start gap-2 md:gap-4">
+                          <div className="w-8 h-8 md:w-12 md:h-12 bg-gray-200 rounded-full flex-shrink-0"></div>
+                          <div className="flex-1 space-y-2">
+                            <div className="h-4 bg-gray-200 rounded w-3/4"></div>
+                            <div className="h-3 bg-gray-200 rounded w-full"></div>
+                            <div className="h-3 bg-gray-200 rounded w-5/6"></div>
+                            <div className="h-32 md:h-40 bg-gray-200 rounded-lg"></div>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : userPosts.length > 0 ? (
+                  <div className="space-y-2.5 md:space-y-4">
+                    {userPosts.map((post: any) => (
+                      <CommunityPostCard key={post.id} post={post} />
+                    ))}
+                    {hasNextPage && (
+                      <div className="flex justify-center mt-4 md:mt-6">
+                        <Button
+                          onClick={() => fetchNextPage()}
+                          disabled={isFetchingNextPage}
+                          variant="outline"
+                          className="px-4 md:px-6 py-1.5 md:py-2 text-sm md:text-base"
+                        >
+                          {isFetchingNextPage ? (
+                            <>
+                              <Loader2 className="w-3.5 h-3.5 md:w-4 md:h-4 mr-1.5 md:mr-2 animate-spin" />
+                              Loading...
+                            </>
+                          ) : (
+                            "Load More"
+                          )}
+                        </Button>
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  <div className="text-center py-6 md:py-8">
+                    <p className="text-xs md:text-sm text-gray-600">No posts yet</p>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         </div>

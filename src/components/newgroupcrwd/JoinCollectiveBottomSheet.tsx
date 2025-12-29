@@ -200,24 +200,24 @@ export default function JoinCollectiveBottomSheet({
       {/* Bottom Sheet */}
       <div
         className={cn(
-          "absolute bottom-0 left-0 right-0 bg-white rounded-t-3xl shadow-2xl transition-transform duration-300 max-h-[90vh] overflow-hidden flex flex-col",
+          "absolute bottom-0 left-0 right-0 bg-white rounded-t-3xl shadow-2xl transition-transform duration-300 max-h-[75vh] sm:max-h-[85vh] md:max-h-[90vh] overflow-hidden flex flex-col",
           isAnimating ? "translate-y-0" : "translate-y-full"
         )}
         onClick={(e) => e.stopPropagation()}
       >
         {/* Handle Bar */}
-        <div className="flex justify-center pt-3 pb-2">
-          <div className="w-12 h-1.5 bg-gray-300 rounded-full" />
+        <div className="flex justify-center pt-2 sm:pt-3 pb-1.5 sm:pb-2">
+          <div className="w-10 sm:w-12 h-1 sm:h-1.5 bg-gray-300 rounded-full" />
         </div>
 
         {/* Header */}
-        <div className="sticky top-0 bg-white px-4 md:px-6 py-3 md:py-4 border-b border-gray-200 z-10">
+        <div className="sticky top-0 bg-white px-3 sm:px-4 md:px-6 py-2.5 sm:py-3 md:py-4 border-b border-gray-200 z-10">
           <div className="flex items-start justify-between">
             <div className="flex-1 pr-2">
-              <h2 className="text-xl md:text-2xl font-bold text-foreground mb-1">
+              <h2 className="text-lg sm:text-xl md:text-2xl font-bold text-foreground mb-0.5 sm:mb-1">
                 You've joined {collectiveName}!
               </h2>
-              <p className="text-xs md:text-sm text-gray-600">
+              <p className="text-[10px] sm:text-xs md:text-sm text-gray-600">
                 {isAtCapacity 
                   ? "Your donation box is at capacity. Increase your donation to add more nonprofits."
                   : hasDonationBox
@@ -228,20 +228,20 @@ export default function JoinCollectiveBottomSheet({
             </div>
             <button
               onClick={onClose}
-              className="ml-2 md:ml-4 p-1.5 md:p-2 hover:bg-gray-100 rounded-full transition-colors flex-shrink-0"
+              className="ml-1.5 sm:ml-2 md:ml-4 p-1 sm:p-1.5 md:p-2 hover:bg-gray-100 rounded-full transition-colors flex-shrink-0"
               aria-label="Close modal"
             >
-              <X className="w-4 h-4 md:w-5 md:h-5 text-gray-600" />
+              <X className="w-3.5 h-3.5 sm:w-4 sm:h-4 md:w-5 md:h-5 text-gray-600" />
             </button>
           </div>
         </div>
 
         {/* Content - Scrollable */}
-        <div className="flex-1 overflow-y-auto px-4 md:px-6 py-4 md:py-6">
+        <div className="flex-1 overflow-y-auto px-3 sm:px-4 md:px-6 py-3 sm:py-4 md:py-6">
           {/* Capacity Error Message */}
           {isAtCapacity && (
-            <div className="bg-red-50 border border-red-200 rounded-lg p-3 md:p-4 mb-4 md:mb-6">
-              <p className="text-sm md:text-base text-red-800 font-medium">
+            <div className="bg-red-50 border border-red-200 rounded-lg p-2.5 sm:p-3 md:p-4 mb-3 sm:mb-4 md:mb-6">
+              <p className="text-xs sm:text-sm md:text-base text-red-800 font-medium">
                 Amazing! Your donation box is at capacity. Increase your donation to add more nonprofits.
               </p>
             </div>
@@ -251,35 +251,35 @@ export default function JoinCollectiveBottomSheet({
           {!isAtCapacity && hasDonationBox && (
             <button
               onClick={handleDeselectAll}
-              className="w-full flex items-center justify-between p-3 md:p-4 mb-2 md:mb-3 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
+              className="w-full flex items-center justify-between p-2.5 sm:p-3 md:p-4 mb-2 sm:mb-2.5 md:mb-3 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
             >
-              <div className="flex items-center gap-3 md:gap-4">
+              <div className="flex items-center gap-2 sm:gap-3 md:gap-4">
                 <div
                   className={cn(
-                    "w-5 h-5 md:w-6 md:h-6 rounded border-2 flex items-center justify-center transition-colors",
+                    "w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 rounded border-2 flex items-center justify-center transition-colors",
                     allSelected
                       ? "bg-[#1600ff] border-[#1600ff]"
                       : "bg-white border-gray-300"
                   )}
                 >
                   {allSelected && (
-                    <svg className="w-3 h-3 md:w-4 md:h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <svg className="w-2.5 h-2.5 sm:w-3 sm:h-3 md:w-4 md:h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
                     </svg>
                   )}
                 </div>
-                <span className="text-sm md:text-base font-medium text-gray-900">
+                <span className="text-xs sm:text-sm md:text-base font-medium text-gray-900">
                   {allSelected ? 'Deselect All' : 'Select All'}
                 </span>
               </div>
-              <span className="text-sm md:text-base font-medium text-[#1600ff]">
+              <span className="text-xs sm:text-sm md:text-base font-medium text-[#1600ff]">
                 {selectedCount} of {availableNonprofits.length} selected
               </span>
             </button>
           )}
 
           {/* Nonprofits List */}
-          <div className="space-y-2 md:space-y-2.5 mb-4 md:mb-6">
+          <div className="space-y-1.5 sm:space-y-2 md:space-y-2.5 mb-3 sm:mb-4 md:mb-6">
             {nonprofits.map((nonprofit) => {
               const cause = nonprofit.cause || nonprofit;
               const nonprofitId = cause.id || nonprofit.id;
@@ -296,7 +296,7 @@ export default function JoinCollectiveBottomSheet({
                   onClick={() => handleToggleNonprofit(nonprofitId)}
                   disabled={isDisabled || isAtCapacity}
                   className={cn(
-                    "w-full flex items-center gap-3 md:gap-4 p-3 md:p-4 bg-white border border-gray-200 rounded-lg transition-colors text-left",
+                    "w-full flex items-center gap-2 sm:gap-3 md:gap-4 p-2.5 sm:p-3 md:p-4 bg-white border border-gray-200 rounded-lg transition-colors text-left",
                     (isDisabled || isAtCapacity)
                       ? "opacity-50 cursor-not-allowed" 
                       : "hover:bg-gray-50"
@@ -305,7 +305,7 @@ export default function JoinCollectiveBottomSheet({
                   {/* Checkbox */}
                   <div
                     className={cn(
-                      "w-5 h-5 md:w-6 md:h-6 rounded border-2 flex items-center justify-center transition-colors flex-shrink-0",
+                      "w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 rounded border-2 flex items-center justify-center transition-colors flex-shrink-0",
                       (isDisabled || isAtCapacity)
                         ? "bg-gray-200 border-gray-300"
                         : isSelected
@@ -314,11 +314,11 @@ export default function JoinCollectiveBottomSheet({
                     )}
                   >
                     {(isDisabled || isAtCapacity) ? (
-                      <svg className="w-3 h-3 md:w-4 md:h-4 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <svg className="w-2.5 h-2.5 sm:w-3 sm:h-3 md:w-4 md:h-4 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                       </svg>
                     ) : isSelected ? (
-                      <svg className="w-3 h-3 md:w-4 md:h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <svg className="w-2.5 h-2.5 sm:w-3 sm:h-3 md:w-4 md:h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
                       </svg>
                     ) : null}
@@ -329,7 +329,7 @@ export default function JoinCollectiveBottomSheet({
                     <img
                       src={nonprofitImage}
                       alt={nonprofitName}
-                      className="w-10 h-10 md:w-12 md:h-12 rounded-lg object-cover flex-shrink-0"
+                      className="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 rounded-lg object-cover flex-shrink-0"
                       onError={(e) => {
                         // Fallback to colored circle with initials if image fails
                         const target = e.target as HTMLImageElement;
@@ -341,26 +341,26 @@ export default function JoinCollectiveBottomSheet({
                   ) : null}
                   <div
                     className={cn(
-                      "w-10 h-10 md:w-12 md:h-12 rounded-lg flex items-center justify-center flex-shrink-0",
+                      "w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 rounded-lg flex items-center justify-center flex-shrink-0",
                       !nonprofitImage ? "flex" : "hidden"
                     )}
                     style={{ backgroundColor: avatarBgColor }}
                   >
-                    <span className="text-white font-bold text-sm md:text-base">
+                    <span className="text-white font-bold text-xs sm:text-sm md:text-base">
                       {initials}
                     </span>
                   </div>
 
                   {/* Nonprofit Name */}
                   <div className="flex-1 min-w-0">
-                    <h4 className="font-semibold text-sm md:text-base text-gray-900 truncate">
+                    <h4 className="font-semibold text-xs sm:text-sm md:text-base text-gray-900 truncate">
                       {nonprofitName}
                     </h4>
                     {isDisabled && !isAtCapacity && (
-                      <p className="text-xs text-gray-500 mt-0.5">Already in your donation box</p>
+                      <p className="text-[10px] sm:text-xs text-gray-500 mt-0.5">Already in your donation box</p>
                     )}
                     {isAtCapacity && (
-                      <p className="text-xs text-red-600 mt-0.5">At capacity</p>
+                      <p className="text-[10px] sm:text-xs text-red-600 mt-0.5">At capacity</p>
                     )}
                   </div>
                 </button>
@@ -370,8 +370,8 @@ export default function JoinCollectiveBottomSheet({
 
           {/* Info Banner - Only show if not at capacity */}
           {!isAtCapacity && (
-            <div className="bg-[#fff3c7] border border-yellow-200 rounded-lg p-3 md:p-4 mb-4 md:mb-6">
-              <p className="text-xs md:text-sm text-yellow-900 leading-relaxed">
+            <div className="bg-[#fff3c7] border border-yellow-200 rounded-lg p-2.5 sm:p-3 md:p-4 mb-3 sm:mb-4 md:mb-6">
+              <p className="text-[10px] sm:text-xs md:text-sm text-yellow-900 leading-relaxed">
                 {hasDonationBox
                   ? "Selected nonprofits will be added to your donation box. You can manage them anytime from your profile."
                   : "Set up your donation box to start supporting these nonprofits with a monthly donation."
@@ -382,7 +382,7 @@ export default function JoinCollectiveBottomSheet({
         </div>
 
         {/* Footer Buttons */}
-        <div className="px-4 md:px-6 py-4 md:py-5 border-t border-gray-200 bg-white space-y-2.5 md:space-y-3">
+        <div className="px-3 sm:px-4 md:px-6 py-3 sm:py-4 md:py-5 border-t border-gray-200 bg-white space-y-2 sm:space-y-2.5 md:space-y-3">
           {!hasDonationBox ? (
             <>
               {/* No donation box - Show setup button and "Not now" */}
@@ -390,7 +390,7 @@ export default function JoinCollectiveBottomSheet({
                 onClick={() => handleJoin(true)}
                 disabled={isJoining || selectedCount === 0}
                 className={cn(
-                  "w-full text-white font-semibold py-4 md:py-6 rounded-lg transition-all text-sm md:text-base flex items-center justify-center gap-2 shadow-lg hover:shadow-xl",
+                  "w-full text-white font-semibold py-3 sm:py-4 md:py-6 rounded-lg transition-all text-xs sm:text-sm md:text-base flex items-center justify-center gap-2 shadow-lg hover:shadow-xl",
                   isJoining || selectedCount === 0
                     ? "bg-gray-400 cursor-not-allowed"
                     : "bg-[#1600ff] hover:bg-[#1400cc]"
@@ -401,7 +401,7 @@ export default function JoinCollectiveBottomSheet({
               <Button
                 onClick={onClose}
                 variant="ghost"
-                className="w-full text-gray-700 hover:text-gray-900 hover:bg-gray-50 font-medium py-2.5 md:py-3 rounded-lg text-sm md:text-base"
+                className="w-full text-gray-700 hover:text-gray-900 hover:bg-gray-50 font-medium py-2 sm:py-2.5 md:py-3 rounded-lg text-xs sm:text-sm md:text-base"
               >
                 Not Now
               </Button>
@@ -411,7 +411,7 @@ export default function JoinCollectiveBottomSheet({
               {/* At capacity - Just close button */}
               <Button
                 onClick={onClose}
-                className="w-full bg-[#1600ff] hover:bg-[#1400cc] text-white font-semibold py-4 md:py-6 rounded-lg text-sm md:text-base"
+                className="w-full bg-[#1600ff] hover:bg-[#1400cc] text-white font-semibold py-3 sm:py-4 md:py-6 rounded-lg text-xs sm:text-sm md:text-base"
               >
                 Got It
               </Button>
@@ -423,7 +423,7 @@ export default function JoinCollectiveBottomSheet({
                 onClick={() => handleJoin(false)}
                 disabled={isJoining || selectedCount === 0}
                 className={cn(
-                  "w-full text-white font-semibold py-4 md:py-6 rounded-lg transition-all text-sm md:text-base flex items-center justify-center gap-2 shadow-lg hover:shadow-xl",
+                  "w-full text-white font-semibold py-3 sm:py-4 md:py-6 rounded-lg transition-all text-xs sm:text-sm md:text-base flex items-center justify-center gap-2 shadow-lg hover:shadow-xl",
                   isJoining || selectedCount === 0
                     ? "bg-gray-400 cursor-not-allowed"
                     : "bg-[#1600ff] hover:bg-[#1400cc]"
@@ -434,7 +434,7 @@ export default function JoinCollectiveBottomSheet({
               <Button
                 onClick={onClose}
                 variant="ghost"
-                className="w-full text-gray-700 hover:text-gray-900 hover:bg-gray-50 font-medium py-2.5 md:py-3 rounded-lg text-sm md:text-base"
+                className="w-full text-gray-700 hover:text-gray-900 hover:bg-gray-50 font-medium py-2 sm:py-2.5 md:py-3 rounded-lg text-xs sm:text-sm md:text-base"
               >
                 Skip
               </Button>

@@ -93,28 +93,28 @@ export default function ActivityCard({ activity }: ActivityCardProps) {
   const profileLink = userId ? `/user-profile/${userId}` : username ? `/user-profile/${username}` : '#';
   
   return (
-    <Card className="bg-white rounded-xl border border-gray-200 mb-3 md:mb-4 overflow-hidden shadow-none">
-      <CardContent className="px-3 md:px-4">
-        <div className="flex gap-2.5 md:gap-3">
+    <Card className="bg-white rounded-xl border border-gray-200 mb-2 sm:mb-3 md:mb-4 overflow-hidden shadow-none">
+      <CardContent className="px-2.5 sm:px-3 md:px-4 py-2 sm:py-2.5 md:py-3">
+        <div className="flex gap-2 sm:gap-2.5 md:gap-3">
           {/* Profile Avatar */}
           {profileLink !== '#' ? (
             <Link to={profileLink}>
-              <Avatar className="h-9 w-9 md:h-10 md:w-10 flex-shrink-0">
+              <Avatar className="h-7 w-7 sm:h-8 sm:w-8 md:h-10 md:w-10 flex-shrink-0">
                 <AvatarImage src={profilePicture} alt={userName} />
                 <AvatarFallback 
                   style={{ backgroundColor: avatarBgColor }}
-                  className="text-white font-bold text-xs md:text-sm"
+                  className="text-white font-bold text-[10px] sm:text-xs md:text-sm"
                 >
                   {initials}
                 </AvatarFallback>
               </Avatar>
             </Link>
           ) : (
-            <Avatar className="h-9 w-9 md:h-10 md:w-10 flex-shrink-0">
+            <Avatar className="h-7 w-7 sm:h-8 sm:w-8 md:h-10 md:w-10 flex-shrink-0">
               <AvatarImage src={profilePicture} alt={userName} />
               <AvatarFallback 
                 style={{ backgroundColor: avatarBgColor }}
-                className="text-white font-bold text-xs md:text-sm"
+                className="text-white font-bold text-[10px] sm:text-xs md:text-sm"
               >
                 {initials}
               </AvatarFallback>
@@ -124,25 +124,24 @@ export default function ActivityCard({ activity }: ActivityCardProps) {
           {/* Content */}
           <div className="flex-1 min-w-0">
             {/* Name and Timestamp */}
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1.5 sm:gap-2 mb-0.5 sm:mb-1">
               {profileLink !== '#' ? (
-                <Link to={profileLink} className="font-bold text-sm md:text-base text-gray-900 hover:underline">
+                <Link to={profileLink} className="font-bold text-xs sm:text-sm md:text-base text-gray-900 hover:underline">
                   {userName}
                 </Link>
               ) : (
-                <span className="font-bold text-sm md:text-base text-gray-900">
+                <span className="font-bold text-xs sm:text-sm md:text-base text-gray-900">
                   {userName}
                 </span>
               )}
-             
-            </div>
-            <span className="text-xs text-gray-500">
+              <span className="text-[10px] sm:text-xs text-gray-500">
                 {formattedTime}
               </span>
+            </div>
             
             {/* Activity Description Box */}
-            <div className="bg-green-50 rounded-lg p-2.5 md:p-3 ">
-              <p className="font-semibold text-sm  text-gray-900">
+            <div className="bg-green-50 rounded-lg p-2 sm:p-2.5 md:p-3">
+              <p className="font-semibold text-xs sm:text-sm text-gray-900">
                 {activityDescription}
               </p>
             </div>

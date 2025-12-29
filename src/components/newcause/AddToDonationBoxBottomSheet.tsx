@@ -80,33 +80,33 @@ export default function AddToDonationBoxBottomSheet({
       {/* Bottom Sheet */}
       <div
         className={cn(
-          "absolute bottom-0 left-0 right-0 bg-white rounded-t-2xl shadow-2xl transition-transform duration-300 max-h-[50vh] flex flex-col",
+          "absolute bottom-0 left-0 right-0 bg-white rounded-t-2xl shadow-2xl transition-transform duration-300 max-h-[60vh] sm:max-h-[50vh] flex flex-col",
           isAnimating ? "translate-y-0" : "translate-y-full"
         )}
         onClick={(e) => e.stopPropagation()}
       >
         {/* Drag Handle */}
-        <div className="flex justify-center pt-3 pb-2">
-          <div className="w-10 md:w-12 h-0.5 md:h-1.5 bg-gray-300 rounded-full" />
+        <div className="flex justify-center pt-2 sm:pt-3 pb-1.5 sm:pb-2">
+          <div className="w-10 sm:w-12 h-0.5 sm:h-1.5 bg-gray-300 rounded-full" />
         </div>
 
       
         {/* Content */}
-        <div className="flex-1 overflow-y-auto p-4 md:p-6">
+        <div className="flex-1 overflow-y-auto p-3 sm:p-4 md:p-6">
           {/* Title */}
-          <h2 className="text-xl md:text-2xl font-bold text-gray-900 mb-2">
+          <h2 className="text-lg sm:text-xl md:text-2xl font-bold text-gray-900 mb-1.5 sm:mb-2">
             Add to Donation Box
           </h2>
 
           {/* Donation Box Count */}
-          <p className="text-sm md:text-base text-gray-600 mb-4">
+          <p className="text-xs sm:text-sm md:text-base text-gray-600 mb-3 sm:mb-4">
             You have {donationBoxCount} nonprofit{donationBoxCount !== 1 ? 's' : ''} in your donation box
           </p>
 
           {/* Cause Card */}
-          <div className="flex items-start gap-3 p-3 rounded-lg border border-gray-200 bg-white mb-6">
+          <div className="flex items-start gap-2 sm:gap-3 p-2.5 sm:p-3 rounded-lg border border-gray-200 bg-white mb-4 sm:mb-6">
             {/* Image */}
-            <div className="w-16 h-16 rounded-lg overflow-hidden flex-shrink-0">
+            <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-lg overflow-hidden flex-shrink-0">
               {hasImage ? (
                 <img
                   src={imageUrl}
@@ -114,9 +114,9 @@ export default function AddToDonationBoxBottomSheet({
                   className="w-full h-full object-cover"
                 />
               ) : (
-                <Avatar className="w-16 h-16 rounded-lg">
+                <Avatar className="w-12 h-12 sm:w-16 sm:h-16 rounded-lg">
                   <AvatarFallback
-                    className="text-white text-2xl font-bold"
+                    className="text-white text-lg sm:text-2xl font-bold"
                     style={{ backgroundColor: iconColor }}
                   >
                     {iconLetter}
@@ -127,10 +127,10 @@ export default function AddToDonationBoxBottomSheet({
 
             {/* Content */}
             <div className="flex-1 min-w-0">
-              <h3 className="text-base md:text-lg font-bold text-gray-900 mb-1 line-clamp-2">
+              <h3 className="text-sm sm:text-base md:text-lg font-bold text-gray-900 mb-1 line-clamp-2">
                 {causeData.name}
               </h3>
-              <p className="text-xs md:text-sm text-gray-600 mb-2 line-clamp-2">
+              <p className="text-[10px] sm:text-xs md:text-sm text-gray-600 mb-1 sm:mb-2 line-clamp-2">
                 {causeData.mission || causeData.description || ''}
               </p>
               
@@ -141,11 +141,11 @@ export default function AddToDonationBoxBottomSheet({
           <Button
             onClick={onConfirm}
             disabled={isPending}
-            className="w-full bg-[#84CC16] hover:bg-[#6BB00F] text-white text-base md:text-lg font-semibold py-3 md:py-3.5 mb-3"
+            className="w-full bg-[#84CC16] hover:bg-[#6BB00F] text-white text-sm sm:text-base md:text-lg font-semibold py-2.5 sm:py-3 md:py-3.5 mb-2 sm:mb-3"
           >
             {isPending ? (
               <>
-                <Loader2 className="w-4 h-4 md:w-5 md:h-5 mr-2 animate-spin" />
+                <Loader2 className="w-3.5 h-3.5 sm:w-4 sm:h-4 md:w-5 md:h-5 mr-1.5 sm:mr-2 animate-spin" />
                 Adding...
               </>
             ) : (
@@ -157,7 +157,7 @@ export default function AddToDonationBoxBottomSheet({
           <button
             onClick={onClose}
             disabled={isPending}
-            className="w-full text-center text-gray-600 text-sm md:text-base font-medium py-2 hover:text-gray-800 disabled:opacity-50"
+            className="w-full text-center text-gray-600 text-xs sm:text-sm md:text-base font-medium py-1.5 sm:py-2 hover:text-gray-800 disabled:opacity-50"
           >
             Cancel
           </button>

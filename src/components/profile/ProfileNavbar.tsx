@@ -181,7 +181,7 @@ export default function ProfileNavbar({
                     onClick={handleClose}
                   >
                     <div
-                      className={`bg-white rounded-t-3xl w-full max-h-[80vh] overflow-y-auto transform transition-transform duration-300 ${
+                      className={`bg-white rounded-t-3xl w-full max-h-[70vh] sm:max-h-[80vh] overflow-y-auto transform transition-transform duration-300 ${
                         isAnimating ? "translate-y-0" : "translate-y-full"
                       }`}
                       style={{
@@ -195,16 +195,16 @@ export default function ProfileNavbar({
                       </div>
 
                       {/* User Profile Section */}
-                      <div className="px-6 pt-4 pb-6 border-b">
-                        <div className="flex items-center gap-3 ">
-                          <Avatar className="h-12 w-12">
+                      <div className="px-4 sm:px-6 pt-3 sm:pt-4 pb-4 sm:pb-6 border-b">
+                        <div className="flex items-center gap-2 sm:gap-3">
+                          <Avatar className="h-10 w-10 sm:h-12 sm:w-12">
                             <AvatarImage src={user?.profile_picture} />
                             <AvatarFallback className="bg-[#1600ff] text-white">
                               {getUserInitials()}
                             </AvatarFallback>
                           </Avatar>
                           <div className="flex-1">
-                            <h3 className="font-bold text-lg text-gray-900">
+                            <h3 className="font-bold text-base sm:text-lg text-gray-900">
                               {user?.first_name && user?.last_name
                                 ? `${user.first_name} ${user.last_name}`
                                 : user?.username || "User"}
@@ -213,7 +213,7 @@ export default function ProfileNavbar({
                             <Link
                               to="/profile"
                               onClick={handleClose}
-                              className="text-[#1600ff] text-sm"
+                              className="text-[#1600ff] text-xs sm:text-sm"
                             >
                               View Profile
                             </Link>
@@ -222,45 +222,45 @@ export default function ProfileNavbar({
                       </div>
 
                       {/* Menu Items */}
-                      <div className="px-6 py-4 space-y-1">
+                      <div className="px-4 sm:px-6 py-3 sm:py-4 space-y-1">
                         <Link
                           to="/circles"
                           onClick={handleClose}
-                          className="flex items-center gap-3 py-3 px-2 rounded-lg hover:bg-gray-100 transition-colors"
+                          className="flex items-center gap-2 sm:gap-3 py-2.5 sm:py-3 px-2 rounded-lg hover:bg-gray-100 transition-colors"
                         >
-                          <Users className="h-5 w-5 text-gray-700" />
-                          <span className="text-gray-900 font-medium">Collectives</span>
+                          <Users className="h-4 w-4 sm:h-5 sm:w-5 text-gray-700" />
+                          <span className="text-gray-900 font-medium text-sm sm:text-base">Collectives</span>
                         </Link>
                         <Link
                           to="/donation"
                           onClick={handleClose}
-                          className="flex items-center gap-3 py-3 px-2 rounded-lg hover:bg-gray-100 transition-colors"
+                          className="flex items-center gap-2 sm:gap-3 py-2.5 sm:py-3 px-2 rounded-lg hover:bg-gray-100 transition-colors"
                         >
-                          <Mail className="h-5 w-5 text-gray-700" />
-                          <span className="text-gray-900 font-medium">Donation Box</span>
+                          <Mail className="h-4 w-4 sm:h-5 sm:w-5 text-gray-700" />
+                          <span className="text-gray-900 font-medium text-sm sm:text-base">Donation Box</span>
                         </Link>
                         <Link
                           to="/settings"
                           onClick={handleClose}
-                          className="flex items-center gap-3 py-3 px-2 rounded-lg hover:bg-gray-100 transition-colors"
+                          className="flex items-center gap-2 sm:gap-3 py-2.5 sm:py-3 px-2 rounded-lg hover:bg-gray-100 transition-colors"
                         >
-                          <Settings className="h-5 w-5 text-gray-700" />
-                          <span className="text-gray-900 font-medium">Settings</span>
+                          <Settings className="h-4 w-4 sm:h-5 sm:w-5 text-gray-700" />
+                          <span className="text-gray-900 font-medium text-sm sm:text-base">Settings</span>
                         </Link>
                       </div>
 
                       {/* Separator */}
-                      <div className="border-t border-gray-200 mx-6"></div>
+                      <div className="border-t border-gray-200 mx-4 sm:mx-6"></div>
 
                       {/* Log Out Section */}
-                      <div className="px-6 m-6 rounded-lg py-4 border border-gray-200 flex items-center justify-center">
+                      <div className="px-4 sm:px-6 m-4 sm:m-6 rounded-lg py-3 sm:py-4 border border-gray-200 flex items-center justify-center">
                         <button
                           onClick={handleLogout}
                           className="flex items-center gap-2 text-red-600 hover:text-red-700 transition-colors"
                         >
-                          <LogOut className="h-5 w-5" />
-                          <span className="font-medium">Log Out</span>
-                          <ArrowRight className="h-4 w-4" />
+                          <LogOut className="h-4 w-4 sm:h-5 sm:w-5" />
+                          <span className="font-medium text-sm sm:text-base">Log Out</span>
+                          <ArrowRight className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                         </button>
                       </div>
                     </div>
@@ -340,7 +340,7 @@ export default function ProfileNavbar({
                     onClick={handleClose}
                   >
                     <div
-                      className={`bg-white rounded-t-3xl w-full max-h-[80vh] overflow-y-auto transform transition-transform duration-300 ${
+                      className={`bg-white rounded-t-3xl w-full max-h-[70vh] sm:max-h-[80vh] overflow-y-auto transform transition-transform duration-300 ${
                         isAnimating ? "translate-y-0" : "translate-y-full"
                       }`}
                       style={{
@@ -354,16 +354,16 @@ export default function ProfileNavbar({
                       </div>
 
                       {/* User Profile Section */}
-                      <div className="px-6 pt-4 pb-6 border-b">
-                        <div className="flex items-center gap-3 ">
-                          <Avatar className="h-12 w-12">
+                      <div className="px-4 sm:px-6 pt-3 sm:pt-4 pb-4 sm:pb-6 border-b">
+                        <div className="flex items-center gap-2 sm:gap-3">
+                          <Avatar className="h-10 w-10 sm:h-12 sm:w-12">
                             <AvatarImage src={user?.profile_picture} />
                             <AvatarFallback className="bg-[#1600ff] text-white">
                               {getUserInitials()}
                             </AvatarFallback>
                           </Avatar>
                           <div className="flex-1">
-                            <h3 className="font-bold text-lg text-gray-900">
+                            <h3 className="font-bold text-base sm:text-lg text-gray-900">
                               {user?.first_name && user?.last_name
                                 ? `${user.first_name} ${user.last_name}`
                                 : user?.username || "User"}
@@ -372,7 +372,7 @@ export default function ProfileNavbar({
                             <Link
                               to="/profile"
                               onClick={handleClose}
-                              className="text-[#1600ff] text-sm"
+                              className="text-[#1600ff] text-xs sm:text-sm"
                             >
                               View Profile
                             </Link>
@@ -381,45 +381,45 @@ export default function ProfileNavbar({
                       </div>
 
                       {/* Menu Items */}
-                      <div className="px-6 py-4 space-y-1">
+                      <div className="px-4 sm:px-6 py-3 sm:py-4 space-y-1">
                         <Link
                           to="/circles"
                           onClick={handleClose}
-                          className="flex items-center gap-3 py-3 px-2 rounded-lg hover:bg-gray-100 transition-colors"
+                          className="flex items-center gap-2 sm:gap-3 py-2.5 sm:py-3 px-2 rounded-lg hover:bg-gray-100 transition-colors"
                         >
-                          <Users className="h-5 w-5 text-gray-700" />
-                          <span className="text-gray-900 font-medium">Collectives</span>
+                          <Users className="h-4 w-4 sm:h-5 sm:w-5 text-gray-700" />
+                          <span className="text-gray-900 font-medium text-sm sm:text-base">Collectives</span>
                         </Link>
                         <Link
                           to="/donation"
                           onClick={handleClose}
-                          className="flex items-center gap-3 py-3 px-2 rounded-lg hover:bg-gray-100 transition-colors"
+                          className="flex items-center gap-2 sm:gap-3 py-2.5 sm:py-3 px-2 rounded-lg hover:bg-gray-100 transition-colors"
                         >
-                          <Mail className="h-5 w-5 text-gray-700" />
-                          <span className="text-gray-900 font-medium">Donation Box</span>
+                          <Mail className="h-4 w-4 sm:h-5 sm:w-5 text-gray-700" />
+                          <span className="text-gray-900 font-medium text-sm sm:text-base">Donation Box</span>
                         </Link>
                         <Link
                           to="/settings"
                           onClick={handleClose}
-                          className="flex items-center gap-3 py-3 px-2 rounded-lg hover:bg-gray-100 transition-colors"
+                          className="flex items-center gap-2 sm:gap-3 py-2.5 sm:py-3 px-2 rounded-lg hover:bg-gray-100 transition-colors"
                         >
-                          <Settings className="h-5 w-5 text-gray-700" />
-                          <span className="text-gray-900 font-medium">Settings</span>
+                          <Settings className="h-4 w-4 sm:h-5 sm:w-5 text-gray-700" />
+                          <span className="text-gray-900 font-medium text-sm sm:text-base">Settings</span>
                         </Link>
                       </div>
 
                       {/* Separator */}
-                      <div className="border-t border-gray-200 mx-6"></div>
+                      <div className="border-t border-gray-200 mx-4 sm:mx-6"></div>
 
                       {/* Log Out Section */}
-                      <div onClick={handleLogout} className="px-6 m-6 rounded-lg py-4 border border-gray-200 hover:bg-gray-100 transition-colors flex items-center justify-center">
+                      <div onClick={handleLogout} className="px-4 sm:px-6 m-4 sm:m-6 rounded-lg py-3 sm:py-4 border border-gray-200 hover:bg-gray-100 transition-colors flex items-center justify-center">
                         <button
                           
                           className="flex items-center gap-2 text-red-600 hover:text-red-700 transition-colors"
                         >
-                          <LogOut className="h-5 w-5" />
-                          <span className="font-medium">Log Out</span>
-                          <ArrowRight className="h-4 w-4" />
+                          <LogOut className="h-4 w-4 sm:h-5 sm:w-5" />
+                          <span className="font-medium text-sm sm:text-base">Log Out</span>
+                          <ArrowRight className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                         </button>
                       </div>
                     </div>
