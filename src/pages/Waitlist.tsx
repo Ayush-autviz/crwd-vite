@@ -221,7 +221,7 @@ export default function WaitlistPage() {
             LAUNCHING EARLY 2026
           </div>
           
-          <h1 className="font-[900] text-foreground mb-3 md:mb-4 leading-tight" style={{ fontSize: 'clamp(2.2rem, 5vw, 4.5rem)' }}>
+          <h1 className="font-[900] text-foreground mb-3 md:mb-4 leading-tight" style={{ fontSize: 'clamp(2.5rem, 5vw, 4.5rem)' }}>
             Stop Choosing Between the
             <span className="text-[#1600ff]"> Causes You Care About.</span>
           </h1>
