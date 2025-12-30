@@ -122,9 +122,19 @@ export default function CommunityPostCard({ post, onCommentPress }: CommunityPos
     '#22C55E', // Emerald
     '#EAB308', // Yellow
   ];
-  // Use post ID to generate a consistent random color for each post
-  const avatarColorIndex = post.id ? (Number(post.id) % avatarColors.length) : Math.floor(Math.random() * avatarColors.length);
-  const avatarBgColor = avatarColors[avatarColorIndex];
+  // Use user ID to generate a consistent color for each user (same user = same color across all posts)
+  const getConsistentColor = (id: number | string | undefined, fallbackName?: string) => {
+    if (id !== undefined && id !== null) {
+      const hash = typeof id === 'number' ? id : id.toString().split('').reduce((acc: number, char: string) => acc + char.charCodeAt(0), 0);
+      return avatarColors[hash % avatarColors.length];
+    }
+    if (fallbackName) {
+      const hash = fallbackName.split('').reduce((acc: number, char: string) => acc + char.charCodeAt(0), 0);
+      return avatarColors[hash % avatarColors.length];
+    }
+    return avatarColors[0];
+  };
+  const avatarBgColor = getConsistentColor(post.user.id, post.user.username || post.user.name);
   const initials = getUserInitials();
 
   return (
