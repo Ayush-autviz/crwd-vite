@@ -64,12 +64,12 @@ export default function FundraiserDetail() {
     : 0;
 
   // Calculate progress percentage
-  const progressPercentage = fundraiserData
-    ? Math.min(
-        (parseFloat(fundraiserData.current_amount || '0') / parseFloat(fundraiserData.target_amount || '1')) * 100,
-        100
-      )
-    : 0;
+//   const progressPercentage = fundraiserData
+//     ? Math.min(
+//         (parseFloat(fundraiserData.current_amount || '0') / parseFloat(fundraiserData.target_amount || '1')) * 100,
+//         100
+//       )
+//     : 0;
 
   const handleDonate = () => {
     if (!fundraiserData?.causes || fundraiserData.causes.length === 0) {
@@ -90,6 +90,8 @@ export default function FundraiserDetail() {
       },
     });
   };
+
+  console.log(fundraiserData);
 
   // Handle outside click for dropdown
   useEffect(() => {
@@ -201,12 +203,12 @@ export default function FundraiserDetail() {
           <div className="w-full h-2 md:h-3 bg-gray-200 rounded-full overflow-hidden mb-2">
             <div
               className="h-full bg-[#1600ff] transition-all duration-300"
-              style={{ width: `${progressPercentage}%` }}
+              style={{ width: `${fundraiserData.progress_percentage}%` }}
             />
           </div>
           <div className="flex items-center justify-between">
             <span className="text-xs md:text-sm text-gray-600">
-              {Math.round(progressPercentage)}% of goal
+              {fundraiserData.progress_percentage}% of goal
             </span>
             {daysLeft > 0 && (
               <span className="text-xs md:text-sm text-gray-600">

@@ -57,6 +57,9 @@ export default function CommunityActivity({
       target_amount: post.fundraiser.target_amount,
       current_amount: post.fundraiser.current_amount,
       progress_percentage: post.fundraiser.progress_percentage || 0,
+      is_active: post.fundraiser.is_active,
+      total_donors: post.fundraiser.total_donors,
+      end_date: post.fundraiser.end_date,
     } : undefined,
     previewDetails: post.preview_details || post.previewDetails ? {
       url: post.preview_details?.url || post.previewDetails?.url,
@@ -75,11 +78,11 @@ export default function CommunityActivity({
           <h3 className="font-bold text-base md:text-lg lg:text-xl text-foreground">
             Community Activity
           </h3>
-          {posts && posts.length > 0 && (
+          {/* {posts && posts.length > 0 && (
             <p className="text-xs md:text-sm text-muted-foreground mt-0.5">
               {posts.length} Update{posts.length !== 1 ? 's' : ''}
             </p>
-          )}
+          )} */}
         </div>
         {!isJoined ? (
           <div
