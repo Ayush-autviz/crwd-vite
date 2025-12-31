@@ -199,8 +199,15 @@ export const createFundraiser = async (data: any) => {
     return response.data;
 };
 
+
 // Get Fundraiser by ID API endpoint
 export const getFundraiserById = async (id: string) => {
     const response = await axiosClient.get(`/crwd/fundraisers/${id}/`);
+    return response.data;
+};
+
+//patch fundraiser API endpoint
+export const patchFundraiser = async (id: string, data: any) => {
+    const response = await axiosClient.patch(`/crwd/fundraisers/${id}/`, data);
     return response.data;
 };

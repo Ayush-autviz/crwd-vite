@@ -79,6 +79,7 @@ import NewSaved from "./pages/NewSaved";
 import NewCreateCollective from "./pages/NewCreateCollective";
 import OneTimeDonationPage from "./pages/OneTimeDonationPage";
 import CreateFundraiser from "./pages/CreateFundraiser";
+import EditFundraiser from "./pages/EditFundraiser";
 import FundraiserDetail from "./pages/FundraiserDetail";
 
 // ScrollToTop component that works for all pages
@@ -238,6 +239,7 @@ function App() {
                     <Route path="/groupcrwd/:crwdId" element={<NewGroupCrwd />} />
                     <Route path="/edit-collective/:crwdId" element={<EditCollective />} />
                     <Route path="/create-fundraiser/:collectiveId" element={<CreateFundraiser />} />
+                    <Route path="/edit-fundraiser/:id" element={<EditFundraiser />} />
                     <Route path="/fundraiser/:id" element={<FundraiserDetail />} />
                     {/* <Route path="/groupcrwd/:id" element={<GroupCrwdById />} /> */}
                     <Route path="/members" element={<Members />} />

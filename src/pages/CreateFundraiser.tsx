@@ -3,7 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { ArrowLeft, Info, Palette, Image as ImageIcon, Camera, X, Check, Search, Building2 } from 'lucide-react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { getCollectiveById, getCausesBySearch, createFundraiser } from '@/services/api/crwd';
-import { toast } from 'sonner';
+import { Toast } from '@/components/ui/toast';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -68,6 +68,10 @@ export default function CreateFundraiser() {
   const [selectedNonprofits, setSelectedNonprofits] = useState<number[]>([]);
   const [searchTrigger, setSearchTrigger] = useState(0);
 
+  // Toast state
+  const [showToast, setShowToast] = useState(false);
+  const [toastMessage, setToastMessage] = useState('');
+
   const colorSwatches = [
     '#0000FF', // Blue
     '#FF3366', // Pink/Red
@@ -104,7 +108,8 @@ export default function CreateFundraiser() {
   const createFundraiserMutation = useMutation({
     mutationFn: createFundraiser,
     onSuccess: () => {
-      toast.success('Fundraiser created successfully!');
+      setToastMessage('Fundraiser created successfully!');
+      setShowToast(true);
       queryClient.invalidateQueries({ queryKey: ['crwd', collectiveId] });
       // Navigate back to the collective page
       navigate(`/groupcrwd/${collectiveId}`);
@@ -112,7 +117,8 @@ export default function CreateFundraiser() {
     onError: (error: any) => {
       console.error('Create fundraiser error:', error);
       const errorMessage = error?.response?.data?.message || error?.message || 'Failed to create fundraiser';
-      toast.error(errorMessage);
+      setToastMessage(errorMessage);
+      setShowToast(true);
     },
   });
 
@@ -140,7 +146,8 @@ export default function CreateFundraiser() {
     } else {
       // Validate required fields
       if (!campaignTitle || !fundraisingGoal || !endDate || !campaignStory || selectedNonprofits.length === 0) {
-        toast.error('Please fill in all required fields and select at least one nonprofit');
+        setToastMessage('Please fill in all required fields and select at least one nonprofit');
+        setShowToast(true);
         return;
       }
 
@@ -148,13 +155,19 @@ export default function CreateFundraiser() {
       const startDate = new Date().toISOString();
       const endDateISO = endDate ? endDate.toISOString() : '';
 
-      if (coverType === 'image' && uploadedCoverImage) {
-        // Use FormData for image upload
+      if (coverType === 'image') {
+        // If image tab is selected, validate that image exists
+        if (!uploadedCoverImage) {
+          setToastMessage('Please upload an image for the campaign cover');
+          setShowToast(true);
+          return;
+        }
+        // Use FormData for image upload - send only image, no color
         const formData = new FormData();
         formData.append('name', campaignTitle);
         formData.append('description', campaignStory);
-        formData.append('image', uploadedCoverImage);
-        formData.append('collective', collectiveId || '');
+        formData.append('image_file', uploadedCoverImage);
+        formData.append('collective_id', collectiveId || '');
         formData.append('target_amount', fundraisingGoal);
         formData.append('start_date', startDate);
         formData.append('end_date', endDateISO);
@@ -164,12 +177,12 @@ export default function CreateFundraiser() {
         });
 
         createFundraiserMutation.mutate(formData);
-      } else {
-        // Use JSON for color-based cover
+      } else if (coverType === 'color') {
+        // Use JSON for color-based cover - send only color, no image
         const requestData = {
           name: campaignTitle,
           description: campaignStory,
-          color: coverType === 'color' ? coverColor : '',
+          color: coverColor,
           collective: parseInt(collectiveId || '0', 10),
           target_amount: parseFloat(fundraisingGoal),
           start_date: startDate,
@@ -657,6 +670,13 @@ export default function CreateFundraiser() {
 
       {/* Spacer for fixed footer */}
       <div className="h-20 md:h-24"></div>
+
+      {/* Toast */}
+      <Toast
+        show={showToast}
+        onHide={() => setShowToast(false)}
+        message={toastMessage}
+      />
     </div>
   );
 }

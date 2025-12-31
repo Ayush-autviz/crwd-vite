@@ -1,10 +1,12 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Link } from "react-router-dom";
-import { Heart, MessageCircle, Share2, MapPin, MoreHorizontal, Pin } from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
+import { Heart, MessageCircle, Share2, MoreHorizontal, Pin, Pencil, Flag } from "lucide-react";
 import dayjs from 'dayjs';
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { likePost, unlikePost } from "@/services/api/social";
+import { patchFundraiser } from "@/services/api/crwd";
+import { Toast } from "@/components/ui/toast";
 import CommentsBottomSheet from "@/components/post/CommentsBottomSheet";
 import { SharePost } from "@/components/ui/SharePost";
 import { Card, CardContent } from "@/components/ui/card";
@@ -59,10 +61,15 @@ interface CommunityPostCardProps {
 
 export default function CommunityPostCard({ post, onCommentPress }: CommunityPostCardProps) {
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
   const [isLiked, setIsLiked] = useState(post.isLiked || false);
   const [likesCount, setLikesCount] = useState(post.likes || 0);
   const [showCommentsSheet, setShowCommentsSheet] = useState(false);
   const [showShareModal, setShowShareModal] = useState(false);
+  const [showFundraiserMenu, setShowFundraiserMenu] = useState(false);
+  const [showToast, setShowToast] = useState(false);
+  const [toastMessage, setToastMessage] = useState("");
+  const menuRef = useRef<HTMLDivElement>(null);
 
   const likeMutation = useMutation({
     mutationFn: () => likePost(post.id.toString()),
@@ -87,6 +94,24 @@ export default function CommunityPostCard({ post, onCommentPress }: CommunityPos
     },
     onError: (error) => {
       console.error('Error unliking post:', error);
+    },
+  });
+
+  // End Fundraiser Mutation
+  const endFundraiserMutation = useMutation({
+    mutationFn: (fundraiserId: number) => patchFundraiser(fundraiserId.toString(), { is_active: false }),
+    onSuccess: () => {
+      setToastMessage('Fundraiser ended successfully');
+      setShowToast(true);
+      queryClient.invalidateQueries({ queryKey: ['posts'] });
+      queryClient.invalidateQueries({ queryKey: ['fundraiser', post.fundraiser?.id] });
+      setShowFundraiserMenu(false);
+    },
+    onError: (error: any) => {
+      console.error('Error ending fundraiser:', error);
+      setToastMessage(`Failed to end fundraiser: ${error.response?.data?.message || error.message}`);
+      setShowToast(true);
+      setShowFundraiserMenu(false);
     },
   });
 
@@ -151,6 +176,36 @@ export default function CommunityPostCard({ post, onCommentPress }: CommunityPos
   const avatarBgColor = getConsistentColor(post.user.id, post.user.username || post.user.name);
   const initials = getUserInitials();
 
+  // Handle outside click to close menu
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+        setShowFundraiserMenu(false);
+      }
+    };
+
+    if (showFundraiserMenu) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [showFundraiserMenu]);
+
+  const handleEditFundraiser = () => {
+    if (post.fundraiser?.id) {
+      navigate(`/edit-fundraiser/${post.fundraiser.id}`);
+    }
+    setShowFundraiserMenu(false);
+  };
+
+  const handleEndFundraiser = () => {
+    if (post.fundraiser?.id) {
+      endFundraiserMutation.mutate(post.fundraiser.id);
+    }
+  };
+
   return (
     <Card
       className={cn(
@@ -166,15 +221,48 @@ export default function CommunityPostCard({ post, onCommentPress }: CommunityPos
               <Pin className="w-3 h-3 md:w-4 md:h-4 text-[#1600ff]" />
               <span className="text-[10px] md:text-sm font-medium text-[#1600ff]">PINNED FUNDRAISER</span>
             </div>
-            <button
-              onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
-              }}
-              className="p-1 hover:bg-gray-100 rounded-full transition-colors"
-            >
-              <MoreHorizontal className="w-4 h-4 md:w-5 md:h-5 text-gray-500" />
-            </button>
+            <div className="relative" ref={menuRef}>
+              <button
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  setShowFundraiserMenu(!showFundraiserMenu);
+                }}
+                className="p-1 hover:bg-gray-100 rounded-full transition-colors"
+              >
+                <MoreHorizontal className="w-4 h-4 md:w-5 md:h-5 text-gray-500" />
+              </button>
+
+              {/* Dropdown Menu */}
+              {showFundraiserMenu && (
+                <div className="absolute right-0 top-8 md:top-10 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-50 min-w-[160px] md:min-w-[180px]">
+                  <button
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      handleEditFundraiser();
+                    }}
+                    className="w-full flex items-center gap-2 md:gap-3 px-3 md:px-4 py-2 md:py-2.5 text-xs md:text-sm text-gray-900 hover:bg-gray-50 transition-colors"
+                  >
+                    <Pencil className="w-4 h-4 md:w-5 md:h-5 text-gray-500" />
+                    <span>Edit Fundraiser</span>
+                  </button>
+                  <div className="border-t border-gray-200 my-1"></div>
+                  <button
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      handleEndFundraiser();
+                    }}
+                    disabled={endFundraiserMutation.isPending}
+                    className="w-full flex items-center gap-2 md:gap-3 px-3 md:px-4 py-2 md:py-2.5 text-xs md:text-sm text-red-600 hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    <Flag className="w-4 h-4 md:w-5 md:h-5 text-red-600" />
+                    <span>{endFundraiserMutation.isPending ? 'Ending...' : 'End Fundraiser'}</span>
+                  </button>
+                </div>
+              )}
+            </div>
           </div>
         )}
 
@@ -476,6 +564,13 @@ export default function CommunityPostCard({ post, onCommentPress }: CommunityPos
         url={`${window.location.origin}/post/${post.id}`}
         title={post.collective?.name || `${post.user.firstName} ${post.user.lastName}` || post.user.name}
         description={post.content}
+      />
+
+      {/* Toast */}
+      <Toast
+        show={showToast}
+        onHide={() => setShowToast(false)}
+        message={toastMessage}
       />
     </Card>
   );
