@@ -133,18 +133,18 @@ export const Comment: React.FC<CommentProps> = ({
 
 
   return (
-    <div className="space-y-4">
-      <div className="flex gap-3">
-        <Avatar className="h-8 w-8">
+    <div className="space-y-2 md:space-y-4">
+      <div className="flex gap-2 md:gap-3">
+        <Avatar className="h-6 w-6 md:h-8 md:w-8">
           <AvatarImage src={avatarUrl} alt={displayName} />
-          <AvatarFallback>
+          <AvatarFallback className="text-[10px] md:text-sm">
             {initials}
           </AvatarFallback>
         </Avatar>
         <div className="flex-1">
-          <div className="bg-muted p-3 rounded-lg">
-            <div className="flex items-center justify-between mb-1">
-              <span className="font-medium text-sm">{displayName}</span>
+          <div className="bg-muted p-2 md:p-3 rounded-lg">
+            <div className="flex items-center justify-between mb-0.5 md:mb-1">
+              <span className="font-medium text-xs md:text-sm">{displayName}</span>
               {isOwnComment && (
                 <div className="relative" ref={menuRef}>
                   <button
@@ -153,12 +153,12 @@ export const Comment: React.FC<CommentProps> = ({
                       e.stopPropagation();
                       setShowMenu(!showMenu);
                     }}
-                    className="p-1 rounded-full hover:bg-gray-100 transition-colors"
+                    className="p-0.5 md:p-1 rounded-full hover:bg-gray-100 transition-colors"
                   >
-                    <EllipsisIcon className="h-4 w-4 text-muted-foreground cursor-pointer" />
+                    <EllipsisIcon className="h-3 w-3 md:h-4 md:w-4 text-muted-foreground cursor-pointer" />
                   </button>
                   {showMenu && (
-                    <div className="absolute right-0 top-8 bg-white border border-gray-200 rounded-md shadow-lg z-10 w-32">
+                    <div className="absolute right-0 top-6 md:top-8 bg-white border border-gray-200 rounded-md shadow-lg z-10 w-28 md:w-32">
                       <button
                         onClick={(e) => {
                           e.preventDefault();
@@ -166,9 +166,9 @@ export const Comment: React.FC<CommentProps> = ({
                           setShowMenu(false);
                           setShowDeleteConfirm(true);
                         }}
-                        className="flex items-center gap-2 w-full px-3 py-2 text-sm text-red-600 hover:bg-gray-50 transition-colors"
+                        className="flex items-center gap-1.5 md:gap-2 w-full px-2 md:px-3 py-1.5 md:py-2 text-xs md:text-sm text-red-600 hover:bg-gray-50 transition-colors"
                       >
-                        <Trash2 className="h-4 w-4" />
+                        <Trash2 className="h-3 w-3 md:h-4 md:w-4" />
                         Delete
                       </button>
                     </div>
@@ -176,9 +176,9 @@ export const Comment: React.FC<CommentProps> = ({
                 </div>
               )}
             </div>
-            <p className="text-sm">{content}</p>
+            <p className="text-xs md:text-sm">{content}</p>
           </div>
-          <div className="flex items-center gap-4 mt-2 text-sm">
+          <div className="flex items-center gap-2 md:gap-4 mt-1 md:mt-2 text-xs md:text-sm">
             <span className="text-muted-foreground">
               {formatDistanceToNow(timestamp, { addSuffix: true })}
             </span>
@@ -194,7 +194,7 @@ export const Comment: React.FC<CommentProps> = ({
                 onClick={() => setIsReplying(!isReplying)}
                 className="flex items-center gap-1 text-muted-foreground hover:text-primary transition-colors"
               >
-                <MessageCircle className="h-4 w-4" />
+                <MessageCircle className="h-3 w-3 md:h-4 md:w-4" />
                 Reply
               </button>
             )}
@@ -206,13 +206,14 @@ export const Comment: React.FC<CommentProps> = ({
               >
                 {isLoadingReplies ? (
                   <>
-                    <div className="w-4 h-4 border-2 border-gray-300 border-t-primary rounded-full animate-spin" />
-                    Loading...
+                    <div className="w-3 h-3 md:w-4 md:h-4 border-2 border-gray-300 border-t-primary rounded-full animate-spin" />
+                    <span className="hidden sm:inline">Loading...</span>
                   </>
                 ) : (
                   <>
-                    <MessageCircle className="h-4 w-4" />
-                    {isExpanded ? 'Hide' : 'View'} {repliesCount} {repliesCount === 1 ? 'reply' : 'replies'}
+                    <MessageCircle className="h-3 w-3 md:h-4 md:w-4" />
+                    <span className="hidden sm:inline">{isExpanded ? 'Hide' : 'View'} </span>
+                    {repliesCount} {repliesCount === 1 ? 'reply' : 'replies'}
                   </>
                 )}
               </button>
@@ -220,11 +221,11 @@ export const Comment: React.FC<CommentProps> = ({
           </div>
 
           {isReplying && (
-            <form onSubmit={handleReplySubmit} className="mt-3">
-              <div className="flex gap-2">
-                <Avatar className="h-6 w-6">
+            <form onSubmit={handleReplySubmit} className="mt-2 md:mt-3">
+              <div className="flex gap-1.5 md:gap-2">
+                <Avatar className="h-5 w-5 md:h-6 md:w-6">
                   <AvatarImage src={avatarUrl} alt={displayName} />
-                  <AvatarFallback>
+                  <AvatarFallback className="text-[8px] md:text-xs">
                     {initials}
                   </AvatarFallback>
                 </Avatar>
@@ -233,9 +234,9 @@ export const Comment: React.FC<CommentProps> = ({
                   value={replyContent}
                   onChange={(e) => setReplyContent(e.target.value)}
                   placeholder="Write a reply..."
-                  className="flex-1 bg-muted rounded-full px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+                  className="flex-1 bg-muted rounded-full px-2 md:px-4 py-1 md:py-2 text-xs md:text-sm focus:outline-none focus:ring-2 focus:ring-primary"
                 />
-                <Button type="submit" size="sm">
+                <Button type="submit" size="sm" className="text-xs md:text-sm px-2 md:px-3 py-1 md:py-2">
                   Reply
                 </Button>
               </div>
@@ -246,7 +247,7 @@ export const Comment: React.FC<CommentProps> = ({
 
       {/* Render replies - only for main comments when expanded */}
       {isExpanded && replies.length > 0 && (
-        <div className="ml-10 space-y-4">
+        <div className="ml-7 md:ml-10 space-y-2 md:space-y-4">
           {replies.map((reply) => (
             <Comment
               key={reply.id}
@@ -262,18 +263,19 @@ export const Comment: React.FC<CommentProps> = ({
 
       {/* Delete Confirmation Dialog */}
       <Dialog open={showDeleteConfirm} onOpenChange={setShowDeleteConfirm}>
-        <DialogContent>
+        <DialogContent className="p-4 md:p-6">
           <DialogHeader>
-            <DialogTitle>Delete Comment</DialogTitle>
-            <DialogDescription>
+            <DialogTitle className="text-sm md:text-base">Delete Comment</DialogTitle>
+            <DialogDescription className="text-xs md:text-sm">
               Are you sure you want to delete this comment? This action cannot be undone.
             </DialogDescription>
           </DialogHeader>
-          <DialogFooter>
+          <DialogFooter className="gap-2">
             <Button
               variant="outline"
               onClick={() => setShowDeleteConfirm(false)}
               disabled={deleteCommentMutation.isPending}
+              className="text-xs md:text-sm px-3 md:px-4 py-1.5 md:py-2"
             >
               Cancel
             </Button>
@@ -283,10 +285,11 @@ export const Comment: React.FC<CommentProps> = ({
                 deleteCommentMutation.mutate();
               }}
               disabled={deleteCommentMutation.isPending}
+              className="text-xs md:text-sm px-3 md:px-4 py-1.5 md:py-2"
             >
               {deleteCommentMutation.isPending ? (
                 <>
-                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  <Loader2 className="w-3 h-3 md:w-4 md:h-4 mr-1 md:mr-2 animate-spin" />
                   Deleting...
                 </>
               ) : (

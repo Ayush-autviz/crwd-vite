@@ -275,11 +275,11 @@ export default function ProfileActivityCard({
       <Card
         key={post.id}
         className={cn(
-          "bg-white rounded-xl border-1 border-gray-200 mb-4 overflow-hidden shadow-none",
+          "bg-white rounded-xl border-1 border-gray-200 mb-4 overflow-hidden shadow-none py-2 md:py-3",
           className
         )}
       >
-        <CardContent className="p-3 md:p-4">
+        <CardContent className="px-3 md:px-4">
           <div className="flex gap-2.5 md:gap-3">
             {/* <Link to={isOwnPost ? `/profile` : `/user-profile/${post.userId}`}> */}
             <a href={isOwnPost ? `/profile` : `/user-profile/${post.userId}`}>
