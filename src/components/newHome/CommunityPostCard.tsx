@@ -8,7 +8,7 @@ import CommentsBottomSheet from "@/components/post/CommentsBottomSheet";
 import { SharePost } from "@/components/ui/SharePost";
 import { Card, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
-import { Loader2 } from "lucide-react";
+import { formatDistanceToNow } from 'date-fns';
 
 interface CommunityPostCardProps {
   post: {
@@ -31,6 +31,16 @@ interface CommunityPostCardProps {
     comments: number;
     isLiked?: boolean;
     timestamp?: string;
+    fundraiser?: {
+      id: number;
+      name: string;
+      description?: string;
+      image?: string | null;
+      color?: string | null;
+      target_amount: string;
+      current_amount: string;
+      progress_percentage: number;
+    };
     previewDetails?: {
       url?: string;
       title?: string;
@@ -172,66 +182,123 @@ export default function CommunityPostCard({ post, onCommentPress }: CommunityPos
                 </Link>
                 <span className="text-[10px] md:text-sm text-gray-500">@{post.user.username}</span>
               </div>
-              {post.collective?.name && (
+              {/* {post.collective?.name && (
                 <div className="text-[10px] md:text-sm text-gray-500 mb-0.5">
                   {post.collective.name}
+                </div>
+              )} */}
+              {post.timestamp && (
+                <div className="text-[10px] md:text-sm text-gray-500">
+                  {formatDistanceToNow(new Date(post.timestamp), { addSuffix: true })}
                 </div>
               )}
             </div>
             </div>
             </div>
 
-            <Link to={`/post/${post.id}`} className="block">
-              <div className="text-xs md:text-base text-gray-900 leading-relaxed mb-2 md:mb-4 whitespace-pre-line">
-                {post.content}
-              </div>
-
-              {/* Show preview card if previewDetails exists, otherwise show image */}
-              {post.previewDetails ? (
-                <a
-                  href={post.previewDetails.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  onClick={(e) => e.stopPropagation()}
-                  className="block w-full rounded-lg overflow-hidden mb-3 border border-gray-200 bg-white hover:opacity-90 transition-opacity cursor-pointer"
-                >
-                  <div className="flex flex-col md:flex-row bg-white">
-                    {/* Preview Image */}
-                    {post.previewDetails.image && (
-                      <div className="w-full md:w-48 h-[150px] md:h-auto flex-shrink-0">
-                        <img
-                          src={post.previewDetails.image}
-                          alt={post.previewDetails.title || 'Link preview'}
-                          className="w-full h-full object-cover"
-                        />
+            <Link to={post.fundraiser ? `/fundraiser/${post.fundraiser.id}` : `/post/${post.id}`} className="block">
+              {/* Fundraiser Post UI */}
+              {post.fundraiser ? (
+                <>
+                  {/* Fundraiser Cover Image/Color */}
+                  <div className="w-full rounded-lg overflow-hidden mb-2 md:mb-3" style={{ height: '250px' }}>
+                    {post.fundraiser.image ? (
+                      <img
+                        src={post.fundraiser.image}
+                        alt={post.fundraiser.name}
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <div
+                        className="w-full h-full flex items-center justify-center"
+                        style={{ backgroundColor: post.fundraiser.color || '#1600ff' }}
+                      >
+                        <span className="text-white text-xl md:text-2xl font-bold">
+                          {post.fundraiser.name}
+                        </span>
                       </div>
                     )}
-                    {/* Preview Content */}
-                    <div className="flex-1 p-2 md:p-3">
-                      {post.previewDetails.site_name && (
-                        <div className="text-[8px] md:text-[10px] text-gray-500 uppercase tracking-wide mb-0.5 md:mb-1">
-                          {post.previewDetails.site_name}
-                        </div>
-                      )}
-                      {post.previewDetails.title && (
-                        <h3 className="text-[10px] md:text-sm font-semibold text-gray-900 mb-0.5 md:mb-1 line-clamp-2">
-                          {post.previewDetails.title}
-                        </h3>
-                      )}
-                      {post.previewDetails.description && (
-                        <p className="text-[9px] md:text-xs text-gray-500 mb-0.5 md:mb-1 line-clamp-2">
-                          {post.previewDetails.description}
-                        </p>
-                      )}
-                      {post.previewDetails.domain && (
-                        <div className="text-[9px] md:text-[11px] text-gray-500 truncate">
-                          {post.previewDetails.domain}
-                        </div>
-                      )}
+                  </div>
+
+                  {/* Fundraiser Info */}
+                  <div className="mb-2 md:mb-3">
+                    <p className="text-xs md:text-sm text-gray-500 mb-1">Started a fundraiser</p>
+                    <h3 className="text-sm md:text-base font-bold text-gray-900 mb-2 md:mb-3">
+                      {post.fundraiser.name}
+                    </h3>
+                    
+                    {/* Amount and Progress */}
+                    <div className="mb-2">
+                      <div className="flex items-baseline gap-2 mb-1.5">
+                        <span className="text-base md:text-xl font-bold text-[#1600ff]">
+                          ${parseFloat(post.fundraiser.current_amount || '0').toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
+                        </span>
+                        <span className="text-xs md:text-sm text-gray-500">
+                          raised of ${parseFloat(post.fundraiser.target_amount || '0').toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 })} goal
+                        </span>
+                      </div>
+                      {/* Progress Bar */}
+                      <div className="w-full h-1.5 md:h-2 bg-gray-200 rounded-full overflow-hidden">
+                        <div
+                          className="h-full bg-[#1600ff] transition-all duration-300"
+                          style={{ width: `${Math.min(post.fundraiser.progress_percentage || 0, 100)}%` }}
+                        />
+                      </div>
                     </div>
                   </div>
-                </a>
-              ) : post.imageUrl ? (
+                </>
+              ) : (
+                <>
+                  <div className="text-xs md:text-base text-gray-900 leading-relaxed mb-2 md:mb-4 whitespace-pre-line">
+                    {post.content}
+                  </div>
+
+                  {/* Show preview card if previewDetails exists, otherwise show image */}
+                  {post.previewDetails ? (
+                    <a
+                      href={post.previewDetails.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      onClick={(e) => e.stopPropagation()}
+                      className="block w-full rounded-lg overflow-hidden mb-3 border border-gray-200 bg-white hover:opacity-90 transition-opacity cursor-pointer"
+                    >
+                      <div className="flex flex-col md:flex-row bg-white">
+                        {/* Preview Image */}
+                        {post.previewDetails.image && (
+                          <div className="w-full md:w-48 h-[150px] md:h-auto flex-shrink-0">
+                            <img
+                              src={post.previewDetails.image}
+                              alt={post.previewDetails.title || 'Link preview'}
+                              className="w-full h-full object-cover"
+                            />
+                          </div>
+                        )}
+                        {/* Preview Content */}
+                        <div className="flex-1 p-2 md:p-3">
+                          {post.previewDetails.site_name && (
+                            <div className="text-[8px] md:text-[10px] text-gray-500 uppercase tracking-wide mb-0.5 md:mb-1">
+                              {post.previewDetails.site_name}
+                            </div>
+                          )}
+                          {post.previewDetails.title && (
+                            <h3 className="text-[10px] md:text-sm font-semibold text-gray-900 mb-0.5 md:mb-1 line-clamp-2">
+                              {post.previewDetails.title}
+                            </h3>
+                          )}
+                          {post.previewDetails.description && (
+                            <p className="text-[9px] md:text-xs text-gray-500 mb-0.5 md:mb-1 line-clamp-2">
+                              {post.previewDetails.description}
+                            </p>
+                          )}
+                          {post.previewDetails.domain && (
+                            <div className="text-[9px] md:text-[11px] text-gray-500 truncate">
+                              {post.previewDetails.domain}
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    </a>
+                  ) : post.imageUrl ? (
                 <a
                   href={post.imageUrl}
                   target="_blank"
@@ -246,6 +313,8 @@ export default function CommunityPostCard({ post, onCommentPress }: CommunityPos
                   />
                 </a>
               ) : null}
+                </>
+              )}
 
               {/* Footer */}
               <div className="border-y border-gray-100 py-2 md:py-4">

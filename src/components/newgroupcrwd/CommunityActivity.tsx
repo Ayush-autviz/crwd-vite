@@ -48,6 +48,16 @@ export default function CommunityActivity({
     comments: post.comments_count || 0,
     isLiked: post.is_liked || false,
     timestamp: post.created_at,
+    fundraiser: post.fundraiser ? {
+      id: post.fundraiser.id,
+      name: post.fundraiser.name,
+      description: post.fundraiser.description,
+      image: post.fundraiser.image,
+      color: post.fundraiser.color,
+      target_amount: post.fundraiser.target_amount,
+      current_amount: post.fundraiser.current_amount,
+      progress_percentage: post.fundraiser.progress_percentage || 0,
+    } : undefined,
     previewDetails: post.preview_details || post.previewDetails ? {
       url: post.preview_details?.url || post.previewDetails?.url,
       title: post.preview_details?.title || post.previewDetails?.title,

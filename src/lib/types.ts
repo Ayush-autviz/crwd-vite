@@ -27,6 +27,16 @@ export interface PostDetail {
   text: string;
   imageUrl?: string;
   previewDetails?: PreviewDetails | null;
+  fundraiser?: {
+    id: number;
+    name: string;
+    description?: string;
+    image?: string | null;
+    color?: string | null;
+    target_amount: string;
+    current_amount: string;
+    progress_percentage: number;
+  };
   likes: number;
   comments: number;
   shares: number;

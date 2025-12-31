@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { ArrowLeft, Star, Share2, MoreHorizontal, Edit, Link2, Flag } from 'lucide-react';
+import { ArrowLeft, Star, Share2, MoreHorizontal, Edit, Link2, Flag, DollarSign, Heart } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { favoriteCollective, unfavoriteCollective } from '@/services/api/social';
@@ -123,6 +123,13 @@ export default function CollectiveHeader({
     setShowDropdown(false);
   };
 
+  const handleCreateFundraiser = () => {
+    if (collectiveId) {
+      navigate(`/create-fundraiser/${collectiveId}`);
+    }
+    setShowDropdown(false);
+  };
+
   const handleReport = () => {
     // TODO: Implement report functionality
     console.log('Report clicked');
@@ -178,7 +185,7 @@ export default function CollectiveHeader({
 
           {/* Dropdown Menu */}
           {showDropdown && (
-            <div className="absolute right-0 mt-2 w-40 md:w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-50">
+            <div className="absolute right-0 mt-2 w-40 md:w-50 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-50">
               {isAdmin && (
                 <>
                   <button
@@ -187,6 +194,13 @@ export default function CollectiveHeader({
                   >
                     <Edit className="w-3 h-3 md:w-4 md:h-4" strokeWidth={2.5} />
                     Manage collective
+                  </button>
+                  <button
+                    onClick={handleCreateFundraiser}
+                    className="w-full font-semibold border-t border-gray-200 flex items-center gap-2 md:gap-3 px-3 md:px-4 py-1.5 md:py-2 text-xs md:text-sm text-foreground hover:bg-gray-100 transition-colors"
+                  >
+                    <Heart className="w-3 h-3 md:w-4 md:h-4" strokeWidth={2.5} />
+                    Create Fundraiser
                   </button>
                   <div className="border-t border-gray-200 my-1"></div>
                 </>

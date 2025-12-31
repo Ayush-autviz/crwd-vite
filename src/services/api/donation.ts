@@ -102,3 +102,10 @@ export const getTransactionReceipt = async (donation_id: string) => {
     const response = await axiosClient.get(`/donations/receipt/${donation_id}/`);
     return response.data;
 };
+
+
+// Fundraiser API endpoints
+export const createFundraiserDonation = async (data: any) => {
+    const response = await axiosClient.post(`/donations/fundraiser/`, data);
+    return response.data;
+};
