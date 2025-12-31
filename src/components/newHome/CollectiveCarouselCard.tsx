@@ -103,7 +103,7 @@ export default function CollectiveCarouselCard({
                   <img
                     src={currentCollective.logo}
                     alt={currentCollective.name}
-                    className="w-full h-full object-cover rounded-full"
+                    className="w-full h-full object-cover rounded-lg"
                   />
                 ) : (
                   <span className="text-white font-bold text-base md:text-xl">

@@ -1,10 +1,9 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Link, useNavigate } from "react-router-dom";
-import { HandHeart, UserPlus } from "lucide-react";
+import { HandHeart, Users } from "lucide-react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { getPostById, followUser, unfollowUser, getUserProfileById } from "@/services/api/social";
 import CommunityPostCard from "@/components/newHome/CommunityPostCard";
-import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { useAuthStore } from "@/stores/store";
 
@@ -150,8 +149,6 @@ function NotificationSummary({ update }: { update: CommunityUpdate }) {
     if (update.collective?.id) {
       navigate(`/groupcrwd/${update.collective.id}`);
     } else if (update.collective?.name) {
-      // If no ID, try to navigate by name (might need to search first)
-      // For now, we'll try to construct the URL - this might need adjustment based on routing
       navigate(`/search?q=${encodeURIComponent(update.collective.name)}&type=collective`);
     }
   };
@@ -166,6 +163,98 @@ function NotificationSummary({ update }: { update: CommunityUpdate }) {
     }
   };
 
+  // Get user display name
+  const userName = update.user.firstName && update.user.lastName 
+    ? `${update.user.firstName} ${update.user.lastName}`
+    : update.user.name || update.user.username;
+
+  // For join notifications, use similar structure to donation but with Users icon
+  if (isJoinNotification) {
+    // Try to extract nonprofit count from content if available
+    // Example patterns: "Supporting 12 nonprofits", "supports 5 causes"
+    let nonprofitCount = 0;
+    const countMatch = actionText.match(/(\d+)\s*(nonprofit|cause|organization)/i);
+    if (countMatch) {
+      nonprofitCount = parseInt(countMatch[1], 10);
+    }
+
+    // Clean action text - remove the supporting text if it exists
+    let cleanActionText = actionText;
+    if (countMatch) {
+      cleanActionText = actionText.replace(/\s*Supporting\s+\d+\s+nonprofit[s]?/i, '').trim();
+    }
+
+    return (
+      <div className="bg-white rounded-lg border-0 p-2.5 md:p-4">
+        {/* Top Section: Profile and Action Button */}
+        <div className="flex items-start justify-between mb-2 md:mb-3">
+          <div className="flex items-center gap-2 md:gap-3">
+            {/* Avatar */}
+            <Avatar className="h-8 w-8 md:h-11 md:w-11 flex-shrink-0 rounded-full">
+              <AvatarImage src={update.user.avatar} />
+              <AvatarFallback className="bg-[#1600ff] text-white text-[10px] md:text-sm">
+                {update.user.name
+                  .split(" ")
+                  .map((n) => n.charAt(0))
+                  .join("")
+                  .toUpperCase()}
+              </AvatarFallback>
+            </Avatar>
+
+            {/* User Info */}
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center gap-1 md:gap-2 lg:gap-3 flex-wrap">
+                <Link
+                  to={`/user-profile/${update.user.id}`}
+                  className="font-bold text-xs md:text-base text-gray-900 hover:underline block"
+                >
+                  {userName}
+                </Link>
+                <p className="text-[10px] md:text-sm text-gray-500">@{update.user.username}</p>
+              </div>
+              {/* {update.collective && (
+                <p className="text-[10px] md:text-sm text-gray-500">{update.collective.name}</p>
+              )} */}
+            </div>
+          </div>
+          
+          {/* Join Button */}
+          {update.collective && (
+            <button
+              onClick={handleJoinClick}
+              className="ml-1.5 sm:ml-2 md:ml-3 bg-white text-[#1600ff] border border-[#1600ff] hover:bg-[#1600ff] hover:text-white text-[10px] xs:text-xs sm:text-xs md:text-sm lg:text-base font-semibold px-2 xs:px-2.5 sm:px-3 md:px-4 lg:px-5 py-1 xs:py-1.5 sm:py-1.5 rounded-full flex-shrink-0"
+            >
+              Join
+            </button>
+          )}
+        </div>
+
+        {/* Content Box */}
+        <div className="rounded-lg p-1.5 md:p-2.5 mb-2 md:mb-3 flex items-center gap-2 md:gap-3 bg-gray-50">
+          {/* Icon */}
+          <div className="h-6 w-6 md:h-8 md:w-8 rounded-full flex items-center justify-center flex-shrink-0">
+            <Users className="h-2.5 w-2.5 md:h-5 md:w-5 text-[#1600ff]" />
+          </div>
+          <div className="flex flex-col gap-1">
+          {/* Action Text */}
+          <p className="text-[10px] md:text-sm font-semibold text-gray-900 flex-1">
+            {cleanActionText}
+          </p>
+           {/* Supporting X nonprofits - Only on second line if it exists */}
+        {nonprofitCount > 0 && (
+          <p className="text-[10px] md:text-sm text-gray-500">
+            Supporting {nonprofitCount} nonprofit{nonprofitCount !== 1 ? 's' : ''}
+          </p>
+        )}
+        </div>
+        </div>
+
+       
+      </div>
+    );
+  }
+
+  // Default UI for donation and other notifications
   return (
     <div className="bg-white rounded-lg border-0 p-2.5 md:p-4">
       {/* Top Section: Profile and Action Button */}
@@ -190,9 +279,7 @@ function NotificationSummary({ update }: { update: CommunityUpdate }) {
                 to={`/user-profile/${update.user.id}`}
                 className="font-bold text-xs md:text-base text-gray-900 hover:underline block"
               >
-                {update.user.firstName && update.user.lastName 
-                  ? `${update.user.firstName} ${update.user.lastName}`
-                  : update.user.name || update.user.username}
+                {userName}
               </Link>
               <p className="text-[10px] md:text-sm text-gray-500">@{update.user.username}</p>
             </div>
@@ -202,15 +289,7 @@ function NotificationSummary({ update }: { update: CommunityUpdate }) {
           </div>
         </div>
         
-        {/* Action Button - Join for join notifications, Follow for donation notifications */}
-        {isJoinNotification && update.collective && (
-          <button
-            onClick={handleJoinClick}
-            className="ml-1.5 sm:ml-2 md:ml-3 bg-white text-[#1600ff] border border-[#1600ff] hover:bg-[#1600ff] hover:text-white text-[10px] xs:text-xs sm:text-xs md:text-sm lg:text-base font-semibold px-2 xs:px-2.5 sm:px-3 md:px-4 lg:px-5 py-1 xs:py-1.5 sm:py-1.5   rounded-full flex-shrink-0"
-          >
-            Join
-          </button>
-        )}
+        {/* Action Button - Follow for donation notifications */}
         {isDonationNotification && update.user.id && currentUser?.id !== update.user.id && (
           <button
             onClick={handleFollowClick}
@@ -227,22 +306,10 @@ function NotificationSummary({ update }: { update: CommunityUpdate }) {
       </div>
 
       {/* Content Box */}
-      <div className={`rounded-lg p-1.5 md:p-2.5 mb-2 md:mb-3 flex items-center gap-2 md:gap-3 ${
-        isJoinNotification 
-          ? 'bg-gray-50' 
-          : 'bg-gray-50'
-      }`}>
+      <div className="rounded-lg p-1.5 md:p-3 mb-2 md:mb-3 flex items-center gap-2 md:gap-3 bg-gray-50">
         {/* Icon */}
-        <div className={`h-6 w-6 md:h-8 md:w-8 rounded-full flex items-center justify-center flex-shrink-0 ${
-          isJoinNotification 
-            ? 'bg-blue-500' 
-            : 'bg-[#13b981]'
-        }`}>
-          {isJoinNotification ? (
-            <UserPlus className="h-2.5 w-2.5 md:h-4 md:w-4 text-white" />
-          ) : (
-            <HandHeart className="h-2.5 w-2.5 md:h-4 md:w-4 text-white" />
-          )}
+        <div className="h-6 w-6 md:h-8 md:w-8 rounded-full flex items-center justify-center flex-shrink-0 bg-[#13b981]">
+          <HandHeart className="h-2.5 w-2.5 md:h-5 md:w-5 text-white" />
         </div>
         {/* Action Text */}
         <p className="text-[10px] md:text-sm font-semibold text-gray-900 flex-1">

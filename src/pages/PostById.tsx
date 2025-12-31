@@ -28,7 +28,7 @@ export default function PostById() {
   const [expandedComments, setExpandedComments] = useState<Set<number>>(new Set());
   const [loadingReplies, setLoadingReplies] = useState<Set<number>>(new Set());
   const navigate = useNavigate();
-  const { token } = useAuthStore();
+  const { token, user } = useAuthStore();
 
   // Redirect to login if no token
   useEffect(() => {
@@ -391,11 +391,23 @@ export default function PostById() {
       {/* Sticky Input Bar */}
       <div className="fixed bottom-0 right-0 bg-white border-t px-3 md:px-4 py-2.5 md:py-3 flex items-center gap-1.5 md:gap-2 w-full">
         <div className="flex items-center gap-1.5 md:gap-2 flex-1 bg-gray-100 rounded-full px-3 md:px-4 py-1.5 md:py-2 relative">
-          <img
-            src="/view.png"
-            alt="current user"
-            className="w-4 h-4 md:w-5 md:h-5 rounded-full border flex-shrink-0"
-          />
+          {user?.profile_picture ? (
+            <img
+              src={user.profile_picture}
+              alt="current user"
+              className="w-4 h-4 md:w-5 md:h-5 rounded-full border flex-shrink-0 object-cover"
+              onError={(e) => {
+                // Fallback to static image if profile picture fails to load
+                e.currentTarget.src = "/view.png";
+              }}
+            />
+          ) : (
+            <img
+              src="/view.png"
+              alt="current user"
+              className="w-4 h-4 md:w-5 md:h-5 rounded-full border flex-shrink-0"
+            />
+          )}
           <input
             type="text"
             value={inputValue}
