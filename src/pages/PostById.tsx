@@ -49,6 +49,22 @@ export default function PostById() {
     enabled: !!id,
   });
 
+  // Get user display name for header
+  const getUserDisplayName = () => {
+    if (!postData?.user) return 'Post';
+    const user = postData.user;
+    if (user.first_name && user.last_name) {
+      return `${user.first_name} ${user.last_name}`;
+    }
+    if (user.full_name) {
+      return user.full_name;
+    }
+    if (user.username) {
+      return user.username;
+    }
+    return 'Post';
+  };
+
   // Transform API response to PostDetail format
   const post: PostDetail | undefined = postData ? {
     id: postData.id,
@@ -251,7 +267,7 @@ export default function PostById() {
   if (isLoading) {
     return (
       <div className="bg-white min-h-screen flex flex-col relative pb-16 md:pb-0">
-        <ProfileNavbar title="Post" />
+        <ProfileNavbar title={getUserDisplayName()} />
         <div className="flex-1 flex items-center justify-center">
           <div className="text-center py-8 md:py-10 px-4">
             <Loader2 className="w-6 h-6 md:w-8 md:h-8 animate-spin mx-auto mb-3 md:mb-4" />
@@ -271,7 +287,7 @@ export default function PostById() {
   if (error || !post) {
     return (
       <div className="bg-white min-h-screen flex flex-col relative pb-16 md:pb-0">
-        <ProfileNavbar title="Post" />
+        <ProfileNavbar title={getUserDisplayName()} />
         <div className="flex-1 flex items-center justify-center">
           <div className="text-center py-8 md:py-10 px-4">
             <h2 className="text-lg md:text-xl font-semibold text-gray-900 mb-1.5 md:mb-2">
@@ -294,7 +310,7 @@ export default function PostById() {
 
   return (
     <div className="bg-white min-h-screen flex flex-col relative pb-16">
-      <ProfileNavbar title="Post" />
+      <ProfileNavbar title={getUserDisplayName()} />
       <main className="flex-1">
         <ProfileActivityCard
           post={post}
