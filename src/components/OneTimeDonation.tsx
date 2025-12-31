@@ -6,7 +6,7 @@ import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { useState, useEffect } from "react";
 import DonationCauseSelector from "./DonationCauseSelector";
 import { useMutation } from '@tanstack/react-query';
-import { createOneTimeDonation } from '@/services/api/donation';
+import { createOneTimeDonation, createFundraiserDonation } from '@/services/api/donation';
 import RequestNonprofitModal from '@/components/newsearch/RequestNonprofitModal';
 import { toast } from 'sonner';
 
@@ -23,6 +23,8 @@ interface OneTimeDonationProps {
   preselectedCauses?: number[];
   preselectedCausesData?: any[];
   preselectedCollectiveId?: number;
+  fundraiserId?: number;
+  initialDonationAmount?: string;
 }
 
 interface SelectedItem {
@@ -41,10 +43,13 @@ export default function OneTimeDonation({
   preselectedCauses,
   preselectedCausesData,
   preselectedCollectiveId,
+  fundraiserId,
+  initialDonationAmount,
 }: OneTimeDonationProps) {
   const [selectedItems, setSelectedItems] = useState<SelectedItem[]>([]);
-  const [donationAmount, setDonationAmount] = useState(5);
-  const [inputValue, setInputValue] = useState("5");
+  const initialAmount = initialDonationAmount ? parseFloat(initialDonationAmount) : 5;
+  const [donationAmount, setDonationAmount] = useState(initialAmount);
+  const [inputValue, setInputValue] = useState(initialAmount.toString());
   const [preselectedItemAdded, setPreselectedItemAdded] = useState(false);
   const [preselectedCausesProcessed, setPreselectedCausesProcessed] = useState(false);
   const [showRequestModal, setShowRequestModal] = useState(false);
@@ -128,6 +133,23 @@ export default function OneTimeDonation({
     },
     onError: (error) => {
       console.error('One-time donation error:', error);
+    },
+  });
+
+  // Fundraiser donation mutation
+  const fundraiserDonationMutation = useMutation({
+    mutationFn: createFundraiserDonation,
+    onSuccess: (response) => {
+      console.log('Fundraiser donation response:', response);
+      if (response.checkout_url) {
+        window.location.href = response.checkout_url;
+      } else {
+        toast.success('Donation initiated successfully!');
+      }
+    },
+    onError: (error: any) => {
+      console.error('Fundraiser donation error:', error);
+      toast.error(`Failed to process donation: ${error.response?.data?.message || error.message}`);
     },
   });
 
@@ -301,6 +323,24 @@ export default function OneTimeDonation({
   };
 
   const handleCheckout = () => {
+    // If this is a fundraiser donation, use the fundraiser API
+    if (fundraiserId) {
+      const selectedCauseIds = selectedItems
+        .filter(item => item.type === 'cause')
+        .map(item => parseInt(item.id));
+
+      const requestBody = {
+        fundraiser_id: fundraiserId,
+        amount: donationAmount.toString(),
+        selected_cause_ids: selectedCauseIds.length > 0 ? selectedCauseIds : [0],
+      };
+
+      console.log('Sending fundraiser donation request:', requestBody);
+      fundraiserDonationMutation.mutate(requestBody);
+      return;
+    }
+
+    // Regular one-time donation
     // Prepare request body according to API specification
     // Format: { amount: string, causes: [{ cause_id: number, attributed_collective?: number }] }
     const causes: Array<{ cause_id: number; attributed_collective?: number }> = [];
@@ -514,28 +554,30 @@ export default function OneTimeDonation({
           </div>
         )}
 
-        {/* Add More Causes Section */}
-        <div className="w-full">
-          <DonationCauseSelector
-            selectedItems={selectedItems}
-            onSelectItem={handleSelectItem}
-            onRemoveItem={handleRemoveItem}
-            onClearAllItems={handleClearAllItems}
-            preselectedItem={preselectedItem}
-            activeTab={activeTab}
-            onRequestNonprofit={() => setShowRequestModal(true)}
-          />
-        </div>
+        {/* Add More Causes Section - Hide for fundraiser donations */}
+        {!fundraiserId && (
+          <div className="w-full">
+            <DonationCauseSelector
+              selectedItems={selectedItems}
+              onSelectItem={handleSelectItem}
+              onRemoveItem={handleRemoveItem}
+              onClearAllItems={handleClearAllItems}
+              preselectedItem={preselectedItem}
+              activeTab={activeTab}
+              onRequestNonprofit={() => setShowRequestModal(true)}
+            />
+          </div>
+        )}
       </div>
 
       {/* Checkout button - Fixed at bottom */}
       <div className="fixed bottom-0 left-0 right-0 p-4 md:p-6 bg-white border-t border-gray-200 z-10">
         <Button
           onClick={handleCheckout}
-          disabled={oneTimeDonationMutation.isPending || selectedItems.length === 0}
+          disabled={(oneTimeDonationMutation.isPending || fundraiserDonationMutation.isPending) || selectedItems.length === 0}
           className="bg-[#1600ff] hover:bg-[#1400cc] text-white w-full py-4 md:py-6 rounded-full font-bold transition-colors flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed text-sm md:text-base"
         >
-          {oneTimeDonationMutation.isPending ? 'Processing...' : 'Continue to Review'}
+          {(oneTimeDonationMutation.isPending || fundraiserDonationMutation.isPending) ? 'Processing...' : 'Continue to Review'}
         </Button>
       </div>
 

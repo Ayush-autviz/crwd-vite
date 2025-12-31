@@ -1,14 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams, Link } from 'react-router-dom';
 import { ArrowLeft, Share2, MoreHorizontal, Users, TrendingUp } from 'lucide-react';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import { getFundraiserById, getCollectiveById } from '@/services/api/crwd';
-import { createOneTimeDonation } from '@/services/api/donation';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
+import { Loader2 } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import dayjs from 'dayjs';
 
@@ -41,7 +40,6 @@ const getInitials = (name: string) => {
 export default function FundraiserDetail() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const queryClient = useQueryClient();
   const [donationAmount, setDonationAmount] = useState('25');
   const [showDropdown, setShowDropdown] = useState(false);
   const dropdownRef = React.useRef<HTMLDivElement>(null);
@@ -73,44 +71,23 @@ export default function FundraiserDetail() {
       )
     : 0;
 
-  // One-time donation mutation
-  const donationMutation = useMutation({
-    mutationFn: createOneTimeDonation,
-    onSuccess: (response) => {
-      if (response.checkout_url) {
-        window.location.href = response.checkout_url;
-      } else {
-        toast.success('Donation initiated successfully!');
-        queryClient.invalidateQueries({ queryKey: ['fundraiser', id] });
-      }
-    },
-    onError: (error: any) => {
-      console.error('Donation error:', error);
-      toast.error(`Failed to process donation: ${error.response?.data?.message || error.message}`);
-    },
-  });
-
   const handleDonate = () => {
     if (!fundraiserData?.causes || fundraiserData.causes.length === 0) {
       toast.error('No nonprofits selected for this fundraiser.');
       return;
     }
 
-    const amount = parseFloat(donationAmount);
-    if (isNaN(amount) || amount <= 0) {
-      toast.error('Please enter a valid donation amount.');
-      return;
-    }
+    // Navigate to one-time donation page with preselected causes and fundraiser ID
+    const preselectedCauseIds = fundraiserData.causes.map((cause: any) => cause.id);
+    const preselectedCausesData = fundraiserData.causes;
 
-    // Prepare causes array for donation
-    const causes = fundraiserData.causes.map((cause: any) => ({
-      cause_id: cause.id || cause.cause_id,
-      attributed_collective: typeof fundraiserData.collective === 'number' ? fundraiserData.collective : fundraiserData.collective?.id,
-    }));
-
-    donationMutation.mutate({
-      amount: amount.toString(),
-      causes: causes.length > 0 ? causes : [{ cause_id: 0 }],
+    navigate('/one-time-donation', {
+      state: {
+        preselectedCauses: preselectedCauseIds,
+        preselectedCausesData: preselectedCausesData,
+        fundraiserId: fundraiserData.id,
+        donationAmount: donationAmount || '25',
+      },
     });
   };
 
@@ -365,20 +342,17 @@ export default function FundraiserDetail() {
             <h2 className="text-lg md:text-xl font-bold text-gray-900 mb-3 md:mb-4">Recent Supporters</h2>
             <div className="space-y-3 md:space-y-4">
               {fundraiserData.recent_donors.slice(0, 5).map((donor: any) => {
-                const user = donor.user || donor;
-                const displayName = user.first_name && user.last_name
-                  ? `${user.first_name} ${user.last_name}`
-                  : user.username || user.full_name || 'Anonymous';
-                const avatarBgColor = getConsistentColor(user.id, user.username || displayName);
+                const displayName = donor.name || 'Anonymous';
+                const avatarBgColor = donor.color || getConsistentColor(donor.id, displayName);
                 const initials = getInitials(displayName);
                 return (
                   <Link
-                    key={donor.id || user.id}
-                    to={`/user-profile/${user.id}`}
+                    key={donor.id}
+                    to={`/user-profile/${donor.id}`}
                     className="flex items-center gap-3 md:gap-4 bg-white border border-gray-200 rounded-lg p-3 md:p-4 hover:bg-gray-50 transition-colors"
                   >
                     <Avatar className="w-10 h-10 md:w-12 md:h-12 flex-shrink-0">
-                      <AvatarImage src={user.profile_picture} alt={displayName} />
+                      <AvatarImage src={donor.image} alt={displayName} />
                       <AvatarFallback
                         style={{ backgroundColor: avatarBgColor }}
                         className="text-white font-bold text-xs md:text-sm"
@@ -390,12 +364,19 @@ export default function FundraiserDetail() {
                       <h3 className="font-bold text-sm md:text-base text-gray-900 truncate">
                         {displayName}
                       </h3>
-                      {donor.created_at && (
+                      {donor.latest_donation_date && (
                         <p className="text-xs md:text-sm text-gray-600">
-                          {formatDistanceToNow(new Date(donor.created_at), { addSuffix: true })}
+                          {formatDistanceToNow(new Date(donor.latest_donation_date), { addSuffix: true })}
                         </p>
                       )}
                     </div>
+                    {donor.amount_donated && (
+                      <div className="flex-shrink-0">
+                        <p className="text-sm md:text-base font-bold text-[#1600ff]">
+                          ${parseFloat(donor.amount_donated.toString()).toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
+                        </p>
+                      </div>
+                    )}
                   </Link>
                 );
               })}
@@ -422,17 +403,10 @@ export default function FundraiserDetail() {
           </div>
           <Button
             onClick={handleDonate}
-            disabled={donationMutation.isPending || !donationAmount || parseFloat(donationAmount) <= 0}
+            disabled={!donationAmount || parseFloat(donationAmount) <= 0}
             className="bg-[#1600ff] hover:bg-[#1400cc] text-white text-sm md:text-base px-6 md:px-8 py-2 md:py-2.5"
           >
-            {donationMutation.isPending ? (
-              <>
-                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                Processing...
-              </>
-            ) : (
-              'Donate to Campaign'
-            )}
+            Donate to Campaign
           </Button>
         </div>
       </div>
