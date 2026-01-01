@@ -142,7 +142,7 @@ export default function FundraiserDetail() {
           <div className="absolute inset-0 w-full h-full">
             {fundraiserData.image ? (
               <div
-                className="absolute inset-0 bg-cover bg-center filter blur-sm scale-110"
+                className="absolute inset-0 bg-cover bg-center filter blur-xs scale-110"
                 style={{ backgroundImage: `url(${fundraiserData.image})` }}
               />
             ) : (
@@ -208,7 +208,7 @@ export default function FundraiserDetail() {
           </div>
           <div className="flex items-center justify-between">
             <span className="text-xs md:text-sm text-gray-600">
-              {fundraiserData.progress_percentage}% of goal
+              {fundraiserData.progress_percentage.toFixed(2)}% of goal
             </span>
             {daysLeft > 0 && (
               <span className="text-xs md:text-sm text-gray-600">

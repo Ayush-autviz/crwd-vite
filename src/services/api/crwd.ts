@@ -211,3 +211,9 @@ export const patchFundraiser = async (id: string, data: any) => {
     const response = await axiosClient.patch(`/crwd/fundraisers/${id}/`, data);
     return response.data;
 };
+
+// put fundraiser API endpoint
+export const putFundraiser = async (id: string, data: any) => {
+    const response = await axiosClient.put(`/crwd/fundraisers/${id}/`, data);
+    return response.data;
+};

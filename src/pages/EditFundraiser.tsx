@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { ArrowLeft, Info, Palette, Image as ImageIcon, Camera, X, Search, Trash2, Plus } from 'lucide-react';
+import { ArrowLeft, Info, Palette, Image as ImageIcon, Camera, X, Search, Trash2, Plus, Calendar } from 'lucide-react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { getFundraiserById, getCollectiveById, getCausesBySearch, patchFundraiser } from '@/services/api/crwd';
 import { Toast } from '@/components/ui/toast';
@@ -60,18 +60,29 @@ export default function EditFundraiser() {
   // State
   const [campaignTitle, setCampaignTitle] = useState('');
   const [campaignStory, setCampaignStory] = useState('');
+  const [goalAmount, setGoalAmount] = useState('');
   const [endDate, setEndDate] = useState<Dayjs | null>(null);
   const [coverType, setCoverType] = useState<'none' | 'color' | 'image'>('none');
   const [coverColor, setCoverColor] = useState('#1600ff');
   const [uploadedCoverImage, setUploadedCoverImage] = useState<File | null>(null);
   const [uploadedCoverImagePreview, setUploadedCoverImagePreview] = useState<string | null>(null);
   const [selectedNonprofits, setSelectedNonprofits] = useState<number[]>([]);
+  const [selectedNonprofitsData, setSelectedNonprofitsData] = useState<any[]>([]); // Store full nonprofit objects
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('');
   const [searchTrigger, setSearchTrigger] = useState(0);
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState('');
   const [showExtendModal, setShowExtendModal] = useState(false);
+  
+  // Store initial values to track changes
+  const [initialTitle, setInitialTitle] = useState('');
+  const [initialStory, setInitialStory] = useState('');
+  const [initialGoalAmount, setInitialGoalAmount] = useState('');
+  const [initialEndDate, setInitialEndDate] = useState<Dayjs | null>(null);
+  const [initialCoverType, setInitialCoverType] = useState<'none' | 'color' | 'image'>('none');
+  const [initialCoverColor, setInitialCoverColor] = useState('#1600ff');
+  const [initialNonprofits, setInitialNonprofits] = useState<number[]>([]);
 
   const colorSwatches = [
     '#0000FF', // Blue
@@ -115,27 +126,45 @@ export default function EditFundraiser() {
   // Initialize form data when fundraiser data loads
   useEffect(() => {
     if (fundraiserData) {
-      setCampaignTitle(fundraiserData.name || '');
-      setCampaignStory(fundraiserData.description || '');
-      if (fundraiserData.end_date) {
-        setEndDate(dayjs(fundraiserData.end_date));
-      }
+      const apiTitle = fundraiserData.name || '';
+      const apiStory = fundraiserData.description || '';
+      const apiGoalAmount = fundraiserData.target_amount || '';
+      const apiEndDate = fundraiserData.end_date ? dayjs(fundraiserData.end_date) : null;
+      
+      setCampaignTitle(apiTitle);
+      setCampaignStory(apiStory);
+      setGoalAmount(apiGoalAmount);
+      setEndDate(apiEndDate);
+      
+      // Store initial values
+      setInitialTitle(apiTitle);
+      setInitialStory(apiStory);
+      setInitialGoalAmount(apiGoalAmount);
+      setInitialEndDate(apiEndDate);
       
       // Set cover type
       if (fundraiserData.image) {
         setCoverType('image');
         setUploadedCoverImagePreview(fundraiserData.image);
+        setInitialCoverType('image');
       } else if (fundraiserData.color) {
         setCoverType('color');
         setCoverColor(fundraiserData.color);
+        setInitialCoverType('color');
+        setInitialCoverColor(fundraiserData.color);
       } else {
         setCoverType('none');
+        setInitialCoverType('none');
       }
 
       // Set selected nonprofits
-      if (fundraiserData.causes && fundraiserData.causes.length > 0) {
-        setSelectedNonprofits(fundraiserData.causes.map((cause: any) => cause.id));
-      }
+      const initialCauses = fundraiserData.causes && fundraiserData.causes.length > 0
+        ? fundraiserData.causes
+        : [];
+      const initialCauseIds = initialCauses.map((cause: any) => cause.id);
+      setSelectedNonprofits(initialCauseIds);
+      setSelectedNonprofitsData(initialCauses); // Store full nonprofit objects
+      setInitialNonprofits(initialCauseIds);
     }
   }, [fundraiserData]);
 
@@ -234,53 +263,100 @@ export default function EditFundraiser() {
       return;
     }
 
+    // Check what has changed
+    const titleChanged = campaignTitle.trim() !== initialTitle;
+    const storyChanged = campaignStory.trim() !== initialStory;
+    const goalAmountChanged = goalAmount !== initialGoalAmount && !hasDonations; // Only allow change if no donations
+    const endDateChanged = endDate ? !endDate.isSame(initialEndDate) : false;
+    const nonprofitsChanged = JSON.stringify(selectedNonprofits.sort()) !== JSON.stringify(initialNonprofits.sort());
+    const hasNewImage = coverType === 'image' && uploadedCoverImage !== null;
+    const colorChanged = coverType === 'color' && coverColor !== initialCoverColor;
+    const coverTypeChanged = coverType !== initialCoverType;
+    
+    // Check if cover was removed (switched from image/color to none)
+    const coverRemoved = (initialCoverType === 'image' || initialCoverType === 'color') && coverType === 'none';
+    // Check if cover was switched from image to color or vice versa
+    const coverSwitched = (initialCoverType === 'image' && coverType === 'color') || 
+                          (initialCoverType === 'color' && coverType === 'image');
+
     const endDateISO = endDate ? endDate.toISOString() : '';
 
-    if (coverType === 'image' && uploadedCoverImage) {
-      // Use FormData for image upload
+    // Use FormData if there's a new image upload, otherwise use JSON
+    if (hasNewImage) {
+      // New file uploaded - use FormData
       const formData = new FormData();
-      formData.append('name', campaignTitle);
-      formData.append('description', campaignStory);
+      
+      // Only add changed fields
+      if (titleChanged) {
+        formData.append('name', campaignTitle.trim());
+      }
+      if (storyChanged) {
+        formData.append('description', campaignStory.trim());
+      }
+      if (goalAmountChanged) {
+        formData.append('target_amount', goalAmount);
+      }
+      if (endDateChanged) {
+        formData.append('end_date', endDateISO);
+      }
+      if (nonprofitsChanged) {
+        selectedNonprofits.forEach((causeId) => {
+          formData.append('cause_ids', causeId.toString());
+        });
+      }
+      
       formData.append('image_file', uploadedCoverImage);
-      formData.append('end_date', endDateISO);
-      selectedNonprofits.forEach((causeId) => {
-        formData.append('cause_ids', causeId.toString());
-      });
-
+      // When image is being displayed, send empty color string to clear the color
+      if (coverTypeChanged || coverSwitched) {
+        formData.append('color', '');
+      }
+      
       updateFundraiserMutation.mutate(formData);
-    } else if (coverType === 'color') {
-      // Use JSON for color-based cover
-      const requestData: any = {
-        name: campaignTitle,
-        description: campaignStory,
-        color: coverColor,
-        end_date: endDateISO,
-        cause_ids: selectedNonprofits,
-      };
-
-      updateFundraiserMutation.mutate(requestData);
-    } else if (coverType === 'none') {
-      // Remove cover
-      const requestData: any = {
-        name: campaignTitle,
-        description: campaignStory,
-        end_date: endDateISO,
-        image: null,
-        color: null,
-        cause_ids: selectedNonprofits,
-      };
-
-      updateFundraiserMutation.mutate(requestData);
     } else {
-      // Just update text fields
-      const requestData: any = {
-        name: campaignTitle,
-        description: campaignStory,
-        end_date: endDateISO,
-        cause_ids: selectedNonprofits,
-      };
-
-      updateFundraiserMutation.mutate(requestData);
+      // Use JSON - no file upload
+      const updateData: any = {};
+      
+      // Only add changed fields
+      if (titleChanged) {
+        updateData.name = campaignTitle.trim();
+      }
+      if (storyChanged) {
+        updateData.description = campaignStory.trim();
+      }
+      if (goalAmountChanged) {
+        updateData.target_amount = parseFloat(goalAmount);
+      }
+      if (endDateChanged) {
+        updateData.end_date = endDateISO;
+      }
+      if (nonprofitsChanged) {
+        updateData.cause_ids = selectedNonprofits;
+      }
+      
+      // Handle cover changes
+      if (coverType === 'image' && coverTypeChanged) {
+        // Switched to image but no new file - keep existing image, clear color
+        updateData.color = '';
+      } else if (coverType === 'color' && (colorChanged || coverTypeChanged)) {
+        // Color changed or switched to color
+        updateData.color = coverColor;
+        // Clear image if switching from image to color
+        if (coverSwitched || (initialCoverType === 'image' && coverType === 'color')) {
+          updateData.image = null;
+        }
+      } else if (coverRemoved) {
+        // Cover was removed
+        updateData.image = null;
+        updateData.color = null;
+      }
+      
+      // Only send update if there are changes
+      if (Object.keys(updateData).length > 0) {
+        updateFundraiserMutation.mutate(updateData);
+      } else {
+        setToastMessage('No changes to save.');
+        setShowToast(true);
+      }
     }
   };
 
@@ -299,14 +375,18 @@ export default function EditFundraiser() {
     setSearchTrigger(prev => prev + 1);
   };
 
-  const handleAddNonprofit = (nonprofitId: number) => {
+  const handleAddNonprofit = (nonprofitId: number, nonprofitData: any) => {
     if (!selectedNonprofits.includes(nonprofitId)) {
       setSelectedNonprofits(prev => [...prev, nonprofitId]);
+      setSelectedNonprofitsData(prev => [...prev, nonprofitData]);
     }
   };
 
   const handleRemoveNonprofit = (nonprofitId: number) => {
     setSelectedNonprofits(prev => prev.filter(id => id !== nonprofitId));
+    setSelectedNonprofitsData(prev => prev.filter(item => item.id !== nonprofitId));
+    setToastMessage('Nonprofit removed from supported nonprofits.');
+    setShowToast(true);
   };
 
   if (isLoading) {
@@ -335,18 +415,13 @@ export default function EditFundraiser() {
     );
   }
 
-  // Get selected nonprofits data
-  const selectedNonprofitsData = fundraiserData.causes?.filter((cause: any) => 
-    selectedNonprofits.includes(cause.id)
-  ) || [];
-
   // Get available nonprofits to add (exclude already selected ones)
   const availableNonprofits = causesData?.results?.filter((cause: any) => 
     !selectedNonprofits.includes(cause.id)
   ) || [];
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-gray-50">
       {/* Header */}
       <div className="sticky top-0 z-10 bg-white border-b px-4 py-3 md:px-6 md:py-4">
         <div className="flex items-center gap-3 md:gap-4 mb-4">
@@ -394,7 +469,7 @@ export default function EditFundraiser() {
         </div>
 
         {/* Campaign Details */}
-        <div className="mb-6 md:mb-8">
+        <div className="mb-6 md:mb-8 bg-white p-4 md:p-6 rounded-lg">
           <h2 className="text-lg md:text-xl font-bold text-gray-900 mb-4 md:mb-6">Campaign Details</h2>
           
           {/* Campaign Title */}
@@ -430,21 +505,25 @@ export default function EditFundraiser() {
               Goal Amount
             </label>
             <div className="relative">
-              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-600 font-medium">
+              
+              <div className="relative">
+              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-600 font-medium z-10">
                 $
               </span>
-              <Input
-                type="number"
-                value={fundraiserData.target_amount || ''}
-                disabled={hasDonations}
-                className="w-full pl-8"
-              />
-              {hasDonations && (
-                <div className="flex items-center gap-2 mt-2">
-                  <Info className="w-4 h-4 text-gray-500" />
-                  <span className="text-xs md:text-sm text-gray-600">Cannot change</span>
-                </div>
-              )}
+                <Input
+                  type="number"
+                  value={goalAmount}
+                  onChange={(e) => setGoalAmount(e.target.value)}
+                  disabled={hasDonations}
+                  className={`w-full pl-8 pr-28 rounded-lg ${hasDonations ? 'bg-gray-100 text-gray-600 cursor-not-allowed' : ''}`}
+                />
+                {hasDonations && (
+                  <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-1.5">
+                    <Info className="w-4 h-4 text-gray-500 flex-shrink-0" />
+                    <span className="text-xs md:text-sm text-gray-600 whitespace-nowrap">Cannot change</span>
+                  </div>
+                )}
+              </div>
               {hasDonations && (
                 <p className="text-xs md:text-sm text-gray-500 mt-1">
                   Goal cannot be changed after donations are received.
@@ -458,13 +537,17 @@ export default function EditFundraiser() {
             <label className="block text-sm md:text-base font-semibold text-gray-900 mb-2">
               End Date
             </label>
-            <div className="flex items-center gap-3">
-              <div className="flex-1">
-                <div className="text-base md:text-lg font-medium text-gray-900">
-                  {endDate ? endDate.format('DD/MM/YYYY') : 'N/A'}
-                </div>
+            <div className="flex items-start gap-3">
+              <div className="flex-1 relative">
+                <Input
+                  type="text"
+                  value={endDate ? endDate.format('DD/MM/YYYY') : 'N/A'}
+                  disabled
+                  className="w-full bg-gray-100 text-gray-900 rounded-lg pr-10 cursor-not-allowed"
+                />
+                {/* <Calendar className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" /> */}
                 {daysLeft > 0 && (
-                  <p className="text-xs md:text-sm text-gray-600 mt-1">
+                  <p className="text-xs md:text-sm text-gray-600">
                     {daysLeft} day{daysLeft !== 1 ? 's' : ''} remaining
                   </p>
                 )}
@@ -472,8 +555,9 @@ export default function EditFundraiser() {
               <Button
                 onClick={handleExtendDate}
                 variant="outline"
-                className="bg-[#1600ff] text-white hover:bg-[#1400cc] border-[#1600ff]"
+                className="bg-[#1600ff] text-white hover:text-white hover:bg-[#1400cc] border-[#1600ff] rounded-full flex items-center gap-2"
               >
+                <Calendar className="w-4 h-4" />
                 Extend
               </Button>
             </div>
@@ -481,46 +565,34 @@ export default function EditFundraiser() {
         </div>
 
         {/* Cover Design */}
-        <div className="mb-6 md:mb-8">
+        <div className="mb-6 md:mb-8 bg-white p-4 md:p-6 rounded-lg">
           <h2 className="text-lg md:text-xl font-bold text-gray-900 mb-4">Cover Design</h2>
           
           {/* Type Selection Buttons */}
           <div className="flex gap-3 mb-4">
-            {/* <button
-              onClick={() => setCoverType('none')}
-              className={`flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-lg border-2 transition-colors ${
-                coverType === 'none'
-                  ? 'bg-white border-gray-400'
-                  : 'bg-gray-50 border-gray-200 hover:bg-gray-100'
-              }`}
-            >
-              <span className={`font-medium text-sm md:text-base ${coverType === 'none' ? 'text-gray-900' : 'text-gray-600'}`}>
-                No Cover
-              </span>
-            </button> */}
             <button
               onClick={() => setCoverType('color')}
-              className={`flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-lg border-2 transition-colors ${
+              className={`flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-full transition-colors ${
                 coverType === 'color'
-                  ? 'bg-white border-gray-400'
-                  : 'bg-gray-50 border-gray-200 hover:bg-gray-100'
+                  ? 'bg-blue-500 text-white'
+                  : 'bg-gray-50 border border-gray-300 text-gray-700 hover:bg-gray-100'
               }`}
             >
-              <Palette className={`w-5 h-5 ${coverType === 'color' ? 'text-gray-700' : 'text-gray-500'}`} />
-              <span className={`font-medium text-sm md:text-base ${coverType === 'color' ? 'text-gray-900' : 'text-gray-600'}`}>
+              <Palette className={`w-5 h-5 ${coverType === 'color' ? 'text-white' : 'text-gray-700'}`} />
+              <span className={`font-medium text-sm md:text-base ${coverType === 'color' ? 'text-white' : 'text-gray-700'}`}>
                 Color
               </span>
             </button>
             <button
               onClick={() => setCoverType('image')}
-              className={`flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-lg border-2 transition-colors ${
+              className={`flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-full transition-colors ${
                 coverType === 'image'
-                  ? 'bg-white border-gray-400'
-                  : 'bg-gray-50 border-gray-200 hover:bg-gray-100'
+                  ? 'bg-blue-500 text-white'
+                  : 'bg-gray-50 border border-gray-300 text-gray-700 hover:bg-gray-100'
               }`}
             >
-              <ImageIcon className={`w-5 h-5 ${coverType === 'image' ? 'text-gray-700' : 'text-gray-500'}`} />
-              <span className={`font-medium text-sm md:text-base ${coverType === 'image' ? 'text-gray-900' : 'text-gray-600'}`}>
+              <ImageIcon className={`w-5 h-5 ${coverType === 'image' ? 'text-white' : 'text-gray-700'}`} />
+              <span className={`font-medium text-sm md:text-base ${coverType === 'image' ? 'text-white' : 'text-gray-700'}`}>
                 Image
               </span>
             </button>
@@ -608,7 +680,7 @@ export default function EditFundraiser() {
         </div>
 
         {/* Supported Nonprofits */}
-        <div className="mb-6 md:mb-8">
+        <div className="mb-6 md:mb-8 bg-white p-4 md:p-6 rounded-lg">
           <h2 className="text-lg md:text-xl font-bold text-gray-900 mb-2">Supported Nonprofits</h2>
           <p className="text-sm md:text-base text-gray-600 mb-4">
             Add or remove nonprofits. Donations will be split evenly among selected organizations.
@@ -627,9 +699,9 @@ export default function EditFundraiser() {
                   return (
                     <div
                       key={cause.id}
-                      className="flex items-center gap-3 md:gap-4 bg-blue-50 rounded-lg p-3 md:p-4"
+                      className="flex items-center gap-3 md:gap-4 bg-blue-50 border border-blue-200 rounded-lg p-3 md:p-4"
                     >
-                      <Avatar className="w-10 h-10 md:w-12 md:h-12 flex-shrink-0">
+                      <Avatar className="w-10 h-10 md:w-12 md:h-12 flex-shrink-0 rounded-lg">
                         <AvatarImage src={cause.image} alt={cause.name} />
                         <AvatarFallback
                           style={{ backgroundColor: avatarBgColor }}
@@ -644,7 +716,7 @@ export default function EditFundraiser() {
                         </h4>
                       </div>
                       <div className="flex items-center gap-2">
-                        <span className="px-2 py-1 bg-[#1600ff] text-white text-xs md:text-sm font-medium rounded">
+                        <span className="px-2 py-1 bg-blue-100 text-blue-800  text-xs font-medium rounded-full">
                           Current
                         </span>
                         <button
@@ -687,9 +759,9 @@ export default function EditFundraiser() {
                   <button
                     key={category.id}
                     onClick={() => handleCategoryFilter(category.id)}
-                    className={`px-3 py-1.5 md:px-4 md:py-2 rounded-lg text-xs md:text-sm font-medium transition-colors whitespace-nowrap flex-shrink-0 ${
+                    className={`px-3 py-1.5 md:px-4 md:py-2 rounded-full text-xs md:text-sm font-medium transition-colors whitespace-nowrap flex-shrink-0 ${
                       isSelected
-                        ? 'bg-[#1600ff] text-white'
+                        ? 'bg-blue-500 text-white'
                         : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                     }`}
                   >
@@ -714,7 +786,7 @@ export default function EditFundraiser() {
                       key={nonprofit.id}
                       className="flex items-center gap-3 md:gap-4 bg-white border border-gray-200 rounded-lg p-3 md:p-4"
                     >
-                      <Avatar className="w-10 h-10 md:w-12 md:h-12 flex-shrink-0">
+                      <Avatar className="w-10 h-10 md:w-12 md:h-12 flex-shrink-0 rounded-lg">
                         <AvatarImage src={nonprofit.image} alt={nonprofit.name} />
                         <AvatarFallback
                           style={{ backgroundColor: avatarBgColor }}
@@ -732,11 +804,11 @@ export default function EditFundraiser() {
                         </p>
                       </div>
                       <button
-                        onClick={() => handleAddNonprofit(nonprofit.id)}
-                        className="p-2 bg-pink-500 rounded-full hover:bg-pink-600 transition-colors flex-shrink-0"
+                        onClick={() => handleAddNonprofit(nonprofit.id, nonprofit)}
+                        className="p-2 bg-pink-100 rounded-full hover:bg-pink-200 transition-colors flex-shrink-0"
                         aria-label="Add nonprofit"
                       >
-                        <Plus className="w-4 h-4 md:w-5 md:h-5 text-white" />
+                        <Plus className="w-4 h-4 md:w-5 md:h-5 text-pink-500" />
                       </button>
                     </div>
                   );
@@ -757,7 +829,7 @@ export default function EditFundraiser() {
           <Button
             onClick={handleSave}
             disabled={updateFundraiserMutation.isPending}
-            className="w-full bg-[#1600ff] hover:bg-[#1400cc] text-white text-sm md:text-base py-3 md:py-4"
+            className="w-full bg-[#1600ff] hover:bg-[#1400cc] text-white text-sm md:text-base py-3 md:py-5"
           >
             {updateFundraiserMutation.isPending ? (
               <>
