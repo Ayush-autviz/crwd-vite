@@ -8,6 +8,7 @@ import { getCollectiveById } from "@/services/api/crwd";
 import { ChevronDown, ChevronUp, Pencil, FileText, Plus, Minus, Trash2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
+import EditDonationSplitBottomSheet from "@/components/donation/EditDonationSplitBottomSheet";
 import {
   Select,
   SelectContent,
@@ -61,6 +62,7 @@ export const DonationBox3 = ({
   const [loadingCollectives, setLoadingCollectives] = useState<Set<number>>(new Set());
   const [isEditingAmount, setIsEditingAmount] = useState(false);
   const [editableAmount, setEditableAmount] = useState(parseFloat(donationBox?.monthly_amount || donationAmount.toString()));
+  const [showEditSplitSheet, setShowEditSplitSheet] = useState(false);
 
   // Get box_causes from donation box (only causes, no collectives)
   const boxCauses = donationBox?.box_causes || [];
@@ -89,10 +91,23 @@ export const DonationBox3 = ({
     return name.substring(0, 2).toUpperCase();
   };
 
-  // Calculate distribution
+  // Calculate distribution - check for custom percentages in box_causes
   const totalItems = causes.length;
-  const distributionPercentage = totalItems > 0 ? 100 / totalItems : 0;
-  const amountPerItem = totalItems > 0 ? (actualDonationAmount * 0.9) / totalItems : 0; // 90% after fees, divided equally
+  const getCausePercentage = (causeId: number) => {
+    const boxCause = boxCauses.find((bc: any) => bc.cause?.id === causeId);
+    return boxCause?.percentage || null; // Return custom percentage if exists
+  };
+  const hasCustomPercentages = boxCauses.some((bc: any) => bc.percentage != null);
+  const distributionPercentage = totalItems > 0 ? (hasCustomPercentages ? null : 100 / totalItems) : 0;
+  
+  // Calculate amount per item - use custom percentage if available, otherwise equal split
+  const getAmountPerItem = (causeId: number) => {
+    const customPercentage = getCausePercentage(causeId);
+    if (customPercentage != null) {
+      return (actualDonationAmount * 0.9 * customPercentage) / 100;
+    }
+    return totalItems > 0 ? (actualDonationAmount * 0.9) / totalItems : 0;
+  };
   const [selectedPaymentMethod, setSelectedPaymentMethod] =
     useState<string>("");
 
@@ -211,16 +226,28 @@ export const DonationBox3 = ({
   const updateAmountMutation = useMutation({
     mutationFn: (amount: number) => updateDonationBox({ monthly_amount: amount }),
     onSuccess: () => {
-      console.log('Donation box amount updated successfully');
-      queryClient.invalidateQueries({ queryKey: ['donationBox', currentUser?.id] });
-      setIsEditingAmount(false);
+      queryClient.invalidateQueries({ queryKey: ['donationBox'] });
+    },
+  });
+
+  const updateSplitMutation = useMutation({
+    mutationFn: (percentages: Record<number, number>) => {
+      // Convert percentages to box_causes format with percentages
+      // The API expects box_causes array with id and percentage
+      const boxCausesWithPercentages = boxCauses.map((boxCause: any) => ({
+        id: boxCause.id, // box_cause ID
+        cause_id: boxCause.cause?.id,
+        percentage: percentages[boxCause.cause?.id] || null,
+      }));
+      return updateDonationBox({ box_causes: boxCausesWithPercentages });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['donationBox'] });
+      toast.success('Donation split updated successfully');
     },
     onError: (error: any) => {
-      console.error('Error updating donation box amount:', error);
-      // Revert on error
-      if (donationBox?.monthly_amount) {
-        setEditableAmount(Math.round(parseFloat(donationBox.monthly_amount)));
-      }
+      console.error('Update split error:', error);
+      toast.error('Failed to update donation split');
     },
   });
 
@@ -574,13 +601,21 @@ export const DonationBox3 = ({
 
         {/* Currently Supporting Section */}
         <div className="mb-4 md:mb-6">
-          <div className="mb-3 md:mb-4">
+          <div className="flex items-center justify-between mb-3 md:mb-4">
+          <div className="">
             <h2 className="text-lg md:text-xl font-bold text-gray-900">Currently Supporting</h2>
             <p className="text-xs md:text-sm text-gray-600 mt-0.5 md:mt-1">
               Supporting {causes.length} nonprofit{causes.length !== 1 ? 's' : ''}
             </p>
           </div>
-
+          <button
+              onClick={() => setShowEditSplitSheet(true)}
+              className=" bg-gray-100 text-gray-600 font-medium py-2 px-4 rounded-lg transition-colors flex items-center justify-center gap-2 hover:bg-gray-200"
+            >
+              <Pencil size={18} className="text-gray-600" />
+              Edit Split
+            </button>
+</div>
           {/* Causes List from box_causes */}
           <div className="space-y-2.5 md:space-y-3">
             {causes.length > 0 ? (
@@ -614,8 +649,17 @@ export const DonationBox3 = ({
                     {/* Donation Info & Action */}
                     <div className="flex items-center gap-3 md:gap-4 ml-2 md:ml-4">
                       <div className="text-right">
-                        <p className="font-bold text-sm md:text-base text-gray-900">{distributionPercentage.toFixed(1)}%</p>
-                        <p className="text-xs md:text-sm text-gray-600">${amountPerItem.toFixed(2)}/mo</p>
+                        <p className="font-bold text-sm md:text-base text-gray-900">
+                          {(() => {
+                            const customPercentage = getCausePercentage(cause.id);
+                            return customPercentage != null 
+                              ? `${customPercentage.toFixed(1)}%` 
+                              : distributionPercentage != null 
+                                ? `${distributionPercentage.toFixed(1)}%` 
+                                : '0%';
+                          })()}
+                        </p>
+                        <p className="text-xs md:text-sm text-gray-600">${getAmountPerItem(cause.id).toFixed(2)}/mo</p>
                       </div>
                       <button
                         onClick={() => {
@@ -1171,6 +1215,18 @@ export const DonationBox3 = ({
           </div>
         </div>
       )}
+
+      {/* Edit Donation Split Bottom Sheet */}
+      <EditDonationSplitBottomSheet
+        isOpen={showEditSplitSheet}
+        onClose={() => setShowEditSplitSheet(false)}
+        causes={causes}
+        monthlyAmount={actualDonationAmount}
+        boxCauses={boxCauses}
+        onSave={(percentages) => {
+          updateSplitMutation.mutate(percentages);
+        }}
+      />
     </div>
   );
 };
