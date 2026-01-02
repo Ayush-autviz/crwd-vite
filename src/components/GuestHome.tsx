@@ -126,17 +126,17 @@
                 </div>
 
                 {/* Hero Section */}
-                <div className="bg-card pt-4 pb-8 md:pt-8 md:pb-16 px-4 md:px-6">
+                <div className="bg-card pt-3 pb-6 md:pt-8 md:pb-16 px-4 md:px-6">
                     {/* Launch Banner */}
-                    <div className="max-w-4xl mx-auto text-center mt-6 md:mt-20 mb-4 md:mb-8">
+                    <div className="max-w-4xl mx-auto text-center mt-4 md:mt-20 mb-3 md:mb-8">
 
 
-                        <h1 className="font-[900] text-foreground mb-2 md:mb-4 leading-tight" style={{ fontSize: 'clamp(1.5rem, 5vw, 4.5rem)' }}>
+                        <h1 className="font-[900] text-foreground mb-1.5 md:mb-4 leading-tight" style={{ fontSize: 'clamp(1.5rem, 5vw, 4.5rem)' }}>
                             Stop Wishing You Made a Difference.
                             <span className="text-[#1600ff]"> Start Being Someone Who Does.</span>
                         </h1>
 
-                        <p className="text-muted-foreground mb-4 md:mb-8 max-w-2xl mx-auto text-sm md:text-base" style={{ fontSize: 'clamp(0.75rem, 1.5vw, 1.5rem)' }}>
+                        <p className="text-muted-foreground mb-3 md:mb-8 max-w-2xl mx-auto text-sm md:text-base" style={{ fontSize: 'clamp(0.75rem, 1.5vw, 1.5rem)' }}>
                             What if you could support every cause you care about automatically, affordably, and powerfully?
                         </p>
 
@@ -151,24 +151,24 @@
                 </div>
 
                 {/* See the Magic in Action Section */}
-                <div className="bg-gradient-to-br from-[#f1f6ff] via-[#f7f6ff] to-[#fdf3f8] py-6 md:py-16 px-4 md:px-6">
+                <div className="bg-gradient-to-br from-[#f1f6ff] via-[#f7f6ff] to-[#fdf3f8] py-4 md:py-16 px-4 md:px-6">
                     <div className="max-w-4xl mx-auto">
-                        <h2 className="font-[800] text-foreground mb-2 md:mb-4 text-center text-lg md:text-2xl" style={{ fontSize: 'clamp(1rem, 3vw, 2.5rem)' }}>
+                        <h2 className="font-[800] text-foreground mb-1.5 md:mb-4 text-center text-lg md:text-2xl" style={{ fontSize: 'clamp(1rem, 3vw, 2.5rem)' }}>
                             See the <span className="text-[#1600ff]">Magic</span> in Action
                         </h2>
-                        <p className="text-muted-foreground mb-4 md:mb-12 text-center text-xs md:text-base" style={{ fontSize: 'clamp(0.7rem, 1.5vw, 1.25rem)' }}>
+                        <p className="text-muted-foreground mb-3 md:mb-12 text-center text-xs md:text-base" style={{ fontSize: 'clamp(0.7rem, 1.5vw, 1.25rem)' }}>
                             Pick your causes. Give once. Multiply your impact.
                         </p>
 
                         {/* Demo Card */}
                         <Card className="max-w-[90%] md:max-w-[80%] lg:max-w-3xl mx-auto">
-                            <CardContent className="p-3 md:p-8 lg:p-12">
-                                <div className="text-gray-500 mb-3 md:mb-4 text-center text-xs md:text-base" style={{ fontSize: 'clamp(0.65rem, 1.5vw, 1.125rem)' }}>
+                            <CardContent className="p-2.5 md:p-8 lg:p-12">
+                                <div className="text-gray-500 mb-2 md:mb-4 text-center text-xs md:text-base" style={{ fontSize: 'clamp(0.65rem, 1.5vw, 1.125rem)' }}>
                                     You can give <span className="text-[#1600ff] font-[900]" style={{ fontSize: 'clamp(1.25rem, 4vw, 3rem)' }}>${donationAmount}</span>/month to
                                 </div>
 
                                 {/* Slider */}
-                                <div className="mb-3 md:mb-6 relative">
+                                <div className="mb-2 md:mb-6 relative">
                                     <input
                                         type="range"
                                         min="5"
@@ -184,7 +184,7 @@
                                 </div>
 
                                 {/* Cause Buttons */}
-                                <div className="grid grid-cols-2 md:flex md:flex-wrap gap-1.5 md:gap-3 mb-3 md:mb-6 justify-center">
+                                <div className="grid grid-cols-2 md:flex md:flex-wrap gap-1.5 md:gap-3 mb-2 md:mb-6 justify-center">
                                     {causeSets[currentCauseSet].map((cause) => (
                                         <button
                                             key={`${cause.name}-${currentCauseSet}`}
@@ -195,19 +195,19 @@
                                     ))}
                                 </div>
 
-                                <div className="font-bold text-[#1600ff] mb-2 md:mb-4 text-center text-xs md:text-base" style={{ fontSize: 'clamp(0.7rem, 2vw, 1.25rem)' }}>
+                                <div className="font-bold text-[#1600ff] mb-1.5 md:mb-4 text-center text-xs md:text-base" style={{ fontSize: 'clamp(0.7rem, 2vw, 1.25rem)' }}>
                                     <span className="font-[700]" style={{ fontSize: 'clamp(0.875rem, 2.5vw, 1.875rem)' }}>= ${donationAmount * 12}</span> /year of impact
                                 </div>
 
                                 {/* Distribution Bar */}
-                                <div className="flex h-2 md:h-4 rounded-full overflow-hidden mb-2 md:mb-4">
+                                <div className="flex h-2 md:h-4 rounded-full overflow-hidden mb-1.5 md:mb-4">
                                     <div className="bg-pink-500 flex-1" />
                                     <div className="bg-orange-500 flex-1" />
                                     <div className="bg-green-500 flex-1" />
                                     <div className="bg-[#1600ff] flex-1" />
                                 </div>
 
-                                <p className="text-gray-700 mb-4 md:mb-8 text-center font-[600] mt-3 md:mt-6 text-xs md:text-base" style={{ fontSize: 'clamp(0.65rem, 1.5vw, 1rem)' }}>
+                                <p className="text-gray-700 mb-3 md:mb-8 text-center font-[600] mt-2 md:mt-6 text-xs md:text-base" style={{ fontSize: 'clamp(0.65rem, 1.5vw, 1rem)' }}>
                                     One gift. Multiple causes.
                                 </p>
 
@@ -217,7 +217,7 @@
                                 >
                                     Start Supporting <ChevronRight className="ml-1.5 md:ml-2 h-3.5 w-3.5 md:h-5 md:w-5" />
                                 </Button>
-                                <p className="text-gray-500 text-center mt-3 md:mt-4 text-xs md:text-base" style={{ fontSize: 'clamp(0.65rem, 1.5vw, 1rem)' }}>Every dollar makes a difference</p>
+                                <p className="text-gray-500 text-center mt-2 md:mt-4 text-xs md:text-base" style={{ fontSize: 'clamp(0.65rem, 1.5vw, 1rem)' }}>Every dollar makes a difference</p>
                             </CardContent>
                         </Card>
                     </div>
