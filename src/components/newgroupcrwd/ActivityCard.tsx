@@ -76,9 +76,9 @@ export default function ActivityCard({ activity }: ActivityCardProps) {
   // Get profile picture
   const profilePicture = activity.data?.profile_picture || '';
   
-  // Get avatar background color
+  // Get avatar background color - prioritize color from API, then fallback to consistent color
   const avatarId = userId || username || userName;
-  const avatarBgColor = getConsistentColor(avatarId, avatarColors);
+  const avatarBgColor = activity.data?.color || getConsistentColor(avatarId, avatarColors);
   const initials = getInitials(userName);
   
   // Format timestamp - use created_at for proper date parsing (timestamp is already formatted like "2d")

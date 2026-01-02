@@ -25,6 +25,7 @@ interface ProfileHeaderProps {
   link: string;
   follow?: boolean;
   activeSince: string;
+  color?: string;
 }
 
 const ProfileHeader: React.FC<ProfileHeaderProps> = ({
@@ -34,12 +35,13 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
   link,
   follow = false,
   activeSince,
+  color,
 }) => {
   const [isFollowing, setIsFollowing] = useState(false);
   const [toastState, setToastState] = useState({ show: false, message: "" });
   
-  // Get consistent color for avatar fallback based on name
-  const avatarBgColor = getConsistentColor(name || link || 'U', avatarColors);
+  // Use color from API if available, otherwise get consistent color for avatar fallback based on name
+  const avatarBgColor = color || getConsistentColor(name || link || 'U', avatarColors);
 
   const showToast = (message: string) => {
     setToastState({ show: true, message });

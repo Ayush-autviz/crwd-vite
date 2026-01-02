@@ -39,6 +39,7 @@ const GroupCrwdUpdates: React.FC<GroupCrwdUpdatesProps> = ({
     userId: post.user?.id?.toString() || '', // Add userId for navigation, convert to string
     avatarUrl: post.user?.profile_picture || '/placeholder.svg',
     username: post.user?.username || post.user?.full_name || 'Unknown User',
+    color: post.user?.color,
     time: new Date(post.created_at).toLocaleDateString(),
     org: post.collective?.name || 'Unknown Collective',
     orgUrl: post.collective?.id,

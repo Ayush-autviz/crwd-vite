@@ -457,6 +457,7 @@ export default function ProfilePage() {
               location={profileData?.location || 'No location specified'}
               link={profileData?.username || ''}
               activeSince={activeSince}
+              color={profileData?.color}
             />
             
             {/* Edit Profile and Share Profile buttons */}
@@ -560,11 +561,12 @@ export default function ProfilePage() {
                     </div>
                   )}
                 </div>
+            <div className="h-px bg-gray-200 mx-2 mt-4"></div>
+
               </>
             )}
 
             {/* Divider */}
-            <div className="h-px bg-gray-200 mx-2 mt-4"></div>
 
             <ProfileBio bio={profileData?.bio} />
             <div className="py-4">
@@ -820,7 +822,7 @@ export default function ProfilePage() {
                             <Avatar className="w-9 h-9 md:w-10 md:h-10 flex-shrink-0">
                               <AvatarImage src={userData.profile_picture || userData.avatar} />
                               <AvatarFallback 
-                                style={{ backgroundColor: getConsistentColor(userData.id || userData.username || 'U', avatarColors) }}
+                                style={{ backgroundColor: userData.color || getConsistentColor(userData.id || userData.username || 'U', avatarColors) }}
                                 className="text-white text-xs md:text-sm font-semibold"
                               >
                                 {getInitials(userData.first_name, userData.last_name, userData.name, userData.username)}
@@ -881,7 +883,7 @@ export default function ProfilePage() {
                             <Avatar className="w-9 h-9 md:w-10 md:h-10 flex-shrink-0">
                               <AvatarImage src={userData.profile_picture || userData.avatar} />
                               <AvatarFallback 
-                                style={{ backgroundColor: getConsistentColor(userData.id || userData.username || 'U', avatarColors) }}
+                                style={{ backgroundColor: userData.color || getConsistentColor(userData.id || userData.username || 'U', avatarColors) }}
                                 className="text-white text-xs md:text-sm font-semibold"
                               >
                                 {getInitials(userData.first_name, userData.last_name, userData.name, userData.username)}

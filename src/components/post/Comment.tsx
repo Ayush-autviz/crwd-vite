@@ -21,6 +21,7 @@ export interface CommentData {
   firstName?: string;
   lastName?: string;
   avatarUrl: string;
+  color?: string;
   content: string;
   timestamp: Date;
   likes: number;
@@ -46,6 +47,7 @@ export const Comment: React.FC<CommentProps> = ({
   firstName,
   lastName,
   avatarUrl,
+  color,
   content,
   timestamp,
   replies,
@@ -76,6 +78,21 @@ export const Comment: React.FC<CommentProps> = ({
   };
   
   const initials = getInitials();
+  
+  // Avatar colors for consistent fallback styling
+  const avatarColors = [
+    '#FF6B6B', '#4CAF50', '#FF9800', '#9C27B0', '#2196F3',
+    '#FFC107', '#E91E63', '#00BCD4', '#8BC34A', '#FF5722',
+    '#673AB7', '#009688', '#FFEB3B', '#795548', '#607D8B',
+  ];
+  
+  const getConsistentColor = (id: number | string, colors: string[]) => {
+    const hash = typeof id === 'number' ? id : id.toString().split('').reduce((acc: number, char: string) => acc + char.charCodeAt(0), 0);
+    return colors[hash % colors.length];
+  };
+  
+  const avatarBgColor = color || getConsistentColor(userId || username || 'U', avatarColors);
+  
   const [isReplying, setIsReplying] = useState(false);
   const [replyContent, setReplyContent] = useState('');
   const [showMenu, setShowMenu] = useState(false);
@@ -137,7 +154,10 @@ export const Comment: React.FC<CommentProps> = ({
       <div className="flex gap-2 md:gap-3">
         <Avatar className="h-6 w-6 md:h-8 md:w-8">
           <AvatarImage src={avatarUrl} alt={displayName} />
-          <AvatarFallback className="text-[10px] md:text-sm">
+          <AvatarFallback 
+            style={{ backgroundColor: avatarBgColor }}
+            className="text-white text-[10px] md:text-sm font-bold"
+          >
             {initials}
           </AvatarFallback>
         </Avatar>
@@ -225,7 +245,10 @@ export const Comment: React.FC<CommentProps> = ({
               <div className="flex gap-1.5 md:gap-2">
                 <Avatar className="h-5 w-5 md:h-6 md:w-6">
                   <AvatarImage src={avatarUrl} alt={displayName} />
-                  <AvatarFallback className="text-[8px] md:text-xs">
+                  <AvatarFallback 
+                    style={{ backgroundColor: avatarBgColor }}
+                    className="text-white text-[8px] md:text-xs font-bold"
+                  >
                     {initials}
                   </AvatarFallback>
                 </Avatar>

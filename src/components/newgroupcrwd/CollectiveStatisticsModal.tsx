@@ -371,7 +371,7 @@ export default function CollectiveStatisticsModal({
                     ];
                     const userId = user.id || member.id || username;
                     const avatarColorIndex = userId ? (Number(userId) % avatarColors.length) : (username?.charCodeAt(0) || 0) % avatarColors.length;
-                    const avatarBgColor = avatarColors[avatarColorIndex];
+                    const avatarBgColor = user.color || avatarColors[avatarColorIndex];
 
                     // Get first initial
                     const initial = name.charAt(0).toUpperCase() || username.charAt(0).toUpperCase() || 'U';
@@ -507,7 +507,7 @@ export default function CollectiveStatisticsModal({
                       };
                       
                       const userId = user.id || index;
-                      const avatarBgColor = getColorForUser(userId, avatarColors);
+                      const avatarBgColor = user.color || getColorForUser(userId, avatarColors);
 
                       // Format time ago
                       const formatTimeAgo = (dateString: string) => {

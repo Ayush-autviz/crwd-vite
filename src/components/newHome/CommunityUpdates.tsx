@@ -16,6 +16,7 @@ interface CommunityUpdate {
     lastName?: string;
     username: string;
     avatar?: string;
+    color?: string;
   };
   collective?: {
     name: string;
@@ -82,6 +83,7 @@ function PostWithData({ update }: { update: CommunityUpdate }) {
       lastName: update.user.lastName,
       username: postData.user?.username || update.user.username,
       avatar: postData.user?.profile_picture || update.user.avatar,
+      color: postData.user?.color || update.user.color,
     },
     collective: postData.collective
       ? {
@@ -192,7 +194,10 @@ function NotificationSummary({ update }: { update: CommunityUpdate }) {
             {/* Avatar */}
             <Avatar className="h-8 w-8 md:h-11 md:w-11 flex-shrink-0 rounded-full">
               <AvatarImage src={update.user.avatar} />
-              <AvatarFallback className="bg-[#1600ff] text-white text-[10px] md:text-sm">
+              <AvatarFallback 
+                style={{ backgroundColor: update.user.color || '#1600ff' }}
+                className="text-white text-[10px] md:text-sm"
+              >
                 {update.user.name
                   .split(" ")
                   .map((n) => n.charAt(0))
@@ -263,7 +268,10 @@ function NotificationSummary({ update }: { update: CommunityUpdate }) {
           {/* Avatar */}
           <Avatar className="h-8 w-8 md:h-11 md:w-11 flex-shrink-0 rounded-full">
             <AvatarImage src={update.user.avatar} />
-            <AvatarFallback className="bg-[#1600ff] text-white text-[10px] md:text-sm">
+            <AvatarFallback 
+              style={{ backgroundColor: update.user.color || '#1600ff' }}
+              className="text-white text-[10px] md:text-sm"
+            >
               {update.user.name
                 .split(" ")
                 .map((n) => n.charAt(0))

@@ -21,6 +21,7 @@ export interface PostDetail {
   userId: string;
   avatarUrl: string;
   username: string;
+  color?: string;
   time: string;
   org: string;
   orgUrl?: string | number; // Collective ID for navigation (optional)

@@ -17,6 +17,7 @@ interface CommentsBottomSheetProps {
     avatarUrl?: string;
     firstName?: string;
     lastName?: string;
+    color?: string;
   };
 }
 
@@ -26,6 +27,7 @@ interface CommentData {
   firstName?: string;
   lastName?: string;
   avatarUrl: string;
+  color?: string;
   content: string;
   timestamp: Date;
   likes: number;
@@ -92,6 +94,7 @@ export default function CommentsBottomSheet({
       firstName: comment.user?.first_name,
       lastName: comment.user?.last_name,
       avatarUrl: comment.user?.profile_picture || '/placeholder.svg',
+      color: comment.user?.color,
       content: comment.content,
       timestamp: new Date(comment.created_at),
       likes: 0,
@@ -173,6 +176,7 @@ export default function CommentsBottomSheet({
         firstName: reply.user?.first_name,
         lastName: reply.user?.last_name,
         avatarUrl: reply.user?.profile_picture || '/placeholder.svg',
+        color: reply.user?.color,
         content: reply.content,
         timestamp: new Date(reply.created_at),
         likes: 0,
@@ -260,7 +264,12 @@ export default function CommentsBottomSheet({
     '#EF4444', '#06B6D4', '#F97316', '#84CC16', '#A855F7',
     '#14B8A6', '#F43F5E', '#6366F1', '#22C55E', '#EAB308',
   ];
-  const postAvatarColor = avatarColors[post.id % avatarColors.length];
+  const getConsistentColor = (id: number | string, colors: string[]) => {
+    const hash = typeof id === 'number' ? id : id.toString().split('').reduce((acc: number, char: string) => acc + char.charCodeAt(0), 0);
+    return colors[hash % colors.length];
+  };
+  
+  const postAvatarColor = post.color || getConsistentColor(post.id, avatarColors);
 
   return (
     <div
@@ -350,6 +359,7 @@ export default function CommentsBottomSheet({
                     firstName: comment.firstName,
                     lastName: comment.lastName,
                     avatarUrl: comment.avatarUrl,
+                    color: comment.color,
                     content: comment.content,
                     timestamp: comment.timestamp,
                     likes: comment.likes,
@@ -369,6 +379,7 @@ export default function CommentsBottomSheet({
                         firstName={commentWithReplies.firstName}
                         lastName={commentWithReplies.lastName}
                         avatarUrl={commentWithReplies.avatarUrl}
+                        color={commentWithReplies.color}
                         content={commentWithReplies.content}
                         timestamp={commentWithReplies.timestamp}
                         likes={commentWithReplies.likes}

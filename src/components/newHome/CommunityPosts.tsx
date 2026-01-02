@@ -72,6 +72,7 @@ export default function CommunityPosts({
       lastName: post.user?.last_name,
       username: post.user?.username || '',
       avatar: post.user?.profile_picture || '',
+      color: post.user?.color,
     },
     collective: post.collective
       ? {
