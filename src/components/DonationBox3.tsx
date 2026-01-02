@@ -1223,9 +1223,6 @@ export const DonationBox3 = ({
         causes={causes}
         monthlyAmount={actualDonationAmount}
         boxCauses={boxCauses}
-        onSave={(percentages) => {
-          updateSplitMutation.mutate(percentages);
-        }}
       />
     </div>
   );

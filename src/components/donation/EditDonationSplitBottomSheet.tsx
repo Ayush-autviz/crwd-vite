@@ -1,18 +1,20 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { X, Minus, Plus, RotateCcw } from "lucide-react";
+import { X, Minus, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { updateDonationBox } from "@/services/api/donation";
+import { toast } from "sonner";
 
 interface EditDonationSplitBottomSheetProps {
   isOpen: boolean;
   onClose: () => void;
   causes: any[];
   monthlyAmount: number;
-  onSave: (percentages: Record<number, number>) => void;
   boxCauses?: any[]; // Optional: to get existing percentages
 }
 
@@ -51,7 +53,6 @@ export default function EditDonationSplitBottomSheet({
   onClose,
   causes,
   monthlyAmount,
-  onSave,
   boxCauses = [],
 }: EditDonationSplitBottomSheetProps) {
   const [isVisible, setIsVisible] = useState(false);
@@ -328,9 +329,84 @@ export default function EditDonationSplitBottomSheet({
     setInputValues(newInputValues);
   };
 
+  const queryClient = useQueryClient();
+
+  // Mutation for updating donation box
+  const updateDonationBoxMutation = useMutation({
+    mutationFn: (data: any) => updateDonationBox(data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['donationBox'] });
+      toast.success('Donation split updated successfully');
+      onClose();
+    },
+    onError: (error: any) => {
+      console.error('Update donation box error:', error);
+      toast.error(error?.response?.data?.message || 'Failed to update donation split');
+    },
+  });
+
   const handleSave = () => {
-    onSave(percentages);
-    onClose();
+    // Check if there are any changes by comparing with initial percentages
+    const hasChanges = causes.some((cause: any) => {
+      const currentPercentage = percentages[cause.id] || 0;
+      // Get initial percentage from boxCauses or calculate equal split
+      const boxCause = boxCauses?.find((bc: any) => bc.cause?.id === cause.id);
+      const initialPercentage = boxCause?.percentage || (100 / causes.length);
+      
+      // Compare with tolerance for floating point differences
+      return Math.abs(currentPercentage - initialPercentage) > 0.01;
+    });
+
+    if (!hasChanges) {
+      toast.info('No changes to save');
+      return;
+    }
+
+    // Format request body according to the provided structure
+    const causesData = causes.map((cause: any) => {
+      const percentage = percentages[cause.id] || 0;
+      // Find the boxCause to get attributed_collective
+      const boxCause = boxCauses?.find((bc: any) => bc.cause?.id === cause.id);
+      // Get attributed_collective - it can be an array or a single value
+      let attributedCollective = null;
+      if (boxCause?.attributed_collectives && Array.isArray(boxCause.attributed_collectives) && boxCause.attributed_collectives.length > 0) {
+        // If it's an array, get the first value (usually a collective ID)
+        attributedCollective = typeof boxCause.attributed_collectives[0] === 'object' 
+          ? boxCause.attributed_collectives[0]?.id || boxCause.attributed_collectives[0]
+          : boxCause.attributed_collectives[0];
+      } else if (boxCause?.attributed_collective) {
+        // If it's a single value
+        attributedCollective = typeof boxCause.attributed_collective === 'object'
+          ? boxCause.attributed_collective?.id || boxCause.attributed_collective
+          : boxCause.attributed_collective;
+      }
+      
+      // Build cause object - only include attributed_collective if it exists and is not "manual"
+      const causeData: any = {
+        cause_id: cause.id,
+        percentage: parseFloat(percentage.toFixed(2)), // Number, not string
+      };
+      
+      // Only add attributed_collective if it exists, is not null/undefined, and is not "manual"
+      if (attributedCollective !== null && 
+          attributedCollective !== undefined && 
+          attributedCollective !== 'manual' &&
+          attributedCollective !== 'Manual') {
+        causeData.attributed_collective = attributedCollective;
+      }
+      
+      return causeData;
+    });
+
+    const requestData = {
+      monthly_amount: monthlyAmount.toString(),
+      causes: causesData,
+    };
+
+    updateDonationBoxMutation.mutate(requestData);
+    
+    // Note: onSave is no longer called here to prevent double API calls
+    // The API is now called directly via updateDonationBoxMutation
   };
 
   if (!isVisible) return null;
@@ -502,9 +578,10 @@ export default function EditDonationSplitBottomSheet({
             </Button>
             <Button
               onClick={handleSave}
-              className="flex-1 bg-[#1600ff] hover:bg-[#1400cc] text-white"
+              disabled={updateDonationBoxMutation.isPending}
+              className="flex-1 bg-[#1600ff] hover:bg-[#1400cc] text-white disabled:opacity-50"
             >
-              Save Split
+              {updateDonationBoxMutation.isPending ? 'Saving...' : 'Save Split'}
             </Button>
           </div>
         </div>

@@ -8,6 +8,7 @@ import DonationCauseSelector from "./DonationCauseSelector";
 import { useMutation } from '@tanstack/react-query';
 import { createOneTimeDonation, createFundraiserDonation } from '@/services/api/donation';
 import RequestNonprofitModal from '@/components/newsearch/RequestNonprofitModal';
+import OneTimeDonationReviewBottomSheet from '@/components/donation/OneTimeDonationReviewBottomSheet';
 import { toast } from 'sonner';
 
 interface OneTimeDonationProps {
@@ -322,7 +323,14 @@ export default function OneTimeDonation({
     console.log('Items cleared');
   };
 
+  const [showReviewBottomSheet, setShowReviewBottomSheet] = useState(false);
+
   const handleCheckout = () => {
+    // Show the review bottom sheet instead of directly calling the API
+    setShowReviewBottomSheet(true);
+  };
+
+  const handleCompleteDonation = () => {
     // If this is a fundraiser donation, use the fundraiser API
     if (fundraiserId) {
       const selectedCauseIds = selectedItems
@@ -574,10 +582,10 @@ export default function OneTimeDonation({
       <div className="fixed bottom-0 left-0 right-0 p-4 md:p-6 bg-white border-t border-gray-200 z-10">
         <Button
           onClick={handleCheckout}
-          disabled={(oneTimeDonationMutation.isPending || fundraiserDonationMutation.isPending) || selectedItems.length === 0}
+          disabled={selectedItems.length === 0}
           className="bg-[#1600ff] hover:bg-[#1400cc] text-white w-full py-4 md:py-6 rounded-full font-bold transition-colors flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed text-sm md:text-base"
         >
-          {(oneTimeDonationMutation.isPending || fundraiserDonationMutation.isPending) ? 'Processing...' : 'Continue to Review'}
+          Continue to Review
         </Button>
       </div>
 
@@ -585,6 +593,25 @@ export default function OneTimeDonation({
       <RequestNonprofitModal
         isOpen={showRequestModal}
         onClose={() => setShowRequestModal(false)}
+      />
+
+      {/* One-Time Donation Review Bottom Sheet */}
+      <OneTimeDonationReviewBottomSheet
+        isOpen={showReviewBottomSheet}
+        onClose={() => setShowReviewBottomSheet(false)}
+        donationAmount={donationAmount}
+        selectedCauses={selectedItems
+          .filter(item => item.type === 'cause')
+          .map(item => ({
+            id: parseInt(item.id),
+            name: item.data?.name || 'Unknown Cause',
+            image: item.data?.image || item.data?.logo,
+            attributed_collective: item.attributedCollectiveId || item.data?.attributed_collective,
+          }))}
+        fundraiserId={fundraiserId}
+        onComplete={() => {
+          setShowReviewBottomSheet(false);
+        }}
       />
     </div>
   );
