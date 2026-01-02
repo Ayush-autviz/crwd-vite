@@ -50,7 +50,7 @@ export default function CreateFundraiser() {
   const { collectiveId } = useParams<{ collectiveId: string }>();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
-  const [step, setStep] = useState<1 | 2>(1);
+  const [step, setStep] = useState<1 | 2 | 3>(1);
   
   // Step 1 state
   const [coverType, setCoverType] = useState<'color' | 'image'>('color');
@@ -66,6 +66,7 @@ export default function CreateFundraiser() {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('');
   const [selectedNonprofits, setSelectedNonprofits] = useState<number[]>([]);
+  const [selectedNonprofitsData, setSelectedNonprofitsData] = useState<any[]>([]); // Store full nonprofit objects
   const [searchTrigger, setSearchTrigger] = useState(0);
 
   // Toast state
@@ -142,62 +143,78 @@ export default function CreateFundraiser() {
 
   const handleNext = async () => {
     if (step === 1) {
-      setStep(2);
-    } else {
-      // Validate required fields
-      if (!campaignTitle || !fundraisingGoal || !endDate || !campaignStory || selectedNonprofits.length === 0) {
-        setToastMessage('Please fill in all required fields and select at least one nonprofit');
+      // Validate step 1 fields
+      if (!campaignTitle || !fundraisingGoal || !endDate || !campaignStory) {
+        setToastMessage('Please fill in all required campaign details.');
         setShowToast(true);
         return;
       }
-
-      // Prepare request data
-      const startDate = new Date().toISOString();
-      const endDateISO = endDate ? endDate.toISOString() : '';
-
-      if (coverType === 'image') {
-        // If image tab is selected, validate that image exists
-        if (!uploadedCoverImage) {
-          setToastMessage('Please upload an image for the campaign cover');
-          setShowToast(true);
-          return;
-        }
-        // Use FormData for image upload - send only image, no color
-        const formData = new FormData();
-        formData.append('name', campaignTitle);
-        formData.append('description', campaignStory);
-        formData.append('image_file', uploadedCoverImage);
-        formData.append('collective_id', collectiveId || '');
-        formData.append('target_amount', fundraisingGoal);
-        formData.append('start_date', startDate);
-        formData.append('end_date', endDateISO);
-        formData.append('is_active', 'true');
-        selectedNonprofits.forEach((causeId) => {
-          formData.append('cause_ids', causeId.toString());
-        });
-
-        createFundraiserMutation.mutate(formData);
-      } else if (coverType === 'color') {
-        // Use JSON for color-based cover - send only color, no image
-        const requestData = {
-          name: campaignTitle,
-          description: campaignStory,
-          color: coverColor,
-          collective: parseInt(collectiveId || '0', 10),
-          target_amount: parseFloat(fundraisingGoal),
-          start_date: startDate,
-          end_date: endDateISO,
-          is_active: true,
-          cause_ids: selectedNonprofits,
-        };
-
-        createFundraiserMutation.mutate(requestData);
+      if (coverType === 'image' && !uploadedCoverImage) {
+        setToastMessage('Please upload an image for the campaign cover');
+        setShowToast(true);
+        return;
       }
+      setStep(2);
+    } else if (step === 2) {
+      // Validate step 2 - at least one nonprofit selected
+      if (selectedNonprofits.length === 0) {
+        setToastMessage('Please select at least one nonprofit.');
+        setShowToast(true);
+        return;
+      }
+      setStep(3);
+    }
+  };
+
+  const handleLaunch = () => {
+    // Prepare request data
+    const startDate = new Date().toISOString();
+    const endDateISO = endDate ? endDate.toISOString() : '';
+
+    if (coverType === 'image') {
+      // If image tab is selected, validate that image exists
+      if (!uploadedCoverImage) {
+        setToastMessage('Please upload an image for the campaign cover');
+        setShowToast(true);
+        return;
+      }
+      // Use FormData for image upload - send only image, no color
+      const formData = new FormData();
+      formData.append('name', campaignTitle);
+      formData.append('description', campaignStory);
+      formData.append('image_file', uploadedCoverImage);
+      formData.append('collective_id', collectiveId || '');
+      formData.append('target_amount', fundraisingGoal);
+      formData.append('start_date', startDate);
+      formData.append('end_date', endDateISO);
+      formData.append('is_active', 'true');
+      selectedNonprofits.forEach((causeId) => {
+        formData.append('cause_ids', causeId.toString());
+      });
+
+      createFundraiserMutation.mutate(formData);
+    } else if (coverType === 'color') {
+      // Use JSON for color-based cover - send only color, no image
+      const requestData = {
+        name: campaignTitle,
+        description: campaignStory,
+        color: coverColor,
+        collective: parseInt(collectiveId || '0', 10),
+        target_amount: parseFloat(fundraisingGoal),
+        start_date: startDate,
+        end_date: endDateISO,
+        is_active: true,
+        cause_ids: selectedNonprofits,
+      };
+
+      createFundraiserMutation.mutate(requestData);
     }
   };
 
   const handleBack = () => {
-    if (step === 2) {
+    if (step === 3) {
+      setStep(2);
+    } else if (step === 2) {
       setStep(1);
     } else {
       navigate(-1);
@@ -224,12 +241,19 @@ export default function CreateFundraiser() {
     setSearchTrigger(prev => prev + 1);
   };
 
-  const handleNonprofitToggle = (nonprofitId: number) => {
+  const handleNonprofitToggle = (nonprofitId: number, nonprofitData: any) => {
     setSelectedNonprofits(prev => {
       if (prev.includes(nonprofitId)) {
         return prev.filter(id => id !== nonprofitId);
       } else {
         return [...prev, nonprofitId];
+      }
+    });
+    setSelectedNonprofitsData(prev => {
+      if (prev.some(item => item.id === nonprofitId)) {
+        return prev.filter(item => item.id !== nonprofitId);
+      } else {
+        return [...prev, nonprofitData];
       }
     });
   };
@@ -255,41 +279,47 @@ export default function CreateFundraiser() {
             <ArrowLeft className="w-5 h-5 text-gray-700" />
           </button>
           <div className="flex-1">
-            <h1 className="font-bold text-lg md:text-xl text-gray-900">Create Fundraiser</h1>
-            <p className="text-sm md:text-base text-gray-600">
-              For {collectiveData?.name || 'Collective'}
-            </p>
+            <h1 className="font-bold text-lg md:text-xl text-gray-900">
+              {step === 3 ? 'Confirm & Launch' : 'Create Fundraiser'}
+            </h1>
+            {step !== 3 && (
+              <p className="text-sm md:text-base text-gray-600">
+                For {collectiveData?.name || 'Collective'}
+              </p>
+            )}
           </div>
         </div>
         
-        {/* Progress Indicator */}
-        <div className="flex items-center gap-2 md:gap-4 mt-3">
-          <div className="flex items-center gap-2">
-            <div className={`w-6 h-6 md:w-8 md:h-8 rounded-full flex items-center justify-center text-xs md:text-sm font-bold ${
-              step === 1 
-                ? 'bg-[#1600ff] text-white' 
-                : 'bg-[#1600ff] text-white'
-            }`}>
-              {step === 2 ? <Check className="w-3 h-3 md:w-4 md:h-4" /> : '1'}
+        {/* Progress Indicator - Only show for steps 1 and 2 */}
+        {step !== 3 && (
+          <div className="flex items-center gap-2 md:gap-4 mt-3">
+            <div className="flex items-center gap-2">
+              <div className={`w-6 h-6 md:w-8 md:h-8 rounded-full flex items-center justify-center text-xs md:text-sm font-bold ${
+                step >= 1 
+                  ? 'bg-[#1600ff] text-white' 
+                  : 'bg-gray-200 text-gray-500'
+              }`}>
+                {step > 1 ? <Check className="w-3 h-3 md:w-4 md:h-4" /> : '1'}
+              </div>
+              <span className={`text-sm md:text-base font-semibold ${
+                step >= 1 ? 'text-[#1600ff]' : 'text-gray-500'
+              }`}>Details</span>
             </div>
-            <span className={`text-sm md:text-base font-semibold ${
-              step === 1 ? 'text-[#1600ff]' : 'text-[#1600ff]'
-            }`}>Details</span>
-          </div>
-          <div className="flex-1 h-px bg-gray-300"></div>
-          <div className="flex items-center gap-2">
-            <div className={`w-6 h-6 md:w-8 md:h-8 rounded-full flex items-center justify-center text-xs md:text-sm font-bold ${
-              step === 2 
-                ? 'bg-[#1600ff] text-white' 
-                : 'bg-gray-200 text-gray-500'
-            }`}>
-              2
+            <div className="flex-1 h-px bg-gray-300"></div>
+            <div className="flex items-center gap-2">
+              <div className={`w-6 h-6 md:w-8 md:h-8 rounded-full flex items-center justify-center text-xs md:text-sm font-bold ${
+                step >= 2 
+                  ? 'bg-[#1600ff] text-white' 
+                  : 'bg-gray-200 text-gray-500'
+              }`}>
+                {step > 2 ? <Check className="w-3 h-3 md:w-4 md:h-4" /> : '2'}
+              </div>
+              <span className={`text-sm md:text-base font-semibold ${
+                step >= 2 ? 'text-[#1600ff]' : 'text-gray-500'
+              }`}>Nonprofits</span>
             </div>
-            <span className={`text-sm md:text-base font-semibold ${
-              step === 2 ? 'text-[#1600ff]' : 'text-gray-500'
-            }`}>Nonprofits</span>
           </div>
-        </div>
+        )}
       </div>
 
       {/* Main Content */}
@@ -503,7 +533,7 @@ export default function CreateFundraiser() {
           />
         </div>
           </>
-        ) : (
+        ) : step === 2 ? (
           <>
             {/* Informational Banner */}
             <div className="border-2 border-orange-200 bg-orange-50 rounded-lg p-3 md:p-4 mb-6 md:mb-8">
@@ -585,7 +615,7 @@ export default function CreateFundraiser() {
                   return (
                     <div
                       key={nonprofit.id}
-                      onClick={() => handleNonprofitToggle(nonprofit.id)}
+                      onClick={() => handleNonprofitToggle(nonprofit.id, nonprofit)}
                       className="flex items-center gap-3 md:gap-4 cursor-pointer p-3 md:p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
                     >
                       <Avatar className="w-10 h-10 md:w-12 md:h-12 rounded-full flex-shrink-0">
@@ -609,7 +639,7 @@ export default function CreateFundraiser() {
                         <input
                           type="checkbox"
                           checked={isSelected}
-                          onChange={() => handleNonprofitToggle(nonprofit.id)}
+                          onChange={() => handleNonprofitToggle(nonprofit.id, nonprofit)}
                           className="w-4 h-4 md:w-5 md:h-5 text-[#1600ff] focus:ring-[#1600ff] rounded"
                         />
                       </label>
@@ -619,7 +649,91 @@ export default function CreateFundraiser() {
               )}
             </div>
           </>
-        )}
+        ) : step === 3 ? (
+          // Step 3: Confirm & Launch
+          <>
+            {/* Campaign Preview Card */}
+            <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden relative">
+              {/* Purple gradient on right edge */}
+              <div className="absolute right-0 top-0 bottom-0 w-1 bg-gradient-to-b from-purple-400 to-purple-600"></div>
+              
+              <div className="p-6 md:p-8">
+                {/* Campaign Identifier */}
+                <div className="text-2xl md:text-3xl font-bold text-[#1600ff] mb-6">
+                  {campaignTitle.substring(0, 2).toUpperCase() || 'CF'}
+                </div>
+
+                {/* Fundraising Goal and End Date */}
+                <div className="grid grid-cols-2 gap-6 mb-6">
+                  <div>
+                    <div className="text-xs md:text-sm text-gray-600 mb-1">FUNDRAISING GOAL</div>
+                    <div className="text-xl md:text-2xl font-bold text-[#1600ff]">
+                      ${parseFloat(fundraisingGoal || '0').toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
+                    </div>
+                  </div>
+                  <div>
+                    <div className="text-xs md:text-sm text-gray-600 mb-1">ENDS ON</div>
+                    <div className="text-xl md:text-2xl font-bold text-gray-900">
+                      {endDate ? endDate.format('MMMM D, YYYY') : 'N/A'}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Campaign Story */}
+                <div className="mb-6">
+                  <div className="text-xs md:text-sm text-gray-600 mb-2">CAMPAIGN STORY</div>
+                  <div className="text-sm md:text-base text-gray-900 whitespace-pre-line">
+                    {campaignStory || 'No story provided'}
+                  </div>
+                </div>
+
+                {/* Supporting Nonprofits */}
+                <div className="mb-4">
+                  <div className="text-xs md:text-sm text-gray-600 mb-3">
+                    SUPPORTING {selectedNonprofitsData.length} NONPROFIT{selectedNonprofitsData.length !== 1 ? 'S' : ''}
+                  </div>
+                  <div className="space-y-3">
+                    {selectedNonprofitsData.map((nonprofit: any) => {
+                      const avatarBgColor = getConsistentColor(nonprofit.id, nonprofit.name);
+                      const initials = getInitials(nonprofit.name || 'N');
+                      const category = categories.find(cat => cat.id === nonprofit.category || cat.id === nonprofit.cause_category);
+                      const categoryName = category?.name || 'General';
+                      
+                      return (
+                        <div key={nonprofit.id} className="flex items-center gap-3 md:gap-4">
+                          <Avatar className="w-10 h-10 md:w-12 md:h-12 rounded-full flex-shrink-0">
+                            <AvatarImage src={nonprofit.image} alt={nonprofit.name} />
+                            <AvatarFallback
+                              style={{ backgroundColor: avatarBgColor }}
+                              className="text-white font-bold text-xs md:text-sm"
+                            >
+                              {initials}
+                            </AvatarFallback>
+                          </Avatar>
+                          <div className="flex-1 min-w-0">
+                            <h4 className="font-bold text-sm md:text-base text-gray-900">
+                              {nonprofit.name}
+                            </h4>
+                            <p className="text-xs md:text-sm text-gray-600">
+                              {categoryName}
+                            </p>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* Donation Split Note */}
+                <div className="bg-gray-100 rounded-lg p-3 md:p-4 mt-6">
+                  <p className="text-xs md:text-sm text-gray-600">
+                    All donations will be split evenly across these nonprofits.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </>
+        ) : null}
       </div>
 
       {/* Footer */}
@@ -641,7 +755,7 @@ export default function CreateFundraiser() {
               Next: Choose Nonprofits
             </Button>
           </>
-        ) : (
+        ) : step === 2 ? (
           <>
             <Button
               variant="outline"
@@ -652,19 +766,28 @@ export default function CreateFundraiser() {
             </Button>
             <Button
               onClick={handleNext}
-              disabled={createFundraiserMutation.isPending || selectedNonprofits.length === 0}
+              disabled={selectedNonprofits.length === 0}
               className="bg-[#1600ff] hover:bg-[#1400cc] text-white text-xs md:text-sm flex-1 md:flex-none md:w-[30%] disabled:opacity-50"
             >
-              {createFundraiserMutation.isPending ? (
-                <>
-                  <Loader2 className="w-3 h-3 md:w-4 md:h-4 mr-2 animate-spin" />
-                  Creating...
-                </>
-              ) : (
-                'Create Fundraiser'
-              )}
+              Next: Confirm & Launch
             </Button>
           </>
+        ) : (
+          // Step 3: Launch Campaign button
+          <Button
+            onClick={handleLaunch}
+            disabled={createFundraiserMutation.isPending}
+            className="bg-[#1600ff] hover:bg-[#1400cc] text-white text-sm md:text-base font-semibold w-full max-w-2xl mx-auto py-4 md:py-6 rounded-full disabled:opacity-50"
+          >
+            {createFundraiserMutation.isPending ? (
+              <>
+                <Loader2 className="w-4 h-4 md:w-5 md:h-5 mr-2 animate-spin" />
+                Launching...
+              </>
+            ) : (
+              'Launch Campaign'
+            )}
+          </Button>
         )}
       </div>
 
