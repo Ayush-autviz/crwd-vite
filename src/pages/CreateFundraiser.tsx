@@ -199,7 +199,7 @@ export default function CreateFundraiser() {
         name: campaignTitle,
         description: campaignStory,
         color: coverColor,
-        collective: parseInt(collectiveId || '0', 10),
+        collective_id: parseInt(collectiveId || '0', 10),
         target_amount: parseFloat(fundraisingGoal),
         start_date: startDate,
         end_date: endDateISO,
@@ -653,43 +653,70 @@ export default function CreateFundraiser() {
           // Step 3: Confirm & Launch
           <>
             {/* Campaign Preview Card */}
-            <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden relative">
-              {/* Purple gradient on right edge */}
-              <div className="absolute right-0 top-0 bottom-0 w-1 bg-gradient-to-b from-purple-400 to-purple-600"></div>
-              
-              <div className="p-6 md:p-8">
-                {/* Campaign Identifier */}
-                <div className="text-2xl md:text-3xl font-bold text-[#1600ff] mb-6">
-                  {campaignTitle.substring(0, 2).toUpperCase() || 'CF'}
-                </div>
+            <div className="bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 p-4 rounded-2xl overflow-hidden">
+              {/* Cover Section - Color or Image */}
+              <div className="w-full rounded-xl overflow-hidden" style={{ height: '200px' }}>
+                {coverType === 'color' ? (
+                  <div
+                    className="w-full h-full flex items-center justify-center"
+                    style={{ backgroundColor: coverColor }}
+                  >
+                
+                  </div>
+                ) : uploadedCoverImagePreview ? (
+                  <img
+                    src={uploadedCoverImagePreview}
+                    alt="Campaign cover"
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <div
+                    className="w-full h-full flex items-center justify-center"
+                    style={{ backgroundColor: '#1600ff' }}
+                  >
+                    <span className="text-white text-2xl md:text-3xl font-bold opacity-50">
+                      {campaignTitle || 'Campaign Cover'}
+                    </span>
+                  </div>
+                )}
+              </div>
+
+              {/* Content Section */}
+              <div className="py-4">
+                {/* Campaign Title */}
+                <h1 className="text-2xl md:text-3xl font-bold text-[#1600ff] mb-6">
+                  {campaignTitle}
+                </h1>
 
                 {/* Fundraising Goal and End Date */}
-                <div className="grid grid-cols-2 gap-6 mb-6">
-                  <div>
-                    <div className="text-xs md:text-sm text-gray-600 mb-1">FUNDRAISING GOAL</div>
-                    <div className="text-xl md:text-2xl font-bold text-[#1600ff]">
-                      ${parseFloat(fundraisingGoal || '0').toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
+                <div className="mb-6">
+                  <div className="grid grid-cols-2 gap-4 md:gap-6">
+                    <div className='bg-white p-4 rounded-lg '>
+                      <div className="text-xs md:text-sm text-gray-600 font-semibold uppercase mb-2">FUNDRAISING GOAL</div>
+                      <div className="text-xl md:text-2xl font-bold text-[#1600ff]">
+                        ${parseFloat(fundraisingGoal || '0').toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
+                      </div>
                     </div>
-                  </div>
-                  <div>
-                    <div className="text-xs md:text-sm text-gray-600 mb-1">ENDS ON</div>
-                    <div className="text-xl md:text-2xl font-bold text-gray-900">
-                      {endDate ? endDate.format('MMMM D, YYYY') : 'N/A'}
+                    <div className='bg-white p-4 rounded-lg'>
+                      <div className="text-xs md:text-sm text-gray-600 font-semibold uppercase mb-2">ENDS ON</div>
+                      <div className="text-base md:text-xl font-semibold text-gray-900">
+                        {endDate ? endDate.format('MMMM D, YYYY') : 'N/A'}
+                      </div>
                     </div>
                   </div>
                 </div>
 
                 {/* Campaign Story */}
                 <div className="mb-6">
-                  <div className="text-xs md:text-sm text-gray-600 mb-2">CAMPAIGN STORY</div>
+                  <div className="text-xs md:text-base text-gray-600 font-medium uppercase mb-2">CAMPAIGN STORY</div>
                   <div className="text-sm md:text-base text-gray-900 whitespace-pre-line">
                     {campaignStory || 'No story provided'}
                   </div>
                 </div>
 
                 {/* Supporting Nonprofits */}
-                <div className="mb-4">
-                  <div className="text-xs md:text-sm text-gray-600 mb-3">
+                <div className="mb-6">
+                  <div className="text-xs md:text-base text-gray-600 font-medium uppercase mb-3">
                     SUPPORTING {selectedNonprofitsData.length} NONPROFIT{selectedNonprofitsData.length !== 1 ? 'S' : ''}
                   </div>
                   <div className="space-y-3">
@@ -700,12 +727,12 @@ export default function CreateFundraiser() {
                       const categoryName = category?.name || 'General';
                       
                       return (
-                        <div key={nonprofit.id} className="flex items-center gap-3 md:gap-4">
-                          <Avatar className="w-10 h-10 md:w-12 md:h-12 rounded-full flex-shrink-0">
+                        <div key={nonprofit.id} className="bg-white rounded-lg border border-gray-200 p-3 md:p-4 flex items-center gap-3 md:gap-4">
+                          <Avatar className="w-10 h-10 md:w-12 md:h-12 rounded-lg flex-shrink-0">
                             <AvatarImage src={nonprofit.image} alt={nonprofit.name} />
                             <AvatarFallback
                               style={{ backgroundColor: avatarBgColor }}
-                              className="text-white font-bold text-xs md:text-sm"
+                              className="text-white font-bold text-xs md:text-sm rounded-lg"
                             >
                               {initials}
                             </AvatarFallback>
@@ -725,8 +752,8 @@ export default function CreateFundraiser() {
                 </div>
 
                 {/* Donation Split Note */}
-                <div className="bg-gray-100 rounded-lg p-3 md:p-4 mt-6">
-                  <p className="text-xs md:text-sm text-gray-600">
+                <div className="bg-white border border-blue-200 rounded-lg p-3 md:p-4">
+                  <p className="text-xs md:text-sm text-gray-700 text-center">
                     All donations will be split evenly across these nonprofits.
                   </p>
                 </div>

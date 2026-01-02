@@ -315,7 +315,16 @@ export default function CommunityPostCard({ post, onCommentPress }: CommunityPos
                 <>
                   {/* Fundraiser Cover Image/Color */}
                   <div className="w-full rounded-t-lg overflow-hidden" style={{ height: '250px' }}>
-                    {post.fundraiser.image ? (
+                    {post.fundraiser.color ? (
+                      <div
+                        className="w-full h-full flex items-center justify-center"
+                        style={{ backgroundColor: post.fundraiser.color }}
+                      >
+                        <span className="text-white text-xl md:text-2xl font-bold">
+                          {post.fundraiser.name}
+                        </span>
+                      </div>
+                    ) : post.fundraiser.image ? (
                       <img
                         src={post.fundraiser.image}
                         alt={post.fundraiser.name}
@@ -324,7 +333,7 @@ export default function CommunityPostCard({ post, onCommentPress }: CommunityPos
                     ) : (
                       <div
                         className="w-full h-full flex items-center justify-center"
-                        style={{ backgroundColor: post.fundraiser.color || '#1600ff' }}
+                        style={{ backgroundColor: '#1600ff' }}
                       >
                         <span className="text-white text-xl md:text-2xl font-bold">
                           {post.fundraiser.name}
@@ -378,7 +387,16 @@ export default function CommunityPostCard({ post, onCommentPress }: CommunityPos
                 <>
                   {/* Legacy Fundraiser UI for inactive fundraisers */}
                   <div className="w-full rounded-t-lg overflow-hidden" style={{ height: '250px' }}>
-                    {post.fundraiser.image ? (
+                    {post.fundraiser.color ? (
+                      <div
+                        className="w-full h-full flex items-center justify-center"
+                        style={{ backgroundColor: post.fundraiser.color }}
+                      >
+                        <span className="text-white text-xl md:text-2xl font-bold">
+                          {post.fundraiser.name}
+                        </span>
+                      </div>
+                    ) : post.fundraiser.image ? (
                       <img
                         src={post.fundraiser.image}
                         alt={post.fundraiser.name}
@@ -387,7 +405,7 @@ export default function CommunityPostCard({ post, onCommentPress }: CommunityPos
                     ) : (
                       <div
                         className="w-full h-full flex items-center justify-center"
-                        style={{ backgroundColor: post.fundraiser.color || '#1600ff' }}
+                        style={{ backgroundColor: '#1600ff' }}
                       >
                         <span className="text-white text-xl md:text-2xl font-bold">
                           {post.fundraiser.name}

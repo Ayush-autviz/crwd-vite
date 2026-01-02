@@ -136,11 +136,16 @@ export default function FundraiserDetail() {
   return (
     <div className="min-h-screen bg-white">
       {/* Header with Banner Background */}
-      <div className={`sticky top-0 z-10 ${fundraiserData.image || fundraiserData.color ? 'relative' : 'bg-white'} border-b overflow-hidden`}>
+      <div className={`sticky top-0 z-10 ${fundraiserData.color || fundraiserData.image ? 'relative' : 'bg-white'} border-b overflow-hidden`}>
         {/* Banner Background */}
-        {(fundraiserData.image || fundraiserData.color) && (
+        {(fundraiserData.color || fundraiserData.image) && (
           <div className="absolute inset-0 w-full h-full">
-            {fundraiserData.image ? (
+            {fundraiserData.color ? (
+              <div
+                className="absolute inset-0"
+                style={{ backgroundColor: fundraiserData.color }}
+              />
+            ) : fundraiserData.image ? (
               <div
                 className="absolute inset-0 bg-cover bg-center filter blur-xs scale-110"
                 style={{ backgroundImage: `url(${fundraiserData.image})` }}
@@ -148,7 +153,7 @@ export default function FundraiserDetail() {
             ) : (
               <div
                 className="absolute inset-0"
-                style={{ backgroundColor: fundraiserData.color || '#1600ff' }}
+                style={{ backgroundColor: '#1600ff' }}
               />
             )}
           </div>

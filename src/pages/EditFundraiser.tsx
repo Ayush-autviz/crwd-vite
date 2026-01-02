@@ -142,16 +142,16 @@ export default function EditFundraiser() {
       setInitialGoalAmount(apiGoalAmount);
       setInitialEndDate(apiEndDate);
       
-      // Set cover type
-      if (fundraiserData.image) {
-        setCoverType('image');
-        setUploadedCoverImagePreview(fundraiserData.image);
-        setInitialCoverType('image');
-      } else if (fundraiserData.color) {
+      // Set cover type - prioritize color over image
+      if (fundraiserData.color) {
         setCoverType('color');
         setCoverColor(fundraiserData.color);
         setInitialCoverType('color');
         setInitialCoverColor(fundraiserData.color);
+      } else if (fundraiserData.image) {
+        setCoverType('image');
+        setUploadedCoverImagePreview(fundraiserData.image);
+        setInitialCoverType('image');
       } else {
         setCoverType('none');
         setInitialCoverType('none');
