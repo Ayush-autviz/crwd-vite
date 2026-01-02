@@ -23,6 +23,7 @@ interface CommunityPostCardProps {
       lastName?: string;
       username: string;
       avatar?: string;
+      color?: string;
     };
     collective?: {
       name: string;
@@ -173,7 +174,7 @@ export default function CommunityPostCard({ post, onCommentPress }: CommunityPos
     }
     return avatarColors[0];
   };
-  const avatarBgColor = getConsistentColor(post.user.id, post.user.username || post.user.name);
+  const avatarBgColor = post.user.color || getConsistentColor(post.user.id, post.user.username || post.user.name);
   const initials = getUserInitials();
 
   // Handle outside click to close menu
@@ -572,6 +573,7 @@ export default function CommunityPostCard({ post, onCommentPress }: CommunityPos
           avatarUrl: post.user.avatar,
           firstName: post.user.firstName,
           lastName: post.user.lastName,
+          color: post.user.color,
         }}
       />
 

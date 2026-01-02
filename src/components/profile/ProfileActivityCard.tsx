@@ -229,11 +229,14 @@ export default function ProfileActivityCard({
   ];
   // Use post ID to generate a consistent random color for each post
   // This ensures the same post always gets the same color
-  const avatarColorIndex = post.id ? (Number(post.id) % avatarColors.length) : Math.floor(Math.random() * avatarColors.length);
-  const avatarBgColor = avatarColors[avatarColorIndex];
-
+  const getConsistentColor = (id: number | string, colors: string[]) => {
+    const hash = typeof id === 'number' ? id : id.toString().split('').reduce((acc: number, char: string) => acc + char.charCodeAt(0), 0);
+    return colors[hash % colors.length];
+  };
+  
   // Get post data with any additional fields
   const postAny = post as any;
+  const avatarBgColor = postAny.color || post.color || getConsistentColor(post.id || post.userId || 'U', avatarColors);
   
   // Get user display name (first name + last name, or fallback to username)
   const getDisplayName = () => {
@@ -592,6 +595,7 @@ export default function ProfileActivityCard({
           avatarUrl: post.avatarUrl,
           firstName: postAny.firstName,
           lastName: postAny.lastName,
+          color: postAny.color || post.color,
         }}
       />
     </>

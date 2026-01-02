@@ -72,6 +72,7 @@ export default function PostById() {
     userId: postData.user?.id?.toString() || '',
     avatarUrl: postData.user?.profile_picture || '/placeholder.svg',
     username: postData.user?.username || postData.user?.full_name || 'Unknown User',
+    color: postData.user?.color,
     time: postData.created_at ? formatDistanceToNow(new Date(postData.created_at), { addSuffix: true }) : '',
     org: postData.collective?.name || 'Unknown Collective',
     orgUrl: postData.collective?.id, // Collective ID for navigation
@@ -110,7 +111,10 @@ export default function PostById() {
     return commentsData.results.map((comment: any) => ({
       id: comment.id,
       username: comment.user?.username || comment.user?.full_name || 'Unknown User',
+      firstName: comment.user?.first_name,
+      lastName: comment.user?.last_name,
       avatarUrl: comment.user?.profile_picture || '/placeholder.svg',
+      color: comment.user?.color,
       content: comment.content,
       timestamp: new Date(comment.created_at),
       likes: 0,
@@ -188,7 +192,10 @@ export default function PostById() {
       const transformedReplies: CommentData[] = repliesData?.replies?.map((reply: any) => ({
         id: reply.id,
         username: reply.user?.username || reply.user?.full_name || 'Unknown User',
+        firstName: reply.user?.first_name,
+        lastName: reply.user?.last_name,
         avatarUrl: reply.user?.profile_picture || '/placeholder.svg',
+        color: reply.user?.color,
         content: reply.content,
         timestamp: new Date(reply.created_at),
         likes: 0,

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { ArrowLeft, Info, Palette, Image as ImageIcon, Camera, X, Check, Search, Building2 } from 'lucide-react';
+import { ArrowLeft, Info, Palette, Image as ImageIcon, Camera, X, Check, Search, Building2, Eye, Share2, Sparkles } from 'lucide-react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { getCollectiveById, getCausesBySearch, createFundraiser } from '@/services/api/crwd';
 import { Toast } from '@/components/ui/toast';
@@ -13,6 +13,9 @@ import { DatePicker } from 'antd';
 import type { Dayjs } from 'dayjs';
 import dayjs from 'dayjs';
 import { categories } from '@/constants/categories';
+import { SharePost } from '@/components/ui/SharePost';
+import Confetti from 'react-confetti';
+import { CrwdAnimation } from '@/assets/newLogo';
 
 // Avatar colors for consistent fallback styling
 const avatarColors = [
@@ -72,6 +75,13 @@ export default function CreateFundraiser() {
   // Toast state
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState('');
+  
+  // Success modal state
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [createdFundraiser, setCreatedFundraiser] = useState<any>(null);
+  const [showShareModal, setShowShareModal] = useState(false);
+  const [showConfetti, setShowConfetti] = useState(false);
+  const [showAnimationComplete, setShowAnimationComplete] = useState(false);
 
   const colorSwatches = [
     '#0000FF', // Blue
@@ -108,16 +118,33 @@ export default function CreateFundraiser() {
   // Create fundraiser mutation
   const createFundraiserMutation = useMutation({
     mutationFn: createFundraiser,
-    onSuccess: () => {
-      setToastMessage('Fundraiser created successfully!');
-      setShowToast(true);
+    onSuccess: (response) => {
+      console.log('Create fundraiser successful:', response);
+      // Store the created fundraiser data
+      setCreatedFundraiser(response);
+      // Wait for animation to complete (3 seconds for one full cycle) before showing success
+      setTimeout(() => {
+        setShowAnimationComplete(true);
+        setShowSuccessModal(true);
+        setShowConfetti(true);
+        setTimeout(() => {
+          setShowConfetti(false);
+        }, 4000);
+      }, 3000);
       queryClient.invalidateQueries({ queryKey: ['crwd', collectiveId] });
-      // Navigate back to the collective page
-      navigate(`/groupcrwd/${collectiveId}`);
+      queryClient.invalidateQueries({ queryKey: ['posts'] });
     },
     onError: (error: any) => {
       console.error('Create fundraiser error:', error);
-      const errorMessage = error?.response?.data?.message || error?.message || 'Failed to create fundraiser';
+      // Check for non_field_errors first (array of error messages)
+      let errorMessage = 'Failed to create fundraiser';
+      if (error?.response?.data?.non_field_errors && Array.isArray(error.response.data.non_field_errors) && error.response.data.non_field_errors.length > 0) {
+        errorMessage = error.response.data.non_field_errors[0];
+      } else if (error?.response?.data?.message) {
+        errorMessage = error.response.data.message;
+      } else if (error?.message) {
+        errorMessage = error.message;
+      }
       setToastMessage(errorMessage);
       setShowToast(true);
     },
@@ -263,6 +290,121 @@ export default function CreateFundraiser() {
       <div className="min-h-screen bg-white flex items-center justify-center">
         <Loader2 className="w-6 h-6 animate-spin text-gray-400" />
       </div>
+    );
+  }
+
+  // Loading Animation Step (during API call or while animation completes)
+  if (createFundraiserMutation.isPending || (createdFundraiser && !showAnimationComplete)) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 flex items-center justify-center px-3 md:px-4">
+        <div className="flex flex-col items-center gap-6 md:gap-8">
+          <CrwdAnimation size="lg" />
+        </div>
+      </div>
+    );
+  }
+
+  // Success Step
+  if (showSuccessModal && createdFundraiser) {
+    return (
+      <>
+        <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50">
+          <div className="flex flex-col items-center justify-center min-h-screen px-3 md:px-4 py-8 md:py-12">
+            <div className="w-full max-w-md bg-white rounded-2xl shadow-lg p-6 md:p-8">
+              {/* Success Icon */}
+              <div className="flex justify-center mb-4 md:mb-6">
+                <div className="w-16 h-16 md:w-20 md:h-20 rounded-full bg-[#ADFF2F] flex items-center justify-center">
+                  <Sparkles className="w-8 h-8 md:w-10 md:h-10 text-white" strokeWidth={2.5} />
+                </div>
+              </div>
+
+              {/* Heading */}
+              <div className="text-center mb-3 md:mb-4">
+                <div className="flex items-center justify-center gap-2 mb-2">
+                  <span className="text-2xl">🎉</span>
+                  <h2 className="text-xl md:text-2xl font-bold text-gray-900">
+                    Campaign is Live!
+                  </h2>
+                </div>
+              </div>
+
+              {/* Description */}
+              <p className="text-sm md:text-base text-gray-600 text-center mb-6 md:mb-8 leading-relaxed">
+                Your <strong>{campaignTitle}</strong> fundraiser is now live! Share it with friends to reach your ${parseFloat(fundraisingGoal || '0').toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 })} goal and support {selectedNonprofitsData.length} nonprofit{selectedNonprofitsData.length !== 1 ? 's' : ''}.
+              </p>
+
+              {/* Action Buttons */}
+              <div className="space-y-3 md:space-y-4">
+                {/* View Campaign Button */}
+                <Button
+                  onClick={() => {
+                    if (createdFundraiser?.id) {
+                      navigate(`/fundraiser/${createdFundraiser.id}`);
+                    }
+                  }}
+                  className="w-full bg-[#1600ff] hover:bg-[#1400cc] text-white font-semibold rounded-lg py-3 md:py-4 text-sm md:text-base flex items-center justify-center gap-2"
+                >
+                  <Eye className="w-4 h-4 md:w-5 md:h-5" />
+                  View Campaign
+                </Button>
+
+                {/* Back to Collective Button */}
+                <Button
+                  onClick={() => {
+                    setShowSuccessModal(false);
+                    navigate(`/groupcrwd/${collectiveId}`);
+                  }}
+                  variant="outline"
+                  className="w-full border border-gray-300 text-gray-900 hover:bg-gray-50 font-semibold rounded-lg py-3 md:py-4 text-sm md:text-base"
+                >
+                  Back to Collective
+                </Button>
+
+                {/* Share Campaign Link */}
+                <button
+                  onClick={() => {
+                    setShowShareModal(true);
+                  }}
+                  className="w-full text-[#1600ff] hover:text-[#1400cc] font-semibold text-sm md:text-base flex items-center justify-center gap-2 py-2 md:py-3"
+                >
+                  <Share2 className="w-4 h-4 md:w-5 md:h-5" />
+                  Share Campaign
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Confetti Animation */}
+        {showConfetti && (
+          <Confetti
+            width={window.innerWidth}
+            height={window.innerHeight}
+            recycle={true}
+            numberOfPieces={300}
+            gravity={0.2}
+            wind={0.05}
+            opacity={0.8}
+          />
+        )}
+
+        {/* Share Modal */}
+        {createdFundraiser && (
+          <SharePost
+            isOpen={showShareModal}
+            onClose={() => setShowShareModal(false)}
+            url={window.location.origin + `/fundraiser/${createdFundraiser.id}`}
+            title={campaignTitle}
+          />
+        )}
+
+        {/* Toast */}
+        <Toast
+          show={showToast}
+          onHide={() => setShowToast(false)}
+          message={toastMessage}
+        />
+      </>
     );
   }
 

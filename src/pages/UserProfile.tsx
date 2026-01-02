@@ -36,6 +36,18 @@ import {
   SheetDescription,
 } from "@/components/ui/sheet";
 
+// Avatar colors for consistent fallback styling
+const avatarColors = [
+  '#FF6B6B', '#4CAF50', '#FF9800', '#9C27B0', '#2196F3',
+  '#FFC107', '#E91E63', '#00BCD4', '#8BC34A', '#FF5722',
+  '#673AB7', '#009688', '#FFEB3B', '#795548', '#607D8B',
+];
+
+const getConsistentColor = (id: number | string, colors: string[]) => {
+  const hash = typeof id === 'number' ? id : id.toString().split('').reduce((acc: number, char: string) => acc + char.charCodeAt(0), 0);
+  return colors[hash % colors.length];
+};
+
 export default function ProfilePage() {
   const { imageUrl } = useLocation().state || { imageUrl: "" };
   const { userId } = useParams();
@@ -239,6 +251,7 @@ export default function ProfilePage() {
       lastName: post.user?.last_name,
       username: post.user?.username || '',
       avatar: post.user?.profile_picture || '',
+      color: post.user?.color || '',
     },
     collective: post.collective
       ? {
@@ -380,6 +393,7 @@ export default function ProfilePage() {
               location={userProfile.location || "Location not specified"}
               activeSince={userProfile.date_joined || "Not specified"}
               link={userProfile.username || ''}
+              color={userProfile.color}
             />
 
 
@@ -777,7 +791,10 @@ export default function ProfilePage() {
                           <div className="flex items-center gap-3 flex-1 min-w-0">
                             <Avatar className="w-10 h-10 flex-shrink-0">
                               <AvatarImage src={userData.profile_picture || userData.avatar} />
-                              <AvatarFallback>
+                              <AvatarFallback 
+                                style={{ backgroundColor: userData.color || getConsistentColor(userData.id || userData.username || 'U', avatarColors) }}
+                                className="text-white text-xs sm:text-sm font-semibold"
+                              >
                                 {userData.first_name && userData.last_name
                                   ? `${userData.first_name[0]}${userData.last_name[0]}`
                                   : (userData.name || 'U').charAt(0)}
@@ -836,7 +853,10 @@ export default function ProfilePage() {
                           <div className="flex items-center gap-3 flex-1 min-w-0">
                             <Avatar className="w-10 h-10 flex-shrink-0">
                               <AvatarImage src={userData.profile_picture || userData.avatar} />
-                              <AvatarFallback>
+                              <AvatarFallback 
+                                style={{ backgroundColor: userData.color || getConsistentColor(userData.id || userData.username || 'U', avatarColors) }}
+                                className="text-white text-xs sm:text-sm font-semibold"
+                              >
                                 {userData.first_name && userData.last_name
                                   ? `${userData.first_name[0]}${userData.last_name[0]}`
                                   : (userData.name || 'U').charAt(0)}

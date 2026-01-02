@@ -12,6 +12,7 @@ interface CollectiveProfileProps {
     last_name?: string;
     username?: string;
     profile_picture?: string;
+    color?: string;
   };
   description?: string;
   isJoined?: boolean;
@@ -97,7 +98,7 @@ export default function CollectiveProfile({
                 <AvatarImage src={founder?.profile_picture || undefined} alt={founderName || 'Founder'} />
                 <AvatarFallback 
                   style={{ 
-                    backgroundColor: (() => {
+                    backgroundColor: founder.color || (() => {
                       const avatarColors = [
                         '#EF4444', // Red
                         '#10B981', // Green

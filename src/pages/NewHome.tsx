@@ -460,6 +460,7 @@ export default function NewHome() {
                                     avatarUrl: post.user.avatar,
                                     firstName: post.user.firstName,
                                     lastName: post.user.lastName,
+                                    color: post.user.color,
                                 });
                                 setShowCommentsSheet(true);
                             }}
@@ -509,6 +510,7 @@ export default function NewHome() {
                                     avatarUrl: post.user.avatar,
                                     firstName: post.user.firstName,
                                     lastName: post.user.lastName,
+                                    color: post.user.color,
                                 });
                                 setShowCommentsSheet(true);
                             }}
