@@ -19,6 +19,8 @@ export default function OneTimeDonationPage() {
   const preselectedCauses = location.state?.preselectedCauses;
   const preselectedCausesData = location.state?.preselectedCausesData;
   const preselectedCollectiveId = location.state?.preselectedCollectiveId;
+  const fundraiserId = location.state?.fundraiserId;
+  const initialDonationAmount = location.state?.donationAmount;
 
   const [selectedOrganizations, setSelectedOrganizations] = useState<string[]>([]);
   const [checkout, setCheckout] = useState(false);
@@ -73,7 +75,7 @@ export default function OneTimeDonationPage() {
   return (
     <div className="w-full h-full bg-white flex flex-col">
       {/* Header */}
-      <div className="sticky top-0 z-10 w-full flex items-center gap-3 md:gap-4 p-3 md:p-4 border-b bg-white">
+      <div className="sticky top-0 z-10 w-full flex items-center gap-3 md:gap-4 p-3 md:p-4 border-b ">
         <button
           onClick={() => navigate(-1)}
           className="p-1.5 md:p-2 hover:bg-gray-100 rounded-full transition-colors"
@@ -94,6 +96,8 @@ export default function OneTimeDonationPage() {
         preselectedCauses={preselectedCauses}
         preselectedCausesData={preselectedCausesData}
         preselectedCollectiveId={preselectedCollectiveId}
+        fundraiserId={fundraiserId}
+        initialDonationAmount={initialDonationAmount}
       />
     </div>
   );

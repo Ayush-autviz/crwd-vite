@@ -191,3 +191,29 @@ export const getSurpriseMe = async (categories?: string[] | string) => {
     const response = await axiosClient.get(url);
     return response.data;
 };
+
+
+// Create Fundraiser API endpoint
+export const createFundraiser = async (data: any) => {
+    const response = await axiosClient.post('/crwd/fundraisers/', data);
+    return response.data;
+};
+
+
+// Get Fundraiser by ID API endpoint
+export const getFundraiserById = async (id: string) => {
+    const response = await axiosClient.get(`/crwd/fundraisers/${id}/`);
+    return response.data;
+};
+
+//patch fundraiser API endpoint
+export const patchFundraiser = async (id: string, data: any) => {
+    const response = await axiosClient.patch(`/crwd/fundraisers/${id}/`, data);
+    return response.data;
+};
+
+// put fundraiser API endpoint
+export const putFundraiser = async (id: string, data: any) => {
+    const response = await axiosClient.put(`/crwd/fundraisers/${id}/`, data);
+    return response.data;
+};

@@ -30,7 +30,7 @@ export const Toast: React.FC<ToastProps> = ({
     <div
       className={cn(
         "fixed top-20 left-1/2 transform -translate-x-1/2 z-50",
-        "w-[90%] md:w-auto md:px-32 md:mx-8",
+        "w-[90%] md:w-auto md:px-10 md:mx-8",
         "bg-white text-black px-4 py-2 rounded-xl",
         "text-sm font-medium shadow-lg text-center",
         "transition-all duration-300",

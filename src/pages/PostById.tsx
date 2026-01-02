@@ -7,6 +7,7 @@ import { Toast } from "@/components/ui/toast";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { getPostById, getPostComments, createPostComment, getCommentReplies } from "@/services/api/social";
 import type { PostDetail } from "@/lib/types";
+import { formatDistanceToNow } from 'date-fns';
 import {
   Dialog,
   DialogContent,
@@ -71,12 +72,22 @@ export default function PostById() {
     userId: postData.user?.id?.toString() || '',
     avatarUrl: postData.user?.profile_picture || '/placeholder.svg',
     username: postData.user?.username || postData.user?.full_name || 'Unknown User',
-    time: new Date(postData.created_at).toLocaleDateString(),
+    time: postData.created_at ? formatDistanceToNow(new Date(postData.created_at), { addSuffix: true }) : '',
     org: postData.collective?.name || 'Unknown Collective',
     orgUrl: postData.collective?.id, // Collective ID for navigation
     text: postData.content || '',
     imageUrl: postData.media || undefined,
     previewDetails: postData.preview_details || null,
+    fundraiser: postData.fundraiser ? {
+      id: postData.fundraiser.id,
+      name: postData.fundraiser.name,
+      description: postData.fundraiser.description,
+      image: postData.fundraiser.image,
+      color: postData.fundraiser.color,
+      target_amount: postData.fundraiser.target_amount,
+      current_amount: postData.fundraiser.current_amount,
+      progress_percentage: postData.fundraiser.progress_percentage || 0,
+    } : undefined,
     likes: postData.likes_count || 0,
     comments: postData.comments_count || 0,
     shares: 0,
