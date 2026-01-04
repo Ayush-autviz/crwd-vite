@@ -255,8 +255,8 @@ function NotificationSummary({ update }: { update: CommunityUpdate }) {
           </div>
           <div className="flex flex-col gap-1">
           {/* Action Text */}
-          <p className="text-[10px] md:text-sm font-semibold text-gray-900 flex-1">
-            {cleanActionText}
+          <p className="text-[10px] md:text-sm font-semibold text-gray-600 flex-1">
+            {userName} {cleanActionText}
           </p>
            {/* Supporting X nonprofits - Only on second line if it exists */}
         {nonprofitCount > 0 && (
