@@ -5,6 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { newSearch } from '@/services/api/social';
+import { getCausesBySearch } from '@/services/api/crwd';
 import { useQuery } from '@tanstack/react-query';
 import SearchResultsHeader from '@/components/newsearch/SearchResultsHeader';
 import SearchTabs from '@/components/newsearch/SearchTabs';
@@ -24,10 +25,17 @@ export default function NewSearchPage() {
   const [hasSearched, setHasSearched] = useState(false);
   const [showRequestModal, setShowRequestModal] = useState(false);
 
-  // Initialize search query from location state if available
+  // Initialize search query and category from location state if available
   useEffect(() => {
     if (location.state?.searchQuery) {
       setSearchQuery(location.state.searchQuery);
+      setHasSearched(true);
+    }
+    // Handle category filtering
+    if (location.state?.categoryId || location.state?.categoryName) {
+      const categoryName = location.state.categoryName || location.state.searchQuery;
+      setSearchQuery(categoryName);
+      setActiveTab('Causes'); // Set to Causes tab for category search
       setHasSearched(true);
     }
   }, [location.state]);
@@ -48,11 +56,23 @@ export default function NewSearchPage() {
     }
   };
 
-  // Fetch search results using the new unified search API
+  // Get category ID from location state
+  const categoryId = location.state?.categoryId;
+
+  // Fetch search results - use getCausesBySearch for category filtering, otherwise use newSearch
   const { data: searchData, isLoading: isLoadingSearch } = useQuery({
-    queryKey: ['new-search', activeTab, searchQuery],
-    queryFn: () => newSearch(getTabValue(activeTab), searchQuery),
-    enabled: hasSearched && searchQuery.trim().length > 0,
+    queryKey: categoryId 
+      ? ['causes-by-category', categoryId, searchQuery]
+      : ['new-search', activeTab, searchQuery],
+    queryFn: () => {
+      if (categoryId && activeTab === 'Causes') {
+        // Use getCausesBySearch for category filtering
+        return getCausesBySearch(searchQuery || '', categoryId, 1);
+      }
+      // Use newSearch for other cases
+      return newSearch(getTabValue(activeTab), searchQuery);
+    },
+    enabled: hasSearched && (searchQuery.trim().length > 0 || categoryId),
   });
 
   const handleSearch = () => {
@@ -82,6 +102,11 @@ export default function NewSearchPage() {
   // Get results based on active tab from the unified search API response
   const getResults = () => {
     if (!searchData) return [];
+    
+    // Handle getCausesBySearch response (has results array)
+    if (categoryId && activeTab === 'Causes' && searchData.results) {
+      return searchData.results;
+    }
     
     // The API response structure may vary, but typically it returns results in a results array
     // or directly as an array. Let's handle both cases.

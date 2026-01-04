@@ -84,7 +84,7 @@
                     {/* Logo with colored circles */}
                     
                     <Link to="/waitlist" className="flex-shrink-0">
-                        <NewLogo size="sm" />
+                        <NewLogo />
                     </Link>
 
                     
@@ -131,7 +131,7 @@
                     <div className="max-w-4xl mx-auto text-center mt-4 md:mt-20 mb-3 md:mb-8">
 
 
-                        <h1 className="font-[900] text-foreground mb-1.5 md:mb-4 leading-tight" style={{ fontSize: 'clamp(1.5rem, 5vw, 4.5rem)' }}>
+                        <h1 className="font-[900] text-foreground mb-2 md:mb-4 leading-tight" style={{ fontSize: 'clamp(1.7rem, 5vw, 4.5rem)' }}>
                             Stop Wishing You Made a Difference.
                             <span className="text-[#1600ff]"> Start Being Someone Who Does.</span>
                         </h1>

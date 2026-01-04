@@ -10,8 +10,10 @@ interface CollectiveHeaderProps {
   collectiveId?: string;
   isFavorite?: boolean;
   isAdmin?: boolean;
+  isJoined?: boolean;
   onShare?: () => void;
   onManageCollective?: () => void;
+  onDonate?: () => void;
 }
 
 export default function CollectiveHeader({ 
@@ -19,8 +21,10 @@ export default function CollectiveHeader({
   collectiveId,
   isFavorite: initialIsFavorite = false,
   isAdmin = false,
+  isJoined = false,
   onShare, 
-  onManageCollective
+  onManageCollective,
+  onDonate
 }: CollectiveHeaderProps) {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
@@ -136,6 +140,13 @@ export default function CollectiveHeader({
     setShowDropdown(false);
   };
 
+  const handleDonate = () => {
+    if (onDonate) {
+      onDonate();
+    }
+    setShowDropdown(false);
+  };
+
   const isLoading = favoriteMutation.isPending || unfavoriteMutation.isPending;
 
   return (
@@ -204,6 +215,15 @@ export default function CollectiveHeader({
                   </button>
                   <div className="border-t border-gray-200 my-1"></div>
                 </>
+              )}
+              {isJoined && (
+                <button
+                  onClick={handleDonate}
+                  className="w-full font-semibold flex items-center gap-2 md:gap-3 px-3 md:px-4 py-1.5 md:py-2 text-xs md:text-sm text-foreground hover:bg-gray-100 transition-colors"
+                >
+                  <DollarSign className="w-3 h-3 md:w-4 md:h-4" strokeWidth={2.5} />
+                  Donate
+                </button>
               )}
               <button
                 onClick={handleShareClick}

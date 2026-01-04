@@ -95,7 +95,7 @@ export default function CommunityActivity({
           <Button
             onClick={() => navigate("/create-post", { state: { collectiveData } })}
             variant="default"
-            className="px-2 md:px-4 lg:px-6 py-1 md:py-1.5 lg:py-2 rounded-full text-[10px] md:text-xs lg:text-sm"
+            className="px-2 md:px-4 lg:px-6 py-1 md:py-1.5 lg:py-2 rounded-full text-[10px] md:text-xs lg:text-sm font-semibold"
           >
             Create Post
           </Button>
@@ -124,7 +124,7 @@ export default function CommunityActivity({
           {transformedPosts && transformedPosts.length > 0 ? (
             <div className="space-y-2.5 md:space-y-4">
               {transformedPosts.map((post: any) => (
-                <CommunityPostCard key={post.id} post={post} />
+                <CommunityPostCard key={post.id} post={post} showSimplifiedHeader={true} />
               ))}
             </div>
           ) : (

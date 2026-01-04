@@ -550,7 +550,7 @@ export default function WaitlistPage() {
                 </label>
                 <Input
                   type="text"
-                  placeholder="Alex"
+                  placeholder="Alex Johnson"
                   value={waitlistForm.name}
                   onChange={(e) => setWaitlistForm(prev => ({ ...prev, name: e.target.value }))}
                   className="w-full h-12 bg-gray-100"

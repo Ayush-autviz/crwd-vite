@@ -111,7 +111,11 @@ export default function CommunityPosts({
 
       <div className="space-y-2.5 md:space-y-4">
         {transformedPosts.map((post: any) => (
-          <CommunityPostCard key={post.id} post={post} onCommentPress={onCommentPress} />
+          <CommunityPostCard 
+            key={post.id} 
+            post={post} 
+            onCommentPress={onCommentPress}
+          />
         ))}
       </div>
     </div>

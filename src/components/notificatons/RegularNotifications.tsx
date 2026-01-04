@@ -1,18 +1,26 @@
 import React, { useMemo } from 'react';
-import { Loader2, HandHeart, Users, Mountain } from 'lucide-react';
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Loader2 } from 'lucide-react';
 import { Link } from "react-router-dom";
 import { useQueries } from "@tanstack/react-query";
 import { getUserProfileById } from "@/services/api/social";
 
 // Avatar colors for consistent coloring
 const avatarColors = [
-  '#EF4444', // Red
-  '#8B5CF6', // Purple
-  '#EC4899', // Pink
-  '#F97316', // Orange
-  '#10B981', // Green
   '#3B82F6', // Blue
+  '#EC4899', // Pink
+  '#8B5CF6', // Purple
+  '#10B981', // Green
+  '#F59E0B', // Amber
+  '#EF4444', // Red
+  '#06B6D4', // Cyan
+  '#F97316', // Orange
+  '#84CC16', // Lime
+  '#A855F7', // Violet
+  '#14B8A6', // Teal
+  '#F43F5E', // Rose
+  '#6366F1', // Indigo
+  '#22C55E', // Emerald
+  '#EAB308', // Yellow
 ];
 
 const getConsistentColor = (id: number | string, colors: string[]) => {
@@ -248,99 +256,186 @@ const RegularNotifications: React.FC<RegularNotificationsProps> = ({
       {transformedNotifications.map((notification, idx) => (
         <div key={notification.id || `regular-${idx}`} className="px-3 md:px-4 py-4 md:py-6 border-b border-gray-100 last:border-b-0">
           <div className="flex items-start gap-3 md:gap-4">
-            {/* Avatar with overlay icon */}
-            {notification.userId ? (
-              <Link to={`/user-profile/${notification.userId}`} className="relative flex-shrink-0">
-                {notification.type === 'donation' ? (
-                  <>
-                    {/* Green circle with 'C' */}
-                    <div className="w-12 h-12 md:w-14 md:h-14 rounded-full bg-green-500 flex items-center justify-center">
-                      <span className="text-white font-bold text-base md:text-lg">C</span>
-                    </div>
-                    {/* Hand icon overlay */}
-                    <div className="absolute -bottom-0.5 md:-bottom-1 -right-0.5 md:-right-1 w-5 h-5 md:w-6 md:h-6 rounded-full bg-blue-400 flex items-center justify-center border-2 border-white">
-                      <HandHeart className="w-3 h-3 md:w-3.5 md:h-3.5 text-white" />
-                    </div>
-                  </>
-                ) : notification.type === 'new_member' ? (
-                  <>
-                    {/* Gray circle with landscape icon */}
-                    <div className="w-12 h-12 md:w-14 md:h-14 rounded-full bg-gray-200 flex items-center justify-center border-2 border-gray-300">
-                      <Mountain className="w-6 h-6 md:w-7 md:h-7 text-gray-500" />
-                    </div>
-                    {/* People icon overlay */}
-                    <div className="absolute -bottom-0.5 md:-bottom-1 -right-0.5 md:-right-1 w-5 h-5 md:w-6 md:h-6 rounded-full bg-green-400 flex items-center justify-center border-2 border-white">
-                      <Users className="w-3 h-3 md:w-3.5 md:h-3.5 text-white" />
-                    </div>
-                  </>
-                ) : (
-                  <>
-                    {/* Default avatar */}
-                    <Avatar className="w-12 h-12 md:w-14 md:h-14">
-                      <AvatarImage src={notification.avatarUrl} />
-                      <AvatarFallback
-                        style={{ backgroundColor: notification.userId ? getConsistentColor(notification.userId, avatarColors) : '#E5E7EB' }}
-                        className="text-white text-sm md:text-base font-bold"
-                      >
-                        {getInitials(notification.firstName, notification.lastName, notification.username)}
-                      </AvatarFallback>
-                    </Avatar>
-                  </>
-                )}
-              </Link>
-            ) : (
-              <div className="relative flex-shrink-0">
-                {notification.type === 'donation' ? (
-                  <>
-                    {/* Green circle with 'C' */}
-                    <div className="w-12 h-12 md:w-14 md:h-14 rounded-full bg-green-500 flex items-center justify-center">
-                      <span className="text-white font-bold text-base md:text-lg">C</span>
-                    </div>
-                    {/* Hand icon overlay */}
-                    <div className="absolute -bottom-0.5 md:-bottom-1 -right-0.5 md:-right-1 w-5 h-5 md:w-6 md:h-6 rounded-full bg-blue-400 flex items-center justify-center border-2 border-white">
-                      <HandHeart className="w-3 h-3 md:w-3.5 md:h-3.5 text-white" />
-                    </div>
-                  </>
-                ) : notification.type === 'new_member' ? (
-                  <>
-                    {/* Gray circle with landscape icon */}
-                    <div className="w-12 h-12 md:w-14 md:h-14 rounded-full bg-gray-200 flex items-center justify-center border-2 border-gray-300">
-                      <Mountain className="w-6 h-6 md:w-7 md:h-7 text-gray-500" />
-                    </div>
-                    {/* People icon overlay */}
-                    <div className="absolute -bottom-0.5 md:-bottom-1 -right-0.5 md:-right-1 w-5 h-5 md:w-6 md:h-6 rounded-full bg-green-400 flex items-center justify-center border-2 border-white">
-                      <Users className="w-3 h-3 md:w-3.5 md:h-3.5 text-white" />
-                    </div>
-                  </>
-                ) : (
-                  <>
-                    {/* Default avatar */}
-                    <Avatar className="w-12 h-12 md:w-14 md:h-14">
-                      <AvatarImage src={notification.avatarUrl} />
-                      <AvatarFallback
-                        style={{ backgroundColor: notification.userId ? getConsistentColor(notification.userId, avatarColors) : '#E5E7EB' }}
-                        className="text-white text-sm md:text-base font-bold"
-                      >
-                        {getInitials(notification.firstName, notification.lastName, notification.username)}
-                      </AvatarFallback>
-                    </Avatar>
-                  </>
-                )}
-              </div>
-            )}
+            {/* Avatar */}
+            {(() => {
+              const bgColor = notification.userId 
+                ? getConsistentColor(notification.userId, avatarColors)
+                : (notification.username ? getConsistentColor(notification.username, avatarColors) : avatarColors[0]);
+              
+              return notification.userId ? (
+                <Link to={`/user-profile/${notification.userId}`} className="flex-shrink-0">
+                  <div 
+                    className="w-12 h-12 md:w-14 md:h-14 rounded-full flex items-center justify-center text-white text-sm md:text-base font-bold"
+                    style={{ backgroundColor: bgColor }}
+                  >
+                    {getInitials(notification.firstName, notification.lastName, notification.username)}
+                  </div>
+                </Link>
+              ) : (
+                <div className="flex-shrink-0">
+                  <div 
+                    className="w-12 h-12 md:w-14 md:h-14 rounded-full flex items-center justify-center text-white text-sm md:text-base font-bold"
+                    style={{ backgroundColor: bgColor }}
+                  >
+                    {getInitials(notification.firstName, notification.lastName, notification.username)}
+                  </div>
+                </div>
+              );
+            })()}
 
             {/* Content */}
             <div className="flex-1 min-w-0">
-              <h3 className="font-bold text-gray-900 text-sm md:text-base mb-0.5 md:mb-1">
+              <h3 className="font-bold text-gray-900 text-xs md:text-sm lg:text-base mb-0.5 md:mb-1">
                 {notification.title}
               </h3>
               <p className="text-gray-700 text-xs md:text-sm mb-1.5 md:mb-2">
-                {notification.type === 'donation' 
-                  ? `Your collective ${notification.collectiveName || 'Community Champions'} received a ${notification.donationAmount || '$50'} donation`
-                  : notification.type === 'new_member'
-                  ? `${notification.memberName || 'Taylor Kim'} joined ${notification.collectiveName || 'Community Champions'}`
-                  : notification.description
-                }
+                {notification.type === 'donation' ? (
+                  <>
+                    Your collective{' '}
+                    {notification.collectiveId && notification.collectiveName ? (
+                      <Link 
+                        to={`/groupcrwd/${notification.collectiveId}`}
+                        className="font-semibold text-gray-700 hover:underline"
+                      >
+                        {notification.collectiveName}
+                      </Link>
+                    ) : (
+                      notification.collectiveName || 'Community Champions'
+                    )}
+                    {' '}received a {notification.donationAmount || '$50'} donation
+                  </>
+                ) : notification.type === 'new_member' ? (
+                  (() => {
+                    // Parse description to make user and collective names clickable
+                    const description = notification.description;
+                    if (!description) return '';
+                    
+                    const parts: React.ReactNode[] = [];
+                    let lastIndex = 0;
+                    
+                    // Find member name and make it clickable
+                    if (notification.userId && notification.memberName) {
+                      const memberPattern = new RegExp(notification.memberName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'gi');
+                      let match;
+                      while ((match = memberPattern.exec(description)) !== null) {
+                        // Add text before match
+                        if (match.index > lastIndex) {
+                          parts.push(description.substring(lastIndex, match.index));
+                        }
+                        // Add clickable link
+                        parts.push(
+                          <Link
+                            key={`member-${match.index}`}
+                            to={`/user-profile/${notification.userId}`}
+                            className="font-semibold text-gray-700 hover:underline"
+                          >
+                            {match[0]}
+                          </Link>
+                        );
+                        lastIndex = match.index + match[0].length;
+                      }
+                    }
+                    
+                    // Find collective name and make it clickable
+                    if (notification.collectiveId && notification.collectiveName) {
+                      const collectivePattern = new RegExp(notification.collectiveName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'gi');
+                      let match;
+                      while ((match = collectivePattern.exec(description)) !== null) {
+                        // Check if this part is already a link
+                        if (match.index >= lastIndex) {
+                          // Add text before match if needed
+                          if (match.index > lastIndex) {
+                            parts.push(description.substring(lastIndex, match.index));
+                          }
+                          // Add clickable link
+                          parts.push(
+                            <Link
+                              key={`collective-${match.index}`}
+                              to={`/groupcrwd/${notification.collectiveId}`}
+                              className="font-semibold text-gray-700 hover:underline"
+                            >
+                              {match[0]}
+                            </Link>
+                          );
+                          lastIndex = match.index + match[0].length;
+                        }
+                      }
+                    }
+                    
+                    // Add remaining text
+                    if (lastIndex < description.length) {
+                      parts.push(description.substring(lastIndex));
+                    }
+                    
+                    return parts.length > 0 ? <>{parts}</> : description;
+                  })()
+                ) : (
+                  (() => {
+                    // Parse description for @username mentions and collective names
+                    const description = notification.description;
+                    if (!description) return '';
+                    
+                    // Split description into parts and create clickable links
+                    const parts: React.ReactNode[] = [];
+                    let lastIndex = 0;
+                    
+                    // Find @username mentions
+                    if (notification.userId && notification.username) {
+                      const usernamePattern = new RegExp(`@${notification.username}\\b`, 'gi');
+                      let match;
+                      while ((match = usernamePattern.exec(description)) !== null) {
+                        // Add text before match
+                        if (match.index > lastIndex) {
+                          parts.push(description.substring(lastIndex, match.index));
+                        }
+                        // Add clickable link
+                        parts.push(
+                          <Link
+                            key={`user-${match.index}`}
+                            to={`/user-profile/${notification.userId}`}
+                            className="font-semibold text-gray-700 hover:underline"
+                          >
+                            {match[0]}
+                          </Link>
+                        );
+                        lastIndex = match.index + match[0].length;
+                      }
+                    }
+                    
+                    // Find collective name mentions
+                    if (notification.collectiveId && notification.collectiveName) {
+                      const collectivePattern = new RegExp(notification.collectiveName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'gi');
+                      let match;
+                      while ((match = collectivePattern.exec(description)) !== null) {
+                        // Check if this part is already a link
+                        if (match.index >= lastIndex) {
+                          // Add text before match if needed
+                          if (match.index > lastIndex) {
+                            parts.push(description.substring(lastIndex, match.index));
+                          }
+                          // Add clickable link
+                          parts.push(
+                            <Link
+                              key={`collective-${match.index}`}
+                              to={`/groupcrwd/${notification.collectiveId}`}
+                              className="font-semibold text-gray-700 hover:underline"
+                            >
+                              {match[0]}
+                            </Link>
+                          );
+                          lastIndex = match.index + match[0].length;
+                        }
+                      }
+                    }
+                    
+                    // Add remaining text
+                    if (lastIndex < description.length) {
+                      parts.push(description.substring(lastIndex));
+                    }
+                    
+                    return parts.length > 0 ? <>{parts}</> : description;
+                  })()
+                )}
               </p>
               <p className="text-gray-500 text-[10px] md:text-xs">
                 {notification.time}

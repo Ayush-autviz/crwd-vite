@@ -251,7 +251,7 @@ export default function JoinCollectiveBottomSheet({
           {!isAtCapacity && hasDonationBox && (
             <button
               onClick={handleDeselectAll}
-              className="w-full flex items-center justify-between p-2.5 sm:p-3 md:p-4 mb-2 sm:mb-2.5 md:mb-3 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
+              className="w-full flex items-center justify-between p-2.5 sm:p-3 md:p-4 mb-2 sm:mb-2.5 md:mb-3 bg-gray-50 border border-gray-200 rounded-lg hover:bg-gray-100 transition-colors"
             >
               <div className="flex items-center gap-2 sm:gap-3 md:gap-4">
                 <div
@@ -296,10 +296,10 @@ export default function JoinCollectiveBottomSheet({
                   onClick={() => handleToggleNonprofit(nonprofitId)}
                   disabled={isDisabled || isAtCapacity}
                   className={cn(
-                    "w-full flex items-center gap-2 sm:gap-3 md:gap-4 p-2.5 sm:p-3 md:p-4 bg-white border border-gray-200 rounded-lg transition-colors text-left",
+                    "w-full flex items-center gap-2 sm:gap-3 md:gap-4 p-2.5 sm:p-3 md:p-4 bg-gray-50   border border-gray-200 rounded-lg transition-colors text-left",
                     (isDisabled || isAtCapacity)
                       ? "opacity-50 cursor-not-allowed" 
-                      : "hover:bg-gray-50"
+                      : "hover:bg-gray-100"
                   )}
                 >
                   {/* Checkbox */}
@@ -370,12 +370,13 @@ export default function JoinCollectiveBottomSheet({
 
           {/* Info Banner - Only show if not at capacity */}
           {!isAtCapacity && (
-            <div className="bg-[#fff3c7] border border-yellow-200 rounded-lg p-2.5 sm:p-3 md:p-4 mb-3 sm:mb-4 md:mb-6">
-              <p className="text-[10px] sm:text-xs md:text-sm text-yellow-900 leading-relaxed">
-                {hasDonationBox
+            <div className="bg-indigo-50 border border-indigo-200 rounded-lg p-2.5 sm:p-3 md:p-4 mb-3 sm:mb-4 md:mb-6">
+              <p className="text-[10px] sm:text-xs md:text-sm text-indigo-900 leading-relaxed">
+                {/* {hasDonationBox
                   ? "Selected nonprofits will be added to your donation box. You can manage them anytime from your profile."
                   : "Set up your donation box to start supporting these nonprofits with a monthly donation."
-                }
+                } */}
+                Your donation box holds nonprofits you want to donate to. You can set up recurring or one-time donations anytime.
               </p>
             </div>
           )}
@@ -400,7 +401,7 @@ export default function JoinCollectiveBottomSheet({
               </Button>
               <Button
                 onClick={onClose}
-                variant="ghost"
+                variant="outline"
                 className="w-full text-gray-700 hover:text-gray-900 hover:bg-gray-50 font-medium py-2 sm:py-2.5 md:py-3 rounded-lg text-xs sm:text-sm md:text-base"
               >
                 Not Now
@@ -433,10 +434,10 @@ export default function JoinCollectiveBottomSheet({
               </Button>
               <Button
                 onClick={onClose}
-                variant="ghost"
+                variant="outline"
                 className="w-full text-gray-700 hover:text-gray-900 hover:bg-gray-50 font-medium py-2 sm:py-2.5 md:py-3 rounded-lg text-xs sm:text-sm md:text-base"
               >
-                Skip
+                Not Now
               </Button>
             </>
           )}

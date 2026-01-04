@@ -541,7 +541,7 @@ export default function NewCreateCollectivePage() {
           >
             <ArrowLeft className="w-4 h-4 md:w-5 md:h-5 text-gray-700" />
           </button>
-          <h1 className="font-bold text-lg md:text-xl text-foreground">Create a CRWD Collective</h1>
+          <h1 className="font-bold text-lg md:text-xl text-foreground">Create a Collective</h1>
         </div>
         <div className="mb-6 md:mb-8">
           <div className="w-12 h-12 md:w-16 md:h-16 rounded-full mt-4 md:mt-5 bg-blue-100 flex items-center justify-center">
@@ -551,10 +551,10 @@ export default function NewCreateCollectivePage() {
         <h2 className="text-xl md:text-2xl font-bold text-foreground text-center mb-4 md:mb-6 px-4">
           Lead a Giving Community
         </h2>
-        <p className="text-sm md:text-base text-gray-700 text-center max-w-md mb-8 md:mb-12 leading-relaxed px-4">
+        <p className="text-sm md:text-base text-gray  -700 text-center max-w-md mb-8 md:mb-12 leading-relaxed px-4">
           You pick the causes. You invite the people. They give monthly. No money touches your hands. You just rally the movement.
         </p>
-        <div className="w-full max-w-xs mx-4 flex gap-3">
+        <div className="w-full max-w-xs px-4 flex gap-3">
           <Button
             onClick={() => navigate('/onboarding?redirectTo=/create-crwd')}
             className="bg-[#1600ff] hover:bg-[#1400cc] text-white font-semibold rounded-lg px-4 md:px-6 py-3 md:py-6 text-sm md:text-base flex-1"
@@ -586,7 +586,7 @@ export default function NewCreateCollectivePage() {
           >
             <ArrowLeft className="w-4 h-4 md:w-5 md:h-5 text-gray-700" />
           </button>
-          <h1 className="font-bold text-lg md:text-xl text-foreground">Create a CRWD Collective</h1>
+          <h1 className="font-bold text-lg md:text-xl text-foreground">Create a Collective</h1>
         </div>
         <div className="mb-6 md:mb-8">
           <div className="w-12 h-12 md:w-16 md:h-16 rounded-full mt-4 md:mt-5 bg-blue-100 flex items-center justify-center">
@@ -599,7 +599,7 @@ export default function NewCreateCollectivePage() {
         <p className="text-sm md:text-base text-gray-700 text-center max-w-md mb-8 md:mb-12 leading-relaxed px-4">
           You pick the causes. You invite the people. They give monthly. No money touches your hands. You just rally the movement.
         </p>
-        <div className="w-full max-w-xs mx-4">
+        <div className="w-fit mx-4">
           <Button
             onClick={() => {
               // Clear any saved form data and proceed to form
@@ -612,8 +612,8 @@ export default function NewCreateCollectivePage() {
               setSelectedCauses([]);
               setHasStarted(true);
             }}
-            className="bg-[#1600ff] hover:bg-[#1400cc] text-white font-semibold rounded-lg px-4 md:px-6 py-3 md:py-6 text-sm md:text-base w-full"
-          >
+            className="bg-[#1600ff] hover:bg-[#1400cc] text-white font-semibold rounded-xl px-3 md:px-6 py-3 md:py-6 text-sm md:text-base w-fit"
+          > 
             Get Started
           </Button>
         </div>
@@ -912,7 +912,7 @@ export default function NewCreateCollectivePage() {
           >
             <ArrowLeft className="w-4 h-4 md:w-5 md:h-5 text-gray-700" />
           </button>
-          <h1 className="font-bold text-lg md:text-xl text-foreground">Create a CRWD Collective</h1>
+          <h1 className="font-bold text-lg md:text-xl text-foreground">Create a Collective</h1>
         </div>
 
         <div className="px-3 md:px-4 py-4 md:py-6 pb-24 md:pb-28 lg:max-w-[60%] lg:mx-auto">

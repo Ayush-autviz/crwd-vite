@@ -123,7 +123,7 @@ export default function CollectiveProfile({
                   }}
                   className="text-white font-semibold text-xs md:text-sm"
                 >
-                  {(founderName || 'F').charAt(0).toUpperCase()}
+                  {(founderName || 'F').split(' ').map(n => n.charAt(0)).join('').toUpperCase()}
                 </AvatarFallback>
               </Avatar>
               <p className="text-muted-foreground text-xs md:text-sm lg:text-base">
