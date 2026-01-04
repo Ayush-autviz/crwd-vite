@@ -4,7 +4,6 @@ import ProfileBio from "../components/profile/ProfileBio";
 import Footer from "@/components/Footer";
 
 import CommunityPostCard from "../components/newHome/CommunityPostCard";
-import ProfileNavbar from "../components/profile/ProfileNavbar";
 import ProfileSidebar from "../components/profile/ProfileSidebar";
 import ProfileStats from "../components/profile/ProfileStats";
 import { Button } from "@/components/ui/button";
@@ -14,6 +13,8 @@ import {
   Share2,
   Loader2,
   LogOut,
+  ChevronLeft,
+  Users,
 } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { Toast } from "../components/ui/toast";
@@ -385,13 +386,27 @@ export default function ProfilePage() {
 
   return (
     <div className="">
-      <ProfileNavbar title="Me" />
+      {/* Custom Navbar for Profile Page */}
+      <header className="w-full flex items-center justify-between h-16 px-3 md:px-6 bg-gray-50 border-b sticky top-0 z-10">
+        {/* Left Section */}
+        <div className="flex items-center gap-3">
+          <button
+            onClick={() => navigate(-1)}
+            className="flex items-center justify-center h-8 w-8 rounded-full bg-gray-100 text-gray-700 hover:bg-gray-200 transition-colors mr-2 cursor-pointer md:hidden"
+            aria-label="Go back"
+          >
+            <ChevronLeft size={18} />
+          </button>
+          <h1 className="text-xl font-bold text-gray-800 tracking-tight">
+            Me
+          </h1>
+        </div>
 
-      <div className="flex items-center gap-3 md:gap-4 justify-end pt-4 md:pt-6 pb-2 px-3 md:px-4 sticky top-14 md:top-16 z-10 bg-white">
+        {/* Right Section - Ellipsis Menu */}
         <div className="relative" ref={menuRef}>
           <button
             onClick={() => setShowMenu(!showMenu)}
-            className="p-1.5 md:p-2 cursor-pointer rounded-full transition-colors"
+            className="p-1.5 md:p-2 cursor-pointer rounded-full transition-colors hover:bg-gray-200"
           >
             <Ellipsis className="w-5 h-5 md:w-6 md:h-6" strokeWidth={3} />
           </button>
@@ -408,17 +423,7 @@ export default function ProfilePage() {
                 <Share className="h-3.5 w-3.5 md:h-4 md:w-4" />
                 Share Profile
               </button>
-              {/* <button
-                onClick={() => {
-                  setShowMenu(false);
-                  // Handle report profile
-                  console.log("Report profile");
-                }}
-                className="flex items-center gap-2 w-full px-3 py-2 text-sm text-red-600 hover:bg-gray-50 transition-colors"
-              >
-                <Flag className="h-4 w-4" />
-                Report Profile
-              </button> */}
+
               <button
                 onClick={() => {
                   setShowMenu(false);
@@ -437,24 +442,17 @@ export default function ProfilePage() {
             </div>
           )}
         </div>
-        <Button
-          onClick={() => navigate("/settings")}
-          variant="outline"
-          className="text-xs md:text-sm py-1.5 md:py-2 px-2.5 md:px-3"
-        >
-          {/* <Pencil className="w-4 h-4 mr-2" /> */}
-          Edit
-        </Button>
-      </div>
+      </header>
 
-      <div className="md:grid md:grid-cols-12 md:gap-6 md:px-4 lg:px-6 md:pt-2 md:pb-6">
-        {/* Main Content */}
-        <div className="md:col-span-12">
+      <div className="lg:max-w-[60%] lg:mx-auto">
+        <div className="md:grid md:grid-cols-12 md:gap-6 md:px-4 lg:px-6 md:pt-2 md:pb-6">
+          {/* Main Content */}
+          <div className="md:col-span-12">
           <div className="flex flex-col space-y-3 md:space-y-4 px-3 md:px-4 lg:px-0">
             <ProfileHeader
               avatarUrl={profileData?.profile_picture || '/placeholder.svg'}
               name={fullName}
-              location={profileData?.location || 'No location specified'}
+              location={profileData?.location || ''}
               link={profileData?.username || ''}
               activeSince={activeSince}
               color={profileData?.color}
@@ -603,8 +601,14 @@ export default function ProfilePage() {
                     ))}
                   </div>
                 ) : (
-                  <div className="text-center py-6 md:py-8">
-                    <p className="text-xs md:text-sm text-gray-600">No posts yet</p>
+                  <div className="flex flex-col items-center justify-center py-12 md:py-16">
+                    <div className="w-16 h-16 md:w-20 md:h-20 rounded-full bg-blue-50 flex items-center justify-center mb-4 md:mb-6">
+                      <Users className="w-8 h-8 md:w-10 md:h-10 text-[#1600ff]" strokeWidth={1.5} />
+                    </div>
+                    <h3 className="text-base md:text-lg font-bold text-gray-900 mb-2 md:mb-3">No posts yet</h3>
+                    <p className="text-xs md:text-sm text-gray-600 text-center max-w-md px-4">
+                      Posts appear when you share updates in your collectives. Join or start a collective to start sharing your impact!
+                    </p>
                   </div>
                 )}
               </div>
@@ -612,9 +616,10 @@ export default function ProfilePage() {
           </div>
         </div>
 
-        {/* Sidebar - Only visible on desktop */}
-        <div className="hidden  md:col-span-4">
-          <ProfileSidebar />
+          {/* Sidebar - Only visible on desktop */}
+          <div className="hidden  md:col-span-4">
+            <ProfileSidebar />
+          </div>
         </div>
       </div>
 
@@ -634,16 +639,16 @@ export default function ProfilePage() {
           <div className="px-3 md:px-4">
             <SheetHeader>
               <SheetTitle className="text-xl md:text-2xl font-bold text-gray-900">
-                {activeStatsTab === 'causes' && 'Causes'}
+                {activeStatsTab === 'causes' && 'All Causes'}
                 {activeStatsTab === 'crwds' && 'Collectives'}
                 {activeStatsTab === 'followers' && 'Followers'}
                 {activeStatsTab === 'following' && 'Following'}
               </SheetTitle>
               <SheetDescription className="text-xs md:text-sm text-gray-500">
-                {activeStatsTab === 'causes' && 'Causes you support'}
+                {activeStatsTab === 'causes' && 'All nonprofits that you support'}
                 {activeStatsTab === 'crwds' && "Collectives you're part of"}
                 {activeStatsTab === 'followers' && 'People following you'}
-                {activeStatsTab === 'following' && 'People you follow'}
+                {activeStatsTab === 'following' && "People you're following"}
               </SheetDescription>
             </SheetHeader>
           </div>
@@ -718,7 +723,7 @@ export default function ProfilePage() {
                             <p className="text-xs md:text-sm font-semibold text-gray-900 mb-0.5 md:mb-1">
                               {cause.name || 'Unknown Cause'}
                             </p>
-                            <p className="text-[10px] md:text-xs text-gray-500 line-clamp-2">
+                            <p className="text-[10px] md:text-xs text-gray-500 line-clamp-1">
                               {cause.mission || 'Supporting this cause'}
                             </p>
                           </div>
@@ -758,7 +763,7 @@ export default function ProfilePage() {
                           key={collective.id || index}
                           className="flex items-center justify-between py-2.5 md:py-3 border-b border-gray-100"
                         >
-                          <div className="flex items-center gap-2.5 md:gap-3 flex-1 min-w-0">
+                          <div onClick={() => navigate(`/groupcrwd/${collective.id}`)} className="flex items-center gap-2.5 md:gap-3 flex-1 min-w-0">
                             <Avatar className="w-9 h-9 md:w-10 md:h-10 flex-shrink-0 rounded-lg">
                               <AvatarImage src={imageUrl} alt={collective.name} />
                               <AvatarFallback 
@@ -769,18 +774,15 @@ export default function ProfilePage() {
                               </AvatarFallback>
                             </Avatar>
                             <div className="flex-1 min-w-0">
-                              <div className="bg-green-100 text-green-600 px-1.5 md:px-2 py-0.5 rounded text-[9px] md:text-[10px] font-semibold w-fit mb-0.5 md:mb-1">
-                                Collective
-                              </div>
-                              <p className="text-xs md:text-sm font-medium text-gray-900 mb-0.5 md:mb-1">
+                              <p className="text-xs md:text-sm font-semibold text-gray-900 mb-0.5 md:mb-1">
                                 {collective.name || 'Unknown Collective'}
                               </p>
-                              <p className="text-[10px] md:text-xs text-gray-500 line-clamp-2">
-                                {collective.description || ''}
+                              <p className="text-[10px] md:text-xs text-gray-500 line-clamp-1">
+                                {collective.member_count || 0} members in this collective
                               </p>
                             </div>
                           </div>
-                          <Button
+                          {/* <Button
                             onClick={() => {
                               setShowStatsSheet(false);
                               navigate(`/groupcrwd/${collective.id}`);
@@ -788,7 +790,7 @@ export default function ProfilePage() {
                             className="bg-blue-600 hover:bg-blue-700 text-white text-[10px] md:text-xs px-3 md:px-4 py-1.5 md:py-2 rounded-lg"
                           >
                             View Details
-                          </Button>
+                          </Button> */}
                         </div>
                       );
                     })}
@@ -818,7 +820,11 @@ export default function ProfilePage() {
                           key={userData.id || index}
                           className="flex items-center justify-between py-2.5 md:py-3 border-b border-gray-100"
                         >
-                          <div className="flex items-center gap-2.5 md:gap-3 flex-1 min-w-0">
+                          <Link
+                            to={`/user-profile/${userData.id}`}
+                            onClick={() => setShowStatsSheet(false)}
+                            className="flex items-center gap-2.5 md:gap-3 flex-1 min-w-0 cursor-pointer hover:opacity-80 transition-opacity"
+                          >
                             <Avatar className="w-9 h-9 md:w-10 md:h-10 flex-shrink-0">
                               <AvatarImage src={userData.profile_picture || userData.avatar} />
                               <AvatarFallback 
@@ -836,7 +842,7 @@ export default function ProfilePage() {
                               </p>
                               <p className="text-[10px] md:text-xs text-gray-500">@{userData.username || 'unknown'}</p>
                             </div>
-                          </div>
+                          </Link>
                           {userData.id !== currentUser?.id && (
                             <Button
                               onClick={() => handleFollowToggle(userData.id.toString(), isFollowing)}
@@ -879,7 +885,11 @@ export default function ProfilePage() {
                           key={userData.id || index}
                           className="flex items-center justify-between py-2.5 md:py-3 border-b border-gray-100"
                         >
-                          <div className="flex items-center gap-2.5 md:gap-3 flex-1 min-w-0">
+                          <Link
+                            to={`/user-profile/${userData.id}`}
+                            onClick={() => setShowStatsSheet(false)}
+                            className="flex items-center gap-2.5 md:gap-3 flex-1 min-w-0 cursor-pointer hover:opacity-80 transition-opacity"
+                          >
                             <Avatar className="w-9 h-9 md:w-10 md:h-10 flex-shrink-0">
                               <AvatarImage src={userData.profile_picture || userData.avatar} />
                               <AvatarFallback 
@@ -897,7 +907,7 @@ export default function ProfilePage() {
                               </p>
                               <p className="text-[10px] md:text-xs text-gray-500">@{userData.username || 'unknown'}</p>
                             </div>
-                          </div>
+                          </Link>
                           {userData.id !== currentUser?.id && (
                             <Button
                               onClick={() => handleFollowToggle(userData.id.toString(), isFollowing)}

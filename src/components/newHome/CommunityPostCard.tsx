@@ -58,9 +58,10 @@ interface CommunityPostCardProps {
     };
   };
   onCommentPress?: (post: CommunityPostCardProps['post']) => void;
+  showSimplifiedHeader?: boolean; // When true, only show name and timestamp (for collective view)
 }
 
-export default function CommunityPostCard({ post, onCommentPress }: CommunityPostCardProps) {
+export default function CommunityPostCard({ post, onCommentPress, showSimplifiedHeader = false }: CommunityPostCardProps) {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
   const [isLiked, setIsLiked] = useState(post.isLiked || false);
@@ -284,7 +285,7 @@ export default function CommunityPostCard({ post, onCommentPress }: CommunityPos
           </Link>
           <div className="flex-1 min-w-0">
             <div className="mb-1.5 md:mb-3">
-              <div className="flex items-center gap-1 md:gap-2 mb-0.5">
+              <div className="flex items-center gap-1 md:gap-2 mb-0.5 flex-wrap">
                 <Link
                   to={`/user-profile/${post.user.id}`}
                   onClick={(e) => e.stopPropagation()}
@@ -292,16 +293,33 @@ export default function CommunityPostCard({ post, onCommentPress }: CommunityPos
                 >
                   {displayName}
                 </Link>
+                {!showSimplifiedHeader && post.user.username && (
+                  <>
+                    <span className="text-gray-400">•</span>
+                    <span className="text-xs md:text-sm text-gray-500">
+                      @{post.user.username}
+                    </span>
+                  </>
+                )}
                 {post.fundraiser?.is_active && (
                   <span className="px-2 py-0.5 bg-[#1600ff] text-white text-[9px] md:text-[10px] font-medium rounded-full">
                     Founder
                   </span>
                 )}
               </div>
+              {!showSimplifiedHeader && post.collective && (
+                <Link
+                  to={post.collective.id ? `/groupcrwd/${post.collective.id}` : '#'}
+                  onClick={(e) => e.stopPropagation()}
+                  className="text-xs md:text-sm text-gray-500 hover:text-gray-700 block"
+                >
+                  {post.collective.name}
+                </Link>
+              )}
               {post.fundraiser?.is_active && (
                 <p className="text-[10px] md:text-xs text-gray-500 mb-0.5">Started a fundraiser</p>
               )}
-              { !post.fundraiser?.is_active && post.timestamp && (
+              {showSimplifiedHeader && post.timestamp && (
                 <div className="text-[10px] md:text-sm text-gray-500">
                   {formatDistanceToNow(new Date(post.timestamp), { addSuffix: true })}
                 </div>
@@ -445,13 +463,13 @@ export default function CommunityPostCard({ post, onCommentPress }: CommunityPos
 
                   {/* Show preview card if previewDetails exists, otherwise show image */}
                   {post.previewDetails ? (
-                    <a
-                      href={post.previewDetails.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      onClick={(e) => e.stopPropagation()}
-                      className="block w-full rounded-lg overflow-hidden mb-3 border border-gray-200 bg-white hover:opacity-90 transition-opacity cursor-pointer"
-                    >
+                    // <a
+                    //   href={post.previewDetails.url}
+                    //   target="_blank"
+                    //   rel="noopener noreferrer"
+                    //   onClick={(e) => e.stopPropagation()}
+                    //   className="block w-full rounded-lg overflow-hidden mb-3 border border-gray-200 bg-white hover:opacity-90 transition-opacity cursor-pointer"
+                    // >
                       <div className="flex flex-col md:flex-row bg-white">
                         {/* Preview Image */}
                         {post.previewDetails.image && (
@@ -487,7 +505,7 @@ export default function CommunityPostCard({ post, onCommentPress }: CommunityPos
                           )}
                         </div>
                       </div>
-                    </a>
+                    // </a>
                   ) : post.imageUrl ? (
                 <a
                   href={post.imageUrl}

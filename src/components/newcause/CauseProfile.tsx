@@ -1,13 +1,28 @@
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { categories } from '@/constants/categories';
+import { useNavigate } from 'react-router-dom';
 
 interface CauseProfileProps {
   causeData: any;
 }
 
 export default function CauseProfile({ causeData }: CauseProfileProps) {
+  const navigate = useNavigate();
   const category = categories.find((cat) => cat.id === causeData?.category);
+  
+  const handleCategoryClick = () => {
+    if (category) {
+      // Navigate to search with category name as search query
+      // This will trigger a search for that category
+      navigate('/search', {
+        state: {
+          searchQuery: category.name,
+          categoryId: category.id,
+        },
+      });
+    }
+  };
   
   // Get first letter for avatar fallback
   const firstLetter = causeData?.name?.charAt(0).toUpperCase() || 'C';
@@ -57,7 +72,8 @@ export default function CauseProfile({ causeData }: CauseProfileProps) {
         {category && (
           <Badge
             variant="secondary"
-            className="rounded-full px-2.5 md:px-3 py-0.5 md:py-1 text-xs md:text-sm font-medium text-white"
+            onClick={handleCategoryClick}
+            className="rounded-full px-2.5 md:px-3 py-0.5 md:py-1 text-xs md:text-sm font-medium text-white cursor-pointer hover:opacity-90 transition-opacity"
             style={{
               backgroundColor: category.background,
             }}

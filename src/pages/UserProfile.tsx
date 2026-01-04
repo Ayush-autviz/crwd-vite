@@ -13,6 +13,7 @@ import {
   Flag,
   Loader2,
   ArrowLeft,
+  Users,
 } from "lucide-react";
 import { Toast } from "../components/ui/toast";
 import { useQuery, useMutation, useQueryClient, useInfiniteQuery } from "@tanstack/react-query";
@@ -382,7 +383,7 @@ export default function ProfilePage() {
         </div>
       </div>
 
-          <div className="md:max-w-[60%] mx-auto">
+          <div className="lg:max-w-[60%] lg:mx-auto">
       <div className="md:grid md:grid-cols-12 md:gap-6 md:px-6 md:pt-2 md:pb-6">
         {/* Main Content */}
         <div className="md:col-span-12">
@@ -390,10 +391,11 @@ export default function ProfilePage() {
             <ProfileHeader
               avatarUrl={userProfile.profile_picture || imageUrl}
               name={`${userProfile.first_name} ${userProfile.last_name}`}
-              location={userProfile.location || "Location not specified"}
+              location={userProfile.location || ""}
               activeSince={userProfile.date_joined || "Not specified"}
               link={userProfile.username || ''}
               color={userProfile.color}
+              founder={false}
             />
 
 
@@ -558,8 +560,14 @@ export default function ProfilePage() {
                     )}
                   </div>
                 ) : (
-                  <div className="text-center py-6 md:py-8">
-                    <p className="text-xs md:text-sm text-gray-600">No posts yet</p>
+                  <div className="flex flex-col items-center justify-center py-12 md:py-16">
+                    <div className="w-16 h-16 md:w-20 md:h-20 rounded-full bg-blue-50 flex items-center justify-center mb-4 md:mb-6">
+                      <Users className="w-8 h-8 md:w-10 md:h-10 text-[#1600ff]" strokeWidth={1.5} />
+                    </div>
+                    <h3 className="text-base md:text-lg font-bold text-gray-900 mb-2 md:mb-3">No posts yet</h3>
+                    <p className="text-xs md:text-sm text-gray-600 text-center max-w-md px-4">
+                      Posts appear when you share updates in your collectives. Join or start a collective to start sharing your impact!
+                    </p>
                   </div>
                 )}
               </div>

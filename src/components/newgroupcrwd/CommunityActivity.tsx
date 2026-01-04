@@ -124,7 +124,7 @@ export default function CommunityActivity({
           {transformedPosts && transformedPosts.length > 0 ? (
             <div className="space-y-2.5 md:space-y-4">
               {transformedPosts.map((post: any) => (
-                <CommunityPostCard key={post.id} post={post} />
+                <CommunityPostCard key={post.id} post={post} showSimplifiedHeader={true} />
               ))}
             </div>
           ) : (

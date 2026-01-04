@@ -26,6 +26,7 @@ interface ProfileHeaderProps {
   follow?: boolean;
   activeSince: string;
   color?: string;
+  founder?: boolean;
 }
 
 const ProfileHeader: React.FC<ProfileHeaderProps> = ({
@@ -36,6 +37,7 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
   follow = false,
   activeSince,
   color,
+  founder = true,
 }) => {
   const [isFollowing, setIsFollowing] = useState(false);
   const [toastState, setToastState] = useState({ show: false, message: "" });
@@ -88,7 +90,7 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
       {/* Avatar and info */}
       <div className="flex flex-col items-center gap-3 md:gap-4 mb-2.5 md:mb-3">
         <ImageModal src={avatarUrl} alt={name}>
-          <Avatar className="w-12 h-12 md:w-14 md:h-14 rounded-full object-contain cursor-pointer hover:opacity-80 transition-opacity">
+          <Avatar className="w-20 h-20 md:w-24 md:h-24 rounded-full object-contain cursor-pointer hover:opacity-80 transition-opacity">
             <AvatarImage src={avatarUrl} alt={name} />
             <AvatarFallback 
               style={{ backgroundColor: avatarBgColor }}
@@ -100,22 +102,21 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
         </ImageModal>
         <div className="font-bold text-base md:text-lg leading-tight">{name}</div>
       </div>
+      
       <div className="flex-1 flex flex-col items-center">
-        <div className="text-[10px] md:text-xs text-gray-500 flex items-center gap-1.5 md:gap-2 mt-0.5 md:mt-1">
+        {/* <div className="text-[10px] md:text-xs text-gray-500 flex items-center gap-1.5 md:gap-2 mt-0.5 md:mt-1"> */}
+          {founder && (
+          <div className="bg-pink-100 rounded-full py-1 px-2 mb-2">
+            <p className="text-pink-500 font-medium text-xs md:text-sm">Founder</p>
+          </div>
+          )}
+          {location && (
           <span className="flex items-center gap-0.5 md:gap-1">
             <MapPin className="w-3.5 h-3.5 md:w-4 md:h-4" />
             {location}
           </span>
-          {/* <a
-            href={link}
-            className="text-blue-500 hover:underline"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            {link}
-          </a>
-          <span className="text-gray-500 text-xs">Active since {new Date(activeSince).getFullYear()}</span> */}
-        </div>
+          )}
+        {/* </div> */}
       </div>
     </div>
   );
