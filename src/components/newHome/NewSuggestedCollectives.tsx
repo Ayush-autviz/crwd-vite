@@ -11,6 +11,7 @@ interface Collective {
   founder: {
     name: string;
     profile_picture?: string;
+    color?: string;
   };
   nonprofit_count: number;
   description: string;
@@ -60,13 +61,13 @@ export default function NewSuggestedCollectives({
       <div className="overflow-x-auto pb-2 -mx-4 px-4 md:mx-0 md:px-0">
         <div className="flex gap-3 md:gap-4 w-max">
           {collectives.map((collective, index) => {
-            // Priority: 1. If color is available, show color with letter, 2. If no color, show image, 3. Fallback to generated color with letter
-            const hasColor = collective.iconColor;
+            // Priority: 1. If logo exists, show logo, 2. If no logo but color exists (and is not empty), show color with letter, 3. Fallback to generated color with letter
             const hasLogo = collective.icon && (collective.icon.startsWith("http") || collective.icon.startsWith("/") || collective.icon.startsWith("data:"));
-            const iconColor = hasColor ? collective.iconColor : (!hasLogo ? getIconColor(index) : undefined);
+            const hasColor = collective.iconColor && collective.iconColor.trim() !== ""; // Check if color exists and is not empty string
+            // If logo exists, no background color needed. Otherwise, use API color if available, else use generated color
+            const iconColor = hasLogo ? undefined : (hasColor ? collective.iconColor : getIconColor(index));
             const iconLetter = getIconLetter(collective.name);
-            const showColorWithLetter = hasColor || !hasLogo;
-            const showImage = !hasColor && hasLogo;
+            const showImage = hasLogo;
 
             return (
               <Link
@@ -79,7 +80,7 @@ export default function NewSuggestedCollectives({
                   <div className="flex items-center gap-2">
                   <div
                     className="w-10 h-10 md:w-12 md:h-12 rounded-lg flex items-center justify-center flex-shrink-0"
-                    style={iconColor ? { backgroundColor: iconColor } : {}}
+                    style={showImage ? {} : (iconColor ? { backgroundColor: iconColor } : { backgroundColor: getIconColor(index) })}
                   >
                     {showImage ? (
                       <img
@@ -107,26 +108,8 @@ export default function NewSuggestedCollectives({
                       <AvatarFallback 
                         style={{ 
                           backgroundColor: (() => {
-                            const avatarColors = [
-                              '#EF4444', // Red
-                              '#10B981', // Green
-                              '#3B82F6', // Blue
-                              '#8B5CF6', // Purple
-                              '#84CC16', // Lime Green
-                              '#EC4899', // Pink
-                              '#F59E0B', // Amber
-                              '#06B6D4', // Cyan
-                              '#F97316', // Orange
-                              '#A855F7', // Violet
-                              '#14B8A6', // Teal
-                              '#F43F5E', // Rose
-                              '#6366F1', // Indigo
-                              '#22C55E', // Emerald
-                              '#EAB308', // Yellow
-                            ];
-                            const founderId = collective.founder.name || collective.id;
-                            const colorIndex = founderId ? (String(founderId).split('').reduce((acc, char) => acc + char.charCodeAt(0), 0) % avatarColors.length) : 0;
-                            return avatarColors[colorIndex];
+                            const color = collective.founder.color;
+                            return color ? color : undefined;
                           })()
                         }}
                         className="text-white text-xs md:text-sm font-semibold"

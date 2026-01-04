@@ -210,11 +210,11 @@ export default function NewSavedPage() {
                   <Loader2 className="w-5 h-5 animate-spin text-gray-400" />
                 </div>
               ) : filteredSuggestedCauses.length > 0 && (
-                <div className="mt-8">
-                  <h3 className="font-bold text-base md:text-lg text-gray-900 mb-4">
+                <div className="mt-6 md:mt-8">
+                  <h3 className="font-bold text-sm md:text-lg text-gray-900 mb-3 md:mb-4">
                     Suggested for you
                   </h3>
-                  <div className="space-y-4">
+                  <div className="space-y-3 md:space-y-4">
                     {filteredSuggestedCauses.map((cause: any) => {
                       const avatarBgColor = getConsistentColor(cause.id, avatarColors);
                       const initials = getInitials(cause.name || 'N');
@@ -225,22 +225,22 @@ export default function NewSavedPage() {
                           onClick={() => navigate(`/cause/${cause.id}`)}
                           className="cursor-pointer hover:shadow-md transition-shadow border border-gray-200"
                         >
-                          <CardContent className="px-4 py-3">
-                            <div className="flex items-start gap-4">
-                              <Avatar className="w-12 h-12 rounded-lg flex-shrink-0 border border-gray-200">
+                          <CardContent className="px-3 py-2 md:px-4 md:py-3">
+                            <div className="flex items-start gap-3 md:gap-4">
+                              <Avatar className="w-10 h-10 md:w-12 md:h-12 rounded-lg flex-shrink-0 border border-gray-200">
                                 <AvatarImage src={cause.image} alt={cause.name} />
                                 <AvatarFallback
                                   style={{ backgroundColor: avatarBgColor }}
-                                  className="text-white rounded-lg font-bold text-base"
+                                  className="text-white rounded-lg font-bold text-sm md:text-base"
                                 >
                                   {initials}
                                 </AvatarFallback>
                               </Avatar>
                               <div className="flex-1 min-w-0">
-                                <h3 className="font-bold text-base text-foreground mb-1">
+                                <h3 className="font-bold text-sm md:text-base text-foreground mb-1">
                                   {cause.name}
                                 </h3>
-                                <p className="text-sm text-gray-600">
+                                <p className="text-xs md:text-sm text-gray-600 line-clamp-2">
                                   {cause.mission || cause.description || 'No description available'}
                                 </p>
                               </div>
@@ -367,11 +367,11 @@ export default function NewSavedPage() {
                 <Loader2 className="w-5 h-5 animate-spin text-gray-400" />
               </div>
             ) : filteredSuggestedCollectives.length > 0 && (
-              <div className="mt-8">
-                <h3 className="font-bold text-base md:text-lg text-gray-900 mb-4">
+              <div className="mt-6 md:mt-8">
+                <h3 className="font-bold text-sm md:text-lg text-gray-900 mb-3 md:mb-4">
                   Suggested for you
                 </h3>
-                <div className="space-y-4">
+                <div className="space-y-3 md:space-y-4">
                   {filteredSuggestedCollectives.map((collective: any, index: number) => {
                     // Generate color for icon if not provided
                     const getIconColor = (index: number): string => {
@@ -407,45 +407,45 @@ export default function NewSavedPage() {
                         onClick={() => navigate(`/groupcrwd/${collective.id}`)}
                         className="cursor-pointer hover:shadow-md transition-shadow border border-gray-200"
                       >
-                        <CardContent className="px-4 py-3">
-                          <div className="flex flex-col items-start gap-4">
-                            <Avatar className="w-12 h-12 rounded-lg flex-shrink-0">
+                        <CardContent className="px-3 py-2 md:px-4 md:py-3">
+                          <div className="flex flex-col items-start gap-3 md:gap-4">
+                            <Avatar className="w-10 h-10 md:w-12 md:h-12 rounded-lg flex-shrink-0">
                               {showImage ? (
                                 <AvatarImage src={collective.logo} alt={collective.name} className="rounded-lg" />
                               ) : null}
                               <AvatarFallback
                                 style={iconColor ? { backgroundColor: iconColor } : {}}
-                                className="text-white font-bold text-xl rounded-lg"
+                                className="text-white font-bold text-lg md:text-xl rounded-lg"
                               >
                                 {iconLetter}
                               </AvatarFallback>
                             </Avatar>
                             <div className="flex-1 min-w-0">
-                              <h3 className="font-bold text-base text-foreground mb-1">
+                              <h3 className="font-bold text-sm md:text-base text-foreground mb-1">
                                 {collective.name}
                               </h3>
-                              <p className="text-sm text-gray-600 mb-2">
+                              <p className="text-xs md:text-sm text-gray-600 mb-2 line-clamp-2">
                                 {collective.description || 'No description available'}
                               </p>
                               {founder && (
                                 <div className="flex items-center gap-2 mb-1">
-                                  <Avatar className="w-6 h-6 rounded-full">
+                                  <Avatar className="w-5 h-5 md:w-6 md:h-6 rounded-full">
                                     <AvatarImage src={founder.profile_picture} alt={founder.username} />
                                     <AvatarFallback
                                       style={{
                                         backgroundColor: getConsistentColor(founder.id, avatarColors),
                                       }}
-                                      className="text-white text-xs font-bold"
+                                      className="text-white text-[10px] md:text-xs font-bold"
                                     >
                                       {founder.first_name?.charAt(0) || founder.username?.charAt(0) || 'U'}
                                     </AvatarFallback>
                                   </Avatar>
-                                  <span className="text-sm text-gray-600">
+                                  <span className="text-xs md:text-sm text-gray-600">
                                     Founded by {founder.first_name} {founder.last_name}
                                   </span>
                                 </div>
                               )}
-                              <p className="text-sm text-gray-500">
+                              <p className="text-xs md:text-sm text-gray-500">
                                 {memberCount} {memberCount === 1 ? 'member' : 'members'}
                               </p>
                             </div>

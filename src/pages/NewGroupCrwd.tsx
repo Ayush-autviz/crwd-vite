@@ -472,7 +472,7 @@ export default function NewGroupCrwdPage() {
       {/* Legal Disclaimer */}
       <div className="px-3 md:px-4 py-4 md:py-6 border-t border-gray-200 mt-6 md:mt-8">
         <p className="text-[10px] md:text-xs text-gray-500 text-center leading-relaxed">
-          All donations are made to CRWD Foundation Inc. (EIN: XX-XXXXXXX), a 501(c)(3) nonprofit organization. CRWD Foundation grants funds to qualified 501(c)(3) organizations selected by donors.
+          All donations are made to CRWD Foundation Inc. (EIN: 41-2423690), a 501(c)(3) nonprofit organization. CRWD Foundation grants funds to qualified 501(c)(3) organizations selected by donors.
         </p>
       </div>
 

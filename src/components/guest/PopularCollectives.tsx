@@ -13,6 +13,7 @@ interface Collective {
   founder: {
     name: string;
     profile_picture?: string;
+    color?: string;
   };
   nonprofit_count: number;
   description: string;
@@ -62,6 +63,7 @@ export default function PopularCollectives({
         founder: {
           name: founderName,
           profile_picture: collective.created_by?.profile_picture || "",
+          color: collective.created_by?.color || "",
         },
         nonprofit_count:
           collective.causes_count ||
@@ -147,7 +149,9 @@ export default function PopularCollectives({
                   <div className="flex items-center gap-1.5 md:gap-2 mb-1.5 md:mb-2">
                     <Avatar className="h-4 w-4 md:h-6 md:w-6 lg:h-6 lg:w-6 xl:h-6 xl:w-6">
                       <AvatarImage src={collective.founder.profile_picture} />
-                      <AvatarFallback className="text-[8px] md:text-[10px]">
+                      <AvatarFallback
+                      style={{ backgroundColor: collective.founder.color }}
+                      className="text-white font-bold text-[8px] md:text-[10px]">
                         {collective.founder.name
                           .split(" ")
                           .map((n) => n.charAt(0))

@@ -168,7 +168,7 @@ export default function ProfileNavbar({
                 >
                   <Avatar className="h-8 w-8">
                     <AvatarImage src={user?.profile_picture} />
-                    <AvatarFallback className="bg-[#1600ff] text-white">
+                    <AvatarFallback className={cn("text-white font-bold text-[10px] md:text-sm", user?.color ? `bg-[${user.color}]` : "bg-blue-500")}>
                       {getUserInitials()}
                     </AvatarFallback>
                   </Avatar>
@@ -327,7 +327,7 @@ export default function ProfileNavbar({
                 >
                   <Avatar className="h-8 w-8">
                     <AvatarImage src={user?.profile_picture} />
-                    <AvatarFallback className="bg-[#1600ff] text-white">
+                    <AvatarFallback className={cn("text-white font-bold text-[10px] md:text-sm", user?.color ? `bg-[${user.color}]` : "bg-blue-500")}>
                       {getUserInitials()}
                     </AvatarFallback>
                   </Avatar>

@@ -1370,7 +1370,7 @@ const DonationBox = ({ tab = "setup", preselectedItem, activeTab, fromPaymentRes
       {checkout && (
         <div className="w-full px-3 md:px-4 py-4 md:py-6 border-t border-gray-200 bg-gray-50">
           <p className="text-[10px] md:text-xs text-gray-500 text-center leading-relaxed max-w-4xl mx-auto">
-            All donations are made to CRWD Foundation Inc. (EIN: XX-XXXXXXX), a 501(c)(3) nonprofit organization. CRWD Foundation grants funds to qualified 501(c)(3) organizations selected by donors.
+            All donations are made to CRWD Foundation Inc. (EIN: 41-2423690), a 501(c)(3) nonprofit organization. CRWD Foundation grants funds to qualified 501(c)(3) organizations selected by donors.
           </p>
         </div>
       )}
