@@ -482,11 +482,33 @@ export default function NewSettings() {
                 />
               </div>
 
+              {/* Username */}
+              <div>
+                <Label className="mb-1.5 md:mb-2 text-xs md:text-sm font-bold text-gray-900">Username</Label>
+                <Input
+                  value={formData.username}
+                  disabled={true}
+                  placeholder="Username"
+                  className="bg-gray-100 border-0 text-sm md:text-base opacity-60 cursor-not-allowed"
+                />
+              </div>
+
+              {/* Email */}
+              <div>
+                <Label className="mb-1.5 md:mb-2 text-xs md:text-sm font-bold text-gray-900">Email</Label>
+                <Input
+                  value={formData.email}
+                  disabled={true}
+                  placeholder="Email"
+                  className="bg-gray-100 border-0 text-sm md:text-base opacity-60 cursor-not-allowed"
+                />
+              </div>
+
               {/* Location */}
               <div>
                 <Label className="mb-1.5 md:mb-2 text-xs md:text-sm font-bold text-gray-900">Location</Label>
                 <div className="relative">
-                  <MapPin className="absolute left-2.5 md:left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 md:h-4 md:w-4 text-gray-500" />
+                  {/* <MapPin className="absolute left-2.5 md:left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 md:h-4 md:w-4 text-gray-500" /> */}
                   <Input
                     value={formData.location}
                     onChange={(e) => setFormData(prev => ({ ...prev, location: e.target.value }))}

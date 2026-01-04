@@ -21,6 +21,7 @@ import SupportedNonprofits from '@/components/newgroupcrwd/SupportedNonprofits';
 import CommunityActivity from '@/components/newgroupcrwd/CommunityActivity';
 import CollectiveStatisticsModal from '@/components/newgroupcrwd/CollectiveStatisticsModal';
 import JoinCollectiveBottomSheet from '@/components/newgroupcrwd/JoinCollectiveBottomSheet';
+import DiscoverMoreCollectives from '@/components/newgroupcrwd/DiscoverMoreCollectives';
 import { SharePost } from '@/components/ui/SharePost';
 import { Toast } from '@/components/ui/toast';
 import { useAuthStore } from '@/stores/store';
@@ -336,8 +337,16 @@ export default function NewGroupCrwdPage() {
         collectiveId={crwdId}
         isFavorite={crwdData.is_favorite}
         isAdmin={isAdmin}
+        isJoined={crwdData.is_joined}
         onShare={handleShare}
         onManageCollective={handleManageCollective}
+        onDonate={() => {
+          if (!currentUser || !token?.access_token) {
+            navigate(`/onboarding?redirectTo=/groupcrwd/${crwdId}`);
+            return;
+          }
+          setShowJoinModal(true);
+        }}
       />
 
     <div className='lg:max-w-[60%] lg:mx-auto'>
@@ -377,7 +386,8 @@ export default function NewGroupCrwdPage() {
             {/* Joined Button - Non-clickable for admin */}
             <Button
               disabled
-              className="flex-1 font-semibold py-2 md:py-4 lg:py-5 rounded-lg text-xs md:text-sm lg:text-base bg-[#1600ff] text-white cursor-not-allowed opacity-75"
+              variant="outline"
+              className="flex-1 font-semibold py-2 md:py-4 lg:py-5 rounded-lg text-xs md:text-sm lg:text-base border-green-600 text-green-600 cursor-not-allowed opacity-75"
             >
               <Check className="w-3 h-3 md:w-3.5 md:h-3.5 lg:w-4 lg:h-4 mr-1 md:mr-1.5 lg:mr-2 inline" />
               Joined
@@ -397,7 +407,8 @@ export default function NewGroupCrwdPage() {
             <Button
               onClick={handleJoinCollective}
               disabled={leaveCollectiveMutation.isPending}
-              className="flex-1 font-semibold py-2 md:py-4 lg:py-5 rounded-lg text-xs md:text-sm lg:text-base bg-[#1600ff] hover:bg-[#1400cc] text-white"
+              variant="outline"
+              className="flex-1 font-semibold py-2 md:py-4 lg:py-5 rounded-lg text-xs md:text-sm lg:text-base border-green-600 text-green-600 hover:bg-green-50"
             >
               {leaveCollectiveMutation.isPending ? (
                 <>
@@ -468,6 +479,9 @@ export default function NewGroupCrwdPage() {
         isJoined={crwdData.is_joined}
         collectiveData={crwdData}
       />
+
+      {/* Discover More Collectives */}
+      <DiscoverMoreCollectives collectiveId={crwdId} />
 
       {/* Legal Disclaimer */}
       <div className="px-3 md:px-4 py-4 md:py-6 border-t border-gray-200 mt-6 md:mt-8">

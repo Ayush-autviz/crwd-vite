@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { HandHeart, Users } from "lucide-react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { getPostById, followUser, unfollowUser, getUserProfileById } from "@/services/api/social";
+import { getJoinCollective } from "@/services/api/crwd";
 import CommunityPostCard from "@/components/newHome/CommunityPostCard";
 import { toast } from "sonner";
 import { useAuthStore } from "@/stores/store";
@@ -110,6 +111,18 @@ function NotificationSummary({ update }: { update: CommunityUpdate }) {
   const actionText = update.content || "";
   const isJoinNotification = update.isJoinNotification || false;
   const isDonationNotification = !isJoinNotification && actionText.toLowerCase().includes('donated');
+
+  // Fetch joined collectives to check if user has already joined
+  const { data: joinedCollectivesData } = useQuery({
+    queryKey: ['joinedCollectives', currentUser?.id],
+    queryFn: () => getJoinCollective(currentUser?.id?.toString() || ''),
+    enabled: !!currentUser?.id && !!token?.access_token && !!update.collective?.id,
+  });
+
+  // Check if user has already joined this collective
+  const hasJoinedCollective = joinedCollectivesData?.data?.some((item: any) => 
+    item.collective?.id?.toString() === update.collective?.id?.toString()
+  ) || false;
 
   // Fetch user profile to check follow status
   const { data: userProfile, isLoading: isLoadingProfile } = useQuery({
@@ -223,8 +236,8 @@ function NotificationSummary({ update }: { update: CommunityUpdate }) {
             </div>
           </div>
           
-          {/* Join Button */}
-          {update.collective && (
+          {/* Join Button - Only show if user hasn't joined */}
+          {update.collective && !hasJoinedCollective && (
             <button
               onClick={handleJoinClick}
               className="ml-1.5 sm:ml-2 md:ml-3 bg-white text-[#1600ff] border border-[#1600ff] hover:bg-[#1600ff] hover:text-white text-[10px] xs:text-xs sm:text-xs md:text-sm lg:text-base font-semibold px-2 xs:px-2.5 sm:px-3 md:px-4 lg:px-5 py-1 xs:py-1.5 sm:py-1.5 rounded-full flex-shrink-0"

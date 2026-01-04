@@ -47,7 +47,7 @@ export default function SupportedNonprofits({
     return (
       <div className="px-3 md:px-4 py-4 md:py-6">
         <div className="flex justify-between items-center mb-3 md:mb-4">
-          <h2 className="text-base xs:text-lg sm:text-2xl md:text-3xl font-bold">Supported Nonprofits</h2>
+          <h2 className="text-lg md:text-xl  font-bold">Supported Nonprofits</h2>
         </div>
         <div className="flex items-center justify-center py-6 md:py-8">
           <Loader2 className="w-5 h-5 md:w-6 md:h-6 animate-spin text-gray-400" />
@@ -63,7 +63,7 @@ export default function SupportedNonprofits({
   return (
     <div className="w-full px-3 md:px-4 mt-6 md:mt-8">
       <div className="flex justify-between items-center mb-3 md:mb-4">
-        <h2 className="text-base xs:text-lg sm:text-2xl md:text-3xl font-bold">Supported Nonprofits</h2>
+        <h2 className="text-base md:text-lg lg:text-xl  font-bold">Supported Nonprofits</h2>
         {onSeeAllClick && (
           <Button 
             variant="link" 

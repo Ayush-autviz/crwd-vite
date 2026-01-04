@@ -614,8 +614,8 @@ export default function ProfilePage() {
           </div>
 
           {/* Tabs */}
-          <div className="px-4 mb-2">
-            <div className="flex gap-0.5 bg-gray-100 rounded-2xl p-1">
+          <div className="px-1 md:px-4 mb-2">
+            <div className="flex justify-between gap-0.5 bg-gray-100 rounded-2xl p-0.5 md:p-1">
               {[
                 { label: 'Causes', value: 'causes' },
                 { label: 'Collectives', value: 'crwds' },
@@ -625,7 +625,7 @@ export default function ProfilePage() {
                 <button
                   key={tab.value}
                   onClick={() => setActiveStatsTab(tab.value as typeof activeStatsTab)}
-                  className={`flex-1 px-3 py-1.5 rounded-xl text-sm font-semibold transition-colors ${activeStatsTab === tab.value
+                  className={`flex-1 px-1.5 sm:px-2 md:px-3 py-1 md:py-1.5 rounded-xl text-[10px] xs:text-xs sm:text-xs md:text-sm font-semibold transition-colors whitespace-nowrap ${activeStatsTab === tab.value
                       ? 'bg-white text-gray-900'
                       : 'text-gray-600'
                     }`}
