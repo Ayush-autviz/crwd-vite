@@ -610,10 +610,10 @@ export const DonationBox3 = ({
           </div>
           <button
               onClick={() => setShowEditSplitSheet(true)}
-              className=" bg-gray-100 text-gray-600 font-medium py-2 px-4 rounded-lg transition-colors flex items-center justify-center gap-2 hover:bg-gray-200"
+              className="bg-gray-100 text-gray-600 font-medium py-1.5 px-3 md:py-2 md:px-4 rounded-lg transition-colors flex items-center gap-1.5 md:gap-2 hover:bg-gray-200"
             >
-              <Pencil size={18} className="text-gray-600" />
-              Edit Split
+              <Pencil size={16} className="md:w-[18px] md:h-[18px] text-gray-600 flex-shrink-0" />
+              <span className="text-xs md:text-sm leading-tight">Edit Split</span>
             </button>
 </div>
           {/* Causes List from box_causes */}

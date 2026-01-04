@@ -427,36 +427,36 @@ export default function EditDonationSplitBottomSheet({
       {/* Bottom Sheet */}
       <div
         className={cn(
-          "absolute bottom-0 left-0 right-0 bg-white rounded-t-2xl shadow-2xl transition-transform duration-300 max-h-[85vh] flex flex-col",
+          "absolute bottom-0 left-0 right-0 bg-white rounded-t-2xl md:rounded-t-3xl shadow-2xl transition-transform duration-300 max-h-[90vh] md:max-h-[85vh] flex flex-col",
           isAnimating ? "translate-y-0" : "translate-y-full"
         )}
         onClick={(e) => e.stopPropagation()}
       >
         {/* Drag Handle */}
-        <div className="flex justify-center pt-3 pb-2">
-          <div className="w-12 h-1.5 bg-gray-300 rounded-full" />
+        <div className="flex justify-center pt-2 md:pt-3 pb-1.5 md:pb-2">
+          <div className="w-10 md:w-12 h-1 md:h-1.5 bg-gray-300 rounded-full" />
         </div>
 
         {/* Header */}
-        <div className="px-4 md:px-6 py-4 border-b border-gray-200 flex items-center justify-between">
-          <div>
-            <h2 className="text-lg md:text-xl font-bold text-gray-900">Edit Donation Split</h2>
-            <p className="text-sm md:text-base text-gray-600 mt-1">
+        <div className="px-3 md:px-6 py-3 md:py-4 border-b border-gray-200 flex items-start md:items-center justify-between gap-2 md:gap-4">
+          <div className="flex-1 min-w-0">
+            <h2 className="text-base md:text-xl font-bold text-gray-900">Edit Donation Split</h2>
+            <p className="text-xs md:text-base text-gray-600 mt-0.5 md:mt-1">
               Adjust how your ${monthlyAmount}/month is split across nonprofits.
             </p>
           </div>
           <button
             onClick={onClose}
-            className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+            className="p-1.5 md:p-2 hover:bg-gray-100 rounded-full transition-colors flex-shrink-0"
             aria-label="Close"
           >
-            <X className="w-5 h-5 text-gray-600" />
+            <X className="w-4 h-4 md:w-5 md:h-5 text-gray-600" />
           </button>
         </div>
 
         {/* Content */}
-        <div className="flex-1 overflow-y-auto px-4 md:px-6 py-4">
-          <div className="space-y-4">
+        <div className="flex-1 overflow-y-auto px-3 md:px-6 py-3 md:py-4">
+          <div className="space-y-3 md:space-y-4">
             {causes.map((cause: any, index: number) => {
               const percentage = percentages[cause.id] || 0;
               const amount = (netAmount * percentage) / 100;
@@ -465,95 +465,86 @@ export default function EditDonationSplitBottomSheet({
               const sliderColor = sliderColors[index % sliderColors.length];
 
               return (
-                <div key={cause.id} className="bg-white border border-gray-300 rounded-lg p-4">
+                <div key={cause.id} className="bg-white border border-gray-300 rounded-lg p-3 md:p-4">
                   {/* Cause Header */}
-                  <div className="flex items-center gap-3 mb-4">
+                  <div className="flex items-center gap-2 md:gap-3 mb-3 md:mb-4">
                     <Avatar className="w-10 h-10 md:w-12 md:h-12 rounded-full flex-shrink-0">
                       <AvatarImage src={cause.image} alt={cause.name} />
                       <AvatarFallback
                         style={{ backgroundColor: avatarBgColor }}
-                        className="text-white font-bold text-sm md:text-base"
+                        className="text-white font-bold text-xs md:text-base"
                       >
                         {initials}
                       </AvatarFallback>
                     </Avatar>
                     <div className="flex-1 min-w-0">
-                      <h3 className="font-bold text-sm md:text-base text-gray-900 truncate">
+                      <h3 className="font-bold text-xs md:text-base text-gray-900 truncate">
                         {cause.name}
                       </h3>
-                      <p className="text-xs md:text-sm text-gray-600">
+                      <p className="text-xs text-gray-600">
                         ${amount.toFixed(2)}/mo
                       </p>
                     </div>
                   </div>
 
                   {/* Controls */}
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-1.5 md:gap-2">
                     <button
                       onClick={() => handleDecrease(cause.id)}
                       disabled={percentage <= calculateMinPercentage()}
                       className="p-1.5 md:p-2 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex-shrink-0"
                     >
-                      <Minus className="w-4 h-4 text-gray-700" />
+                      <Minus className="w-3.5 h-3.5 md:w-4 md:h-4 text-gray-700" />
                     </button>
 
-                    {/* <div className="flex-1 relative"> */}
-                      {/* Percentage Input - Above slider */}
-                      {/* <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-full mb-2 z-10"> */}
-                        <div className="flex flex-1 flex-col items-center">
-                          <Input
-                            type="number"
-                            step="0.01"
-                            value={inputValues[cause.id] || '0'}
-                            onChange={(e) => handleInputChange(cause.id, e.target.value)}
-                            onBlur={() => handleInputBlur(cause.id)}
-                            className="w-full text-center text-sm md:text-base font-semibold border-gray-300 rounded-lg bg-white [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none [-moz-appearance:textfield]"
-                            min="0"
-                            max="100"
-                          />
-                        </div>
-                      {/* </div>s */}
-
-                    
-                    {/* </div> */}
+                    <div className="flex flex-1 flex-col items-center">
+                      <Input
+                        type="number"
+                        step="0.01"
+                        value={inputValues[cause.id] || '0'}
+                        onChange={(e) => handleInputChange(cause.id, e.target.value)}
+                        onBlur={() => handleInputBlur(cause.id)}
+                        className="w-full text-center text-xs md:text-base font-semibold border-gray-300 rounded-lg bg-white py-2 md:py-2.5 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none [-moz-appearance:textfield]"
+                        min="0"
+                        max="100"
+                      />
+                    </div>
 
                     <button
                       onClick={() => handleIncrease(cause.id)}
                       disabled={percentage >= 100}
                       className="p-1.5 md:p-2 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex-shrink-0"
                     >
-                      <Plus className="w-4 h-4 text-gray-700" />
+                      <Plus className="w-3.5 h-3.5 md:w-4 md:h-4 text-gray-700" />
                     </button>
-                    
                   </div>
 
-                  <span className="text-xs  text-gray-500 flex justify-center  mt-4">percent</span>
+                  <span className="text-[10px] md:text-xs text-gray-500 flex justify-center mt-2 md:mt-4">percent</span>
 
-                    {/* Slider */}
-                    <div className="relative h-2 bg-gray-200 rounded-full mt-4">
-                      
-                        <input
-                          type="range"
-                          min={calculateMinPercentage()}
-                          max="100"
-                          step="0.01"
-                          value={percentage}
-                          onChange={(e) => handlePercentageChange(cause.id, parseFloat(e.target.value))}
-                          className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
-                          style={{ 
-                            WebkitAppearance: 'none', 
-                            appearance: 'none',
-                            background: 'transparent',
-                          }}
-                        />
-                        <div
-                          className="absolute left-0 top-0 h-full rounded-full transition-all duration-200 pointer-events-none"
-                          style={{
-                            width: `${percentage}%`,
-                            backgroundColor: sliderColor,
-                          }}
-                        />
-                      </div>
+                  {/* Slider */}
+                  <div className="relative h-1.5 md:h-2 bg-gray-200 rounded-full mt-2 md:mt-4">
+                    <input
+                      type="range"
+                      min={calculateMinPercentage()}
+                      max="100"
+                      step="0.01"
+                      value={percentage}
+                      onChange={(e) => handlePercentageChange(cause.id, parseFloat(e.target.value))}
+                      className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                      style={{ 
+                        WebkitAppearance: 'none', 
+                        appearance: 'none',
+                        background: 'transparent',
+                      }}
+                    />
+                    <div
+                      className="absolute left-0 top-0 h-full rounded-full transition-all duration-200 pointer-events-none"
+                      style={{
+                        width: `${percentage}%`,
+                        backgroundColor: sliderColor,
+                      }}
+                    />
+                  </div>
                 </div>
               );
             })}
@@ -561,25 +552,25 @@ export default function EditDonationSplitBottomSheet({
         </div>
 
         {/* Footer */}
-        <div className="px-4 md:px-6 py-4 border-t border-gray-200 bg-white">
+        <div className="px-3 md:px-6 py-3 md:py-4 border-t border-gray-200 bg-white">
           <button
             onClick={handleReset}
-            className="w-full flex flex-col items-center gap-1 px-3 py-3 border border-gray-300 rounded-lg text-gray-600 hover:text-gray-900 transition-colors mb-3"
+            className="w-full flex flex-col items-center gap-1 px-3 py-2 md:py-3 border border-gray-300 rounded-lg text-gray-600 hover:text-gray-900 transition-colors mb-2 md:mb-3"
           >
             <span className="text-xs md:text-sm text-center">Reset to equal split</span>
           </button>
-          <div className="flex items-center justify-between gap-3">
+          <div className="flex items-center justify-between gap-2 md:gap-3">
             <Button
               variant="outline"
               onClick={onClose}
-              className="flex-1 border-gray-300 text-gray-700"
+              className="flex-1 border-gray-300 text-gray-700 text-sm md:text-base py-2 md:py-2.5"
             >
               Cancel
             </Button>
             <Button
               onClick={handleSave}
               disabled={updateDonationBoxMutation.isPending}
-              className="flex-1 bg-[#1600ff] hover:bg-[#1400cc] text-white disabled:opacity-50"
+              className="flex-1 bg-[#1600ff] hover:bg-[#1400cc] text-white disabled:opacity-50 text-sm md:text-base py-2 md:py-2.5"
             >
               {updateDonationBoxMutation.isPending ? 'Saving...' : 'Save Split'}
             </Button>

@@ -11,6 +11,7 @@ import { useQueryClient, useQuery, useMutation } from "@tanstack/react-query";
 import { useAuthStore } from "@/stores/store";
 import { getDonationHistory, removeCauseFromBox, updateDonationBox, cancelDonationBox } from "@/services/api/donation";
 import RequestNonprofitModal from "@/components/newsearch/RequestNonprofitModal";
+import EditDonationSplitBottomSheet from "@/components/donation/EditDonationSplitBottomSheet";
 import { toast } from "sonner";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 
@@ -63,6 +64,7 @@ export const Checkout = ({
   const [isPauseModalVisible, setIsPauseModalVisible] = useState(false);
   const [isPauseModalAnimating, setIsPauseModalAnimating] = useState(false);
   const [selectedPauseOption, setSelectedPauseOption] = useState<number | null>(null);
+  const [showEditSplit, setShowEditSplit] = useState(false);
 
   // Update showManageDonationBox when initialShowManage changes
   useEffect(() => {
@@ -451,16 +453,29 @@ export const Checkout = ({
     return () => clearTimeout(timer);
   }, [showRemoveModal, isRemoveModalVisible]);
 
-  // Calculate equal distribution percentage and amount per item
+  // Calculate distribution percentage and amount per item
+  // Check if boxCauses have custom percentages, otherwise use equal distribution
+  const hasCustomPercentages = boxCauses.some((bc: any) => bc.percentage != null && bc.percentage !== undefined);
+  
   const totalItems = hasApiData
     ? totalCauses
     : selectedOrganizations.length;
-  const distributionPercentage =
-    totalItems > 0
-      ? 100 / totalItems
-      : 0;
+  
+  // Get percentage for each cause (from boxCauses if available, otherwise equal)
+  const getCausePercentage = (causeId: number) => {
+    if (hasCustomPercentages) {
+      const boxCause = boxCauses.find((bc: any) => bc.cause?.id === causeId);
+      return boxCause?.percentage || (100 / totalItems);
+    }
+    return 100 / totalItems;
+  };
+  
+  const distributionPercentage = totalItems > 0 ? 100 / totalItems : 0;
+  
+  // Calculate amount per item based on net amount (after fees)
+  // Use existing net from fees calculation
   const amountPerItem = totalItems > 0
-    ? (actualDonationAmount * 0.9) / totalItems // 90% after fees, divided equally
+    ? net / totalItems // Net amount divided equally (or by custom percentages)
     : 0;
 
   if (showManageDonationBox) {
@@ -685,11 +700,25 @@ export const Checkout = ({
           {/* Currently Supporting Section */}
           {causes.length > 0 && (
             <div className="mb-4 md:mb-6">
-              <div className="mb-3 md:mb-4">
-                <h2 className="text-lg md:text-xl font-bold text-gray-900">Currently Supporting</h2>
-                <p className="text-xs md:text-sm text-gray-600 mt-0.5 md:mt-1">
-                  Supporting {causes.length} nonprofit{causes.length !== 1 ? 's' : ''}
-                </p>
+              <div className="mb-3 md:mb-4 flex items-center justify-between">
+                <div>
+                  <h2 className="text-lg md:text-xl font-bold text-gray-900">Currently Supporting</h2>
+                  <p className="text-xs md:text-sm text-gray-600 mt-0.5 md:mt-1">
+                    Supporting {causes.length} nonprofit{causes.length !== 1 ? 's' : ''}
+                  </p>
+                </div>
+                {causes.length > 1 && (
+                  <button
+                    onClick={() => setShowEditSplit(true)}
+                    className="bg-gray-100 text-gray-600 font-medium py-1.5 px-3 md:py-2 md:px-4 rounded-lg transition-colors flex items-center gap-1.5 md:gap-2 hover:bg-gray-200"
+                  >
+                    <Pencil size={16} className="md:w-[18px] md:h-[18px] text-gray-600 flex-shrink-0" />
+                    <div className="flex flex-col items-start">
+                      <span className="text-xs md:text-sm leading-tight">Edit Split</span>
+                      
+                    </div>
+                  </button>
+                )}
               </div>
 
               {/* Causes List from box_causes */}
@@ -724,8 +753,18 @@ export const Checkout = ({
                       {/* Donation Info & Remove Button */}
                       <div className="flex items-center gap-3 md:gap-4 ml-2 md:ml-4">
                         <div className="text-right">
-                          <p className="font-bold text-sm md:text-base text-gray-900">{distributionPercentage.toFixed(1)}%</p>
-                          <p className="text-xs md:text-sm text-gray-600">${amountPerItem.toFixed(2)}/mo</p>
+                          <p className="font-bold text-sm md:text-base text-gray-900">
+                            {hasCustomPercentages 
+                              ? `${getCausePercentage(cause.id).toFixed(1)}%`
+                              : `${distributionPercentage.toFixed(1)}%`
+                            }
+                          </p>
+                          <p className="text-xs md:text-sm text-gray-600">
+                            ${hasCustomPercentages
+                              ? ((net * getCausePercentage(cause.id) / 100)).toFixed(2)
+                              : amountPerItem.toFixed(2)
+                            }/mo
+                          </p>
                         </div>
                         <button
                           onClick={() => handleRemoveCause(cause)}
@@ -1019,6 +1058,17 @@ export const Checkout = ({
         isOpen={showRequestModal}
         onClose={() => setShowRequestModal(false)}
       />
+
+      {/* Edit Split Bottom Sheet */}
+      {causes.length > 0 && (
+        <EditDonationSplitBottomSheet
+          isOpen={showEditSplit}
+          onClose={() => setShowEditSplit(false)}
+          causes={causes}
+          monthlyAmount={actualDonationAmount}
+          boxCauses={boxCauses}
+        />
+      )}
 
       {/* Remove Cause Bottom Sheet Modal */}
       {isRemoveModalVisible && (
