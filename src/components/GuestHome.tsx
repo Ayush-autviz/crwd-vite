@@ -84,7 +84,7 @@
                     {/* Logo with colored circles */}
                     
                     <Link to="/waitlist" className="flex-shrink-0">
-                        <NewLogo size="sm" />
+                        <NewLogo />
                     </Link>
 
                     
