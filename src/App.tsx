@@ -148,7 +148,7 @@ function App() {
             {!token?.access_token && (
               <>
                 <Route path="/" element={<Waitlist />} />
-                <Route path="/login" element={<Login />} />
+                <Route path="/loginnew" element={<Login />} />
                 {/* <Route path="/signup" element={<Signup />} /> */}
                 <Route path="/forgot-password" element={<ForgotPassword />} />
                 <Route path="/interests" element={<Interests />} />
@@ -158,7 +158,7 @@ function App() {
                 <Route path="/onboarding" element={<NewOnboard />} />
                 {/* <Route path="/complete-onboard" element={<CompleteOnboard />} /> */}
                 {/* <Route path="/claim-profile" element={<ClaimProfile />} /> */}
-                <Route path="/claim-profile" element={<NewClaimProfile />} /> New Claim Profile
+                <Route path="/claim-profile" element={<NewClaimProfile />} />
                 {/* <Route
                   path="/non-profit-interests"
                   element={<NonProfitInterests />}
