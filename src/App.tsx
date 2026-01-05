@@ -147,6 +147,7 @@ function App() {
             {/* Auth routes - only render if no token */}
             {!token?.access_token && (
               <>
+                <Route path="/" element={<Waitlist />} />
                 <Route path="/login" element={<Login />} />
                 {/* <Route path="/signup" element={<Signup />} /> */}
                 <Route path="/forgot-password" element={<ForgotPassword />} />
@@ -172,8 +173,8 @@ function App() {
                 <Layout>
                   <Routes>
                     {/* <Route path="/" element={<Home />} /> */}
-                 <Route path="/" element={<NewHome />} />
-                 <Route path="/waitlist" element={<Waitlist />} />
+                 <Route path="/home" element={<NewHome />} />
+                 <Route path="/" element={<Waitlist />} />
                  {/* <Route path="/search" element={<Search />} /> */}
                  <Route path="/search" element={<NewSearch />} />
                  <Route path="/surprise-me" element={<SurpriseMe />} />

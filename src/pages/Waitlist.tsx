@@ -208,9 +208,9 @@ export default function WaitlistPage() {
 <div className="sticky top-0 z-10 w-full flex items-center justify-between p-4 border-b bg-background">
   {/* <img src="/logo3.png" width={100} height={100} alt="CRWD Logo" /> */}
   <NewLogo />
-  <Button variant="ghost" className="px-4 font-bold text-xs sm:text-sm md:text-base lg:text-lg" onClick={() => navigate("/")}>
+  {/* <Button variant="ghost" className="px-4 font-bold text-xs sm:text-sm md:text-base lg:text-lg" onClick={() => navigate("/")}>
     See How It Works
-  </Button>
+  </Button> */}
 </div>
 
       {/* Hero Section */}
