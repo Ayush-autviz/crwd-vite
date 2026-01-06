@@ -58,6 +58,7 @@ export default function ProfilePage() {
   const [isFollowing, setIsFollowing] = useState(false);
   const [showStatsSheet, setShowStatsSheet] = useState(false);
   const [activeStatsTab, setActiveStatsTab] = useState<'causes' | 'crwds' | 'followers' | 'following'>('causes');
+  const [showFounderSheet, setShowFounderSheet] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
   const { user: currentUser } = useAuthStore();
   const queryClient = useQueryClient();
@@ -174,6 +175,26 @@ export default function ProfilePage() {
     queryFn: () => getJoinCollective(targetUserId),
     enabled: !!targetUserId && showStatsSheet && activeStatsTab === 'crwds',
   });
+
+  // Fetch all joined collectives to check for admin status
+  const { data: allCollectivesData } = useQuery({
+    queryKey: ['allCollectives', targetUserId],
+    queryFn: () => getJoinCollective(targetUserId),
+    enabled: !!targetUserId,
+  });
+
+  // Filter collectives to only show those where user is admin
+  const adminCollectives = allCollectivesData?.data?.filter((item: any) => item.role === 'admin') || [];
+  
+  // Fetch admin collectives for founder bottom sheet (only when sheet is open)
+  const { data: adminCollectivesData, isLoading: adminCollectivesLoading } = useQuery({
+    queryKey: ['adminCollectives', targetUserId],
+    queryFn: () => getJoinCollective(targetUserId),
+    enabled: !!targetUserId && showFounderSheet,
+  });
+
+  // Filter collectives for bottom sheet to only show those where user is admin
+  const adminCollectivesForSheet = adminCollectivesData?.data?.filter((item: any) => item.role === 'admin') || [];
 
   const { data: statsFollowersData, isLoading: statsFollowersLoading } = useQuery({
     queryKey: ['followers', targetUserId],
@@ -395,7 +416,8 @@ export default function ProfilePage() {
               activeSince={userProfile.date_joined || "Not specified"}
               link={userProfile.username || ''}
               color={userProfile.color}
-              founder={false}
+              founder={adminCollectives.length > 0}
+              onFounderClick={() => setShowFounderSheet(true)}
             />
 
 
@@ -899,6 +921,120 @@ export default function ProfilePage() {
                 )}
               </>
             )}
+          </div>
+        </SheetContent>
+      </Sheet>
+
+      {/* Founder Collectives Bottom Sheet */}
+      <Sheet open={showFounderSheet} onOpenChange={setShowFounderSheet}>
+        <SheetContent side="bottom" className="h-[85vh] max-h-[85vh] p-0 flex flex-col">
+          {/* Drag Handle */}
+          <div className="flex justify-center pt-3 pb-2">
+            <div className="w-10 md:w-12 h-0.5 md:h-1.5 bg-gray-300 rounded-full" />
+          </div>
+
+          {/* Content */}
+          <div className="flex-1 overflow-y-auto px-4 md:px-6 pb-4 md:pb-6">
+            {/* Header */}
+            <div className="mb-4 md:mb-6">
+              <p className="text-sm md:text-base text-gray-500">
+                Collectives founded by {userProfile?.first_name} {userProfile?.last_name}
+              </p>
+            </div>
+
+            {adminCollectivesLoading ? (
+              <div className="space-y-3 md:space-y-4 mb-6 md:mb-8">
+                {[1, 2, 3].map((i) => (
+                  <div
+                    key={i}
+                    className="bg-white border border-gray-200 rounded-lg p-3 md:p-4 animate-pulse"
+                  >
+                    <div className="flex items-start gap-3 md:gap-4">
+                      {/* Avatar Skeleton */}
+                      <div className="w-12 h-12 md:w-14 md:h-14 bg-gray-200 rounded-lg flex-shrink-0" />
+                      {/* Text Skeleton */}
+                      <div className="flex-1 min-w-0 space-y-2">
+                        <div className="h-4 md:h-5 bg-gray-200 rounded w-3/4" />
+                        <div className="h-3 md:h-4 bg-gray-200 rounded w-full" />
+                        <div className="h-3 md:h-4 bg-gray-200 rounded w-5/6" />
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : adminCollectivesForSheet.length > 0 ? (
+              <div className="space-y-3 md:space-y-4 mb-6 md:mb-8">
+                {adminCollectivesForSheet.map((item: any, index: number) => {
+                  const collective = item.collective || item;
+                  
+                  // Priority: 1. Use color from API, 2. Use logo, 3. Fallback to generated color with letter
+                  const hasColor = collective.color;
+                  const hasLogo = collective.logo && (collective.logo.startsWith("http") || collective.logo.startsWith("/") || collective.logo.startsWith("data:"));
+                  const iconColor = hasColor || (!hasLogo ? getConsistentColor(collective.id || collective.name, avatarColors) : undefined);
+                  const iconLetter = collective.name?.charAt(0)?.toUpperCase() || 'N';
+                  const imageUrl = hasLogo ? collective.logo : (collective.image || collective.avatar || undefined);
+                  
+                  return (
+                    <div
+                      key={collective.id || index}
+                      onClick={() => {
+                        setShowFounderSheet(false);
+                        navigate(`/groupcrwd/${collective.id}`);
+                      }}
+                      className="bg-white border border-gray-200 rounded-lg p-3 md:p-4 cursor-pointer hover:shadow-md transition-shadow"
+                    >
+                      <div className="flex items-start gap-3 md:gap-4">
+                        {/* Avatar */}
+                        <Avatar className="w-12 h-12 md:w-14 md:h-14 flex-shrink-0 rounded-lg">
+                          <AvatarImage src={imageUrl} alt={collective.name} />
+                          <AvatarFallback 
+                            style={iconColor ? { backgroundColor: iconColor } : {}}
+                            className="rounded-lg text-white font-bold text-sm md:text-base"
+                          >
+                            {iconLetter}
+                          </AvatarFallback>
+                        </Avatar>
+                        {/* Collective Info */}
+                        <div className="flex-1 min-w-0">
+                          <h3 className="font-bold text-sm md:text-base text-gray-900 mb-1 md:mb-2">
+                            {collective.name || 'Unknown Collective'}
+                          </h3>
+                          <p className="text-xs md:text-sm text-gray-600 leading-relaxed">
+                            {collective.description || 'No description available'}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            ) : (
+              <div className="flex items-center justify-center py-8 md:py-10">
+                <p className="text-xs md:text-sm text-gray-500">No collectives found</p>
+              </div>
+            )}
+
+            {/* Motivational Message */}
+            {adminCollectivesForSheet.length > 0 && (
+              <div className="text-center mb-4 md:mb-6">
+                <p className="text-xs md:text-sm text-gray-500">
+                  Keep building your impact! Create another Collective to bring even more people together.
+                </p>
+              </div>
+            )}
+
+            {/* Create Another Collective Button */}
+            <div className="flex justify-center">
+              <Button
+                onClick={() => {
+                  setShowFounderSheet(false);
+                  navigate('/create-crwd');
+                }}
+                className="w-full px-6 md:px-8 py-3 md:py-4 text-sm md:text-base font-semibold bg-[#1600ff] hover:bg-[#1400cc] text-white rounded-lg"
+              >
+                Create Another Collective
+              </Button>
+            </div>
           </div>
         </SheetContent>
       </Sheet>

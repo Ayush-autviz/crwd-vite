@@ -973,9 +973,24 @@ export default function ProfilePage() {
             </div>
 
             {adminCollectivesLoading ? (
-              <div className="flex flex-col items-center justify-center py-8 md:py-10">
-                <Loader2 className="w-5 h-5 md:w-6 md:h-6 animate-spin text-blue-600" />
-                <p className="text-xs md:text-sm text-gray-600 mt-2 md:mt-2.5">Loading collectives...</p>
+              <div className="space-y-3 md:space-y-4 mb-6 md:mb-8">
+                {[1, 2, 3].map((i) => (
+                  <div
+                    key={i}
+                    className="bg-white border border-gray-200 rounded-lg p-3 md:p-4 animate-pulse"
+                  >
+                    <div className="flex items-start gap-3 md:gap-4">
+                      {/* Avatar Skeleton */}
+                      <div className="w-12 h-12 md:w-14 md:h-14 bg-gray-200 rounded-lg flex-shrink-0" />
+                      {/* Text Skeleton */}
+                      <div className="flex-1 min-w-0 space-y-2">
+                        <div className="h-4 md:h-5 bg-gray-200 rounded w-3/4" />
+                        <div className="h-3 md:h-4 bg-gray-200 rounded w-full" />
+                        <div className="h-3 md:h-4 bg-gray-200 rounded w-5/6" />
+                      </div>
+                    </div>
+                  </div>
+                ))}
               </div>
             ) : adminCollectivesForSheet.length > 0 ? (
               <div className="space-y-3 md:space-y-4 mb-6 md:mb-8">
