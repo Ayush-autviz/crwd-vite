@@ -95,7 +95,8 @@ export const DonationBox3 = ({
   const totalItems = causes.length;
   const getCausePercentage = (causeId: number) => {
     const boxCause = boxCauses.find((bc: any) => bc.cause?.id === causeId);
-    return boxCause?.percentage || null; // Return custom percentage if exists
+    const percentage = boxCause?.percentage;
+    return percentage != null ? Number(percentage) : null; // Return custom percentage as number if exists
   };
   const hasCustomPercentages = boxCauses.some((bc: any) => bc.percentage != null);
   const distributionPercentage = totalItems > 0 ? (hasCustomPercentages ? null : 100 / totalItems) : 0;
@@ -653,9 +654,9 @@ export const DonationBox3 = ({
                           {(() => {
                             const customPercentage = getCausePercentage(cause.id);
                             return customPercentage != null 
-                              ? `${customPercentage.toFixed(1)}%` 
+                              ? `${Number(customPercentage).toFixed(1)}%` 
                               : distributionPercentage != null 
-                                ? `${distributionPercentage.toFixed(1)}%` 
+                                ? `${Number(distributionPercentage).toFixed(1)}%` 
                                 : '0%';
                           })()}
                         </p>

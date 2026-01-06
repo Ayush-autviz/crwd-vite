@@ -27,6 +27,7 @@ interface ProfileHeaderProps {
   activeSince: string;
   color?: string;
   founder?: boolean;
+  onFounderClick?: () => void;
 }
 
 const ProfileHeader: React.FC<ProfileHeaderProps> = ({
@@ -38,6 +39,7 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
   activeSince,
   color,
   founder = true,
+  onFounderClick,
 }) => {
   const [isFollowing, setIsFollowing] = useState(false);
   const [toastState, setToastState] = useState({ show: false, message: "" });
@@ -106,7 +108,10 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
       <div className="flex-1 flex flex-col items-center">
         {/* <div className="text-[10px] md:text-xs text-gray-500 flex items-center gap-1.5 md:gap-2 mt-0.5 md:mt-1"> */}
           {founder && (
-          <div className="bg-pink-100 rounded-full py-1 px-2 mb-2">
+          <div 
+            className={`bg-pink-100 rounded-full py-1 px-2 mb-2 ${onFounderClick ? 'cursor-pointer hover:bg-pink-200 transition-colors' : ''}`}
+            onClick={onFounderClick}
+          >
             <p className="text-pink-500 font-medium text-xs md:text-sm">Founder</p>
           </div>
           )}

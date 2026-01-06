@@ -402,7 +402,11 @@ export default function FundraiserDetail() {
             <Input
               type="number"
               value={donationAmount}
-              onChange={(e) => setDonationAmount(e.target.value)}
+              onChange={(e) => {
+                // Only allow numbers
+                const numericValue = e.target.value.replace(/[^0-9]/g, '');
+                setDonationAmount(numericValue);
+              }}
               placeholder="25"
               className="pl-8 md:pl-10 text-sm md:text-base"
               min="1"

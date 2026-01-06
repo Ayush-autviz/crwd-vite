@@ -559,10 +559,34 @@ const ManageDonationBox: React.FC<ManageDonationBoxProps> = ({
   const totalCollectiveIds = [...remainingExistingCollectiveIdsForValidation, ...selectedCollectives];
   const hasNoItems = totalCauseIds.length === 0 && totalCollectiveIds.length === 0;
 
+  // Get box_causes from donation box to access custom percentages
+  const boxCauses = donationBoxData?.box_causes || [];
+  
+  // Get custom percentage for a cause from box_causes
+  const getCausePercentage = (causeId: number) => {
+    const boxCause = boxCauses.find((bc: any) => bc.cause?.id === causeId);
+    const percentage = boxCause?.percentage;
+    return percentage != null ? Number(percentage) : null; // Return custom percentage as number if exists
+  };
+  
+  // Check if there are custom percentages
+  const hasCustomPercentages = boxCauses.some((bc: any) => bc.percentage != null);
+  
   // Calculate equal distribution percentage and amount per item
   const totalItems = totalCauseIds.length + totalCollectiveIds.length;
-  const distributionPercentage = totalItems > 0 ? 100 / totalItems : 0;
-  const amountPerItem = totalItems > 0 ? (editableAmount * 0.9) / totalItems : 0; // 90% after fees, divided equally
+  const distributionPercentage = totalItems > 0 ? (hasCustomPercentages ? null : 100 / totalItems) : 0;
+  
+  // Calculate amount per item - use custom percentage if available, otherwise equal split
+  const getAmountPerItem = (causeId: number) => {
+    const customPercentage = getCausePercentage(causeId);
+    if (customPercentage != null) {
+      return (editableAmount * 0.9 * customPercentage) / 100;
+    }
+    return totalItems > 0 ? (editableAmount * 0.9) / totalItems : 0;
+  };
+  
+  // Legacy amountPerItem for backward compatibility (used for collectives)
+  const amountPerItem = totalItems > 0 ? (editableAmount * 0.9) / totalItems : 0;
 
   // Calculate capacity and counts for summary card
   const totalCausesCount = totalCauseIds.length;
@@ -779,8 +803,8 @@ const ManageDonationBox: React.FC<ManageDonationBoxProps> = ({
               )}
             </div>
 
-            {/* Information Banner - Show when amount has changed */}
-            {formatNextChargeDate(nextChargeDate) && (
+            {/* Information Banner - Show when amount has changed and donation box is active */}
+            {isActive && nextChargeDate && formatNextChargeDate(nextChargeDate) && (
               <div className="bg-blue-50 rounded-lg px-3 md:px-4 py-2.5 md:py-3 mb-4 md:mb-6 border border-blue-100">
                 <p className="text-xs md:text-sm text-blue-700">
                   Changes take effect on your next billing cycle ({formatNextChargeDate(nextChargeDate)} of the month)
@@ -920,10 +944,17 @@ const ManageDonationBox: React.FC<ManageDonationBoxProps> = ({
                             <div className="flex items-center gap-3 md:gap-4">
                               <div className="text-right">
                                 <div className="font-bold text-gray-900 text-sm md:text-base">
-                                  {distributionPercentage.toFixed(1)}%
+                                  {(() => {
+                                    const customPercentage = getCausePercentage(causeId);
+                                    return customPercentage != null 
+                                      ? `${Number(customPercentage).toFixed(1)}%` 
+                                      : distributionPercentage != null 
+                                        ? `${Number(distributionPercentage).toFixed(1)}%` 
+                                        : '0%';
+                                  })()}
                                 </div>
                                 <div className="text-xs md:text-sm text-gray-500">
-                                  ${amountPerItem.toFixed(2)}/mo
+                                  ${getAmountPerItem(causeId).toFixed(2)}/mo
                                 </div>
                               </div>
                               <button
@@ -1161,7 +1192,9 @@ const ManageDonationBox: React.FC<ManageDonationBoxProps> = ({
                               <div className="flex items-center gap-3 md:gap-4">
                                 <div className="text-right">
                                   <div className="font-bold text-gray-900 text-sm md:text-base">
-                                    {distributionPercentage.toFixed(1)}%
+                                    {distributionPercentage != null 
+                                      ? `${Number(distributionPercentage).toFixed(1)}%` 
+                                      : '0%'}
                                   </div>
                                   <div className="text-xs md:text-sm text-gray-500">
                                     ${amountPerItem.toFixed(2)}/mo

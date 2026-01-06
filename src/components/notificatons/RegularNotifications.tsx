@@ -267,19 +267,19 @@ const RegularNotifications: React.FC<RegularNotificationsProps> = ({
                   <div 
                     className="w-12 h-12 md:w-14 md:h-14 rounded-full flex items-center justify-center text-white text-sm md:text-base font-bold"
                     style={{ backgroundColor: bgColor }}
-                  >
-                    {getInitials(notification.firstName, notification.lastName, notification.username)}
+                      >
+                        {getInitials(notification.firstName, notification.lastName, notification.username)}
                   </div>
-                </Link>
-              ) : (
+              </Link>
+            ) : (
                 <div className="flex-shrink-0">
                   <div 
                     className="w-12 h-12 md:w-14 md:h-14 rounded-full flex items-center justify-center text-white text-sm md:text-base font-bold"
                     style={{ backgroundColor: bgColor }}
-                  >
-                    {getInitials(notification.firstName, notification.lastName, notification.username)}
+                      >
+                        {getInitials(notification.firstName, notification.lastName, notification.username)}
                   </div>
-                </div>
+              </div>
               );
             })()}
 
