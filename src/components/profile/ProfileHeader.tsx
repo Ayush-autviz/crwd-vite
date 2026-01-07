@@ -102,7 +102,7 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
             </AvatarFallback>
           </Avatar>
         </ImageModal>
-        <div className="font-bold text-base md:text-lg leading-tight">{name}</div>
+        <div className="font-bold text-sm sm:text-base md:text-lg leading-tight">{name}</div>
       </div>
 
       <div className="flex-1 flex flex-col items-center">
