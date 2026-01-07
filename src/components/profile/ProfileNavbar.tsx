@@ -75,9 +75,9 @@ export default function ProfileNavbar({
   };
 
   const getUserInitials = () => {
-    if (user?.first_name && user?.last_name) {
-      return `${user.first_name.charAt(0)}${user.last_name.charAt(0)}`.toUpperCase();
-    }
+    // if (user?.first_name && user?.last_name) {
+    //   return `${user.first_name.charAt(0)}${user.last_name.charAt(0)}`.toUpperCase();
+    // }
     if (user?.first_name) {
       return user.first_name.charAt(0).toUpperCase();
     }
@@ -86,6 +86,9 @@ export default function ProfileNavbar({
     }
     return "U";
   };
+
+  console.log('color', user?.color);
+
 
 
   return (
@@ -168,22 +171,20 @@ export default function ProfileNavbar({
                 >
                   <Avatar className="h-8 w-8">
                     <AvatarImage src={user?.profile_picture} />
-                    <AvatarFallback className={cn("text-white font-bold text-[10px] md:text-sm", user?.color ? `bg-[${user.color}]` : "bg-blue-500")}>
+                    <AvatarFallback className="text-white font-bold text-[10px] md:text-sm" style={{ backgroundColor: user?.color }}>
                       {getUserInitials()}
                     </AvatarFallback>
                   </Avatar>
                 </button>
                 {isVisible && (
                   <div
-                    className={`fixed inset-0 bg-black/50 flex items-end justify-center z-50 transition-opacity duration-300 ${
-                      isAnimating ? "opacity-100" : "opacity-0"
-                    }`}
+                    className={`fixed inset-0 bg-black/50 flex items-end justify-center z-50 transition-opacity duration-300 ${isAnimating ? "opacity-100" : "opacity-0"
+                      }`}
                     onClick={handleClose}
                   >
                     <div
-                      className={`bg-white rounded-t-3xl w-full max-h-[70vh] sm:max-h-[80vh] overflow-y-auto transform transition-transform duration-300 ${
-                        isAnimating ? "translate-y-0" : "translate-y-full"
-                      }`}
+                      className={`bg-white rounded-t-3xl w-full max-h-[70vh] sm:max-h-[80vh] overflow-y-auto transform transition-transform duration-300 ${isAnimating ? "translate-y-0" : "translate-y-full"
+                        }`}
                       style={{
                         transitionTimingFunction: "cubic-bezier(0.25, 0.46, 0.45, 0.94)",
                       }}
@@ -316,7 +317,7 @@ export default function ProfileNavbar({
                 >
                   <Bell size={20} className="text-gray-900" />
                   {unreadCount?.data > 0 && (
-                    <div className="absolute -top-0.5 -right-1.5  rounded-lg min-w-[16px] h-4 flex items-center justify-center px-1">
+                    <div className="absolute -top-0.5 -right-1.5 rounded-lg min-w-[16px] h-4 flex items-center justify-center px-1">
                       <span className="text-white text-[10px] font-bold">{unreadCount?.data}</span>
                     </div>
                   )}
@@ -327,22 +328,20 @@ export default function ProfileNavbar({
                 >
                   <Avatar className="h-8 w-8">
                     <AvatarImage src={user?.profile_picture} />
-                    <AvatarFallback className={cn("text-white font-bold text-[10px] md:text-sm", user?.color ? `bg-[${user.color}]` : "bg-blue-500")}>
+                    <AvatarFallback className={`text-white font-bold text-[10px] md:text-sm`} style={{ backgroundColor: user?.color }}>
                       {getUserInitials()}
                     </AvatarFallback>
                   </Avatar>
                 </button>
                 {isVisible && (
                   <div
-                    className={`fixed inset-0 bg-black/50 flex items-end justify-center z-50 transition-opacity duration-300 ${
-                      isAnimating ? "opacity-100" : "opacity-0"
-                    }`}
+                    className={`fixed inset-0 bg-black/50 flex items-end justify-center z-50 transition-opacity duration-300 ${isAnimating ? "opacity-100" : "opacity-0"
+                      }`}
                     onClick={handleClose}
                   >
                     <div
-                      className={`bg-white rounded-t-3xl w-full max-h-[70vh] sm:max-h-[80vh] overflow-y-auto transform transition-transform duration-300 ${
-                        isAnimating ? "translate-y-0" : "translate-y-full"
-                      }`}
+                      className={`bg-white rounded-t-3xl w-full max-h-[70vh] sm:max-h-[80vh] overflow-y-auto transform transition-transform duration-300 ${isAnimating ? "translate-y-0" : "translate-y-full"
+                        }`}
                       style={{
                         transitionTimingFunction: "cubic-bezier(0.25, 0.46, 0.45, 0.94)",
                       }}
@@ -358,9 +357,9 @@ export default function ProfileNavbar({
                         <div className="flex items-center gap-2 sm:gap-3">
                           <Avatar className="h-10 w-10 sm:h-12 sm:w-12">
                             <AvatarImage src={user?.profile_picture} />
-                            <AvatarFallback 
-                            
-                            className={cn("text-white font-bold text-[10px] md:text-sm", user?.color ? `bg-[${user.color}]` : "bg-blue-500")}>
+                            <AvatarFallback
+                              className="text-white font-bold text-[10px] md:text-sm"
+                              style={{ backgroundColor: user?.color }}>
                               {getUserInitials()}
                             </AvatarFallback>
                           </Avatar>
@@ -416,7 +415,7 @@ export default function ProfileNavbar({
                       {/* Log Out Section */}
                       <div onClick={handleLogout} className="px-4 sm:px-6 m-4 sm:m-6 rounded-lg py-3 sm:py-4 border border-gray-200 hover:bg-gray-100 transition-colors flex items-center justify-center">
                         <button
-                          
+
                           className="flex items-center gap-2 text-red-600 hover:text-red-700 transition-colors"
                         >
                           <LogOut className="h-4 w-4 sm:h-5 sm:w-5" />

@@ -2,6 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { getPosts } from "@/services/api/social";
 import { Heart, MessageCircle, Loader2 } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { useNavigate } from "react-router-dom";
 
 interface CommunityTestimonialsProps {
   limit?: number;
@@ -10,6 +11,8 @@ interface CommunityTestimonialsProps {
 export default function CommunityTestimonials({
   limit = 3,
 }: CommunityTestimonialsProps) {
+
+  const navigate = useNavigate();
   // Fetch posts data using React Query
   const { data: postsData, isLoading } = useQuery({
     queryKey: ["community-testimonials"],
@@ -20,9 +23,9 @@ export default function CommunityTestimonials({
 
   // Get user initials
   const getInitials = (user: any) => {
-    if (user?.first_name && user?.last_name) {
-      return `${user.first_name.charAt(0)}${user.last_name.charAt(0)}`.toUpperCase();
-    }
+    // if (user?.first_name && user?.last_name) {
+    //   return `${user.first_name.charAt(0)}${user.last_name.charAt(0)}`.toUpperCase();
+    // }
     if (user?.first_name) {
       return user.first_name.charAt(0).toUpperCase();
     }
@@ -34,9 +37,9 @@ export default function CommunityTestimonials({
 
   // Get user display name
   const getUserName = (user: any) => {
-    if (user?.first_name && user?.last_name) {
-      return `${user.first_name} ${user.last_name.charAt(0)}.`;
-    }
+    // if (user?.first_name && user?.last_name) {
+    //   return `${user.first_name} ${user.last_name.charAt(0)}.`;
+    // }
     if (user?.first_name) {
       return user.first_name;
     }
@@ -101,9 +104,9 @@ export default function CommunityTestimonials({
                   <div className="flex items-start gap-2 md:gap-4 lg:gap-5 mb-2 md:mb-4 lg:mb-5">
                     <Avatar className="h-8 w-8 md:h-12 md:w-12 lg:h-14 lg:w-14 xl:h-16 xl:w-16 flex-shrink-0">
                       <AvatarImage src={post.user?.profile_picture} />
-                      <AvatarFallback 
+                      <AvatarFallback
                         className="text-white font-semibold text-[10px] md:text-sm lg:text-base xl:text-lg"
-                        style={{ backgroundColor: avatarColor.bg }}
+                        style={{ backgroundColor: post.user?.color }}
                       >
                         {getInitials(post.user)}
                       </AvatarFallback>
@@ -121,7 +124,7 @@ export default function CommunityTestimonials({
                   </div>
 
                   {/* Post Content */}
-                  <p className="text-gray-900 text-xs md:text-base lg:text-lg xl:text-xl mb-3 md:mb-5 lg:mb-6 leading-relaxed">
+                  <p onClick={() => navigate(`/post/${post.id}`)} className="cursor-pointer text-gray-900 text-xs md:text-base lg:text-lg xl:text-xl mb-3 md:mb-5 lg:mb-6 leading-relaxed">
                     {post.content}
                   </p>
 

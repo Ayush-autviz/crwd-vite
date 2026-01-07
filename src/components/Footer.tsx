@@ -41,15 +41,13 @@ const Footer = () => {
             >
               <h3 className="font-bold text-sm md:text-base lg:text-lg">Platform</h3>
               <ChevronDown
-                className={`w-4 h-4 md:hidden transition-transform ${
-                  openSections.platform ? "rotate-180" : ""
-                }`}
+                className={`w-4 h-4 md:hidden transition-transform ${openSections.platform ? "rotate-180" : ""
+                  }`}
               />
             </button>
             <nav
-              className={`space-y-1.5 md:space-y-2 ${
-                openSections.platform ? "block" : "hidden"
-              } md:block`}
+              className={`space-y-1.5 md:space-y-2 ${openSections.platform ? "block" : "hidden"
+                } md:block`}
             >
               <Link
                 to="/search"
@@ -80,15 +78,13 @@ const Footer = () => {
             >
               <h3 className="font-bold text-sm md:text-base lg:text-lg">Resources</h3>
               <ChevronDown
-                className={`w-4 h-4 md:hidden transition-transform ${
-                  openSections.resources ? "rotate-180" : ""
-                }`}
+                className={`w-4 h-4 md:hidden transition-transform ${openSections.resources ? "rotate-180" : ""
+                  }`}
               />
             </button>
             <nav
-              className={`space-y-1.5 md:space-y-2 ${
-                openSections.resources ? "block" : "hidden"
-              } md:block`}
+              className={`space-y-1.5 md:space-y-2 ${openSections.resources ? "block" : "hidden"
+                } md:block`}
             >
               <Link
                 to="/settings/about"
@@ -119,15 +115,13 @@ const Footer = () => {
             >
               <h3 className="font-bold text-sm md:text-base lg:text-lg">Support</h3>
               <ChevronDown
-                className={`w-4 h-4 md:hidden transition-transform ${
-                  openSections.support ? "rotate-180" : ""
-                }`}
+                className={`w-4 h-4 md:hidden transition-transform ${openSections.support ? "rotate-180" : ""
+                  }`}
               />
             </button>
             <nav
-              className={`space-y-1.5 md:space-y-2 ${
-                openSections.support ? "block" : "hidden"
-              } md:block`}
+              className={`space-y-1.5 md:space-y-2 ${openSections.support ? "block" : "hidden"
+                } md:block`}
             >
               <Link
                 to="/settings/help"
@@ -184,7 +178,7 @@ const Footer = () => {
         {/* Copyright Section - Bottom Center */}
         <div className="border-t border-gray-800 pt-6 md:pt-8">
           <div className="text-center space-y-1.5 md:space-y-2 text-[10px] md:text-xs lg:text-sm text-gray-400">
-            <p>© 2025 CRWD Collective. Making the world better, together.</p>
+            <p>© 2026 CRWD Collective. Making the world better, together.</p>
             <p>All donations are made to and gifted from CRWD Foundation</p>
             <p>EIN: 41-2423690</p>
           </div>

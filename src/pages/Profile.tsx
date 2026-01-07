@@ -20,9 +20,9 @@ import { Link, useNavigate } from "react-router-dom";
 import { Toast } from "../components/ui/toast";
 import { useQuery, useMutation, useInfiniteQuery } from "@tanstack/react-query";
 // import { getProfile } from "@/services/api/auth";
-import { 
-  getPosts, 
-  getUserProfileById, 
+import {
+  getPosts,
+  getUserProfileById,
   getSupportedCausesByUserId,
   getUserFollowers,
   getUserFollowing,
@@ -94,7 +94,7 @@ export default function ProfilePage() {
       setShowToast(true);
       // Navigate to login page after a short delay
       // setTimeout(() => {
-        navigate('/login', { replace: true });
+      navigate('/login', { replace: true });
       // }, 1500);
     },
     onError: (error: any) => {
@@ -106,7 +106,7 @@ export default function ProfilePage() {
 
   const handleLogout = () => {
     // if (window.confirm('Are you sure you want to logout?')) {
-      // logoutMutation.mutate();
+    // logoutMutation.mutate();
     // }
     logoutStore();
     queryClient.clear()
@@ -137,7 +137,7 @@ export default function ProfilePage() {
   // const profileData = profileQuery.data?.user || {};
 
   // gett user profile data
-  const {data: profileData, isLoading: profileLoading, error: profileError, refetch: refetchProfile} = useQuery({
+  const { data: profileData, isLoading: profileLoading, error: profileError, refetch: refetchProfile } = useQuery({
     queryKey: ['userProfile', currentUser?.id],
     queryFn: () => getUserProfileById(currentUser?.id || ''),
     enabled: !!currentUser?.id,
@@ -145,7 +145,7 @@ export default function ProfilePage() {
 
   // Statistics bottom sheet queries
   const targetUserId = profileData?.id?.toString() || currentUser?.id?.toString() || '';
-  
+
   const { data: statsCausesData, isLoading: statsCausesLoading } = useQuery({
     queryKey: ['supportedCauses', targetUserId],
     queryFn: () => getSupportedCausesByUserId(targetUserId),
@@ -167,7 +167,7 @@ export default function ProfilePage() {
 
   // Filter collectives to only show those where user is admin
   const adminCollectives = allCollectivesData?.data?.filter((item: any) => item.role === 'admin') || [];
-  
+
   // Fetch admin collectives for founder bottom sheet (only when sheet is open)
   const { data: adminCollectivesData, isLoading: adminCollectivesLoading } = useQuery({
     queryKey: ['adminCollectives', targetUserId],
@@ -295,20 +295,20 @@ export default function ProfilePage() {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
             </svg>
           </div>
-          
+
           {/* Title */}
           <h2 className="text-xl md:text-2xl font-bold text-gray-900 mb-2 md:mb-3">
             Sign in to view your profile
           </h2>
-          
+
           {/* Description */}
           <p className="text-sm md:text-base text-gray-600 mb-6 md:mb-8 leading-relaxed">
             Sign in to view your profile, manage your causes, and connect with your community.
           </p>
-          
+
           {/* CTA Button */}
-          <Button 
-            size="lg" 
+          <Button
+            size="lg"
             className="bg-blue-600 hover:bg-blue-700 text-white px-6 md:px-8 py-2.5 md:py-3 rounded-lg font-medium transition-colors duration-200 shadow-lg hover:shadow-xl text-sm md:text-base"
           >
             <Link to="/login" className="flex items-center gap-1.5 md:gap-2">
@@ -318,10 +318,10 @@ export default function ProfilePage() {
               Sign In to Continue
             </Link>
           </Button>
-          
+
           {/* Additional Info */}
           <p className="text-xs md:text-sm text-gray-500 mt-4 md:mt-6">
-            Don't have an account? 
+            Don't have an account?
             <Link to="/claim-profile" className="text-blue-600 hover:text-blue-700 font-medium ml-1">
               Create one here
             </Link>
@@ -382,12 +382,13 @@ export default function ProfilePage() {
       lastName: post.user?.last_name,
       username: post.user?.username || '',
       avatar: post.user?.profile_picture || '',
+      color: post.user?.color || '',
     },
     collective: post.collective
       ? {
-          name: post.collective.name,
-          id: post.collective.id,
-        }
+        name: post.collective.name,
+        id: post.collective.id,
+      }
       : undefined,
     content: post.content || '',
     imageUrl: post.media || undefined,
@@ -469,175 +470,175 @@ export default function ProfilePage() {
         <div className="md:grid md:grid-cols-12 md:gap-6 md:px-4 lg:px-6 md:pt-2 md:pb-6">
           {/* Main Content */}
           <div className="md:col-span-12">
-          <div className="flex flex-col space-y-3 md:space-y-4 px-3 md:px-4 lg:px-0">
-            <ProfileHeader
-              avatarUrl={profileData?.profile_picture || '/placeholder.svg'}
-              name={fullName}
-              location={profileData?.location || ''}
-              link={profileData?.username || ''}
-              activeSince={activeSince}
-              color={profileData?.color}
-              founder={adminCollectives.length > 0}
-              onFounderClick={() => setShowFounderSheet(true)}
-            />
-            
-            {/* Edit Profile and Share Profile buttons */}
-            <div className="flex items-center justify-center gap-3 md:gap-4 mt-3 md:mt-4">
-              <Button
-                onClick={() => navigate("/settings")}
-                variant="outline"
-                className="px-3 md:px-4 py-2 md:py-2.5 border border-gray-300 rounded-lg min-w-[100px] md:min-w-[120px]"
-              >
-                <span className="text-xs md:text-sm font-semibold text-gray-700">Edit Profile</span>
-              </Button>
-              <Button
-                onClick={handleShareProfile}
-                variant="outline"
-                className="px-3 md:px-4 py-2 md:py-2.5 border border-gray-300 rounded-lg min-w-[100px] md:min-w-[120px]"
-              >
-                <div className="flex items-center gap-1">
-                  <Share2 className="w-3.5 h-3.5 md:w-4 md:h-4 text-gray-700" />
-                  <span className="text-xs md:text-sm font-semibold text-gray-700">Share Profile</span>
-                </div>
-              </Button>
-            </div>
+            <div className="flex flex-col space-y-3 md:space-y-4 px-3 md:px-4 lg:px-0">
+              <ProfileHeader
+                avatarUrl={profileData?.profile_picture || '/placeholder.svg'}
+                name={fullName}
+                location={profileData?.location || ''}
+                link={profileData?.username || ''}
+                activeSince={activeSince}
+                color={profileData?.color}
+                founder={adminCollectives.length > 0}
+                onFounderClick={() => setShowFounderSheet(true)}
+              />
 
-            <ProfileStats
-              profileId={profileData?.id?.toString() || ''}
-              causes={profileData?.supported_causes_count || 0}
-              crwds={profileData?.joined_collectives_count || 0}
-              followers={profileData?.followers_count || 0}
-              following={profileData?.following_count || 0}
-              isLoadingCauses={profileLoading}
-              isLoadingCrwds={profileLoading}
-              isLoadingFollowers={profileLoading}
-              isLoadingFollowing={profileLoading}
-              onStatPress={handleStatPress}
-            />
-
-            {/* Divider */}
-            <div className="h-px bg-gray-200 mx-2 mt-2"></div>
-
-            {/* Supports Section */}
-            {profileData?.recently_supported_causes && profileData.recently_supported_causes.length > 0 && (
-              <>
-                <div className="mt-4 md:mt-6">
-                  <div className="flex justify-between items-center mb-3 md:mb-4">
-                    <h2 className="text-base md:text-lg font-bold text-gray-900">Supports</h2>
+              {/* Edit Profile and Share Profile buttons */}
+              <div className="flex items-center justify-center gap-3 md:gap-4 mt-3 md:mt-4">
+                <Button
+                  onClick={() => navigate("/settings")}
+                  variant="outline"
+                  className="px-3 md:px-4 py-2 md:py-2.5 border border-gray-300 rounded-lg min-w-[100px] md:min-w-[120px]"
+                >
+                  <span className="text-xs md:text-sm font-semibold text-gray-700">Edit Profile</span>
+                </Button>
+                <Button
+                  onClick={handleShareProfile}
+                  variant="outline"
+                  className="px-3 md:px-4 py-2 md:py-2.5 border border-gray-300 rounded-lg min-w-[100px] md:min-w-[120px]"
+                >
+                  <div className="flex items-center gap-1">
+                    <Share2 className="w-3.5 h-3.5 md:w-4 md:h-4 text-gray-700" />
+                    <span className="text-xs md:text-sm font-semibold text-gray-700">Share Profile</span>
                   </div>
+                </Button>
+              </div>
 
-                  {/* Grid Layout - Responsive: 2 cols mobile, 3 cols tablet, 4 cols desktop */}
-                  <div className="flex flex-wrap -mx-1 sm:-mx-1.5 md:-mx-2">
-                    {profileData.recently_supported_causes.slice(0, 6).map((cause: any, i: number) => {
-                      // Generate consistent color based on cause ID
-                      const bgColor = getConsistentColor(cause.id || cause.name || 'N', avatarColors);
-                      
-                      return (
-                        <Link 
-                          key={cause.id || i} 
-                          to={`/cause/${cause.id}`}
-                          className="w-1/2 sm:w-1/3 lg:w-1/4 px-1 sm:px-1.5 md:px-2 mb-2 md:mb-3"
-                        >
-                          <div className="bg-white border border-gray-200 rounded-lg p-1.5 sm:p-2 md:p-3 flex flex-col items-center justify-between h-[90px] sm:h-[100px] md:h-[120px]">
-                            {cause.image || cause.logo ? (
-                              <Avatar className="w-9 h-9 sm:w-10 sm:h-10 md:w-12 md:h-12 rounded-lg mb-1.5 md:mb-2 flex-shrink-0">
-                                <AvatarImage src={cause.image || cause.logo} alt={cause.name} />
-                                <AvatarFallback 
+              <ProfileStats
+                profileId={profileData?.id?.toString() || ''}
+                causes={profileData?.supported_causes_count || 0}
+                crwds={profileData?.joined_collectives_count || 0}
+                followers={profileData?.followers_count || 0}
+                following={profileData?.following_count || 0}
+                isLoadingCauses={profileLoading}
+                isLoadingCrwds={profileLoading}
+                isLoadingFollowers={profileLoading}
+                isLoadingFollowing={profileLoading}
+                onStatPress={handleStatPress}
+              />
+
+              {/* Divider */}
+              <div className="h-px bg-gray-200 mt-2"></div>
+
+              {/* Supports Section */}
+              {profileData?.recently_supported_causes && profileData.recently_supported_causes.length > 0 && (
+                <>
+                  <div className="mt-4 md:mt-6">
+                    <div className="flex justify-between items-center mb-3 md:mb-4">
+                      <h2 className="text-sm xs:text-base sm:text-xl md:text-3xl font-bold text-gray-900">Supports</h2>
+                    </div>
+
+                    {/* Grid Layout - Responsive: 2 cols mobile, 3 cols tablet, 4 cols desktop */}
+                    <div className="flex flex-wrap -mx-1 sm:-mx-1.5 md:-mx-2">
+                      {profileData.recently_supported_causes.slice(0, 6).map((cause: any, i: number) => {
+                        // Generate consistent color based on cause ID
+                        const bgColor = getConsistentColor(cause.id || cause.name || 'N', avatarColors);
+
+                        return (
+                          <Link
+                            key={cause.id || i}
+                            to={`/cause/${cause.id}`}
+                            className="w-1/2 sm:w-1/3 lg:w-1/4 px-1 sm:px-1.5 md:px-2 mb-2 md:mb-3"
+                          >
+                            <div className="bg-white border border-gray-200 rounded-lg p-1.5 sm:p-2 md:p-3 flex flex-col items-center justify-between h-[90px] sm:h-[100px] md:h-[120px]">
+                              {cause.image || cause.logo ? (
+                                <Avatar className="w-9 h-9 sm:w-10 sm:h-10 md:w-12 md:h-12 rounded-lg mb-1.5 md:mb-2 flex-shrink-0">
+                                  <AvatarImage src={cause.image || cause.logo} alt={cause.name} />
+                                  <AvatarFallback
+                                    style={{ backgroundColor: bgColor }}
+                                    className="text-white text-[10px] sm:text-xs md:text-sm font-semibold rounded-lg"
+                                  >
+                                    {cause.name?.charAt(0)?.toUpperCase() || 'N'}
+                                  </AvatarFallback>
+                                </Avatar>
+                              ) : (
+                                <div
+                                  className="w-9 h-9 sm:w-10 sm:h-10 md:w-12 md:h-12 rounded-lg mb-1.5 md:mb-2 flex items-center justify-center flex-shrink-0"
                                   style={{ backgroundColor: bgColor }}
-                                  className="text-white text-[10px] sm:text-xs md:text-sm font-semibold rounded-lg"
                                 >
-                                  {cause.name?.charAt(0)?.toUpperCase() || 'N'}
-                                </AvatarFallback>
-                              </Avatar>
-                            ) : (
-                              <div 
-                                className="w-9 h-9 sm:w-10 sm:h-10 md:w-12 md:h-12 rounded-lg mb-1.5 md:mb-2 flex items-center justify-center flex-shrink-0"
-                                style={{ backgroundColor: bgColor }}
-                              >
-                                <span className="text-base sm:text-lg md:text-xl font-semibold text-white">
-                                  {cause.name?.charAt(0)?.toUpperCase() || 'N'}
-                                </span>
-                              </div>
-                            )}
-                            <p className="text-[10px] sm:text-xs font-semibold text-gray-900 text-center line-clamp-2 flex-grow flex items-center justify-center">
-                              {cause.name}
-                            </p>
-                          </div>
+                                  <span className="text-base sm:text-lg md:text-xl font-semibold text-white">
+                                    {cause.name?.charAt(0)?.toUpperCase() || 'N'}
+                                  </span>
+                                </div>
+                              )}
+                              <p className="text-[10px] sm:text-xs font-semibold text-gray-900 text-center line-clamp-2 flex-grow flex items-center justify-center">
+                                {cause.name}
+                              </p>
+                            </div>
+                          </Link>
+                        );
+                      })}
+                    </div>
+
+                    {/* Show more causes text and link */}
+                    {profileData.recently_supported_causes.length > 6 && (
+                      <div className="flex flex-col items-center gap-1.5 md:gap-2 mt-3 md:mt-4">
+                        <p className="text-xs md:text-sm text-gray-500">
+                          + {profileData.recently_supported_causes.length - 6} more causes
+                        </p>
+                        <Link to="/interests">
+                          <span className="text-xs md:text-sm text-blue-600 font-medium">
+                            See all {profileData.recently_supported_causes.length} →
+                          </span>
                         </Link>
-                      );
-                    })}
+                      </div>
+                    )}
+                  </div>
+                  <div className="h-px bg-gray-200 mt-4"></div>
+
+                </>
+              )}
+
+              {/* Divider */}
+
+              <ProfileBio bio={profileData?.bio} />
+              <div className="py-4">
+                <div className="w-full my-4 mb-6 md:px-0 md:my-8 md:mb-10">
+                  <div className="mb-3 md:mb-6">
+                    <h2 className="text-sm xs:text-base sm:text-xl md:text-3xl font-bold text-gray-900 mb-1 md:mb-2">
+                      Recent Activity
+                    </h2>
+                    <p className="text-[10px] sm:text-xs md:text-sm text-gray-600">
+                      Activity, updates, and discoveries from your community
+                    </p>
                   </div>
 
-                  {/* Show more causes text and link */}
-                  {profileData.recently_supported_causes.length > 6 && (
-                    <div className="flex flex-col items-center gap-1.5 md:gap-2 mt-3 md:mt-4">
-                      <p className="text-xs md:text-sm text-gray-500">
-                        + {profileData.recently_supported_causes.length - 6} more causes
+                  {postsLoading ? (
+                    <div className="space-y-2.5 md:space-y-4">
+                      {[1, 2].map((i) => (
+                        <div key={i} className="bg-white rounded-lg border border-gray-200 p-2.5 md:p-4 animate-pulse">
+                          <div className="flex items-start gap-2 md:gap-4">
+                            <div className="w-8 h-8 md:w-12 md:h-12 bg-gray-200 rounded-full flex-shrink-0"></div>
+                            <div className="flex-1 space-y-2">
+                              <div className="h-4 bg-gray-200 rounded w-3/4"></div>
+                              <div className="h-3 bg-gray-200 rounded w-full"></div>
+                              <div className="h-3 bg-gray-200 rounded w-5/6"></div>
+                              <div className="h-32 md:h-40 bg-gray-200 rounded-lg"></div>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  ) : userPosts.length > 0 ? (
+                    <div className="space-y-2.5 md:space-y-4">
+                      {userPosts.map((post: any) => (
+                        <CommunityPostCard key={post.id} post={post} />
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="flex flex-col items-center justify-center py-12 md:py-16">
+                      <div className="w-16 h-16 md:w-20 md:h-20 rounded-full bg-blue-50 flex items-center justify-center mb-4 md:mb-6">
+                        <Users className="w-8 h-8 md:w-10 md:h-10 text-[#1600ff]" strokeWidth={1.5} />
+                      </div>
+                      <h3 className="text-base md:text-lg font-bold text-gray-900 mb-2 md:mb-3">No posts yet</h3>
+                      <p className="text-xs md:text-sm text-gray-600 text-center max-w-md px-4">
+                        Posts appear when you share updates in your collectives. Join or start a collective to start sharing your impact!
                       </p>
-                      <Link to="/interests">
-                        <span className="text-xs md:text-sm text-blue-600 font-medium">
-                          See all {profileData.recently_supported_causes.length} →
-                        </span>
-                      </Link>
                     </div>
                   )}
                 </div>
-            <div className="h-px bg-gray-200 mx-2 mt-4"></div>
-
-              </>
-            )}
-
-            {/* Divider */}
-
-            <ProfileBio bio={profileData?.bio} />
-            <div className="py-4">
-              <div className="w-full px-4 my-4 mb-6 md:px-0 md:my-8 md:mb-10">
-                <div className="mb-3 md:mb-6">
-                  <h2 className="text-sm xs:text-base sm:text-xl md:text-3xl font-bold text-gray-900 mb-1 md:mb-2">
-                    Recent Activity
-                  </h2>
-                  <p className="text-[10px] sm:text-xs md:text-sm text-gray-600">
-                    Activity, updates, and discoveries from your community
-                  </p>
-                </div>
-
-                {postsLoading ? (
-                  <div className="space-y-2.5 md:space-y-4">
-                    {[1, 2].map((i) => (
-                      <div key={i} className="bg-white rounded-lg border border-gray-200 p-2.5 md:p-4 animate-pulse">
-                        <div className="flex items-start gap-2 md:gap-4">
-                          <div className="w-8 h-8 md:w-12 md:h-12 bg-gray-200 rounded-full flex-shrink-0"></div>
-                          <div className="flex-1 space-y-2">
-                            <div className="h-4 bg-gray-200 rounded w-3/4"></div>
-                            <div className="h-3 bg-gray-200 rounded w-full"></div>
-                            <div className="h-3 bg-gray-200 rounded w-5/6"></div>
-                            <div className="h-32 md:h-40 bg-gray-200 rounded-lg"></div>
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                ) : userPosts.length > 0 ? (
-                  <div className="space-y-2.5 md:space-y-4">
-                    {userPosts.map((post: any) => (
-                      <CommunityPostCard key={post.id} post={post} />
-                    ))}
-                  </div>
-                ) : (
-                  <div className="flex flex-col items-center justify-center py-12 md:py-16">
-                    <div className="w-16 h-16 md:w-20 md:h-20 rounded-full bg-blue-50 flex items-center justify-center mb-4 md:mb-6">
-                      <Users className="w-8 h-8 md:w-10 md:h-10 text-[#1600ff]" strokeWidth={1.5} />
-                    </div>
-                    <h3 className="text-base md:text-lg font-bold text-gray-900 mb-2 md:mb-3">No posts yet</h3>
-                    <p className="text-xs md:text-sm text-gray-600 text-center max-w-md px-4">
-                      Posts appear when you share updates in your collectives. Join or start a collective to start sharing your impact!
-                    </p>
-                  </div>
-                )}
               </div>
             </div>
           </div>
-        </div>
 
           {/* Sidebar - Only visible on desktop */}
           <div className="hidden  md:col-span-4">
@@ -688,11 +689,10 @@ export default function ProfilePage() {
                 <button
                   key={tab.value}
                   onClick={() => setActiveStatsTab(tab.value as typeof activeStatsTab)}
-                  className={`flex-1 px-1.5 sm:px-2 md:px-3 py-1 md:py-1.5 rounded-xl text-[10px] xs:text-xs sm:text-xs md:text-sm font-semibold transition-colors whitespace-nowrap ${
-                    activeStatsTab === tab.value
-                      ? 'bg-white text-gray-900'
-                      : 'text-gray-600'
-                  }`}
+                  className={`flex-1 px-1.5 sm:px-2 md:px-3 py-1 md:py-1.5 rounded-xl text-[10px] xs:text-xs sm:text-xs md:text-sm font-semibold transition-colors whitespace-nowrap ${activeStatsTab === tab.value
+                    ? 'bg-white text-gray-900'
+                    : 'text-gray-600'
+                    }`}
                 >
                   {tab.label}
                 </button>
@@ -714,7 +714,7 @@ export default function ProfilePage() {
                     {statsCausesData.results.map((item: any, index: number) => {
                       const cause = item.cause || item;
                       const causeBgColor = getConsistentColor(cause.id || cause.name || 'N', avatarColors);
-                      
+
                       return (
                         <Link
                           key={cause.id || index}
@@ -725,7 +725,7 @@ export default function ProfilePage() {
                           {cause.image || cause.logo ? (
                             <Avatar className="w-10 h-10 md:w-12 md:h-12 rounded-lg flex-shrink-0">
                               <AvatarImage src={cause.image || cause.logo} alt={cause.name} />
-                              <AvatarFallback 
+                              <AvatarFallback
                                 style={{ backgroundColor: causeBgColor }}
                                 className="text-white rounded-lg font-bold text-base md:text-lg"
                               >
@@ -773,14 +773,14 @@ export default function ProfilePage() {
                   <div className="space-y-0">
                     {statsCollectivesData.data.map((item: any, index: number) => {
                       const collective = item.collective || item;
-                      
+
                       // Priority: 1. Use color from API, 2. Use logo, 3. Fallback to generated color with letter
                       const hasColor = collective.color;
                       const hasLogo = collective.logo && (collective.logo.startsWith("http") || collective.logo.startsWith("/") || collective.logo.startsWith("data:"));
                       const iconColor = hasColor || (!hasLogo ? getConsistentColor(collective.id || collective.name, avatarColors) : undefined);
                       const iconLetter = collective.name?.charAt(0)?.toUpperCase() || 'N';
                       const imageUrl = hasLogo ? collective.logo : (collective.image || collective.avatar || undefined);
-                      
+
                       return (
                         <div
                           key={collective.id || index}
@@ -789,7 +789,7 @@ export default function ProfilePage() {
                           <div onClick={() => navigate(`/groupcrwd/${collective.id}`)} className="flex items-center gap-2.5 md:gap-3 flex-1 min-w-0">
                             <Avatar className="w-9 h-9 md:w-10 md:h-10 flex-shrink-0 rounded-lg">
                               <AvatarImage src={imageUrl} alt={collective.name} />
-                              <AvatarFallback 
+                              <AvatarFallback
                                 style={iconColor ? { backgroundColor: iconColor } : {}}
                                 className="rounded-lg text-white font-bold text-xs md:text-sm"
                               >
@@ -850,7 +850,7 @@ export default function ProfilePage() {
                           >
                             <Avatar className="w-9 h-9 md:w-10 md:h-10 flex-shrink-0">
                               <AvatarImage src={userData.profile_picture || userData.avatar} />
-                              <AvatarFallback 
+                              <AvatarFallback
                                 style={{ backgroundColor: userData.color || getConsistentColor(userData.id || userData.username || 'U', avatarColors) }}
                                 className="text-white text-xs md:text-sm font-semibold"
                               >
@@ -870,11 +870,10 @@ export default function ProfilePage() {
                             <Button
                               onClick={() => handleFollowToggle(userData.id.toString(), isFollowing)}
                               disabled={followUserMutation.isPending || unfollowUserMutation.isPending}
-                              className={`text-[10px] md:text-xs px-3 md:px-4 py-1.5 md:py-2 rounded-full ${
-                                isFollowing
-                                  ? 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-                                  : 'bg-blue-600 text-white hover:bg-blue-700'
-                              }`}
+                              className={`text-[10px] md:text-xs px-3 md:px-4 py-1.5 md:py-2 rounded-full ${isFollowing
+                                ? 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                                : 'bg-blue-600 text-white hover:bg-blue-700'
+                                }`}
                             >
                               {isFollowing ? 'Following' : 'Follow'}
                             </Button>
@@ -915,7 +914,7 @@ export default function ProfilePage() {
                           >
                             <Avatar className="w-9 h-9 md:w-10 md:h-10 flex-shrink-0">
                               <AvatarImage src={userData.profile_picture || userData.avatar} />
-                              <AvatarFallback 
+                              <AvatarFallback
                                 style={{ backgroundColor: userData.color || getConsistentColor(userData.id || userData.username || 'U', avatarColors) }}
                                 className="text-white text-xs md:text-sm font-semibold"
                               >
@@ -996,14 +995,14 @@ export default function ProfilePage() {
               <div className="space-y-3 md:space-y-4 mb-6 md:mb-8">
                 {adminCollectivesForSheet.map((item: any, index: number) => {
                   const collective = item.collective || item;
-                  
+
                   // Priority: 1. Use color from API, 2. Use logo, 3. Fallback to generated color with letter
                   const hasColor = collective.color;
                   const hasLogo = collective.logo && (collective.logo.startsWith("http") || collective.logo.startsWith("/") || collective.logo.startsWith("data:"));
                   const iconColor = hasColor || (!hasLogo ? getConsistentColor(collective.id || collective.name, avatarColors) : undefined);
                   const iconLetter = collective.name?.charAt(0)?.toUpperCase() || 'N';
                   const imageUrl = hasLogo ? collective.logo : (collective.image || collective.avatar || undefined);
-                  
+
                   return (
                     <div
                       key={collective.id || index}
@@ -1017,7 +1016,7 @@ export default function ProfilePage() {
                         {/* Avatar */}
                         <Avatar className="w-12 h-12 md:w-14 md:h-14 flex-shrink-0 rounded-lg">
                           <AvatarImage src={imageUrl} alt={collective.name} />
-                          <AvatarFallback 
+                          <AvatarFallback
                             style={iconColor ? { backgroundColor: iconColor } : {}}
                             className="rounded-lg text-white font-bold text-sm md:text-base"
                           >

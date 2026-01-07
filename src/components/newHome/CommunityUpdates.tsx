@@ -88,9 +88,9 @@ function PostWithData({ update }: { update: CommunityUpdate }) {
     },
     collective: postData.collective
       ? {
-          name: postData.collective.name,
-          id: postData.collective.id,
-        }
+        name: postData.collective.name,
+        id: postData.collective.id,
+      }
       : update.collective,
     content: postData.content || '',
     imageUrl: postData.media || undefined,
@@ -120,7 +120,7 @@ function NotificationSummary({ update }: { update: CommunityUpdate }) {
   });
 
   // Check if user has already joined this collective
-  const hasJoinedCollective = joinedCollectivesData?.data?.some((item: any) => 
+  const hasJoinedCollective = joinedCollectivesData?.data?.some((item: any) =>
     item.collective?.id?.toString() === update.collective?.id?.toString()
   ) || false;
 
@@ -179,7 +179,7 @@ function NotificationSummary({ update }: { update: CommunityUpdate }) {
   };
 
   // Get user display name
-  const userName = update.user.firstName && update.user.lastName 
+  const userName = update.user.firstName && update.user.lastName
     ? `${update.user.firstName} ${update.user.lastName}`
     : update.user.name || update.user.username;
 
@@ -196,7 +196,10 @@ function NotificationSummary({ update }: { update: CommunityUpdate }) {
     // Clean action text - remove the supporting text if it exists
     let cleanActionText = actionText;
     if (countMatch) {
-      cleanActionText = actionText.replace(/\s*Supporting\s+\d+\s+nonprofit[s]?/i, '').trim();
+      cleanActionText = actionText
+        .replace(/\s*(Supporting\s+\d+\s+nonprofit[s]?|joined)/gi, '')
+        .trim();
+
     }
 
     return (
@@ -207,14 +210,12 @@ function NotificationSummary({ update }: { update: CommunityUpdate }) {
             {/* Avatar */}
             <Avatar className="h-8 w-8 md:h-11 md:w-11 flex-shrink-0 rounded-full">
               <AvatarImage src={update.user.avatar} />
-              <AvatarFallback 
+              <AvatarFallback
                 style={{ backgroundColor: update.user.color || '#1600ff' }}
                 className="text-white text-[10px] md:text-sm"
               >
                 {update.user.name
-                  .split(" ")
-                  .map((n) => n.charAt(0))
-                  .join("")
+                  .charAt(0)
                   .toUpperCase()}
               </AvatarFallback>
             </Avatar>
@@ -235,7 +236,7 @@ function NotificationSummary({ update }: { update: CommunityUpdate }) {
               )} */}
             </div>
           </div>
-          
+
           {/* Join Button - Only show if user hasn't joined */}
           {update.collective && !hasJoinedCollective && (
             <button
@@ -254,20 +255,20 @@ function NotificationSummary({ update }: { update: CommunityUpdate }) {
             <Users className="h-2.5 w-2.5 md:h-5 md:w-5 text-[#1600ff]" />
           </div>
           <div className="flex flex-col gap-1">
-          {/* Action Text */}
-          <p className="text-[10px] md:text-sm font-semibold text-gray-600 flex-1">
-            {userName} {cleanActionText}
-          </p>
-           {/* Supporting X nonprofits - Only on second line if it exists */}
-        {nonprofitCount > 0 && (
-          <p className="text-[10px] md:text-sm text-gray-500">
-            Supporting {nonprofitCount} nonprofit{nonprofitCount !== 1 ? 's' : ''}
-          </p>
-        )}
-        </div>
+            {/* Action Text */}
+            <p className="text-[10px] md:text-sm font-semibold text-gray-800 flex-1">
+              {userName} <span className="font-medium">joined</span>  {cleanActionText}
+            </p>
+            {/* Supporting X nonprofits - Only on second line if it exists */}
+            {nonprofitCount > 0 && (
+              <p className="text-[10px] md:text-sm text-gray-500">
+                Supporting {nonprofitCount} nonprofit{nonprofitCount !== 1 ? 's' : ''}
+              </p>
+            )}
+          </div>
         </div>
 
-       
+
       </div>
     );
   }
@@ -281,14 +282,12 @@ function NotificationSummary({ update }: { update: CommunityUpdate }) {
           {/* Avatar */}
           <Avatar className="h-8 w-8 md:h-11 md:w-11 flex-shrink-0 rounded-full">
             <AvatarImage src={update.user.avatar} />
-            <AvatarFallback 
+            <AvatarFallback
               style={{ backgroundColor: update.user.color || '#1600ff' }}
               className="text-white text-[10px] md:text-sm"
             >
               {update.user.name
-                .split(" ")
-                .map((n) => n.charAt(0))
-                .join("")
+                .charAt(0)
                 .toUpperCase()}
             </AvatarFallback>
           </Avatar>
@@ -309,17 +308,16 @@ function NotificationSummary({ update }: { update: CommunityUpdate }) {
             )}
           </div>
         </div>
-        
+
         {/* Action Button - Follow for donation notifications */}
         {isDonationNotification && update.user.id && currentUser?.id !== update.user.id && (
           <button
             onClick={handleFollowClick}
             disabled={followMutation.isPending || unfollowMutation.isPending || isLoadingProfile}
-            className={`ml-1.5 sm:ml-2 md:ml-3 text-[10px] xs:text-xs sm:text-xs md:text-sm lg:text-base font-semibold px-2 xs:px-2.5 sm:px-3 md:px-4 lg:px-5 py-1 xs:py-1.5 sm:py-1.5 rounded-full flex-shrink-0 ${
-              isFollowing
-                ? 'bg-[#1600ff] text-white border border-[#1600ff] hover:bg-[#1400cc]'
-                : 'bg-white text-[#1600ff] border border-[#1600ff] hover:bg-[#1600ff] hover:text-white'
-            }`}
+            className={`ml-1.5 sm:ml-2 md:ml-3 text-[10px] xs:text-xs sm:text-xs md:text-sm lg:text-base font-semibold px-2 xs:px-2.5 sm:px-3 md:px-4 lg:px-5 py-1 xs:py-1.5 sm:py-1.5 rounded-full flex-shrink-0 ${isFollowing
+              ? 'bg-[#1600ff] text-white border border-[#1600ff] hover:bg-[#1400cc]'
+              : 'bg-white text-[#1600ff] border border-[#1600ff] hover:bg-[#1600ff] hover:text-white'
+              }`}
           >
             {followMutation.isPending || unfollowMutation.isPending ? 'Loading...' : isLoadingProfile ? 'Loading...' : isFollowing ? 'Following' : 'Follow'}
           </button>
@@ -365,7 +363,7 @@ export default function CommunityUpdates({
         {updates.map((update) => {
           // If postId exists, fetch and display the full post
           const PostContent = update.postId ? PostWithData : NotificationSummary;
-          
+
           return (
             <PostContent key={update.id} update={update} />
           );

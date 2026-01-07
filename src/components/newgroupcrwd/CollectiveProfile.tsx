@@ -74,7 +74,7 @@ export default function CollectiveProfile({
           {showImage ? (
             <AvatarImage src={imageUrl} alt={name} />
           ) : null}
-          <AvatarFallback 
+          <AvatarFallback
             style={iconColor ? { backgroundColor: iconColor } : {}}
             className="rounded-xl text-white font-bold text-2xl md:text-3xl"
           >
@@ -94,7 +94,7 @@ export default function CollectiveProfile({
           </div>
           {founder && (
             <div className="flex items-center gap-1.5 md:gap-2">
-              <Avatar className="w-5 h-5 md:w-6 md:h-6 rounded-full flex-shrink-0">
+              {/* <Avatar className="w-5 h-5 md:w-6 md:h-6 rounded-full flex-shrink-0">
                 <AvatarImage src={founder?.profile_picture || undefined} alt={founderName || 'Founder'} />
                 <AvatarFallback 
                   style={{ 
@@ -125,7 +125,7 @@ export default function CollectiveProfile({
                 >
                   {(founderName || 'F').split(' ').map(n => n.charAt(0)).join('').toUpperCase()}
                 </AvatarFallback>
-              </Avatar>
+              </Avatar> */}
               <p className="text-muted-foreground text-xs md:text-sm lg:text-base">
                 Founded by{' '}
                 <button

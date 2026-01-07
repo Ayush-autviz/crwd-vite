@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 import { Loader2 } from 'lucide-react';
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useQueries } from "@tanstack/react-query";
 import { getUserProfileById } from "@/services/api/social";
 
@@ -46,12 +46,12 @@ interface RegularNotificationsProps {
 // Helper function to format time ago
 const formatTimeAgo = (dateString: string): string => {
   if (!dateString) return '';
-  
+
   try {
     const date = new Date(dateString);
     const now = new Date();
     const diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000);
-    
+
     if (diffInSeconds < 60) {
       return `${diffInSeconds} seconds ago`;
     } else if (diffInSeconds < 3600) {
@@ -69,10 +69,11 @@ const formatTimeAgo = (dateString: string): string => {
   }
 };
 
-const RegularNotifications: React.FC<RegularNotificationsProps> = ({ 
-  notifications = [], 
-  isLoading = false 
+const RegularNotifications: React.FC<RegularNotificationsProps> = ({
+  notifications = [],
+  isLoading = false
 }) => {
+  const navigate = useNavigate();
   // Filter personal notifications first
   const personalNotifications = useMemo(() => {
     return (notifications || []).filter((notification: any) => notification.type === "personal");
@@ -85,14 +86,14 @@ const RegularNotifications: React.FC<RegularNotificationsProps> = ({
       new Set(
         personalNotifications
           .map((notification: any) => {
-            const userId = 
-              notification.data?.liker_id || 
-              notification.data?.commenter_id || 
+            const userId =
+              notification.data?.liker_id ||
+              notification.data?.commenter_id ||
               notification.data?.mentioner_id ||
               notification.data?.follower_id ||
-              notification.data?.donor_id || 
-              notification.data?.new_member_id || 
-              notification.user?.id || 
+              notification.data?.donor_id ||
+              notification.data?.new_member_id ||
+              notification.user?.id ||
               notification.data?.user_id;
             return userId;
           })
@@ -127,103 +128,109 @@ const RegularNotifications: React.FC<RegularNotificationsProps> = ({
     if (!personalNotifications || personalNotifications.length === 0) return [];
 
     return personalNotifications.map((notification: any) => {
-        // Determine notification type and extract data
-        const isDonation = notification.title?.toLowerCase().includes('donation') || 
-                          notification.body?.toLowerCase().includes('donation') ||
-                          notification.data?.donor_id;
-        const isNewMember = notification.title?.toLowerCase().includes('member') || 
-                           notification.body?.toLowerCase().includes('joined') ||
-                           notification.data?.new_member_id;
-        
-        // Extract collective name from body or title
-        let collectiveName = '';
-        if (notification.body) {
-          const receivedMatch = notification.body.match(/received.*?donation.*?to (.+)/i);
-          if (receivedMatch) {
-            collectiveName = receivedMatch[1].trim();
-          } else {
-            const joinedMatch = notification.body.match(/joined (.+)/i);
-            if (joinedMatch) {
-              collectiveName = joinedMatch[1].trim();
-            }
-          }
-        }
-        
-        // Extract user name for new member notifications
-        let memberName = '';
-        if (isNewMember && notification.body) {
-          const nameMatch = notification.body.match(/^([^ ]+ [^ ]+)/);
-          if (nameMatch) {
-            memberName = nameMatch[1].trim();
-          }
-        }
-        
-        // Extract donation amount
-        let donationAmount = '';
-        if (isDonation && notification.body) {
-          const amountMatch = notification.body.match(/\$(\d+)/);
-          if (amountMatch) {
-            donationAmount = `$${amountMatch[1]}`;
-          }
-        }
+      // Determine notification type and extract data
+      const isDonation = notification.title?.toLowerCase().includes('donation') ||
+        notification.body?.toLowerCase().includes('donation') ||
+        notification.data?.donor_id;
+      const isNewMember = notification.title?.toLowerCase().includes('member') ||
+        notification.body?.toLowerCase().includes('joined') ||
+        notification.data?.new_member_id;
 
-        // Extract user info for avatar - get the user who triggered the notification
-        // For likes, comments, mentions, etc., check liker_id, commenter_id, mentioner_id, etc.
-        const userId = 
-          notification.data?.liker_id || 
-          notification.data?.commenter_id || 
-          notification.data?.mentioner_id ||
-          notification.data?.follower_id ||
-          notification.data?.donor_id || 
-          notification.data?.new_member_id || 
-          notification.user?.id || 
-          notification.data?.user_id;
-        
-        // Extract username from body if it contains @username pattern (e.g., "@jake_long liked your post")
-        let username = '';
-        if (notification.body) {
-          const usernameMatch = notification.body.match(/@(\w+)/);
-          if (usernameMatch) {
-            username = usernameMatch[1];
+      // Extract collective name from body or title
+      let collectiveName = '';
+      if (notification.body) {
+        const receivedMatch = notification.body.match(/received.*?donation.*?to (.+)/i);
+        if (receivedMatch) {
+          collectiveName = receivedMatch[1].trim();
+        } else {
+          const joinedMatch = notification.body.match(/joined (.+)/i);
+          if (joinedMatch) {
+            collectiveName = joinedMatch[1].trim();
           }
         }
-        
-        // Get user profile from fetched profiles map if available
-        const userProfile = userId ? userProfilesMap.get(userId.toString()) : null;
-        const profileUser = userProfile?.user || userProfile;
-        
-        // Get user info from fetched profile, notification.user, or notification.data
-        const firstName = 
-          profileUser?.first_name || 
-          notification.user?.first_name || 
-          notification.data?.first_name || '';
-        const lastName = 
-          profileUser?.last_name || 
-          notification.user?.last_name || 
-          notification.data?.last_name || '';
-        const extractedUsername = 
-          username || 
-          profileUser?.username || 
-          notification.user?.username || 
-          notification.data?.username || '';
+      }
 
-        return {
-          id: notification.id,
-          type: isDonation ? 'donation' : isNewMember ? 'new_member' : 'other',
-          title: isDonation ? 'Donation Received' : isNewMember ? 'New Member' : notification.title || 'Notification',
-          description: notification.body || notification.title || '',
-          collectiveName: collectiveName,
-          memberName: memberName,
-          donationAmount: donationAmount,
-          time: formatTimeAgo(notification.created_at || notification.updated_at),
-          avatarUrl: notification.user?.profile_picture || notification.data?.profile_picture || '',
-          collectiveId: notification.data?.collective_id,
-          userId: userId,
-          firstName: firstName,
-          lastName: lastName,
-          username: extractedUsername,
-        };
-      });
+      // Extract user name for new member notifications
+      let memberName = '';
+      if (isNewMember && notification.body) {
+        const nameMatch = notification.body.match(/^([^ ]+ [^ ]+)/);
+        if (nameMatch) {
+          memberName = nameMatch[1].trim();
+        }
+      }
+
+      // Extract donation amount
+      let donationAmount = '';
+      if (isDonation && notification.body) {
+        const amountMatch = notification.body.match(/\$(\d+)/);
+        if (amountMatch) {
+          donationAmount = `$${amountMatch[1]}`;
+        }
+      }
+
+      // Extract user info for avatar - get the user who triggered the notification
+      // For likes, comments, mentions, etc., check liker_id, commenter_id, mentioner_id, etc.
+      const userId =
+        notification.data?.liker_id ||
+        notification.data?.commenter_id ||
+        notification.data?.mentioner_id ||
+        notification.data?.follower_id ||
+        notification.data?.donor_id ||
+        notification.data?.new_member_id ||
+        notification.user?.id ||
+        notification.data?.user_id;
+
+      // Extract username from body if it contains @username pattern (e.g., "@jake_long liked your post")
+      let username = '';
+      if (notification.body) {
+        const usernameMatch = notification.body.match(/@(\w+)/);
+        if (usernameMatch) {
+          username = usernameMatch[1];
+        }
+      }
+
+      // Get user profile from fetched profiles map if available
+      const userProfile = userId ? userProfilesMap.get(userId.toString()) : null;
+      const profileUser = userProfile?.user || userProfile;
+
+      // Get user info from fetched profile, notification.user, or notification.data
+      const firstName =
+        profileUser?.first_name ||
+        notification.user?.first_name ||
+        notification.data?.first_name || '';
+      const lastName =
+        profileUser?.last_name ||
+        notification.user?.last_name ||
+        notification.data?.last_name || '';
+      const extractedUsername =
+        username ||
+        profileUser?.username ||
+        notification.user?.username ||
+        notification.data?.username || '';
+
+      const postId = notification.data?.post_id || notification.data?.post?.id || notification.post_id;
+      const collectiveId = notification.data?.collective_id || notification.data?.collective?.id;
+      const nonprofitId = notification.data?.nonprofit_id;
+
+      return {
+        id: notification.id,
+        type: isDonation ? 'donation' : isNewMember ? 'new_member' : 'other',
+        title: isDonation ? 'Donation Received' : isNewMember ? 'New Member' : notification.title || 'Notification',
+        description: notification.body || notification.title || '',
+        collectiveName: collectiveName,
+        memberName: memberName,
+        donationAmount: donationAmount,
+        time: formatTimeAgo(notification.created_at || notification.updated_at),
+        avatarUrl: notification.user?.profile_picture || notification.data?.profile_picture || '',
+        collectiveId: collectiveId,
+        nonprofitId: nonprofitId,
+        postId: postId,
+        userId: userId,
+        firstName: firstName,
+        lastName: lastName,
+        username: extractedUsername,
+      };
+    });
   }, [personalNotifications, userProfilesMap]);
 
   if (isLoading) {
@@ -254,32 +261,44 @@ const RegularNotifications: React.FC<RegularNotificationsProps> = ({
   return (
     <div className="w-full flex flex-col bg-white">
       {transformedNotifications.map((notification, idx) => (
-        <div key={notification.id || `regular-${idx}`} className="px-3 md:px-4 py-4 md:py-6 border-b border-gray-100 last:border-b-0">
+        <div
+          key={notification.id || `regular-${idx}`}
+          className={`px-3 md:px-4 py-4 md:py-6 border-b border-gray-100 last:border-b-0 ${notification.postId ? 'cursor-pointer hover:bg-gray-50 transition-colors' : ''}`}
+          onClick={() => {
+            if (notification.postId) {
+              navigate(`/post/${notification.postId}`);
+            }
+          }}
+        >
           <div className="flex items-start gap-3 md:gap-4">
             {/* Avatar */}
             {(() => {
-              const bgColor = notification.userId 
+              const bgColor = notification.userId
                 ? getConsistentColor(notification.userId, avatarColors)
                 : (notification.username ? getConsistentColor(notification.username, avatarColors) : avatarColors[0]);
-              
+
               return notification.userId ? (
-                <Link to={`/user-profile/${notification.userId}`} className="flex-shrink-0">
-                  <div 
+                <Link
+                  to={`/user-profile/${notification.userId}`}
+                  className="flex-shrink-0"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  <div
                     className="w-12 h-12 md:w-14 md:h-14 rounded-full flex items-center justify-center text-white text-sm md:text-base font-bold"
                     style={{ backgroundColor: bgColor }}
-                      >
-                        {getInitials(notification.firstName, notification.lastName, notification.username)}
+                  >
+                    {getInitials(notification.firstName, notification.lastName, notification.username)}
                   </div>
-              </Link>
-            ) : (
+                </Link>
+              ) : (
                 <div className="flex-shrink-0">
-                  <div 
+                  <div
                     className="w-12 h-12 md:w-14 md:h-14 rounded-full flex items-center justify-center text-white text-sm md:text-base font-bold"
                     style={{ backgroundColor: bgColor }}
-                      >
-                        {getInitials(notification.firstName, notification.lastName, notification.username)}
+                  >
+                    {getInitials(notification.firstName, notification.lastName, notification.username)}
                   </div>
-              </div>
+                </div>
               );
             })()}
 
@@ -290,29 +309,91 @@ const RegularNotifications: React.FC<RegularNotificationsProps> = ({
               </h3>
               <p className="text-gray-700 text-xs md:text-sm mb-1.5 md:mb-2">
                 {notification.type === 'donation' ? (
-                  <>
-                    Your collective{' '}
-                    {notification.collectiveId && notification.collectiveName ? (
-                      <Link 
-                        to={`/groupcrwd/${notification.collectiveId}`}
-                        className="font-semibold text-gray-700 hover:underline"
-                      >
-                        {notification.collectiveName}
-                      </Link>
-                    ) : (
-                      notification.collectiveName || 'Community Champions'
-                    )}
-                    {' '}received a {notification.donationAmount || '$50'} donation
-                  </>
+                  notification.description && notification.description.includes('donated to') ? (
+                    (() => {
+                      // Format: "@username donated to Nonprofit Name and X other"
+                      const description = notification.description;
+                      const parts: React.ReactNode[] = [];
+
+                      const donatedSplit = description.split(' donated to ');
+                      if (donatedSplit.length === 2) {
+                        const donorPart = donatedSplit[0];
+                        const restPart = donatedSplit[1];
+
+                        // Handle Donor Link
+                        if (donorPart.startsWith('@') && notification.userId) {
+                          parts.push(
+                            <Link
+                              key="donor"
+                              to={`/user-profile/${notification.userId}`}
+                              className="font-semibold text-gray-700 hover:underline"
+                              onClick={(e) => e.stopPropagation()}
+                            >
+                              {donorPart}
+                            </Link>
+                          );
+                        } else {
+                          parts.push(donorPart);
+                        }
+
+                        parts.push(' donated to ');
+
+                        // Handle Nonprofit Link
+                        // Check for " and X other"
+                        const otherMatch = restPart.match(/(.*)( and \d+ other.*)/);
+                        const nonprofitName = otherMatch ? otherMatch[1] : restPart;
+                        const suffix = otherMatch ? otherMatch[2] : '';
+
+                        if (notification.nonprofitId) {
+                          parts.push(
+                            <Link
+                              key="nonprofit"
+                              to={`/cause/${notification.nonprofitId}`}
+                              className="font-semibold text-gray-700 hover:underline"
+                              onClick={(e) => e.stopPropagation()}
+                            >
+                              {nonprofitName}
+                            </Link>
+                          );
+                        } else {
+                          parts.push(nonprofitName);
+                        }
+
+                        if (suffix) {
+                          parts.push(suffix);
+                        }
+
+                        return <>{parts}</>;
+                      }
+
+                      return description;
+                    })()
+                  ) : (
+                    <>
+                      Your collective{' '}
+                      {notification.collectiveId && notification.collectiveName ? (
+                        <Link
+                          to={`/groupcrwd/${notification.collectiveId}`}
+                          className="font-semibold text-gray-700 hover:underline"
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          {notification.collectiveName}
+                        </Link>
+                      ) : (
+                        notification.collectiveName || 'Community Champions'
+                      )}
+                      {' '}received a {notification.donationAmount || '$50'} donation
+                    </>
+                  )
                 ) : notification.type === 'new_member' ? (
                   (() => {
                     // Parse description to make user and collective names clickable
                     const description = notification.description;
                     if (!description) return '';
-                    
+
                     const parts: React.ReactNode[] = [];
                     let lastIndex = 0;
-                    
+
                     // Find member name and make it clickable
                     if (notification.userId && notification.memberName) {
                       const memberPattern = new RegExp(notification.memberName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'gi');
@@ -328,6 +409,7 @@ const RegularNotifications: React.FC<RegularNotificationsProps> = ({
                             key={`member-${match.index}`}
                             to={`/user-profile/${notification.userId}`}
                             className="font-semibold text-gray-700 hover:underline"
+                            onClick={(e) => e.stopPropagation()}
                           >
                             {match[0]}
                           </Link>
@@ -335,7 +417,7 @@ const RegularNotifications: React.FC<RegularNotificationsProps> = ({
                         lastIndex = match.index + match[0].length;
                       }
                     }
-                    
+
                     // Find collective name and make it clickable
                     if (notification.collectiveId && notification.collectiveName) {
                       const collectivePattern = new RegExp(notification.collectiveName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'gi');
@@ -353,6 +435,7 @@ const RegularNotifications: React.FC<RegularNotificationsProps> = ({
                               key={`collective-${match.index}`}
                               to={`/groupcrwd/${notification.collectiveId}`}
                               className="font-semibold text-gray-700 hover:underline"
+                              onClick={(e) => e.stopPropagation()}
                             >
                               {match[0]}
                             </Link>
@@ -361,12 +444,12 @@ const RegularNotifications: React.FC<RegularNotificationsProps> = ({
                         }
                       }
                     }
-                    
+
                     // Add remaining text
                     if (lastIndex < description.length) {
                       parts.push(description.substring(lastIndex));
                     }
-                    
+
                     return parts.length > 0 ? <>{parts}</> : description;
                   })()
                 ) : (
@@ -374,11 +457,11 @@ const RegularNotifications: React.FC<RegularNotificationsProps> = ({
                     // Parse description for @username mentions and collective names
                     const description = notification.description;
                     if (!description) return '';
-                    
+
                     // Split description into parts and create clickable links
                     const parts: React.ReactNode[] = [];
                     let lastIndex = 0;
-                    
+
                     // Find @username mentions
                     if (notification.userId && notification.username) {
                       const usernamePattern = new RegExp(`@${notification.username}\\b`, 'gi');
@@ -394,6 +477,7 @@ const RegularNotifications: React.FC<RegularNotificationsProps> = ({
                             key={`user-${match.index}`}
                             to={`/user-profile/${notification.userId}`}
                             className="font-semibold text-gray-700 hover:underline"
+                            onClick={(e) => e.stopPropagation()}
                           >
                             {match[0]}
                           </Link>
@@ -401,7 +485,7 @@ const RegularNotifications: React.FC<RegularNotificationsProps> = ({
                         lastIndex = match.index + match[0].length;
                       }
                     }
-                    
+
                     // Find collective name mentions
                     if (notification.collectiveId && notification.collectiveName) {
                       const collectivePattern = new RegExp(notification.collectiveName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'gi');
@@ -419,6 +503,7 @@ const RegularNotifications: React.FC<RegularNotificationsProps> = ({
                               key={`collective-${match.index}`}
                               to={`/groupcrwd/${notification.collectiveId}`}
                               className="font-semibold text-gray-700 hover:underline"
+                              onClick={(e) => e.stopPropagation()}
                             >
                               {match[0]}
                             </Link>
@@ -427,12 +512,12 @@ const RegularNotifications: React.FC<RegularNotificationsProps> = ({
                         }
                       }
                     }
-                    
+
                     // Add remaining text
                     if (lastIndex < description.length) {
                       parts.push(description.substring(lastIndex));
                     }
-                    
+
                     return parts.length > 0 ? <>{parts}</> : description;
                   })()
                 )}

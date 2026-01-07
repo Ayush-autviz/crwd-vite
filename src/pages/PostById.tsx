@@ -19,6 +19,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Comment, CommentData } from "@/components/post/Comment";
 import { useAuthStore } from "@/stores/store";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 export default function PostById() {
   const { id } = useParams();
@@ -32,16 +33,16 @@ export default function PostById() {
   const { token, user } = useAuthStore();
 
   // Redirect to login if no token
-  useEffect(() => {
-    if (!token?.access_token) {
-      navigate('/login', { replace: true });
-    }
-  }, [token, navigate]);
+  // useEffect(() => {
+  //   if (!token?.access_token) {
+  //     navigate('/login', { replace: true });
+  //   }
+  // }, [token, navigate]);
 
-  // Show nothing if no token (redirect will happen)
-  if (!token?.access_token) {
-    return null;
-  }
+  // // Show nothing if no token (redirect will happen)
+  // if (!token?.access_token) {
+  //   return null;
+  // }
 
   // Fetch post data using API
   const { data: postData, isLoading, error } = useQuery({
@@ -107,7 +108,7 @@ export default function PostById() {
   // Transform API comments to CommentData format
   const apiComments = React.useMemo(() => {
     if (!commentsData?.results) return [];
-    
+
     return commentsData.results.map((comment: any) => ({
       id: comment.id,
       username: comment.user?.username || comment.user?.full_name || 'Unknown User',
@@ -124,7 +125,7 @@ export default function PostById() {
       userId: comment.user?.id, // Add user ID for delete functionality
     }));
   }, [commentsData]);
-  
+
 
   // Use API comments if available, otherwise fall back to mock comments
   const [comments, setComments] = useState<CommentData[]>(
@@ -161,7 +162,7 @@ export default function PostById() {
 
   // Create reply mutation
   const createReplyMutation = useMutation({
-    mutationFn: ({ commentId, data }: { commentId: number; data: { content: string } }) => 
+    mutationFn: ({ commentId, data }: { commentId: number; data: { content: string } }) =>
       createPostComment(id || '', { content: data.content, parent_comment_id: commentId }), // Use createPostComment with parent_comment_id
     onSuccess: () => {
       setToastMessage("Reply added successfully!");
@@ -336,22 +337,22 @@ export default function PostById() {
         />
 
         {/* Comments Section */}
-         <div className="px-3 md:px-4 py-4 md:py-6">
-           {isLoadingComments ? (
-             <div className="text-center py-6 md:py-8 px-3 md:px-4">
-               <div className="bg-gray-50 rounded-lg p-4 md:p-6 border border-gray-100">
-                 <div className="w-10 h-10 md:w-12 md:h-12 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-3 md:mb-4">
-                   <Loader2 className="w-5 h-5 md:w-6 md:h-6 text-primary animate-spin" />
-                 </div>
-                 <h3 className="text-sm md:text-base font-medium text-gray-900 mb-1.5 md:mb-2">
-                   Loading comments...
-                 </h3>
-                 <p className="text-xs md:text-sm text-gray-500">
-                   Please wait while we fetch the comments
-                 </p>
-               </div>
-             </div>
-           ) : comments.length === 0 ? (
+        <div className="px-3 md:px-4 py-4 md:py-6">
+          {isLoadingComments ? (
+            <div className="text-center py-6 md:py-8 px-3 md:px-4">
+              <div className="bg-gray-50 rounded-lg p-4 md:p-6 border border-gray-100">
+                <div className="w-10 h-10 md:w-12 md:h-12 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-3 md:mb-4">
+                  <Loader2 className="w-5 h-5 md:w-6 md:h-6 text-primary animate-spin" />
+                </div>
+                <h3 className="text-sm md:text-base font-medium text-gray-900 mb-1.5 md:mb-2">
+                  Loading comments...
+                </h3>
+                <p className="text-xs md:text-sm text-gray-500">
+                  Please wait while we fetch the comments
+                </p>
+              </div>
+            </div>
+          ) : comments.length === 0 ? (
             <div className="text-center py-6 md:py-8 px-3 md:px-4">
               <div className="bg-gray-50 rounded-lg p-4 md:p-6 border border-gray-100">
                 <div className="w-10 h-10 md:w-12 md:h-12 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-3 md:mb-4">
@@ -397,7 +398,7 @@ export default function PostById() {
                     setComments(prev => {
                       // First, try to remove it as a main comment
                       const filteredComments = prev.filter(c => c.id !== commentId);
-                      
+
                       // If not found, it might be a reply - remove from parent comment's replies
                       if (filteredComments.length === prev.length) {
                         return prev.map(comment => ({
@@ -406,7 +407,7 @@ export default function PostById() {
                           repliesCount: comment.replies.filter(reply => reply.id !== commentId).length,
                         }));
                       }
-                      
+
                       return filteredComments;
                     });
                     // Invalidate queries to refresh
@@ -423,9 +424,10 @@ export default function PostById() {
       </main>
 
       {/* Sticky Input Bar */}
-      <div className="fixed bottom-0 right-0 bg-white border-t px-3 md:px-4 py-2.5 md:py-3 flex items-center gap-1.5 md:gap-2 w-full">
-        <div className="flex items-center gap-1.5 md:gap-2 flex-1 bg-gray-100 rounded-full px-3 md:px-4 py-1.5 md:py-2 relative">
-          {user?.profile_picture ? (
+      {token?.access_token && (
+        <div className="fixed bottom-0 right-0 bg-white border-t px-3 md:px-4 py-2.5 md:py-3 flex items-center gap-1.5 md:gap-2 w-full">
+          <div className="flex items-center gap-1.5 md:gap-2 flex-1 bg-gray-100 rounded-full px-3 md:px-4 py-1.5 md:py-2 relative">
+            {/* {user?.profile_picture ? (
             <img
               src={user.profile_picture}
               alt="current user"
@@ -441,30 +443,37 @@ export default function PostById() {
               alt="current user"
               className="w-4 h-4 md:w-5 md:h-5 rounded-full border flex-shrink-0"
             />
-          )}
-          <input
-            type="text"
-            value={inputValue}
-            onChange={(e) => setInputValue(e.target.value)}
-            onKeyPress={handleKeyPress}
-            placeholder="Join the conversation"
-            disabled={createCommentMutation.isPending}
-            className="bg-transparent outline-none flex-1 text-xs md:text-sm text-gray-700 placeholder-gray-400 pr-5 md:pr-6 disabled:opacity-50"
-          />
-          {createCommentMutation.isPending ? (
-            <div className="absolute right-2 md:right-3 p-0.5 md:p-1">
-              <Loader2 className="w-3.5 h-3.5 md:w-4 md:h-4 text-gray-500 animate-spin" />
-            </div>
-          ) : inputValue ? (
-            <button
-              onClick={() => setInputValue("")}
-              className="absolute right-2 md:right-3 p-0.5 md:p-1 hover:bg-gray-200 rounded-full transition-colors"
-            >
-              <X className="w-3.5 h-3.5 md:w-4 md:h-4 text-gray-500" />
-            </button>
-          ) : null}
+          )} */}
+            <Avatar className="h-8 w-8">
+              <AvatarImage src={user?.profile_picture} />
+              <AvatarFallback className={`text-white font-bold text-[10px] md:text-sm`} style={{ backgroundColor: user?.color }}>
+                {user?.first_name?.charAt(0).toUpperCase() + user?.last_name?.charAt(0).toUpperCase()}
+              </AvatarFallback>
+            </Avatar>
+            <input
+              type="text"
+              value={inputValue}
+              onChange={(e) => setInputValue(e.target.value)}
+              onKeyPress={handleKeyPress}
+              placeholder="Join the conversation"
+              disabled={createCommentMutation.isPending}
+              className="bg-transparent outline-none flex-1 text-xs md:text-sm text-gray-700 placeholder-gray-400 pr-5 md:pr-6 disabled:opacity-50"
+            />
+            {createCommentMutation.isPending ? (
+              <div className="absolute right-2 md:right-3 p-0.5 md:p-1">
+                <Loader2 className="w-3.5 h-3.5 md:w-4 md:h-4 text-gray-500 animate-spin" />
+              </div>
+            ) : inputValue ? (
+              <button
+                onClick={() => setInputValue("")}
+                className="absolute right-2 md:right-3 p-0.5 md:p-1 hover:bg-gray-200 rounded-full transition-colors"
+              >
+                <X className="w-3.5 h-3.5 md:w-4 md:h-4 text-gray-500" />
+              </button>
+            ) : null}
+          </div>
         </div>
-      </div>
+      )}
 
       <Toast
         show={showToast}

@@ -43,7 +43,7 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
 }) => {
   const [isFollowing, setIsFollowing] = useState(false);
   const [toastState, setToastState] = useState({ show: false, message: "" });
-  
+
   // Use color from API if available, otherwise get consistent color for avatar fallback based on name
   const avatarBgColor = color || getConsistentColor(name || link || 'U', avatarColors);
 
@@ -94,33 +94,33 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
         <ImageModal src={avatarUrl} alt={name}>
           <Avatar className="w-20 h-20 md:w-24 md:h-24 rounded-full object-contain cursor-pointer hover:opacity-80 transition-opacity">
             <AvatarImage src={avatarUrl} alt={name} />
-            <AvatarFallback 
+            <AvatarFallback
               style={{ backgroundColor: avatarBgColor }}
-              className="text-white text-sm md:text-base font-semibold"
+              className="text-white text-2xl md:text-4xl font-medium"
             >
-              {name.split(' ').map(word => word[0]).join('').toUpperCase()}
+              {name.charAt(0).toUpperCase()}
             </AvatarFallback>
           </Avatar>
         </ImageModal>
         <div className="font-bold text-base md:text-lg leading-tight">{name}</div>
       </div>
-      
+
       <div className="flex-1 flex flex-col items-center">
         {/* <div className="text-[10px] md:text-xs text-gray-500 flex items-center gap-1.5 md:gap-2 mt-0.5 md:mt-1"> */}
-          {founder && (
-          <div 
+        {founder && (
+          <div
             className={`bg-pink-100 rounded-full py-1 px-2 mb-2 ${onFounderClick ? 'cursor-pointer hover:bg-pink-200 transition-colors' : ''}`}
             onClick={onFounderClick}
           >
             <p className="text-pink-500 font-medium text-xs md:text-sm">Founder</p>
           </div>
-          )}
-          {location && (
+        )}
+        {location && (
           <div className="flex items-center gap-0.5 md:gap-1">
             <MapPin className="w-3.5 h-3.5 md:w-4 md:h-4" />
             <span className="text-xs md:text-sm">{location}</span>
           </div>
-          )}
+        )}
         {/* </div> */}
       </div>
     </div>
