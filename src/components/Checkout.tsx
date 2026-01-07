@@ -112,7 +112,7 @@ export const Checkout = ({
     const gross = grossAmount;
     let crwdFee: number;
     let net: number;
-    
+
     if (gross < 10.00) {
       // Flat fee of $1.00
       crwdFee = 1.00;
@@ -122,12 +122,12 @@ export const Checkout = ({
       crwdFee = gross * 0.10;
       net = gross - crwdFee;
     }
-    
+
     console.log('=== Fee Calculation ===');
     console.log('Gross Amount:', gross);
     console.log('CRWD Fee:', crwdFee);
     console.log('Net (Gross - CRWD Fee):', net);
-    
+
     return {
       crwdFee: Math.round(crwdFee * 100) / 100,
       net: Math.round(net * 100) / 100,
@@ -137,16 +137,16 @@ export const Checkout = ({
   const fees = calculateFees(actualDonationAmount);
   const net = fees.net;
   const maxCapacity = Math.floor(net / 0.20);
-  
+
   console.log('=== Capacity Calculation ===');
   console.log('Fees object:', fees);
   console.log('Net amount:', net);
   console.log('Max Capacity (net / 0.20):', maxCapacity);
-  
+
   // Get current capacity from box_causes only
   const uniqueCauseIds = new Set(boxCauses.map((bc: any) => bc.cause?.id).filter(Boolean));
   const currentCapacity = uniqueCauseIds.size;
-  
+
   console.log('=== Capacity Info ===');
   console.log('Box Causes:', boxCauses);
   console.log('Unique Cause IDs:', Array.from(uniqueCauseIds));
@@ -335,7 +335,7 @@ export const Checkout = ({
     const gross = grossAmount;
     let crwdFee: number;
     let net: number;
-    
+
     if (gross < 10.00) {
       // Flat fee of $1.00
       crwdFee = 1.00;
@@ -345,7 +345,7 @@ export const Checkout = ({
       crwdFee = gross * 0.10;
       net = gross - crwdFee;
     }
-    
+
     return {
       crwdFee: Math.round(crwdFee * 100) / 100,
       net: Math.round(net * 100) / 100,
@@ -384,14 +384,14 @@ export const Checkout = ({
     const fees = calculateFeesForAmount(editableAmount);
     const net = fees.net;
     const maxCapacity = Math.floor(net / 0.20);
-    
+
     // Check if current causes exceed the new capacity
     if (currentCapacity > maxCapacity) {
       // Show error toast
       toast.error(`You can only support up to ${maxCapacity} cause${maxCapacity !== 1 ? 's' : ''} with $${editableAmount}. Please remove some causes or increase the amount.`);
       return;
     }
-    
+
     // If capacity check passes, update the amount
     updateAmountMutation.mutate(editableAmount);
   };
@@ -456,22 +456,26 @@ export const Checkout = ({
   // Calculate distribution percentage and amount per item
   // Check if boxCauses have custom percentages, otherwise use equal distribution
   const hasCustomPercentages = boxCauses.some((bc: any) => bc.percentage != null && bc.percentage !== undefined);
-  
+
   const totalItems = hasApiData
     ? totalCauses
     : selectedOrganizations.length;
-  
+
   // Get percentage for each cause (from boxCauses if available, otherwise equal)
   const getCausePercentage = (causeId: number) => {
     if (hasCustomPercentages) {
       const boxCause = boxCauses.find((bc: any) => bc.cause?.id === causeId);
-      return boxCause?.percentage || (100 / totalItems);
+      const percentage = boxCause?.percentage;
+      if (percentage !== undefined && percentage !== null) {
+        return typeof percentage === 'string' ? parseFloat(percentage) : percentage;
+      }
+      return 100 / totalItems;
     }
     return 100 / totalItems;
   };
-  
+
   const distributionPercentage = totalItems > 0 ? 100 / totalItems : 0;
-  
+
   // Calculate amount per item based on net amount (after fees)
   // Use existing net from fees calculation
   const amountPerItem = totalItems > 0
@@ -561,7 +565,7 @@ export const Checkout = ({
               {/* Monthly Donation Section */}
               <div className="mb-4 md:mb-6">
                 <h2 className="text-sm md:text-base font-medium text-gray-900 mb-2 md:mb-3">Monthly Donation</h2>
-                
+
                 {/* Amount Display with Controls */}
                 <div className="flex items-center justify-between mb-1.5 md:mb-2">
                   <div className="flex items-baseline gap-1.5 md:gap-2">
@@ -588,18 +592,17 @@ export const Checkout = ({
                     )}
                     <span className="text-sm md:text-base text-gray-600">/month</span>
                   </div>
-                  
+
                   {/* +/- Buttons - Only show when editing */}
                   {isEditingAmount && (
                     <div className="flex items-center gap-2">
                       <button
                         onClick={decrementAmount}
                         disabled={editableAmount <= 5}
-                        className={`flex items-center justify-center w-10 h-10 md:w-12 md:h-12 rounded-lg transition-colors ${
-                          editableAmount > 5 
-                            ? 'bg-gray-100 hover:bg-gray-200' 
+                        className={`flex items-center justify-center w-10 h-10 md:w-12 md:h-12 rounded-lg transition-colors ${editableAmount > 5
+                            ? 'bg-gray-100 hover:bg-gray-200'
                             : 'bg-gray-200 cursor-not-allowed opacity-50'
-                        }`}
+                          }`}
                       >
                         <Minus size={20} className="text-gray-600 font-bold" strokeWidth={3} />
                       </button>
@@ -611,7 +614,7 @@ export const Checkout = ({
                       </button>
                     </div>
                   )}
-                  
+
                   {/* Pencil Icon - Only show when not editing */}
                   {!isEditingAmount && (
                     <button
@@ -623,12 +626,12 @@ export const Checkout = ({
                     </button>
                   )}
                 </div>
-                
+
                 {/* Lifetime Amount */}
                 {lifetimeAmount > 0 && (
                   <p className="text-xs md:text-sm text-gray-600 mb-3 md:mb-4">${lifetimeAmount.toLocaleString()} lifetime</p>
                 )}
-                
+
                 {/* Billing Cycle Info - Only show when editing and donation box is active */}
                 {isEditingAmount && donationBox?.is_active && donationBox?.next_charge_date && (
                   <div className="bg-blue-50 rounded-lg p-3 md:p-4 mb-4 md:mb-6">
@@ -637,7 +640,7 @@ export const Checkout = ({
                     </p>
                   </div>
                 )}
-                
+
                 {/* Action Buttons - Only show when editing */}
                 {isEditingAmount && (
                   <div className="flex items-center gap-2 md:gap-3">
@@ -715,7 +718,7 @@ export const Checkout = ({
                     <Pencil size={16} className="md:w-[18px] md:h-[18px] text-gray-600 flex-shrink-0" />
                     <div className="flex flex-col items-start">
                       <span className="text-xs md:text-sm leading-tight">Edit Split</span>
-                      
+
                     </div>
                   </button>
                 )}
@@ -754,7 +757,7 @@ export const Checkout = ({
                       <div className="flex items-center gap-3 md:gap-4 ml-2 md:ml-4">
                         <div className="text-right">
                           <p className="font-bold text-sm md:text-base text-gray-900">
-                            {hasCustomPercentages 
+                            {hasCustomPercentages
                               ? `${getCausePercentage(cause.id).toFixed(1)}%`
                               : `${distributionPercentage.toFixed(1)}%`
                             }
@@ -1073,9 +1076,8 @@ export const Checkout = ({
       {/* Remove Cause Bottom Sheet Modal */}
       {isRemoveModalVisible && (
         <div
-          className={`fixed inset-0 z-50 transition-opacity duration-300 ${
-            isRemoveModalAnimating ? 'opacity-100' : 'opacity-0'
-          }`}
+          className={`fixed inset-0 z-50 transition-opacity duration-300 ${isRemoveModalAnimating ? 'opacity-100' : 'opacity-0'
+            }`}
           onClick={() => {
             setShowRemoveModal(false);
             setCauseToRemove(null);
@@ -1083,12 +1085,11 @@ export const Checkout = ({
         >
           {/* Backdrop */}
           <div className="absolute inset-0 bg-black/50" />
-          
+
           {/* Bottom Sheet */}
           <div
-            className={`absolute bottom-0 left-0 right-0 bg-white rounded-t-2xl md:rounded-t-3xl shadow-2xl max-h-[90vh] md:max-h-[85vh] overflow-hidden flex flex-col transition-transform duration-300 ${
-              isRemoveModalAnimating ? 'translate-y-0' : 'translate-y-full'
-            }`}
+            className={`absolute bottom-0 left-0 right-0 bg-white rounded-t-2xl md:rounded-t-3xl shadow-2xl max-h-[90vh] md:max-h-[85vh] overflow-hidden flex flex-col transition-transform duration-300 ${isRemoveModalAnimating ? 'translate-y-0' : 'translate-y-full'
+              }`}
             onClick={(e) => e.stopPropagation()}
           >
             {/* Handle Bar */}
@@ -1140,9 +1141,8 @@ export const Checkout = ({
       {/* Pause Donations Bottom Sheet Modal */}
       {isPauseModalVisible && (
         <div
-          className={`fixed inset-0 z-50 transition-opacity duration-300 ${
-            isPauseModalAnimating ? 'opacity-100' : 'opacity-0'
-          }`}
+          className={`fixed inset-0 z-50 transition-opacity duration-300 ${isPauseModalAnimating ? 'opacity-100' : 'opacity-0'
+            }`}
           onClick={() => {
             setShowPauseModal(false);
             setSelectedPauseOption(null);
@@ -1150,12 +1150,11 @@ export const Checkout = ({
         >
           {/* Backdrop */}
           <div className="absolute inset-0 bg-black/50" />
-          
+
           {/* Bottom Sheet */}
           <div
-            className={`absolute bottom-0 left-0 right-0 bg-white rounded-t-2xl md:rounded-t-3xl shadow-2xl max-h-[90vh] md:max-h-[85vh] overflow-hidden flex flex-col transition-transform duration-300 ${
-              isPauseModalAnimating ? 'translate-y-0' : 'translate-y-full'
-            }`}
+            className={`absolute bottom-0 left-0 right-0 bg-white rounded-t-2xl md:rounded-t-3xl shadow-2xl max-h-[90vh] md:max-h-[85vh] overflow-hidden flex flex-col transition-transform duration-300 ${isPauseModalAnimating ? 'translate-y-0' : 'translate-y-full'
+              }`}
             onClick={(e) => e.stopPropagation()}
           >
             {/* Header */}
@@ -1189,11 +1188,10 @@ export const Checkout = ({
                 {/* Option 1: Skip this month */}
                 <button
                   onClick={() => setSelectedPauseOption(1)}
-                  className={`w-full p-3 rounded-lg border-2 transition-all text-left ${
-                    selectedPauseOption === 1
+                  className={`w-full p-3 rounded-lg border-2 transition-all text-left ${selectedPauseOption === 1
                       ? 'border-[#1600ff] bg-blue-50'
                       : 'border-gray-200 hover:border-gray-300 bg-white'
-                  }`}
+                    }`}
                 >
                   <div className="flex items-center justify-between">
                     <span className="font-semibold text-sm text-gray-900">Skip this month</span>
@@ -1204,11 +1202,10 @@ export const Checkout = ({
                 {/* Option 2: Pause for 2 months */}
                 <button
                   onClick={() => setSelectedPauseOption(2)}
-                  className={`w-full p-3 rounded-lg border-2 transition-all text-left ${
-                    selectedPauseOption === 2
+                  className={`w-full p-3 rounded-lg border-2 transition-all text-left ${selectedPauseOption === 2
                       ? 'border-[#1600ff] bg-blue-50'
                       : 'border-gray-200 hover:border-gray-300 bg-white'
-                  }`}
+                    }`}
                 >
                   <div className="flex items-center justify-between">
                     <span className="font-semibold text-sm text-gray-900">Pause for 2 months</span>
@@ -1219,11 +1216,10 @@ export const Checkout = ({
                 {/* Option 3: Pause for 3 months */}
                 <button
                   onClick={() => setSelectedPauseOption(3)}
-                  className={`w-full p-3 rounded-lg border-2 transition-all text-left ${
-                    selectedPauseOption === 3
+                  className={`w-full p-3 rounded-lg border-2 transition-all text-left ${selectedPauseOption === 3
                       ? 'border-[#1600ff] bg-blue-50'
                       : 'border-gray-200 hover:border-gray-300 bg-white'
-                  }`}
+                    }`}
                 >
                   <div className="flex items-center justify-between">
                     <span className="font-semibold text-sm text-gray-900">Pause for 3 months</span>
