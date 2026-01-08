@@ -319,7 +319,7 @@ export default function CommunityPostCard({ post, onCommentPress, showSimplified
               {post.fundraiser?.is_active && (
                 <p className="text-[10px] md:text-xs text-gray-500 mb-0.5">Started a fundraiser</p>
               )}
-              {showSimplifiedHeader && post.timestamp && (
+              {showSimplifiedHeader && post.timestamp && !post.fundraiser?.is_active && (
                 <div className="text-[10px] md:text-sm text-gray-500">
                   {formatDistanceToNow(new Date(post.timestamp), { addSuffix: true })}
                 </div>

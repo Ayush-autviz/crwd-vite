@@ -78,7 +78,7 @@ export default function NewFeaturedNonprofits({
                   {/* Content */}
                   <div className="flex-1 min-w-0 flex flex-col h-full">
                     {/* Title */}
-                    <h3 className="font-bold text-xs md:text-sm text-gray-900 mb-1">
+                    <h3 className="font-bold text-xs md:text-sm text-gray-900 mb-1 line-clamp-1">
                       {nonprofit.name}
                     </h3>
 

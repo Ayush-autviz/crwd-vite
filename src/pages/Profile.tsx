@@ -482,6 +482,8 @@ export default function ProfilePage() {
                 onFounderClick={() => setShowFounderSheet(true)}
               />
 
+              <ProfileBio bio={profileData?.bio} />
+
               {/* Edit Profile and Share Profile buttons */}
               <div className="flex items-center justify-center gap-3 md:gap-4 mt-3 md:mt-4">
                 <Button
@@ -515,6 +517,7 @@ export default function ProfilePage() {
                 isLoadingFollowing={profileLoading}
                 onStatPress={handleStatPress}
               />
+
 
               {/* Divider */}
               <div className="h-px bg-gray-200 mt-2"></div>
@@ -600,7 +603,6 @@ export default function ProfilePage() {
 
               {/* Divider */}
 
-              <ProfileBio bio={profileData?.bio} />
               <div className="py-4">
                 <div className="w-full my-4 mb-6 md:px-0 md:my-8 md:mb-10">
                   <div className="mb-3 md:mb-6">

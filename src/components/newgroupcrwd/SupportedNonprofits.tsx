@@ -65,8 +65,8 @@ export default function SupportedNonprofits({
       <div className="flex justify-between items-center mb-3 md:mb-4">
         <h2 className="text-base md:text-lg lg:text-xl  font-bold">Supported Nonprofits</h2>
         {onSeeAllClick && (
-          <Button 
-            variant="link" 
+          <Button
+            variant="link"
             onClick={onSeeAllClick}
             className="text-green-600 p-0 h-auto flex items-center text-xs md:text-sm"
           >
@@ -74,7 +74,7 @@ export default function SupportedNonprofits({
           </Button>
         )}
       </div>
-      <div className="overflow-x-auto pb-2 -mx-3 md:-mx-4 px-3 md:px-4 md:mx-0 md:px-0">
+      <div className="overflow-x-auto pb-2 -mx-3 md:-mx-4 px-3 md:px-4  md:px-0">
         <div className="flex gap-3 md:gap-4 w-max items-stretch">
           {nonprofits.map((nonprofit) => {
             const cause = nonprofit.cause || nonprofit;

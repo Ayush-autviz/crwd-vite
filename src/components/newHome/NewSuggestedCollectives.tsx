@@ -78,35 +78,35 @@ export default function NewSuggestedCollectives({
                 <div className="flex flex-col gap-2.5 md:gap-3 p-3 md:p-4 rounded-lg border border-gray-200 hover:bg-gray-50 cursor-pointer transition-colors min-w-[240px] md:min-w-[280px] max-w-[280px] md:max-w-[320px] h-[220px] md:h-[240px]">
                   {/* Icon */}
                   <div className="flex items-center gap-2">
-                  <div
-                    className="w-10 h-10 md:w-12 md:h-12 rounded-lg flex items-center justify-center flex-shrink-0"
-                    style={showImage ? {} : (iconColor ? { backgroundColor: iconColor } : { backgroundColor: getIconColor(index) })}
-                  >
-                    {showImage ? (
-                      <img
-                        src={collective.icon}
-                        alt={collective.name}
-                        className="w-full h-full object-cover rounded-lg"
-                      />
-                    ) : (
-                      <span className="text-white font-bold text-lg md:text-xl">
-                        {iconLetter}
-                      </span>
-                    )}
-                  </div>
+                    <div
+                      className="w-10 h-10 md:w-12 md:h-12 rounded-lg flex items-center justify-center flex-shrink-0"
+                      style={showImage ? {} : (iconColor ? { backgroundColor: iconColor } : { backgroundColor: getIconColor(index) })}
+                    >
+                      {showImage ? (
+                        <img
+                          src={collective.icon}
+                          alt={collective.name}
+                          className="w-full h-full object-cover rounded-lg"
+                        />
+                      ) : (
+                        <span className="text-white font-bold text-lg md:text-xl">
+                          {iconLetter}
+                        </span>
+                      )}
+                    </div>
 
-                  {/* Title */}
-                  <h3 className="font-bold text-sm md:text-base text-black flex-shrink-0">
-                    {collective.name}
-                  </h3>
+                    {/* Title */}
+                    <h3 className="font-bold text-sm md:text-base text-black flex-shrink-0">
+                      {collective.name}
+                    </h3>
                   </div>
 
                   {/* Founder */}
                   <div className="flex items-center gap-1.5 md:gap-2 flex-shrink-0">
                     <Avatar className="h-5 w-5 md:h-6 md:w-6">
                       <AvatarImage src={collective.founder.profile_picture} />
-                      <AvatarFallback 
-                        style={{ 
+                      <AvatarFallback
+                        style={{
                           backgroundColor: (() => {
                             const color = collective.founder.color;
                             return color ? color : undefined;
@@ -115,9 +115,7 @@ export default function NewSuggestedCollectives({
                         className="text-white text-xs md:text-sm font-semibold"
                       >
                         {collective.founder.name
-                          .split(" ")
-                          .map((n) => n.charAt(0))
-                          .join("")
+                          .charAt(0)
                           .toUpperCase()}
                       </AvatarFallback>
                     </Avatar>

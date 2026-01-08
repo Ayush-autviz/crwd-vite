@@ -147,7 +147,7 @@ function App() {
             {/* Auth routes - only render if no token */}
             {!token?.access_token && (
               <>
-                <Route path="/" element={<Waitlist />} />
+                <Route path="/" element={<NewHome />} />
                 <Route path="/login" element={<Login />} />
                 {/* <Route path="/signup" element={<Signup />} /> */}
                 <Route path="/forgot-password" element={<ForgotPassword />} />

@@ -273,7 +273,7 @@ export default function FundraiserDetail() {
                   style={{ backgroundColor: collective.color || getConsistentColor(collective.id, collective.name) }}
                   className="text-white font-bold text-sm md:text-base"
                 >
-                  {getInitials(collective.name || 'Collective')}
+                  {getInitials(collective.name || 'Collective').charAt(0)}
                 </AvatarFallback>
               </Avatar>
               <div className="flex-1 min-w-0">
@@ -300,7 +300,7 @@ export default function FundraiserDetail() {
             <div className="space-y-3 md:space-y-4">
               {fundraiserData.causes.map((cause: any) => {
                 const avatarBgColor = getConsistentColor(cause.id, cause.name);
-                const initials = getInitials(cause.name || 'Nonprofit');
+                const initials = getInitials(cause.name || 'Nonprofit').charAt(0);
                 return (
                   <Link
                     key={cause.id}
@@ -336,7 +336,7 @@ export default function FundraiserDetail() {
               {fundraiserData.recent_donors.slice(0, 5).map((donor: any) => {
                 const displayName = donor.name || 'Anonymous';
                 const avatarBgColor = donor.color || getConsistentColor(donor.id, displayName);
-                const initials = getInitials(displayName);
+                const initials = getInitials(displayName).charAt(0);
                 return (
                   <Link
                     key={donor.id}

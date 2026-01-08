@@ -40,6 +40,7 @@ export default function NewGroupCrwdPage() {
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState('');
+  const [showFounderPerk, setShowFounderPerk] = useState(true);
 
   // Fetch collective data
   const { data: crwdData, isLoading: isLoadingCrwd, error: crwdError } = useQuery({
@@ -472,6 +473,56 @@ export default function NewGroupCrwdPage() {
           }}
         />
 
+        {showFounderPerk && (
+          <div className="flex items-start bg-[#FFF8F1] border border-[#F5E6D3] rounded-xl p-5 relative shadow-sm mx-3 md:mx-4 mt-3 md:mt-4">
+            {/* Icon Container */}
+            <div className="flex items-center justify-center w-10 h-10 bg-[#F54E6D] rounded-full mr-4 shrink-0 text-white">
+              <svg
+                className="w-5 h-5"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+              </svg>
+            </div>
+
+            {/* Content Container */}
+            <div className="flex-1 pr-6">
+              <h3 className="m-0 mb-1 text-xs md:text-sm lg:text-base font-bold text-gray-900">
+                Founder Perk: Create Fundraisers
+              </h3>
+              <p className="m-0 text-xs md:text-sm lg:text-base text-gray-600 leading-relaxed">
+                Respond to current events by creating fundraisers with any nonprofits you choose.
+              </p>
+            </div>
+
+            {/* Close Button */}
+            <button
+              onClick={() => setShowFounderPerk(false)}
+              className="absolute cursor-pointer top-3 right-3 p-1 text-gray-400 hover:text-gray-600 transition-colors"
+              aria-label="Close"
+            >
+              <svg
+                className="w-4.5 h-4.5"
+                width="18"
+                height="18"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+              </svg>
+            </button>
+          </div>
+        )}
 
         <CommunityActivity
           posts={posts?.results || []}

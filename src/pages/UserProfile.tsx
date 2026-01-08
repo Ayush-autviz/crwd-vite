@@ -185,7 +185,7 @@ export default function ProfilePage() {
 
   // Filter collectives to only show those where user is admin
   const adminCollectives = allCollectivesData?.data?.filter((item: any) => item.role === 'admin') || [];
-  
+
   // Fetch admin collectives for founder bottom sheet (only when sheet is open)
   const { data: adminCollectivesData, isLoading: adminCollectivesLoading } = useQuery({
     queryKey: ['adminCollectives', targetUserId],
@@ -277,9 +277,9 @@ export default function ProfilePage() {
     },
     collective: post.collective
       ? {
-          name: post.collective.name,
-          id: post.collective.id,
-        }
+        name: post.collective.name,
+        id: post.collective.id,
+      }
       : undefined,
     content: post.content || '',
     imageUrl: post.media || undefined,
@@ -404,204 +404,206 @@ export default function ProfilePage() {
         </div>
       </div>
 
-          <div className="lg:max-w-[60%] lg:mx-auto">
-      <div className="md:grid md:grid-cols-12 md:gap-6 md:px-6 md:pt-2 md:pb-6">
-        {/* Main Content */}
-        <div className="md:col-span-12">
-          <div className="flex flex-col space-y-4 px-4 md:px-0">
-            <ProfileHeader
-              avatarUrl={userProfile.profile_picture || imageUrl}
-              name={`${userProfile.first_name} ${userProfile.last_name}`}
-              location={userProfile.location || ""}
-              activeSince={userProfile.date_joined || "Not specified"}
-              link={userProfile.username || ''}
-              color={userProfile.color}
-              founder={adminCollectives.length > 0}
-              onFounderClick={() => setShowFounderSheet(true)}
-            />
+      <div className="lg:max-w-[60%] lg:mx-auto">
+        <div className="md:grid md:grid-cols-12 md:gap-6 md:px-6 md:pt-2 md:pb-6">
+          {/* Main Content */}
+          <div className="md:col-span-12">
+            <div className="flex flex-col space-y-4 px-4 md:px-0">
+              <ProfileHeader
+                avatarUrl={userProfile.profile_picture || imageUrl}
+                name={`${userProfile.first_name} ${userProfile.last_name}`}
+                location={userProfile.location || ""}
+                activeSince={userProfile.date_joined || "Not specified"}
+                link={userProfile.username || ''}
+                color={userProfile.color}
+                founder={adminCollectives.length > 0}
+                onFounderClick={() => setShowFounderSheet(true)}
+              />
+
+              <ProfileBio bio={userProfile.bio} />
 
 
-            <Button
-              onClick={handleFollowClick}
-              className="w-fit mx-auto px-10"
-              variant={isFollowing ? "outline" : "default"}
-              disabled={followMutation.isPending || unfollowMutation.isPending}
-            >
-              {followMutation.isPending || unfollowMutation.isPending ? (
-                <Loader2 className="w-4 h-4 animate-spin" />
-              ) : isFollowing ? "Following" : "Follow"}
-            </Button>
+              <Button
+                onClick={handleFollowClick}
+                className="w-fit mx-auto px-10"
+                variant={isFollowing ? "outline" : "default"}
+                disabled={followMutation.isPending || unfollowMutation.isPending}
+              >
+                {followMutation.isPending || unfollowMutation.isPending ? (
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                ) : isFollowing ? "Following" : "Follow"}
+              </Button>
 
-            <ProfileStats
-              profileId={userProfile.id?.toString() || ''}
-              causes={userProfile.supported_causes_count || 0}
-              crwds={userProfile.joined_collectives_count || 0}
-              followers={userProfile.followers_count || 0}
-              following={userProfile.following_count || 0}
-              isLoadingCauses={isLoading}
-              isLoadingCrwds={isLoading}
-              isLoadingFollowers={isLoading}
-              isLoadingFollowing={isLoading}
-              onStatPress={handleStatPress}
-            />
 
-            {/* Divider */}
-            <div className="h-px bg-gray-200 mx-2 mt-2"></div>
+              <ProfileStats
+                profileId={userProfile.id?.toString() || ''}
+                causes={userProfile.supported_causes_count || 0}
+                crwds={userProfile.joined_collectives_count || 0}
+                followers={userProfile.followers_count || 0}
+                following={userProfile.following_count || 0}
+                isLoadingCauses={isLoading}
+                isLoadingCrwds={isLoading}
+                isLoadingFollowers={isLoading}
+                isLoadingFollowing={isLoading}
+                onStatPress={handleStatPress}
+              />
 
-            {/* Supports Section */}
-            {userProfile.recently_supported_causes && userProfile.recently_supported_causes.length > 0 && (
-              <>
-                <div className="mt-6">
-                  <div className="flex justify-between items-center mb-4">
-                    <h2 className="text-lg font-bold text-gray-900">Supports</h2>
-                  </div>
+              {/* Divider */}
+              <div className="h-px bg-gray-200 mx-2 mt-2"></div>
 
-                  {/* Grid Layout - Responsive: 2 cols mobile, 3 cols tablet, 4 cols desktop */}
-                  <div className="flex flex-wrap -mx-1.5 sm:-mx-2">
-                    {userProfile.recently_supported_causes.slice(0, 6).map((cause: any, i: number) => {
-                      // Generate consistent color based on cause name
-                      const colors = [
-                        '#f97316', // orange
-                        '#ec4899', // pink
-                        '#3b82f6', // blue
-                        '#ef4444', // red
-                        '#10b981', // green
-                        '#f97316', // orange (repeat)
-                      ];
-                      const bgColor = colors[i % colors.length];
-
-                      return (
-                        <Link
-                          key={cause.id || i}
-                          to={`/cause/${cause.id}`}
-                          className="w-1/2 sm:w-1/3 lg:w-1/4 px-1.5 sm:px-2 mb-3"
-                        >
-                          <div className="bg-white border border-gray-200 rounded-lg p-2 sm:p-3 flex flex-col items-center justify-between h-[100px] sm:h-[120px]">
-                            {cause.image || cause.logo ? (
-                              <Avatar className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg mb-2 flex-shrink-0">
-                                <AvatarImage src={cause.image || cause.logo} alt={cause.name} />
-                                <AvatarFallback 
-                                  style={{ backgroundColor: bgColor }}
-                                  className="text-white text-xs sm:text-sm font-semibold rounded-lg"
-                                >
-                                  {cause.name?.charAt(0)?.toUpperCase() || 'N'}
-                                </AvatarFallback>
-                              </Avatar>
-                            ) : (
-                              <div
-                                className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg mb-2 flex items-center justify-center flex-shrink-0"
-                                style={{ backgroundColor: bgColor }}
-                              >
-                                <span className="text-lg sm:text-xl font-semibold text-white">
-                                  {cause.name?.charAt(0)?.toUpperCase() || 'N'}
-                                </span>
-                              </div>
-                            )}
-                            <p className="text-xs font-semibold text-gray-900 text-center line-clamp-2 flex-grow flex items-center justify-center">
-                              {cause.name}
-                            </p>
-                          </div>
-                        </Link>
-                      );
-                    })}
-                  </div>
-
-                  {/* Show more causes text and link */}
-                  {userProfile.recently_supported_causes.length > 6 && (
-                    <div className="flex flex-col items-center gap-2 mt-4">
-                      <p className="text-sm text-gray-500">
-                        + {userProfile.recently_supported_causes.length - 6} more causes
-                      </p>
-                      <Link to="/interests">
-                        <span className="text-sm text-blue-600 font-medium">
-                          See all {userProfile.recently_supported_causes.length} →
-                        </span>
-                      </Link>
+              {/* Supports Section */}
+              {userProfile.recently_supported_causes && userProfile.recently_supported_causes.length > 0 && (
+                <>
+                  <div className="mt-6">
+                    <div className="flex justify-between items-center mb-4">
+                      <h2 className="text-sm xs:text-base sm:text-xl md:text-3xl font-bold text-gray-900">Supports</h2>
                     </div>
-                  )}
-                </div>
-            <div className="h-px bg-gray-200 mx-2 mt-4"></div>
 
-              </>
-            )}
+                    {/* Grid Layout - Responsive: 2 cols mobile, 3 cols tablet, 4 cols desktop */}
+                    <div className="flex flex-wrap -mx-1.5 sm:-mx-2">
+                      {userProfile.recently_supported_causes.slice(0, 6).map((cause: any, i: number) => {
+                        // Generate consistent color based on cause name
+                        const colors = [
+                          '#f97316', // orange
+                          '#ec4899', // pink
+                          '#3b82f6', // blue
+                          '#ef4444', // red
+                          '#10b981', // green
+                          '#f97316', // orange (repeat)
+                        ];
+                        const bgColor = colors[i % colors.length];
 
-            {/* Divider */}
+                        return (
+                          <Link
+                            key={cause.id || i}
+                            to={`/cause/${cause.id}`}
+                            className="w-1/2 sm:w-1/3 lg:w-1/4 px-1.5 sm:px-2 mb-3"
+                          >
+                            <div className="bg-white border border-gray-200 rounded-lg p-2 sm:p-3 flex flex-col items-center justify-between h-[100px] sm:h-[120px]">
+                              {cause.image || cause.logo ? (
+                                <Avatar className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg mb-2 flex-shrink-0">
+                                  <AvatarImage src={cause.image || cause.logo} alt={cause.name} />
+                                  <AvatarFallback
+                                    style={{ backgroundColor: bgColor }}
+                                    className="text-white text-xs sm:text-sm font-semibold rounded-lg"
+                                  >
+                                    {cause.name?.charAt(0)?.toUpperCase() || 'N'}
+                                  </AvatarFallback>
+                                </Avatar>
+                              ) : (
+                                <div
+                                  className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg mb-2 flex items-center justify-center flex-shrink-0"
+                                  style={{ backgroundColor: bgColor }}
+                                >
+                                  <span className="text-lg sm:text-xl font-semibold text-white">
+                                    {cause.name?.charAt(0)?.toUpperCase() || 'N'}
+                                  </span>
+                                </div>
+                              )}
+                              <p className="text-xs font-semibold text-gray-900 text-center line-clamp-2 flex-grow flex items-center justify-center">
+                                {cause.name}
+                              </p>
+                            </div>
+                          </Link>
+                        );
+                      })}
+                    </div>
 
-            <ProfileBio bio={userProfile.bio} />
-
-            <div className="py-4">
-              <div className="w-full px-4 my-4 mb-6 md:px-0 md:my-8 md:mb-10">
-                <div className="mb-3 md:mb-6">
-                  <h2 className="text-sm xs:text-base sm:text-xl md:text-3xl font-bold text-gray-900 mb-1 md:mb-2">
-                    Recent Activity
-                  </h2>
-                  <p className="text-[10px] sm:text-xs md:text-sm text-gray-600">
-                    Activity, updates, and discoveries from your community
-                  </p>
-                </div>
-
-                {postsLoading ? (
-                  <div className="space-y-2.5 md:space-y-4">
-                    {[1, 2].map((i) => (
-                      <div key={i} className="bg-white rounded-lg border border-gray-200 p-2.5 md:p-4 animate-pulse">
-                        <div className="flex items-start gap-2 md:gap-4">
-                          <div className="w-8 h-8 md:w-12 md:h-12 bg-gray-200 rounded-full flex-shrink-0"></div>
-                          <div className="flex-1 space-y-2">
-                            <div className="h-4 bg-gray-200 rounded w-3/4"></div>
-                            <div className="h-3 bg-gray-200 rounded w-full"></div>
-                            <div className="h-3 bg-gray-200 rounded w-5/6"></div>
-                            <div className="h-32 md:h-40 bg-gray-200 rounded-lg"></div>
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                ) : userPosts.length > 0 ? (
-                  <div className="space-y-2.5 md:space-y-4">
-                    {userPosts.map((post: any) => (
-                      <CommunityPostCard key={post.id} post={post} />
-                    ))}
-                    {hasNextPage && (
-                      <div className="flex justify-center mt-4 md:mt-6">
-                        <Button
-                          onClick={() => fetchNextPage()}
-                          disabled={isFetchingNextPage}
-                          variant="outline"
-                          className="px-4 md:px-6 py-1.5 md:py-2 text-sm md:text-base"
-                        >
-                          {isFetchingNextPage ? (
-                            <>
-                              <Loader2 className="w-3.5 h-3.5 md:w-4 md:h-4 mr-1.5 md:mr-2 animate-spin" />
-                              Loading...
-                            </>
-                          ) : (
-                            "Load More"
-                          )}
-                        </Button>
+                    {/* Show more causes text and link */}
+                    {userProfile.recently_supported_causes.length > 6 && (
+                      <div className="flex flex-col items-center gap-2 mt-4">
+                        <p className="text-sm text-gray-500">
+                          + {userProfile.recently_supported_causes.length - 6} more causes
+                        </p>
+                        <Link to="/interests">
+                          <span className="text-sm text-blue-600 font-medium">
+                            See all {userProfile.recently_supported_causes.length} →
+                          </span>
+                        </Link>
                       </div>
                     )}
                   </div>
-                ) : (
-                  <div className="flex flex-col items-center justify-center py-12 md:py-16">
-                    <div className="w-16 h-16 md:w-20 md:h-20 rounded-full bg-blue-50 flex items-center justify-center mb-4 md:mb-6">
-                      <Users className="w-8 h-8 md:w-10 md:h-10 text-[#1600ff]" strokeWidth={1.5} />
-                    </div>
-                    <h3 className="text-base md:text-lg font-bold text-gray-900 mb-2 md:mb-3">No posts yet</h3>
-                    <p className="text-xs md:text-sm text-gray-600 text-center max-w-md px-4">
-                      Posts appear when you share updates in your collectives. Join or start a collective to start sharing your impact!
+                  <div className="h-px bg-gray-200 mx-2 mt-4"></div>
+
+                </>
+              )}
+
+              {/* Divider */}
+
+
+              <div className="py-4">
+                <div className="w-full my-4 mb-6 md:my-8 md:mb-10">
+                  <div className="mb-3 md:mb-6">
+                    <h2 className="text-sm xs:text-base sm:text-xl md:text-3xl font-bold text-gray-900 mb-1 md:mb-2">
+                      Recent Activity
+                    </h2>
+                    <p className="text-[10px] sm:text-xs md:text-sm text-gray-600">
+                      Activity, updates, and discoveries from your community
                     </p>
                   </div>
-                )}
+
+                  {postsLoading ? (
+                    <div className="space-y-2.5 md:space-y-4">
+                      {[1, 2].map((i) => (
+                        <div key={i} className="bg-white rounded-lg border border-gray-200 p-2.5 md:p-4 animate-pulse">
+                          <div className="flex items-start gap-2 md:gap-4">
+                            <div className="w-8 h-8 md:w-12 md:h-12 bg-gray-200 rounded-full flex-shrink-0"></div>
+                            <div className="flex-1 space-y-2">
+                              <div className="h-4 bg-gray-200 rounded w-3/4"></div>
+                              <div className="h-3 bg-gray-200 rounded w-full"></div>
+                              <div className="h-3 bg-gray-200 rounded w-5/6"></div>
+                              <div className="h-32 md:h-40 bg-gray-200 rounded-lg"></div>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  ) : userPosts.length > 0 ? (
+                    <div className="space-y-2.5 md:space-y-4">
+                      {userPosts.map((post: any) => (
+                        <CommunityPostCard key={post.id} post={post} />
+                      ))}
+                      {hasNextPage && (
+                        <div className="flex justify-center mt-4 md:mt-6">
+                          <Button
+                            onClick={() => fetchNextPage()}
+                            disabled={isFetchingNextPage}
+                            variant="outline"
+                            className="px-4 md:px-6 py-1.5 md:py-2 text-sm md:text-base"
+                          >
+                            {isFetchingNextPage ? (
+                              <>
+                                <Loader2 className="w-3.5 h-3.5 md:w-4 md:h-4 mr-1.5 md:mr-2 animate-spin" />
+                                Loading...
+                              </>
+                            ) : (
+                              "Load More"
+                            )}
+                          </Button>
+                        </div>
+                      )}
+                    </div>
+                  ) : (
+                    <div className="flex flex-col items-center justify-center py-12 md:py-16">
+                      <div className="w-16 h-16 md:w-20 md:h-20 rounded-full bg-blue-50 flex items-center justify-center mb-4 md:mb-6">
+                        <Users className="w-8 h-8 md:w-10 md:h-10 text-[#1600ff]" strokeWidth={1.5} />
+                      </div>
+                      <h3 className="text-base md:text-lg font-bold text-gray-900 mb-2 md:mb-3">No posts yet</h3>
+                      <p className="text-xs md:text-sm text-gray-600 text-center max-w-md px-4">
+                        Posts appear when you share updates in your collectives. Join or start a collective to start sharing your impact!
+                      </p>
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
           </div>
-        </div>
 
-        {/* Sidebar - Only visible on desktop */}
-        <div className="hidden md:col-span-4">
-          <ProfileSidebar />
+          {/* Sidebar - Only visible on desktop */}
+          <div className="hidden md:col-span-4">
+            <ProfileSidebar />
+          </div>
         </div>
-      </div>
 
       </div>
 
@@ -621,16 +623,16 @@ export default function ProfilePage() {
           <div className="px-4">
             <SheetHeader>
               <SheetTitle className="text-2xl font-bold text-gray-900">
-                {activeStatsTab === 'causes' && 'Causes'}
+                {activeStatsTab === 'causes' && 'All Causes'}
                 {activeStatsTab === 'crwds' && 'Collectives'}
                 {activeStatsTab === 'followers' && 'Followers'}
                 {activeStatsTab === 'following' && 'Following'}
               </SheetTitle>
               <SheetDescription className="text-sm text-gray-500">
-                {activeStatsTab === 'causes' && 'Causes they support'}
-                {activeStatsTab === 'crwds' && "Collectives they're part of"}
-                {activeStatsTab === 'followers' && 'People following them'}
-                {activeStatsTab === 'following' && 'People they follow'}
+                {activeStatsTab === 'causes' && 'All nonprofits that you support'}
+                {activeStatsTab === 'crwds' && "Collectives you're part of"}
+                {activeStatsTab === 'followers' && 'People following you'}
+                {activeStatsTab === 'following' && "People you're follow"}
               </SheetDescription>
             </SheetHeader>
           </div>
@@ -648,8 +650,8 @@ export default function ProfilePage() {
                   key={tab.value}
                   onClick={() => setActiveStatsTab(tab.value as typeof activeStatsTab)}
                   className={`flex-1 px-1.5 sm:px-2 md:px-3 py-1 md:py-1.5 rounded-xl text-[10px] xs:text-xs sm:text-xs md:text-sm font-semibold transition-colors whitespace-nowrap ${activeStatsTab === tab.value
-                      ? 'bg-white text-gray-900'
-                      : 'text-gray-600'
+                    ? 'bg-white text-gray-900'
+                    : 'text-gray-600'
                     }`}
                 >
                   {tab.label}
@@ -687,7 +689,7 @@ export default function ProfilePage() {
                           {cause.image || cause.logo ? (
                             <Avatar className="w-12 h-12 rounded-lg flex-shrink-0">
                               <AvatarImage src={cause.image || cause.logo} alt={cause.name} />
-                              <AvatarFallback 
+                              <AvatarFallback
                                 style={{ backgroundColor: causeBgColor }}
                                 className="text-white rounded-lg font-bold text-lg"
                               >
@@ -735,7 +737,7 @@ export default function ProfilePage() {
                   <div className="space-y-0">
                     {statsCollectivesData.data.map((item: any, index: number) => {
                       const collective = item.collective || item;
-                      
+
                       // Generate consistent color for avatar fallback
                       const avatarColors = [
                         '#3B82F6', '#EC4899', '#8B5CF6', '#10B981', '#F59E0B', '#EF4444', '#06B6D4',
@@ -745,14 +747,14 @@ export default function ProfilePage() {
                         const hash = typeof id === 'number' ? id : id.toString().split('').reduce((acc: number, char: string) => acc + char.charCodeAt(0), 0);
                         return colors[hash % colors.length];
                       };
-                      
+
                       // Priority: 1. Use color from API, 2. Use logo, 3. Fallback to generated color with letter
                       const hasColor = collective.color;
                       const hasLogo = collective.logo && (collective.logo.startsWith("http") || collective.logo.startsWith("/") || collective.logo.startsWith("data:"));
                       const iconColor = hasColor || (!hasLogo ? getConsistentColor(collective.id || collective.name, avatarColors) : undefined);
                       const iconLetter = collective.name?.charAt(0)?.toUpperCase() || 'N';
                       const imageUrl = hasLogo ? collective.logo : (collective.image || collective.avatar || undefined);
-                      
+
                       return (
                         <div
                           key={collective.id || index}
@@ -761,7 +763,7 @@ export default function ProfilePage() {
                           <div className="flex items-center gap-3 flex-1 min-w-0">
                             <Avatar className="w-10 h-10 flex-shrink-0 rounded-lg">
                               <AvatarImage src={imageUrl} alt={collective.name} />
-                              <AvatarFallback 
+                              <AvatarFallback
                                 style={iconColor ? { backgroundColor: iconColor } : {}}
                                 className="rounded-lg text-white font-bold"
                               >
@@ -821,7 +823,7 @@ export default function ProfilePage() {
                           <div className="flex items-center gap-3 flex-1 min-w-0">
                             <Avatar className="w-10 h-10 flex-shrink-0">
                               <AvatarImage src={userData.profile_picture || userData.avatar} />
-                              <AvatarFallback 
+                              <AvatarFallback
                                 style={{ backgroundColor: userData.color || getConsistentColor(userData.id || userData.username || 'U', avatarColors) }}
                                 className="text-white text-xs sm:text-sm font-semibold"
                               >
@@ -844,8 +846,8 @@ export default function ProfilePage() {
                               onClick={() => handleFollowToggle(userData.id.toString(), isCurrentlyFollowing)}
                               disabled={followUserMutation.isPending || unfollowUserMutation.isPending}
                               className={`text-xs px-4 py-2 rounded-full ${isCurrentlyFollowing
-                                  ? 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-                                  : 'bg-blue-600 text-white hover:bg-blue-700'
+                                ? 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                                : 'bg-blue-600 text-white hover:bg-blue-700'
                                 }`}
                             >
                               {isCurrentlyFollowing ? 'Following' : 'Follow'}
@@ -883,7 +885,7 @@ export default function ProfilePage() {
                           <div className="flex items-center gap-3 flex-1 min-w-0">
                             <Avatar className="w-10 h-10 flex-shrink-0">
                               <AvatarImage src={userData.profile_picture || userData.avatar} />
-                              <AvatarFallback 
+                              <AvatarFallback
                                 style={{ backgroundColor: userData.color || getConsistentColor(userData.id || userData.username || 'U', avatarColors) }}
                                 className="text-white text-xs sm:text-sm font-semibold"
                               >
@@ -966,14 +968,14 @@ export default function ProfilePage() {
               <div className="space-y-3 md:space-y-4 mb-6 md:mb-8">
                 {adminCollectivesForSheet.map((item: any, index: number) => {
                   const collective = item.collective || item;
-                  
+
                   // Priority: 1. Use color from API, 2. Use logo, 3. Fallback to generated color with letter
                   const hasColor = collective.color;
                   const hasLogo = collective.logo && (collective.logo.startsWith("http") || collective.logo.startsWith("/") || collective.logo.startsWith("data:"));
                   const iconColor = hasColor || (!hasLogo ? getConsistentColor(collective.id || collective.name, avatarColors) : undefined);
                   const iconLetter = collective.name?.charAt(0)?.toUpperCase() || 'N';
                   const imageUrl = hasLogo ? collective.logo : (collective.image || collective.avatar || undefined);
-                  
+
                   return (
                     <div
                       key={collective.id || index}
@@ -987,7 +989,7 @@ export default function ProfilePage() {
                         {/* Avatar */}
                         <Avatar className="w-12 h-12 md:w-14 md:h-14 flex-shrink-0 rounded-lg">
                           <AvatarImage src={imageUrl} alt={collective.name} />
-                          <AvatarFallback 
+                          <AvatarFallback
                             style={iconColor ? { backgroundColor: iconColor } : {}}
                             className="rounded-lg text-white font-bold text-sm md:text-base"
                           >
