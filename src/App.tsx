@@ -143,12 +143,12 @@ function App() {
             {/* Public routes - accessible without authentication */}
             <Route path="/terms" element={<SettingsTerms />} />
             <Route path="/privacy" element={<SettingsPrivacy />} />
-            
+
             {/* Auth routes - only render if no token */}
             {!token?.access_token && (
               <>
                 <Route path="/" element={<Waitlist />} />
-                <Route path="/loginnew" element={<Login />} />
+                <Route path="/login" element={<Login />} />
                 {/* <Route path="/signup" element={<Signup />} /> */}
                 <Route path="/forgot-password" element={<ForgotPassword />} />
                 <Route path="/interests" element={<Interests />} />
@@ -173,12 +173,12 @@ function App() {
                 <Layout>
                   <Routes>
                     {/* <Route path="/" element={<Home />} /> */}
-                 <Route path="/home" element={<NewHome />} />
-                 <Route path="/" element={<Waitlist />} />
-                 {/* <Route path="/search" element={<Search />} /> */}
-                 <Route path="/search" element={<NewSearch />} />
-                 <Route path="/surprise-me" element={<SurpriseMe />} />
-                 <Route path="/search2" element={<Search2 />} />
+                    <Route path="/" element={<NewHome />} />
+                    <Route path="/waitlist" element={<Waitlist />} />
+                    {/* <Route path="/search" element={<Search />} /> */}
+                    <Route path="/search" element={<NewSearch />} />
+                    <Route path="/surprise-me" element={<SurpriseMe />} />
+                    <Route path="/search2" element={<Search2 />} />
                     <Route path="/donation" element={<Donation />} />
                     <Route path="/donation/manage" element={<ManageDonationBox />} />
                     <Route path="/one-time-donation" element={<OneTimeDonationPage />} />
@@ -255,7 +255,7 @@ function App() {
                     <Route path="/article/:slug" element={<ArticleDetail />} />
                     {/* <Route path="/complete-onboard" element={<CompleteOnboard />} /> */}
                     <Route path="/complete-onboard" element={<NewCompleteOnboard />} />
-                    
+
                   </Routes>
                 </Layout>
               }

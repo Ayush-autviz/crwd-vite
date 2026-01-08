@@ -30,10 +30,10 @@ const causeSets = [
     { name: "cancer research", bgColor: "bg-orange-300", hoverColor: "hover:bg-orange-400" },
   ],
   [
-      { name: "disaster relief", bgColor: "bg-slate-400", hoverColor: "hover:bg-slate-500" },
-      { name: "wildlife rescue", bgColor: "bg-purple-300", hoverColor: "hover:bg-purple-400" },
-      { name: "affordable housing", bgColor: "bg-green-300", hoverColor: "hover:bg-green-400" },
-      { name: "mental health", bgColor: "bg-orange-300", hoverColor: "hover:bg-orange-400" },
+    { name: "disaster relief", bgColor: "bg-slate-400", hoverColor: "hover:bg-slate-500" },
+    { name: "wildlife rescue", bgColor: "bg-purple-300", hoverColor: "hover:bg-purple-400" },
+    { name: "affordable housing", bgColor: "bg-green-300", hoverColor: "hover:bg-green-400" },
+    { name: "mental health", bgColor: "bg-orange-300", hoverColor: "hover:bg-orange-400" },
   ]
 ];
 
@@ -43,7 +43,7 @@ export default function WaitlistPage() {
   const [activeTab, setActiveTab] = useState<"waitlist" | "collective">("waitlist")
   const [donationAmount, setDonationAmount] = useState(5) // Default $35/month
   const [currentCauseSet, setCurrentCauseSet] = useState(0)
-  
+
   const sectionRef = useRef<HTMLDivElement>(null);
 
   const scrollToSection = () => {
@@ -68,7 +68,7 @@ export default function WaitlistPage() {
   })
   const [waitlistSuccess, setWaitlistSuccess] = useState(false)
   const [emailError, setEmailError] = useState("")
-  
+
   // Start a Collective form state
   const [collectiveForm, setCollectiveForm] = useState({
     name: "",
@@ -86,13 +86,13 @@ export default function WaitlistPage() {
       return
     }
     setEmailError("")
-    
+
     setIsSubmitting(true)
     setWaitlistSuccess(false)
-    
+
     // Extract category from causes (first one or null)
     const category = waitlistForm.causes.length > 0 ? waitlistForm.causes[0] : null
-    
+
     // Extract amount from monthlyAmount string (e.g., "$5-10" -> "5" or "-1" if not provided)
     let amount = "-1"
     if (waitlistForm.monthlyAmount) {
@@ -122,9 +122,9 @@ export default function WaitlistPage() {
         monthlyAmount: ""
       })
       setWaitlistSuccess(true)
-    } catch (error) {
+    } catch (error: any) {
       console.error("Waitlist submission failed:", error)
-      toast.error("We couldn't join the waitlist. Please try again.")
+      toast.error(error.response.data.errors.email[0] || "Something went wrong. Please try again.")
     } finally {
       setIsSubmitting(false)
     }
@@ -133,9 +133,9 @@ export default function WaitlistPage() {
   const handleCollectiveSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!collectiveForm.name.trim() || !collectiveForm.email.trim() || !collectiveForm.idea.trim()) return
-    
+
     setIsSubmitting(true)
-    
+
     try {
       await joinWaitlist({
         type: "collective",
@@ -155,9 +155,9 @@ export default function WaitlistPage() {
         idea: "",
         vibe: ""
       })
-    } catch (error) {
+    } catch (error: any) {
       console.error("Collective submission failed:", error)
-      toast.error("We couldn't submit your request. Please try again.")
+      toast.error(error.response.data.errors.email[0] || "Something went wrong. Please try again.")
     } finally {
       setIsSubmitting(false)
     }
@@ -204,14 +204,14 @@ export default function WaitlistPage() {
       /> */}
 
 
-{/* Navbar */}
-<div className="sticky top-0 z-10 w-full flex items-center justify-between p-4 border-b bg-background">
-  {/* <img src="/logo3.png" width={100} height={100} alt="CRWD Logo" /> */}
-  <NewLogo />
-  {/* <Button variant="ghost" className="px-4 font-bold text-xs sm:text-sm md:text-base lg:text-lg" onClick={() => navigate("/")}>
+      {/* Navbar */}
+      <div className="sticky top-0 z-10 w-full flex items-center justify-between p-4 border-b bg-background">
+        {/* <img src="/logo3.png" width={100} height={100} alt="CRWD Logo" /> */}
+        <NewLogo />
+        {/* <Button variant="ghost" className="px-4 font-bold text-xs sm:text-sm md:text-base lg:text-lg" onClick={() => navigate("/")}>
     See How It Works
   </Button> */}
-</div>
+      </div>
 
       {/* Hero Section */}
       <div className="bg-card pt-6 pb-12 md:pt-8 md:pb-16 px-4 md:px-6">
@@ -220,16 +220,16 @@ export default function WaitlistPage() {
           <div className="w-fit mx-auto bg-[#aeff30] text-black px-4 py-1 rounded-full text-sm font-[800] mb-4 md:mb-6">
             LAUNCHING EARLY 2026
           </div>
-          
+
           <h1 className="font-[900] text-foreground mb-3 md:mb-4 leading-tight" style={{ fontSize: 'clamp(2.5rem, 5vw, 4.5rem)' }}>
             Stop Choosing Between the
             <span className="text-[#1600ff]"> Causes You Care About.</span>
           </h1>
-          
+
           <p className="text-muted-foreground mb-6 md:mb-8 max-w-2xl mx-auto" style={{ fontSize: 'clamp(1rem, 2vw, 1.25rem)' }}>
             One monthly gift. All your causes. Automatic impact. Join the waitlist to become someone who actually shows up.
           </p>
-          
+
           <Button
             onClick={scrollToSection}
             size="lg"
@@ -237,7 +237,7 @@ export default function WaitlistPage() {
           >
             Join the Waitlist
           </Button>
-         
+
         </div>
       </div>
 
@@ -257,7 +257,7 @@ export default function WaitlistPage() {
               <div className="text-gray-500 mb-4 text-center" style={{ fontSize: 'clamp(0.875rem, 2vw, 1.125rem)' }}>
                 You can give <span className="text-[#1600ff] font-[900]" style={{ fontSize: 'clamp(2rem, 5vw, 3rem)' }}>${donationAmount}</span> /month to
               </div>
-              
+
               {/* Slider */}
               <div className="mb-4 md:mb-6 relative">
                 <input
@@ -273,7 +273,7 @@ export default function WaitlistPage() {
                   }}
                 />
               </div>
-              
+
               {/* Cause Buttons */}
               <div className="grid grid-cols-2 md:flex md:flex-wrap gap-2 md:gap-3 mb-4 md:mb-6 justify-center">
                 {causeSets[currentCauseSet].map((cause) => (
@@ -321,7 +321,7 @@ export default function WaitlistPage() {
             You Care About Everything.<br />
             <span className="text-[#1600ff]">But You Give to Nothing.</span>
           </h2>
-          
+
           <div className="text-center space-y-3 md:space-y-4 text-muted-foreground mt-6 md:mt-8" style={{ fontSize: 'clamp(1.125rem, 2.5vw, 1.5rem)' }}>
             <p className='text-black font-[600]'>
               Clean water. Education. Climate. Animals. Mental health. Maybe one. Maybe all.
@@ -354,7 +354,7 @@ export default function WaitlistPage() {
           <h3 className="font-[800] text-foreground mb-8 md:mb-12 text-center" style={{ fontSize: 'clamp(1.5rem, 4vw, 2.5rem)' }}>
             How It Works:
           </h3>
-          
+
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 md:gap-8 lg:gap-12">
             {/* Step 1 */}
             <div className="flex flex-col items-center text-center">
@@ -393,7 +393,7 @@ export default function WaitlistPage() {
             This is who <span className="text-[#a955f7]">we're building for.</span>
           </h2>
           <p className="mt-10 text-center text-foreground font-[800] max-w-3xl mx-auto" style={{ fontSize: 'clamp(1.25rem, 3vw, 1.875rem)' }}>
-            Not the people who already give $1,000/year to one charity. The people who want to give something to everything they care about. 
+            Not the people who already give $1,000/year to one charity. The people who want to give something to everything they care about.
           </p>
           <p className="mt-8 text-center text-foreground font-[600] max-w-3xl mx-auto" style={{ fontSize: 'clamp(1.25rem, 3vw, 1.875rem)' }}>
             You're one of them. That's why you're here.
@@ -414,11 +414,11 @@ export default function WaitlistPage() {
                 The Question Is: "Can I Afford Not to Become Someone Who Shows Up?"
               </p>
               <p className="text-muted-foreground mb-6 md:mb-8 mt-8" style={{ fontSize: 'clamp(1rem, 2vw, 1.25rem)' }}>
-                You've been meaning to give. You've been caring from the sidelines. 
+                You've been meaning to give. You've been caring from the sidelines.
               </p>
 
               <p className="text-black font-[800] mb-6 md:mb-8 mt-8" style={{ fontSize: 'clamp(1rem, 2vw, 1.25rem)' }}>
-                Today, that changes. 
+                Today, that changes.
               </p>
 
               <p className="text-muted-foreground mb-6 md:mb-8 mt-8" style={{ fontSize: 'clamp(1rem, 2vw, 1.25rem)' }}>
@@ -464,39 +464,37 @@ export default function WaitlistPage() {
       {/* Tab Navigation */}
       <div ref={sectionRef} className="w-full bg-[#edeff1]  md:top-0 z-40 flex justify-center">
         <div className="pt-16 w-full">
-        <div className=" max-w-[90%] md:max-w-[80%] lg:max-w-[70%] mx-auto px-4 py-1.5 md:py-2 flex justify-center gap-3 md:gap-4 bg-[#eae0f8] rounded-xl">
-          <button
-            onClick={() => {
-              setActiveTab("waitlist")
-              const element = document.getElementById('tab-content')
-              element?.scrollIntoView({ behavior: 'smooth', block: 'start' })
-            }}
-            className={`rounded-xl px-4 w-full py-1.5 md:px-6 md:py-3 font-medium transition-all ${
-              activeTab !== "waitlist"
+          <div className=" max-w-[90%] md:max-w-[80%] lg:max-w-[70%] mx-auto px-4 py-1.5 md:py-2 flex justify-center gap-3 md:gap-4 bg-[#eae0f8] rounded-xl">
+            <button
+              onClick={() => {
+                setActiveTab("waitlist")
+                const element = document.getElementById('tab-content')
+                element?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+              }}
+              className={`rounded-xl px-4 w-full py-1.5 md:px-6 md:py-3 font-medium transition-all ${activeTab !== "waitlist"
                 ? "bg-[#eae0f8] text-gray-700 font-[800]"
                 : "bg-white text-gray-700 border border-[#eae0f8] font-[800]"
-            }`}
-            style={{ fontSize: 'clamp(0.875rem, 2vw, 1.125rem)' }}
-          >
-            Join Waitlist
-          </button>
-          <button
-            onClick={() => {
-              setActiveTab("collective")
-              const element = document.getElementById('tab-content')
-              element?.scrollIntoView({ behavior: 'smooth', block: 'start' })
-            }}
-            className={`rounded-xl w-full px-4 py-1.5 md:px-6 md:py-3 font-medium transition-all ${
-              activeTab !== "collective"
+                }`}
+              style={{ fontSize: 'clamp(0.875rem, 2vw, 1.125rem)' }}
+            >
+              Join Waitlist
+            </button>
+            <button
+              onClick={() => {
+                setActiveTab("collective")
+                const element = document.getElementById('tab-content')
+                element?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+              }}
+              className={`rounded-xl w-full px-4 py-1.5 md:px-6 md:py-3 font-medium transition-all ${activeTab !== "collective"
                 ? "bg-[#eae0f8] text-gray-700 font-[800]"
                 : "bg-white text-gray-700 border border-[#eae0f8] font-[800]"
-            }`}
-            style={{ fontSize: 'clamp(0.875rem, 2vw, 1.125rem)' }}
-          >
-            Start a Collective
-          </button>
+                }`}
+              style={{ fontSize: 'clamp(0.875rem, 2vw, 1.125rem)' }}
+            >
+              Start a Collective
+            </button>
           </div>
-          </div>
+        </div>
       </div>
 
       {/* Tab Content */}
@@ -516,119 +514,118 @@ export default function WaitlistPage() {
                 {/* Form Card */}
                 <Card>
                   <CardContent className="p-4 md:p-8 lg:p-12">
-            <form onSubmit={handleWaitlistSubmit} className="space-y-6">
-              {/* Email */}
-              <div>
-                <label className="block text-sm font-semibold mb-2">
-                  Email Address*
-                </label>
-                <Input
-                  type="email"
-                  placeholder="you@example.com"
-                  value={waitlistForm.email}
-                  onChange={(e) => {
-                    const value = e.target.value
-                    setWaitlistForm(prev => ({ ...prev, email: value }))
-                    if (emailError && isValidEmail(value)) {
-                      setEmailError("")
-                    }
-                  }}
-                  className="w-full h-12 bg-gray-100"
-                  required
-                />
-                {emailError && (
-                  <p className="text-xs text-rose-500 mt-2">
-                    {emailError}
-                  </p>
-                )}
+                    <form onSubmit={handleWaitlistSubmit} className="space-y-6">
+                      {/* Email */}
+                      <div>
+                        <label className="block text-sm font-semibold mb-2">
+                          Email Address*
+                        </label>
+                        <Input
+                          type="email"
+                          placeholder="you@example.com"
+                          value={waitlistForm.email}
+                          onChange={(e) => {
+                            const value = e.target.value
+                            setWaitlistForm(prev => ({ ...prev, email: value }))
+                            if (emailError && isValidEmail(value)) {
+                              setEmailError("")
+                            }
+                          }}
+                          className="w-full h-12 bg-gray-100"
+                          required
+                        />
+                        {emailError && (
+                          <p className="text-xs text-rose-500 mt-2">
+                            {emailError}
+                          </p>
+                        )}
+                      </div>
+
+                      {/* First Name */}
+                      <div>
+                        <label className="block text-sm font-semibold mb-2">
+                          Full Name*
+                        </label>
+                        <Input
+                          type="text"
+                          placeholder="Alex Johnson"
+                          value={waitlistForm.name}
+                          onChange={(e) => setWaitlistForm(prev => ({ ...prev, name: e.target.value }))}
+                          className="w-full h-12 bg-gray-100"
+                          required
+                        />
+                      </div>
+
+                      {/* Causes */}
+                      <div>
+                        <label className="block text-sm font-semibold mb-3">
+                          Which causes do you care about? (optional)
+                        </label>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-1">
+                          {causes.map((cause) => (
+                            <label
+                              key={cause}
+                              className="flex items-center space-x-2 cursor-pointer p-2 rounded-lg hover:bg-gray-50"
+                            >
+                              <input
+                                type="checkbox"
+                                checked={waitlistForm.causes.includes(cause)}
+                                onChange={() => toggleCause(cause)}
+                                className="w-4 h-4 text-[#1600ff] border-gray-300 rounded-sm focus:ring-[#1600ff]"
+                              />
+                              <span className="text-gray-700" style={{ fontSize: 'clamp(0.875rem, 2vw, 1rem)' }}>{cause}</span>
+                            </label>
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* Monthly Amount */}
+                      <div>
+                        <label className="block text-sm font-semibold mb-3">
+                          How much would you donate monthly? (optional)
+                        </label>
+                        <div className="grid grid-cols-2 gap-3">
+                          {["$5-10", "$10-25", "$25-50", "$50+"].map((amount) => (
+                            <button
+                              key={amount}
+                              type="button"
+                              onClick={() => setWaitlistForm(prev => ({ ...prev, monthlyAmount: amount }))}
+                              className={`h-12 rounded-full border-2 transition-colors ${waitlistForm.monthlyAmount === amount
+                                ? "border-[#1600ff] bg-[#1600ff] font-bold text-white"
+                                : "border-gray-300 bg-white font-bold text-gray-700 hover:border-[#1600ff]"
+                                }`}
+                            >
+                              {amount}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* Submit Button */}
+                      <Button
+                        type="submit"
+                        disabled={isSubmitting}
+                        size="lg"
+                        className="w-full h-12 rounded-full font-semi bold text-lg"
+                      >
+                        {isSubmitting ? "Joining..." : "Join the Waitlist"} <ArrowRight className="ml-2 h-5 w-5" />
+                      </Button>
+
+                      {waitlistSuccess && (
+                        <p className="text-sm text-emerald-700 text-center mt-2">
+                          Thanks! We'll be in touch as soon as we launch.
+                        </p>
+                      )}
+
+                      {/* Privacy Statement */}
+                      <p className="text-xs text-muted-foreground text-center">
+                        We'll never share your email. Unsubscribe anytime.
+                      </p>
+                    </form>
+                  </CardContent>
+                </Card>
               </div>
-
-              {/* First Name */}
-              <div>
-                <label className="block text-sm font-semibold mb-2">
-                  Full Name*
-                </label>
-                <Input
-                  type="text"
-                  placeholder="Alex Johnson"
-                  value={waitlistForm.name}
-                  onChange={(e) => setWaitlistForm(prev => ({ ...prev, name: e.target.value }))}
-                  className="w-full h-12 bg-gray-100"
-                  required
-                />
-              </div>
-
-              {/* Causes */}
-              <div>
-                <label className="block text-sm font-semibold mb-3">
-                  Which causes do you care about? (optional)
-                </label>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-1">
-                  {causes.map((cause) => (
-                    <label
-                      key={cause}
-                      className="flex items-center space-x-2 cursor-pointer p-2 rounded-lg hover:bg-gray-50"
-                    >
-                      <input
-                        type="checkbox"
-                        checked={waitlistForm.causes.includes(cause)}
-                        onChange={() => toggleCause(cause)}
-                        className="w-4 h-4 text-[#1600ff] border-gray-300 rounded-sm focus:ring-[#1600ff]"
-                      />
-                      <span className="text-gray-700" style={{ fontSize: 'clamp(0.875rem, 2vw, 1rem)' }}>{cause}</span>
-                    </label>
-                  ))}
-                </div>
-              </div>
-
-              {/* Monthly Amount */}
-              <div>
-                <label className="block text-sm font-semibold mb-3">
-                  How much would you donate monthly? (optional)
-                </label>
-                <div className="grid grid-cols-2 gap-3">
-                  {["$5-10", "$10-25", "$25-50", "$50+"].map((amount) => (
-                    <button
-                      key={amount}
-                      type="button"
-                      onClick={() => setWaitlistForm(prev => ({ ...prev, monthlyAmount: amount }))}
-                      className={`h-12 rounded-full border-2 transition-colors ${
-                        waitlistForm.monthlyAmount === amount
-                          ? "border-[#1600ff] bg-[#1600ff] font-bold text-white"
-                          : "border-gray-300 bg-white font-bold text-gray-700 hover:border-[#1600ff]"
-                      }`}
-                    >
-                      {amount}
-                    </button>
-                  ))}
-                </div>  
-              </div>
-
-              {/* Submit Button */}
-              <Button
-                type="submit"
-                disabled={isSubmitting}
-                size="lg"
-                className="w-full h-12 rounded-full font-semi bold text-lg"
-              >
-                {isSubmitting ? "Joining..." : "Join the Waitlist"} <ArrowRight className="ml-2 h-5 w-5" />
-              </Button>
-
-              {waitlistSuccess && (
-                <p className="text-sm text-emerald-700 text-center mt-2">
-                  Thanks! We'll be in touch as soon as we launch.
-                </p>
-              )}
-
-              {/* Privacy Statement */}
-              <p className="text-xs text-muted-foreground text-center">
-                We'll never share your email. Unsubscribe anytime.
-              </p>
-            </form>
-            </CardContent>
-          </Card>
-        </div>
-      </div>
+            </div>
           </>
         )}
 
@@ -652,164 +649,163 @@ export default function WaitlistPage() {
                   Lead a Giving Community Around What You Care About.
                 </h3>
                 <p className="text-muted-foreground mb-8 md:mb-12 text-center max-w-3xl mx-auto" style={{ fontSize: 'clamp(1rem, 2vw, 1.125rem)' }}>
-            Rally your friends, family, followers, or anyone who shares your passion. Pick the causes. They join and give monthly. Watch your collective impact grow.
-          </p>
+                  Rally your friends, family, followers, or anyone who shares your passion. Pick the causes. They join and give monthly. Watch your collective impact grow.
+                </p>
 
                 {/* Feature Blocks */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 gap-4 md:gap-6 mb-10 md:mb-16">
-            {/* We'll Match Donations */}
-            <Card>
-              <CardContent className="px-6">
-              <div className="w-12 h-12 bg-[#aeff30] rounded-full flex items-center justify-center mb-4">
-                <Zap className="w-6 h-6" />
-              </div>
-              <h4 className="font-[800] text-foreground mb-2" style={{ fontSize: 'clamp(1.125rem, 2.5vw, 1.25rem)' }}>We'll Match Donations</h4>
-              <p className="text-muted-foreground" style={{ fontSize: 'clamp(1rem, 2vw, 1.125rem)' }}>Get up to $200 in matched donations to jumpstart your collective's impact.</p>
-            </CardContent>
-            </Card>
+                  {/* We'll Match Donations */}
+                  <Card>
+                    <CardContent className="px-6">
+                      <div className="w-12 h-12 bg-[#aeff30] rounded-full flex items-center justify-center mb-4">
+                        <Zap className="w-6 h-6" />
+                      </div>
+                      <h4 className="font-[800] text-foreground mb-2" style={{ fontSize: 'clamp(1.125rem, 2.5vw, 1.25rem)' }}>We'll Match Donations</h4>
+                      <p className="text-muted-foreground" style={{ fontSize: 'clamp(1rem, 2vw, 1.125rem)' }}>Get up to $200 in matched donations to jumpstart your collective's impact.</p>
+                    </CardContent>
+                  </Card>
 
-            {/* Get In First */}
-            <Card>
-              <CardContent className="px-6">
-              <div className="w-12 h-12 bg-[#a854f7] rounded-full flex items-center justify-center mb-4">
-                <Sparkles className="w-6 h-6 text-white" />
-              </div>
-              <h4 className="font-[800] text-foreground mb-2" style={{ fontSize: 'clamp(1.125rem, 2.5vw, 1.25rem)' }}>Get In First</h4>
-              <p className="text-muted-foreground" style={{ fontSize: 'clamp(1rem, 2vw, 1.125rem)' }}>Early access means you get to build your community before everyone else even knows we exist.</p>
-            </CardContent>
-            </Card>
+                  {/* Get In First */}
+                  <Card>
+                    <CardContent className="px-6">
+                      <div className="w-12 h-12 bg-[#a854f7] rounded-full flex items-center justify-center mb-4">
+                        <Sparkles className="w-6 h-6 text-white" />
+                      </div>
+                      <h4 className="font-[800] text-foreground mb-2" style={{ fontSize: 'clamp(1.125rem, 2.5vw, 1.25rem)' }}>Get In First</h4>
+                      <p className="text-muted-foreground" style={{ fontSize: 'clamp(1rem, 2vw, 1.125rem)' }}>Early access means you get to build your community before everyone else even knows we exist.</p>
+                    </CardContent>
+                  </Card>
 
-            {/* We'll Help You Grow */}
-            <Card>
-              <CardContent className="px-6">
-              <div className="w-12 h-12 bg-[#ff3366] rounded-full flex items-center justify-center mb-4">
-                <Users className="w-6 h-6 text-white" />
-              </div>
-              <h4 className="font-[800] text-foreground mb-2" style={{ fontSize: 'clamp(1.125rem, 2.5vw, 1.25rem)' }}>We'll Help You Grow</h4>
-              <p className="text-muted-foreground" style={{ fontSize: 'clamp(1rem, 2vw, 1.125rem)' }}>Your collective gets featured in our campaigns so you can rally more people to your cause.</p>
-            </CardContent>
-            </Card>
+                  {/* We'll Help You Grow */}
+                  <Card>
+                    <CardContent className="px-6">
+                      <div className="w-12 h-12 bg-[#ff3366] rounded-full flex items-center justify-center mb-4">
+                        <Users className="w-6 h-6 text-white" />
+                      </div>
+                      <h4 className="font-[800] text-foreground mb-2" style={{ fontSize: 'clamp(1.125rem, 2.5vw, 1.25rem)' }}>We'll Help You Grow</h4>
+                      <p className="text-muted-foreground" style={{ fontSize: 'clamp(1rem, 2vw, 1.125rem)' }}>Your collective gets featured in our campaigns so you can rally more people to your cause.</p>
+                    </CardContent>
+                  </Card>
 
-            {/* Build With Us */}
-            <Card>
-              <CardContent className="px-6">
-              <div className="w-12 h-12 bg-[#1600ff] rounded-full flex items-center justify-center mb-4">
-                <Heart className="w-6 h-6 text-white" />
-              </div>
-              <h4 className="font-[800] text-foreground mb-2" style={{ fontSize: 'clamp(1.125rem, 2.5vw, 1.25rem)' }}>Build With Us</h4>
-              <p className="text-muted-foreground" style={{ fontSize: 'clamp(1rem, 2vw, 1.125rem)' }}>Work directly with the CRWD team to shape features and make the platform better for everyone.</p>
-            </CardContent>
-            </Card>
-          </div>
+                  {/* Build With Us */}
+                  <Card>
+                    <CardContent className="px-6">
+                      <div className="w-12 h-12 bg-[#1600ff] rounded-full flex items-center justify-center mb-4">
+                        <Heart className="w-6 h-6 text-white" />
+                      </div>
+                      <h4 className="font-[800] text-foreground mb-2" style={{ fontSize: 'clamp(1.125rem, 2.5vw, 1.25rem)' }}>Build With Us</h4>
+                      <p className="text-muted-foreground" style={{ fontSize: 'clamp(1rem, 2vw, 1.125rem)' }}>Work directly with the CRWD team to shape features and make the platform better for everyone.</p>
+                    </CardContent>
+                  </Card>
+                </div>
 
                 {/* Become a Collective Founder Form */}
                 <Card>
                   <CardContent className="p-4 md:p-8 lg:p-12">
-                  <h3 className="font-[800] text-gray-900 mb-6 md:mb-8 text-center" style={{ fontSize: 'clamp(1.25rem, 3vw, 1.875rem)' }}>Become a Collective Founder</h3>
-            
-            <form onSubmit={handleCollectiveSubmit} className="space-y-6">
-              {/* Your Name */}
-              <div>
-                <label className="block font-bold text-gray-900 mb-2" style={{ fontSize: 'clamp(0.9rem, 1.8vw, 1rem)' }}>
-                  Your Name*
-                </label>
-                <Input
-                  type="text"
-                  value={collectiveForm.name}
-                  onChange={(e) => setCollectiveForm(prev => ({ ...prev, name: e.target.value }))}
-                  className="w-full h-12 bg-gray-100"
-                  required
-                  placeholder="Alex Johnson"
-                />
+                    <h3 className="font-[800] text-gray-900 mb-6 md:mb-8 text-center" style={{ fontSize: 'clamp(1.25rem, 3vw, 1.875rem)' }}>Become a Collective Founder</h3>
+
+                    <form onSubmit={handleCollectiveSubmit} className="space-y-6">
+                      {/* Your Name */}
+                      <div>
+                        <label className="block font-bold text-gray-900 mb-2" style={{ fontSize: 'clamp(0.9rem, 1.8vw, 1rem)' }}>
+                          Your Name*
+                        </label>
+                        <Input
+                          type="text"
+                          value={collectiveForm.name}
+                          onChange={(e) => setCollectiveForm(prev => ({ ...prev, name: e.target.value }))}
+                          className="w-full h-12 bg-gray-100"
+                          required
+                          placeholder="Alex Johnson"
+                        />
+                      </div>
+
+                      {/* Email Address */}
+                      <div>
+                        <label className="block font-bold text-gray-900 mb-2" style={{ fontSize: 'clamp(0.9rem, 1.8vw, 1rem)' }}>
+                          Email Address*
+                        </label>
+                        <Input
+                          type="email"
+                          value={collectiveForm.email}
+                          onChange={(e) => setCollectiveForm(prev => ({ ...prev, email: e.target.value }))}
+                          className="w-full h-12 bg-gray-100"
+                          required
+                          placeholder="you@example.com"
+                        />
+                      </div>
+
+                      {/* Social Media Handle */}
+                      <div>
+                        <label className="block font-bold text-gray-900 mb-2" style={{ fontSize: 'clamp(0.9rem, 1.8vw, 1rem)' }}>
+                          Social Media Handle (optional)
+                        </label>
+                        <Input
+                          type="text"
+                          value={collectiveForm.socialHandle}
+                          onChange={(e) => setCollectiveForm(prev => ({ ...prev, socialHandle: e.target.value }))}
+                          className="w-full h-12 bg-gray-100"
+                          placeholder="@yourusername"
+                        />
+                        <p className="text-sm text-gray-500 mt-1">Instagram, TikTok, X/Twitter, or any platform.</p>
+                      </div>
+
+                      {/* Collective Idea */}
+                      <div>
+                        <label className="block font-bold text-gray-900 mb-2" style={{ fontSize: 'clamp(0.9rem, 1.8vw, 1rem)' }}>
+                          What's your collective idea?*
+                        </label>
+                        <Textarea
+                          value={collectiveForm.idea}
+                          onChange={(e) => setCollectiveForm(prev => ({ ...prev, idea: e.target.value }))}
+                          className="w-full min-h-[120px] bg-gray-100"
+                          required
+                          placeholder='E.g., "Ocean Lovers" - For people who want to protect our oceans and marine life.'
+                        />
+                        <p className="text-sm text-gray-500 mt-1">What causes? Who would join? What's the vibe? Dream big!</p>
+                      </div>
+
+                      {/* Main Vibe */}
+                      <div>
+                        <label className="block font-bold text-gray-900 mb-2" style={{ fontSize: 'clamp(0.9rem, 1.8vw, 1rem)' }}>
+                          Main vibe? (optional)
+                        </label>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-2 md:gap-3">
+                          {collectiveCauses.map((cause) => (
+                            <button
+                              key={cause}
+                              type="button"
+                              onClick={() => setCollectiveForm(prev => ({ ...prev, vibe: cause }))}
+                              className={`h-10 md:h-12 rounded-full border-2 transition-colors text-sm md:text-base ${collectiveForm.vibe === cause
+                                ? "border-[#1600ff] bg-[#1600ff] text-white"
+                                : "border-gray-300 bg-white text-gray-700 hover:border-[#6A0DAD]"
+                                }`}
+                            >
+                              {cause}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* Submit Button */}
+                      <Button
+                        type="submit"
+                        disabled={isSubmitting}
+                        size="lg"
+                        className="w-full h-12 bg-[#a955f7] hover:bg-[#8a3feb] text-white font-[800] rounded-full"
+                      >
+                        {isSubmitting ? "Submitting..." : "Sign Me Up"}
+                      </Button>
+
+                      {/* Concluding Text */}
+                      <p className="text-base text-muted-foreground text-center">
+                        We're excited to see what you'll build!
+                      </p>
+                    </form>
+                  </CardContent>
+                </Card>
               </div>
-
-              {/* Email Address */}
-              <div>
-                <label className="block font-bold text-gray-900 mb-2" style={{ fontSize: 'clamp(0.9rem, 1.8vw, 1rem)' }}>
-                  Email Address*
-                </label>
-                <Input
-                  type="email"
-                  value={collectiveForm.email}
-                  onChange={(e) => setCollectiveForm(prev => ({ ...prev, email: e.target.value }))}
-                  className="w-full h-12 bg-gray-100"
-                  required
-                  placeholder="you@example.com"
-                />
-              </div>
-
-              {/* Social Media Handle */}
-              <div>
-                <label className="block font-bold text-gray-900 mb-2" style={{ fontSize: 'clamp(0.9rem, 1.8vw, 1rem)' }}>
-                  Social Media Handle (optional)
-                </label>
-                <Input
-                  type="text"
-                  value={collectiveForm.socialHandle}
-                  onChange={(e) => setCollectiveForm(prev => ({ ...prev, socialHandle: e.target.value }))}
-                  className="w-full h-12 bg-gray-100"
-                  placeholder="@yourusername"
-                />
-                <p className="text-sm text-gray-500 mt-1">Instagram, TikTok, X/Twitter, or any platform.</p>
-              </div>
-
-              {/* Collective Idea */}
-              <div>
-                <label className="block font-bold text-gray-900 mb-2" style={{ fontSize: 'clamp(0.9rem, 1.8vw, 1rem)' }}>
-                  What's your collective idea?*
-                </label>
-                <Textarea
-                  value={collectiveForm.idea}
-                  onChange={(e) => setCollectiveForm(prev => ({ ...prev, idea: e.target.value }))}
-                  className="w-full min-h-[120px] bg-gray-100"
-                  required
-                  placeholder='E.g., "Ocean Lovers" - For people who want to protect our oceans and marine life.'
-                />
-                <p className="text-sm text-gray-500 mt-1">What causes? Who would join? What's the vibe? Dream big!</p>
-              </div>
-
-              {/* Main Vibe */} 
-              <div>
-                <label className="block font-bold text-gray-900 mb-2" style={{ fontSize: 'clamp(0.9rem, 1.8vw, 1rem)' }}>
-                  Main vibe? (optional)
-                </label>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-2 md:gap-3">
-                  {collectiveCauses.map((cause) => (
-                    <button
-                      key={cause}
-                      type="button"
-                      onClick={() => setCollectiveForm(prev => ({ ...prev, vibe: cause }))}
-                      className={`h-10 md:h-12 rounded-full border-2 transition-colors text-sm md:text-base ${
-                        collectiveForm.vibe === cause
-                          ? "border-[#1600ff] bg-[#1600ff] text-white"
-                          : "border-gray-300 bg-white text-gray-700 hover:border-[#6A0DAD]"
-                      }`}
-                    >
-                      {cause}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              {/* Submit Button */}
-              <Button
-                type="submit"
-                disabled={isSubmitting}
-                size="lg"
-                className="w-full h-12 bg-[#a955f7] hover:bg-[#8a3feb] text-white font-[800] rounded-full"
-              >
-                {isSubmitting ? "Submitting..." : "Sign Me Up"}
-              </Button>
-
-              {/* Concluding Text */}
-              <p className="text-base text-muted-foreground text-center">
-                We're excited to see what you'll build!
-              </p>
-            </form>
-            </CardContent>
-          </Card>
-        </div>
-      </div>
+            </div>
           </>
         )}
       </div>

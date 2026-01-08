@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams, Link } from 'react-router-dom';
 import { ArrowLeft, Share2, MoreHorizontal, Users, TrendingUp } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
-import { getFundraiserById, getCollectiveById } from '@/services/api/crwd';
+import { getFundraiserById } from '@/services/api/crwd';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -51,25 +51,10 @@ export default function FundraiserDetail() {
     enabled: !!id,
   });
 
-  // Fetch collective data (collective is a number ID in the API response)
-  const { data: collectiveData } = useQuery({
-    queryKey: ['crwd', fundraiserData?.collective],
-    queryFn: () => getCollectiveById(fundraiserData?.collective?.toString() || ''),
-    enabled: !!fundraiserData?.collective && typeof fundraiserData.collective === 'number',
-  });
-
   // Calculate days left
   const daysLeft = fundraiserData?.end_date
     ? Math.max(0, dayjs(fundraiserData.end_date).diff(dayjs(), 'day'))
     : 0;
-
-  // Calculate progress percentage
-//   const progressPercentage = fundraiserData
-//     ? Math.min(
-//         (parseFloat(fundraiserData.current_amount || '0') / parseFloat(fundraiserData.target_amount || '1')) * 100,
-//         100
-//       )
-//     : 0;
 
   const handleDonate = () => {
     if (!fundraiserData?.causes || fundraiserData.causes.length === 0) {
@@ -133,6 +118,8 @@ export default function FundraiserDetail() {
     );
   }
 
+  const collective = fundraiserData.collective;
+
   return (
     <div className="min-h-screen bg-white">
       {/* Header with Banner Background */}
@@ -158,70 +145,70 @@ export default function FundraiserDetail() {
             )}
           </div>
         )}
-        
+
         {/* Header Content */}
         <div className={`relative z-10 px-4 py-3 md:px-6 md:py-4`}>
-        <div className="flex items-center justify-between mb-4">
-          <button
-            onClick={() => navigate(-1)}
-            className="p-1.5 hover:bg-gray-100 rounded-full transition-colors"
-            aria-label="Go back"
-          >
-            <ArrowLeft className="w-5 h-5 text-gray-700" />
-          </button>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center justify-between mb-4">
             <button
+              onClick={() => navigate(-1)}
               className="p-1.5 hover:bg-gray-100 rounded-full transition-colors"
-              aria-label="Share"
+              aria-label="Go back"
             >
-              <Share2 className="w-5 h-5 text-gray-700" />
+              <ArrowLeft className="w-5 h-5 text-gray-700" />
             </button>
-            <div className="relative" ref={dropdownRef}>
+            <div className="flex items-center gap-3">
               <button
-                onClick={() => setShowDropdown(!showDropdown)}
                 className="p-1.5 hover:bg-gray-100 rounded-full transition-colors"
-                aria-label="More options"
+                aria-label="Share"
               >
-                <MoreHorizontal className="w-5 h-5 text-gray-700" />
+                <Share2 className="w-5 h-5 text-gray-700" />
               </button>
-              {showDropdown && (
-                <div className="absolute right-0 mt-2 w-40 md:w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-50">
-                  <button className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                    Report
-                  </button>
-                </div>
+              <div className="relative" ref={dropdownRef}>
+                <button
+                  onClick={() => setShowDropdown(!showDropdown)}
+                  className="p-1.5 hover:bg-gray-100 rounded-full transition-colors"
+                  aria-label="More options"
+                >
+                  <MoreHorizontal className="w-5 h-5 text-gray-700" />
+                </button>
+                {showDropdown && (
+                  <div className="absolute right-0 mt-2 w-40 md:w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-50">
+                    <button className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                      Report
+                    </button>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+
+          {/* Amount and Progress */}
+          <div className="mb-3 bg-white p-4 rounded-lg">
+            <div className="flex items-baseline gap-2 mb-2">
+              <span className="text-2xl md:text-3xl font-bold text-[#1600ff]">
+                ${parseFloat(fundraiserData.current_amount || '0').toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
+              </span>
+              <span className="text-sm md:text-base text-gray-500">
+                raised of ${parseFloat(fundraiserData.target_amount || '0').toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 })} goal
+              </span>
+            </div>
+            <div className="w-full h-2 md:h-3 bg-gray-200 rounded-full overflow-hidden mb-2">
+              <div
+                className="h-full bg-[#1600ff] transition-all duration-300"
+                style={{ width: `${fundraiserData.progress_percentage || 0}%` }}
+              />
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="text-xs md:text-sm text-gray-600">
+                {(fundraiserData.progress_percentage || 0).toFixed(2)}% of goal
+              </span>
+              {daysLeft > 0 && (
+                <span className="text-xs md:text-sm text-gray-600">
+                  {daysLeft} day{daysLeft !== 1 ? 's' : ''} left
+                </span>
               )}
             </div>
           </div>
-        </div>
-
-        {/* Amount and Progress */}
-        <div className="mb-3 bg-white p-4 rounded-lg">
-          <div className="flex items-baseline gap-2 mb-2">
-            <span className="text-2xl md:text-3xl font-bold text-[#1600ff]">
-              ${parseFloat(fundraiserData.current_amount || '0').toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
-            </span>
-            <span className="text-sm md:text-base text-gray-500">
-              raised of ${parseFloat(fundraiserData.target_amount || '0').toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 })} goal
-            </span>
-          </div>
-          <div className="w-full h-2 md:h-3 bg-gray-200 rounded-full overflow-hidden mb-2">
-            <div
-              className="h-full bg-[#1600ff] transition-all duration-300"
-              style={{ width: `${fundraiserData.progress_percentage}%` }}
-            />
-          </div>
-          <div className="flex items-center justify-between">
-            <span className="text-xs md:text-sm text-gray-600">
-              {fundraiserData.progress_percentage.toFixed(2)}% of goal
-            </span>
-            {daysLeft > 0 && (
-              <span className="text-xs md:text-sm text-gray-600">
-                {daysLeft} day{daysLeft !== 1 ? 's' : ''} left
-              </span>
-            )}
-          </div>
-        </div>
         </div>
       </div>
 
@@ -232,12 +219,12 @@ export default function FundraiserDetail() {
           <h1 className="text-2xl md:text-3xl font-bold text-gray-900 mb-3 md:mb-4">
             {fundraiserData.name}
           </h1>
-          {(collectiveData || fundraiserData.collective_name) && (
+          {collective && (
             <Link
-              to={`/groupcrwd/${fundraiserData.collective}`}
+              to={`/groupcrwd/${collective.id}`}
               className="inline-block px-3 md:px-4 py-1.5 md:py-2 bg-gray-100 text-[#1600ff] rounded-full text-xs md:text-sm font-medium hover:bg-gray-200 transition-colors"
             >
-              {collectiveData?.name || fundraiserData.collective_name}
+              {collective.name}
             </Link>
           )}
         </div>
@@ -273,31 +260,29 @@ export default function FundraiserDetail() {
         </div>
 
         {/* Organized By */}
-        {(collectiveData || fundraiserData.collective_name) && (
+        {collective && (
           <div className="mb-6 md:mb-8">
             <h2 className="text-lg md:text-xl font-bold text-gray-900 mb-3 md:mb-4">Organized By</h2>
             <Link
-              to={`/groupcrwd/${fundraiserData.collective}`}
+              to={`/groupcrwd/${collective.id}`}
               className="flex items-center gap-3 md:gap-4 bg-white border border-gray-200 rounded-lg p-3 md:p-4 hover:bg-gray-50 transition-colors"
             >
               <Avatar className="w-12 h-12 md:w-14 md:h-14 flex-shrink-0">
-                <AvatarImage src={collectiveData?.image} alt={collectiveData?.name || fundraiserData.collective_name} />
+                <AvatarImage src={collective.image} alt={collective.name} />
                 <AvatarFallback
-                  style={{ backgroundColor: getConsistentColor(collectiveData?.id || fundraiserData.collective, collectiveData?.name || fundraiserData.collective_name) }}
+                  style={{ backgroundColor: collective.color || getConsistentColor(collective.id, collective.name) }}
                   className="text-white font-bold text-sm md:text-base"
                 >
-                  {getInitials(collectiveData?.name || fundraiserData.collective_name || 'Collective')}
+                  {getInitials(collective.name || 'Collective')}
                 </AvatarFallback>
               </Avatar>
               <div className="flex-1 min-w-0">
                 <h3 className="font-bold text-sm md:text-base text-gray-900 truncate">
-                  {collectiveData?.name || fundraiserData.collective_name}
+                  {collective.name}
                 </h3>
-                {collectiveData && (
-                  <p className="text-xs md:text-sm text-gray-600">
-                    {collectiveData.members_count || 0} member{(collectiveData.members_count || 0) !== 1 ? 's' : ''}
-                  </p>
-                )}
+                <p className="text-xs md:text-sm text-gray-600">
+                  {collective.members_count || 0} member{(collective.members_count || 0) !== 1 ? 's' : ''}
+                </p>
               </div>
             </Link>
           </div>

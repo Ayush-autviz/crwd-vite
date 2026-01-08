@@ -42,11 +42,10 @@ export default function CauseActionButtons({
     <div className="px-3 md:px-4 py-3 md:py-4 space-y-2.5 md:space-y-3">
       <Button
         onClick={handleAddToDonationBox}
-        className={`w-full font-semibold rounded-full py-4 md:py-5 text-sm md:text-base ${
-          isAlreadyInBox
+        className={`w-full font-semibold rounded-full py-4 md:py-5 text-sm md:text-base ${isAlreadyInBox
             ? 'bg-green-100 hover:bg-green-200 text-green-700 cursor-pointer'
-            : 'bg-[#aeff30] hover:bg-[#93c902] text-black'
-        }`}
+            : 'bg-[#1660ff] hover:bg-[#1400cc] text-white'
+          }`}
       >
         {isAlreadyInBox ? (
           <>
@@ -60,7 +59,7 @@ export default function CauseActionButtons({
           </>
         )}
       </Button>
-      
+
       {/* <Button
         onClick={handleDonate}
         className="w-full bg-[#1600ff] hover:bg-[#1400cc] text-white font-semibold rounded-full py-5 text-base"

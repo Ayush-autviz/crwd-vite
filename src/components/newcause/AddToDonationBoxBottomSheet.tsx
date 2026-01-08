@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { X, Loader2 } from 'lucide-react';
+import { X, Loader2, Check } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
@@ -90,7 +90,7 @@ export default function AddToDonationBoxBottomSheet({
           <div className="w-10 sm:w-12 h-0.5 sm:h-1.5 bg-gray-300 rounded-full" />
         </div>
 
-      
+
         {/* Content */}
         <div className="flex-1 overflow-y-auto p-3 sm:p-4 md:p-6">
           {/* Title */}
@@ -133,7 +133,7 @@ export default function AddToDonationBoxBottomSheet({
               <p className="text-[10px] sm:text-xs md:text-sm text-gray-600 mb-1 sm:mb-2 line-clamp-2">
                 {causeData.mission || causeData.description || ''}
               </p>
-              
+
             </div>
           </div>
 
@@ -141,7 +141,7 @@ export default function AddToDonationBoxBottomSheet({
           <Button
             onClick={onConfirm}
             disabled={isPending}
-            className="w-full bg-[#84CC16] hover:bg-[#6BB00F] text-white text-sm sm:text-base md:text-lg font-semibold py-2.5 sm:py-3 md:py-3.5 mb-2 sm:mb-3"
+            className="w-full bg-[#aeff30] hover:bg-[#6BB00F] text-black text-sm sm:text-base md:text-lg font-medium py-2.5 sm:py-3 md:py-3.5 mb-2 sm:mb-3 rounded-full"
           >
             {isPending ? (
               <>
@@ -149,7 +149,10 @@ export default function AddToDonationBoxBottomSheet({
                 Adding...
               </>
             ) : (
-              'Confirm'
+              <>
+                <Check className="w-3.5 h-3.5 sm:w-4 sm:h-4 md:w-5 md:h-5 mr-1.5 sm:mr-2" />
+                <span className="mr-1.5 sm:mr-2">Confirm & Add</span>
+              </>
             )}
           </Button>
 

@@ -55,9 +55,9 @@ const getConsistentColor = (id: number | string, colors: string[]) => {
 };
 
 const getInitials = (firstName?: string, lastName?: string, name?: string, username?: string) => {
-  if (firstName && lastName) {
-    return `${firstName.charAt(0)}${lastName.charAt(0)}`.toUpperCase();
-  }
+  // if (firstName && lastName) {
+  //   return `${firstName.charAt(0)}${lastName.charAt(0)}`.toUpperCase();
+  // }
   if (firstName) {
     return firstName.charAt(0).toUpperCase();
   }
@@ -537,7 +537,8 @@ export default function ProfilePage() {
                           <Link
                             key={cause.id || i}
                             to={`/cause/${cause.id}`}
-                            className="w-1/2 sm:w-1/3 lg:w-1/4 px-1 sm:px-1.5 md:px-2 mb-2 md:mb-3"
+                            // className="w-1/2 sm:w-1/3 lg:w-1/4 px-1 sm:px-1.5 md:px-2 mb-2 md:mb-3"
+                            className="w-1/3 flex-none px-1 sm:px-1.5 md:px-2 mb-2 md:mb-3"
                           >
                             <div className="bg-white border border-gray-200 rounded-lg p-1.5 sm:p-2 md:p-3 flex flex-col items-center justify-between h-[90px] sm:h-[100px] md:h-[120px]">
                               {cause.image || cause.logo ? (
@@ -560,9 +561,15 @@ export default function ProfilePage() {
                                   </span>
                                 </div>
                               )}
-                              <p className="text-[10px] sm:text-xs font-semibold text-gray-900 text-center line-clamp-2 flex-grow flex items-center justify-center">
+                              {/* <p className="text-[10px] sm:text-xs font-semibold text-gray-900 text-center line-clamp-2 flex-grow flex items-center justify-center">
                                 {cause.name}
-                              </p>
+                              </p> */}
+                              <div className="flex items-center justify-center flex-grow">
+                                <p className="text-[10px] sm:text-xs font-semibold text-gray-900 text-center line-clamp-2">
+                                  {cause.name}
+                                </p>
+                              </div>
+
                             </div>
                           </Link>
                         );
@@ -570,16 +577,19 @@ export default function ProfilePage() {
                     </div>
 
                     {/* Show more causes text and link */}
-                    {profileData.recently_supported_causes.length > 6 && (
+                    {profileData.recently_supported_causes.length > 4 && (
                       <div className="flex flex-col items-center gap-1.5 md:gap-2 mt-3 md:mt-4">
                         <p className="text-xs md:text-sm text-gray-500">
-                          + {profileData.recently_supported_causes.length - 6} more causes
+                          {profileData.supported_causes_count - 5} more causes
                         </p>
-                        <Link to="/interests">
+                        <div onClick={() => {
+                          setActiveStatsTab('causes');
+                          setShowStatsSheet(true);
+                        }}>
                           <span className="text-xs md:text-sm text-blue-600 font-medium">
-                            See all {profileData.recently_supported_causes.length} →
+                            See all {profileData.supported_causes_count} →
                           </span>
-                        </Link>
+                        </div>
                       </div>
                     )}
                   </div>
@@ -801,7 +811,7 @@ export default function ProfilePage() {
                                 {collective.name || 'Unknown Collective'}
                               </p>
                               <p className="text-[10px] md:text-xs text-gray-500 line-clamp-1">
-                                {collective.member_count || 0} members in this collective
+                                {collective.member_count || 0} members
                               </p>
                             </div>
                           </div>

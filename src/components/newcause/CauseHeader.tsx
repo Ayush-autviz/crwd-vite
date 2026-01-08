@@ -133,19 +133,19 @@ export default function CauseHeader({
 
   return (
     <div className="sticky top-0 z-10 w-full flex items-center justify-between p-3 md:p-4 border-b bg-white">
-      <div className="flex items-center flex-1 min-w-0">
-      <button
-        onClick={() => navigate(-1)}
-        className="p-1.5 md:p-2 hover:bg-gray-100 rounded-full transition-colors flex-shrink-0"
-        aria-label="Go back"
-      >
-        <ArrowLeft className="w-4 h-4 md:w-5 md:h-5 text-gray-700" />
-      </button>
+      <div className="flex items-center  min-w-0">
+        <button
+          onClick={() => navigate(-1)}
+          className="p-1.5 md:p-2 hover:bg-gray-100 rounded-full transition-colors flex-shrink-0"
+          aria-label="Go back"
+        >
+          <ArrowLeft className="w-4 h-4 md:w-5 md:h-5 text-gray-700" />
+        </button>
 
-      <h1 className="font-bold text-lg md:text-xl text-foreground flex-1 text-center truncate px-2">
-        {title}
-      </h1>
-</div>
+        <h1 className="font-bold text-base md:text-lg text-foreground flex-1 text-center truncate px-2">
+          {title}
+        </h1>
+      </div>
       <div className="flex items-center gap-1.5 md:gap-2 flex-shrink-0">
         <button
           onClick={handleFavoriteClick}

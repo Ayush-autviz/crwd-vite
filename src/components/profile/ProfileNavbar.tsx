@@ -135,7 +135,8 @@ export default function ProfileNavbar({
           {/* Logo on the left */}
           <div className="flex-shrink-0">
             <Link to="/waitlist">
-              <NewLogo />
+              {/* <NewLogo /> */}
+              <img src="/icons/FullLogo.png" alt="" width={80} height={80} />
             </Link>
           </div>
 
@@ -296,7 +297,8 @@ export default function ProfileNavbar({
             </Link>
           </div> */}
 
-          <NewLogo />
+          {/* <NewLogo /> */}
+          <img src="/icons/FullLogo.png" width={120} height={120} alt="CRWD Logo" className="object-contain" />
 
           {/* Action buttons on the right */}
           <div className="flex items-center gap-2.5">

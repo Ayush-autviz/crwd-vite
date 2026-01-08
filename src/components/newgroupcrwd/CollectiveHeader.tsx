@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { ArrowLeft, Star, Share2, MoreHorizontal, Edit, Link2, Flag, DollarSign, Heart } from 'lucide-react';
+import { ArrowLeft, Star, Share2, MoreHorizontal, Edit, Link2, Flag, DollarSign, Heart, User } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { favoriteCollective, unfavoriteCollective } from '@/services/api/social';
@@ -14,17 +14,19 @@ interface CollectiveHeaderProps {
   onShare?: () => void;
   onManageCollective?: () => void;
   onDonate?: () => void;
+  onLeave?: () => void;
 }
 
-export default function CollectiveHeader({ 
-  title, 
+export default function CollectiveHeader({
+  title,
   collectiveId,
   isFavorite: initialIsFavorite = false,
   isAdmin = false,
   isJoined = false,
-  onShare, 
+  onShare,
   onManageCollective,
-  onDonate
+  onDonate,
+  onLeave
 }: CollectiveHeaderProps) {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
@@ -158,7 +160,7 @@ export default function CollectiveHeader({
       >
         <ArrowLeft className="w-4 h-4 md:w-5 md:h-5 text-gray-700" />
       </button>
-      
+
       <h1 className="font-bold text-lg md:text-xl text-foreground flex-1 px-2 md:px-4">
         {title}
       </h1>
@@ -170,12 +172,11 @@ export default function CollectiveHeader({
           className="p-1.5 md:p-2 hover:bg-gray-100 rounded-full transition-colors disabled:opacity-50"
           aria-label={isFavorite ? "Remove from favorites" : "Add to favorites"}
         >
-          <Star 
-            className={`w-4 h-4 md:w-5 md:h-5 transition-colors ${
-              isFavorite 
-                ? "text-yellow-500 fill-yellow-500" 
-                : "text-gray-700"
-            }`} 
+          <Star
+            className={`w-4 h-4 md:w-5 md:h-5 transition-colors ${isFavorite
+              ? "text-yellow-500 fill-yellow-500"
+              : "text-gray-700"
+              }`}
           />
         </button>
         <button
@@ -232,7 +233,7 @@ export default function CollectiveHeader({
                 <Share2 className="w-3 h-3 md:w-4 md:h-4" strokeWidth={2.5} />
                 Share
               </button>
-             
+
               <button
                 onClick={handleCopyLink}
                 className="w-full font-semibold flex items-center gap-2 md:gap-3 px-3 md:px-4 py-1.5 md:py-2 text-xs md:text-sm text-foreground hover:bg-gray-100 transition-colors"
@@ -240,7 +241,7 @@ export default function CollectiveHeader({
                 <Link2 className="w-3 h-3 md:w-4 md:h-4" strokeWidth={2.5} />
                 Copy link
               </button>
-              
+
               <button
                 onClick={handleFavoriteFromDropdown}
                 disabled={isLoading || !currentUser}
@@ -249,6 +250,18 @@ export default function CollectiveHeader({
                 <Star className={`w-3 h-3 md:w-4 md:h-4 ${isFavorite ? 'fill-yellow-500 text-yellow-500' : ''}`} strokeWidth={2.5} />
                 {isFavorite ? 'Remove favorite' : 'Add to favorites'}
               </button>
+              {!isAdmin && isJoined && (
+                <>
+                  <div className="border-t border-gray-200 my-1"></div>
+                  <button
+                    onClick={onLeave}
+                    className="w-full text-red-500 font-semibold flex items-center gap-2 md:gap-3 px-3 md:px-4 py-1.5 md:py-2 text-xs md:text-sm text-foreground hover:bg-gray-100 transition-colors"
+                  >
+                    <User className="w-3 h-3 md:w-4 md:h-4" strokeWidth={2.5} />
+                    Leave collective
+                  </button>
+                </>
+              )}
               <div className="border-t border-gray-200 my-1"></div>
               <button
                 onClick={handleReport}

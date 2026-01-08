@@ -93,15 +93,15 @@ export default function NewGroupCrwdPage() {
   // Flatten posts
   const posts = postsData
     ? {
-        results: postsData.pages.flatMap((page) => page.results || []),
-        next: postsData.pages[postsData.pages.length - 1]?.next || null,
-        count: postsData.pages[0]?.count || 0,
-      }
+      results: postsData.pages.flatMap((page) => page.results || []),
+      next: postsData.pages[postsData.pages.length - 1]?.next || null,
+      count: postsData.pages[0]?.count || 0,
+    }
     : undefined;
 
   // Transform causes data for SupportedNonprofits component
   const nonprofits = causesData?.results || causesData || [];
-  
+
   // Transform inactive causes data for CollectiveStatisticsModal component
   const inactiveCauses = crwdData?.inactive_causes || [];
 
@@ -115,21 +115,21 @@ export default function NewGroupCrwdPage() {
     mutationFn: joinCollective,
     onSuccess: async (response) => {
       console.log('Join collective successful:', response);
-      
+
       // Invalidate queries to refresh data
       queryClient.invalidateQueries({ queryKey: ['crwd', crwdId] });
       queryClient.invalidateQueries({ queryKey: ['joined-collectives'] });
       queryClient.invalidateQueries({ queryKey: ['joined-collectives', currentUser?.id] });
       queryClient.invalidateQueries({ queryKey: ['joined-collectives-manage'] });
       queryClient.invalidateQueries({ queryKey: ['joinedCollectives'] });
-      
+
       // Refetch donation box to get latest data including capacity
       await refetchDonationBox();
-      
+
       // Show custom toast
       setToastMessage('You\'ve joined the collective!');
       setShowToast(true);
-      
+
       // Always show the drawer sheet after joining
       setShowJoinModal(true);
     },
@@ -145,7 +145,7 @@ export default function NewGroupCrwdPage() {
     onSuccess: async (response) => {
       console.log('Leave collective successful:', response);
       setShowConfirmDialog(false);
-      
+
       // Invalidate queries to refresh data
       queryClient.invalidateQueries({ queryKey: ['crwd', crwdId] });
       queryClient.invalidateQueries({ queryKey: ['joined-collectives'] });
@@ -233,7 +233,7 @@ export default function NewGroupCrwdPage() {
 
       // Close the drawer
       setShowJoinModal(false);
-      
+
       // Navigate to donation setup with preselected causes
       navigate('/donation?tab=setup', {
         state: {
@@ -257,7 +257,7 @@ export default function NewGroupCrwdPage() {
         };
         return causeEntry;
       });
-      
+
       try {
         await addCausesToBox({ causes });
         queryClient.invalidateQueries({ queryKey: ['donationBox'] });
@@ -338,6 +338,7 @@ export default function NewGroupCrwdPage() {
         isFavorite={crwdData.is_favorite}
         isAdmin={isAdmin}
         isJoined={crwdData.is_joined}
+        onLeave={handleJoinCollective}
         onShare={handleShare}
         onManageCollective={handleManageCollective}
         onDonate={() => {
@@ -349,166 +350,166 @@ export default function NewGroupCrwdPage() {
         }}
       />
 
-    <div className='lg:max-w-[60%] lg:mx-auto'>
+      <div className='lg:max-w-[60%] lg:mx-auto'>
 
 
-      <CollectiveProfile
-        name={crwdData.name || 'Collective'}
-        image={crwdData.avatar || crwdData.image}
-        logo={crwdData.logo}
-        color={crwdData.color}
-        founder={crwdData.created_by}
-        description={crwdData.description}
-        isJoined={crwdData.is_joined}
-      />
-
-      <CollectiveStats
-        nonprofitCount={nonprofitCount}
-        memberCount={memberCount}
-        donationCount={donationCount}
-        onStatClick={(tab) => {
-          if (!currentUser || !token?.access_token) {
-            // If not logged in, navigate to onboarding with redirectTo parameter
-            navigate(`/onboarding?redirectTo=/groupcrwd/${crwdId}`);
-            return;
-          }
-          setStatisticsTab(tab);
-          setShowStatisticsModal(true);
-        }}
-      />
-
-      {/* <DonationInfoBox nonprofitCount={nonprofitCount} /> */}
-
-      {/* Action Buttons */}
-      <div className="px-3 md:px-4 mb-4 md:mb-6 flex flex-row gap-2 md:gap-3">
-        {isAdmin ? (
-          <>
-            {/* Joined Button - Non-clickable for admin */}
-            <Button
-              disabled
-              variant="outline"
-              className="flex-1 font-semibold py-2 md:py-4 lg:py-5 rounded-lg text-xs md:text-sm lg:text-base border-green-600 text-green-600 cursor-not-allowed opacity-75"
-            >
-              <Check className="w-3 h-3 md:w-3.5 md:h-3.5 lg:w-4 lg:h-4 mr-1 md:mr-1.5 lg:mr-2 inline" />
-              Joined
-            </Button>
-            {/* Share Button */}
-            <Button
-              onClick={handleShare}
-              className="flex-1 font-semibold py-2 md:py-4 lg:py-5 rounded-lg text-xs md:text-sm lg:text-base bg-[#1600ff] hover:bg-[#1400cc] text-white shadow-sm"
-            >
-              <Share2 className="w-3 h-3 md:w-3.5 md:h-3.5 lg:w-4 lg:h-4 mr-1 md:mr-1.5 lg:mr-2 inline" />
-              Share
-            </Button>
-          </>
-        ) : crwdData.is_joined ? (
-          <>
-            {/* Joined Button - Clickable for non-admin, prompts to unjoin */}
-            <Button
-              onClick={handleJoinCollective}
-              disabled={leaveCollectiveMutation.isPending}
-              variant="outline"
-              className="flex-1 font-semibold py-2 md:py-4 lg:py-5 rounded-lg text-xs md:text-sm lg:text-base border-green-600 text-green-600 hover:bg-green-50"
-            >
-              {leaveCollectiveMutation.isPending ? (
-                <>
-                  <Loader2 className="w-3 h-3 md:w-3.5 md:h-3.5 lg:w-4 lg:h-4 mr-1 md:mr-1.5 lg:mr-2 animate-spin inline" />
-                  Leaving...
-                </>
-              ) : (
-                <>
-                  <Check className="w-3 h-3 md:w-3.5 md:h-3.5 lg:w-4 lg:h-4 mr-1 md:mr-1.5 lg:mr-2 inline" />
-                  Joined
-                </>
-              )}
-            </Button>
-            {/* Share Button */}
-            <Button
-              onClick={handleShare}
-              className="flex-1 font-semibold py-2 md:py-4 lg:py-5 rounded-lg text-xs md:text-sm lg:text-base bg-[#1600ff] hover:bg-[#1400cc] text-white shadow-sm"
-            >
-              <Share2 className="w-3 h-3 md:w-3.5 md:h-3.5 lg:w-4 lg:h-4 mr-1 md:mr-1.5 lg:mr-2 inline" />
-              Share
-            </Button>
-          </>
-        ) : (
-          <>
-            <Button
-              onClick={handleJoinCollective}
-              disabled={joinCollectiveMutation.isPending}
-              className="flex-1 font-semibold py-2 md:py-4 lg:py-5 rounded-lg text-xs md:text-sm lg:text-base bg-[#1600ff] hover:bg-[#1400cc] text-white"
-            >
-              {joinCollectiveMutation.isPending ? (
-                <>
-                  <Loader2 className="w-3 h-3 md:w-3.5 md:h-3.5 lg:w-4 lg:h-4 mr-1 md:mr-1.5 lg:mr-2 animate-spin inline" />
-                  Joining...
-                </>
-              ) : (
-                'Join Collective'
-              )}
-            </Button>
-            <Button
-              onClick={handleOneTimeDonation}
-              variant="outline"
-              className="flex-1 border-[#1600ff] text-[#1600ff] hover:bg-[#1600ff] hover:text-white font-semibold py-2 md:py-4 lg:py-5 rounded-lg text-xs md:text-sm lg:text-base"
-            >
-              One-Time Donation
-            </Button>
-          </>
-        )}
-      </div>
-
-      <SupportedNonprofits 
-        nonprofits={nonprofits} 
-        isLoading={isLoadingCauses}
-        onSeeAllClick={() => {
-          if (!currentUser || !token?.access_token) {
-            navigate(`/onboarding?redirectTo=/groupcrwd/${crwdId}`);
-            return;
-          }
-          setStatisticsTab('Nonprofits');
-          setShowStatisticsModal(true);
-        }}
-      />
-
-
-      <CommunityActivity
-        posts={posts?.results || []}
-        isLoading={isLoadingPosts}
-        collectiveId={crwdId}
-        isJoined={crwdData.is_joined}
-        collectiveData={crwdData}
-      />
-
-      {/* Discover More Collectives */}
-      <DiscoverMoreCollectives collectiveId={crwdId} />
-
-      {/* Legal Disclaimer */}
-      <div className="px-3 md:px-4 py-4 md:py-6 border-t border-gray-200 mt-6 md:mt-8">
-        <p className="text-[10px] md:text-xs text-gray-500 text-center leading-relaxed">
-          All donations are made to CRWD Foundation Inc. (EIN: 41-2423690), a 501(c)(3) nonprofit organization. CRWD Foundation grants funds to qualified 501(c)(3) organizations selected by donors.
-        </p>
-      </div>
-
-      {/* Share Modal */}
-      {showShareModal && (
-        <SharePost
-          isOpen={showShareModal}
-          onClose={() => setShowShareModal(false)}
-          url={window.location.href}
-          title={crwdData.name || 'Collective'}
+        <CollectiveProfile
+          name={crwdData.name || 'Collective'}
+          image={crwdData.avatar || crwdData.image}
+          logo={crwdData.logo}
+          color={crwdData.color}
+          founder={crwdData.created_by}
+          description={crwdData.description}
+          isJoined={crwdData.is_joined}
         />
-      )}
 
-      {/* Statistics Modal */}
-      <CollectiveStatisticsModal
-        isOpen={showStatisticsModal}
-        onClose={() => setShowStatisticsModal(false)}
-        collectiveId={crwdId}
-        collectiveName={crwdData.name}
-        initialTab={statisticsTab}
-        previouslySupported={inactiveCauses}
-      />
+        <CollectiveStats
+          nonprofitCount={nonprofitCount}
+          memberCount={memberCount}
+          donationCount={donationCount}
+          onStatClick={(tab) => {
+            if (!currentUser || !token?.access_token) {
+              // If not logged in, navigate to onboarding with redirectTo parameter
+              navigate(`/onboarding?redirectTo=/groupcrwd/${crwdId}`);
+              return;
+            }
+            setStatisticsTab(tab);
+            setShowStatisticsModal(true);
+          }}
+        />
+
+        {/* <DonationInfoBox nonprofitCount={nonprofitCount} /> */}
+
+        {/* Action Buttons */}
+        <div className="px-3 md:px-4 mb-4 md:mb-6 flex flex-row gap-2 md:gap-3">
+          {isAdmin ? (
+            <>
+              {/* Joined Button - Non-clickable for admin */}
+              <Button
+                disabled
+                variant="outline"
+                className="flex-1 font-semibold py-2 md:py-4 lg:py-5 rounded-lg text-xs md:text-sm lg:text-base border-green-600 text-green-600 cursor-not-allowed opacity-75"
+              >
+                <Check className="w-3 h-3 md:w-3.5 md:h-3.5 lg:w-4 lg:h-4 mr-1 md:mr-1.5 lg:mr-2 inline" />
+                Joined
+              </Button>
+              {/* Share Button */}
+              <Button
+                onClick={handleShare}
+                className="flex-1 font-semibold py-2 md:py-4 lg:py-5 rounded-lg text-xs md:text-sm lg:text-base bg-[#1600ff] hover:bg-[#1400cc] text-white shadow-sm"
+              >
+                <Share2 className="w-3 h-3 md:w-3.5 md:h-3.5 lg:w-4 lg:h-4 mr-1 md:mr-1.5 lg:mr-2 inline" />
+                Share
+              </Button>
+            </>
+          ) : crwdData.is_joined ? (
+            <>
+              {/* Joined Button - Clickable for non-admin, prompts to unjoin */}
+              <Button
+                onClick={handleJoinCollective}
+                disabled={leaveCollectiveMutation.isPending}
+                variant="outline"
+                className="flex-1 font-semibold py-2 md:py-4 lg:py-5 rounded-lg text-xs md:text-sm lg:text-base border-green-600 text-green-600 hover:bg-green-50"
+              >
+                {leaveCollectiveMutation.isPending ? (
+                  <>
+                    <Loader2 className="w-3 h-3 md:w-3.5 md:h-3.5 lg:w-4 lg:h-4 mr-1 md:mr-1.5 lg:mr-2 animate-spin inline" />
+                    Leaving...
+                  </>
+                ) : (
+                  <>
+                    <Check className="w-3 h-3 md:w-3.5 md:h-3.5 lg:w-4 lg:h-4 mr-1 md:mr-1.5 lg:mr-2 inline" />
+                    Joined
+                  </>
+                )}
+              </Button>
+              {/* Share Button */}
+              <Button
+                onClick={handleShare}
+                className="flex-1 font-semibold py-2 md:py-4 lg:py-5 rounded-lg text-xs md:text-sm lg:text-base bg-[#1600ff] hover:bg-[#1400cc] text-white shadow-sm"
+              >
+                <Share2 className="w-3 h-3 md:w-3.5 md:h-3.5 lg:w-4 lg:h-4 mr-1 md:mr-1.5 lg:mr-2 inline" />
+                Share
+              </Button>
+            </>
+          ) : (
+            <>
+              <Button
+                onClick={handleJoinCollective}
+                disabled={joinCollectiveMutation.isPending}
+                className="flex-1 font-semibold py-2 md:py-4 lg:py-5 rounded-lg text-xs md:text-sm lg:text-base bg-[#1600ff] hover:bg-[#1400cc] text-white"
+              >
+                {joinCollectiveMutation.isPending ? (
+                  <>
+                    <Loader2 className="w-3 h-3 md:w-3.5 md:h-3.5 lg:w-4 lg:h-4 mr-1 md:mr-1.5 lg:mr-2 animate-spin inline" />
+                    Joining...
+                  </>
+                ) : (
+                  'Join Collective'
+                )}
+              </Button>
+              <Button
+                onClick={handleOneTimeDonation}
+                variant="outline"
+                className="flex-1 border-[#1600ff] text-[#1600ff] hover:bg-[#1600ff] hover:text-white font-semibold py-2 md:py-4 lg:py-5 rounded-lg text-xs md:text-sm lg:text-base"
+              >
+                One-Time Donation
+              </Button>
+            </>
+          )}
+        </div>
+
+        <SupportedNonprofits
+          nonprofits={nonprofits}
+          isLoading={isLoadingCauses}
+          onSeeAllClick={() => {
+            if (!currentUser || !token?.access_token) {
+              navigate(`/onboarding?redirectTo=/groupcrwd/${crwdId}`);
+              return;
+            }
+            setStatisticsTab('Nonprofits');
+            setShowStatisticsModal(true);
+          }}
+        />
+
+
+        <CommunityActivity
+          posts={posts?.results || []}
+          isLoading={isLoadingPosts}
+          collectiveId={crwdId}
+          isJoined={crwdData.is_joined}
+          collectiveData={crwdData}
+        />
+
+        {/* Discover More Collectives */}
+        <DiscoverMoreCollectives collectiveId={crwdId} />
+
+        {/* Legal Disclaimer */}
+        <div className="px-3 md:px-4 py-4 md:py-6 border-t border-gray-200 mt-6 md:mt-8">
+          <p className="text-[10px] md:text-xs text-gray-500 text-center leading-relaxed">
+            All donations are made to CRWD Foundation Inc. (EIN: 41-2423690), a 501(c)(3) nonprofit organization. CRWD Foundation grants funds to qualified 501(c)(3) organizations selected by donors.
+          </p>
+        </div>
+
+        {/* Share Modal */}
+        {showShareModal && (
+          <SharePost
+            isOpen={showShareModal}
+            onClose={() => setShowShareModal(false)}
+            url={window.location.href}
+            title={crwdData.name || 'Collective'}
+          />
+        )}
+
+        {/* Statistics Modal */}
+        <CollectiveStatisticsModal
+          isOpen={showStatisticsModal}
+          onClose={() => setShowStatisticsModal(false)}
+          collectiveId={crwdId}
+          collectiveName={crwdData.name}
+          initialTab={statisticsTab}
+          previouslySupported={inactiveCauses}
+        />
 
       </div>
 
