@@ -72,7 +72,7 @@ export function SharePost({
     // Instagram doesn't have a direct share API, so we open the create post page
     const instagramUrl = `https://www.instagram.com/create/details/?mediaType=PHOTO`;
     window.open(instagramUrl, '_blank', 'width=600,height=700,scrollbars=yes,resizable=yes');
-    
+
     // Also copy to clipboard for convenience
     navigator.clipboard.writeText(shareText).then(() => {
       setCopied(true);
@@ -86,7 +86,7 @@ export function SharePost({
     // TikTok doesn't have a direct share API, so we open the upload page
     const tiktokUrl = `https://www.tiktok.com/upload`;
     window.open(tiktokUrl, '_blank', 'width=600,height=700,scrollbars=yes,resizable=yes');
-    
+
     // Also copy to clipboard for convenience
     navigator.clipboard.writeText(shareText).then(() => {
       setCopied(true);
@@ -116,17 +116,17 @@ export function SharePost({
   if (!isOpen) return null;
 
   // Render mobile bottom sheet for mobile devices
-  if (isMobile) {
-    return (
-      <MobileShareModal
-        isOpen={isOpen}
-        onClose={onClose}
-        title={title}
-        message={description}
-        url={url}
-      />
-    );
-  }
+  // if (isMobile) {
+  return (
+    <MobileShareModal
+      isOpen={isOpen}
+      onClose={onClose}
+      title={title}
+      message={description}
+      url={url}
+    />
+  );
+  // }
 
   const shareOptions = [
     {
@@ -143,7 +143,7 @@ export function SharePost({
       icon: X,
       bgColor: 'bg-gray-100',
       iconColor: 'text-gray-900',
-      onClick: () => {},
+      onClick: () => { },
       shareButton: true,
     },
     {
@@ -199,7 +199,7 @@ export function SharePost({
         <div className="grid grid-cols-3 gap-6 gap-y-8">
           {shareOptions.map((option) => {
             const IconComponent = option.icon;
-            
+
             if (option.id === 'twitter' && option.shareButton) {
               return (
                 <TwitterShareButton
@@ -215,7 +215,7 @@ export function SharePost({
                 </TwitterShareButton>
               );
             }
-            
+
             if (option.id === 'linkedin' && option.shareButton) {
               return (
                 <LinkedinShareButton

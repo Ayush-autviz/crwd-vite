@@ -771,18 +771,16 @@ export default function ProfilePage() {
                               </AvatarFallback>
                             </Avatar>
                             <div className="flex-1 min-w-0">
-                              <div className="bg-green-100 text-green-600 px-2 py-0.5 rounded text-[10px] font-semibold w-fit mb-1">
-                                Collective
-                              </div>
+
                               <p className="text-sm font-medium text-gray-900 mb-1">
                                 {collective.name || 'Unknown Collective'}
                               </p>
-                              <p className="text-xs text-gray-500 line-clamp-2">
-                                {collective.description || ''}
+                              <p className="text-[10px] md:text-xs text-gray-500 line-clamp-1">
+                                {collective.member_count || 0} members
                               </p>
                             </div>
                           </div>
-                          <Button
+                          {/* <Button
                             onClick={() => {
                               setShowStatsSheet(false);
                               navigate(`/groupcrwd/${collective.id}`);
@@ -790,7 +788,7 @@ export default function ProfilePage() {
                             className="bg-blue-600 hover:bg-blue-700 text-white text-xs px-4 py-2 rounded-lg"
                           >
                             View Details
-                          </Button>
+                          </Button> */}
                         </div>
                       );
                     })}
@@ -828,7 +826,7 @@ export default function ProfilePage() {
                                 className="text-white text-xs sm:text-sm font-semibold"
                               >
                                 {userData.first_name && userData.last_name
-                                  ? `${userData.first_name[0]}${userData.last_name[0]}`
+                                  ? `${userData.first_name[0]}`
                                   : (userData.name || 'U').charAt(0)}
                               </AvatarFallback>
                             </Avatar>
@@ -890,7 +888,7 @@ export default function ProfilePage() {
                                 className="text-white text-xs sm:text-sm font-semibold"
                               >
                                 {userData.first_name && userData.last_name
-                                  ? `${userData.first_name[0]}${userData.last_name[0]}`
+                                  ? `${userData.first_name[0]}`
                                   : (userData.name || 'U').charAt(0)}
                               </AvatarFallback>
                             </Avatar>

@@ -2,13 +2,13 @@
 
 import React, { useState, useEffect, useRef } from 'react'
 import ProfileNavbar from "../components/profile/ProfileNavbar"
-import { 
-  CircleHelp, 
-  CreditCard, 
-  FileText, 
-  Lock, 
-  Mail, 
-  Heart, 
+import {
+  CircleHelp,
+  CreditCard,
+  FileText,
+  Lock,
+  Mail,
+  Heart,
   ChevronDown,
   Eye,
   EyeOff,
@@ -298,7 +298,7 @@ export default function NewSettings() {
 
   const handlePasswordSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    
+
     const errors = {
       currentPassword: !passwordForm.currentPassword ? "Current password is required" : "",
       newPassword: validatePassword(passwordForm.newPassword),
@@ -324,7 +324,7 @@ export default function NewSettings() {
 
   const handleEmailSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    
+
     const errors = {
       newEmail: validateEmail(emailForm.newEmail),
       confirmEmail: emailForm.newEmail !== emailForm.confirmEmail ? "Emails do not match" : "",
@@ -437,14 +437,14 @@ export default function NewSettings() {
                     </div>
                   )}
                 </button>
-                {isEditMode && (
+                {/* {isEditMode && (
                   <button
                     onClick={() => fileInputRef.current?.click()}
                     className="absolute -bottom-1 -right-1 w-5 h-5 md:w-6 md:h-6 bg-blue-500 text-white rounded-full flex items-center justify-center hover:bg-blue-600 transition-colors"
                   >
                     <Camera className="h-2.5 w-2.5 md:h-3 md:w-3" />
                   </button>
-                )}
+                )} */}
               </div>
               {isEditMode && (
                 <button
@@ -514,7 +514,7 @@ export default function NewSettings() {
                     onChange={(e) => setFormData(prev => ({ ...prev, location: e.target.value }))}
                     disabled={!isEditMode}
                     placeholder="Location"
-                    className="bg-gray-100 border-0 pl-9 md:pl-10 text-sm md:text-base"
+                    className="bg-gray-100 border-0 text-sm md:text-base"
                   />
                 </div>
               </div>
@@ -682,9 +682,8 @@ export default function NewSettings() {
                         {faq.question}
                       </span>
                       <ChevronDown
-                        className={`h-4 w-4 md:h-5 md:w-5 text-gray-500 transition-transform flex-shrink-0 ${
-                          expandedFAQ === index ? 'rotate-180' : ''
-                        }`}
+                        className={`h-4 w-4 md:h-5 md:w-5 text-gray-500 transition-transform flex-shrink-0 ${expandedFAQ === index ? 'rotate-180' : ''
+                          }`}
                       />
                     </button>
                     {expandedFAQ === index && (

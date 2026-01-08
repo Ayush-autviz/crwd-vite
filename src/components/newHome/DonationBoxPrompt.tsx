@@ -19,11 +19,11 @@ export default function DonationBoxPrompt({ causeCount, hasJoinedCollectives = f
   return (
     <div className="w-full py-2 md:py-6 md:max-w-2xl md:mx-auto">
       {/* Greeting - Only show if not showing "Almost There" card */}
-      {!showAlmostThereCard && (
-        <h2 className="text-lg md:text-2xl font-bold text-foreground mb-3 md:mb-6">
-          Hi {firstName}, ready to make an impact?
-        </h2>
-      )}
+
+      <h2 className="text-lg md:text-2xl font-bold text-foreground mb-3 md:mb-6">
+        Hi {firstName}, ready to make an impact?
+      </h2>
+
 
       {/* Action Cards */}
       <div className="space-y-2 md:space-y-4">
@@ -31,7 +31,7 @@ export default function DonationBoxPrompt({ causeCount, hasJoinedCollectives = f
         {showAlmostThereCard ? (
           <Card
             onClick={() => navigate('/donation?tab=setup')}
-            className="cursor-pointer shadow-none border border-orange-300 bg-yellow-50"
+            className="cursor-pointer py-0 shadow-none border border-orange-300 bg-yellow-50"
           >
             <CardContent className="p-3 md:p-6">
               <div className="flex flex-col items-start gap-2.5 md:flex-row md:items-start md:gap-4">
@@ -43,7 +43,7 @@ export default function DonationBoxPrompt({ causeCount, hasJoinedCollectives = f
                   <h3 className="font-bold text-sm md:text-lg text-gray-900 mb-0.5 md:mb-1">
                     You're Almost There!
                   </h3>
-                  <p className="text-xs md:text-base text-gray-900 mb-2 md:mb-3">
+                  <p className="text-xs md:text-base text-amber-900 mb-2 md:mb-3">
                     You selected <span className="font-bold">{causeCount} {causeCount === 1 ? 'cause' : 'causes'}</span> but haven't started donating yet
                   </p>
                   <button
