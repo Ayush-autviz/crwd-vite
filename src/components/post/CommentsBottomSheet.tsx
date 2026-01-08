@@ -68,6 +68,58 @@ export default function CommentsBottomSheet({
     return () => clearTimeout(timer);
   }, [isOpen, isVisible]);
 
+  // Handle window resize - close sheet if viewport changes significantly
+  useEffect(() => {
+    if (!isOpen) return;
+
+    let initialWidth = window.innerWidth;
+
+    const handleResize = () => {
+      const currentWidth = window.innerWidth;
+      // If width changes by more than 100px, close the sheet
+      if (Math.abs(currentWidth - initialWidth) > 10) {
+        handleClose();
+      }
+    };
+
+    window.addEventListener('resize', handleResize);
+
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, [isOpen]);
+
+  // Lock body scroll when sheet is visible
+  useEffect(() => {
+    if (isVisible) {
+      // Save current scroll position
+      const scrollY = window.scrollY;
+      document.body.style.position = 'fixed';
+      document.body.style.top = `-${scrollY}px`;
+      document.body.style.width = '100%';
+    } else {
+      // Restore scroll position
+      const scrollY = document.body.style.top;
+      document.body.style.position = '';
+      document.body.style.top = '';
+      document.body.style.width = '';
+      if (scrollY) {
+        window.scrollTo(0, parseInt(scrollY || '0') * -1);
+      }
+    }
+
+    // Cleanup on unmount
+    return () => {
+      const scrollY = document.body.style.top;
+      document.body.style.position = '';
+      document.body.style.top = '';
+      document.body.style.width = '';
+      if (scrollY) {
+        window.scrollTo(0, parseInt(scrollY || '0') * -1);
+      }
+    };
+  }, [isVisible]);
+
   // Fetch comments
   const { data: commentsData, isLoading: isLoadingComments } = useQuery({
     queryKey: ['postComments', post.id],
