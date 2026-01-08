@@ -298,7 +298,7 @@ export default function ProfileNavbar({
           </div> */}
 
           {/* <NewLogo /> */}
-          <img src="/icons/FullLogo.png" width={120} height={120} alt="CRWD Logo" className="object-contain" />
+          <img src="/icons/FullLogo.png" width={100} height={100} alt="CRWD Logo" className="object-contain" />
 
           {/* Action buttons on the right */}
           <div className="flex items-center gap-2.5">

@@ -420,7 +420,9 @@ export default function ProfilePage() {
                 onFounderClick={() => setShowFounderSheet(true)}
               />
 
-              <ProfileBio bio={userProfile.bio} />
+              {userProfile.bio && (
+                <ProfileBio bio={userProfile.bio} />
+              )}
 
 
               <Button
@@ -516,7 +518,7 @@ export default function ProfilePage() {
                           + {userProfile.recently_supported_causes.length - 6} more causes
                         </p>
                         <Link to="/interests">
-                          <span className="text-sm text-blue-600 font-medium">
+                          <span className="cursor-pointer hover:underline text-sm text-[#1600ff] font-medium">
                             See all {userProfile.recently_supported_causes.length} →
                           </span>
                         </Link>

@@ -142,7 +142,7 @@ export default function CommentsBottomSheet({
 
   // Create reply mutation
   const createReplyMutation = useMutation({
-    mutationFn: ({ commentId, data }: { commentId: number; data: { content: string } }) => 
+    mutationFn: ({ commentId, data }: { commentId: number; data: { content: string } }) =>
       createPostComment(post.id.toString(), { content: data.content, parent_comment_id: commentId }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['postComments', post.id] });
@@ -166,10 +166,10 @@ export default function CommentsBottomSheet({
     setLoadingReplies(prev => new Set(prev).add(commentId));
     try {
       const repliesData = await getCommentReplies(commentId.toString());
-      
+
       // Check different possible response structures
       const repliesArray = repliesData?.replies || repliesData?.results || (Array.isArray(repliesData) ? repliesData : []);
-      
+
       const transformedReplies: CommentData[] = repliesArray.map((reply: any) => ({
         id: reply.id,
         username: getDisplayName(reply.user),
@@ -187,13 +187,13 @@ export default function CommentsBottomSheet({
       }));
 
       setComments(prev => {
-        return prev.map(comment => 
-          comment.id === commentId 
+        return prev.map(comment =>
+          comment.id === commentId
             ? { ...comment, replies: transformedReplies }
             : comment
         );
       });
-      
+
       // Also add to expanded comments set after replies are loaded
       setExpandedComments(prev => new Set(prev).add(commentId));
     } catch (error) {
@@ -255,9 +255,9 @@ export default function CommentsBottomSheet({
     : post.username;
 
   const postUserInitials = post.firstName && post.lastName
-    ? `${post.firstName.charAt(0)}${post.lastName.charAt(0)}`.toUpperCase()
+    ? `${post.firstName.charAt(0)}`.toUpperCase()
     : post.username.charAt(0).toUpperCase();
-  
+
   // Generate consistent color for post avatar
   const avatarColors = [
     '#3B82F6', '#EC4899', '#8B5CF6', '#10B981', '#F59E0B',
@@ -268,20 +268,18 @@ export default function CommentsBottomSheet({
     const hash = typeof id === 'number' ? id : id.toString().split('').reduce((acc: number, char: string) => acc + char.charCodeAt(0), 0);
     return colors[hash % colors.length];
   };
-  
+
   const postAvatarColor = post.color || getConsistentColor(post.id, avatarColors);
 
   return (
     <div
-      className={`fixed inset-0 bg-black/50 flex items-end justify-center z-50 transition-opacity duration-300 ${
-        isAnimating ? 'opacity-100' : 'opacity-0'
-      }`}
+      className={`fixed inset-0 bg-black/50 flex items-end justify-center z-50 transition-opacity duration-300 ${isAnimating ? 'opacity-100' : 'opacity-0'
+        }`}
       onClick={handleClose}
     >
       <div
-        className={`bg-white rounded-t-3xl w-full h-[85vh] flex flex-col transform transition-transform duration-300 ${
-          isAnimating ? 'translate-y-0' : 'translate-y-full'
-        }`}
+        className={`bg-white rounded-t-3xl w-full h-[85vh] flex flex-col transform transition-transform duration-300 ${isAnimating ? 'translate-y-0' : 'translate-y-full'
+          }`}
         style={{
           transitionTimingFunction: 'cubic-bezier(0.25, 0.46, 0.45, 0.94)',
         }}
@@ -368,9 +366,9 @@ export default function CommentsBottomSheet({
                     parentComment: comment.parentComment,
                     userId: comment.userId,
                   };
-                  
+
                   const isExpanded = expandedComments.has(comment.id);
-                  
+
                   return (
                     <div key={comment.id}>
                       <Comment

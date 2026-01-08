@@ -57,7 +57,7 @@ export default function CauseResultCard({ cause }: CauseResultCardProps) {
   return (
     <Card
       onClick={() => navigate(`/cause/${cause.id}`)}
-      className="cursor-pointer hover:shadow-md transition-shadow border border-gray-200"
+      className="cursor-pointer hover:shadow-md py-0 transition-shadow border border-gray-200"
     >
       <CardContent className="px-3 md:px-4 py-3 md:py-4">
         <div className="flex items-start gap-3 md:gap-4">

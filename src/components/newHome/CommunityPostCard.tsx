@@ -569,9 +569,9 @@ export default function CommunityPostCard({ post, onCommentPress, showSimplified
                 }}
               >
                 <Share2 className="w-3.5 h-3.5 md:w-5 md:h-5 text-gray-500" strokeWidth={2} />
-                {post.fundraiser?.is_active && (
+                {/* {post.fundraiser?.is_active && (
                   <span className="text-xs md:text-sm text-gray-500">Share</span>
-                )}
+                )} */}
               </button>
             </div>
           </div>
@@ -599,9 +599,18 @@ export default function CommunityPostCard({ post, onCommentPress, showSimplified
       <SharePost
         isOpen={showShareModal}
         onClose={() => setShowShareModal(false)}
-        url={`${window.location.origin}/post/${post.id}`}
-        title={post.collective?.name || `${post.user.firstName} ${post.user.lastName}` || post.user.name}
-        description={post.content}
+        url={post.fundraiser
+          ? `${window.location.origin}/fundraiser/${post.fundraiser.id}`
+          : `${window.location.origin}/post/${post.id}`
+        }
+        title={post.fundraiser
+          ? post.fundraiser.name
+          : (post.collective?.name || `${post.user.firstName || ''} ${post.user.lastName || ''}`.trim() || post.user.name)
+        }
+        description={post.fundraiser
+          ? post.fundraiser.description || post.content
+          : post.content
+        }
       />
 
       {/* Toast */}

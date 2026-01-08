@@ -189,14 +189,14 @@ export default function NewHome() {
                 (donationBoxData.attributing_collectives?.length || 0),
         }
         : null;
-    
+
     // Get cause count for inactive donation box - count unique causes from box_causes
     const inactiveBoxCauseCount = donationBoxData && !isDonationBoxNotFound && !isDonationBoxActive
         ? (() => {
             const boxCauses = donationBoxData.box_causes || [];
             const uniqueCauseIds = new Set(boxCauses.map((bc: any) => bc.cause?.id).filter(Boolean));
             return uniqueCauseIds.size || 0;
-          })()
+        })()
         : 0;
 
     // Transform joined collectives for carousel
@@ -231,8 +231,8 @@ export default function NewHome() {
     // Use useMemo to make it reactive to userProfilesMap changes
     const transformedCommunityUpdates = useMemo(() => {
         return notificationsData?.results
-            ?.filter((notification: any) => 
-                notification.type === "community" && 
+            ?.filter((notification: any) =>
+                notification.type === "community" &&
                 !notification.data?.post_id // Filter out post type items
             )
             .map((notification: any) => {
@@ -289,14 +289,14 @@ export default function NewHome() {
 
                 // Get user profile from the fetched profiles map
                 const userProfile = userId ? userProfilesMap.get(userId.toString()) : null;
-                
+
                 // Use first_name and last_name from profile, fallback to username
                 // Handle both flat structure and nested "user" structure
                 const profileUser = userProfile?.user || userProfile;
                 let firstName = profileUser?.first_name || '';
                 let lastName = profileUser?.last_name || '';
                 let fullName = '';
-                
+
                 if (firstName && lastName) {
                     fullName = `${firstName} ${lastName}`;
                 } else if (profileUser?.full_name) {
@@ -304,7 +304,7 @@ export default function NewHome() {
                 } else {
                     fullName = username || "Unknown User";
                 }
-                
+
                 // Get avatar from profile if available
                 const avatar = profileUser?.profile_picture || "";
 
@@ -319,16 +319,16 @@ export default function NewHome() {
                 }
 
                 // Check if this is a join notification
-                const isJoinNotification = 
+                const isJoinNotification =
                     notification.body?.toLowerCase().includes('joined') ||
                     notification.data?.new_member_id !== undefined ||
                     notification.title?.toLowerCase().includes('new member');
 
                 // Extract collective ID from notification data if available
-                const collectiveId = notification.data?.collective_id || 
-                                   notification.data?.collectiveId || 
-                                   notification.data?.crwd_id ||
-                                   null;
+                const collectiveId = notification.data?.collective_id ||
+                    notification.data?.collectiveId ||
+                    notification.data?.crwd_id ||
+                    null;
 
                 return {
                     id: notification.id,
@@ -404,12 +404,12 @@ export default function NewHome() {
                         </>
                     ) : donationBoxData && !isDonationBoxNotFound && !isDonationBoxActive && inactiveBoxCauseCount > 0 ? (
                         // Donation box exists but is not active - show prompt with cause count
-                        <DonationBoxPrompt 
+                        <DonationBoxPrompt
                             causeCount={inactiveBoxCauseCount}
                             hasJoinedCollectives={transformedAttributingCollectives.length > 0}
                         />
                     ) : (
-                        <DonationBoxPrompt 
+                        <DonationBoxPrompt
                             hasJoinedCollectives={transformedAttributingCollectives.length > 0}
                         />
                     )
@@ -445,13 +445,13 @@ export default function NewHome() {
             {/* <div className="md:grid md:grid-cols-12 md:gap-6 md:pt-6 md:px-6">
                 <div className="md:col-span-12"> */}
 
-                <div className="w-full max-w-7xl mx-auto">
+            <div className="w-full max-w-7xl mx-auto">
                 <div className="mx-0 md:mx-6">
                     {/* 2 Posts - Above Featured Nonprofits */}
                     {token?.access_token && (
-                        <CommunityPosts 
-                            limit={2} 
-                            startIndex={0} 
+                        <CommunityPosts
+                            limit={2}
+                            startIndex={0}
                             showHeading={true}
                             onCommentPress={(post) => {
                                 setSelectedPost({
@@ -499,9 +499,9 @@ export default function NewHome() {
 
                     {/* 1 Post - After Featured Nonprofits */}
                     {token?.access_token && (
-                        <CommunityPosts 
-                            limit={1} 
-                            startIndex={2} 
+                        <CommunityPosts
+                            limit={1}
+                            startIndex={2}
                             showHeading={false}
                             onCommentPress={(post) => {
                                 setSelectedPost({
@@ -558,10 +558,10 @@ export default function NewHome() {
                         ) : null
                     )}
 
-                    </div>
-                    </div>
+                </div>
+            </div>
 
-                {/* </div>
+            {/* </div>
             </div> */}
             <ExploreCards />
 
@@ -581,26 +581,27 @@ export default function NewHome() {
 
             {/* Fixed iOS App Banner */}
             {showAppBanner && (
-              <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-4 md:px-6 py-3 md:py-4 z-40 shadow-lg block sm:hidden">
-                <div className="max-w-7xl mx-auto flex items-center justify-between gap-2 md:gap-4">
-                  <NewLogo size="sm" />
-                  <div className="flex-1 flex flex-col md:flex-row md:items-center gap-1 md:gap-2">
-                    <p className="text-xs xs:text-sm md:text-base font-bold text-gray-900">
-                      Get the full experience on iOS
-                    </p>
-                    <p className="text-xs xs:text-sm md:text-sm text-gray-500">
-                      Easily manage all of your giving
-                    </p>
-                  </div>
-                  <button
-                    onClick={() => setShowAppBanner(false)}
-                    className="text-gray-400 hover:text-gray-600 transition-colors flex-shrink-0"
-                    aria-label="Close banner"
-                  >
-                    <X className="w-4 h-4 md:w-5 md:h-5" />
-                  </button>
+                <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-2 md:px-6 py-3 md:py-4 z-40 shadow-lg block sm:hidden">
+                    <div className="max-w-7xl mx-auto flex items-center justify-between gap-3 md:gap-4">
+                        {/* <NewLogo size="sm" /> */}
+                        <img src="/icons/FullLogo.png" width={75} height={75} />
+                        <div className="flex-1 flex flex-col md:flex-row md:items-center gap-1 md:gap-2">
+                            <p className="text-xs xs:text-sm md:text-base font-bold text-gray-900">
+                                Get the full experience on iOS
+                            </p>
+                            <p className="text-xs xs:text-sm md:text-sm text-gray-500">
+                                Easily manage all of your giving
+                            </p>
+                        </div>
+                        <button
+                            onClick={() => setShowAppBanner(false)}
+                            className="text-gray-400 hover:text-gray-600 transition-colors flex-shrink-0"
+                            aria-label="Close banner"
+                        >
+                            <X className="w-4 h-4 md:w-5 md:h-5" />
+                        </button>
+                    </div>
                 </div>
-              </div>
             )}
 
         </div>

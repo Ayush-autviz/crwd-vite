@@ -58,7 +58,7 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
   };
 
   return (
-    <div className="pt-3 md:pt-4 pb-2 px-3 md:px-4 bg-white">
+    <div className="pt-3 md:pt-4  px-3 md:px-4 bg-white">
       <Toast
         show={toastState.show}
         message={toastState.message}

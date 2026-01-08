@@ -40,7 +40,7 @@ export default function UserResultCard({ user }: UserResultCardProps) {
   return (
     <Card
       onClick={() => navigate(`/user-profile/${user.id}`)}
-      className="cursor-pointer hover:shadow-md transition-shadow border border-gray-200 bg-white rounded-lg"
+      className="cursor-pointer py-0 hover:shadow-md transition-shadow border border-gray-200 bg-white rounded-lg"
     >
       <CardContent className="px-3 md:px-4 py-3 md:py-4">
         <div className="flex items-center gap-3 md:gap-4">

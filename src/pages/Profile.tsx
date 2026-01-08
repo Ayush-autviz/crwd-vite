@@ -1,4 +1,5 @@
 import { useEffect, useState, useRef } from "react";
+import { SharePost } from "@/components/ui/SharePost";
 import ProfileHeader from "../components/profile/ProfileHeader";
 import ProfileBio from "../components/profile/ProfileBio";
 import Footer from "@/components/Footer";
@@ -113,18 +114,11 @@ export default function ProfilePage() {
     navigate('/', { replace: true });
   };
 
-  const handleShareProfile = async () => {
-    try {
-      const profileUrl = `${window.location.origin}/user-profile/${currentUser?.id}`;
-      await navigator.clipboard.writeText(profileUrl);
-      setToastMessage("Profile link copied to clipboard");
-      setShowToast(true);
-      setShowMenu(false);
-    } catch (err) {
-      console.error("Failed to copy profile link:", err);
-      setToastMessage("Failed to copy profile link");
-      setShowToast(true);
-    }
+  const [showShareModal, setShowShareModal] = useState(false);
+
+  const handleShareProfile = () => {
+    setShowMenu(false);
+    setShowShareModal(true);
   };
 
   // // Fetch profile data using React Query
@@ -482,7 +476,9 @@ export default function ProfilePage() {
                 onFounderClick={() => setShowFounderSheet(true)}
               />
 
-              <ProfileBio bio={profileData?.bio} />
+              {profileData?.bio && (
+                <ProfileBio bio={profileData?.bio} />
+              )}
 
               {/* Edit Profile and Share Profile buttons */}
               <div className="flex items-center justify-center gap-3 md:gap-4 mt-3 md:mt-4">
@@ -589,7 +585,7 @@ export default function ProfilePage() {
                           setActiveStatsTab('causes');
                           setShowStatsSheet(true);
                         }}>
-                          <span className="text-xs md:text-sm text-blue-600 font-medium">
+                          <span className="cursor-pointer hover:underline text-xs md:text-sm text-[#1600ff] font-medium">
                             See all {profileData.supported_causes_count} →
                           </span>
                         </div>
@@ -1079,6 +1075,15 @@ export default function ProfilePage() {
           </div>
         </SheetContent>
       </Sheet>
+
+      {/* Share Modal */}
+      <SharePost
+        isOpen={showShareModal}
+        onClose={() => setShowShareModal(false)}
+        url={`${window.location.origin}/user-profile/${currentUser?.id}`}
+        title={`Check out ${fullName}'s profile on CRWD`}
+        description={`See the causes and collectives supported by ${fullName} on CRWD.`}
+      />
 
       {/* Toast notification */}
       <Toast

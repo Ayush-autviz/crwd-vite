@@ -10,6 +10,7 @@ import { toast } from 'sonner';
 import { Loader2 } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import dayjs from 'dayjs';
+import { SharePost } from "@/components/ui/SharePost";
 
 // Avatar colors for consistent fallback styling
 const avatarColors = [
@@ -42,6 +43,7 @@ export default function FundraiserDetail() {
   const navigate = useNavigate();
   const [donationAmount, setDonationAmount] = useState('25');
   const [showDropdown, setShowDropdown] = useState(false);
+  const [showShareModal, setShowShareModal] = useState(false);
   const dropdownRef = React.useRef<HTMLDivElement>(null);
 
   // Fetch fundraiser data
@@ -158,6 +160,7 @@ export default function FundraiserDetail() {
             </button>
             <div className="flex items-center gap-3">
               <button
+                onClick={() => setShowShareModal(true)}
                 className="p-1.5 hover:bg-gray-100 rounded-full transition-colors"
                 aria-label="Share"
               >
@@ -378,38 +381,50 @@ export default function FundraiserDetail() {
       </div>
 
       {/* Footer - Donation Input */}
-      <div className="fixed bottom-0 left-0 right-0 bg-white border-t px-4 md:px-6 py-4 md:py-5">
-        <div className="max-w-2xl mx-auto flex items-center gap-3 md:gap-4">
-          <div className="relative flex-1">
-            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-600 font-medium text-sm md:text-base">
-              $
-            </span>
-            <Input
-              type="number"
-              value={donationAmount}
-              onChange={(e) => {
-                // Only allow numbers
-                const numericValue = e.target.value.replace(/[^0-9]/g, '');
-                setDonationAmount(numericValue);
-              }}
-              placeholder="25"
-              className="pl-8 md:pl-10 text-sm md:text-base"
-              min="1"
-            />
+      {fundraiserData.is_active && (
+        <div className="fixed bottom-0 left-0 right-0 bg-white border-t px-4 md:px-6 py-4 md:py-5">
+          <div className="max-w-2xl mx-auto flex items-center gap-3 md:gap-4">
+            <div className="relative flex-1">
+              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-600 font-medium text-sm md:text-base">
+                $
+              </span>
+              <Input
+                type="number"
+                value={donationAmount}
+                onChange={(e) => {
+                  // Only allow numbers
+                  const numericValue = e.target.value.replace(/[^0-9]/g, '');
+                  setDonationAmount(numericValue);
+                }}
+                placeholder="25"
+                className="pl-8 md:pl-10 text-sm md:text-base"
+                min="1"
+              />
+            </div>
+            <Button
+              onClick={handleDonate}
+              disabled={!donationAmount || parseFloat(donationAmount) <= 0}
+              className="bg-[#1600ff] hover:bg-[#1400cc] text-white text-sm md:text-base px-6 md:px-8 py-2 md:py-2.5"
+            >
+              Donate to Campaign
+            </Button>
           </div>
-          <Button
-            onClick={handleDonate}
-            disabled={!donationAmount || parseFloat(donationAmount) <= 0}
-            className="bg-[#1600ff] hover:bg-[#1400cc] text-white text-sm md:text-base px-6 md:px-8 py-2 md:py-2.5"
-          >
-            Donate to Campaign
-          </Button>
         </div>
-      </div>
+      )}
+
 
       {/* Spacer for fixed footer */}
       <div className="h-20 md:h-24"></div>
+
+      {fundraiserData && (
+        <SharePost
+          isOpen={showShareModal}
+          onClose={() => setShowShareModal(false)}
+          url={window.location.href}
+          title={fundraiserData.name}
+          description={fundraiserData.description || `Check out this fundraiser: ${fundraiserData.name}`}
+        />
+      )}
     </div>
   );
 }
-
