@@ -6,7 +6,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { newSearch } from '@/services/api/social';
 import { getCausesBySearch } from '@/services/api/crwd';
-import { useQuery } from '@tanstack/react-query';
+import { useInfiniteQuery } from '@tanstack/react-query';
 import SearchResultsHeader from '@/components/newsearch/SearchResultsHeader';
 import SearchTabs from '@/components/newsearch/SearchTabs';
 import CauseResultCard from '@/components/newsearch/CauseResultCard';
@@ -60,19 +60,38 @@ export default function NewSearchPage() {
   const categoryId = location.state?.categoryId;
 
   // Fetch search results - use getCausesBySearch for category filtering, otherwise use newSearch
-  const { data: searchData, isLoading: isLoadingSearch } = useQuery({
-    queryKey: categoryId 
+  const {
+    data: searchData,
+    isLoading: isLoadingSearch,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage
+  } = useInfiniteQuery({
+    queryKey: categoryId
       ? ['causes-by-category', categoryId, searchQuery]
       : ['new-search', activeTab, searchQuery],
-    queryFn: () => {
+    queryFn: ({ pageParam = 1 }: { pageParam?: number }) => {
       if (categoryId && activeTab === 'Causes') {
         // Use getCausesBySearch for category filtering
-        return getCausesBySearch(searchQuery || '', categoryId, 1);
+        return getCausesBySearch(searchQuery || '', categoryId, pageParam);
       }
       // Use newSearch for other cases
-      return newSearch(getTabValue(activeTab), searchQuery);
+      return newSearch(getTabValue(activeTab), searchQuery, pageParam);
     },
-    enabled: hasSearched && (searchQuery.trim().length > 0 || categoryId),
+    getNextPageParam: (lastPage: any) => {
+      if (lastPage.next) {
+        try {
+          const url = new URL(lastPage.next);
+          const page = url.searchParams.get('page');
+          return page ? parseInt(page) : undefined;
+        } catch (e) {
+          return undefined;
+        }
+      }
+      return undefined;
+    },
+    initialPageParam: 1,
+    enabled: hasSearched && (searchQuery.trim().length > 0 || !!categoryId),
   });
 
   const handleSearch = () => {
@@ -91,7 +110,7 @@ export default function NewSearchPage() {
     // Get categories from URL params if available
     const categoriesParam = new URLSearchParams(window.location.search).get('categories');
     const categories = categoriesParam ? categoriesParam.split(',').filter(Boolean) : undefined;
-    
+
     if (categories && categories.length > 0) {
       navigate(`/surprise-me?categories=${categories.join(',')}`);
     } else {
@@ -101,42 +120,44 @@ export default function NewSearchPage() {
 
   // Get results based on active tab from the unified search API response
   const getResults = () => {
-    if (!searchData) return [];
-    
-    // Handle getCausesBySearch response (has results array)
-    if (categoryId && activeTab === 'Causes' && searchData.results) {
-      return searchData.results;
-    }
-    
-    // The API response structure may vary, but typically it returns results in a results array
-    // or directly as an array. Let's handle both cases.
-    if (Array.isArray(searchData)) {
-      return searchData;
-    }
-    
-    // If it's an object with a results property
-    if (searchData.results) {
-      return searchData.results;
-    }
-    
-    // If it's an object with tab-specific properties
-    switch (activeTab) {
-      case 'Causes':
-        return searchData.causes || searchData.cause || [];
-      case 'Collectives':
-        return searchData.collectives || searchData.collective || [];
-      case 'Users':
-        return searchData.users || searchData.user || [];
-      case 'Posts':
-        return searchData.posts || searchData.post || [];
-      default:
-        return [];
-    }
+    if (!searchData?.pages) return [];
+
+    return searchData.pages.flatMap((page: any) => {
+      // Handle getCausesBySearch response (has results array)
+      if (categoryId && activeTab === 'Causes' && page.results) {
+        return page.results;
+      }
+
+      // The API response structure may vary, but typically it returns results in a results array
+      // or directly as an array. Let's handle both cases.
+      if (Array.isArray(page)) {
+        return page;
+      }
+
+      // If it's an object with a results property
+      if (page.results) {
+        return page.results;
+      }
+
+      // If it's an object with tab-specific properties
+      switch (activeTab) {
+        case 'Causes':
+          return page.causes || page.cause || [];
+        case 'Collectives':
+          return page.collectives || page.collective || [];
+        case 'Users':
+          return page.users || page.user || [];
+        case 'Posts':
+          return page.posts || page.post || [];
+        default:
+          return [];
+      }
+    });
   };
 
   const results = getResults();
   const isLoading = isLoadingSearch;
-  const resultsCount = results.length;
+  const resultsCount = searchData?.pages?.[0]?.count || results.length;
 
   return (
     <div className="min-h-screen bg-white">
@@ -188,7 +209,7 @@ export default function NewSearchPage() {
               <h2 className="text-xs md:text-sm font-bold text-gray-900 uppercase mb-3 md:mb-4">
                 NOT SURE WHERE TO START?
               </h2>
-              
+
               <Card
                 onClick={handleSurpriseMe}
                 className="shadow-none border py-4 border-gray-200 rounded-lg cursor-pointer hover:border-1 hover:border-purple-500 transition-colors"
@@ -202,7 +223,7 @@ export default function NewSearchPage() {
                         <Plus className="w-1.5 h-1.5 md:w-2 md:h-2 text-purple-500" strokeWidth={3} />
                       </div>
                     </div>
-                    
+
                     <div className="flex-1">
                       <h3 className="font-bold text-sm md:text-base text-foreground mb-0.5 md:mb-1">
                         Surprise Me
@@ -240,25 +261,48 @@ export default function NewSearchPage() {
                 <div className="flex items-center justify-center py-8 md:py-12">
                   <Loader2 className="w-5 h-5 md:w-6 md:h-6 animate-spin text-gray-400" />
                 </div>
-              ) : resultsCount > 0 ? (
-                <div className="space-y-3 md:space-y-4">
-                  {activeTab === 'Causes' &&
-                    results.map((cause: any) => (
-                      <CauseResultCard key={cause.id} cause={cause} />
-                    ))}
-                  {activeTab === 'Collectives' &&
-                    results.map((collective: any) => (
-                      <CollectiveResultCard key={collective.id} collective={collective} />
-                    ))}
-                  {activeTab === 'Users' &&
-                    results.map((user: any) => (
-                      <UserResultCard key={user.id} user={user} />
-                    ))}
-                  {activeTab === 'Posts' &&
-                    results.map((post: any) => (
-                      <PostResultCard key={post.id} post={post} />
-                    ))}
-                </div>
+              ) : results.length > 0 ? (
+                <>
+                  <div className="space-y-3 md:space-y-4">
+                    {activeTab === 'Causes' &&
+                      results.map((cause: any) => (
+                        <CauseResultCard key={`${cause.id}-${activeTab}`} cause={cause} />
+                      ))}
+                    {activeTab === 'Collectives' &&
+                      results.map((collective: any) => (
+                        <CollectiveResultCard key={`${collective.id}-${activeTab}`} collective={collective} />
+                      ))}
+                    {activeTab === 'Users' &&
+                      results.map((user: any) => (
+                        <UserResultCard key={`${user.id}-${activeTab}`} user={user} />
+                      ))}
+                    {activeTab === 'Posts' &&
+                      results.map((post: any) => (
+                        <PostResultCard key={`${post.id}-${activeTab}`} post={post} />
+                      ))}
+                  </div>
+
+                  {/* Load More Button */}
+                  {hasNextPage && (
+                    <div className="mt-6 flex justify-center">
+                      <Button
+                        variant="outline"
+                        onClick={() => fetchNextPage()}
+                        disabled={isFetchingNextPage}
+                        className="min-w-[120px]"
+                      >
+                        {isFetchingNextPage ? (
+                          <>
+                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                            Loading...
+                          </>
+                        ) : (
+                          'Load More'
+                        )}
+                      </Button>
+                    </div>
+                  )}
+                </>
               ) : activeTab === 'Causes' ? (
                 <>
                   {/* Causes Empty State */}

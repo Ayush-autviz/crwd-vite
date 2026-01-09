@@ -85,23 +85,21 @@ export default function CollectiveStatisticsModal({
 
   return (
     <div
-      className={`fixed inset-0 bg-black/50 flex items-end justify-center z-50 transition-opacity duration-300 ${
-        isAnimating ? 'opacity-100' : 'opacity-0'
-      }`}
+      className={`fixed inset-0 bg-black/50 flex items-end justify-center z-50 transition-opacity duration-300 ${isAnimating ? 'opacity-100' : 'opacity-0'
+        }`}
       onClick={handleClose}
     >
       <div
-        className={`bg-white rounded-t-3xl w-full h-[60vh] md:h-[70vh] flex flex-col transform transition-transform duration-300 ${
-          isAnimating ? 'translate-y-0' : 'translate-y-full'
-        }`}
+        className={`bg-white rounded-t-3xl w-full h-[85vh] flex flex-col transform transition-transform duration-300 ${isAnimating ? 'translate-y-0' : 'translate-y-full'
+          }`}
         style={{
           transitionTimingFunction: 'cubic-bezier(0.25, 0.46, 0.45, 0.94)',
         }}
         onClick={(e) => e.stopPropagation()}
       >
         {/* Scroll indicator */}
-        <div className="flex justify-center pt-2 pb-1 sticky top-0 bg-white z-10">
-          <div className="w-10 md:w-12 h-0.5 md:h-1 bg-gray-300 rounded-full"></div>
+        <div className="flex justify-center pt-3 pb-2 sticky top-0 bg-white z-10">
+          <div className="w-12 h-1.5 bg-gray-300 rounded-full"></div>
         </div>
 
         {/* Header */}
@@ -128,11 +126,10 @@ export default function CollectiveStatisticsModal({
               <button
                 key={tab}
                 onClick={() => setActiveTab(tab)}
-                className={`pb-1.5 md:pb-2 lg:pb-3 px-0.5 md:px-1 font-semibold text-xs md:text-sm lg:text-base transition-colors relative ${
-                  activeTab === tab
-                    ? 'text-foreground'
-                    : 'text-muted-foreground'
-                }`}
+                className={`pb-1.5 md:pb-2 lg:pb-3 px-0.5 md:px-1 font-semibold text-xs md:text-sm lg:text-base transition-colors relative ${activeTab === tab
+                  ? 'text-foreground'
+                  : 'text-muted-foreground'
+                  }`}
               >
                 {tab}
                 {activeTab === tab && (
@@ -190,7 +187,7 @@ export default function CollectiveStatisticsModal({
                       >
                         <Avatar className="w-8 h-8 md:w-10 md:h-10 lg:w-12 lg:h-12 rounded-lg flex-shrink-0">
                           <AvatarImage src={image} alt={name} />
-                          <AvatarFallback 
+                          <AvatarFallback
                             style={{ backgroundColor: avatarBgColor }}
                             className="text-white rounded-lg font-semibold text-sm md:text-base lg:text-lg"
                           >
@@ -202,7 +199,8 @@ export default function CollectiveStatisticsModal({
                             {name}
                           </h4>
                           <p className="text-[10px] md:text-xs lg:text-sm text-muted-foreground line-clamp-3">
-                            {cause.mission || 'No description available'}
+                            {/* {cause.mission || 'No description available'} */}
+                            Actively Supported
                           </p>
                         </div>
                         <Button
@@ -288,7 +286,7 @@ export default function CollectiveStatisticsModal({
                           {image ? (
                             <Avatar className="w-10 h-10 md:w-12 md:h-12 lg:w-14 lg:h-14 rounded-lg flex-shrink-0">
                               <AvatarImage src={image} alt={name} />
-                              <AvatarFallback 
+                              <AvatarFallback
                                 style={{ backgroundColor: avatarBgColor }}
                                 className="text-white rounded-lg font-semibold text-sm md:text-base lg:text-lg"
                               >
@@ -389,7 +387,7 @@ export default function CollectiveStatisticsModal({
                       >
                         <Avatar className="w-8 h-8 md:w-10 md:h-10 lg:w-12 lg:h-12 rounded-full flex-shrink-0">
                           <AvatarImage src={avatar} alt={name} />
-                          <AvatarFallback 
+                          <AvatarFallback
                             style={{ backgroundColor: avatarBgColor }}
                             className="text-white font-bold text-sm md:text-base lg:text-lg"
                           >
@@ -467,13 +465,13 @@ export default function CollectiveStatisticsModal({
                       const firstName = user.first_name || '';
                       const lastName = user.last_name || '';
                       const fullName = `${firstName} ${lastName}`.trim() || user.username || 'Unknown User';
-                      const initials = firstName && lastName 
+                      const initials = firstName && lastName
                         ? `${firstName.charAt(0)}${lastName.charAt(0)}`.toUpperCase()
                         : fullName.charAt(0).toUpperCase();
-                      
+
                       const avatar = user.profile_picture || '';
                       const isCollectiveDonation = donation.amount_attributed_to_collective > 0;
-                      
+
                       // Generate consistent avatar color - use a larger palette for more variety
                       const avatarColors = [
                         '#86efac', // Lime green
@@ -493,7 +491,7 @@ export default function CollectiveStatisticsModal({
                         '#EAB308', // Yellow
                         '#F59E0B', // Amber
                       ];
-                      
+
                       // Use a hash function to get more varied color distribution
                       const getColorForUser = (id: number | string, colors: string[]) => {
                         const idStr = id.toString();
@@ -505,7 +503,7 @@ export default function CollectiveStatisticsModal({
                         }
                         return colors[Math.abs(hash) % colors.length];
                       };
-                      
+
                       const userId = user.id || index;
                       const avatarBgColor = user.color || getColorForUser(userId, avatarColors);
 
@@ -514,7 +512,7 @@ export default function CollectiveStatisticsModal({
                         const date = new Date(dateString);
                         const now = new Date();
                         const diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000);
-                        
+
                         if (diffInSeconds < 60) return 'Just now';
                         if (diffInSeconds < 3600) {
                           const minutes = Math.floor(diffInSeconds / 60);

@@ -68,7 +68,7 @@ const getConsistentColor = (id: number | string, colors: string[]) => {
 
 export default function CollectiveResultCard({ collective }: CollectiveResultCardProps) {
   const navigate = useNavigate();
-  
+
   // Priority: 1. If color is available, show color with letter, 2. If no color, show image, 3. Fallback to generated color with letter
   const hasColor = collective.color;
   const hasLogo = collective.logo && (collective.logo.startsWith("http") || collective.logo.startsWith("/") || collective.logo.startsWith("data:"));
@@ -85,12 +85,12 @@ export default function CollectiveResultCard({ collective }: CollectiveResultCar
   // Get founder initials from first name and last name
   const founderInitials = founder
     ? (founder.first_name && founder.last_name
-        ? `${founder.first_name.charAt(0)}${founder.last_name.charAt(0)}`.toUpperCase()
-        : founder.first_name
+      ? `${founder.first_name.charAt(0)}${founder.last_name.charAt(0)}`.toUpperCase()
+      : founder.first_name
         ? founder.first_name.charAt(0).toUpperCase()
         : getInitials(founderName))
     : 'U';
-  
+
   const founderAvatarBgColor = founder ? getConsistentColor(founder.id || founderName, avatarColors) : '#9CA3AF';
 
   // Get nonprofit count
@@ -99,7 +99,7 @@ export default function CollectiveResultCard({ collective }: CollectiveResultCar
   return (
     <Card
       onClick={() => navigate(`/groupcrwd/${collective.id}`)}
-      className="cursor-pointer hover:shadow-md transition-shadow border border-gray-200 bg-white rounded-lg"
+      className="cursor-pointer py-0 hover:shadow-md transition-shadow border border-gray-200 bg-white rounded-lg"
     >
       <CardContent className="px-3 md:px-4 py-3 md:py-4">
         <div className="flex items-start gap-3 md:gap-4">

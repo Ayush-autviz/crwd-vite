@@ -480,8 +480,12 @@ export default function ProfilePage() {
                 <ProfileBio bio={profileData?.bio} />
               )}
 
+              {profileData?.inspired_people_count > 0 && (
+                <p className="text-xs md:text-sm lg:text-base mx-auto font-bold text-gray-900">{profileData?.inspired_people_count} Inspired People</p>
+              )}
+
               {/* Edit Profile and Share Profile buttons */}
-              <div className="flex items-center justify-center gap-3 md:gap-4 mt-3 md:mt-4">
+              <div className="flex items-center justify-center gap-3 md:gap-4 mt-1">
                 <Button
                   onClick={() => navigate("/settings")}
                   variant="outline"
@@ -662,15 +666,15 @@ export default function ProfilePage() {
 
       {/* Statistics Bottom Sheet */}
       <Sheet open={showStatsSheet} onOpenChange={setShowStatsSheet}>
-        <SheetContent side="bottom" className="h-[75vh] max-h-[75vh] p-0 flex flex-col">
+        <SheetContent side="bottom" className="h-[85vh] max-h-[85vh] p-0 flex flex-col rounded-t-3xl">
           {/* Drag Handle */}
-          <div className="flex justify-center pt-3 pb-2">
-            <div className="w-10 md:w-12 h-0.5 md:h-1.5 bg-gray-300 rounded-full" />
+          <div className="flex justify-center pt-2">
+            <div className="w-12 h-1.5 bg-gray-300 rounded-full" />
           </div>
 
           <div className="px-3 md:px-4">
-            <SheetHeader>
-              <SheetTitle className="text-xl md:text-2xl font-bold text-gray-900">
+            <SheetHeader className="py-0">
+              <SheetTitle className="text-xl  font-bold text-gray-900">
                 {activeStatsTab === 'causes' && 'All Causes'}
                 {activeStatsTab === 'crwds' && 'Collectives'}
                 {activeStatsTab === 'followers' && 'Followers'}
@@ -686,7 +690,7 @@ export default function ProfilePage() {
           </div>
 
           {/* Tabs */}
-          <div className="px-1 md:px-4 mb-2">
+          <div className="px-1 md:px-4">
             <div className="flex justify-between gap-0.5 bg-gray-100 rounded-2xl p-0.5 md:p-1">
               {[
                 { label: 'Causes', value: 'causes' },
@@ -964,10 +968,10 @@ export default function ProfilePage() {
 
       {/* Founder Collectives Bottom Sheet */}
       <Sheet open={showFounderSheet} onOpenChange={setShowFounderSheet}>
-        <SheetContent side="bottom" className="h-[85vh] max-h-[85vh] p-0 flex flex-col">
+        <SheetContent side="bottom" className="h-[85vh] max-h-[85vh] p-0 flex flex-col rounded-t-3xl">
           {/* Drag Handle */}
           <div className="flex justify-center pt-3 pb-2">
-            <div className="w-10 md:w-12 h-0.5 md:h-1.5 bg-gray-300 rounded-full" />
+            <div className="w-12 h-1.5 bg-gray-300 rounded-full" />
           </div>
 
           {/* Content */}

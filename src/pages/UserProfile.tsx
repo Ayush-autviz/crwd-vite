@@ -424,11 +424,15 @@ export default function ProfilePage() {
                 <ProfileBio bio={userProfile.bio} />
               )}
 
+              {userProfile.inspired_people_count > 0 && (
+                <p className="text-xs md:text-sm lg:text-base mx-auto font-bold text-gray-900">{userProfile.inspired_people_count} Inspired People</p>
+              )}
+
 
               <Button
                 onClick={handleFollowClick}
                 size="sm"
-                className="w-fit mx-auto px-8"
+                className="w-fit mx-auto px-8 mt-0 pt-0"
                 variant={isFollowing ? "outline" : "default"}
                 disabled={followMutation.isPending || unfollowMutation.isPending}
               >
@@ -618,15 +622,15 @@ export default function ProfilePage() {
 
       {/* Statistics Bottom Sheet */}
       <Sheet open={showStatsSheet} onOpenChange={setShowStatsSheet}>
-        <SheetContent side="bottom" className="h-[75vh] max-h-[75vh] p-0 flex flex-col">
+        <SheetContent side="bottom" className="h-[85vh] max-h-[85vh] p-0 flex flex-col rounded-t-3xl">
           {/* Drag Handle */}
-          <div className="flex justify-center pt-3 pb-2">
+          <div className="flex justify-center pt-2">
             <div className="w-12 h-1.5 bg-gray-300 rounded-full" />
           </div>
 
           <div className="px-4">
-            <SheetHeader>
-              <SheetTitle className="text-2xl font-bold text-gray-900">
+            <SheetHeader className="py-0">
+              <SheetTitle className="text-xl font-bold text-gray-900 py-0">
                 {activeStatsTab === 'causes' && 'All Causes'}
                 {activeStatsTab === 'crwds' && 'Collectives'}
                 {activeStatsTab === 'followers' && 'Followers'}
@@ -931,10 +935,10 @@ export default function ProfilePage() {
 
       {/* Founder Collectives Bottom Sheet */}
       <Sheet open={showFounderSheet} onOpenChange={setShowFounderSheet}>
-        <SheetContent side="bottom" className="h-[85vh] max-h-[85vh] p-0 flex flex-col">
+        <SheetContent side="bottom" className="h-[85vh] max-h-[85vh] p-0 flex flex-col rounded-t-3xl">
           {/* Drag Handle */}
           <div className="flex justify-center pt-3 pb-2">
-            <div className="w-10 md:w-12 h-0.5 md:h-1.5 bg-gray-300 rounded-full" />
+            <div className="w-12 h-1.5 bg-gray-300 rounded-full" />
           </div>
 
           {/* Content */}

@@ -341,7 +341,7 @@ export default function CommentsBottomSheet({
       >
         {/* Scroll indicator */}
         <div className="flex justify-center pt-2 pb-1 sticky top-0 bg-white z-10">
-          <div className="w-10 md:w-12 h-0.5 md:h-1 bg-gray-300 rounded-full"></div>
+          <div className="w-10 md:w-12 h-1.5 md:h-1 bg-gray-300 rounded-full"></div>
         </div>
 
         {/* Header */}
