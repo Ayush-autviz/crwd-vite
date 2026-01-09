@@ -25,8 +25,9 @@ export const googleLogin = async (data: any, platform: 'Google' | 'SignInWithApp
     return response.data;
 };
 
-export const googleCallback = async (code: any) => {
-    const response = await axiosClient.get(`/auth/google/callback/?code=${code}`);
+export const googleCallback = async (code: any, platform: 'google' | 'apple') => {
+    console.log("ghghhg", code, platform);
+    const response = await axiosClient.get(`/auth/google/callback/?code=${code}&platform=${platform}`);
     return response.data;
 };
 

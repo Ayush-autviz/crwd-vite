@@ -19,17 +19,17 @@ export default function GoogleCallback() {
   const redirectToFromUrl = searchParams.get('redirectTo');
   const redirectToFromStorage = sessionStorage.getItem('googleLoginRedirectTo');
   const redirectTo = redirectToFromUrl || redirectToFromStorage || '/';
-  
+
   // Clear sessionStorage after reading
   if (redirectToFromStorage) {
     sessionStorage.removeItem('googleLoginRedirectTo');
   }
-  
+
   console.log(code, 'code');
 
   const googleCallbackQuery = useQuery({
-    queryKey: ['googleCallback', code],
-    queryFn: () => googleCallback(code!),
+    queryKey: ['googleCallback', code, 'google'],
+    queryFn: () => googleCallback(code!, 'google'),
     enabled: !!code, // Only run if code exists
   });
 
@@ -41,31 +41,31 @@ export default function GoogleCallback() {
 
     if (googleCallbackQuery.data) {
       console.log('Google callback successful:', googleCallbackQuery.data);
-      
+
       if (googleCallbackQuery.data) {
         setUser(googleCallbackQuery.data.user);
-        setToken({access_token: googleCallbackQuery.data.access_token, refresh_token: googleCallbackQuery.data.refresh_token});
+        setToken({ access_token: googleCallbackQuery.data.access_token, refresh_token: googleCallbackQuery.data.refresh_token });
         setToastMessage("Google authentication successful!");
         setShowToast(true);
-        
+
         // If last_login_at is null, navigate to nonprofit interests page (new user)
         if (googleCallbackQuery.data.user && !googleCallbackQuery.data.user.last_login_at) {
-          navigate(`/non-profit-interests?redirectTo=${encodeURIComponent(redirectTo)}`, { 
+          navigate(`/non-profit-interests?redirectTo=${encodeURIComponent(redirectTo)}`, {
             state: { fromAuth: true },
-            replace: true 
+            replace: true
           });
         } else {
           // Navigate to redirectTo if available, otherwise home page for existing users
-          navigate(redirectTo, {replace: true});
+          navigate(redirectTo, { replace: true });
         }
       }
     }
 
     if (googleCallbackQuery.error) {
       console.error('Google callback error:', googleCallbackQuery.error);
-      const errorMessage = (googleCallbackQuery.error as any)?.response?.data?.message || 
-                          googleCallbackQuery.error.message || 
-                          'Authentication failed';
+      const errorMessage = (googleCallbackQuery.error as any)?.response?.data?.message ||
+        googleCallbackQuery.error.message ||
+        'Authentication failed';
       setError(errorMessage);
       setToastMessage(`Authentication failed: ${errorMessage}`);
       setShowToast(true);

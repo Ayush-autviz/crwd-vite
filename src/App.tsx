@@ -81,6 +81,7 @@ import OneTimeDonationPage from "./pages/OneTimeDonationPage";
 import CreateFundraiser from "./pages/CreateFundraiser";
 import EditFundraiser from "./pages/EditFundraiser";
 import FundraiserDetail from "./pages/FundraiserDetail";
+import AppleCallback from "./pages/auth/AppleCallback";
 
 // ScrollToTop component that works for all pages
 function ScrollToTop() {
@@ -154,6 +155,7 @@ function App() {
                 <Route path="/interests" element={<Interests />} />
                 <Route path="/verify" element={<Verify />} />
                 <Route path="/auth/google/callback" element={<GoogleCallback />} />
+                <Route path="/auth/apple/callback" element={<AppleCallback />} />
                 {/* <Route path="/onboarding" element={<OnBoard />} />s */}
                 <Route path="/onboarding" element={<NewOnboard />} />
                 {/* <Route path="/complete-onboard" element={<CompleteOnboard />} /> */}
