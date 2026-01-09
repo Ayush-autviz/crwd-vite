@@ -92,7 +92,7 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
       {/* Avatar and info */}
       <div className="flex flex-col items-center gap-3 md:gap-4 mb-2.5 md:mb-3">
         <ImageModal src={avatarUrl} alt={name}>
-          <Avatar className="w-20 h-20 md:w-24 md:h-24 rounded-full object-contain cursor-pointer hover:opacity-80 transition-opacity">
+          <Avatar className="w-28 h-28 md:w-28 md:h-28 rounded-full object-contain cursor-pointer hover:opacity-80 transition-opacity">
             <AvatarImage src={avatarUrl} alt={name} />
             <AvatarFallback
               style={{ backgroundColor: avatarBgColor }}

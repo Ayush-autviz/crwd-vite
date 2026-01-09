@@ -74,6 +74,7 @@ export default function FundraiserDetail() {
         preselectedCausesData: preselectedCausesData,
         fundraiserId: fundraiserData.id,
         donationAmount: donationAmount || '25',
+        fundraiserTitle: fundraiserData.name,
       },
     });
   };

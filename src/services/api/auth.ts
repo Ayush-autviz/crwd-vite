@@ -10,7 +10,7 @@ export const emailRegistration = async (data: any) => {
     return response.data;
 };
 
-export const emailVerification = async (data: any   ) => {
+export const emailVerification = async (data: any) => {
     const response = await axiosClient.post('/auth/cognito/confirm/', data);
     return response.data;
 };
@@ -20,8 +20,8 @@ export const resendEmailVerificationCode = async (data: any) => {
     return response.data;
 };
 
-export const googleLogin = async (data: any) => {
-    const response = await axiosClient.get('/auth/google/login/', data);
+export const googleLogin = async (data: any, platform: 'Google' | 'SignInWithApple') => {
+    const response = await axiosClient.get(`/auth/google/login/?platform=${platform}`, data);
     return response.data;
 };
 

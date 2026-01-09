@@ -16,14 +16,14 @@ export default function CollectiveStats({
   onStatClick,
 }: CollectiveStatsProps) {
   return (
-    <Card className="mx-3 md:mx-4 mb-3 md:mb-4 bg-gray-50 border-none rounded-lg py-1.5 md:py-2">
+    <Card className="mx-3 md:mx-4 mb-3 md:mb-4 bg-gray-50 border-none rounded-lg py-0">
       <CardContent className="p-0">
         <div className="grid grid-cols-3 gap-2 md:gap-3 text-center">
           <div
             onClick={() => onStatClick?.('Nonprofits')}
             className={`${onStatClick ? 'cursor-pointer hover:bg-gray-100 transition-colors rounded-lg py-0.5 md:py-1' : ''}`}
           >
-            <p className="text-base md:text-lg lg:text-xl font-bold text-foreground mb-0.5">
+            <p className="text-sm sm:text-base font-bold text-foreground mb-0.5">
               {nonprofitCount}
             </p>
             <p className="text-[8px] md:text-[9px] lg:text-[10px] font-semibold text-muted-foreground">

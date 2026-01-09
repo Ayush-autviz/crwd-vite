@@ -26,6 +26,8 @@ interface OneTimeDonationProps {
   preselectedCollectiveId?: number;
   fundraiserId?: number;
   initialDonationAmount?: string;
+  collectiveName?: string;
+  fundraiserTitle?: string;
 }
 
 interface SelectedItem {
@@ -46,6 +48,8 @@ export default function OneTimeDonation({
   preselectedCollectiveId,
   fundraiserId,
   initialDonationAmount,
+  collectiveName,
+  fundraiserTitle,
 }: OneTimeDonationProps) {
   const [selectedItems, setSelectedItems] = useState<SelectedItem[]>([]);
   const initialAmount = initialDonationAmount ? parseFloat(initialDonationAmount) : 5;
@@ -93,7 +97,7 @@ export default function OneTimeDonation({
   useEffect(() => {
     if (preselectedCauses && preselectedCauses.length > 0 && !preselectedCausesProcessed) {
       console.log('OneTimeDonation: Setting preselected causes:', preselectedCauses, preselectedCausesData);
-      
+
       // If we have the full cause data, use it directly
       if (preselectedCausesData && preselectedCausesData.length > 0) {
         const causesAsItems: SelectedItem[] = preselectedCausesData.map((cause: any) => ({
@@ -103,7 +107,7 @@ export default function OneTimeDonation({
           // Mark causes from collective with the collective ID
           attributedCollectiveId: preselectedCollectiveId && preselectedCollectiveId > 0 ? preselectedCollectiveId : undefined,
         }));
-        
+
         setSelectedItems(causesAsItems);
         setSelectedOrganizations(causesAsItems.map(item => item.id));
         setPreselectedCausesProcessed(true);
@@ -116,7 +120,7 @@ export default function OneTimeDonation({
           // Mark causes from collective with the collective ID
           attributedCollectiveId: preselectedCollectiveId && preselectedCollectiveId > 0 ? preselectedCollectiveId : undefined,
         }));
-        
+
         setSelectedItems(causesAsItems);
         setSelectedOrganizations(causesAsItems.map(item => item.id));
         setPreselectedCausesProcessed(true);
@@ -163,7 +167,7 @@ export default function OneTimeDonation({
   const decrementDonation = () => {
     if (donationAmount > 5) {
       const newAmount = donationAmount - 5;
-      
+
       // Calculate max capacity for new amount
       // For donations < $10.00: Flat fee of $1.00
       // For donations ≥ $10.00: 10% of total (covers all platform + processing costs)
@@ -171,7 +175,7 @@ export default function OneTimeDonation({
         const gross = grossAmount;
         let crwdFee: number;
         let net: number;
-        
+
         if (gross < 10.00) {
           // Flat fee of $1.00
           crwdFee = 1.00;
@@ -181,7 +185,7 @@ export default function OneTimeDonation({
           crwdFee = gross * 0.10;
           net = gross - crwdFee;
         }
-        
+
         return {
           crwdFee: Math.round(crwdFee * 100) / 100,
           net: Math.round(net * 100) / 100,
@@ -191,13 +195,13 @@ export default function OneTimeDonation({
       const net = fees.net;
       const newMaxCapacity = Math.floor(net / 0.20);
       const currentCapacity = selectedItems.length;
-      
+
       // Check if new amount would reduce capacity below current causes
       if (currentCapacity > newMaxCapacity) {
         toast.error(`You have ${currentCapacity} cause${currentCapacity !== 1 ? 's' : ''} selected. Please remove ${currentCapacity - newMaxCapacity} cause${currentCapacity - newMaxCapacity !== 1 ? 's' : ''} to lower the donation amount to $${newAmount}.`);
         return;
       }
-      
+
       setDonationAmount(newAmount);
       setInputValue(newAmount.toString());
     }
@@ -214,7 +218,7 @@ export default function OneTimeDonation({
     const numValue = parseInt(inputValue) || 1;
     // Ensure minimum donation is $5
     const finalValue = numValue < 5 ? 5 : numValue;
-    
+
     // Only validate if the amount is being lowered
     if (finalValue < donationAmount) {
       // Calculate max capacity for new amount
@@ -224,7 +228,7 @@ export default function OneTimeDonation({
         const gross = grossAmount;
         let crwdFee: number;
         let net: number;
-        
+
         if (gross < 10.00) {
           // Flat fee of $1.00
           crwdFee = 1.00;
@@ -234,7 +238,7 @@ export default function OneTimeDonation({
           crwdFee = gross * 0.10;
           net = gross - crwdFee;
         }
-        
+
         return {
           crwdFee: Math.round(crwdFee * 100) / 100,
           net: Math.round(net * 100) / 100,
@@ -244,7 +248,7 @@ export default function OneTimeDonation({
       const net = fees.net;
       const newMaxCapacity = Math.floor(net / 0.20);
       const currentCapacity = selectedItems.length;
-      
+
       // Check if new amount would reduce capacity below current causes
       if (currentCapacity > newMaxCapacity) {
         toast.error(`You have ${currentCapacity} cause${currentCapacity !== 1 ? 's' : ''} selected. Please remove ${currentCapacity - newMaxCapacity} cause${currentCapacity - newMaxCapacity !== 1 ? 's' : ''} to lower the donation amount to $${finalValue}.`);
@@ -253,17 +257,17 @@ export default function OneTimeDonation({
         return;
       }
     }
-    
+
     setDonationAmount(finalValue);
     setInputValue(finalValue.toString());
   };
 
   const handleSelectItem = (item: SelectedItem) => {
     // Check if item is already selected to prevent duplicates
-    const isAlreadySelected = selectedItems.some(selectedItem => 
+    const isAlreadySelected = selectedItems.some(selectedItem =>
       selectedItem.id === item.id && selectedItem.type === item.type
     );
-    
+
     if (!isAlreadySelected) {
       // Calculate max capacity before adding
       // For donations < $10.00: Flat fee of $1.00
@@ -272,7 +276,7 @@ export default function OneTimeDonation({
         const gross = grossAmount;
         let crwdFee: number;
         let net: number;
-        
+
         if (gross < 10.00) {
           // Flat fee of $1.00
           crwdFee = 1.00;
@@ -282,7 +286,7 @@ export default function OneTimeDonation({
           crwdFee = gross * 0.10;
           net = gross - crwdFee;
         }
-        
+
         return {
           crwdFee: Math.round(crwdFee * 100) / 100,
           net: Math.round(net * 100) / 100,
@@ -293,13 +297,13 @@ export default function OneTimeDonation({
       const net = fees.net;
       const maxCapacity = Math.floor(net / 0.20);
       const currentCapacity = selectedItems.length;
-      
+
       // Check if adding this item would exceed capacity
       if (currentCapacity >= maxCapacity) {
         toast.error(`You can only add up to ${maxCapacity} cause${maxCapacity !== 1 ? 's' : ''} for $${donationAmount}. Increase your donation amount to support more causes.`);
         return;
       }
-      
+
       setSelectedItems((prev: SelectedItem[]) => [...prev, item]);
       // Also update the legacy selectedOrganizations for backward compatibility
       setSelectedOrganizations([...selectedOrganizations, item.id]);
@@ -316,10 +320,10 @@ export default function OneTimeDonation({
     console.log('handleClearAllItems called');
     console.log('Current selectedItems before clear:', selectedItems);
     console.log('Current selectedOrganizations before clear:', selectedOrganizations);
-    
+
     setSelectedItems([]);
     setSelectedOrganizations([]);
-    
+
     console.log('Items cleared');
   };
 
@@ -360,7 +364,7 @@ export default function OneTimeDonation({
         const causeEntry: { cause_id: number; attributed_collective?: number } = {
           cause_id: causeId,
         };
-        
+
         // Only include attributed_collective if this cause came from a collective (has attributedCollectiveId)
         // Causes added from search will not have attributedCollectiveId
         // Always preserve the collective ID for causes that came from a collective
@@ -370,7 +374,7 @@ export default function OneTimeDonation({
           // Also check if the cause data itself has an attributed_collective field and preserve it
           causeEntry.attributed_collective = item.data.attributed_collective;
         }
-        
+
         causes.push(causeEntry);
       }
       // Note: For one-time donations, we're only handling causes, not collectives directly
@@ -396,7 +400,7 @@ export default function OneTimeDonation({
     const gross = grossAmount;
     let crwdFee: number;
     let net: number;
-    
+
     if (gross < 10.00) {
       // Flat fee of $1.00
       crwdFee = 1.00;
@@ -406,12 +410,12 @@ export default function OneTimeDonation({
       crwdFee = gross * 0.10;
       net = gross - crwdFee;
     }
-    
+
     console.log('=== Fee Calculation (OneTimeDonation) ===');
     console.log('Gross Amount:', gross);
     console.log('CRWD Fee:', crwdFee);
     console.log('Net (Gross - CRWD Fee):', net);
-    
+
     return {
       crwdFee: Math.round(crwdFee * 100) / 100,
       net: Math.round(net * 100) / 100,
@@ -424,7 +428,7 @@ export default function OneTimeDonation({
   const maxCapacity = Math.floor(net / 0.20);
   const currentCapacity = selectedItems.length;
   const capacityPercentage = maxCapacity > 0 ? Math.min(100, (currentCapacity / maxCapacity) * 100) : 0;
-  
+
   console.log('=== Capacity Calculation (OneTimeDonation) ===');
   console.log('Donation Amount:', donationAmount);
   console.log('Actual Donation Amount:', actualDonationAmount);
@@ -440,6 +444,13 @@ export default function OneTimeDonation({
         {/* Header Section */}
         <div>
           <p className="text-xl md:text-2xl font-bold text-[#1600ff] text-center">Set your one-time gift</p>
+          {(collectiveName || fundraiserTitle) && (
+            <div className="flex justify-center mt-2 mb-2">
+              <span className="bg-blue-50 text-blue-700 px-3 py-1 rounded-full text-sm font-medium">
+                Supporting {collectiveName ? `with ${collectiveName}` : fundraiserTitle}
+              </span>
+            </div>
+          )}
           <p className="text-gray-600 text-xs text-center mt-1.5 md:mt-2">Support multiple causes with one donation, split evenly. Change anytime.</p>
         </div>
 
@@ -450,17 +461,16 @@ export default function OneTimeDonation({
             <h2 className="text-lg md:text-xl font-bold text-gray-900 text-center mb-4 md:mb-6">
               Your One-Time Impact
             </h2>
-            
+
             {/* Amount Selector */}
             <div className="flex items-center justify-center gap-3 md:gap-4">
               <button
                 onClick={decrementDonation}
                 disabled={donationAmount <= 5}
-                className={`flex items-center justify-center w-10 h-10 md:w-12 md:h-12 rounded-lg transition-colors ${
-                  donationAmount > 5 
-                    ? 'bg-[#1600ff] hover:bg-[#1600ff]' 
-                    : 'bg-gray-200 hover:bg-gray-300 cursor-not-allowed'
-                }`}
+                className={`flex items-center justify-center w-10 h-10 md:w-12 md:h-12 rounded-lg transition-colors ${donationAmount > 5
+                  ? 'bg-[#1600ff] hover:bg-[#1600ff]'
+                  : 'bg-gray-200 hover:bg-gray-300 cursor-not-allowed'
+                  }`}
               >
                 <Minus size={18} className="md:w-5 md:h-5 text-white font-bold" strokeWidth={3} />
               </button>
@@ -518,7 +528,7 @@ export default function OneTimeDonation({
                 <span className="text-white text-xs md:text-sm font-bold">{selectedItems.filter(item => item.type === 'cause').length}</span>
               </div>
             </div>
-            
+
             <div className="space-y-2 md:space-y-3 mt-3 md:mt-4">
               {selectedItems
                 .filter(item => item.type === 'cause')

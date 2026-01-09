@@ -21,6 +21,8 @@ export default function OneTimeDonationPage() {
   const preselectedCollectiveId = location.state?.preselectedCollectiveId;
   const fundraiserId = location.state?.fundraiserId;
   const initialDonationAmount = location.state?.donationAmount;
+  const collectiveName = location.state?.collectiveName;
+  const fundraiserTitle = location.state?.fundraiserTitle;
 
   const [selectedOrganizations, setSelectedOrganizations] = useState<string[]>([]);
   const [checkout, setCheckout] = useState(false);
@@ -36,20 +38,20 @@ export default function OneTimeDonationPage() {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
             </svg>
           </div>
-          
+
           {/* Title */}
           <h2 className="text-2xl font-bold text-gray-900 mb-3">
             Sign in to make a donation
           </h2>
-          
+
           {/* Description */}
           <p className="text-gray-600 mb-8 leading-relaxed">
             Sign in to make a one-time donation and support your favorite causes.
           </p>
-          
+
           {/* CTA Button */}
-          <Button 
-            size="lg" 
+          <Button
+            size="lg"
             className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-lg font-medium transition-colors duration-200 shadow-lg hover:shadow-xl"
           >
             <Link to={`/onboarding?redirectTo=${encodeURIComponent(location.pathname + location.search)}`} className="flex items-center gap-2">
@@ -59,10 +61,10 @@ export default function OneTimeDonationPage() {
               Sign In to Continue
             </Link>
           </Button>
-          
+
           {/* Additional Info */}
           <p className="text-sm text-gray-500 mt-6">
-            Don't have an account? 
+            Don't have an account?
             <Link to="/claim-profile" className="text-blue-600 hover:text-blue-700 font-medium ml-1">
               Create one here
             </Link>
@@ -98,6 +100,8 @@ export default function OneTimeDonationPage() {
         preselectedCollectiveId={preselectedCollectiveId}
         fundraiserId={fundraiserId}
         initialDonationAmount={initialDonationAmount}
+        collectiveName={collectiveName}
+        fundraiserTitle={fundraiserTitle}
       />
     </div>
   );

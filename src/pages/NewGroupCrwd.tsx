@@ -317,6 +317,7 @@ export default function NewGroupCrwdPage() {
         preselectedCauses: causeIds,
         preselectedCausesData: collectiveCauses,
         preselectedCollectiveId: parseInt(crwdId || '0'),
+        collectiveName: crwdData.name,
       },
     });
   };
