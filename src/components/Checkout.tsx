@@ -600,8 +600,8 @@ export const Checkout = ({
                         onClick={decrementAmount}
                         disabled={editableAmount <= 5}
                         className={`flex items-center justify-center w-10 h-10 md:w-12 md:h-12 rounded-lg transition-colors ${editableAmount > 5
-                            ? 'bg-gray-100 hover:bg-gray-200'
-                            : 'bg-gray-200 cursor-not-allowed opacity-50'
+                          ? 'bg-gray-100 hover:bg-gray-200'
+                          : 'bg-gray-200 cursor-not-allowed opacity-50'
                           }`}
                       >
                         <Minus size={20} className="text-gray-600 font-bold" strokeWidth={3} />
@@ -687,13 +687,13 @@ export const Checkout = ({
               </div> */}
 
               {/* Add Causes Button */}
-              <button
+              <Button
                 onClick={() => navigate('/donation/manage')}
                 className="w-full bg-[#1600ff] hover:bg-[#1400cc] text-white font-semibold py-3 rounded-lg transition-colors flex items-center justify-center gap-2"
               >
                 <Plus size={18} className="text-white" />
                 <span>Add Causes</span>
-              </button>
+              </Button>
             </div>
           </div>
 
@@ -705,7 +705,7 @@ export const Checkout = ({
             <div className="mb-4 md:mb-6">
               <div className="mb-3 md:mb-4 flex items-center justify-between">
                 <div>
-                  <h2 className="text-lg md:text-xl font-bold text-gray-900">Currently Supporting</h2>
+                  <h2 className="text-base sm:text-lg md:text-xl font-bold text-gray-900">Currently Supporting</h2>
                   <p className="text-xs md:text-sm text-gray-600 mt-0.5 md:mt-1">
                     Supporting {causes.length} nonprofit{causes.length !== 1 ? 's' : ''}
                   </p>
@@ -747,7 +747,7 @@ export const Checkout = ({
 
                       {/* Cause Info */}
                       <div className="flex-1 min-w-0">
-                        <h3 className="font-bold text-sm md:text-base text-gray-900 mb-0.5 md:mb-1">{cause.name}</h3>
+                        <h3 className="font-bold text-xs sm:text-sm md:text-base text-gray-900 mb-0.5 md:mb-1 line-clamp-1">{cause.name}</h3>
                         <p className="text-xs md:text-sm text-gray-600 line-clamp-1">
                           {cause.mission || cause.description || 'Making a positive impact in the community'}
                         </p>
@@ -1189,8 +1189,8 @@ export const Checkout = ({
                 <button
                   onClick={() => setSelectedPauseOption(1)}
                   className={`w-full p-3 rounded-lg border-2 transition-all text-left ${selectedPauseOption === 1
-                      ? 'border-[#1600ff] bg-blue-50'
-                      : 'border-gray-200 hover:border-gray-300 bg-white'
+                    ? 'border-[#1600ff] bg-blue-50'
+                    : 'border-gray-200 hover:border-gray-300 bg-white'
                     }`}
                 >
                   <div className="flex items-center justify-between">
@@ -1203,8 +1203,8 @@ export const Checkout = ({
                 <button
                   onClick={() => setSelectedPauseOption(2)}
                   className={`w-full p-3 rounded-lg border-2 transition-all text-left ${selectedPauseOption === 2
-                      ? 'border-[#1600ff] bg-blue-50'
-                      : 'border-gray-200 hover:border-gray-300 bg-white'
+                    ? 'border-[#1600ff] bg-blue-50'
+                    : 'border-gray-200 hover:border-gray-300 bg-white'
                     }`}
                 >
                   <div className="flex items-center justify-between">
@@ -1217,8 +1217,8 @@ export const Checkout = ({
                 <button
                   onClick={() => setSelectedPauseOption(3)}
                   className={`w-full p-3 rounded-lg border-2 transition-all text-left ${selectedPauseOption === 3
-                      ? 'border-[#1600ff] bg-blue-50'
-                      : 'border-gray-200 hover:border-gray-300 bg-white'
+                    ? 'border-[#1600ff] bg-blue-50'
+                    : 'border-gray-200 hover:border-gray-300 bg-white'
                     }`}
                 >
                   <div className="flex items-center justify-between">

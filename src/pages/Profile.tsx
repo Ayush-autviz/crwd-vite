@@ -408,12 +408,12 @@ export default function ProfilePage() {
         <div className="flex items-center gap-3">
           <button
             onClick={() => navigate(-1)}
-            className="flex items-center justify-center h-8 w-8 rounded-full bg-gray-100 text-gray-700 hover:bg-gray-200 transition-colors mr-2 cursor-pointer md:hidden"
+            className="flex items-center justify-center h-6 w-6 sm:h-8 sm:w-8 rounded-full bg-gray-100 text-gray-700 hover:bg-gray-200 transition-colors mr-2 cursor-pointer md:hidden"
             aria-label="Go back"
           >
             <ChevronLeft size={18} />
           </button>
-          <h1 className="text-xl font-bold text-gray-800 tracking-tight">
+          <h1 className="text-sm sm:text-base md:text-lg font-bold text-gray-800 tracking-tight">
             Me
           </h1>
         </div>

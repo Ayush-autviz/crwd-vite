@@ -427,7 +427,7 @@ export default function PostById() {
       {/* Sticky Input Bar */}
       {token?.access_token && (
         <div className="fixed bottom-0 left-0 right-0 bg-white border-t p-4 z-40">
-          <div className="max-w-screen-xl mx-auto w-full">
+          <div className="mx-auto w-full">
             <div className="relative flex items-center">
               <div className="absolute left-0 top-0 bottom-0 w-1 bg-[#1600ff] rounded-l-md z-10" />
               <input
@@ -437,12 +437,12 @@ export default function PostById() {
                 onKeyPress={handleKeyPress}
                 placeholder="Join the conversation"
                 disabled={createCommentMutation.isPending}
-                className="w-full bg-gray-50 border-none outline-none focus:ring-0 text-sm md:text-base py-3 pl-4 rounded-md min-h-[50px]"
+                className="w-full bg-gray-50 border-none outline-none focus:ring-0 text-sm md:text-base py-3 pl-4 rounded-md min-h-[35px]"
               />
             </div>
 
             <div className="flex items-center justify-between mt-3">
-              <div className="flex items-center gap-4 text-gray-400">
+              <div className="flex items-center gap-2 text-gray-400">
                 {/* <button type="button" className="hover:text-gray-600">
                   <ImageIcon className="w-5 h-5" />
                 </button>

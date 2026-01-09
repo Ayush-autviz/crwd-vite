@@ -100,7 +100,7 @@ export default function ProfileNavbar({
             {showBackButton && (
               <button
                 onClick={() => backPath ? navigate(backPath) : navigate(-1)}
-                className="flex items-center justify-center h-8 w-8 rounded-full bg-gray-100 text-gray-700 hover:bg-gray-200 transition-colors mr-2 cursor-pointer"
+                className="flex items-center justify-center h-6 w-6 sm:h-8 sm:w-8 rounded-full bg-gray-100 text-gray-700 hover:bg-gray-200 transition-colors mr-2 cursor-pointer"
                 aria-label="Go back"
               >
                 {/* <ArrowLeft size={18} /> */}
@@ -109,7 +109,7 @@ export default function ProfileNavbar({
             )}
             {title && (
               <div className="flex flex-col">
-                <h1 className="text-xl font-bold text-gray-800 tracking-tight">
+                <h1 className="text-sm sm:text-base md:text-lg font-bold text-gray-800 tracking-tight">
                   {title}
                 </h1>
               </div>
