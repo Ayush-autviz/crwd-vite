@@ -437,8 +437,8 @@ export default function CreateFundraiser() {
           <div className="flex items-center gap-2 md:gap-4 mt-3">
             <div className="flex items-center gap-2">
               <div className={`w-6 h-6 md:w-8 md:h-8 rounded-full flex items-center justify-center text-xs md:text-sm font-bold ${step >= 1
-                  ? 'bg-[#1600ff] text-white'
-                  : 'bg-gray-200 text-gray-500'
+                ? 'bg-[#1600ff] text-white'
+                : 'bg-gray-200 text-gray-500'
                 }`}>
                 {step > 1 ? <Check className="w-3 h-3 md:w-4 md:h-4" /> : '1'}
               </div>
@@ -448,8 +448,8 @@ export default function CreateFundraiser() {
             <div className="flex-1 h-px bg-gray-300"></div>
             <div className="flex items-center gap-2">
               <div className={`w-6 h-6 md:w-8 md:h-8 rounded-full flex items-center justify-center text-xs md:text-sm font-bold ${step >= 2
-                  ? 'bg-[#1600ff] text-white'
-                  : 'bg-gray-200 text-gray-500'
+                ? 'bg-[#1600ff] text-white'
+                : 'bg-gray-200 text-gray-500'
                 }`}>
                 {step > 2 ? <Check className="w-3 h-3 md:w-4 md:h-4" /> : '2'}
               </div>
@@ -494,8 +494,8 @@ export default function CreateFundraiser() {
                 <button
                   onClick={() => setCoverType('color')}
                   className={`flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-lg border-2 transition-colors ${coverType === 'color'
-                      ? 'bg-white border-gray-400'
-                      : 'bg-gray-50 border-gray-200 hover:bg-gray-100'
+                    ? 'bg-white border-gray-400'
+                    : 'bg-gray-50 border-gray-200 hover:bg-gray-100'
                     }`}
                 >
                   <Palette className={`w-5 h-5 ${coverType === 'color' ? 'text-gray-700' : 'text-gray-500'}`} />
@@ -506,8 +506,8 @@ export default function CreateFundraiser() {
                 <button
                   onClick={() => setCoverType('image')}
                   className={`flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-lg border-2 transition-colors ${coverType === 'image'
-                      ? 'bg-white border-gray-400'
-                      : 'bg-gray-50 border-gray-200 hover:bg-gray-100'
+                    ? 'bg-white border-gray-400'
+                    : 'bg-gray-50 border-gray-200 hover:bg-gray-100'
                     }`}
                 >
                   <ImageIcon className={`w-5 h-5 ${coverType === 'image' ? 'text-gray-700' : 'text-gray-500'}`} />
@@ -535,12 +535,12 @@ export default function CreateFundraiser() {
                   </div>
 
                   {/* Color Preview Box */}
-                  <div className="rounded-lg border border-gray-200 overflow-hidden" style={{ height: '200px' }}>
+                  <div className="rounded-lg border border-gray-200 overflow-hidden" style={{ height: '180px' }}>
                     <div
                       className="w-full h-full flex items-center justify-center"
                       style={{ backgroundColor: coverColor }}
                     >
-                      <span className="text-white text-xl md:text-2xl font-bold opacity-50">
+                      <span className="text-white text-base md:text-lg font-bold">
                         {campaignTitle || 'Campaign Cover'}
                       </span>
                     </div>
@@ -559,7 +559,7 @@ export default function CreateFundraiser() {
                     id="cover-image-upload-input"
                   />
                   {uploadedCoverImagePreview ? (
-                    <div className="relative rounded-lg border border-gray-200 overflow-hidden" style={{ height: '200px' }}>
+                    <div className="relative rounded-lg border border-gray-200 overflow-hidden" style={{ height: '180px' }}>
                       <img
                         src={uploadedCoverImagePreview}
                         alt="Campaign cover"
@@ -711,8 +711,8 @@ export default function CreateFundraiser() {
                     key={category.id}
                     onClick={() => handleCategoryFilter(category.id)}
                     className={`px-3 py-1.5 md:px-4 md:py-2 rounded-lg text-xs md:text-sm font-medium transition-colors whitespace-nowrap flex-shrink-0 ${isSelected
-                        ? 'bg-[#1600ff] text-white'
-                        : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                      ? 'bg-[#1600ff] text-white'
+                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                       }`}
                   >
                     {category.name}

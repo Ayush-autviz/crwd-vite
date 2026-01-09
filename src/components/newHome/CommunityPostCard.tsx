@@ -333,13 +333,13 @@ export default function CommunityPostCard({ post, onCommentPress, showSimplified
           {post.fundraiser?.is_active ? (
             <>
               {/* Fundraiser Cover Image/Color */}
-              <div className="w-full rounded-t-lg overflow-hidden" style={{ height: '250px' }}>
+              <div className="w-full rounded-t-lg overflow-hidden" style={{ height: '180px' }}>
                 {post.fundraiser.color ? (
                   <div
                     className="w-full h-full flex items-center justify-center"
                     style={{ backgroundColor: post.fundraiser.color }}
                   >
-                    <span className="text-white text-xl md:text-2xl font-bold">
+                    <span className="text-white text-base md:text-lg font-bold">
                       {post.fundraiser.name}
                     </span>
                   </div>
@@ -405,13 +405,13 @@ export default function CommunityPostCard({ post, onCommentPress, showSimplified
           ) : post.fundraiser ? (
             <>
               {/* Legacy Fundraiser UI for inactive fundraisers */}
-              <div className="w-full rounded-t-lg overflow-hidden" style={{ height: '250px' }}>
+              <div className="w-full rounded-t-lg overflow-hidden" style={{ height: '180px' }}>
                 {post.fundraiser.color ? (
                   <div
                     className="w-full h-full flex items-center justify-center"
                     style={{ backgroundColor: post.fundraiser.color }}
                   >
-                    <span className="text-white text-xl md:text-2xl font-bold">
+                    <span className="text-white text-base md:text-lg font-bold">
                       {post.fundraiser.name}
                     </span>
                   </div>

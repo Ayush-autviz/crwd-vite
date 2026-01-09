@@ -427,6 +427,7 @@ export default function ProfilePage() {
 
               <Button
                 onClick={handleFollowClick}
+                size="sm"
                 className="w-fit mx-auto px-8"
                 variant={isFollowing ? "outline" : "default"}
                 disabled={followMutation.isPending || unfollowMutation.isPending}

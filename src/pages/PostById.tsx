@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import ProfileActivityCard from "@/components/profile/ProfileActivityCard";
-import { X, Loader2 } from "lucide-react";
+import { Loader2, Image as ImageIcon, Link as LinkIcon } from "lucide-react";
 import ProfileNavbar from "@/components/profile/ProfileNavbar";
 import { Toast } from "@/components/ui/toast";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
@@ -19,7 +19,6 @@ import {
 import { Button } from "@/components/ui/button";
 import { Comment, CommentData } from "@/components/post/Comment";
 import { useAuthStore } from "@/stores/store";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 export default function PostById() {
   const { id } = useParams();
@@ -30,7 +29,7 @@ export default function PostById() {
   const [expandedComments, setExpandedComments] = useState<Set<number>>(new Set());
   const [loadingReplies, setLoadingReplies] = useState<Set<number>>(new Set());
   const navigate = useNavigate();
-  const { token, user } = useAuthStore();
+  const { token } = useAuthStore();
 
   // Redirect to login if no token
   // useEffect(() => {
@@ -164,10 +163,12 @@ export default function PostById() {
   const createReplyMutation = useMutation({
     mutationFn: ({ commentId, data }: { commentId: number; data: { content: string } }) =>
       createPostComment(id || '', { content: data.content, parent_comment_id: commentId }), // Use createPostComment with parent_comment_id
-    onSuccess: () => {
+    onSuccess: (_, variables) => {
       setToastMessage("Reply added successfully!");
       setShowToast(true);
       queryClient.invalidateQueries({ queryKey: ['postComments', id] });
+      // Fetch replies to show the new one and expand
+      fetchReplies(variables.commentId);
     },
     onError: () => {
       setToastMessage("Failed to add reply. Please try again.");
@@ -425,52 +426,46 @@ export default function PostById() {
 
       {/* Sticky Input Bar */}
       {token?.access_token && (
-        <div className="fixed bottom-0 right-0 bg-white border-t px-3 md:px-4 py-2.5 md:py-3 flex items-center gap-1.5 md:gap-2 w-full">
-          <div className="flex items-center gap-1.5 md:gap-2 flex-1 bg-gray-100 rounded-full px-3 md:px-4 py-1.5 md:py-2 relative">
-            {/* {user?.profile_picture ? (
-            <img
-              src={user.profile_picture}
-              alt="current user"
-              className="w-4 h-4 md:w-5 md:h-5 rounded-full border flex-shrink-0 object-cover"
-              onError={(e) => {
-                // Fallback to static image if profile picture fails to load
-                e.currentTarget.src = "/view.png";
-              }}
-            />
-          ) : (
-            <img
-              src="/view.png"
-              alt="current user"
-              className="w-4 h-4 md:w-5 md:h-5 rounded-full border flex-shrink-0"
-            />
-          )} */}
-            <Avatar className="h-8 w-8">
-              <AvatarImage src={user?.profile_picture} />
-              <AvatarFallback className={`text-white font-bold text-[10px] md:text-sm`} style={{ backgroundColor: user?.color }}>
-                {user?.first_name?.charAt(0).toUpperCase() + user?.last_name?.charAt(0).toUpperCase()}
-              </AvatarFallback>
-            </Avatar>
-            <input
-              type="text"
-              value={inputValue}
-              onChange={(e) => setInputValue(e.target.value)}
-              onKeyPress={handleKeyPress}
-              placeholder="Join the conversation"
-              disabled={createCommentMutation.isPending}
-              className="bg-transparent outline-none flex-1 text-xs md:text-sm text-gray-700 placeholder-gray-400 pr-5 md:pr-6 disabled:opacity-50"
-            />
-            {createCommentMutation.isPending ? (
-              <div className="absolute right-2 md:right-3 p-0.5 md:p-1">
-                <Loader2 className="w-3.5 h-3.5 md:w-4 md:h-4 text-gray-500 animate-spin" />
+        <div className="fixed bottom-0 left-0 right-0 bg-white border-t p-4 z-40">
+          <div className="max-w-screen-xl mx-auto w-full">
+            <div className="relative flex items-center">
+              <div className="absolute left-0 top-0 bottom-0 w-1 bg-[#1600ff] rounded-l-md z-10" />
+              <input
+                type="text"
+                value={inputValue}
+                onChange={(e) => setInputValue(e.target.value)}
+                onKeyPress={handleKeyPress}
+                placeholder="Join the conversation"
+                disabled={createCommentMutation.isPending}
+                className="w-full bg-gray-50 border-none outline-none focus:ring-0 text-sm md:text-base py-3 pl-4 rounded-md min-h-[50px]"
+              />
+            </div>
+
+            <div className="flex items-center justify-between mt-3">
+              <div className="flex items-center gap-4 text-gray-400">
+                {/* <button type="button" className="hover:text-gray-600">
+                  <ImageIcon className="w-5 h-5" />
+                </button>
+                <button type="button" className="hover:text-gray-600">
+                  <LinkIcon className="w-5 h-5" />
+                </button> */}
               </div>
-            ) : inputValue ? (
+
               <button
-                onClick={() => setInputValue("")}
-                className="absolute right-2 md:right-3 p-0.5 md:p-1 hover:bg-gray-200 rounded-full transition-colors"
+                onClick={() => handleAddComment(inputValue)}
+                disabled={!inputValue.trim() || createCommentMutation.isPending}
+                className={`px-6 py-1.5 rounded-full font-semibold text-sm transition-colors ${inputValue.trim() && !createCommentMutation.isPending
+                  ? 'bg-[#1600ff] text-white hover:bg-[#1400cc]'
+                  : 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                  }`}
               >
-                <X className="w-3.5 h-3.5 md:w-4 md:h-4 text-gray-500" />
+                {createCommentMutation.isPending ? (
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                ) : (
+                  'Reply'
+                )}
               </button>
-            ) : null}
+            </div>
           </div>
         </div>
       )}

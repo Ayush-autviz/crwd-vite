@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, useMemo } from 'react';
-import { X, MessageCircle, Send, Loader2 } from 'lucide-react';
+import { X, MessageCircle, Loader2, Image as ImageIcon, Link as LinkIcon } from 'lucide-react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { getPostComments, createPostComment, getCommentReplies } from '@/services/api/social';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
@@ -196,8 +196,10 @@ export default function CommentsBottomSheet({
   const createReplyMutation = useMutation({
     mutationFn: ({ commentId, data }: { commentId: number; data: { content: string } }) =>
       createPostComment(post.id.toString(), { content: data.content, parent_comment_id: commentId }),
-    onSuccess: () => {
+    onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ['postComments', post.id] });
+      // Fetch replies to show the new one and expand
+      fetchReplies(variables.commentId);
     },
     onError: () => {
       console.error('Failed to add reply');
@@ -466,28 +468,46 @@ export default function CommentsBottomSheet({
         </div>
 
         {/* Input Bar */}
-        <div className="border-t border-gray-200 px-3 md:px-4 py-2.5 md:py-3 bg-white sticky bottom-0">
-          <form onSubmit={handleSubmit} className="flex items-center gap-1.5 md:gap-2">
-            <Input
-              ref={inputRef}
-              type="text"
-              placeholder="Join the conversation"
-              value={commentText}
-              onChange={(e) => setCommentText(e.target.value)}
-              className="flex-1 bg-gray-100 rounded-full border-none focus-visible:ring-0 text-sm md:text-base py-2 md:py-2.5"
-              disabled={createCommentMutation.isPending || !currentUser}
-            />
-            <button
-              type="submit"
-              disabled={!commentText.trim() || createCommentMutation.isPending || !currentUser}
-              className="p-1.5 md:p-2 bg-[#1600ff] text-white rounded-full hover:bg-[#1400cc] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {createCommentMutation.isPending ? (
-                <Loader2 className="w-4 h-4 md:w-5 md:h-5 animate-spin" />
-              ) : (
-                <Send className="w-4 h-4 md:w-5 md:h-5" />
-              )}
-            </button>
+        <div className="border-t border-gray-200 p-4 bg-white sticky bottom-0">
+          <form onSubmit={handleSubmit} className="flex flex-col">
+            <div className="relative flex items-center">
+              <div className="absolute left-0 top-0 bottom-0 w-1 bg-[#1600ff] rounded-l-md z-10" />
+              <Input
+                ref={inputRef}
+                type="text"
+                placeholder="Join the conversation"
+                value={commentText}
+                onChange={(e) => setCommentText(e.target.value)}
+                className="w-full bg-gray-50 border-none focus-visible:ring-0 text-sm md:text-base py-3 pl-4 rounded-md min-h-[50px]"
+                disabled={createCommentMutation.isPending || !currentUser}
+              />
+            </div>
+
+            <div className="flex items-center justify-between mt-3">
+              <div className="flex items-center gap-4 text-gray-400">
+                {/* <button type="button" className="hover:text-gray-600">
+                  <ImageIcon className="w-5 h-5" />
+                </button>
+                <button type="button" className="hover:text-gray-600">
+                  <LinkIcon className="w-5 h-5" />
+                </button> */}
+              </div>
+
+              <button
+                type="submit"
+                disabled={!commentText.trim() || createCommentMutation.isPending || !currentUser}
+                className={`px-6 py-1.5 rounded-full font-semibold text-sm transition-colors ${commentText.trim() && !createCommentMutation.isPending
+                  ? 'bg-[#1600ff] text-white hover:bg-[#1400cc]'
+                  : 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                  }`}
+              >
+                {createCommentMutation.isPending ? (
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                ) : (
+                  'Reply'
+                )}
+              </button>
+            </div>
           </form>
         </div>
       </div>

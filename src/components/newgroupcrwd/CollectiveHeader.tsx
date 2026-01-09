@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { ArrowLeft, Star, Share2, MoreHorizontal, Edit, Link2, Flag, DollarSign, Heart, User } from 'lucide-react';
+import { ArrowLeft, Star, Share2, MoreHorizontal, Edit, Link2, Flag, DollarSign, Heart, User, Pencil, Link } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { favoriteCollective, unfavoriteCollective } from '@/services/api/social';
@@ -204,7 +204,7 @@ export default function CollectiveHeader({
                     onClick={handleManageCollective}
                     className="w-full font-semibold flex items-center gap-2 md:gap-3 px-3 md:px-4 py-1.5 md:py-2 text-xs md:text-sm text-foreground hover:bg-gray-100 transition-colors"
                   >
-                    <Edit className="w-3 h-3 md:w-4 md:h-4" strokeWidth={2.5} />
+                    <Pencil className="w-3 h-3 md:w-4 md:h-4" strokeWidth={2.5} />
                     Manage collective
                   </button>
                   <button
@@ -238,7 +238,7 @@ export default function CollectiveHeader({
                 onClick={handleCopyLink}
                 className="w-full font-semibold flex items-center gap-2 md:gap-3 px-3 md:px-4 py-1.5 md:py-2 text-xs md:text-sm text-foreground hover:bg-gray-100 transition-colors"
               >
-                <Link2 className="w-3 h-3 md:w-4 md:h-4" strokeWidth={2.5} />
+                <Link className="w-3 h-3 md:w-4 md:h-4" strokeWidth={2.5} />
                 Copy link
               </button>
 
