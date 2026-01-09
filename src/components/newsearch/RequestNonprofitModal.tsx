@@ -72,7 +72,7 @@ export default function RequestNonprofitModal({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!nonprofitName.trim() || !ein.trim() || !reason.trim()) {
+    if (!nonprofitName.trim() || !ein.trim()) {
       return;
     }
 
@@ -81,17 +81,17 @@ export default function RequestNonprofitModal({
       await requestCause({
         name: nonprofitName.trim(),
         ein_number: ein.trim(),
-        description: reason.trim(),
+        description: reason.trim() || 'No reason provided',
       });
-      
+
       // Reset form first
       setNonprofitName('');
       setEin('');
       setReason('');
-      
+
       // Close modal first
       onClose();
-      
+
       // Show success toast after modal closes
       setTimeout(() => {
         setToastMessage('Request submitted successfully!');
@@ -107,7 +107,7 @@ export default function RequestNonprofitModal({
     }
   };
 
-  const isFormValid = nonprofitName.trim() && ein.trim() && reason.trim();
+  const isFormValid = nonprofitName.trim() && ein.trim();
 
   return (
     <>
@@ -135,116 +135,115 @@ export default function RequestNonprofitModal({
               animation: 'slideUp 0.3s ease-out',
             }}
           >
-        {/* Header */}
-        <div className="sticky top-0 bg-white  px-4 md:px-6 py-3 md:py-4 flex items-center justify-between z-10">
-          <h2 className="text-xl md:text-2xl font-bold text-foreground">Request a Nonprofit</h2>
-          <button
-            onClick={onClose}
-            className="p-1.5 md:p-2 hover:bg-gray-100 rounded-full transition-colors"
-            aria-label="Close modal"
-          >
-            <X className="w-4 h-4 md:w-5 md:h-5 text-gray-600" />
-          </button>
-        </div>
-
-        {/* Content */}
-        <div className="px-4 md:px-6 py-4 md:py-6">
-          {/* Introductory Text */}
-          <p className="text-sm md:text-base text-gray-700 mb-4 md:mb-6 leading-relaxed">
-            Can't find the nonprofit you're looking for? Let us know and if everything checks out we'll add it within{' '}
-            <span className="text-[#1600ff] font-semibold">72 hours</span>.
-          </p>
-
-          {/* Form */}
-          <form onSubmit={handleSubmit} className="space-y-4 md:space-y-6">
-            {/* Nonprofit Name */}
-            <div>
-              <label
-                htmlFor="nonprofit-name"
-                className="block text-xs md:text-sm font-medium text-gray-900 mb-1.5 md:mb-2"
-              >
-                Nonprofit Name
-              </label>
-              <Input
-                id="nonprofit-name"
-                type="text"
-                placeholder="e.g., Local Food Bank"
-                value={nonprofitName}
-                onChange={(e) => setNonprofitName(e.target.value)}
-                className="w-full border-blue-500 focus:ring-2 focus:ring-blue-500 text-sm md:text-base py-2 md:py-2.5"
-              />
-            </div>
-
-            {/* EIN */}
-            <div>
-              <label
-                htmlFor="ein"
-                className="block text-xs md:text-sm font-medium text-gray-900 mb-1.5 md:mb-2"
-              >
-                EIN (Employer Identification Number)
-              </label>
-              <Input
-                id="ein"
-                type="text"
-                placeholder="e.g., 12-3456789"
-                value={ein}
-                onChange={(e) => setEin(e.target.value)}
-                className="w-full border-blue-500 focus:ring-2 focus:ring-blue-500 text-sm md:text-base py-2 md:py-2.5"
-              />
-            </div>
-
-            {/* Why do you care */}
-            <div>
-              <label
-                htmlFor="reason"
-                className="block text-xs md:text-sm font-medium text-gray-900 mb-1.5 md:mb-2"
-              >
-                Why do you care about this cause?
-              </label>
-              <Textarea
-                id="reason"
-                placeholder="Tell us why this nonprofit matters to you..."
-                value={reason}
-                onChange={(e) => setReason(e.target.value)}
-                rows={4}
-                className="w-full border-l-4 border-blue-500 focus:ring-2 focus:ring-blue-500 resize-none text-sm md:text-base"
-              />
-            </div>
-
-            {/* Action Buttons */}
-            <div className="flex items-center justify-between pt-3 md:pt-4">
+            {/* Header */}
+            <div className="sticky top-0 bg-white  px-4 md:px-6 py-3 md:py-4 flex items-center justify-between z-10">
+              <h2 className="text-xl md:text-2xl font-bold text-foreground">Request a Nonprofit</h2>
               <button
-                type="button"
                 onClick={onClose}
-                className="text-sm md:text-base text-gray-700 hover:text-gray-900 font-medium"
+                className="p-1.5 md:p-2 hover:bg-gray-100 rounded-full transition-colors"
+                aria-label="Close modal"
               >
-                Cancel
+                <X className="w-4 h-4 md:w-5 md:h-5 text-gray-600" />
               </button>
-
-              <Button
-                type="submit"
-                disabled={!isFormValid || isSubmitting}
-                className={`flex items-center gap-1.5 md:gap-2 px-4 md:px-6 py-1.5 md:py-2 rounded-full font-medium transition-colors text-sm md:text-base ${
-                  isFormValid && !isSubmitting
-                    ? 'bg-gradient-to-r from-[#1600ff] to-purple-700 text-white hover:bg-gray-400'
-                    : 'bg-gray-200 text-gray-400 cursor-not-allowed'
-                }`}
-              >
-                {isSubmitting ? (
-                  <>
-                    <Loader2 className="w-3.5 h-3.5 md:w-4 md:h-4 animate-spin" />
-                    Submitting...
-                  </>
-                ) : (
-                  <>
-                    <Send className="w-3.5 h-3.5 md:w-4 md:h-4" />
-                    Submit Request
-                  </>
-                )}
-              </Button>
             </div>
-          </form>
-        </div>
+
+            {/* Content */}
+            <div className="px-4 md:px-6 py-4 md:py-6">
+              {/* Introductory Text */}
+              <p className="text-sm md:text-base text-gray-700 mb-4 md:mb-6 leading-relaxed">
+                Can't find the nonprofit you're looking for? Let us know and if everything checks out we'll add it within{' '}
+                <span className="text-[#1600ff] font-semibold">72 hours</span>.
+              </p>
+
+              {/* Form */}
+              <form onSubmit={handleSubmit} className="space-y-4 md:space-y-6">
+                {/* Nonprofit Name */}
+                <div>
+                  <label
+                    htmlFor="nonprofit-name"
+                    className="block text-xs md:text-sm font-medium text-gray-900 mb-1.5 md:mb-2"
+                  >
+                    Nonprofit Name
+                  </label>
+                  <Input
+                    id="nonprofit-name"
+                    type="text"
+                    placeholder="e.g., Local Food Bank"
+                    value={nonprofitName}
+                    onChange={(e) => setNonprofitName(e.target.value)}
+                    className="w-full border-blue-500 focus:ring-2 focus:ring-blue-500 text-sm md:text-base py-2 md:py-2.5"
+                  />
+                </div>
+
+                {/* EIN */}
+                <div>
+                  <label
+                    htmlFor="ein"
+                    className="block text-xs md:text-sm font-medium text-gray-900 mb-1.5 md:mb-2"
+                  >
+                    EIN (Employer Identification Number)
+                  </label>
+                  <Input
+                    id="ein"
+                    type="text"
+                    placeholder="e.g., 12-3456789"
+                    value={ein}
+                    onChange={(e) => setEin(e.target.value)}
+                    className="w-full border-blue-500 focus:ring-2 focus:ring-blue-500 text-sm md:text-base py-2 md:py-2.5"
+                  />
+                </div>
+
+                {/* Why do you care */}
+                <div>
+                  <label
+                    htmlFor="reason"
+                    className="block text-xs md:text-sm font-medium text-gray-900 mb-1.5 md:mb-2"
+                  >
+                    Why do you care about this cause?
+                  </label>
+                  <Textarea
+                    id="reason"
+                    placeholder="Tell us why this nonprofit matters to you..."
+                    value={reason}
+                    onChange={(e) => setReason(e.target.value)}
+                    rows={4}
+                    className="w-full border-l-4 border-blue-500 focus:ring-2 focus:ring-blue-500 resize-none text-sm md:text-base"
+                  />
+                </div>
+
+                {/* Action Buttons */}
+                <div className="flex items-center justify-between pt-3 md:pt-4">
+                  <button
+                    type="button"
+                    onClick={onClose}
+                    className="text-sm md:text-base text-gray-700 hover:text-gray-900 font-medium"
+                  >
+                    Cancel
+                  </button>
+
+                  <Button
+                    type="submit"
+                    disabled={!isFormValid || isSubmitting}
+                    className={`flex items-center gap-1.5 md:gap-2 px-4 md:px-6 py-1.5 md:py-2 rounded-full font-medium transition-colors text-sm md:text-base ${isFormValid && !isSubmitting
+                      ? 'bg-gradient-to-r from-[#1600ff] to-purple-700 text-white hover:bg-gray-400'
+                      : 'bg-gray-200 text-gray-400 cursor-not-allowed'
+                      }`}
+                  >
+                    {isSubmitting ? (
+                      <>
+                        <Loader2 className="w-3.5 h-3.5 md:w-4 md:h-4 animate-spin" />
+                        Submitting...
+                      </>
+                    ) : (
+                      <>
+                        <Send className="w-3.5 h-3.5 md:w-4 md:h-4" />
+                        Submit Request
+                      </>
+                    )}
+                  </Button>
+                </div>
+              </form>
+            </div>
 
           </div>
         </>

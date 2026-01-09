@@ -54,17 +54,17 @@ export default function CreateFundraiser() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [step, setStep] = useState<1 | 2 | 3>(1);
-  
+
   // Step 1 state
   const [coverType, setCoverType] = useState<'color' | 'image'>('color');
   const [coverColor, setCoverColor] = useState('#1600ff');
   const [uploadedCoverImage, setUploadedCoverImage] = useState<File | null>(null);
   const [uploadedCoverImagePreview, setUploadedCoverImagePreview] = useState<string | null>(null);
   const [campaignTitle, setCampaignTitle] = useState('');
-  const [fundraisingGoal, setFundraisingGoal] = useState('1000');
+  const [fundraisingGoal, setFundraisingGoal] = useState('100');
   const [endDate, setEndDate] = useState<Dayjs | null>(null);
   const [campaignStory, setCampaignStory] = useState('');
-  
+
   // Step 2 state
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('');
@@ -75,7 +75,7 @@ export default function CreateFundraiser() {
   // Toast state
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState('');
-  
+
   // Success modal state
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [createdFundraiser, setCreatedFundraiser] = useState<any>(null);
@@ -431,34 +431,30 @@ export default function CreateFundraiser() {
             )}
           </div>
         </div>
-        
+
         {/* Progress Indicator - Only show for steps 1 and 2 */}
         {step !== 3 && (
           <div className="flex items-center gap-2 md:gap-4 mt-3">
             <div className="flex items-center gap-2">
-              <div className={`w-6 h-6 md:w-8 md:h-8 rounded-full flex items-center justify-center text-xs md:text-sm font-bold ${
-                step >= 1 
-                  ? 'bg-[#1600ff] text-white' 
+              <div className={`w-6 h-6 md:w-8 md:h-8 rounded-full flex items-center justify-center text-xs md:text-sm font-bold ${step >= 1
+                  ? 'bg-[#1600ff] text-white'
                   : 'bg-gray-200 text-gray-500'
-              }`}>
+                }`}>
                 {step > 1 ? <Check className="w-3 h-3 md:w-4 md:h-4" /> : '1'}
               </div>
-              <span className={`text-sm md:text-base font-semibold ${
-                step >= 1 ? 'text-[#1600ff]' : 'text-gray-500'
-              }`}>Details</span>
+              <span className={`text-sm md:text-base font-semibold ${step >= 1 ? 'text-[#1600ff]' : 'text-gray-500'
+                }`}>Details</span>
             </div>
             <div className="flex-1 h-px bg-gray-300"></div>
             <div className="flex items-center gap-2">
-              <div className={`w-6 h-6 md:w-8 md:h-8 rounded-full flex items-center justify-center text-xs md:text-sm font-bold ${
-                step >= 2 
-                  ? 'bg-[#1600ff] text-white' 
+              <div className={`w-6 h-6 md:w-8 md:h-8 rounded-full flex items-center justify-center text-xs md:text-sm font-bold ${step >= 2
+                  ? 'bg-[#1600ff] text-white'
                   : 'bg-gray-200 text-gray-500'
-              }`}>
+                }`}>
                 {step > 2 ? <Check className="w-3 h-3 md:w-4 md:h-4" /> : '2'}
               </div>
-              <span className={`text-sm md:text-base font-semibold ${
-                step >= 2 ? 'text-[#1600ff]' : 'text-gray-500'
-              }`}>Nonprofits</span>
+              <span className={`text-sm md:text-base font-semibold ${step >= 2 ? 'text-[#1600ff]' : 'text-gray-500'
+                }`}>Nonprofits</span>
             </div>
           </div>
         )}
@@ -469,211 +465,208 @@ export default function CreateFundraiser() {
         {step === 1 ? (
           <>
             {/* Time-Limited Campaign Info Box */}
-        <div className="border-2 border-blue-200 bg-blue-50 rounded-lg p-3 md:p-4 mb-6 md:mb-8">
-          <div className="flex items-start gap-3">
-            <div className="flex-shrink-0 mt-0.5">
-              <Info className="w-5 h-5 md:w-6 md:h-6 text-blue-600" />
+            <div className="border-2 border-blue-200 bg-blue-50 rounded-lg p-3 md:p-4 mb-6 md:mb-8">
+              <div className="flex items-start gap-3">
+                <div className="flex-shrink-0 mt-0.5">
+                  <Info className="w-5 h-5 md:w-6 md:h-6 text-blue-600" />
+                </div>
+                <div>
+                  <h3 className="font-bold text-sm md:text-base text-blue-900 mb-1">
+                    Time-Limited Campaign
+                  </h3>
+                  <p className="text-xs md:text-sm text-blue-800">
+                    Create urgency for your cause with a deadline. Perfect for emergencies, holidays, or special events.
+                  </p>
+                </div>
+              </div>
             </div>
-            <div>
-              <h3 className="font-bold text-sm md:text-base text-blue-900 mb-1">
-                Time-Limited Campaign
-              </h3>
-              <p className="text-xs md:text-sm text-blue-800">
-                Create urgency for your cause with a deadline. Perfect for emergencies, holidays, or special events.
-              </p>
-            </div>
-          </div>
-        </div>
 
-        {/* Campaign Cover */}
-        <div className="mb-6 md:mb-8">
-          <label className="block text-sm md:text-base font-semibold text-gray-900 mb-3">
-            Campaign Cover
-          </label>
-          
-          
+            {/* Campaign Cover */}
+            <div className="mb-6 md:mb-8">
+              <label className="block text-sm md:text-base font-semibold text-gray-900 mb-3">
+                Campaign Cover
+              </label>
 
-          {/* Type Selection Buttons */}
-          <div className="flex gap-3 mb-4">
-            <button
-              onClick={() => setCoverType('color')}
-              className={`flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-lg border-2 transition-colors ${
-                coverType === 'color'
-                  ? 'bg-white border-gray-400'
-                  : 'bg-gray-50 border-gray-200 hover:bg-gray-100'
-              }`}
-            >
-              <Palette className={`w-5 h-5 ${coverType === 'color' ? 'text-gray-700' : 'text-gray-500'}`} />
-              <span className={`font-medium text-sm md:text-base ${coverType === 'color' ? 'text-gray-900' : 'text-gray-600'}`}>
-                Color
-              </span>
-            </button>
-            <button
-              onClick={() => setCoverType('image')}
-              className={`flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-lg border-2 transition-colors ${
-                coverType === 'image'
-                  ? 'bg-white border-gray-400'
-                  : 'bg-gray-50 border-gray-200 hover:bg-gray-100'
-              }`}
-            >
-              <ImageIcon className={`w-5 h-5 ${coverType === 'image' ? 'text-gray-700' : 'text-gray-500'}`} />
-              <span className={`font-medium text-sm md:text-base ${coverType === 'image' ? 'text-gray-900' : 'text-gray-600'}`}>
-                Image
-              </span>
-            </button>
-          </div>
 
-          {/* Color Picker */}
-          {coverType === 'color' && (
-            <div>
-              <h4 className="font-semibold text-sm md:text-base text-gray-900 mb-3">Choose Background Color</h4>
-              <div className="flex flex-wrap gap-3 mb-4">
-                {colorSwatches.map((color) => (
-                  <button
-                    key={color}
-                    onClick={() => handleColorSelect(color)}
-                    className={`w-10 h-10 md:w-12 md:h-12 rounded-lg transition-transform hover:scale-110 ${
-                      coverColor === color ? 'ring-2 ring-gray-900 ring-offset-2' : ''
+
+              {/* Type Selection Buttons */}
+              <div className="flex gap-3 mb-4">
+                <button
+                  onClick={() => setCoverType('color')}
+                  className={`flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-lg border-2 transition-colors ${coverType === 'color'
+                      ? 'bg-white border-gray-400'
+                      : 'bg-gray-50 border-gray-200 hover:bg-gray-100'
                     }`}
-                    style={{ backgroundColor: color }}
-                    aria-label={`Select color ${color}`}
-                  />
-                ))}
-              </div>
-              
-              {/* Color Preview Box */}
-              <div className="rounded-lg border border-gray-200 overflow-hidden" style={{ height: '200px' }}>
-                <div
-                  className="w-full h-full flex items-center justify-center"
-                  style={{ backgroundColor: coverColor }}
                 >
-                  <span className="text-white text-xl md:text-2xl font-bold opacity-50">
-                    {campaignTitle || 'Campaign Cover'}
+                  <Palette className={`w-5 h-5 ${coverType === 'color' ? 'text-gray-700' : 'text-gray-500'}`} />
+                  <span className={`font-medium text-sm md:text-base ${coverType === 'color' ? 'text-gray-900' : 'text-gray-600'}`}>
+                    Color
                   </span>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* Image Upload */}
-          {coverType === 'image' && (
-            <div>
-              <input
-                type="file"
-                accept="image/*"
-                onChange={handleFileChange}
-                className="hidden"
-                id="cover-image-upload-input"
-              />
-              {uploadedCoverImagePreview ? (
-                <div className="relative rounded-lg border border-gray-200 overflow-hidden" style={{ height: '200px' }}>
-                  <img
-                    src={uploadedCoverImagePreview}
-                    alt="Campaign cover"
-                    className="w-full h-full object-cover"
-                  />
-                  <button
-                    onClick={() => {
-                      setUploadedCoverImage(null);
-                      setUploadedCoverImagePreview(null);
-                    }}
-                    className="absolute top-2 right-2 p-1.5 bg-white rounded-full shadow-md hover:bg-gray-100 transition-colors"
-                    aria-label="Remove image"
-                  >
-                    <X className="w-4 h-4 text-gray-700" />
-                  </button>
-                </div>
-              ) : (
-                <div
-                  onClick={() => {
-                    const input = document.getElementById('cover-image-upload-input');
-                    input?.click();
-                  }}
-                  className="relative rounded-lg border-2 border-dashed border-gray-300 bg-gray-50 hover:bg-gray-100 transition-colors cursor-pointer flex items-center justify-center"
-                  style={{ height: '200px' }}
+                </button>
+                <button
+                  onClick={() => setCoverType('image')}
+                  className={`flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-lg border-2 transition-colors ${coverType === 'image'
+                      ? 'bg-white border-gray-400'
+                      : 'bg-gray-50 border-gray-200 hover:bg-gray-100'
+                    }`}
                 >
-                  <div className="text-center">
-                    <Camera className="w-8 h-8 md:w-10 md:h-10 text-gray-400 mx-auto mb-2" />
-                    <p className="text-sm md:text-base text-gray-600 font-medium">
-                      Click to upload image
-                    </p>
-                    <p className="text-xs md:text-sm text-gray-500 mt-1">
-                      Choose from gallery
-                    </p>
+                  <ImageIcon className={`w-5 h-5 ${coverType === 'image' ? 'text-gray-700' : 'text-gray-500'}`} />
+                  <span className={`font-medium text-sm md:text-base ${coverType === 'image' ? 'text-gray-900' : 'text-gray-600'}`}>
+                    Image
+                  </span>
+                </button>
+              </div>
+
+              {/* Color Picker */}
+              {coverType === 'color' && (
+                <div>
+                  <h4 className="font-semibold text-sm md:text-base text-gray-900 mb-3">Choose Background Color</h4>
+                  <div className="flex flex-wrap gap-3 mb-4">
+                    {colorSwatches.map((color) => (
+                      <button
+                        key={color}
+                        onClick={() => handleColorSelect(color)}
+                        className={`w-10 h-10 md:w-12 md:h-12 rounded-lg transition-transform hover:scale-110 ${coverColor === color ? 'ring-2 ring-gray-900 ring-offset-2' : ''
+                          }`}
+                        style={{ backgroundColor: color }}
+                        aria-label={`Select color ${color}`}
+                      />
+                    ))}
+                  </div>
+
+                  {/* Color Preview Box */}
+                  <div className="rounded-lg border border-gray-200 overflow-hidden" style={{ height: '200px' }}>
+                    <div
+                      className="w-full h-full flex items-center justify-center"
+                      style={{ backgroundColor: coverColor }}
+                    >
+                      <span className="text-white text-xl md:text-2xl font-bold opacity-50">
+                        {campaignTitle || 'Campaign Cover'}
+                      </span>
+                    </div>
                   </div>
                 </div>
               )}
+
+              {/* Image Upload */}
+              {coverType === 'image' && (
+                <div>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleFileChange}
+                    className="hidden"
+                    id="cover-image-upload-input"
+                  />
+                  {uploadedCoverImagePreview ? (
+                    <div className="relative rounded-lg border border-gray-200 overflow-hidden" style={{ height: '200px' }}>
+                      <img
+                        src={uploadedCoverImagePreview}
+                        alt="Campaign cover"
+                        className="w-full h-full object-cover"
+                      />
+                      <button
+                        onClick={() => {
+                          setUploadedCoverImage(null);
+                          setUploadedCoverImagePreview(null);
+                        }}
+                        className="absolute top-2 right-2 p-1.5 bg-white rounded-full shadow-md hover:bg-gray-100 transition-colors"
+                        aria-label="Remove image"
+                      >
+                        <X className="w-4 h-4 text-gray-700" />
+                      </button>
+                    </div>
+                  ) : (
+                    <div
+                      onClick={() => {
+                        const input = document.getElementById('cover-image-upload-input');
+                        input?.click();
+                      }}
+                      className="relative rounded-lg border-2 border-dashed border-gray-300 bg-gray-50 hover:bg-gray-100 transition-colors cursor-pointer flex items-center justify-center"
+                      style={{ height: '200px' }}
+                    >
+                      <div className="text-center">
+                        <Camera className="w-8 h-8 md:w-10 md:h-10 text-gray-400 mx-auto mb-2" />
+                        <p className="text-sm md:text-base text-gray-600 font-medium">
+                          Click to upload image
+                        </p>
+                        <p className="text-xs md:text-sm text-gray-500 mt-1">
+                          Choose from gallery
+                        </p>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
-          )}
-        </div>
 
-        {/* Campaign Title */}
-        <div className="mb-6 md:mb-8">
-          <label className="block text-sm md:text-base font-semibold text-gray-900 mb-2">
-            Campaign Title <span className="text-red-500">*</span>
-          </label>
-          <Input
-            type="text"
-            value={campaignTitle}
-            onChange={(e) => setCampaignTitle(e.target.value)}
-            placeholder="e.g., Kansas Tornado Relief Fund"
-            className="w-full"
-          />
-        </div>
+            {/* Campaign Title */}
+            <div className="mb-6 md:mb-8">
+              <label className="block text-sm md:text-base font-semibold text-gray-900 mb-2">
+                Campaign Title <span className="text-red-500">*</span>
+              </label>
+              <Input
+                type="text"
+                value={campaignTitle}
+                onChange={(e) => setCampaignTitle(e.target.value)}
+                placeholder="e.g., Kansas Tornado Relief Fund"
+                className="w-full"
+              />
+            </div>
 
-        {/* Fundraising Goal */}
-        <div className="mb-6 md:mb-8">
-          <label className="block text-sm md:text-base font-semibold text-gray-900 mb-2">
-            Fundraising Goal <span className="text-red-500">*</span>
-          </label>
-          <div className="relative">
-            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-600 font-medium">
-              $
-            </span>
-            <Input
-              type="number"
-              value={fundraisingGoal}
-              onChange={(e) => setFundraisingGoal(e.target.value)}
-              placeholder="1000"
-              className="w-full pl-8"
-            />
-          </div>
-        </div>
+            {/* Fundraising Goal */}
+            <div className="mb-6 md:mb-8">
+              <label className="block text-sm md:text-base font-semibold text-gray-900 mb-2">
+                Fundraising Goal <span className="text-red-500">*</span>
+              </label>
+              <div className="relative">
+                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-600 font-medium">
+                  $
+                </span>
+                <Input
+                  type="number"
+                  value={fundraisingGoal}
+                  onChange={(e) => setFundraisingGoal(e.target.value)}
+                  placeholder="1000"
+                  className="w-full pl-8"
+                />
+              </div>
+            </div>
 
-        {/* Campaign End Date */}
-        <div className="mb-6 md:mb-8">
-          <label className="block text-sm md:text-base font-semibold text-gray-900 mb-2">
-            Campaign End Date <span className="text-red-500">*</span>
-          </label>
-          <DatePicker
-            value={endDate}
-            onChange={(date) => setEndDate(date)}
-            disabledDate={(current) => {
-              // Disable dates before today
-              return current && current < dayjs().startOf('day');
-            }}
-            className="w-full"
-            placeholder="Select end date"
-            format="YYYY-MM-DD"
-            size="large"
-          />
-          <p className="text-xs md:text-sm text-gray-500 mt-1">
-            Choose when your campaign ends
-          </p>
-        </div>
+            {/* Campaign End Date */}
+            <div className="mb-6 md:mb-8">
+              <label className="block text-sm md:text-base font-semibold text-gray-900 mb-2">
+                Campaign End Date <span className="text-red-500">*</span>
+              </label>
+              <DatePicker
+                value={endDate}
+                onChange={(date) => setEndDate(date)}
+                disabledDate={(current) => {
+                  // Disable dates before today
+                  return current && current < dayjs().startOf('day');
+                }}
+                className="w-full"
+                placeholder="Select end date"
+                format="YYYY-MM-DD"
+                size="large"
+              />
+              <p className="text-xs md:text-sm text-gray-500 mt-1">
+                Choose when your campaign ends
+              </p>
+            </div>
 
-        {/* Campaign Story */}
-        <div className="mb-6 md:mb-8">
-          <label className="block text-sm md:text-base font-semibold text-gray-900 mb-2">
-            Campaign Story <span className="text-red-500">*</span>
-          </label>
-          <Textarea
-            value={campaignStory}
-            onChange={(e) => setCampaignStory(e.target.value)}
-            placeholder="Tell people why you're raising money and how it will make an impact..."
-            className="w-full min-h-[120px] md:min-h-[150px] resize-none"
-          />
-        </div>
+            {/* Campaign Story */}
+            <div className="mb-6 md:mb-8">
+              <label className="block text-sm md:text-base font-semibold text-gray-900 mb-2">
+                Campaign Story <span className="text-red-500">*</span>
+              </label>
+              <Textarea
+                value={campaignStory}
+                onChange={(e) => setCampaignStory(e.target.value)}
+                placeholder="Tell people why you're raising money and how it will make an impact..."
+                className="w-full min-h-[120px] md:min-h-[150px] resize-none"
+              />
+            </div>
           </>
         ) : step === 2 ? (
           <>
@@ -717,11 +710,10 @@ export default function CreateFundraiser() {
                   <button
                     key={category.id}
                     onClick={() => handleCategoryFilter(category.id)}
-                    className={`px-3 py-1.5 md:px-4 md:py-2 rounded-lg text-xs md:text-sm font-medium transition-colors whitespace-nowrap flex-shrink-0 ${
-                      isSelected
+                    className={`px-3 py-1.5 md:px-4 md:py-2 rounded-lg text-xs md:text-sm font-medium transition-colors whitespace-nowrap flex-shrink-0 ${isSelected
                         ? 'bg-[#1600ff] text-white'
                         : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                    }`}
+                      }`}
                   >
                     {category.name}
                   </button>
@@ -803,7 +795,7 @@ export default function CreateFundraiser() {
                     className="w-full h-full flex items-center justify-center"
                     style={{ backgroundColor: coverColor }}
                   >
-                
+
                   </div>
                 ) : uploadedCoverImagePreview ? (
                   <img
@@ -867,7 +859,7 @@ export default function CreateFundraiser() {
                       const initials = getInitials(nonprofit.name || 'N');
                       const category = categories.find(cat => cat.id === nonprofit.category || cat.id === nonprofit.cause_category);
                       const categoryName = category?.name || 'General';
-                      
+
                       return (
                         <div key={nonprofit.id} className="bg-white rounded-lg border border-gray-200 p-3 md:p-4 flex items-center gap-3 md:gap-4">
                           <Avatar className="w-10 h-10 md:w-12 md:h-12 rounded-lg flex-shrink-0">

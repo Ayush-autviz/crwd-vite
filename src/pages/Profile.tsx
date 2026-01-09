@@ -191,7 +191,7 @@ export default function ProfilePage() {
       queryClient.invalidateQueries({ queryKey: ['followers'] });
       queryClient.invalidateQueries({ queryKey: ['following'] });
       queryClient.invalidateQueries({ queryKey: ['userProfile', currentUser?.id] });
-      setToastMessage('Followed');
+      // setToastMessage('Followed');
       setShowToast(true);
     },
     onError: (error) => {
@@ -207,7 +207,7 @@ export default function ProfilePage() {
       queryClient.invalidateQueries({ queryKey: ['followers'] });
       queryClient.invalidateQueries({ queryKey: ['following'] });
       queryClient.invalidateQueries({ queryKey: ['userProfile', currentUser?.id] });
-      setToastMessage('Unfollowed');
+      // setToastMessage('Unfollowed');
       setShowToast(true);
     },
     onError: (error) => {

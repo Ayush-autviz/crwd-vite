@@ -86,11 +86,11 @@ export default function CollectiveProfile({
             <h2 className="font-[800] text-xl md:text-2xl lg:text-3xl text-foreground">
               {name}
             </h2>
-            {isJoined && (
+            {/* {isJoined && (
               <span className="bg-green-100 text-green-700 text-[10px] md:text-xs font-semibold px-2 md:px-2.5 py-0.5 md:py-1 rounded-full">
                 Joined
               </span>
-            )}
+            )} */}
           </div>
           {founder && (
             <div className="flex items-center gap-1.5 md:gap-2">

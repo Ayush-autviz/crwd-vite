@@ -492,10 +492,10 @@ export default function NewGroupCrwdPage() {
 
             {/* Content Container */}
             <div className="flex-1 pr-6">
-              <h3 className="m-0 mb-1 text-xs md:text-sm lg:text-base font-bold text-gray-900">
+              <h3 className="m-0 mb-1 text-xs md:text-sm lg:text-base xl:text-lg font-bold text-gray-900">
                 Founder Perk: Create Fundraisers
               </h3>
-              <p className="m-0 text-xs md:text-sm lg:text-base text-gray-600 leading-relaxed">
+              <p className="m-0 text-xs md:text-sm lg:text-base xl:text-lg text-gray-600 leading-relaxed">
                 Respond to current events by creating fundraisers with any nonprofits you choose.
               </p>
             </div>

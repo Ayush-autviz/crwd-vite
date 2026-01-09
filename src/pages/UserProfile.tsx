@@ -108,7 +108,7 @@ export default function ProfilePage() {
     mutationFn: () => followUserById(userId || ''),
     onSuccess: () => {
       setIsFollowing(true);
-      setToastMessage("Followed successfully!");
+      // setToastMessage("Followed successfully!");
       setShowToast(true);
       queryClient.invalidateQueries({ queryKey: ['userProfile', userId] });
     },
@@ -124,7 +124,7 @@ export default function ProfilePage() {
     mutationFn: () => unfollowUserById(userId || ''),
     onSuccess: () => {
       setIsFollowing(false);
-      setToastMessage("Unfollowed successfully!");
+      // setToastMessage("Unfollowed successfully!");
       setShowToast(true);
       queryClient.invalidateQueries({ queryKey: ['userProfile', userId] });
     },
@@ -427,11 +427,12 @@ export default function ProfilePage() {
 
               <Button
                 onClick={handleFollowClick}
-                className="w-fit mx-auto px-10"
+                className="w-fit mx-auto px-8"
                 variant={isFollowing ? "outline" : "default"}
                 disabled={followMutation.isPending || unfollowMutation.isPending}
               >
                 {followMutation.isPending || unfollowMutation.isPending ? (
+
                   <Loader2 className="w-4 h-4 animate-spin" />
                 ) : isFollowing ? "Following" : "Follow"}
               </Button>

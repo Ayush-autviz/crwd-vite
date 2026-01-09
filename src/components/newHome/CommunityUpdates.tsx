@@ -138,7 +138,7 @@ function NotificationSummary({ update }: { update: CommunityUpdate }) {
   const followMutation = useMutation({
     mutationFn: (userId: string) => followUser(userId),
     onSuccess: () => {
-      toast.success('Following user');
+      // toast.success('Following user');
       queryClient.invalidateQueries({ queryKey: ['userProfile', update.user.id] });
     },
     onError: (error: any) => {
@@ -151,7 +151,7 @@ function NotificationSummary({ update }: { update: CommunityUpdate }) {
   const unfollowMutation = useMutation({
     mutationFn: (userId: string) => unfollowUser(userId),
     onSuccess: () => {
-      toast.success('Unfollowed user');
+      // toast.success('Unfollowed user');
       queryClient.invalidateQueries({ queryKey: ['userProfile', update.user.id] });
     },
     onError: (error: any) => {
