@@ -67,6 +67,7 @@ export default function NewSettings() {
   const [selectedImageUrl, setSelectedImageUrl] = useState<string | null>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
   const queryClient = useQueryClient()
+  const user = useAuthStore((state) => state.user)
 
   // Password form state
   const [passwordForm, setPasswordForm] = useState({
@@ -571,54 +572,56 @@ export default function NewSettings() {
           </div>
 
           {/* Security Section */}
-          <div className="bg-white rounded-lg shadow-sm border border-gray-100 mb-4 md:mb-6">
-            <div className="px-4 md:px-6 py-3 md:py-4 border-b border-gray-100">
-              <div className="flex items-center gap-2 md:gap-3">
-                <Lock className="h-4 w-4 md:h-5 md:w-5 text-blue-600" />
-                <h2 className="text-base md:text-lg font-semibold text-gray-900">Security</h2>
+          {user?.auth_method === 'email' && (
+            <div className="bg-white rounded-lg shadow-sm border border-gray-100 mb-4 md:mb-6">
+              <div className="px-4 md:px-6 py-3 md:py-4 border-b border-gray-100">
+                <div className="flex items-center gap-2 md:gap-3">
+                  <Lock className="h-4 w-4 md:h-5 md:w-5 text-blue-600" />
+                  <h2 className="text-base md:text-lg font-semibold text-gray-900">Security</h2>
+                </div>
+              </div>
+              <div className="p-4 md:p-6 space-y-3 md:space-y-4">
+                <div>
+                  <Label className="mb-1.5 md:mb-2 text-xs md:text-sm">Password</Label>
+                  <div className="flex items-center gap-2 bg-gray-50 rounded-lg px-3 md:px-4 py-2 mb-2.5 md:mb-3">
+                    <Input
+                      type={showPasswords.current ? "text" : "password"}
+                      value="••••••••••"
+                      readOnly
+                      className="text-sm md:text-base"
+                    />
+                    <Eye className="h-4 w-4 md:h-5 md:w-5 text-gray-500" />
+                  </div>
+                  <Button
+                    variant="outline"
+                    onClick={() => setShowPasswordDialog(true)}
+                    className="w-full text-sm md:text-base py-2 md:py-2.5"
+                  >
+                    Change Password
+                  </Button>
+                </div>
+                <div>
+                  <Label className="mb-1.5 md:mb-2 text-xs md:text-sm">Email</Label>
+                  <div className="flex items-center gap-2 bg-gray-50 rounded-lg px-3 md:px-4 py-2 mb-2.5 md:mb-3">
+                    <Input
+                      type="text"
+                      value={currentUser.email || ""}
+                      readOnly
+                      className="text-sm md:text-base"
+                    />
+                    <Mail className="h-4 w-4 md:h-5 md:w-5 text-gray-500" />
+                  </div>
+                  <Button
+                    variant="outline"
+                    onClick={() => setShowEmailDialog(true)}
+                    className="w-full text-sm md:text-base py-2 md:py-2.5"
+                  >
+                    Change Email
+                  </Button>
+                </div>
               </div>
             </div>
-            <div className="p-4 md:p-6 space-y-3 md:space-y-4">
-              <div>
-                <Label className="mb-1.5 md:mb-2 text-xs md:text-sm">Password</Label>
-                <div className="flex items-center gap-2 bg-gray-50 rounded-lg px-3 md:px-4 py-2 mb-2.5 md:mb-3">
-                  <Input
-                    type={showPasswords.current ? "text" : "password"}
-                    value="••••••••••"
-                    readOnly
-                    className="text-sm md:text-base"
-                  />
-                  <Eye className="h-4 w-4 md:h-5 md:w-5 text-gray-500" />
-                </div>
-                <Button
-                  variant="outline"
-                  onClick={() => setShowPasswordDialog(true)}
-                  className="w-full text-sm md:text-base py-2 md:py-2.5"
-                >
-                  Change Password
-                </Button>
-              </div>
-              <div>
-                <Label className="mb-1.5 md:mb-2 text-xs md:text-sm">Email</Label>
-                <div className="flex items-center gap-2 bg-gray-50 rounded-lg px-3 md:px-4 py-2 mb-2.5 md:mb-3">
-                  <Input
-                    type="text"
-                    value={currentUser.email || ""}
-                    readOnly
-                    className="text-sm md:text-base"
-                  />
-                  <Mail className="h-4 w-4 md:h-5 md:w-5 text-gray-500" />
-                </div>
-                <Button
-                  variant="outline"
-                  onClick={() => setShowEmailDialog(true)}
-                  className="w-full text-sm md:text-base py-2 md:py-2.5"
-                >
-                  Change Email
-                </Button>
-              </div>
-            </div>
-          </div>
+          )}
 
           {/* Payment & Receipts Section */}
           <div className="bg-white rounded-lg shadow-sm border border-gray-100 mb-4 md:mb-6">
