@@ -40,7 +40,7 @@ const LoginPage: React.FC = () => {
     mutationFn: login,
     onSuccess: (response) => {
       console.log('Login successful:', response)
-      
+
       // Store user data and token in the store
       if (response.user) {
         setUser(response.user)
@@ -48,16 +48,16 @@ const LoginPage: React.FC = () => {
       if (response.access_token) {
         setToken({ access_token: response.access_token, refresh_token: response.refresh_token })
       }
-      
+
       // If last_login_at is null, navigate to nonprofit interests page (new user)
       if (response.user && !response.user.last_login_at) {
-        navigate(`/non-profit-interests?redirectTo=${encodeURIComponent(redirectTo)}`, { 
+        navigate(`/non-profit-interests?redirectTo=${encodeURIComponent(redirectTo)}`, {
           state: { fromAuth: true },
-          replace: true 
+          replace: true
         })
       } else {
         // Navigate to redirectTo if available, otherwise home page for existing users
-        navigate(redirectTo, {replace: true})
+        navigate(redirectTo, { replace: true })
       }
     },
     onError: (error: any) => {
@@ -70,13 +70,19 @@ const LoginPage: React.FC = () => {
   // Google login query
   const googleLoginQuery = useQuery({
     queryKey: ['googleLogin'],
-    queryFn: googleLogin,
+    queryFn: () => googleLogin({}, 'Google'),
     enabled: false, // Don't run automatically
   })
 
+  const appleLoginQuery = useQuery({
+    queryKey: ["appleLogin"],
+    queryFn: () => googleLogin({}, 'SignInWithApple'),
+    enabled: false, // Don't run automatically
+  });
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    
+
     if (!formData.email.trim() || !formData.password.trim()) {
       setToastMessage("Please enter both email and password")
       setShowToast(true)
@@ -107,6 +113,22 @@ const LoginPage: React.FC = () => {
     }
   }
 
+  const handleAppleLogin = async () => {
+    try {
+      // Store redirectTo in sessionStorage before redirecting to Google
+      if (redirectTo && redirectTo !== '/') {
+        sessionStorage.setItem('appleLoginRedirectTo', redirectTo);
+      }
+      const result = await appleLoginQuery.refetch();
+      if (result.data) {
+        console.log("Apple login successful:", result.data);
+        window.location.href = result.data.url;
+      }
+    } catch (error) {
+      console.error("Apple login failed:", error);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-100 via-purple-50 to-pink-50 flex flex-col items-center justify-center px-4 py-8">
       <div className="w-full max-w-md bg-white rounded-xl p-6">
@@ -125,6 +147,18 @@ const LoginPage: React.FC = () => {
             </Link>
           </p>
         </div>
+
+        <Button
+          type="button"
+          onClick={() => handleAppleLogin()}
+          disabled={appleLoginQuery.isFetching}
+          className="w-full h-12 mb-2 md:mb-3 bg-black hover:bg-gray-900 text-white font-medium rounded-lg flex items-center justify-center gap-2"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="20" height="20" viewBox="0 0 30 30" style={{ fill: "#FFFFFF" }}>
+            <path d="M25.565,9.785c-0.123,0.077-3.051,1.702-3.051,5.305c0.138,4.109,3.695,5.55,3.756,5.55 c-0.061,0.077-0.537,1.963-1.947,3.94C23.204,26.283,21.962,28,20.076,28c-1.794,0-2.438-1.135-4.508-1.135 c-2.223,0-2.852,1.135-4.554,1.135c-1.886,0-3.22-1.809-4.4-3.496c-1.533-2.208-2.836-5.673-2.882-9 c-0.031-1.763,0.307-3.496,1.165-4.968c1.211-2.055,3.373-3.45,5.734-3.496c1.809-0.061,3.419,1.242,4.523,1.242 c1.058,0,3.036-1.242,5.274-1.242C21.394,7.041,23.97,7.332,25.565,9.785z M15.001,6.688c-0.322-1.61,0.567-3.22,1.395-4.247 c1.058-1.242,2.729-2.085,4.17-2.085c0.092,1.61-0.491,3.189-1.533,4.339C18.098,5.937,16.488,6.872,15.001,6.688z"></path>
+          </svg>
+          Continue with Apple
+        </Button>
 
         {/* Google Login Button */}
         <Button

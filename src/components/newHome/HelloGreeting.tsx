@@ -17,8 +17,8 @@ export default function HelloGreeting() {
   const userName = getUserName();
 
   return (
-    <div className="w-full mt-2 md:mt-6">
-      <h1 className="text-lg md:text-2xl font-bold text-gray-900 px-0">
+    <div className="w-full md:max-w-2xl md:mx-auto">
+      <h1 className="text-lg md:text-2xl font-bold text-foreground mb-3 ">
         Hi {userName}, keep up the great work!
       </h1>
     </div>

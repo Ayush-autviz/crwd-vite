@@ -326,8 +326,8 @@ export default function CollectiveCarouselCard({
             {/* Content */}
             <div className="w-full text-left">
               <p className="text-xs md:text-base text-gray-700 mb-2 md:mb-4 leading-relaxed text-left">
-                <span className="font-semibold text-gray-600">{currentCollective.memberCount} {currentCollective.memberCount === 1 ? 'member' : 'members'}</span> {currentCollective.memberCount === 1 ? 'is' : 'are'} currently donating{" "}
-                to <span className="font-semibold text-gray-600">{currentCollective.causeCount} {currentCollective.causeCount === 1 ? 'cause' : 'causes'}</span>.
+                <span className="font-bold text-gray-800">{currentCollective.memberCount} {currentCollective.memberCount === 1 ? 'member' : 'members'}</span> {currentCollective.memberCount === 1 ? 'is' : 'are'} currently donating{" "}
+                to <span className="font-bold text-gray-800">{currentCollective.causeCount} {currentCollective.causeCount === 1 ? 'cause' : 'causes'}</span>.
               </p>
 
               {/* Action Buttons */}
