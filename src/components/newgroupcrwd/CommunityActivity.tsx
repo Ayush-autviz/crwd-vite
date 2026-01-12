@@ -1,5 +1,8 @@
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
+import { useState, useRef, useEffect } from 'react';
+import { useAuthStore } from '@/stores/store';
+import { MessageCircle, Calendar, Heart } from 'lucide-react';
 import ActivityCard from './ActivityCard';
 import CommunityPostCard from '@/components/newHome/CommunityPostCard';
 
@@ -19,7 +22,23 @@ export default function CommunityActivity({
   collectiveData,
 }: CommunityActivityProps) {
   const navigate = useNavigate();
-  
+  const { user } = useAuthStore();
+  const [showCreateMenu, setShowCreateMenu] = useState(false);
+  const menuRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+        setShowCreateMenu(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const isFounder = user?.id === collectiveData?.user?.id || user?.id === collectiveData?.created_by?.id;
+  const toggleMenu = () => setShowCreateMenu(!showCreateMenu);
+
   // Get recent activities from collective data
   const recentActivities = collectiveData?.recent_activities || [];
 
@@ -39,9 +58,9 @@ export default function CommunityActivity({
     },
     collective: post.collective
       ? {
-          name: post.collective.name,
-          id: post.collective.id,
-        }
+        name: post.collective.name,
+        id: post.collective.id,
+      }
       : undefined,
     content: post.content || '',
     imageUrl: post.media || undefined,
@@ -87,18 +106,48 @@ export default function CommunityActivity({
         </div>
         {!isJoined ? (
           <div
-            className="bg-[#1600ff] hover:bg-[#1400cc] text-white font-bold px-2 md:px-3 lg:px-4 py-1 md:py-1.5 lg:py-2 rounded-full text-[10px] md:text-xs lg:text-sm"
+            className="bg-white hover:bg-gray-100 text-gray-800 font-semibold border-1 border-gray-200 px-2 md:px-3 lg:px-4 py-1 md:py-1.5 lg:py-2 rounded-full text-[10px] md:text-xs lg:text-sm"
           >
             Join to post updates
           </div>
         ) : (
-          <Button
-            onClick={() => navigate("/create-post", { state: { collectiveData } })}
-            variant="default"
-            className="px-2 md:px-4 lg:px-6 py-1 md:py-1.5 lg:py-2 rounded-full text-[10px] md:text-xs lg:text-sm font-semibold"
-          >
-            Create Post
-          </Button>
+          <div className="relative" ref={menuRef}>
+            <Button
+              onClick={isFounder ? toggleMenu : () => navigate("/create-post", { state: { collectiveData } })}
+              variant="default"
+              className="px-2 md:px-4 bg-white text-gray-800 shadow-none border-1 border-gray-200 hover:bg-gray-100 hover:text-gray-900  lg:px-6 py-1 md:py-1.5 lg:py-2 rounded-full text-[10px] md:text-xs lg:text-sm font-semibold flex items-center gap-1"
+            >
+              {isFounder ? '+ Create' : 'Create Post'}
+            </Button>
+
+            {showCreateMenu && isFounder && (
+              <div className="absolute right-0 top-full mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-100 z-50 overflow-hidden">
+                <div className="py-1">
+                  <button
+                    onClick={() => navigate("/create-post", { state: { collectiveData } })}
+                    className="w-full text-left px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-3 transition-colors font-medium"
+                  >
+                    <MessageCircle className="w-4 h-4 text-gray-500" />
+                    Create Post
+                  </button>
+                  {/* <button
+                    onClick={() => navigate("/create-event", { state: { collectiveData } })}
+                    className="w-full text-left px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-3 transition-colors"
+                  >
+                    <Calendar className="w-4 h-4 text-gray-500" />
+                    Create Event
+                  </button> */}
+                  <button
+                    onClick={() => navigate("/create-fundraiser", { state: { collectiveData } })}
+                    className="w-full text-left px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-3 transition-colors font-medium"
+                  >
+                    <Heart className="w-4 h-4 text-gray-500" />
+                    Create Fundraiser
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
         )}
       </div>
 
@@ -134,7 +183,7 @@ export default function CommunityActivity({
               </p>
             </div>
           )}
-          
+
           {/* Recent Activities Section */}
           {recentActivities.length > 0 && (
             <div className="mt-4 md:mt-6 space-y-0">

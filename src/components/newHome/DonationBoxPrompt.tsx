@@ -64,7 +64,7 @@ export default function DonationBoxPrompt({ causeCount, hasJoinedCollectives = f
           /* Create Donation Box Card - Show when no donation box exists */
           <Card
             onClick={() => navigate('/donation')}
-            className="cursor-pointer shadow-none border border-gray-200"
+            className="cursor-pointer py-0 shadow-none border border-gray-200"
           >
             <CardContent className="p-3 md:p-6">
               <div className="flex flex-col items-start gap-2.5 md:flex-row md:items-start md:gap-4">

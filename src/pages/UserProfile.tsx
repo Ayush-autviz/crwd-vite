@@ -425,7 +425,7 @@ export default function ProfilePage() {
               )}
 
               {userProfile.inspired_people_count > 0 && (
-                <p className="text-xs md:text-sm lg:text-base mx-auto font-bold text-gray-900">{userProfile.inspired_people_count} Inspired People</p>
+                <p className="text-xs md:text-sm lg:text-base mx-auto font-bold text-gray-900">{userProfile.inspired_people_count} {userProfile.inspired_people_count === 1 ? 'Person' : 'People'} Inspired</p>
               )}
 
 
@@ -460,57 +460,53 @@ export default function ProfilePage() {
               <div className="h-px bg-gray-200 mx-2 mt-2"></div>
 
               {/* Supports Section */}
+              {/* Supports Section */}
               {userProfile.recently_supported_causes && userProfile.recently_supported_causes.length > 0 && (
                 <>
-                  <div className="mt-6">
-                    <div className="flex justify-between items-center mb-4">
+                  <div className="mt-4 md:mt-6">
+                    <div className="flex justify-between items-center mb-3 md:mb-4">
                       <h2 className="text-sm xs:text-base sm:text-xl md:text-3xl font-bold text-gray-900">Supports</h2>
                     </div>
 
                     {/* Grid Layout - Responsive: 2 cols mobile, 3 cols tablet, 4 cols desktop */}
-                    <div className="flex flex-wrap -mx-1.5 sm:-mx-2">
+                    <div className="flex flex-wrap -mx-1 sm:-mx-1.5 md:-mx-2">
                       {userProfile.recently_supported_causes.slice(0, 6).map((cause: any, i: number) => {
-                        // Generate consistent color based on cause name
-                        const colors = [
-                          '#f97316', // orange
-                          '#ec4899', // pink
-                          '#3b82f6', // blue
-                          '#ef4444', // red
-                          '#10b981', // green
-                          '#f97316', // orange (repeat)
-                        ];
-                        const bgColor = colors[i % colors.length];
+                        // Generate consistent color based on cause ID
+                        const bgColor = getConsistentColor(cause.id || cause.name || 'N', avatarColors);
 
                         return (
                           <Link
                             key={cause.id || i}
                             to={`/cause/${cause.id}`}
-                            className="w-1/2 sm:w-1/3 lg:w-1/4 px-1.5 sm:px-2 mb-3"
+                            className="w-1/3 flex-none px-1 sm:px-1.5 md:px-2 mb-2 md:mb-3"
                           >
-                            <div className="bg-white border border-gray-200 rounded-lg p-2 sm:p-3 flex flex-col items-center justify-between h-[100px] sm:h-[120px]">
+                            <div className="bg-white border border-gray-200 rounded-lg p-1.5 sm:p-2 md:p-3 flex flex-col items-center justify-between h-[90px] sm:h-[100px] md:h-[120px]">
                               {cause.image || cause.logo ? (
-                                <Avatar className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg mb-2 flex-shrink-0">
+                                <Avatar className="w-9 h-9 sm:w-10 sm:h-10 md:w-12 md:h-12 rounded-lg mb-1.5 md:mb-2 flex-shrink-0">
                                   <AvatarImage src={cause.image || cause.logo} alt={cause.name} />
                                   <AvatarFallback
                                     style={{ backgroundColor: bgColor }}
-                                    className="text-white text-xs sm:text-sm font-semibold rounded-lg"
+                                    className="text-white text-[10px] sm:text-xs md:text-sm font-semibold rounded-lg"
                                   >
                                     {cause.name?.charAt(0)?.toUpperCase() || 'N'}
                                   </AvatarFallback>
                                 </Avatar>
                               ) : (
                                 <div
-                                  className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg mb-2 flex items-center justify-center flex-shrink-0"
+                                  className="w-9 h-9 sm:w-10 sm:h-10 md:w-12 md:h-12 rounded-lg mb-1.5 md:mb-2 flex items-center justify-center flex-shrink-0"
                                   style={{ backgroundColor: bgColor }}
                                 >
-                                  <span className="text-lg sm:text-xl font-semibold text-white">
+                                  <span className="text-base sm:text-lg md:text-xl font-semibold text-white">
                                     {cause.name?.charAt(0)?.toUpperCase() || 'N'}
                                   </span>
                                 </div>
                               )}
-                              <p className="text-xs font-semibold text-gray-900 text-center line-clamp-2 flex-grow flex items-center justify-center">
-                                {cause.name}
-                              </p>
+                              <div className="flex items-center justify-center flex-grow">
+                                <p className="text-[10px] sm:text-xs font-semibold text-gray-900 text-center line-clamp-2">
+                                  {cause.name}
+                                </p>
+                              </div>
+
                             </div>
                           </Link>
                         );
@@ -518,20 +514,23 @@ export default function ProfilePage() {
                     </div>
 
                     {/* Show more causes text and link */}
-                    {userProfile.recently_supported_causes.length > 6 && (
-                      <div className="flex flex-col items-center gap-2 mt-4">
-                        <p className="text-sm text-gray-500">
-                          + {userProfile.recently_supported_causes.length - 6} more causes
+                    {userProfile.recently_supported_causes.length > 5 && (
+                      <div className="flex flex-col items-center gap-1.5 md:gap-2 mt-3 md:mt-4">
+                        <p className="text-xs md:text-sm text-gray-500">
+                          + {userProfile.supported_causes_count - 6} more causes
                         </p>
-                        <Link to="/interests">
-                          <span className="cursor-pointer hover:underline text-sm text-[#1600ff] font-medium">
-                            See all {userProfile.recently_supported_causes.length} →
+                        <div onClick={() => {
+                          setActiveStatsTab('causes');
+                          setShowStatsSheet(true);
+                        }}>
+                          <span className="cursor-pointer hover:underline text-xs md:text-sm text-[#1600ff] font-medium">
+                            See all {userProfile.supported_causes_count} →
                           </span>
-                        </Link>
+                        </div>
                       </div>
                     )}
                   </div>
-                  <div className="h-px bg-gray-200 mx-2 mt-4"></div>
+                  <div className="h-px bg-gray-200 mt-4"></div>
 
                 </>
               )}

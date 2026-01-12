@@ -109,10 +109,10 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
         {/* <div className="text-[10px] md:text-xs text-gray-500 flex items-center gap-1.5 md:gap-2 mt-0.5 md:mt-1"> */}
         {founder && (
           <div
-            className={`bg-pink-100 rounded-full py-1 px-2 mb-2 ${onFounderClick ? 'cursor-pointer hover:bg-pink-200 transition-colors' : ''}`}
+            className={`bg-pink-100 rounded-full py-1 px-3 mb-2 ${onFounderClick ? 'cursor-pointer hover:bg-pink-200 transition-colors' : ''}`}
             onClick={onFounderClick}
           >
-            <p className="text-pink-500 font-medium text-xs md:text-sm">Founder</p>
+            <p className="text-pink-500 font-medium text-xs md:text-sm">Leader</p>
           </div>
         )}
         {location && (

@@ -317,7 +317,7 @@ export default function CollectiveCarouselCard({
                 <h3 className="font-bold text-sm md:text-lg text-gray-900 mb-0.5 md:mb-1">{currentCollective.name}</h3>
                 {currentCollective.role === 'Admin' && (
                   <p className={`${currentCollective.role === 'Admin' ? 'bg-pink-100 text-red-600' : 'bg-[#a955f7] text-white'} text-xs md:text-sm font-medium px-1.5 md:px-2 py-0.5 rounded-md whitespace-nowrap w-fit`}>
-                    {currentCollective.role === 'Admin' ? 'Founder' : currentCollective.role}
+                    {currentCollective.role === 'Admin' ? 'Leader' : currentCollective.role}
                   </p>
                 )}
               </div>

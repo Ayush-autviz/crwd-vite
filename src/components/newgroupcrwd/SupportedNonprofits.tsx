@@ -112,7 +112,7 @@ export default function SupportedNonprofits({
                     </h3>
 
                     {/* Description */}
-                    <p className="text-xs md:text-sm text-gray-600 leading-relaxed line-clamp-3">
+                    <p className="text-xs text-gray-600 leading-relaxed line-clamp-1 ">
                       {description}
                     </p>
                   </div>

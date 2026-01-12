@@ -6,16 +6,16 @@ export default function CreateCollectiveCard() {
   const navigate = useNavigate();
 
   return (
-    <div className="w-full py-2 md:py-6 md:max-w-2xl md:mx-auto">
+    <div className="w-full py-2 md:max-w-2xl md:mx-auto">
       <Card
         onClick={() => navigate('/create-crwd')}
-        className="cursor-pointer hover:shadow-md transition-shadow border border-gray-200 bg-white"
+        className="cursor-pointer py-0 hover:shadow-md transition-shadow border border-gray-200 bg-white"
       >
         <CardContent className="p-3 md:p-6">
           <div className="flex flex-col items-start gap-2.5 md:flex-row md:items-start md:gap-4">
             {/* Green Icon */}
             <div className="w-8 h-8 md:w-12 md:h-12 rounded-full bg-[#aeff30] flex items-center justify-center flex-shrink-0">
-              <Plus className="w-4 h-4 md:w-6 md:h-6 text-black" strokeWidth={3}/>
+              <Plus className="w-4 h-4 md:w-6 md:h-6 text-black" strokeWidth={3} />
             </div>
             <div className="flex-1 min-w-0 text-left w-full md:w-auto">
               <h3 className="font-bold text-sm md:text-lg text-foreground">
