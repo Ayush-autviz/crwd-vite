@@ -289,14 +289,14 @@ export default function CommunityPostCard({ post, onCommentPress, showSimplified
                 <Link
                   to={`/user-profile/${post.user.id}`}
                   onClick={(e) => e.stopPropagation()}
-                  className="text-xs md:text-base font-bold text-gray-900 hover:underline cursor-pointer"
+                  className="text-sm md:text-base font-bold text-gray-900 hover:underline cursor-pointer"
                 >
                   {displayName}
                 </Link>
                 {!showSimplifiedHeader && post.user.username && (
                   <>
                     <span className="text-gray-400">•</span>
-                    <span className="text-xs md:text-sm text-gray-500">
+                    <span className="text-sm md:text-sm text-gray-500">
                       @{post.user.username}
                     </span>
                   </>
@@ -457,7 +457,7 @@ export default function CommunityPostCard({ post, onCommentPress, showSimplified
             </>
           ) : (
             <>
-              <div className="text-xs md:text-base text-gray-900 leading-relaxed mb-2 md:mb-4 whitespace-pre-line">
+              <div className="text-sm md:text-base text-gray-900 leading-relaxed mb-2 md:mb-4 whitespace-pre-line">
                 {post.content}
               </div>
 
@@ -537,12 +537,12 @@ export default function CommunityPostCard({ post, onCommentPress, showSimplified
                         <Loader2 className="w-4 h-4 md:w-5 md:h-5 animate-spin text-gray-400" />
                       ) : ( */}
                   <Heart
-                    className={`w-3.5 h-3.5 md:w-5 md:h-5 ${isLiked ? "fill-[#ef4444] text-[#ef4444]" : "text-gray-500"
+                    className={`w-4 h-4 md:w-5 md:h-5 ${isLiked ? "fill-[#ef4444] text-[#ef4444]" : "text-gray-500"
                       }`}
                     strokeWidth={2}
                   />
                   {/* )} */}
-                  <span className="text-xs md:text-base font-medium text-gray-500">{likesCount}</span>
+                  <span className="text-sm md:text-base font-medium text-gray-500">{likesCount}</span>
                 </button>
                 <button
                   onClick={(e) => {
@@ -556,8 +556,8 @@ export default function CommunityPostCard({ post, onCommentPress, showSimplified
                   }}
                   className="flex items-center gap-1 hover:opacity-80 transition-opacity"
                 >
-                  <MessageCircle className="w-3.5 h-3.5 md:w-5 md:h-5 text-gray-500" strokeWidth={2} />
-                  <span className="text-xs md:text-base font-medium text-gray-500">{post.comments || 0}</span>
+                  <MessageCircle className="w-4 h-4 md:w-5 md:h-5 text-gray-500" strokeWidth={2} />
+                  <span className="text-sm md:text-base font-medium text-gray-500">{post.comments || 0}</span>
                 </button>
               </div>
               <button

@@ -9,7 +9,7 @@ interface CommunityPostsProps {
   onCommentPress?: (post: any) => void;
 }
 
-export default function CommunityPosts({ 
+export default function CommunityPosts({
   limit = 3,
   startIndex = 0,
   showHeading = true,
@@ -76,9 +76,9 @@ export default function CommunityPosts({
     },
     collective: post.collective
       ? {
-          name: post.collective.name,
-          id: post.collective.id,
-        }
+        name: post.collective.name,
+        id: post.collective.id,
+      }
       : undefined,
     content: post.content || '',
     imageUrl: post.media || undefined,
@@ -100,10 +100,10 @@ export default function CommunityPosts({
     <div className="w-full px-4 my-4 mb-6 md:px-0 md:my-8 md:mb-10">
       {showHeading && (
         <div className="mb-3 md:mb-6">
-          <h2 className="text-sm xs:text-base sm:text-xl md:text-3xl font-bold text-gray-900 mb-1 md:mb-2">
+          <h2 className="text-base sm:text-xl md:text-3xl font-bold text-gray-900 mb-1 md:mb-2">
             Community Updates
           </h2>
-          <p className="text-[10px] sm:text-xs md:text-sm text-gray-600">
+          <p className="text-[11px] sm:text-xs md:text-sm text-gray-600">
             Activity, updates, and discoveries from your community
           </p>
         </div>
@@ -111,9 +111,9 @@ export default function CommunityPosts({
 
       <div className="space-y-2.5 md:space-y-4">
         {transformedPosts.map((post: any) => (
-          <CommunityPostCard 
-            key={post.id} 
-            post={post} 
+          <CommunityPostCard
+            key={post.id}
+            post={post}
             onCommentPress={onCommentPress}
           />
         ))}

@@ -212,7 +212,7 @@ function NotificationSummary({ update }: { update: CommunityUpdate }) {
               <AvatarImage src={update.user.avatar} />
               <AvatarFallback
                 style={{ backgroundColor: update.user.color || '#1600ff' }}
-                className="text-white text-[10px] md:text-sm"
+                className="text-white text-xs font-semibold md:text-sm"
               >
                 {update.user.name
                   .charAt(0)
@@ -225,11 +225,11 @@ function NotificationSummary({ update }: { update: CommunityUpdate }) {
               <div className="flex items-center gap-1 md:gap-2 lg:gap-3 flex-wrap">
                 <Link
                   to={`/user-profile/${update.user.id}`}
-                  className="font-bold text-xs md:text-base text-gray-900 hover:underline block"
+                  className="font-bold text-sm md:text-base text-gray-900 hover:underline block"
                 >
                   {userName}
                 </Link>
-                <p className="text-[10px] md:text-sm text-gray-500">@{update.user.username}</p>
+                <p className="text-sm md:text-sm text-gray-500">@{update.user.username}</p>
               </div>
               {/* {update.collective && (
                 <p className="text-[10px] md:text-sm text-gray-500">{update.collective.name}</p>
@@ -252,16 +252,16 @@ function NotificationSummary({ update }: { update: CommunityUpdate }) {
         <div className="rounded-lg p-1.5 md:p-2.5 mb-2 md:mb-3 flex items-center gap-2 md:gap-3 bg-gray-50">
           {/* Icon */}
           <div className="h-6 w-6 md:h-8 md:w-8 rounded-full flex items-center justify-center flex-shrink-0">
-            <Users className="h-2.5 w-2.5 md:h-5 md:w-5 text-[#1600ff]" />
+            <Users className="h-4 w-4 md:h-5 md:w-5 text-[#1600ff]" />
           </div>
           <div className="flex flex-col gap-1">
             {/* Action Text */}
-            <p className="text-[10px] md:text-sm font-semibold text-gray-800 flex-1">
+            <p className="text-xs md:text-sm font-semibold text-gray-800 flex-1">
               {userName} <span className="font-medium">joined</span>  {cleanActionText}
             </p>
             {/* Supporting X nonprofits - Only on second line if it exists */}
             {nonprofitCount > 0 && (
-              <p className="text-[10px] md:text-sm text-gray-500">
+              <p className="text-[11px] md:text-sm text-gray-500">
                 Supporting {nonprofitCount} nonprofit{nonprofitCount !== 1 ? 's' : ''}
               </p>
             )}
@@ -284,7 +284,7 @@ function NotificationSummary({ update }: { update: CommunityUpdate }) {
             <AvatarImage src={update.user.avatar} />
             <AvatarFallback
               style={{ backgroundColor: update.user.color || '#1600ff' }}
-              className="text-white text-[10px] md:text-sm"
+              className="text-white text-xs font-semibold md:text-sm"
             >
               {update.user.name
                 .charAt(0)
@@ -297,15 +297,15 @@ function NotificationSummary({ update }: { update: CommunityUpdate }) {
             <div className="flex items-center gap-1 md:gap-2 lg:gap-3 flex-wrap">
               <Link
                 to={`/user-profile/${update.user.id}`}
-                className="font-bold text-xs md:text-base text-gray-900 hover:underline block"
+                className="font-bold text-sm md:text-base text-gray-900 hover:underline block"
               >
                 {userName}
               </Link>
-              <p className="text-[10px] md:text-sm text-gray-500">@{update.user.username}</p>
+              <p className="text-sm md:text-sm text-gray-500">@{update.user.username}</p>
             </div>
-            {update.collective && (
+            {/* {update.collective && (
               <p className="text-[10px] md:text-sm text-gray-500">{update.collective.name}</p>
-            )}
+            )} */}
           </div>
         </div>
 
@@ -328,10 +328,10 @@ function NotificationSummary({ update }: { update: CommunityUpdate }) {
       <div className="rounded-lg p-1.5 md:p-3 mb-2 md:mb-3 flex items-center gap-2 md:gap-3 bg-gray-50">
         {/* Icon */}
         <div className="h-6 w-6 md:h-8 md:w-8 rounded-full flex items-center justify-center flex-shrink-0 bg-[#13b981]">
-          <HandHeart className="h-2.5 w-2.5 md:h-5 md:w-5 text-white" />
+          <HandHeart className="h-4 w-4 md:h-5 md:w-5 text-white" />
         </div>
         {/* Action Text */}
-        <p className="text-[10px] md:text-sm font-semibold text-gray-900 flex-1">
+        <p className="text-xs md:text-sm font-semibold text-gray-900 flex-1">
           {actionText}
         </p>
       </div>

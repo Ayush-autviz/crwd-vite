@@ -75,7 +75,7 @@ export default function NewSuggestedCollectives({
                 key={collective.id}
                 className="block"
               >
-                <div className="flex flex-col gap-2.5 md:gap-3 p-3 md:p-4 rounded-lg border border-gray-200 hover:bg-gray-50 cursor-pointer transition-colors min-w-[240px] md:min-w-[280px] max-w-[280px] md:max-w-[320px] h-[220px] md:h-[240px]">
+                <div className="flex flex-col gap-2.5 md:gap-3 p-3 md:p-4 rounded-lg border border-gray-200 hover:bg-gray-50 cursor-pointer transition-colors min-w-[240px] md:min-w-[280px] max-w-[280px] md:max-w-[320px] h-[190px] md:h-[200px]">
                   {/* Icon */}
                   <div className="flex items-center gap-2">
                     <div
@@ -96,7 +96,7 @@ export default function NewSuggestedCollectives({
                     </div>
 
                     {/* Title */}
-                    <h3 className="font-bold text-sm md:text-base text-black flex-shrink-0">
+                    <h3 className="font-bold text-sm md:text-base text-black flex-shrink-0 line-clamp-1">
                       {collective.name}
                     </h3>
                   </div>
@@ -131,7 +131,7 @@ export default function NewSuggestedCollectives({
                   </p>
 
                   {/* Description */}
-                  <p className="text-xs md:text-sm text-muted-foreground leading-relaxed line-clamp-2 flex-1">
+                  <p className="text-xs md:text-sm text-muted-foreground leading-relaxed line-clamp-2">
                     {collective.description}
                   </p>
                 </div>
