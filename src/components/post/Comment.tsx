@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { MessageCircle, EllipsisIcon, Trash2, Loader2 } from 'lucide-react';
 import { Button } from '../ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
@@ -93,8 +94,6 @@ export const Comment: React.FC<CommentProps> = ({
 
   const avatarBgColor = color || getConsistentColor(userId || username || 'U', avatarColors);
 
-  const [isReplying, setIsReplying] = useState(false);
-  const [replyContent, setReplyContent] = useState('');
   const [showMenu, setShowMenu] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
@@ -119,6 +118,19 @@ export const Comment: React.FC<CommentProps> = ({
     };
   }, [showMenu]);
 
+  const navigate = useNavigate();
+
+  const handleReplyClick = () => {
+    onReply(id, `@${username} `);
+  };
+
+  const handleUserClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (userId) {
+      navigate(`/profile/${userId}`);
+    }
+  };
+
   // Delete comment mutation
   const deleteCommentMutation = useMutation({
     mutationFn: () => deleteComment(id.toString()),
@@ -139,32 +151,32 @@ export const Comment: React.FC<CommentProps> = ({
     },
   });
 
-  const handleReplySubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (replyContent.trim()) {
-      onReply(id, replyContent);
-      setReplyContent('');
-      setIsReplying(false);
-    }
-  };
-
-
   return (
     <div className="space-y-2 md:space-y-4">
       <div className="flex gap-2 md:gap-3">
-        <Avatar className="h-6 w-6 md:h-8 md:w-8">
-          <AvatarImage src={avatarUrl} alt={displayName} />
-          <AvatarFallback
-            style={{ backgroundColor: avatarBgColor }}
-            className="text-white text-[10px] md:text-sm font-bold"
-          >
-            {initials}
-          </AvatarFallback>
-        </Avatar>
+        <div
+          onClick={handleUserClick}
+          className="cursor-pointer hover:opacity-80 transition-opacity"
+        >
+          <Avatar className="h-6 w-6 md:h-8 md:w-8">
+            <AvatarImage src={avatarUrl} alt={displayName} />
+            <AvatarFallback
+              style={{ backgroundColor: avatarBgColor }}
+              className="text-white text-[10px] md:text-sm font-bold"
+            >
+              {initials}
+            </AvatarFallback>
+          </Avatar>
+        </div>
         <div className="flex-1">
           <div className="bg-muted p-2 md:p-3 rounded-lg">
             <div className="flex items-center justify-between mb-0.5 md:mb-1">
-              <span className="font-medium text-xs md:text-sm">{displayName}</span>
+              <span
+                onClick={handleUserClick}
+                className="font-medium text-xs md:text-sm cursor-pointer hover:underline"
+              >
+                {displayName}
+              </span>
               {isOwnComment && (
                 <div className="relative" ref={menuRef}>
                   <button
@@ -202,16 +214,9 @@ export const Comment: React.FC<CommentProps> = ({
             <span className="text-muted-foreground">
               {formatDistanceToNow(timestamp, { addSuffix: true })}
             </span>
-            {/* <button
-              onClick={handleLike}
-              className="flex items-center gap-1 text-muted-foreground hover:text-primary transition-colors"
-            >
-              <Heart className={`h-4 w-4 ${isLiked ? 'fill-primary text-primary' : ''}`} />
-              {likes}
-            </button> */}
             {showReplyButton && (
               <button
-                onClick={() => setIsReplying(!isReplying)}
+                onClick={handleReplyClick}
                 className="flex items-center gap-1 text-muted-foreground hover:text-primary transition-colors"
               >
                 <MessageCircle className="h-3 w-3 md:h-4 md:w-4" />
@@ -239,32 +244,6 @@ export const Comment: React.FC<CommentProps> = ({
               </button>
             )}
           </div>
-
-          {isReplying && (
-            <form onSubmit={handleReplySubmit} className="mt-2 md:mt-3">
-              <div className="flex gap-1.5 md:gap-2">
-                <Avatar className="h-5 w-5 md:h-6 md:w-6 mt-1.5">
-                  <AvatarImage src={avatarUrl} alt={displayName} />
-                  <AvatarFallback
-                    style={{ backgroundColor: avatarBgColor }}
-                    className="text-white text-[8px] md:text-xs font-bold"
-                  >
-                    {initials}
-                  </AvatarFallback>
-                </Avatar>
-                <input
-                  type="text"
-                  value={replyContent}
-                  onChange={(e) => setReplyContent(e.target.value)}
-                  placeholder="Write a reply..."
-                  className="flex-1 bg-muted rounded-full px-2 md:px-4 py-1 md:py-2 text-xs md:text-sm focus:outline-none focus:ring-2 focus:ring-primary"
-                />
-                <Button type="submit" size="sm" className="text-xs md:text-sm px-2 md:px-3 py-1 md:py-2">
-                  Reply
-                </Button>
-              </div>
-            </form>
-          )}
         </div>
       </div>
 

@@ -2,16 +2,13 @@ import React, { useState } from "react";
 import {
   Minus,
   Plus,
-  DollarSign,
   Trash2,
   Search,
   X,
   ChevronDown,
   ChevronUp,
-  Book,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Link } from "react-router-dom";
 import {
   Dialog,
   DialogContent,
@@ -24,7 +21,6 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { getCausesBySearch, getJoinCollective, getCollectiveById } from "@/services/api/crwd";
 import { updateDonationBox, cancelDonationBox, getDonationHistory, getDonationBox } from "@/services/api/donation";
 import { useAuthStore } from "@/stores/store";
-import { cn } from "@/lib/utils";
 import { Toast } from "./ui/toast";
 import { getNonprofitColor } from "@/lib/getNonprofitColor";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
@@ -276,7 +272,7 @@ const ManageDonationBox: React.FC<ManageDonationBoxProps> = ({
     } else {
       // Selecting - find the cause data from search results or default causes
       const causeData = causesData?.results?.find((c: any) => c.id === causeId) ||
-                        defaultCausesData?.results?.find((c: any) => c.id === causeId);
+        defaultCausesData?.results?.find((c: any) => c.id === causeId);
       if (causeData) {
         setSelectedCauses((prev) => [...prev, causeId]);
         setSelectedCausesData((prev) => [...prev, causeData]);
@@ -287,14 +283,14 @@ const ManageDonationBox: React.FC<ManageDonationBoxProps> = ({
   const handleToggleCollectiveDropdown = async (collectiveId: number) => {
     const isExpanded = expandedCollectives.has(collectiveId);
     const newExpanded = new Set(expandedCollectives);
-    
+
     if (isExpanded) {
       newExpanded.delete(collectiveId);
       setExpandedCollectives(newExpanded);
     } else {
       newExpanded.add(collectiveId);
       setExpandedCollectives(newExpanded);
-      
+
       // Fetch collective details if not already cached
       if (!collectiveDetails[collectiveId]) {
         setLoadingCollectives(prev => new Set(prev).add(collectiveId));
@@ -315,8 +311,8 @@ const ManageDonationBox: React.FC<ManageDonationBoxProps> = ({
   };
 
   const handleToggleCollective = (collectiveId: number) => {
-    setSelectedCollectives((prev) => 
-      prev.includes(collectiveId) 
+    setSelectedCollectives((prev) =>
+      prev.includes(collectiveId)
         ? prev.filter(id => id !== collectiveId)
         : [...prev, collectiveId]
     );
@@ -343,7 +339,7 @@ const ManageDonationBox: React.FC<ManageDonationBoxProps> = ({
       const attributingCollectiveIdsUpdate = attributingCollectivesFromBoxUpdate.map((collective: any) => collective.id).filter((id: any) => id != null);
       const allCollectiveIdsUpdate = [...existingCollectiveIdsUpdate, ...attributingCollectiveIdsUpdate];
       const uniqueCollectiveIdsUpdate = Array.from(new Set(allCollectiveIdsUpdate));
-      
+
       const remainingExistingCollectiveIds = uniqueCollectiveIdsUpdate.filter((collectiveId: number) => {
         const collectiveIdString = `collective-${collectiveId}`;
         return !temporarilyRemovedCauses.includes(collectiveIdString);
@@ -365,7 +361,7 @@ const ManageDonationBox: React.FC<ManageDonationBoxProps> = ({
       // Get box_causes from donation box data to map attributed_collectives
       const boxCauses = donationBoxData?.box_causes || [];
       const causeToAttributedCollective = new Map<number, number>();
-      
+
       // Map existing causes to their attributed_collective from box_causes
       boxCauses.forEach((boxCause: any) => {
         const causeId = boxCause.cause?.id;
@@ -373,7 +369,7 @@ const ManageDonationBox: React.FC<ManageDonationBoxProps> = ({
           // Check if attributed_collectives exists and is not "manual"
           const attributedCollectives = boxCause.attributed_collectives || [];
           // Find the first numeric collective ID (not "manual")
-          const numericCollectiveId = attributedCollectives.find((ac: any) => 
+          const numericCollectiveId = attributedCollectives.find((ac: any) =>
             typeof ac === 'number' && ac !== 0
           );
           if (numericCollectiveId) {
@@ -481,7 +477,7 @@ const ManageDonationBox: React.FC<ManageDonationBoxProps> = ({
 
   // Get all selected cause IDs (existing + newly selected)
   const allSelectedCauseIds = [...existingCauseIds, ...selectedCauses];
-  
+
   // Get all selected collective IDs (existing + newly selected)
   // Also include collectives from donationBoxData
   const attributingCollectivesForFilter = donationBoxData?.attributing_collectives || [];
@@ -493,13 +489,13 @@ const ManageDonationBox: React.FC<ManageDonationBoxProps> = ({
   // Format next charge date
   const formatNextChargeDate = (dateString?: string) => {
     if (!dateString) return null; // Fallback
-    
+
     try {
       const date = new Date(dateString);
-      const options: Intl.DateTimeFormatOptions = { 
-        year: 'numeric', 
-        month: 'long', 
-        day: 'numeric' 
+      const options: Intl.DateTimeFormatOptions = {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
       };
       return date.toLocaleDateString('en-US', options);
     } catch (error) {
@@ -511,7 +507,7 @@ const ManageDonationBox: React.FC<ManageDonationBoxProps> = ({
   // Get day of month from next charge date
   const getChargeDay = (dateString?: string) => {
     if (!dateString) return '26'; // Fallback
-    
+
     try {
       const date = new Date(dateString);
       const day = date.getDate();
@@ -549,7 +545,7 @@ const ManageDonationBox: React.FC<ManageDonationBoxProps> = ({
   const allCollectiveIdsForValidation = [...existingCollectiveIdsValidation, ...attributingCollectiveIdsValidation];
   // Remove duplicates
   const uniqueCollectiveIdsForValidation = Array.from(new Set(allCollectiveIdsForValidation));
-  
+
   const remainingExistingCollectiveIdsForValidation = uniqueCollectiveIdsForValidation.filter((collectiveId: number) => {
     const collectiveIdString = `collective-${collectiveId}`;
     return !temporarilyRemovedCauses.includes(collectiveIdString);
@@ -561,21 +557,21 @@ const ManageDonationBox: React.FC<ManageDonationBoxProps> = ({
 
   // Get box_causes from donation box to access custom percentages
   const boxCauses = donationBoxData?.box_causes || [];
-  
+
   // Get custom percentage for a cause from box_causes
   const getCausePercentage = (causeId: number) => {
     const boxCause = boxCauses.find((bc: any) => bc.cause?.id === causeId);
     const percentage = boxCause?.percentage;
     return percentage != null ? Number(percentage) : null; // Return custom percentage as number if exists
   };
-  
+
   // Check if there are custom percentages
   const hasCustomPercentages = boxCauses.some((bc: any) => bc.percentage != null);
-  
+
   // Calculate equal distribution percentage and amount per item
   const totalItems = totalCauseIds.length + totalCollectiveIds.length;
   const distributionPercentage = totalItems > 0 ? (hasCustomPercentages ? null : 100 / totalItems) : 0;
-  
+
   // Calculate amount per item - use custom percentage if available, otherwise equal split
   const getAmountPerItem = (causeId: number) => {
     const customPercentage = getCausePercentage(causeId);
@@ -584,7 +580,7 @@ const ManageDonationBox: React.FC<ManageDonationBoxProps> = ({
     }
     return totalItems > 0 ? (editableAmount * 0.9) / totalItems : 0;
   };
-  
+
   // Legacy amountPerItem for backward compatibility (used for collectives)
   const amountPerItem = totalItems > 0 ? (editableAmount * 0.9) / totalItems : 0;
 
@@ -592,7 +588,7 @@ const ManageDonationBox: React.FC<ManageDonationBoxProps> = ({
   const totalCausesCount = totalCauseIds.length;
   const totalCollectivesCount = totalCollectiveIds.length;
   const currentCapacity = totalCausesCount;
-  
+
   // Calculate fees and capacity using the provided formula
   // For donations < $10.00: Flat fee of $1.00
   // For donations ≥ $10.00: 10% of total (covers all platform + processing costs)
@@ -600,7 +596,7 @@ const ManageDonationBox: React.FC<ManageDonationBoxProps> = ({
     const gross = grossAmount;
     let crwdFee: number;
     let net: number;
-    
+
     if (gross < 10.00) {
       // Flat fee of $1.00
       crwdFee = 1.00;
@@ -610,12 +606,12 @@ const ManageDonationBox: React.FC<ManageDonationBoxProps> = ({
       crwdFee = gross * 0.10;
       net = gross - crwdFee;
     }
-    
+
     console.log('=== Fee Calculation (ManageDonationBox) ===');
     console.log('Gross Amount:', gross);
     console.log('CRWD Fee:', crwdFee);
     console.log('Net (Gross - CRWD Fee):', net);
-    
+
     return {
       crwdFee: Math.round(crwdFee * 100) / 100,
       net: Math.round(net * 100) / 100,
@@ -626,7 +622,7 @@ const ManageDonationBox: React.FC<ManageDonationBoxProps> = ({
   const fees = calculateFees(actualDonationAmount);
   const net = fees.net;
   const maxCapacity = Math.floor(net / 0.20);
-  
+
   console.log('=== Capacity Calculation (ManageDonationBox) ===');
   console.log('Editable Amount:', editableAmount);
   console.log('Actual Donation Amount:', actualDonationAmount);
@@ -636,10 +632,10 @@ const ManageDonationBox: React.FC<ManageDonationBoxProps> = ({
   console.log('Current Capacity (totalCausesCount):', currentCapacity);
   console.log('Total Causes Count:', totalCausesCount);
   console.log('Total Collectives Count:', totalCollectivesCount);
-  
+
   const remainingCapacity = maxCapacity - currentCapacity;
   const capacityPercentage = (currentCapacity / maxCapacity) * 100;
-  
+
   console.log('=== Capacity Info (ManageDonationBox) ===');
   console.log('Remaining Capacity:', remainingCapacity);
   console.log('Capacity Percentage:', capacityPercentage);
@@ -662,10 +658,10 @@ const ManageDonationBox: React.FC<ManageDonationBoxProps> = ({
   // Create combined selected causes list for display (existing + newly selected from search results)
   const getSelectedCausesForDisplay = () => {
     const existingList = existingCauses.filter(c => !temporarilyRemovedCauses.includes(c.id));
-    
+
     // Get newly selected causes from stored data
     const newlySelectedCauses = selectedCausesData;
-    
+
     return [...existingList.map(c => ({
       id: c.id,
       name: c.name,
@@ -687,7 +683,7 @@ const ManageDonationBox: React.FC<ManageDonationBoxProps> = ({
   // Create combined selected collectives list for display
   const getSelectedCollectivesForDisplay = () => {
     const existingList = existingCollectives.filter(c => !temporarilyRemovedCauses.includes(c.id));
-    const newlySelectedFromList = joinedCollectivesData?.data?.map((item: any) => item.collective).filter((collective: any) => 
+    const newlySelectedFromList = joinedCollectivesData?.data?.map((item: any) => item.collective).filter((collective: any) =>
       selectedCollectives.includes(collective.id)
     ) || [];
     return [...existingList.map(c => ({
@@ -709,22 +705,22 @@ const ManageDonationBox: React.FC<ManageDonationBoxProps> = ({
   };
 
   // Get search results (max 5) for nonprofits, excluding all selected ones
-  const searchResults = showSearchResults && causesData?.results 
+  const searchResults = showSearchResults && causesData?.results
     ? causesData.results
-        .filter((cause: any) => !allSelectedCauseIds.includes(cause.id))
-        .slice(0, 5)
+      .filter((cause: any) => !allSelectedCauseIds.includes(cause.id))
+      .slice(0, 5)
     : [];
 
   // Get default causes (max 5) when no search is active, excluding all selected ones
   const defaultCauses = !showSearchResults && defaultCausesData?.results
     ? defaultCausesData.results
-        .filter((cause: any) => !allSelectedCauseIds.includes(cause.id))
-        .slice(0, 5)
+      .filter((cause: any) => !allSelectedCauseIds.includes(cause.id))
+      .slice(0, 5)
     : [];
 
   // Get joined collectives, excluding all selected ones
   const joinedCollectives = joinedCollectivesData?.data?.map((item: any) => item.collective) || [];
-  const availableCollectives = joinedCollectives.filter((collective: any) => 
+  const availableCollectives = joinedCollectives.filter((collective: any) =>
     !allSelectedCollectiveIds.includes(collective.id)
   );
 
@@ -732,8 +728,8 @@ const ManageDonationBox: React.FC<ManageDonationBoxProps> = ({
     <div className="w-full min-h-screen bg-white flex flex-col ">
       {/* Content Container with max-width */}
       <div className="md:max-w-[60%] mx-auto w-full">
-      {/* Header */}
-      {/* <div className="bg-white border-b border-gray-200 h-16 p-4 flex items-center">
+        {/* Header */}
+        {/* <div className="bg-white border-b border-gray-200 h-16 p-4 flex items-center">
         <button
           onClick={() => onBack()}
           className="flex items-center justify-center h-8 w-8 rounded-full bg-gray-100 text-gray-700 hover:bg-gray-200 transition-colors mr-2 cursor-pointer"
@@ -748,81 +744,80 @@ const ManageDonationBox: React.FC<ManageDonationBoxProps> = ({
         <div className="w-10"></div>
       </div> */}
 
-      {/* Donation Box Summary Card */}
-      <div className="mx-3 md:mx-4 mt-3 md:mt-4 mb-4 md:mb-6">
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-          {/* Gradient Header */}
-          <div className="bg-gradient-to-r from-blue-500 to-purple-500 h-1 md:h-2"></div>
+        {/* Donation Box Summary Card */}
+        <div className="mx-3 md:mx-4 mt-3 md:mt-4 mb-4 md:mb-6">
+          <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+            {/* Gradient Header */}
+            <div className="bg-gradient-to-r from-blue-500 to-purple-500 h-1 md:h-2"></div>
 
-          <div className="p-4 md:p-6">
-            {/* Monthly Donation Section */}
-            <div className="mb-4 md:mb-6">
-              <h2 className="text-sm md:text-base font-medium text-gray-900 mb-2 md:mb-3">Monthly Donation</h2>
-              <div className="flex items-center justify-between mb-1.5 md:mb-2">
-                <div className="flex items-baseline gap-1.5 md:gap-2">
-                  {isEditingAmount ? (
-                    <input
-                      type="text"
-                      value={editableAmount}
-                      onChange={handleAmountChange}
-                      onBlur={() => setIsEditingAmount(false)}
-                      autoFocus
-                      className="text-3xl md:text-4xl font-bold text-gray-900 bg-transparent border-b border-gray-300 w-20 md:w-24 text-center focus:outline-none"
-                    />
-                  ) : (
-                    <>
-                      <span className="text-3xl md:text-4xl font-bold text-gray-900">${editableAmount}</span>
-                      <span className="text-sm md:text-base text-gray-600">/   month</span>
-                    </>
-                  )}
-                </div>
-                <div className="flex items-center gap-1.5 md:gap-2">
-                  <button
-                    onClick={decrementAmount}
-                    disabled={editableAmount <= 5}
-                    className={`w-7 h-7 md:w-8 md:h-8 rounded-full flex items-center justify-center transition-colors ${
-                      editableAmount > 5 
-                        ? 'bg-gray-100 hover:bg-gray-200' 
+            <div className="p-4 md:p-6">
+              {/* Monthly Donation Section */}
+              <div className="mb-4 md:mb-6">
+                <h2 className="text-sm md:text-base font-medium text-gray-900 mb-2 md:mb-3">Monthly Donation</h2>
+                <div className="flex items-center justify-between mb-1.5 md:mb-2">
+                  <div className="flex items-baseline gap-1.5 md:gap-2">
+                    {isEditingAmount ? (
+                      <input
+                        type="text"
+                        value={editableAmount}
+                        onChange={handleAmountChange}
+                        onBlur={() => setIsEditingAmount(false)}
+                        autoFocus
+                        className="text-3xl md:text-4xl font-bold text-gray-900 bg-transparent border-b border-gray-300 w-20 md:w-24 text-center focus:outline-none"
+                      />
+                    ) : (
+                      <>
+                        <span className="text-3xl md:text-4xl font-bold text-gray-900">${editableAmount}</span>
+                        <span className="text-sm md:text-base text-gray-600">/   month</span>
+                      </>
+                    )}
+                  </div>
+                  <div className="flex items-center gap-1.5 md:gap-2">
+                    <button
+                      onClick={decrementAmount}
+                      disabled={editableAmount <= 5}
+                      className={`w-7 h-7 md:w-8 md:h-8 rounded-full flex items-center justify-center transition-colors ${editableAmount > 5
+                        ? 'bg-gray-100 hover:bg-gray-200'
                         : 'bg-gray-200 cursor-not-allowed opacity-50'
-                    }`}
-                    aria-label="Decrease amount"
-                  >
-                    <Minus className="w-3.5 h-3.5 md:w-4 md:h-4 text-gray-600 font-bold" strokeWidth={3} />
-                  </button>
-                  <button
-                    onClick={incrementAmount}
-                    className="w-7 h-7 md:w-8 md:h-8 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center transition-colors"
-                    aria-label="Increase amount"
-                  >
-                    <Plus className="w-3.5 h-3.5 md:w-4 md:h-4 text-gray-600" />
-                  </button>
+                        }`}
+                      aria-label="Decrease amount"
+                    >
+                      <Minus className="w-3.5 h-3.5 md:w-4 md:h-4 text-gray-600 font-bold" strokeWidth={3} />
+                    </button>
+                    <button
+                      onClick={incrementAmount}
+                      className="w-7 h-7 md:w-8 md:h-8 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center transition-colors"
+                      aria-label="Increase amount"
+                    >
+                      <Plus className="w-3.5 h-3.5 md:w-4 md:h-4 text-gray-600" />
+                    </button>
+                  </div>
                 </div>
+                {lifetimeAmount > 0 && (
+                  <p className="text-xs md:text-sm text-gray-600">${lifetimeAmount.toLocaleString()} lifetime</p>
+                )}
               </div>
-              {lifetimeAmount > 0 && (
-                <p className="text-xs md:text-sm text-gray-600">${lifetimeAmount.toLocaleString()} lifetime</p>
-              )}
-            </div>
 
-            {/* Information Banner - Show when amount has changed and donation box is active */}
-            {isActive && nextChargeDate && formatNextChargeDate(nextChargeDate) && (
-              <div className="bg-blue-50 rounded-lg px-3 md:px-4 py-2.5 md:py-3 mb-4 md:mb-6 border border-blue-100">
-                <p className="text-xs md:text-sm text-blue-700">
-                  Changes take effect on your next billing cycle ({formatNextChargeDate(nextChargeDate)} of the month)
+              {/* Information Banner - Show when amount has changed and donation box is active */}
+              {isActive && nextChargeDate && formatNextChargeDate(nextChargeDate) && (
+                <div className="bg-blue-50 rounded-lg px-3 md:px-4 py-2.5 md:py-3 mb-4 md:mb-6 border border-blue-100">
+                  <p className="text-xs md:text-sm text-blue-700">
+                    Changes take effect on your next billing cycle ({formatNextChargeDate(nextChargeDate)} of the month)
+                  </p>
+                </div>
+              )}
+
+
+
+              {/* Supported Entities */}
+              <div className="bg-gray-100 rounded-lg px-3 md:px-4 py-2.5 md:py-3 mb-4 md:mb-6 text-center">
+                <p className="text-xs md:text-sm font-bold text-gray-900">
+                  {totalCausesCount} Cause{totalCausesCount !== 1 ? 's' : ''} • {totalCollectivesCount} Collective{totalCollectivesCount !== 1 ? 's' : ''}
                 </p>
               </div>
-            )}
 
-           
-
-            {/* Supported Entities */}
-            <div className="bg-gray-100 rounded-lg px-3 md:px-4 py-2.5 md:py-3 mb-4 md:mb-6 text-center">
-              <p className="text-xs md:text-sm font-bold text-gray-900">
-                {totalCausesCount} Cause{totalCausesCount !== 1 ? 's' : ''} • {totalCollectivesCount} Collective{totalCollectivesCount !== 1 ? 's' : ''}
-              </p>
-            </div>
-
-            {/* Donation Box Capacity */}
-            {/* <div className="bg-gradient-to-br from-blue-50 to-purple-50 rounded-lg p-3 md:p-4 mb-4 md:mb-6">
+              {/* Donation Box Capacity */}
+              {/* <div className="bg-gradient-to-br from-blue-50 to-purple-50 rounded-lg p-3 md:p-4 mb-4 md:mb-6">
               <div className="flex items-center justify-between mb-1.5 md:mb-2">
                 <h3 className="text-xs md:text-sm font-bold text-blue-600">Donation Box Capacity</h3>
                 <span className="text-xs md:text-sm text-gray-900">{currentCapacity}/{maxCapacity} causes</span>
@@ -838,8 +833,8 @@ const ManageDonationBox: React.FC<ManageDonationBoxProps> = ({
               </p>
             </div> */}
 
-            {/* Payment Schedule and Action Buttons */}
-            {/* <div className="text-sm text-gray-600 mb-4 text-center">
+              {/* Payment Schedule and Action Buttons */}
+              {/* <div className="text-sm text-gray-600 mb-4 text-center">
               on the {getChargeDay(nextChargeDate)} of every month
             </div>
             <div className="flex w-full max-w-xs mx-auto justify-between gap-2">
@@ -858,11 +853,11 @@ const ManageDonationBox: React.FC<ManageDonationBoxProps> = ({
                 <span className="text-xs text-gray-600 underline">transaction history</span>
               </Link>
             </div> */}
+            </div>
           </div>
         </div>
-      </div>
-      {/* Tabs Navigation */}
-      {/* <div className="mx-4 mt-4">
+        {/* Tabs Navigation */}
+        {/* <div className="mx-4 mt-4">
         <div className="flex rounded-xl overflow-hidden border bg-white shadow-sm">
           <button
             className={cn(
@@ -897,257 +892,382 @@ const ManageDonationBox: React.FC<ManageDonationBoxProps> = ({
         </div>
       </div> */}
 
-      {/* Content Area */}
-      <div className="flex-1 mt-3 md:mt-4 mb-20 md:mb-24 overflow-auto">
-        {activeTab === "nonprofits" ? (
-          <div className="px-3 md:px-4">
-            {/* Selected Nonprofits - Combined existing + newly selected */}
-            {(() => {
-              const selectedCausesForDisplay = getSelectedCausesForDisplay();
-              return selectedCausesForDisplay.length > 0 && (
-                <div className="mb-4 md:mb-6">
-                  <div className="flex items-center justify-between mb-2">
-                    <div>
-                      <h2 className="text-lg md:text-xl font-bold text-gray-800">Your Selected Causes</h2>
-                      <p className="text-xs md:text-sm text-gray-600 mt-0.5 md:mt-1">Your Donation Box. Add or remove anytime.</p>
+        {/* Content Area */}
+        <div className="flex-1 mt-3 md:mt-4 mb-20 md:mb-24 overflow-auto">
+          {activeTab === "nonprofits" ? (
+            <div className="px-3 md:px-4">
+              {/* Selected Nonprofits - Combined existing + newly selected */}
+              {(() => {
+                const selectedCausesForDisplay = getSelectedCausesForDisplay();
+                return selectedCausesForDisplay.length > 0 && (
+                  <div className="mb-4 md:mb-6">
+                    <div className="flex items-center justify-between mb-2">
+                      <div>
+                        <h2 className="text-lg md:text-xl font-bold text-gray-800">Your Selected Causes</h2>
+                        <p className="text-xs md:text-sm text-gray-600 mt-0.5 md:mt-1">Your Donation Box. Add or remove anytime.</p>
+                      </div>
+                    </div>
+                    <div className="space-y-2.5 md:space-y-3">
+                      {selectedCausesForDisplay.map((org) => {
+                        const causeId = org.isNewlySelected ? (org as any).causeId : parseInt(org.id.replace('cause-', ''));
+                        const colors = getNonprofitColor(causeId || org.name);
+                        return (
+                          <div
+                            key={org.id}
+                            className="bg-white rounded-xl px-3 md:px-4 py-3 md:py-4 shadow-sm border border-gray-200"
+                          >
+                            <div className="flex gap-3 md:gap-4 items-center">
+                              <Avatar className="w-10 h-10 md:w-12 md:h-12 rounded-lg flex-shrink-0 border border-gray-200">
+                                <AvatarImage src={org.imageUrl} />
+                                <AvatarFallback
+                                  style={{ backgroundColor: colors.bgColor }}
+                                  className="font-semibold rounded-lg text-lg md:text-xl"
+                                >
+                                  {org.name.charAt(0).toUpperCase()}
+                                </AvatarFallback>
+                              </Avatar>
+                              <div className="flex-1 min-w-0">
+                                <h3 className="font-bold text-gray-900 text-sm md:text-base mb-0.5 md:mb-1">
+                                  {org.name}
+                                </h3>
+                                {org.description && (
+                                  <p className="text-xs md:text-sm text-gray-500 line-clamp-1">
+                                    {org.description}
+                                  </p>
+                                )}
+                              </div>
+                              <div className="flex items-center gap-3 md:gap-4">
+                                <div className="text-right">
+                                  <div className="font-bold text-gray-900 text-sm md:text-base">
+                                    {(() => {
+                                      const customPercentage = getCausePercentage(causeId);
+                                      return customPercentage != null
+                                        ? `${Number(customPercentage).toFixed(1)}%`
+                                        : distributionPercentage != null
+                                          ? `${Number(distributionPercentage).toFixed(1)}%`
+                                          : '0%';
+                                    })()}
+                                  </div>
+                                  <div className="text-xs md:text-sm text-gray-500">
+                                    ${getAmountPerItem(causeId).toFixed(2)}/mo
+                                  </div>
+                                </div>
+                                <button
+                                  className="text-red-500 hover:text-red-600 transition-colors flex-shrink-0"
+                                  onClick={() => handleDeselectCause(causeId, org.isNewlySelected, org.name)}
+                                  aria-label="Remove cause"
+                                >
+                                  <Trash2 size={16} className="md:w-[18px] md:h-[18px]" />
+                                </button>
+                              </div>
+                            </div>
+                          </div>
+                        );
+                      })}
                     </div>
                   </div>
-                  <div className="space-y-2.5 md:space-y-3">
-                    {selectedCausesForDisplay.map((org) => {
-                      const causeId = org.isNewlySelected ? (org as any).causeId : parseInt(org.id.replace('cause-', ''));
-                      const colors = getNonprofitColor(causeId || org.name);
-                      return (
-                        <div
-                          key={org.id}
-                          className="bg-white rounded-xl px-3 md:px-4 py-3 md:py-4 shadow-sm border border-gray-200"
-                        >
-                          <div className="flex gap-3 md:gap-4 items-center">
+                );
+              })()}
+
+              {/* Search Section */}
+              <div className="mb-4 md:mb-6">
+                <h2 className="text-lg md:text-xl font-bold text-gray-800 mb-3 md:mb-4">
+                  Add More Causes
+                </h2>
+                <div className="flex gap-2 mb-3 md:mb-4">
+                  <div className="relative flex-1">
+                    <Search className="absolute left-2.5 md:left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4 md:w-5 md:h-5" />
+                    <input
+                      type="text"
+                      placeholder="Search for causes..."
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter') {
+                          handleSearch();
+                        }
+                      }}
+                      className="w-full pl-8 md:pl-10 pr-3 md:pr-4 py-2 md:py-2.5 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#1600ff] text-sm md:text-base"
+                    />
+                    {searchQuery && (
+                      <button
+                        onClick={() => {
+                          setSearchQuery("");
+                          setShowSearchResults(false);
+                        }}
+                        className="absolute right-2.5 md:right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                      >
+                        <X size={14} className="md:w-4 md:h-4" />
+                      </button>
+                    )}
+                  </div>
+                </div>
+
+              </div>
+
+              {/* Default Causes - Show when no search is active */}
+              {!showSearchResults && (
+                <div className="mb-4 md:mb-6">
+                  <h3 className="text-xs md:text-sm font-semibold text-gray-700 mb-2 md:mb-3">
+                    Suggested Nonprofits
+                  </h3>
+                  {defaultCausesLoading ? (
+                    <p className="text-gray-500 text-center py-3 md:py-4 text-sm md:text-base">Loading...</p>
+                  ) : defaultCauses.length > 0 ? (
+                    <div className="space-y-2.5 md:space-y-3">
+                      {defaultCauses.map((cause: any) => {
+                        const isSelected = selectedCauses.includes(cause.id);
+                        const colors = getNonprofitColor(cause.id || cause.name);
+                        return (
+                          <div
+                            key={cause.id}
+                            className="flex items-center gap-3 md:gap-4 bg-white rounded-xl px-3 md:px-4 py-3 md:py-4 shadow-sm border border-gray-200 hover:bg-gray-50 transition-colors cursor-pointer"
+                            onClick={() => handleToggleCause(cause.id)}
+                          >
                             <Avatar className="w-10 h-10 md:w-12 md:h-12 rounded-lg flex-shrink-0 border border-gray-200">
-                              <AvatarImage src={org.imageUrl} />
+                              <AvatarImage src={cause.image} />
                               <AvatarFallback
                                 style={{ backgroundColor: colors.bgColor }}
                                 className="font-semibold rounded-lg text-lg md:text-xl"
                               >
-                                {org.name.charAt(0).toUpperCase()}
+                                {cause.name?.charAt(0)?.toUpperCase() || 'C'}
                               </AvatarFallback>
                             </Avatar>
                             <div className="flex-1 min-w-0">
-                              <h3 className="font-bold text-gray-900 text-sm md:text-base mb-0.5 md:mb-1">
-                                {org.name}
-                              </h3>
-                              {org.description && (
-                                <p className="text-xs md:text-sm text-gray-500 line-clamp-1">
-                                  {org.description}
-                                </p>
-                              )}
+                              <h3 className="font-bold text-gray-900 text-sm md:text-base mb-0.5 md:mb-1">{cause.name}</h3>
+                              <p className="text-xs md:text-sm text-gray-500 line-clamp-1">{cause.mission || cause.description}</p>
                             </div>
-                            <div className="flex items-center gap-3 md:gap-4">
-                              <div className="text-right">
-                                <div className="font-bold text-gray-900 text-sm md:text-base">
-                                  {(() => {
-                                    const customPercentage = getCausePercentage(causeId);
-                                    return customPercentage != null 
-                                      ? `${Number(customPercentage).toFixed(1)}%` 
-                                      : distributionPercentage != null 
-                                        ? `${Number(distributionPercentage).toFixed(1)}%` 
-                                        : '0%';
-                                  })()}
-                                </div>
-                                <div className="text-xs md:text-sm text-gray-500">
-                                  ${getAmountPerItem(causeId).toFixed(2)}/mo
-                                </div>
-                              </div>
+                            {!isSelected && (
                               <button
-                                className="text-red-500 hover:text-red-600 transition-colors flex-shrink-0"
-                                onClick={() => handleDeselectCause(causeId, org.isNewlySelected, org.name)}
-                                aria-label="Remove cause"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleToggleCause(cause.id);
+                                }}
+                                className="w-7 h-7 md:w-8 md:h-8 rounded-full bg-red-100 hover:bg-red-200 flex items-center justify-center transition-colors flex-shrink-0"
                               >
-                                <Trash2 size={16} className="md:w-[18px] md:h-[18px]" />
+                                <Plus size={14} className="md:w-4 md:h-4 text-pink-600" strokeWidth={3} />
                               </button>
-                            </div>
+                            )}
+                            {isSelected && (
+                              <div className="w-7 h-7 md:w-8 md:h-8 rounded-full bg-blue-600 flex items-center justify-center flex-shrink-0">
+                                <svg className="w-3.5 h-3.5 md:w-4 md:h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                  <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                                </svg>
+                              </div>
+                            )}
                           </div>
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
-              );
-            })()}
-
-            {/* Search Section */}
-            <div className="mb-4 md:mb-6">
-              <h2 className="text-lg md:text-xl font-bold text-gray-800 mb-3 md:mb-4">
-                Add More Causes
-              </h2>
-              <div className="flex gap-2 mb-3 md:mb-4">
-                <div className="relative flex-1">
-                  <Search className="absolute left-2.5 md:left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4 md:w-5 md:h-5" />
-                  <input
-                    type="text"
-                    placeholder="Search for causes..."
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter') {
-                        handleSearch();
-                      }
-                    }}
-                    className="w-full pl-8 md:pl-10 pr-3 md:pr-4 py-2 md:py-2.5 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#1600ff] text-sm md:text-base"
-                  />
-                  {searchQuery && (
-                    <button
-                      onClick={() => {
-                        setSearchQuery("");
-                        setShowSearchResults(false);
-                      }}
-                      className="absolute right-2.5 md:right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
-                    >
-                      <X size={14} className="md:w-4 md:h-4" />
-                    </button>
+                        );
+                      })}
+                    </div>
+                  ) : (
+                    <p className="text-gray-500 text-center py-3 md:py-4 text-sm md:text-base">No nonprofits available</p>
                   )}
                 </div>
-              </div>
-              
-            </div>
+              )}
 
-            {/* Default Causes - Show when no search is active */}
-            {!showSearchResults && (
-              <div className="mb-4 md:mb-6">
-                <h3 className="text-xs md:text-sm font-semibold text-gray-700 mb-2 md:mb-3">
-                  Suggested Nonprofits
-                </h3>
-                {defaultCausesLoading ? (
-                  <p className="text-gray-500 text-center py-3 md:py-4 text-sm md:text-base">Loading...</p>
-                ) : defaultCauses.length > 0 ? (
-                  <div className="space-y-2.5 md:space-y-3">
-                    {defaultCauses.map((cause: any) => {
-                      const isSelected = selectedCauses.includes(cause.id);
-                      const colors = getNonprofitColor(cause.id || cause.name);
-                      return (
-                        <div
-                          key={cause.id}
-                          className="flex items-center gap-3 md:gap-4 bg-white rounded-xl px-3 md:px-4 py-3 md:py-4 shadow-sm border border-gray-200 hover:bg-gray-50 transition-colors cursor-pointer"
-                          onClick={() => handleToggleCause(cause.id)}
-                        >
-                          <Avatar className="w-10 h-10 md:w-12 md:h-12 rounded-lg flex-shrink-0 border border-gray-200">
-                            <AvatarImage src={cause.image} />
-                            <AvatarFallback
-                              style={{ backgroundColor: colors.bgColor }}
-                              className="font-semibold rounded-lg text-lg md:text-xl"
-                            >
-                              {cause.name?.charAt(0)?.toUpperCase() || 'C'}
-                            </AvatarFallback>
-                          </Avatar>
-                          <div className="flex-1 min-w-0">
-                            <h3 className="font-bold text-gray-900 text-sm md:text-base mb-0.5 md:mb-1">{cause.name}</h3>
-                            <p className="text-xs md:text-sm text-gray-500 line-clamp-1">{cause.mission || cause.description}</p>
-                          </div>
-                          {!isSelected && (
-                            <button
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                handleToggleCause(cause.id);
-                              }}
-                              className="w-7 h-7 md:w-8 md:h-8 rounded-full bg-red-100 hover:bg-red-200 flex items-center justify-center transition-colors flex-shrink-0"
-                            >
-                              <Plus size={14} className="md:w-4 md:h-4 text-pink-600" strokeWidth={3} />
-                            </button>
-                          )}
-                          {isSelected && (
-                            <div className="w-7 h-7 md:w-8 md:h-8 rounded-full bg-blue-600 flex items-center justify-center flex-shrink-0">
-                              <svg className="w-3.5 h-3.5 md:w-4 md:h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
-                                <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                              </svg>
-                            </div>
-                          )}
-                        </div>
-                      );
-                    })}
-                  </div>
-                ) : (
-                  <p className="text-gray-500 text-center py-3 md:py-4 text-sm md:text-base">No nonprofits available</p>
-                )}
-              </div>
-            )}
-
-            {/* Search Results */}
-            {showSearchResults && (
-              <div className="mb-4 md:mb-6">
-                <h3 className="text-xs md:text-sm font-semibold text-gray-700 mb-2 md:mb-3">
-                  Search Results (Max 5)
-                </h3>
-                {causesLoading ? (
-                  <p className="text-gray-500 text-center py-3 md:py-4 text-sm md:text-base">Loading...</p>
-                ) : searchResults.length > 0 ? (
-                  <div className="space-y-2.5 md:space-y-3">
-                    {searchResults.map((cause: any) => {
-                      const isSelected = selectedCauses.includes(cause.id);
-                      const colors = getNonprofitColor(cause.id || cause.name);
-                      return (
-                        <div
-                          key={cause.id}
-                          className="flex items-center gap-3 md:gap-4 bg-white rounded-xl px-3 md:px-4 py-3 md:py-4 shadow-sm border border-gray-200 hover:bg-gray-50 transition-colors"
-                        >
-                          <div 
-                            className="w-10 h-10 md:w-12 md:h-12 flex-shrink-0 rounded-lg flex items-center justify-center"
-                            style={{ backgroundColor: colors.bgColor }}
-                          >
-                            <span 
-                              className="text-lg md:text-xl font-bold"
-                              style={{ color: colors.textColor }}
-                            >
-                              {cause.name?.charAt(0)?.toUpperCase() || 'C'}
-                            </span>
-                          </div>
-                          <div className="flex-1 min-w-0">
-                            <h3 className="font-bold text-gray-900 text-sm md:text-base mb-0.5 md:mb-1">{cause.name}</h3>
-                            <p className="text-xs md:text-sm text-gray-500 line-clamp-1">{cause.mission || cause.description}</p>
-                          </div>
-                          {!isSelected && (
-                            <button
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                handleToggleCause(cause.id);
-                              }}
-                              className="w-7 h-7 md:w-8 md:h-8 rounded-full bg-red-100 hover:bg-red-200 flex items-center justify-center transition-colors flex-shrink-0"
-                            >
-                              <Plus size={14} className="md:w-4 md:h-4 text-pink-600" strokeWidth={3} />
-                            </button>
-                          )}
-                          {isSelected && (
-                            <div className="w-7 h-7 md:w-8 md:h-8 rounded-full bg-blue-600 flex items-center justify-center flex-shrink-0">
-                              <svg className="w-3.5 h-3.5 md:w-4 md:h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
-                                <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                              </svg>
-                            </div>
-                          )}
-                        </div>
-                      );
-                    })}
-                  </div>
-                ) : (
-                  <p className="text-gray-500 text-center py-3 md:py-4 text-sm md:text-base">No nonprofits found</p>
-                )}
-              </div>
-            )}
-          </div>
-                        ) : (
-          <div className="px-3 md:px-4">
-            {/* Selected Collectives - Combined existing + newly selected */}
-            {(() => {
-              const selectedCollectivesForDisplay = getSelectedCollectivesForDisplay();
-              return selectedCollectivesForDisplay.length > 0 && (
+              {/* Search Results */}
+              {showSearchResults && (
                 <div className="mb-4 md:mb-6">
-                  <h2 className="text-sm md:text-base font-semibold text-gray-700 uppercase mb-3 md:mb-4 tracking-wide">
-                    Selected Collectives
-                  </h2>
+                  <h3 className="text-xs md:text-sm font-semibold text-gray-700 mb-2 md:mb-3">
+                    Search Results (Max 5)
+                  </h3>
+                  {causesLoading ? (
+                    <p className="text-gray-500 text-center py-3 md:py-4 text-sm md:text-base">Loading...</p>
+                  ) : searchResults.length > 0 ? (
+                    <div className="space-y-2.5 md:space-y-3">
+                      {searchResults.map((cause: any) => {
+                        const isSelected = selectedCauses.includes(cause.id);
+                        const colors = getNonprofitColor(cause.id || cause.name);
+                        return (
+                          <div
+                            key={cause.id}
+                            className="flex items-center gap-3 md:gap-4 bg-white rounded-xl px-3 md:px-4 py-3 md:py-4 shadow-sm border border-gray-200 hover:bg-gray-50 transition-colors"
+                          >
+                            <Avatar className="w-10 h-10 md:w-12 md:h-12 rounded-lg flex-shrink-0 border border-gray-200">
+                              <AvatarImage src={cause.image || cause.logo || cause.imageUrl} />
+                              <AvatarFallback
+                                style={{ backgroundColor: colors.bgColor }}
+                                className="font-semibold rounded-lg text-lg md:text-xl"
+                              >
+                                {cause.name?.charAt(0)?.toUpperCase() || 'C'}
+                              </AvatarFallback>
+                            </Avatar>
+                            <div className="flex-1 min-w-0">
+                              <h3 className="font-bold text-gray-900 text-sm md:text-base mb-0.5 md:mb-1">{cause.name}</h3>
+                              <p className="text-xs md:text-sm text-gray-500 line-clamp-1">{cause.mission || cause.description}</p>
+                            </div>
+                            {!isSelected && (
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleToggleCause(cause.id);
+                                }}
+                                className="w-7 h-7 md:w-8 md:h-8 rounded-full bg-red-100 hover:bg-red-200 flex items-center justify-center transition-colors flex-shrink-0"
+                              >
+                                <Plus size={14} className="md:w-4 md:h-4 text-pink-600" strokeWidth={3} />
+                              </button>
+                            )}
+                            {isSelected && (
+                              <div className="w-7 h-7 md:w-8 md:h-8 rounded-full bg-blue-600 flex items-center justify-center flex-shrink-0">
+                                <svg className="w-3.5 h-3.5 md:w-4 md:h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                  <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                                </svg>
+                              </div>
+                            )}
+                          </div>
+                        );
+                      })}
+                    </div>
+                  ) : (
+                    <p className="text-gray-500 text-center py-3 md:py-4 text-sm md:text-base">No nonprofits found</p>
+                  )}
+                </div>
+              )}
+            </div>
+          ) : (
+            <div className="px-3 md:px-4">
+              {/* Selected Collectives - Combined existing + newly selected */}
+              {(() => {
+                const selectedCollectivesForDisplay = getSelectedCollectivesForDisplay();
+                return selectedCollectivesForDisplay.length > 0 && (
+                  <div className="mb-4 md:mb-6">
+                    <h2 className="text-sm md:text-base font-semibold text-gray-700 uppercase mb-3 md:mb-4 tracking-wide">
+                      Selected Collectives
+                    </h2>
+                    <div className="space-y-2.5 md:space-y-3">
+                      {selectedCollectivesForDisplay.map((org) => {
+                        const collectiveId = org.isNewlySelected ? (org as any).collectiveId : parseInt(org.id.replace('collective-', ''));
+                        const isExpanded = expandedCollectives.has(collectiveId);
+                        const details = collectiveDetails[collectiveId];
+                        const isLoading = loadingCollectives.has(collectiveId);
+
+                        // Generate consistent color for collective
+                        const collectiveColors = [
+                          { bg: '#dbeafe', text: '#1e40af' }, // blue
+                          { bg: '#fce7f3', text: '#831843' }, // pink
+                          { bg: '#e9d5ff', text: '#6b21a8' }, // purple
+                          { bg: '#d1fae5', text: '#065f46' }, // green
+                          { bg: '#fed7aa', text: '#9a3412' }, // orange
+                        ];
+                        const colorIndex = (org.name?.charCodeAt(0) || 0) % collectiveColors.length;
+                        const collectiveColor = collectiveColors[colorIndex];
+
+                        return (
+                          <div key={org.id}>
+                            <div className="bg-white rounded-xl px-3 md:px-4 py-3 md:py-4 shadow-sm border border-gray-200">
+                              <div className="flex gap-3 md:gap-4 items-center">
+                                <div
+                                  className="flex gap-3 md:gap-4 items-center cursor-pointer flex-1 min-w-0"
+                                  onClick={() => handleToggleCollectiveDropdown(collectiveId)}
+                                >
+                                  <div
+                                    className="w-10 h-10 md:w-12 md:h-12 flex-shrink-0 rounded-lg flex items-center justify-center"
+                                    style={{ backgroundColor: collectiveColor.bg }}
+                                  >
+                                    <span
+                                      className="text-lg md:text-xl font-bold"
+                                      style={{ color: collectiveColor.text }}
+                                    >
+                                      {org.name.charAt(0).toUpperCase()}
+                                    </span>
+                                  </div>
+                                  <div className="flex-1 min-w-0">
+                                    <h3 className="font-bold text-gray-900 text-sm md:text-base mb-0.5 md:mb-1">
+                                      {org.name}
+                                    </h3>
+                                    {org.description && (
+                                      <p className="text-xs md:text-sm text-gray-500 line-clamp-1">
+                                        {org.description}
+                                      </p>
+                                    )}
+                                  </div>
+                                </div>
+                                <div className="flex items-center gap-3 md:gap-4">
+                                  <div className="text-right">
+                                    <div className="font-bold text-gray-900 text-sm md:text-base">
+                                      {distributionPercentage != null
+                                        ? `${Number(distributionPercentage).toFixed(1)}%`
+                                        : '0%'}
+                                    </div>
+                                    <div className="text-xs md:text-sm text-gray-500">
+                                      ${amountPerItem.toFixed(2)}/mo
+                                    </div>
+                                  </div>
+                                  <div className="flex items-center gap-1.5 md:gap-2">
+                                    {isLoading ? (
+                                      <div className="animate-spin rounded-full h-3.5 w-3.5 md:h-4 md:w-4 border-b-2 border-green-600"></div>
+                                    ) : (
+                                      isExpanded ? (
+                                        <ChevronUp size={18} className="md:w-5 md:h-5 text-gray-500" />
+                                      ) : (
+                                        <ChevronDown size={18} className="md:w-5 md:h-5 text-gray-500" />
+                                      )
+                                    )}
+                                    <button
+                                      className="text-red-500 hover:text-red-600 transition-colors flex-shrink-0"
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        handleDeselectCollective(collectiveId, org.isNewlySelected, org.name);
+                                      }}
+                                      aria-label="Remove collective"
+                                    >
+                                      <Trash2 size={16} className="md:w-[18px] md:h-[18px]" />
+                                    </button>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                            {isExpanded && details && details.causes && details.causes.length > 0 && (
+                              <div className="bg-gray-50 p-3 md:p-4 border border-gray-200 rounded-lg mt-2 ml-3 md:ml-4">
+                                <h4 className="text-xs md:text-sm font-semibold text-gray-800 mb-2 md:mb-3">
+                                  Nonprofits ({details.causes.length})
+                                </h4>
+                                <div className="space-y-2 md:space-y-3 pl-12 md:pl-14">
+                                  {details.causes.map((causeItem: any) => (
+                                    <div key={causeItem.id} className="flex items-center gap-2.5 md:gap-3 py-1.5 md:py-2 border-b border-gray-200 last:border-b-0">
+                                      <div className="w-7 h-7 md:w-8 md:h-8 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0">
+                                        <span className="text-blue-600 text-[10px] md:text-xs font-semibold">
+                                          {causeItem.cause?.name?.charAt(0).toUpperCase() || 'N'}
+                                        </span>
+                                      </div>
+                                      <div className="flex-1 min-w-0">
+                                        <h5 className="font-semibold text-gray-800 text-xs md:text-sm">
+                                          {causeItem.cause?.name}
+                                        </h5>
+                                        {causeItem.cause?.description && (
+                                          <p className="text-[10px] md:text-xs text-gray-600 line-clamp-2 mt-0.5 md:mt-1">
+                                            {causeItem.cause.description}
+                                          </p>
+                                        )}
+                                      </div>
+                                    </div>
+                                  ))}
+                                </div>
+                              </div>
+                            )}
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                );
+              })()}
+
+              {/* Available Collectives */}
+              <div className="mb-4 md:mb-6">
+                <h2 className="text-sm md:text-base font-semibold text-gray-700 uppercase mb-3 md:mb-4 tracking-wide">
+                  Joined Collectives
+                </h2>
+                {joinedCollectivesLoading ? (
+                  <p className="text-gray-500 text-center py-3 md:py-4 text-sm md:text-base">Loading...</p>
+                ) : availableCollectives.length > 0 ? (
                   <div className="space-y-2.5 md:space-y-3">
-                    {selectedCollectivesForDisplay.map((org) => {
-                      const collectiveId = org.isNewlySelected ? (org as any).collectiveId : parseInt(org.id.replace('collective-', ''));
-                      const isExpanded = expandedCollectives.has(collectiveId);
-                      const details = collectiveDetails[collectiveId];
-                      const isLoading = loadingCollectives.has(collectiveId);
-                      
+                    {availableCollectives.map((collective: any) => {
+                      const isSelected = selectedCollectives.includes(collective.id);
+                      const isExpanded = expandedCollectives.has(collective.id);
+                      const details = collectiveDetails[collective.id];
+                      const isLoading = loadingCollectives.has(collective.id);
+
                       // Generate consistent color for collective
                       const collectiveColors = [
                         { bg: '#dbeafe', text: '#1e40af' }, // blue
@@ -1156,72 +1276,55 @@ const ManageDonationBox: React.FC<ManageDonationBoxProps> = ({
                         { bg: '#d1fae5', text: '#065f46' }, // green
                         { bg: '#fed7aa', text: '#9a3412' }, // orange
                       ];
-                      const colorIndex = (org.name?.charCodeAt(0) || 0) % collectiveColors.length;
+                      const colorIndex = (collective.name?.charCodeAt(0) || 0) % collectiveColors.length;
                       const collectiveColor = collectiveColors[colorIndex];
-                      
+
                       return (
-                        <div key={org.id}>
-                          <div className="bg-white rounded-xl px-3 md:px-4 py-3 md:py-4 shadow-sm border border-gray-200">
-                            <div className="flex gap-3 md:gap-4 items-center">
+                        <div key={collective.id}>
+                          <div className="flex items-center gap-3 md:gap-4 bg-white rounded-xl px-3 md:px-4 py-3 md:py-4 shadow-sm border border-gray-200 hover:bg-gray-50 transition-colors">
+                            <div
+                              className="flex gap-3 md:gap-4 items-center cursor-pointer flex-1 min-w-0"
+                              onClick={() => handleToggleCollectiveDropdown(collective.id)}
+                            >
                               <div
-                                className="flex gap-3 md:gap-4 items-center cursor-pointer flex-1 min-w-0"
-                                onClick={() => handleToggleCollectiveDropdown(collectiveId)}
+                                className="w-10 h-10 md:w-12 md:h-12 flex-shrink-0 rounded-lg flex items-center justify-center"
+                                style={{ backgroundColor: collectiveColor.bg }}
                               >
-                                <div 
-                                  className="w-10 h-10 md:w-12 md:h-12 flex-shrink-0 rounded-lg flex items-center justify-center"
-                                  style={{ backgroundColor: collectiveColor.bg }}
+                                <span
+                                  className="text-lg md:text-xl font-bold"
+                                  style={{ color: collectiveColor.text }}
                                 >
-                                  <span 
-                                    className="text-lg md:text-xl font-bold"
-                                    style={{ color: collectiveColor.text }}
-                                  >
-                                    {org.name.charAt(0).toUpperCase()}
-                                  </span>
-                                </div>
-                                <div className="flex-1 min-w-0">
-                                  <h3 className="font-bold text-gray-900 text-sm md:text-base mb-0.5 md:mb-1">
-                                    {org.name}
-                                  </h3>
-                                  {org.description && (
-                                    <p className="text-xs md:text-sm text-gray-500 line-clamp-1">
-                                      {org.description}
-                                    </p>
-                                  )}
-                                </div>
+                                  {collective.name?.charAt(0)?.toUpperCase() || 'C'}
+                                </span>
                               </div>
-                              <div className="flex items-center gap-3 md:gap-4">
-                                <div className="text-right">
-                                  <div className="font-bold text-gray-900 text-sm md:text-base">
-                                    {distributionPercentage != null 
-                                      ? `${Number(distributionPercentage).toFixed(1)}%` 
-                                      : '0%'}
-                                  </div>
-                                  <div className="text-xs md:text-sm text-gray-500">
-                                    ${amountPerItem.toFixed(2)}/mo
-                                  </div>
-                                </div>
-                                <div className="flex items-center gap-1.5 md:gap-2">
-                                  {isLoading ? (
-                                    <div className="animate-spin rounded-full h-3.5 w-3.5 md:h-4 md:w-4 border-b-2 border-green-600"></div>
+                              <div className="flex-1 min-w-0">
+                                <h3 className="font-bold text-gray-900 text-sm md:text-base mb-0.5 md:mb-1">{collective.name}</h3>
+                                <p className="text-xs md:text-sm text-gray-500 line-clamp-1">{collective.description || 'Community collective'}</p>
+                              </div>
+                              <div className="ml-2 md:ml-4">
+                                {isLoading ? (
+                                  <div className="animate-spin rounded-full h-3.5 w-3.5 md:h-4 md:w-4 border-b-2 border-green-600"></div>
+                                ) : (
+                                  isExpanded ? (
+                                    <ChevronUp size={18} className="md:w-5 md:h-5 text-gray-500" />
                                   ) : (
-                                    isExpanded ? (
-                                      <ChevronUp size={18} className="md:w-5 md:h-5 text-gray-500" />
-                                    ) : (
-                                      <ChevronDown size={18} className="md:w-5 md:h-5 text-gray-500" />
-                                    )
-                                  )}
-                                  <button
-                                    className="text-red-500 hover:text-red-600 transition-colors flex-shrink-0"
-                                    onClick={(e) => {
-                                      e.stopPropagation();
-                                      handleDeselectCollective(collectiveId, org.isNewlySelected, org.name);
-                                    }}
-                                    aria-label="Remove collective"
-                                  >
-                                    <Trash2 size={16} className="md:w-[18px] md:h-[18px]" />
-                                  </button>
-                                </div>
+                                    <ChevronDown size={18} className="md:w-5 md:h-5 text-gray-500" />
+                                  )
+                                )}
                               </div>
+                            </div>
+                            <div
+                              className={`w-5 h-5 md:w-6 md:h-6 rounded-full flex items-center justify-center flex-shrink-0 cursor-pointer ${isSelected ? 'bg-blue-600' : 'border-2 border-gray-300'}`}
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleToggleCollective(collective.id);
+                              }}
+                            >
+                              {isSelected && (
+                                <svg className="w-3 h-3 md:w-4 md:h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                  <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                                </svg>
+                              )}
                             </div>
                           </div>
                           {isExpanded && details && details.causes && details.causes.length > 0 && (
@@ -1256,126 +1359,16 @@ const ManageDonationBox: React.FC<ManageDonationBoxProps> = ({
                       );
                     })}
                   </div>
-                </div>
-              );
-            })()}
-
-            {/* Available Collectives */}
-            <div className="mb-4 md:mb-6">
-              <h2 className="text-sm md:text-base font-semibold text-gray-700 uppercase mb-3 md:mb-4 tracking-wide">
-                Joined Collectives
-              </h2>
-              {joinedCollectivesLoading ? (
-                <p className="text-gray-500 text-center py-3 md:py-4 text-sm md:text-base">Loading...</p>
-              ) : availableCollectives.length > 0 ? (
-                <div className="space-y-2.5 md:space-y-3">
-                  {availableCollectives.map((collective: any) => {
-                    const isSelected = selectedCollectives.includes(collective.id);
-                    const isExpanded = expandedCollectives.has(collective.id);
-                    const details = collectiveDetails[collective.id];
-                    const isLoading = loadingCollectives.has(collective.id);
-                    
-                    // Generate consistent color for collective
-                    const collectiveColors = [
-                      { bg: '#dbeafe', text: '#1e40af' }, // blue
-                      { bg: '#fce7f3', text: '#831843' }, // pink
-                      { bg: '#e9d5ff', text: '#6b21a8' }, // purple
-                      { bg: '#d1fae5', text: '#065f46' }, // green
-                      { bg: '#fed7aa', text: '#9a3412' }, // orange
-                    ];
-                    const colorIndex = (collective.name?.charCodeAt(0) || 0) % collectiveColors.length;
-                    const collectiveColor = collectiveColors[colorIndex];
-                    
-                    return (
-                      <div key={collective.id}>
-                        <div className="flex items-center gap-3 md:gap-4 bg-white rounded-xl px-3 md:px-4 py-3 md:py-4 shadow-sm border border-gray-200 hover:bg-gray-50 transition-colors">
-                          <div
-                            className="flex gap-3 md:gap-4 items-center cursor-pointer flex-1 min-w-0"
-                            onClick={() => handleToggleCollectiveDropdown(collective.id)}
-                          >
-                            <div 
-                              className="w-10 h-10 md:w-12 md:h-12 flex-shrink-0 rounded-lg flex items-center justify-center"
-                              style={{ backgroundColor: collectiveColor.bg }}
-                            >
-                              <span 
-                                className="text-lg md:text-xl font-bold"
-                                style={{ color: collectiveColor.text }}
-                              >
-                                {collective.name?.charAt(0)?.toUpperCase() || 'C'}
-                              </span>
-                            </div>
-                            <div className="flex-1 min-w-0">
-                              <h3 className="font-bold text-gray-900 text-sm md:text-base mb-0.5 md:mb-1">{collective.name}</h3>
-                              <p className="text-xs md:text-sm text-gray-500 line-clamp-1">{collective.description || 'Community collective'}</p>
-                            </div>
-                            <div className="ml-2 md:ml-4">
-                              {isLoading ? (
-                                <div className="animate-spin rounded-full h-3.5 w-3.5 md:h-4 md:w-4 border-b-2 border-green-600"></div>
-                              ) : (
-                                isExpanded ? (
-                                  <ChevronUp size={18} className="md:w-5 md:h-5 text-gray-500" />
-                                ) : (
-                                  <ChevronDown size={18} className="md:w-5 md:h-5 text-gray-500" />
-                                )
-                              )}
-                            </div>
-                          </div>
-                          <div
-                            className={`w-5 h-5 md:w-6 md:h-6 rounded-full flex items-center justify-center flex-shrink-0 cursor-pointer ${isSelected ? 'bg-blue-600' : 'border-2 border-gray-300'}`}
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handleToggleCollective(collective.id);
-                            }}
-                          >
-                            {isSelected && (
-                              <svg className="w-3 h-3 md:w-4 md:h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
-                                <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                              </svg>
-                            )}
-                          </div>
-                        </div>
-                        {isExpanded && details && details.causes && details.causes.length > 0 && (
-                          <div className="bg-gray-50 p-3 md:p-4 border border-gray-200 rounded-lg mt-2 ml-3 md:ml-4">
-                            <h4 className="text-xs md:text-sm font-semibold text-gray-800 mb-2 md:mb-3">
-                              Nonprofits ({details.causes.length})
-                            </h4>
-                            <div className="space-y-2 md:space-y-3 pl-12 md:pl-14">
-                              {details.causes.map((causeItem: any) => (
-                                <div key={causeItem.id} className="flex items-center gap-2.5 md:gap-3 py-1.5 md:py-2 border-b border-gray-200 last:border-b-0">
-                                  <div className="w-7 h-7 md:w-8 md:h-8 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0">
-                                    <span className="text-blue-600 text-[10px] md:text-xs font-semibold">
-                                      {causeItem.cause?.name?.charAt(0).toUpperCase() || 'N'}
-                                    </span>
-                                  </div>
-                                  <div className="flex-1 min-w-0">
-                                    <h5 className="font-semibold text-gray-800 text-xs md:text-sm">
-                                      {causeItem.cause?.name}
-                                    </h5>
-                                    {causeItem.cause?.description && (
-                                      <p className="text-[10px] md:text-xs text-gray-600 line-clamp-2 mt-0.5 md:mt-1">
-                                        {causeItem.cause.description}
-                                      </p>
-                                    )}
-                                  </div>
-                                </div>
-                              ))}
-                            </div>
-                          </div>
-                        )}
-                      </div>
-                    );
-                  })}
-                </div>
-              ) : (
-                <p className="text-gray-500 text-center py-3 md:py-4 text-sm md:text-base">No collectives available</p>
-              )}
+                ) : (
+                  <p className="text-gray-500 text-center py-3 md:py-4 text-sm md:text-base">No collectives available</p>
+                )}
+              </div>
             </div>
-          </div>
-        )}
-      </div>
+          )}
+        </div>
 
-      {/* Distribution Details */}
-      {/* <div className="px-4 py-4">
+        {/* Distribution Details */}
+        {/* <div className="px-4 py-4">
         <p className="text-sm text-gray-500 text-center">
           Your ${editableAmount} becomes ${(editableAmount * 0.9).toFixed(2)}{" "}
           after fees, split evenly across causes. Your donation will be evenly
@@ -1383,28 +1376,28 @@ const ManageDonationBox: React.FC<ManageDonationBoxProps> = ({
         </p>
       </div> */}
 
-      {/* Update Donation Button */}
-      <div className="fixed bottom-0 left-0 right-0 p-4 md:p-6 border-t border-gray-200 bg-white">
-        <Button
-          onClick={handleUpdateDonation}
-          disabled={updateDonationBoxMutation.isPending || hasNoItems}
-          className="w-full bg-[#1600ff] hover:bg-[#0000ff] text-white py-4 md:py-6 rounded-lg font-semibold disabled:opacity-50 disabled:cursor-not-allowed text-sm md:text-base"
-        >
-          {updateDonationBoxMutation.isPending
-            ? 'Updating...'
-            : 'Update Donation'}
-        </Button>
+        {/* Update Donation Button */}
+        <div className="fixed bottom-0 left-0 right-0 p-4 md:p-6 border-t border-gray-200 bg-white">
+          <Button
+            onClick={handleUpdateDonation}
+            disabled={updateDonationBoxMutation.isPending || hasNoItems}
+            className="w-full bg-[#1600ff] hover:bg-[#0000ff] text-white py-4 md:py-6 rounded-lg font-semibold disabled:opacity-50 disabled:cursor-not-allowed text-sm md:text-base"
+          >
+            {updateDonationBoxMutation.isPending
+              ? 'Updating...'
+              : 'Update Donation'}
+          </Button>
 
-        {/* Toast notification */}
-        <Toast
-          message={toastMessage}
-          show={showToast}
-          onHide={() => setShowToast(false)}
-          duration={3000}
-        />
-        
-        {/* Deactivate Subscription Button - Only show if subscription is active */}
-        {/* {isActive && (
+          {/* Toast notification */}
+          <Toast
+            message={toastMessage}
+            show={showToast}
+            onHide={() => setShowToast(false)}
+            duration={3000}
+          />
+
+          {/* Deactivate Subscription Button - Only show if subscription is active */}
+          {/* {isActive && (
           <Button
             onClick={() => setShowCancelModal(true)}
             disabled={cancelDonationBoxMutation.isPending}
@@ -1416,10 +1409,10 @@ const ManageDonationBox: React.FC<ManageDonationBoxProps> = ({
               : 'Deactivate Subscription'}
           </Button>
         )} */}
-      </div>
+        </div>
 
-      {/* Payment Method Section */}
-      {/* <div className="px-8 py-4">
+        {/* Payment Method Section */}
+        {/* <div className="px-8 py-4">
         <h3 className="text-base font-semibold text-gray-700 uppercase mb-4 tracking-wide">
           PAYMENT METHOD
         </h3>
@@ -1446,8 +1439,8 @@ const ManageDonationBox: React.FC<ManageDonationBoxProps> = ({
         </div>
       </div> */}
 
-      {/* Next Payment Section */}
-      {/* <div className="px-8 py-4">
+        {/* Next Payment Section */}
+        {/* <div className="px-8 py-4">
         <h3 className="text-base font-semibold text-gray-700 uppercase mb-4 tracking-wide">
           NEXT PAYMENT
         </h3>
@@ -1469,12 +1462,12 @@ const ManageDonationBox: React.FC<ManageDonationBoxProps> = ({
         </div>
       </div> */}
 
-      {/* <div className=" text-gray-400 mb-5  pt-5 text-center">
+        {/* <div className=" text-gray-400 mb-5  pt-5 text-center">
         Allocations will automatically adjust for 100% distribution
       </div> */}
 
-      {/* Edit Causes Button */}
-      {/* <div className="flex  mt-6 pb-4 px-8">
+        {/* Edit Causes Button */}
+        {/* <div className="flex  mt-6 pb-4 px-8">
         <Button
           variant="outline"
           className="rounded-full px-6 py-2 text-blue-700 border-blue-200 bg-blue-50 hover:bg-blue-100 font-semibold"
@@ -1484,85 +1477,84 @@ const ManageDonationBox: React.FC<ManageDonationBoxProps> = ({
         </Button>
       </div> */}
 
-      {/* Footer */}
-      {isEditMode && (
-        <div className="px-4 py-6 ">
-          <div className="grid grid-cols-2 gap-2">
-            {visibleCauses.length > 0 && (
-              <button className="col-span-1 text-xs text-gray-400">
-                Deactivate donation box
-              </button>
-            )}
-            <Button
-              className={`${
-                visibleCauses.length > 0 ? "col-span-1" : "col-span-2"
-              } rounded-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-6 px-20 w-1/2 mx-auto`}
-              onClick={handleSave}
-            >
-              Save
-            </Button>
+        {/* Footer */}
+        {isEditMode && (
+          <div className="px-4 py-6 ">
+            <div className="grid grid-cols-2 gap-2">
+              {visibleCauses.length > 0 && (
+                <button className="col-span-1 text-xs text-gray-400">
+                  Deactivate donation box
+                </button>
+              )}
+              <Button
+                className={`${visibleCauses.length > 0 ? "col-span-1" : "col-span-2"
+                  } rounded-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-6 px-20 w-1/2 mx-auto`}
+                onClick={handleSave}
+              >
+                Save
+              </Button>
+            </div>
           </div>
-        </div>
-      )}
+        )}
 
-      {/* Delete Confirmation Modal */}
-      <Dialog open={showDeleteModal} onOpenChange={setShowDeleteModal}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Confirm Removal</DialogTitle>
-            <DialogDescription>
-              Are you sure you want to remove {itemToDelete?.name} from your donation box? This action cannot be undone.
-            </DialogDescription>
-          </DialogHeader>
-          <DialogFooter>
-            <Button 
-              variant="outline" 
-              onClick={() => {
-                setShowDeleteModal(false);
-                setItemToDelete(null);
-              }}
-            >
-              Cancel
-            </Button>
-            <Button 
-              variant="destructive" 
-              onClick={handleConfirmDelete}
-            >
-              Remove
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+        {/* Delete Confirmation Modal */}
+        <Dialog open={showDeleteModal} onOpenChange={setShowDeleteModal}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Confirm Removal</DialogTitle>
+              <DialogDescription>
+                Are you sure you want to remove {itemToDelete?.name} from your donation box? This action cannot be undone.
+              </DialogDescription>
+            </DialogHeader>
+            <DialogFooter>
+              <Button
+                variant="outline"
+                onClick={() => {
+                  setShowDeleteModal(false);
+                  setItemToDelete(null);
+                }}
+              >
+                Cancel
+              </Button>
+              <Button
+                variant="destructive"
+                onClick={handleConfirmDelete}
+              >
+                Remove
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
 
-      {/* Cancel Subscription Confirmation Modal */}
-      <Dialog open={showCancelModal} onOpenChange={setShowCancelModal}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Deactivate Subscription</DialogTitle>
-            <DialogDescription>
-              Are you sure you want to deactivate your donation box subscription? This will cancel all future monthly donations. You can reactivate it at any time.
-            </DialogDescription>
-          </DialogHeader>
-          <DialogFooter>
-            <Button 
-              variant="outline" 
-              onClick={() => setShowCancelModal(false)}
-              disabled={cancelDonationBoxMutation.isPending}
-            >
-              Cancel
-            </Button>
-            <Button 
-              variant="destructive" 
-              onClick={() => cancelDonationBoxMutation.mutate()}
-              disabled={cancelDonationBoxMutation.isPending}
-            >
-              {cancelDonationBoxMutation.isPending ? 'Deactivating...' : 'Deactivate Subscription'}
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+        {/* Cancel Subscription Confirmation Modal */}
+        <Dialog open={showCancelModal} onOpenChange={setShowCancelModal}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Deactivate Subscription</DialogTitle>
+              <DialogDescription>
+                Are you sure you want to deactivate your donation box subscription? This will cancel all future monthly donations. You can reactivate it at any time.
+              </DialogDescription>
+            </DialogHeader>
+            <DialogFooter>
+              <Button
+                variant="outline"
+                onClick={() => setShowCancelModal(false)}
+                disabled={cancelDonationBoxMutation.isPending}
+              >
+                Cancel
+              </Button>
+              <Button
+                variant="destructive"
+                onClick={() => cancelDonationBoxMutation.mutate()}
+                disabled={cancelDonationBoxMutation.isPending}
+              >
+                {cancelDonationBoxMutation.isPending ? 'Deactivating...' : 'Deactivate Subscription'}
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
 
-      {/* <div className="h-24 md:hidden"></div> */}
+        {/* <div className="h-24 md:hidden"></div> */}
       </div>
     </div>
   );

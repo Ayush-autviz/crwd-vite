@@ -34,6 +34,8 @@ import {
 } from "@/components/ui/sheet"
 import { Toast } from "@/components/ui/toast"
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar"
+import RequestNonprofitModal from '@/components/newsearch/RequestNonprofitModal';
+
 
 export default function NewSettings() {
   const navigate = useNavigate()
@@ -45,6 +47,7 @@ export default function NewSettings() {
   const [showToast, setShowToast] = useState(false)
   const [toastMessage, setToastMessage] = useState("")
   const [isEditMode, setIsEditMode] = useState(false)
+  const [showRequestModal, setShowRequestModal] = useState(false);
   const [formData, setFormData] = useState({
     first_name: '',
     last_name: '',
@@ -428,13 +431,13 @@ export default function NewSettings() {
                   {selectedImageUrl || formData.profile_picture_file ? (
                     <Avatar className="w-20 h-20 md:w-24 md:h-24">
                       <AvatarImage src={selectedImageUrl || formData.profile_picture_file} />
-                      <AvatarFallback className="bg-purple-600">
+                      <AvatarFallback style={{ backgroundColor: currentUser?.color }}>
                         <User className="h-10 w-10 md:h-12 md:w-12 text-white" />
                       </AvatarFallback>
                     </Avatar>
                   ) : (
-                    <div className="w-20 h-20 md:w-24 md:h-24 rounded-full bg-purple-600 flex items-center justify-center">
-                      <User className="h-10 w-10 md:h-12 md:w-12 text-white" />
+                    <div style={{ backgroundColor: currentUser?.color }} className="w-20 h-20 md:w-24 md:h-24 rounded-full text-white text-2xl font-bold flex items-center justify-center">
+                      {currentUser?.first_name.charAt(0).toUpperCase()}
                     </div>
                   )}
                 </button>
@@ -702,25 +705,31 @@ export default function NewSettings() {
               <div className="mt-6 md:mt-8 space-y-0">
                 <button
                   onClick={() => navigate("/settings/report")}
-                  className="w-full text-left py-2.5 md:py-3 px-0 text-sm md:text-base font-medium text-gray-900 hover:text-blue-600 transition-colors"
+                  className="w-full text-left py-2.5 md:py-3 px-0 text-sm md:text-base font-semibold text-gray-900 hover:text-blue-600 transition-colors"
                 >
                   Contact Support
                 </button>
                 <button
+                  onClick={() => setShowRequestModal(true)}
+                  className="w-full text-left py-2.5 md:py-3 px-0 text-sm md:text-base font-semibold text-gray-900 hover:text-blue-600 transition-colors"
+                >
+                  Suggest a Nonprofit
+                </button>
+                <button
                   onClick={() => navigate("/settings/terms")}
-                  className="w-full text-left py-2.5 md:py-3 px-0 text-sm md:text-base font-medium text-gray-900 hover:text-blue-600 transition-colors"
+                  className="w-full text-left py-2.5 md:py-3 px-0 text-sm md:text-base font-semibold text-gray-900 hover:text-blue-600 transition-colors"
                 >
                   Terms of Service
                 </button>
                 <button
                   onClick={() => navigate("/settings/privacy")}
-                  className="w-full text-left py-2.5 md:py-3 px-0 text-sm md:text-base font-medium text-gray-900 hover:text-blue-600 transition-colors"
+                  className="w-full text-left py-2.5 md:py-3 px-0 text-sm md:text-base font-semibold text-gray-900 hover:text-blue-600 transition-colors"
                 >
                   Privacy Policy
                 </button>
                 <button
                   onClick={() => navigate("/settings/about")}
-                  className="w-full text-left py-2.5 md:py-3 px-0 text-sm md:text-base font-medium text-gray-900 hover:text-blue-600 transition-colors"
+                  className="w-full text-left py-2.5 md:py-3 px-0 text-sm md:text-base font-semibold   text-gray-900 hover:text-blue-600 transition-colors"
                 >
                   About CRWD
                 </button>
@@ -926,6 +935,12 @@ export default function NewSettings() {
         show={showToast}
         onHide={() => setShowToast(false)}
         duration={3000}
+      />
+
+      {/* Request Nonprofit Modal */}
+      <RequestNonprofitModal
+        isOpen={showRequestModal}
+        onClose={() => setShowRequestModal(false)}
       />
     </div>
   )

@@ -1290,7 +1290,7 @@ const ArticleDetail = () => {
       <div className="pb-20">
         <div className="">
           <div className="bg-gradient-to-br from-[#f1f6ff] via-[#f9f6ff] to-[#fbf5fe] p-2">
-            <div className="container mx-auto px-4 max-w-3xl">
+            <div className="container mx-auto px-4 mt-10 max-w-3xl">
               <Button
                 onClick={() => navigate('/')}
                 variant="ghost"

@@ -52,6 +52,8 @@ export default function CommentsBottomSheet({
   const { user: currentUser } = useAuthStore();
   const queryClient = useQueryClient();
 
+  const [replyingTo, setReplyingTo] = useState<CommentData | null>(null);
+
   // Handle animation
   useEffect(() => {
     let timer: NodeJS.Timeout;
@@ -64,6 +66,7 @@ export default function CommentsBottomSheet({
     } else if (isVisible) {
       setIsAnimating(false);
       timer = setTimeout(() => setIsVisible(false), 300);
+      setReplyingTo(null);
     }
     return () => clearTimeout(timer);
   }, [isOpen, isVisible]);
@@ -200,6 +203,8 @@ export default function CommentsBottomSheet({
       queryClient.invalidateQueries({ queryKey: ['postComments', post.id] });
       // Fetch replies to show the new one and expand
       fetchReplies(variables.commentId);
+      setCommentText('');
+      setReplyingTo(null);
     },
     onError: () => {
       console.error('Failed to add reply');
@@ -207,8 +212,28 @@ export default function CommentsBottomSheet({
   });
 
   const handleReply = (commentId: number, content: string) => {
-    if (content.trim()) {
-      createReplyMutation.mutate({ commentId, data: { content: content.trim() } });
+    // Find comment or handle based on ID if we have full comment object lookup available
+    // For now we just need the ID and minimal info to show "Replying to..."
+    // Since we pass content as "@username " from Comment.tsx, we can use that logic or refactor
+    // Refactoring: The Comment component now calls onReply(id, "@username ")
+
+    // Find the comment object to get username properly
+    const findComment = (commentsList: CommentData[]): CommentData | undefined => {
+      for (const c of commentsList) {
+        if (c.id === commentId) return c;
+        if (c.replies && c.replies.length > 0) {
+          const found = findComment(c.replies);
+          if (found) return found;
+        }
+      }
+      return undefined;
+    };
+
+    const targetComment = findComment(comments);
+
+    if (targetComment) {
+      setReplyingTo(targetComment);
+      inputRef.current?.focus();
     }
   };
 
@@ -285,8 +310,12 @@ export default function CommentsBottomSheet({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (commentText.trim() && !createCommentMutation.isPending) {
-      createCommentMutation.mutate({ content: commentText.trim() });
+    if (commentText.trim()) {
+      if (replyingTo) {
+        createReplyMutation.mutate({ commentId: replyingTo.id, data: { content: commentText.trim() } });
+      } else if (!createCommentMutation.isPending) {
+        createCommentMutation.mutate({ content: commentText.trim() });
+      }
     }
   };
 
@@ -295,6 +324,7 @@ export default function CommentsBottomSheet({
     setTimeout(() => {
       onClose();
       setCommentText('');
+      setReplyingTo(null);
     }, 300);
   };
 
@@ -469,17 +499,31 @@ export default function CommentsBottomSheet({
 
         {/* Input Bar */}
         <div className="border-t border-gray-200 p-4 bg-white sticky bottom-0">
+          {replyingTo && (
+            <div className="flex items-center justify-between bg-gray-50 px-4 py-2 mb-2 rounded-lg border-l-4 border-blue-500">
+              <div className="flex flex-col">
+                <span className="text-xs font-semibold text-blue-600">Replying to {replyingTo.username}</span>
+                <span className="text-xs text-gray-500 line-clamp-1">{replyingTo.content}</span>
+              </div>
+              <button
+                onClick={() => setReplyingTo(null)}
+                className="p-1 hover:bg-gray-200 rounded-full"
+              >
+                <X className="w-3 h-3 text-gray-500" />
+              </button>
+            </div>
+          )}
           <form onSubmit={handleSubmit} className="flex flex-col">
             <div className="relative flex items-center">
               <div className="absolute left-0 top-0 bottom-0 w-1 bg-[#1600ff] rounded-l-md z-10" />
               <Input
                 ref={inputRef}
                 type="text"
-                placeholder="Join the conversation"
+                placeholder={replyingTo ? `Reply to ${replyingTo.username}...` : "Join the conversation"}
                 value={commentText}
                 onChange={(e) => setCommentText(e.target.value)}
                 className="w-full bg-gray-50 border-none focus-visible:ring-0 text-sm md:text-base py-3 pl-4 rounded-md min-h-[35px]"
-                disabled={createCommentMutation.isPending || !currentUser}
+                disabled={createCommentMutation.isPending || createReplyMutation.isPending || !currentUser}
               />
             </div>
 
@@ -495,13 +539,13 @@ export default function CommentsBottomSheet({
 
               <button
                 type="submit"
-                disabled={!commentText.trim() || createCommentMutation.isPending || !currentUser}
-                className={`px-6 py-1.5 rounded-full font-semibold text-sm transition-colors ${commentText.trim() && !createCommentMutation.isPending
+                disabled={!commentText.trim() || createCommentMutation.isPending || createReplyMutation.isPending || !currentUser}
+                className={`px-6 py-1.5 rounded-full font-semibold text-sm transition-colors ${commentText.trim() && !createCommentMutation.isPending && !createReplyMutation.isPending
                   ? 'bg-[#1600ff] text-white hover:bg-[#1400cc]'
                   : 'bg-gray-100 text-gray-400 cursor-not-allowed'
                   }`}
               >
-                {createCommentMutation.isPending ? (
+                {createCommentMutation.isPending || createReplyMutation.isPending ? (
                   <Loader2 className="w-4 h-4 animate-spin" />
                 ) : (
                   'Reply'

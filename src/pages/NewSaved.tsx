@@ -118,7 +118,7 @@ export default function NewSavedPage() {
           <div className="flex gap-6">
             <button
               onClick={() => setActiveTab('Nonprofits')}
-              className={`pb-3 px-2 md:px-4 font-bold text-sm transition-colors ${activeTab === 'Nonprofits'
+              className={`pb-3 px-2 md:px-4 font-bold text-sm md:text-base transition-colors ${activeTab === 'Nonprofits'
                 ? 'text-[#1600ff] border-b-3 border-[#1600ff]'
                 : 'text-gray-500 hover:text-gray-700'
                 }`}
@@ -127,7 +127,7 @@ export default function NewSavedPage() {
             </button>
             <button
               onClick={() => setActiveTab('Collectives')}
-              className={`pb-3 px-2 md:px-4 font-bold text-sm transition-colors ${activeTab === 'Collectives'
+              className={`pb-3 px-2 md:px-4 font-bold text-sm md:text-base transition-colors ${activeTab === 'Collectives'
                 ? 'text-[#1600ff] border-b-3 border-[#1600ff]'
                 : 'text-gray-500 hover:text-gray-700'
                 }`}
