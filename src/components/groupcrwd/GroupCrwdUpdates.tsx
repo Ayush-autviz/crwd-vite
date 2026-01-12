@@ -60,20 +60,20 @@ const GroupCrwdUpdates: React.FC<GroupCrwdUpdatesProps> = ({
     const isCommunityType = activity.type === "community";
     const isDonationType = activity.type === "donation" || activity.type === "donation_activity";
     const isMilestoneType = activity.type === "milestone";
-    
+
     // Extract username from activity body (e.g., "@jake_long" -> "jake_long")
     const usernameMatch = activity.body?.match(/@(\w+)/);
     const username = usernameMatch ? usernameMatch[1] : null;
-    
+
     // Try to get user ID from various possible fields in activity.data
-    const userId = 
-      activity.data?.new_member_id || 
-      activity.data?.user_id || 
-      activity.data?.donor_id || 
+    const userId =
+      activity.data?.new_member_id ||
+      activity.data?.user_id ||
+      activity.data?.donor_id ||
       activity.data?.member_id ||
       activity.data?.creator_id ||
       null;
-    
+
     // Removed automatic user profile fetching to prevent unnecessary API calls on mount
     // User profiles will be fetched when user navigates to the profile page
 
@@ -86,10 +86,10 @@ const GroupCrwdUpdates: React.FC<GroupCrwdUpdatesProps> = ({
       const firstChar = activity.body?.charAt(0);
       return firstChar ? firstChar.toUpperCase() : '?';
     };
-    
+
     // Determine if we should show avatar (show for all activities with user info)
     const shouldShowAvatar = !!userId || !!username;
-    
+
     // Get profile link - use userId if available, otherwise use username
     const getProfileLink = () => {
       if (userId) {
@@ -101,7 +101,7 @@ const GroupCrwdUpdates: React.FC<GroupCrwdUpdatesProps> = ({
       }
       return '#';
     };
-    
+
     // Check if we should make username clickable (has userId or username)
     const canNavigateToProfile = !!userId || !!username;
 
@@ -129,7 +129,7 @@ const GroupCrwdUpdates: React.FC<GroupCrwdUpdatesProps> = ({
               </Avatar>
             )
           ) : null}
-          
+
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 mb-1">
               {isCommunityType && (
@@ -225,7 +225,7 @@ const GroupCrwdUpdates: React.FC<GroupCrwdUpdatesProps> = ({
         {isLoading ? (
           <div className="flex items-center justify-center py-8">
             <Loader2 className="w-6 h-6 animate-spin mr-2" />
-            <span className="text-gray-600">Loading posts...</span>
+            <span className="text-gray-600">Loading...</span>
           </div>
         ) : shouldShowEmpty ? (
           <EmptyState

@@ -83,7 +83,7 @@ const ProfileActivity: React.FC<ProfileActivityProps> = ({
           <div className="flex items-center justify-center py-6 md:py-8">
             <div className="flex flex-col items-center gap-1.5 md:gap-2">
               <Loader2 className="w-5 h-5 md:w-6 md:h-6 animate-spin" />
-              <p className="text-xs md:text-sm text-gray-600">Loading posts...</p>
+              <p className="text-xs md:text-sm text-gray-600">Loading...</p>
             </div>
           </div>
         ) : error ? (

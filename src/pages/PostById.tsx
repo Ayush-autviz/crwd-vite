@@ -292,7 +292,7 @@ export default function PostById() {
           <div className="text-center py-8 md:py-10 px-4">
             <Loader2 className="w-6 h-6 md:w-8 md:h-8 animate-spin mx-auto mb-3 md:mb-4" />
             <h2 className="text-lg md:text-xl font-semibold text-gray-900 mb-1.5 md:mb-2">
-              Loading post...
+              Loading...
             </h2>
             <p className="text-sm md:text-base text-gray-600">
               Please wait while we fetch the post details.

@@ -541,7 +541,7 @@ export default function EditFundraiser() {
               <div className="flex-1 relative">
                 <Input
                   type="text"
-                  value={endDate ? endDate.format('DD/MM/YYYY') : 'N/A'}
+                  value={endDate ? endDate.format('MM/DD/YYYY') : 'N/A'}
                   disabled
                   className="w-full bg-gray-100 text-gray-900 rounded-lg pr-10 cursor-not-allowed"
                 />

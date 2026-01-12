@@ -647,7 +647,7 @@ export default function CreateFundraiser() {
                 }}
                 className="w-full"
                 placeholder="Select end date"
-                format="YYYY-MM-DD"
+                format="MM-DD-YYYY"
                 size="large"
               />
               <p className="text-xs md:text-sm text-gray-500 mt-1">
@@ -671,13 +671,13 @@ export default function CreateFundraiser() {
         ) : step === 2 ? (
           <>
             {/* Informational Banner */}
-            <div className="border-2 border-orange-200 bg-orange-50 rounded-lg p-3 md:p-4 mb-6 md:mb-8">
+            <div className="border-2  border-orange-200 bg-amber-100 rounded-lg p-3 md:p-4 mb-6 md:mb-8">
               <div className="flex items-start gap-3">
                 <div className="flex-shrink-0 mt-0.5">
                   <Building2 className="w-5 h-5 md:w-6 md:h-6 text-orange-600" />
                 </div>
                 <div>
-                  <h3 className="font-bold text-sm md:text-base text-orange-900 mb-1">
+                  <h3 className="font-semibold text-sm md:text-base text-orange-800 mb-1">
                     Choose Any Nonprofits
                   </h3>
                   <p className="text-xs md:text-sm text-orange-800">
@@ -765,16 +765,16 @@ export default function CreateFundraiser() {
                         <h4 className="font-bold text-sm md:text-base text-gray-900 mb-1">
                           {nonprofit.name}
                         </h4>
-                        <p className="text-xs md:text-sm text-gray-600">
+                        <p className="text-xs md:text-sm text-gray-600 line-clamp-1">
                           {nonprofit.mission || nonprofit.description || categoryName}
                         </p>
                       </div>
-                      <label className="flex items-center flex-shrink-0 cursor-pointer">
+                      <label className="flex items-center flex-shrink-0 cursor-pointer" onClick={(e) => e.stopPropagation()}  >
                         <input
                           type="checkbox"
                           checked={isSelected}
                           onChange={() => handleNonprofitToggle(nonprofit.id, nonprofit)}
-                          className="w-4 h-4 md:w-5 md:h-5 text-[#1600ff] focus:ring-[#1600ff] rounded"
+                          className="w-4 h-4 md:w-5 md:h-5 text-[#1600ff] focus:ring-[#1600ff] cursor-pointer rounded"
                         />
                       </label>
                     </div>

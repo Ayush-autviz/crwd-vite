@@ -397,16 +397,17 @@ export default function CollectiveStatisticsModal({
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center gap-1 md:gap-1.5 lg:gap-2 flex-wrap">
                             <h4 className="font-bold text-xs md:text-sm lg:text-base text-foreground">
-                              @{username || name.toLowerCase().replace(/\s+/g, '_')}
+                              {/* @{username || name.toLowerCase().replace(/\s+/g, '_')} */}
+                              {name}
                             </h4>
                             {isFounder && (
                               <span className="bg-red-500 text-white text-[9px] md:text-[10px] lg:text-xs font-semibold px-1 md:px-1.5 lg:px-2 py-0.5 rounded-full">
-                                Founder
+                                Leader
                               </span>
                             )}
                           </div>
                           <p className="text-[10px] md:text-xs lg:text-sm text-gray-500 mt-0.5 md:mt-1">
-                            Active member
+                            {user.bio || user.location || 'Actively Supporting'}
                           </p>
                         </div>
                       </div>

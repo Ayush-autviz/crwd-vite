@@ -29,30 +29,30 @@ export const PopularPosts = ({
 
 
   console.log(posts?.results);
-  
+
 
   return (
     <div className="w-full p-3 md:p-4 lg:p-0">
       <div className="flex items-center gap-1.5 md:gap-2 mb-3 md:mb-4">
         {title != "no title" && (
           <>
-        <h2 className="text-base md:text-lg font-semibold">
-          {related ? "Related Posts" : title}
-        </h2>
-        <div className="group relative">
-          <HelpCircle className="w-3.5 h-3.5 md:w-4 md:h-4 text-gray-500 cursor-pointer" />
-          <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2.5 md:px-3 py-1.5 md:py-2 bg-gray-100 text-gray-500 text-xs md:text-sm rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap z-10">
-            You can engage with others in Collectives.
-            <div className="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-gray-900"></div>
-          </div>
-        </div>
-        </>
-      )}
+            <h2 className="text-base md:text-lg font-semibold">
+              {related ? "Related Posts" : title}
+            </h2>
+            <div className="group relative">
+              <HelpCircle className="w-3.5 h-3.5 md:w-4 md:h-4 text-gray-500 cursor-pointer" />
+              <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2.5 md:px-3 py-1.5 md:py-2 bg-gray-100 text-gray-500 text-xs md:text-sm rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap z-10">
+                You can engage with others in Collectives.
+                <div className="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-gray-900"></div>
+              </div>
+            </div>
+          </>
+        )}
       </div>
       {isLoading ? (
         <div className="flex justify-center items-center py-6 md:py-8">
           <Loader2 className="w-5 h-5 md:w-6 md:h-6 animate-spin" />
-          <span className="ml-1.5 md:ml-2 text-sm md:text-base">Loading posts...</span>
+          <span className="ml-1.5 md:ml-2 text-sm md:text-base">Loading...</span>
         </div>
       ) : (
         <div className="space-y-3 md:space-y-4">
@@ -80,7 +80,7 @@ export const PopularPosts = ({
                 shares: 0, // API doesn't provide shares count
                 isLiked: post.is_liked === true, // Ensure boolean conversion
               };
-              
+
               return (
                 <ProfileActivity title="" key={post.id} posts={[transformedPost]} />
               );
