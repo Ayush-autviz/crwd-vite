@@ -102,7 +102,7 @@ export default function GuestHome() {
                     {/* Sign In Button */}
                     <button
                         onClick={() => navigate("/login")}
-                        className="bg-[#ff3366] hover:bg-[#ff0033] text-white font-bold px-3 py-1.5 xs:px-4 xs:py-2 md:px-6 md:py-2 rounded-full text-xs xs:text-sm md:text-base whitespace-nowrap"
+                        className="bg-[#ff3366] hover:bg-[#ff0033] text-white font-bold px-3 py-1 xs:px-4  md:px-6 md:py-2 rounded-full text-xs xs:text-sm md:text-base whitespace-nowrap"
                     >
                         Sign In
                     </button>
