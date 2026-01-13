@@ -29,7 +29,7 @@ export default function CommunityPosts({
             <h2 className="text-sm xs:text-base sm:text-xl md:text-3xl font-bold text-gray-900 mb-1 md:mb-2">
               Community Updates
             </h2>
-            <p className="text-[10px] sm:text-xs md:text-sm text-gray-600">
+            <p className="text-[10px] xs:text-[11px] sm:text-xs md:text-sm text-gray-600">
               Activity, updates, and discoveries from your community
             </p>
           </div>
@@ -103,7 +103,7 @@ export default function CommunityPosts({
           <h2 className="text-base sm:text-xl md:text-3xl font-bold text-gray-900 mb-1 md:mb-2">
             Community Updates
           </h2>
-          <p className="text-[11px] sm:text-xs md:text-sm text-gray-600">
+          <p className="text-[11px] xs:text-xs md:text-sm text-gray-600">
             Activity, updates, and discoveries from your community
           </p>
         </div>

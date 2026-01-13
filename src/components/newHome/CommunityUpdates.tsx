@@ -212,7 +212,7 @@ function NotificationSummary({ update }: { update: CommunityUpdate }) {
               <AvatarImage src={update.user.avatar} />
               <AvatarFallback
                 style={{ backgroundColor: update.user.color || '#1600ff' }}
-                className="text-white text-xs font-semibold md:text-sm"
+                className="text-white text-[8px] xs:text-[10px] md:text-sm font-semibold"
               >
                 {update.user.name
                   .charAt(0)
@@ -225,11 +225,11 @@ function NotificationSummary({ update }: { update: CommunityUpdate }) {
               <div className="flex items-center gap-1 md:gap-2 lg:gap-3 flex-wrap">
                 <Link
                   to={`/user-profile/${update.user.id}`}
-                  className="font-bold text-sm md:text-base text-gray-900 hover:underline block"
+                  className="font-bold text-xs xs:text-sm md:text-base text-gray-900 hover:underline block"
                 >
                   {userName}
                 </Link>
-                <p className="text-sm md:text-sm text-gray-500">@{update.user.username}</p>
+                <p className="text-xs xs:text-sm text-gray-500">@{update.user.username}</p>
               </div>
               {/* {update.collective && (
                 <p className="text-[10px] md:text-sm text-gray-500">{update.collective.name}</p>
@@ -256,12 +256,12 @@ function NotificationSummary({ update }: { update: CommunityUpdate }) {
           </div>
           <div className="flex flex-col gap-1">
             {/* Action Text */}
-            <p className="text-xs md:text-sm font-semibold text-gray-800 flex-1">
+            <p className="text-[10px] xs:text-sm md:text-sm font-semibold text-gray-800 flex-1">
               {userName} <span className="font-medium">joined</span>  {cleanActionText}
             </p>
             {/* Supporting X nonprofits - Only on second line if it exists */}
             {nonprofitCount > 0 && (
-              <p className="text-[11px] md:text-sm text-gray-500">
+              <p className="text-[10px] xs:text-xs md:text-sm text-gray-500">
                 Supporting {nonprofitCount} nonprofit{nonprofitCount !== 1 ? 's' : ''}
               </p>
             )}
@@ -297,11 +297,11 @@ function NotificationSummary({ update }: { update: CommunityUpdate }) {
             <div className="flex items-center gap-1 md:gap-2 lg:gap-3 flex-wrap">
               <Link
                 to={`/user-profile/${update.user.id}`}
-                className="font-bold text-sm md:text-base text-gray-900 hover:underline block"
+                className="font-bold text-xs xs:text-sm md:text-base text-gray-900 hover:underline block"
               >
                 {userName}
               </Link>
-              <p className="text-sm md:text-sm text-gray-500">@{update.user.username}</p>
+              <p className="text-xs xs:text-sm text-gray-500">@{update.user.username}</p>
             </div>
             {/* {update.collective && (
               <p className="text-[10px] md:text-sm text-gray-500">{update.collective.name}</p>
@@ -331,7 +331,7 @@ function NotificationSummary({ update }: { update: CommunityUpdate }) {
           <HandHeart className="h-4 w-4 md:h-5 md:w-5 text-white" />
         </div>
         {/* Action Text */}
-        <p className="text-xs md:text-sm font-semibold text-gray-900 flex-1">
+        <p className="text-[10px] xs:text-sm md:text-sm font-semibold text-gray-900 flex-1">
           {actionText}
         </p>
       </div>
@@ -352,8 +352,8 @@ export default function CommunityUpdates({
     <div className="w-full px-4 my-4 mb-6 md:px-0 md:my-8 md:mb-10">
       {showHeading && (
         <div className="mb-3 md:mb-6">
-          <h2 className="text-base sm:text-xl md:text-3xl font-bold text-gray-900 mb-1 md:mb-2">Community Updates</h2>
-          <p className="text-[10px] md:text-sm text-gray-600">
+          <h2 className="text-sm xs:text-base sm:text-xl md:text-3xl font-bold text-gray-900 mb-1 md:mb-2">Community Updates</h2>
+          <p className="text-[10px] xs:text-xs md:text-sm text-gray-600">
             Activity, updates, and discoveries from your community
           </p>
         </div>

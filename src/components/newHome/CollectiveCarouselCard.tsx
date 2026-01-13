@@ -278,7 +278,7 @@ export default function CollectiveCarouselCard({
               >
                 <ChevronLeft className="h-3.5 w-3.5 md:h-5 md:w-5 text-gray-700" />
               </button>
-              <span className="text-xs md:text-sm text-gray-700 min-w-[45px] md:min-w-[60px] text-center font-medium">
+              <span className="text-[10px] xs:text-xs md:text-sm text-gray-700 min-w-[45px] md:min-w-[60px] text-center font-medium">
                 {currentIndex + 1} of {totalCollectives}
               </span>
               <button
@@ -306,7 +306,7 @@ export default function CollectiveCarouselCard({
                     className="w-full h-full object-cover rounded-lg"
                   />
                 ) : (
-                  <span className="text-white font-bold text-base md:text-xl">
+                  <span className="text-white font-bold text-sm xs:text-base md:text-xl">
                     {iconLetter}
                   </span>
                 )}
@@ -314,9 +314,9 @@ export default function CollectiveCarouselCard({
 
               {/* Title and Badge */}
               <div className="flex-1 min-w-0">
-                <h3 className="font-bold text-sm md:text-lg text-gray-900 mb-0.5 md:mb-1">{currentCollective.name}</h3>
+                <h3 className="font-bold text-xs xs:text-base md:text-lg text-gray-900 mb-0.5 md:mb-1">{currentCollective.name}</h3>
                 {currentCollective.role === 'Admin' && (
-                  <p className={`${currentCollective.role === 'Admin' ? 'bg-pink-100 text-red-600' : 'bg-[#a955f7] text-white'} text-xs md:text-sm font-medium px-1.5 md:px-2 py-0.5 rounded-md whitespace-nowrap w-fit`}>
+                  <p className={`${currentCollective.role === 'Admin' ? 'bg-pink-100 text-red-600' : 'bg-[#a955f7] text-white'} text-[10px] xs:text-xs md:text-sm font-medium px-1.5 md:px-2 py-0.5 rounded-md whitespace-nowrap w-fit`}>
                     {currentCollective.role === 'Admin' ? 'Leader' : currentCollective.role}
                   </p>
                 )}
@@ -325,7 +325,7 @@ export default function CollectiveCarouselCard({
 
             {/* Content */}
             <div className="w-full text-left">
-              <p className="text-xs md:text-base text-gray-700 mb-2 md:mb-4 leading-relaxed text-left">
+              <p className="text-xs xs:text-sm md:text-base text-gray-700 mb-2 md:mb-4 leading-relaxed text-left">
                 <span className="font-bold text-gray-800">{currentCollective.memberCount} {currentCollective.memberCount === 1 ? 'member' : 'members'}</span> {currentCollective.memberCount === 1 ? 'is' : 'are'} currently donating{" "}
                 to <span className="font-bold text-gray-800">{currentCollective.causeCount} {currentCollective.causeCount === 1 ? 'cause' : 'causes'}</span>.
               </p>
@@ -335,14 +335,14 @@ export default function CollectiveCarouselCard({
                 <Button
                   variant="ghost"
                   size="sm"
-                  className="text-[#1600ff] hover:text-[#1600ff] text-xs md:text-base font-semibold inline-flex items-center gap-1 hover:underline w-[30%]"
+                  className="text-[#1600ff] hover:text-[#1600ff] text-[10px] xs:text-xs md:text-base font-semibold inline-flex items-center gap-1 hover:underline w-[30%]"
                   onClick={handleButtonClick}
                 >
                   {isFounder ? "Manage" : "View"} <ArrowRight className="h-3.5 w-3.5 md:h-4 md:w-4" strokeWidth={2.5} />
                 </Button>
                 <Button
                   size="sm"
-                  className="bg-[#1600ff] hover:bg-[#1400cc] text-white flex items-center justify-center gap-1 md:gap-1.5 text-xs md:text-sm h-7 md:h-9 px-2 md:px-3 font-semibold w-[30%]"
+                  className="bg-[#1600ff] hover:bg-[#1400cc] text-white flex items-center justify-center gap-1 md:gap-1.5 text-[10px] xs:text-xs md:text-sm h-7 md:h-9 px-2 md:px-3 font-semibold w-[30%]"
                   onClick={() => setShowShareModal(true)}
                 >
                   Share

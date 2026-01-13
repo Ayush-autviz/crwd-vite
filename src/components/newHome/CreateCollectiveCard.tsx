@@ -18,10 +18,10 @@ export default function CreateCollectiveCard() {
               <Plus className="w-4 h-4 md:w-6 md:h-6 text-black" strokeWidth={3} />
             </div>
             <div className="flex-1 min-w-0 text-left w-full md:w-auto">
-              <h3 className="font-bold text-sm md:text-lg text-foreground">
+              <h3 className="font-bold text-xs xs:text-sm md:text-lg text-foreground">
                 Start Your Own Collective
               </h3>
-              <p className="text-xs md:text-sm text-gray-600 mb-1.5 md:mb-2 mt-0.5 md:mt-1">
+              <p className="text-[10px] xs:text-xs md:text-sm text-gray-600 mb-1.5 md:mb-2 mt-0.5 md:mt-1">
                 Bring people together around causes you care about.
               </p>
               <button
@@ -29,7 +29,7 @@ export default function CreateCollectiveCard() {
                   e.stopPropagation();
                   navigate('/create-crwd');
                 }}
-                className="text-foreground font-semibold text-xs md:text-sm hover:underline flex items-center gap-1 self-start"
+                className="text-foreground font-semibold text-[10px] xs:text-xs md:text-sm hover:underline flex items-center gap-1 self-start"
               >
                 Create collective
                 <ArrowRight className="w-3 h-3 md:w-4 md:h-4" />

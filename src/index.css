@@ -3,6 +3,10 @@
 
 @custom-variant dark (&:is(.dark *));
 
+@theme {
+  --breakpoint-xs: 360px;
+}
+
 @keyframes scroll {
   0% {
     transform: translateX(0);
