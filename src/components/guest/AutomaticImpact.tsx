@@ -9,7 +9,7 @@ export default function AutomaticImpact() {
     <div className="bg-gradient-to-r from-blue-50 via-purple-50 to-pink-50 py-6 md:py-16 px-4 md:px-6">
       <div className="max-w-6xl mx-auto">
         {/* Heading */}
-        <h2 className="font-[800] text-foreground mb-4 md:mb-12 text-center text-lg md:text-3xl" style={{ fontSize: 'clamp(1.25rem, 3.5vw, 3rem)' }}>
+        <h2 className="font-[800] text-foreground mb-4 md:mb-12 text-center text-2xl xs:text-3xl md:text-3xl" style={{ fontSize: 'clamp(1.75rem, 4.5vw, 3rem)' }}>
           One Decision. <span className="text-[#1600ff]">Automatic Impact.</span> Every Cause You Love.
         </h2>
 
@@ -21,26 +21,25 @@ export default function AutomaticImpact() {
               <div className="w-8 h-8 md:w-12 md:h-12 rounded-full bg-blue-100 flex items-center justify-center mb-2 md:mb-3 mx-auto">
                 <span className={`text-[${PrimaryBlue}] text-sm md:text-xl font-bold`}>1</span>
               </div>
-              <p className="text-foreground font-[600] mb-2 md:mb-3 text-center text-xs md:text-base">
+              <p className="text-foreground font-[600] mb-2 md:mb-3 text-center text-sm xs:text-base md:text-base">
                 Set one monthly amount
               </p>
               <div className="flex flex-wrap gap-1 md:gap-2 justify-center mb-1.5 md:mb-2">
                 {amountOptions.map((amount) => (
                   <button
                     key={amount}
-                    className={`px-2 py-1 md:px-3.5 md:py-2 rounded-full text-[10px] md:text-sm font-medium transition-colors ${
-                      amount === 5
+                    className={`px-3 py-1.5 md:px-3.5 md:py-2 rounded-full text-xs xs:text-sm md:text-sm font-medium transition-colors ${amount === 5
                         ? "bg-[#1600ff] text-white"
                         : amount === 25
-                        ? "bg-[#ff3366] text-white"
-                        : "bg-[#a854f7] text-white "
-                    }`}
+                          ? "bg-[#ff3366] text-white"
+                          : "bg-[#a854f7] text-white "
+                      }`}
                   >
                     ${amount}
                   </button>
                 ))}
               </div>
-              <p className="text-muted-foreground text-center text-[10px] md:text-sm">
+              <p className="text-muted-foreground text-center text-xs xs:text-sm md:text-sm">
                 whatever works for you
               </p>
             </CardContent>
@@ -52,7 +51,7 @@ export default function AutomaticImpact() {
               <div className="w-8 h-8 md:w-12 md:h-12 rounded-full bg-pink-100 flex items-center justify-center mb-2 md:mb-3 mx-auto">
                 <span className="text-pink-500 text-sm md:text-xl font-bold">2</span>
               </div>
-              <p className="text-foreground font-[600] text-center text-xs md:text-base">
+              <p className="text-foreground font-[600] text-center text-sm xs:text-base md:text-base">
                 Split it across every nonprofit you care about
               </p>
             </CardContent>
@@ -64,7 +63,7 @@ export default function AutomaticImpact() {
               <div className="w-8 h-8 md:w-12 md:h-12 rounded-full bg-purple-100 flex items-center justify-center mb-2 md:mb-3 mx-auto">
                 <span className="text-purple-500 text-sm md:text-xl font-bold">3</span>
               </div>
-              <p className="text-foreground font-[600] text-center text-xs md:text-base">
+              <p className="text-foreground font-[600] text-center text-sm xs:text-base md:text-base">
                 We handle everything automatically
               </p>
             </CardContent>
@@ -79,7 +78,7 @@ export default function AutomaticImpact() {
                 <div className="w-4 h-4 md:w-6 md:h-6 rounded-full flex items-center justify-center flex-shrink-0">
                   <Check className="w-3.5 h-3.5 md:w-4 md:h-4 text-green-700" />
                 </div>
-                <p className="text-gray-700 font-[600] text-xs md:text-base">
+                <p className="text-gray-700 font-[600] text-sm xs:text-base md:text-base">
                   No decision fatigue
                 </p>
               </div>
@@ -87,7 +86,7 @@ export default function AutomaticImpact() {
                 <div className="w-4 h-4 md:w-6 md:h-6 rounded-full flex items-center justify-center flex-shrink-0">
                   <Check className="w-3.5 h-3.5 md:w-4 md:h-4 text-green-700" />
                 </div>
-                <p className="text-gray-700 font-[600] text-xs md:text-base">
+                <p className="text-gray-700 font-[600] text-sm xs:text-base md:text-base">
                   No guilt
                 </p>
               </div>
@@ -95,13 +94,13 @@ export default function AutomaticImpact() {
                 <div className="w-4 h-4 md:w-6 md:h-6 rounded-full flex items-center justify-center flex-shrink-0">
                   <Check className="w-3.5 h-3.5 md:w-4 md:h-4 text-green-700" />
                 </div>
-                <p className="text-gray-700 font-[600] text-xs md:text-base">
+                <p className="text-gray-700 font-[600] text-sm xs:text-base md:text-base">
                   No choosing
                 </p>
               </div>
             </div>
 
-            <p className="text-[#1600ff] font-[800] text-center text-sm md:text-xl" style={{ fontSize: 'clamp(0.875rem, 2vw, 1.5rem)' }}>
+            <p className="text-[#1600ff] font-[800] text-center text-lg xs:text-xl md:text-xl" style={{ fontSize: 'clamp(1.125rem, 3vw, 1.5rem)' }}>
               Just set it once, and become someone who actually makes a difference.
             </p>
           </CardContent>
@@ -112,7 +111,7 @@ export default function AutomaticImpact() {
           <div className="w-4 h-4 md:w-5 md:h-5 rounded-full border-1 border-green-700 flex items-center justify-center flex-shrink-0">
             <Check className="w-3 h-3 md:w-4 md:h-4 text-green-700" />
           </div>
-          <p className="text-xs md:text-base text-center" style={{ fontSize: 'clamp(0.7rem, 1.2vw, 1rem)' }}>
+          <p className="text-xs xs:text-sm md:text-base text-center" style={{ fontSize: 'clamp(0.75rem, 1.5vw, 1rem)' }}>
             Your donations are tax-deductible and you'll receive a consolidated receipt for easy filing
           </p>
         </div>

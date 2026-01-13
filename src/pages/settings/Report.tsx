@@ -14,9 +14,9 @@ import { useMutation } from "@tanstack/react-query";
 export default function SettingsReport() {
   const [formData, setFormData] = useState({
     type: "",
-    title: "",
+    title: "No title",
     description: "",
-    steps: "",
+    steps: "No steps",
   });
 
   const reportIssueMutation = useMutation({
@@ -115,7 +115,7 @@ export default function SettingsReport() {
                   </Select>
                 </div>
 
-                <div className="space-y-1.5 md:space-y-2">
+                {/* <div className="space-y-1.5 md:space-y-2">
                   <Label htmlFor="title" className="text-sm md:text-base">Title</Label>
                   <Input
                     id="title"
@@ -126,7 +126,7 @@ export default function SettingsReport() {
                     required
                     className="text-sm md:text-base"
                   />
-                </div>
+                </div> */}
 
                 <div className="space-y-1.5 md:space-y-2">
                   <Label htmlFor="description" className="text-sm md:text-base">Description</Label>
@@ -141,7 +141,7 @@ export default function SettingsReport() {
                   />
                 </div>
 
-                <div className="space-y-1.5 md:space-y-2">
+                {/* <div className="space-y-1.5 md:space-y-2">
                   <Label htmlFor="steps" className="text-sm md:text-base">Steps to Reproduce</Label>
                   <Textarea
                     id="steps"
@@ -151,7 +151,7 @@ export default function SettingsReport() {
                     placeholder="1. First step&#10;2. Second step&#10;3. And so on..."
                     className="min-h-[80px] md:min-h-[100px] text-sm md:text-base"
                   />
-                </div>
+                </div> */}
 
                 <div className="flex flex-col sm:flex-row gap-3 md:gap-4 pt-3 md:pt-4">
                   <Button

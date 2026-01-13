@@ -487,7 +487,7 @@ export default function NewSettings() {
               </div>
 
               {/* Username */}
-              <div>
+              {/* <div>
                 <Label className="mb-1.5 md:mb-2 text-xs md:text-sm font-bold text-gray-900">Username</Label>
                 <Input
                   value={formData.username}
@@ -495,7 +495,7 @@ export default function NewSettings() {
                   placeholder="Username"
                   className="bg-gray-100 border-0 text-sm md:text-base opacity-60 cursor-not-allowed"
                 />
-              </div>
+              </div> */}
 
               {/* Email */}
               <div>

@@ -82,7 +82,7 @@ export default function CommunityTestimonials({
     <div className="bg-gray-50 py-6 md:py-12 lg:py-16 xl:py-20 px-4 md:px-6 lg:px-8 xl:px-10">
       <div className="max-w-4xl lg:max-w-5xl xl:max-w-6xl mx-auto">
         {/* Title */}
-        <h2 className="font-[800] text-foreground mb-4 md:mb-8 lg:mb-10 xl:mb-12 text-center text-lg md:text-3xl" style={{ fontSize: 'clamp(1.125rem, 3vw, 3rem)' }}>
+        <h2 className="font-[800] text-foreground mb-4 md:mb-8 lg:mb-10 xl:mb-12 text-center text-2xl xs:text-3xl md:text-3xl" style={{ fontSize: 'clamp(1.5rem, 4vw, 3rem)' }}>
           What Our Community Is Saying
         </h2>
 
@@ -112,11 +112,11 @@ export default function CommunityTestimonials({
                       </AvatarFallback>
                     </Avatar>
                     <div className="flex-1 min-w-0">
-                      <h3 className="font-bold text-gray-900 text-xs md:text-base lg:text-lg xl:text-xl mb-0.5 md:mb-1">
+                      <h3 className="font-bold text-gray-900 text-sm xs:text-base md:text-base lg:text-lg xl:text-xl mb-0.5 md:mb-1">
                         {getUserName(post.user)}
                       </h3>
                       {post.collective?.name && (
-                        <p className="text-[#1600ff] text-xs md:text-base lg:text-lg xl:text-xl font-medium">
+                        <p className="text-[#1600ff] text-sm xs:text-base md:text-base lg:text-lg xl:text-xl font-medium">
                           {post.collective.name}
                         </p>
                       )}
@@ -124,7 +124,7 @@ export default function CommunityTestimonials({
                   </div>
 
                   {/* Post Content */}
-                  <p onClick={() => navigate(`/post/${post.id}`)} className="cursor-pointer text-gray-900 text-xs md:text-base lg:text-lg xl:text-xl mb-3 md:mb-5 lg:mb-6 leading-relaxed">
+                  <p onClick={() => navigate(`/post/${post.id}`)} className="cursor-pointer text-gray-900 text-sm xs:text-base md:text-base lg:text-lg xl:text-xl mb-3 md:mb-5 lg:mb-6 leading-relaxed">
                     {post.content}
                   </p>
 

@@ -102,7 +102,7 @@ export default function GuestHome() {
                     {/* Sign In Button */}
                     <button
                         onClick={() => navigate("/login")}
-                        className="bg-[#ff3366] hover:bg-[#ff0033] text-white font-bold px-2 py-1 sm:px-3 sm:py-1.5 md:px-6 md:py-2 rounded-full text-[10px] xs:text-xs sm:text-sm md:text-base whitespace-nowrap"
+                        className="bg-[#ff3366] hover:bg-[#ff0033] text-white font-bold px-3 py-1.5 xs:px-4 xs:py-2 md:px-6 md:py-2 rounded-full text-xs xs:text-sm md:text-base whitespace-nowrap"
                     >
                         Sign In
                     </button>
@@ -131,18 +131,18 @@ export default function GuestHome() {
                 <div className="max-w-4xl mx-auto text-center mt-4 md:mt-20 mb-3 md:mb-8">
 
 
-                    <h1 className="font-[900] text-foreground mb-2 md:mb-4 leading-tight" style={{ fontSize: 'clamp(1.7rem, 5vw, 4.5rem)' }}>
+                    <h1 className="font-[900] text-foreground mb-2 md:mb-4 leading-tight" style={{ fontSize: 'clamp(2.5rem, 10vw, 4.5rem)' }}>
                         Stop Wishing You Made a Difference.
                         <span className="text-[#1600ff]"> Start Being Someone Who Does.</span>
                     </h1>
 
-                    <p className="text-muted-foreground mb-3 md:mb-8 max-w-2xl mx-auto text-sm md:text-base" style={{ fontSize: 'clamp(0.75rem, 1.5vw, 1.5rem)' }}>
+                    <p className="text-muted-foreground my-8 md:mb-12 max-w-2xl mx-auto text-base md:text-base" style={{ fontSize: 'clamp(1.2rem, 2vw, 1.5rem)' }}>
                         What if you could support every cause you care about automatically, affordably, and powerfully?
                     </p>
 
                     <Button
                         onClick={() => navigate("/onboarding")}
-                        className="h-10 md:h-14 px-6 md:px-10 py-2 md:py-4 rounded-lg bg-[#1600ff] text-white font-bold text-sm md:text-lg"
+                        className="h-12 md:h-14 px-8 md:px-10 py-3 md:py-4 my-4 md:my-8 rounded-lg bg-[#1600ff] text-white font-bold text-lg md:text-lg"
                     >
                         Get started
                     </Button>
@@ -153,18 +153,18 @@ export default function GuestHome() {
             {/* See the Magic in Action Section */}
             <div className="bg-gradient-to-br from-[#f1f6ff] via-[#f7f6ff] to-[#fdf3f8] py-4 md:py-16 px-4 md:px-6">
                 <div className="max-w-4xl mx-auto">
-                    <h2 className="font-[800] text-foreground mb-1.5 md:mb-4 text-center text-lg md:text-2xl" style={{ fontSize: 'clamp(1rem, 3vw, 2.5rem)' }}>
+                    <h2 className="font-[800] text-foreground mb-1.5 md:mb-4 text-center text-xl xs:text-2xl md:text-2xl" style={{ fontSize: 'clamp(1.5rem, 5vw, 2.5rem)' }}>
                         See the <span className="text-[#1600ff]">Magic</span> in Action
                     </h2>
-                    <p className="text-muted-foreground mb-3 md:mb-12 text-center text-xs md:text-base" style={{ fontSize: 'clamp(0.7rem, 1.5vw, 1.25rem)' }}>
+                    <p className="text-muted-foreground my-4 md:my-8 text-center text-sm xs:text-base md:text-base" style={{ fontSize: 'clamp(0.9rem, 2vw, 1.25rem)' }}>
                         Pick your causes. Give once. Multiply your impact.
                     </p>
 
                     {/* Demo Card */}
                     <Card className="max-w-[90%] md:max-w-[80%] lg:max-w-3xl mx-auto">
                         <CardContent className="p-2.5 md:p-8 lg:p-12">
-                            <div className="text-gray-500 mb-2 md:mb-4 text-center text-xs md:text-base" style={{ fontSize: 'clamp(0.65rem, 1.5vw, 1.125rem)' }}>
-                                You can give <span className="text-[#1600ff] font-[900]" style={{ fontSize: 'clamp(1.25rem, 4vw, 3rem)' }}>${donationAmount}</span>/month to
+                            <div className="text-gray-500 mb-2 md:mb-4 text-center text-sm xs:text-base md:text-base" style={{ fontSize: 'clamp(0.875rem, 2vw, 1.125rem)' }}>
+                                You can give <span className="text-[#1600ff] font-[900]" style={{ fontSize: 'clamp(1.75rem, 5vw, 3rem)' }}>${donationAmount}</span>/month to
                             </div>
 
                             {/* Slider */}
@@ -176,7 +176,7 @@ export default function GuestHome() {
                                     step="5"
                                     value={donationAmount}
                                     onChange={(e) => setDonationAmount(Math.round(Number(e.target.value) / 5) * 5)}
-                                    className="w-full h-2 md:h-3 bg-gray-200 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:h-4 md:[&::-webkit-slider-thumb]:w-5 md:[&::-webkit-slider-thumb]:h-5 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-[#fff] [&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-[#1600ff] [&::-webkit-slider-thumb]:cursor-pointer [&::-webkit-slider-thumb]:shadow-md [&::-moz-range-thumb]:w-4 [&::-moz-range-thumb]:h-4 md:[&::-moz-range-thumb]:w-5 md:[&::-moz-range-thumb]:h-5 [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:bg-[#1600ff] [&::-moz-range-thumb]:cursor-pointer [&::-moz-range-thumb]:border-0 [&::-moz-range-thumb]:shadow-md"
+                                    className="w-full h-3 md:h-3 bg-gray-200 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-5 [&::-webkit-slider-thumb]:h-5 md:[&::-webkit-slider-thumb]:w-6 md:[&::-webkit-slider-thumb]:h-6 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-[#fff] [&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-[#1600ff] [&::-webkit-slider-thumb]:cursor-pointer [&::-webkit-slider-thumb]:shadow-md [&::-moz-range-thumb]:w-5 [&::-moz-range-thumb]:h-5 md:[&::-moz-range-thumb]:w-6 md:[&::-moz-range-thumb]:h-6 [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:bg-[#1600ff] [&::-moz-range-thumb]:cursor-pointer [&::-moz-range-thumb]:border-0 [&::-moz-range-thumb]:shadow-md"
                                     style={{
                                         background: `linear-gradient(to right, #1600ff 0%, #1600ff ${((donationAmount - 5) / 95) * 100}%, #e5e7eb ${((donationAmount - 5) / 95) * 100}%, #e5e7eb 100%)`
                                     }}
@@ -188,15 +188,15 @@ export default function GuestHome() {
                                 {causeSets[currentCauseSet].map((cause) => (
                                     <button
                                         key={`${cause.name}-${currentCauseSet}`}
-                                        className={`px-1.5 py-0.5 md:px-4 md:py-2 rounded-full text-primary-foreground text-[10px] md:text-sm lg:text-base font-medium ${cause.bgColor} ${cause.hoverColor} transition-colors`}
+                                        className={`px-3 py-1.5 md:px-4 md:py-2 rounded-full text-primary-foreground text-xs xs:text-sm md:text-sm lg:text-base font-medium ${cause.bgColor} ${cause.hoverColor} transition-colors`}
                                     >
                                         {cause.name}
                                     </button>
                                 ))}
                             </div>
 
-                            <div className="font-bold text-[#1600ff] mb-1.5 md:mb-4 text-center text-xs md:text-base" style={{ fontSize: 'clamp(0.7rem, 2vw, 1.25rem)' }}>
-                                <span className="font-[700]" style={{ fontSize: 'clamp(0.875rem, 2.5vw, 1.875rem)' }}>= ${donationAmount * 12}</span> /year of impact
+                            <div className="font-bold text-[#1600ff] mb-1.5 md:mb-4 text-center text-sm xs:text-base md:text-base" style={{ fontSize: 'clamp(0.875rem, 2.5vw, 1.25rem)' }}>
+                                <span className="font-[700]" style={{ fontSize: 'clamp(1.125rem, 3vw, 1.875rem)' }}>= ${donationAmount * 12}</span> /year of impact
                             </div>
 
                             {/* Distribution Bar */}
@@ -207,7 +207,7 @@ export default function GuestHome() {
                                 <div className="bg-[#1600ff] flex-1" />
                             </div>
 
-                            <p className="text-gray-700 mb-3 md:mb-8 text-center font-[600] mt-2 md:mt-6 text-xs md:text-base" style={{ fontSize: 'clamp(0.65rem, 1.5vw, 1rem)' }}>
+                            <p className="text-gray-700 mb-3 md:mb-8 text-center font-[600] mt-2 md:mt-6 text-sm xs:text-base md:text-base" style={{ fontSize: 'clamp(0.875rem, 2vw, 1rem)' }}>
                                 One gift. Multiple causes.
                             </p>
 
@@ -217,7 +217,7 @@ export default function GuestHome() {
                             >
                                 Start Supporting <ChevronRight className="ml-1.5 md:ml-2 h-3.5 w-3.5 md:h-5 md:w-5" />
                             </Button>
-                            <p className="text-gray-500 text-center mt-2 md:mt-4 text-xs md:text-base" style={{ fontSize: 'clamp(0.65rem, 1.5vw, 1rem)' }}>Every dollar makes a difference</p>
+                            <p className="text-gray-500 text-center mt-2 md:mt-4 text-xs xs:text-sm md:text-base" style={{ fontSize: 'clamp(0.75rem, 2vw, 1rem)' }}>Every dollar makes a difference</p>
                         </CardContent>
                     </Card>
                 </div>
