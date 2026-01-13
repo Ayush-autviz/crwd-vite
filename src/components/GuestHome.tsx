@@ -128,7 +128,7 @@ export default function GuestHome() {
             {/* Hero Section */}
             <div className="bg-card pt-3 pb-6 md:pt-8 md:pb-16 px-4 md:px-6">
                 {/* Launch Banner */}
-                <div className="max-w-4xl mx-auto text-center mt-4 md:mt-20 mb-3 md:mb-8">
+                <div className="max-w-4xl mx-auto text-center mt-4 ">
 
 
                     <h1 className="font-[900] text-foreground mb-2 md:mb-4 leading-tight" style={{ fontSize: 'clamp(2.5rem, 10vw, 4.5rem)' }}>
@@ -136,13 +136,13 @@ export default function GuestHome() {
                         <span className="text-[#1600ff]"> Start Being Someone Who Does.</span>
                     </h1>
 
-                    <p className="text-muted-foreground my-8 md:mb-12 max-w-2xl mx-auto text-base md:text-base" style={{ fontSize: 'clamp(1.2rem, 2vw, 1.5rem)' }}>
+                    <p className="text-muted-foreground my-8  max-w-2xl mx-auto text-base md:text-base" style={{ fontSize: 'clamp(1.2rem, 2vw, 1.5rem)' }}>
                         What if you could support every cause you care about automatically, affordably, and powerfully?
                     </p>
 
                     <Button
                         onClick={() => navigate("/onboarding")}
-                        className="h-12 md:h-14 px-8 md:px-10 py-3 md:py-4 my-4 md:my-8 rounded-lg bg-[#1600ff] text-white font-bold text-lg md:text-lg"
+                        className="h-12 md:h-14 px-8 md:px-10 py-3 md:py-4 my-4 rounded-lg bg-[#1600ff] text-white font-bold text-lg md:text-lg"
                     >
                         Get started
                     </Button>
