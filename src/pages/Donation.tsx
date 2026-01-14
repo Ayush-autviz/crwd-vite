@@ -18,7 +18,8 @@ export default function DonationPage() {
   const preselectedCauses = location.state?.preselectedCauses;
   const preselectedCausesData = location.state?.preselectedCausesData;
   const preselectedCollectiveId = location.state?.preselectedCollectiveId;
-  
+  const collectiveName = location.state?.collectiveName;
+
   console.log('Preselected item:', preselectedItem);
   console.log('Active tab:', activeTab);
 
@@ -34,20 +35,20 @@ export default function DonationPage() {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
             </svg>
           </div>
-          
+
           {/* Title */}
           <h2 className="text-2xl font-bold text-gray-900 mb-3">
             Sign in to make a donation
           </h2>
-          
+
           {/* Description */}
           <p className="text-gray-600 mb-8 leading-relaxed">
             Sign in to view your profile, manage your causes, and connect with your community.
           </p>
-          
+
           {/* CTA Button */}
-          <Button 
-            size="lg" 
+          <Button
+            size="lg"
             className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-lg font-medium transition-colors duration-200 shadow-lg hover:shadow-xl"
           >
             <Link to="/onboarding" className="flex items-center gap-2">
@@ -57,10 +58,10 @@ export default function DonationPage() {
               Sign In to Continue
             </Link>
           </Button>
-          
+
           {/* Additional Info */}
           <p className="text-sm text-gray-500 mt-6">
-            Don't have an account? 
+            Don't have an account?
             <Link to="/claim-profile" className="text-blue-600 hover:text-blue-700 font-medium ml-1">
               Create one here
             </Link>
@@ -72,14 +73,15 @@ export default function DonationPage() {
 
   return (
     <div>
-      <DonationBox 
-        tab={tab || "setup"} 
+      <DonationBox
+        tab={tab || "setup"}
         preselectedItem={preselectedItem}
         activeTab={activeTab}
         fromPaymentResult={fromPaymentResult}
         preselectedCauses={preselectedCauses}
         preselectedCausesData={preselectedCausesData}
         preselectedCollectiveId={preselectedCollectiveId}
+        collectiveName={collectiveName}
       />
       {/* <div className="hidden md:block">
         <Footer />

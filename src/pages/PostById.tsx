@@ -330,7 +330,7 @@ export default function PostById() {
 
   return (
     <div className="bg-white min-h-screen flex flex-col relative pb-16">
-      <ProfileNavbar title={getUserDisplayName()} />
+      <ProfileNavbar title={post.org} />
       <main className="flex-1">
         <ProfileActivityCard
           post={post}

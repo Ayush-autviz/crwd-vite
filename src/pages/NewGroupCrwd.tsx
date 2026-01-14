@@ -254,6 +254,7 @@ export default function NewGroupCrwdPage() {
           preselectedCauses: preselectedCauseIds,
           preselectedCausesData: preselectedCauses,
           preselectedCollectiveId: parseInt(collectiveId),
+          collectiveName: crwdData.name, // Pass collective name for header display
           returnTo: `/groupcrwd/${crwdId}`, // Return to collective after setup
         },
       });
