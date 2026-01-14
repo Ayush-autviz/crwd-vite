@@ -138,7 +138,7 @@ export default function CommunityActivity({
                     Create Event
                   </button> */}
                   <button
-                    onClick={() => navigate("/create-fundraiser", { state: { collectiveData } })}
+                    onClick={() => navigate(`/create-fundraiser/${collectiveId}`)}
                     className="w-full text-left px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-3 transition-colors font-medium"
                   >
                     <Heart className="w-4 h-4 text-gray-500" />

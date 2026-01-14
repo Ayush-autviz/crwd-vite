@@ -492,7 +492,7 @@ export default function NewGroupCrwdPage() {
             </div>
 
             {/* Content Container */}
-            <div className="flex-1 pr-6">
+            <div onClick={() => isAdmin ? navigate(`/create-fundraiser/${crwdId}`) : navigate(`/create-crwd`)} className="flex-1 pr-6 cursor-pointer">
               <h3 className="m-0 mb-1 text-xs md:text-sm lg:text-base xl:text-lg font-bold text-gray-900">
                 Founder Perk: Create Fundraisers
               </h3>

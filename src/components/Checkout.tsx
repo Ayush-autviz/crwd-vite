@@ -65,6 +65,7 @@ export const Checkout = ({
   const [isPauseModalAnimating, setIsPauseModalAnimating] = useState(false);
   const [selectedPauseOption, setSelectedPauseOption] = useState<number | null>(null);
   const [showEditSplit, setShowEditSplit] = useState(false);
+  const [showCancelConfirmModal, setShowCancelConfirmModal] = useState(false);
 
   // Update showManageDonationBox when initialShowManage changes
   useEffect(() => {
@@ -436,7 +437,12 @@ export const Checkout = ({
   });
 
   const handleCancelSubscription = () => {
+    setShowCancelConfirmModal(true);
+  };
+
+  const handleConfirmCancel = () => {
     cancelDonationBoxMutation.mutate();
+    setShowCancelConfirmModal(false);
   };
 
   // Handle remove modal animation
@@ -1133,6 +1139,52 @@ export const Checkout = ({
                   'Remove'
                 )}
               </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Cancel Confirmation Modal */}
+      {showCancelConfirmModal && (
+        <div
+          className="fixed inset-0 z-[60] flex items-end md:items-center justify-center"
+          onClick={() => setShowCancelConfirmModal(false)}
+        >
+          {/* Backdrop */}
+          <div className="absolute inset-0 bg-black/50" />
+
+          {/* Modal Content */}
+          <div
+            className="relative bg-white rounded-t-2xl md:rounded-2xl shadow-xl w-full md:max-w-md m-0 md:m-4 overflow-hidden animate-in slide-in-from-bottom md:slide-in-from-center duration-200"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Handle Bar (Mobile only) */}
+            <div className="flex justify-center pt-2 md:pt-3 pb-1.5 md:pb-2 md:hidden">
+              <div className="w-10 h-1 bg-gray-300 rounded-full" />
+            </div>
+
+            <div className="p-6">
+              <h2 className="text-xl font-bold text-gray-900 mb-2">Cancel Subscription?</h2>
+              <p className="text-gray-600 mb-6">
+                Are you sure you want to cancel your donation box completely?
+              </p>
+
+              <div className="flex flex-col sm:flex-row gap-3">
+                <button
+                  onClick={() => setShowCancelConfirmModal(false)}
+                  disabled={cancelDonationBoxMutation.isPending}
+                  className="w-full sm:flex-1 bg-gray-100 hover:bg-gray-200 text-gray-900 font-semibold py-3 rounded-lg transition-colors"
+                >
+                  Keep Subscription
+                </button>
+                <button
+                  onClick={handleConfirmCancel}
+                  disabled={cancelDonationBoxMutation.isPending}
+                  className="w-full sm:flex-1 bg-red-500 hover:bg-red-600 text-white font-semibold py-3 rounded-lg transition-colors flex items-center justify-center gap-2"
+                >
+                  {cancelDonationBoxMutation.isPending ? 'Cancelling...' : 'Yes, Cancel'}
+                </button>
+              </div>
             </div>
           </div>
         </div>

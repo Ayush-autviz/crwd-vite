@@ -69,15 +69,15 @@ export default function SettingsAbout() {
                 <section id="about-crwd" className="mb-8 md:mb-12">
                   <h2 className="text-xl md:text-2xl font-semibold mb-3 md:mb-4">About CRWD</h2>
                   <p className="text-sm md:text-base text-gray-600 mb-3 md:mb-4">
-                    CRWD makes it easy to give to multiple nonprofits in one
-                    place.
+                    CRWD is a collective giving platform that makes it easy to support multiple causes you care about with a single monthly donation. Our mission is to transform how people give by removing barriers and creating communities of changemakers who show up consistently for the causes that matter.
                   </p>
                   <p className="text-sm md:text-base text-gray-600 mb-3 md:mb-4">
-                    You can build a personalized donation box, add nonprofits
-                    you care about, and give once or monthly. CRWD handles the
-                    rest—including distributing your donation and keeping
-                    everything organized.
+                    CRWD operates through two entities:
                   </p>
+                  <ul className="list-disc pl-5 md:pl-6 text-sm md:text-base text-gray-600 mb-4 md:mb-6">
+                    <li><strong>CRWD Foundation Inc.</strong>, a 501(c)(3) nonprofit organization (EIN: 41-2423690) that receives and distributes donations to qualified nonprofits.</li>
+                    <li><strong>CRWD Collective Giving LLC</strong>, which provides the technology platform and services.</li>
+                  </ul>
                   <p className="text-sm md:text-base text-gray-600 font-medium">
                     We're here to simplify generosity.
                   </p>
@@ -114,13 +114,19 @@ export default function SettingsAbout() {
 
                     <div className="border-l-4 border-blue-500 pl-4 md:pl-6">
                       <h3 className="text-lg md:text-xl font-medium mb-1.5 md:mb-2">
+                        Transparent fee structure.
+                      </h3>
+                      <p className="text-sm md:text-base text-gray-600">
+                        At least 90% of your donation goes directly to the nonprofits you've chosen. No more than 10% supports CRWD's operations (including payment processing, verification, and platform maintenance).
+                      </p>
+                    </div>
+
+                    <div className="border-l-4 border-blue-500 pl-4 md:pl-6">
+                      <h3 className="text-lg md:text-xl font-medium mb-1.5 md:mb-2">
                         We send the funds.
                       </h3>
                       <p className="text-sm md:text-base text-gray-600">
-                        CRWD distributes donations to nonprofits within 45 days,
-                        bundled as a single payment that includes all
-                        contributions made to that nonprofit across the
-                        platform.
+                        CRWD Foundation Inc. disburses donations to nonprofits within 60 days of receipt. This window allows for payment processing, verification, and operational requirements.
                       </p>
                     </div>
 
@@ -169,8 +175,7 @@ export default function SettingsAbout() {
                     <h4 className="font-medium mb-2 md:mb-3 text-sm md:text-base">In the meantime:</h4>
                     <ul className="space-y-1.5 md:space-y-2 text-sm md:text-base text-gray-600">
                       <li>
-                        • Nonprofits still receive 100% of your donation (minus
-                        processing fees)
+                        • Nonprofits receive at least 90% of your donation
                       </li>
                       <li>
                         • You'll receive a giving summary from CRWD for your
