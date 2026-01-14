@@ -131,7 +131,7 @@ export default function GuestHome() {
                 <div className="max-w-4xl mx-auto text-center mt-10 ">
 
 
-                    <h1 className="font-[900] mb-2 md:mb-4 leading-[2.8rem]" style={{ fontSize: 'clamp(2.5rem, 10vw, 4.5rem)' }}>
+                    <h1 className="font-[900] sm:font-[800] mb-2 md:mb-4 leading-none" style={{ fontSize: 'clamp(2.5rem, 10vw, 4.5rem)' }}>
                         Stop Wishing You Made a Difference.
                         <span className="text-[#1600ff]"> Start Being Someone Who Does.</span>
                     </h1>
