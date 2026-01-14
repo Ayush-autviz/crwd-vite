@@ -128,10 +128,10 @@ export default function GuestHome() {
             {/* Hero Section */}
             <div className="bg-card pt-3 pb-6 md:pt-8 md:pb-16 px-4 md:px-6">
                 {/* Launch Banner */}
-                <div className="max-w-4xl mx-auto text-center mt-4 ">
+                <div className="max-w-4xl mx-auto text-center mt-10 ">
 
 
-                    <h1 className="font-[900] text-foreground mb-2 md:mb-4 leading-tight" style={{ fontSize: 'clamp(2.5rem, 10vw, 4.5rem)' }}>
+                    <h1 className="font-[900] mb-2 md:mb-4 leading-[2.8rem]" style={{ fontSize: 'clamp(2.5rem, 10vw, 4.5rem)' }}>
                         Stop Wishing You Made a Difference.
                         <span className="text-[#1600ff]"> Start Being Someone Who Does.</span>
                     </h1>
@@ -142,7 +142,7 @@ export default function GuestHome() {
 
                     <Button
                         onClick={() => navigate("/onboarding")}
-                        className="h-12 md:h-14 px-8 md:px-10 py-3 md:py-4 my-4 rounded-lg bg-[#1600ff] text-white font-bold text-lg md:text-lg"
+                        className="h-12 md:h-14 px-8 md:px-10 py-3 md:py-4 my-6 rounded-lg bg-[#1600ff] text-white font-bold text-lg md:text-lg"
                     >
                         Get started
                     </Button>
