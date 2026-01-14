@@ -165,7 +165,7 @@ export default function NewCompleteOnboard() {
 
   const handleSkip = () => {
     // Navigate to redirectTo if available, otherwise to home
-    navigate(redirectTo);
+    navigate(redirectTo, { state: { from: 'NewCompleteDonation' } });
   };
 
   const getCategoryInfo = (categoryId: string) => {

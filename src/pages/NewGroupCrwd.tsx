@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { useQuery, useInfiniteQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Loader2, Check, Share2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -31,8 +31,21 @@ import { toast } from 'sonner';
 export default function NewGroupCrwdPage() {
   const { crwdId } = useParams<{ crwdId: string }>();
   const navigate = useNavigate();
+  const location = useLocation();
   const { user: currentUser, token } = useAuthStore();
   const queryClient = useQueryClient();
+
+  const handleBack = () => {
+    const fromScreen = (location.state as any)?.from;
+    console.log(fromScreen);
+    const specialFlows = ['NewNonprofitInterests', 'NewCompleteDonation', 'Login'];
+
+    if (fromScreen && specialFlows.includes(fromScreen)) {
+      navigate('/');
+    } else {
+      navigate(-1);
+    }
+  };
   const [showShareModal, setShowShareModal] = useState(false);
   const [showStatisticsModal, setShowStatisticsModal] = useState(false);
   const [statisticsTab, setStatisticsTab] = useState<'Nonprofits' | 'Members' | 'Donations'>('Nonprofits');
@@ -343,6 +356,7 @@ export default function NewGroupCrwdPage() {
         onLeave={handleJoinCollective}
         onShare={handleShare}
         onManageCollective={handleManageCollective}
+        onBack={handleBack}
         onDonate={() => {
           if (!currentUser || !token?.access_token) {
             navigate(`/onboarding?redirectTo=/groupcrwd/${crwdId}`);

@@ -32,10 +32,10 @@ export default function NewNonProfitInterests() {
     "Society",
     "Sports"
   ];
-  
-  const mainCategories = categories.filter((cat) => 
-    cat.id !== "" && 
-    cat.name !== "All" && 
+
+  const mainCategories = categories.filter((cat) =>
+    cat.id !== "" &&
+    cat.name !== "All" &&
     allowedCategoryNames.includes(cat.name)
   );
 
@@ -59,8 +59,8 @@ export default function NewNonProfitInterests() {
       if (redirectTo && redirectTo !== '/') {
         navigate(redirectTo);
       } else {
-        navigate(`/complete-onboard?redirectTo=${encodeURIComponent(redirectTo)}`, { 
-          state: { selectedCategories } 
+        navigate(`/complete-onboard?redirectTo=${encodeURIComponent(redirectTo)}`, {
+          state: { selectedCategories }
         });
       }
     },
@@ -81,7 +81,7 @@ export default function NewNonProfitInterests() {
     // If came from create-crwd or groupcrwd, navigate directly to that page
     // Otherwise, navigate to complete-onboard
     if (redirectTo.includes('/create-crwd') || redirectTo.includes('/groupcrwd/')) {
-      navigate(redirectTo);
+      navigate(redirectTo, { state: { from: 'NewNonprofitInterests' } });
     } else {
       navigate(`/complete-onboard?redirectTo=${encodeURIComponent(redirectTo)}`);
     }
@@ -126,8 +126,8 @@ export default function NewNonProfitInterests() {
                 className={`
                   relative px-4 sm:px-5 md:px-6 py-2 sm:py-2.5 md:py-3 rounded-full text-sm sm:text-base font-medium transition-all duration-200
                   flex items-center justify-center whitespace-nowrap
-                  ${isSelected 
-                    ? "text-white shadow-md transform scale-105" 
+                  ${isSelected
+                    ? "text-white shadow-md transform scale-105"
                     : "hover:shadow-sm hover:scale-102"
                   }
                 `}
@@ -143,10 +143,10 @@ export default function NewNonProfitInterests() {
           })}
         </div>
 
-          {/* Selected Count */}
-          {selectedCategories.length > 0 && (
-        <div className="mb-4 sm:mb-6">
-          <p className="text-xs sm:text-sm text-indigo-600 font-medium">
+        {/* Selected Count */}
+        {selectedCategories.length > 0 && (
+          <div className="mb-4 sm:mb-6">
+            <p className="text-xs sm:text-sm text-indigo-600 font-medium">
               {selectedCategories.length} {selectedCategories.length === 1 ? "category" : "categories"} selected
             </p>
           </div>

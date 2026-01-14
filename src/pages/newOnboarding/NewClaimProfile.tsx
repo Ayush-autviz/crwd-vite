@@ -1,6 +1,6 @@
 import React, { useState, useRef } from "react";
 import { Camera, Loader2, Eye, EyeOff, ArrowRight, Check } from "lucide-react";
-import { useNavigate, Link, useSearchParams } from "react-router-dom";
+import { useNavigate, Link, useSearchParams, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useMutation } from "@tanstack/react-query";
@@ -38,6 +38,7 @@ export default function NewClaimProfile() {
   });
   const fileInputRef = useRef<HTMLInputElement>(null);
   const navigate = useNavigate();
+  const location = useLocation();
   const [searchParams] = useSearchParams();
   const redirectTo = searchParams.get('redirectTo') || '/';
   const { setUser, setToken } = useAuthStore();
@@ -53,7 +54,7 @@ export default function NewClaimProfile() {
         }));
         return;
       }
-      
+
       // Validate file size (e.g., max 5MB)
       const maxSize = 5 * 1024 * 1024; // 5MB
       if (file.size > maxSize) {
@@ -63,7 +64,7 @@ export default function NewClaimProfile() {
         }));
         return;
       }
-      
+
       // Clear any previous errors
       if (errors.profileImage) {
         setErrors((prev) => {
@@ -72,7 +73,7 @@ export default function NewClaimProfile() {
           return newErrors;
         });
       }
-      
+
       const reader = new FileReader();
       reader.onload = (e) => {
         setFormData((prev) => ({
@@ -201,7 +202,7 @@ export default function NewClaimProfile() {
       console.error("Registration error:", error);
       console.error("Error response:", error.response?.data);
       console.error("Error status:", error.response?.status);
-      
+
       // Handle validation errors
       const errorData = error.response?.data;
       if (errorData?.errors) {
@@ -225,16 +226,16 @@ export default function NewClaimProfile() {
           setErrors((prev) => ({ ...prev, ...fieldErrors }));
         }
       }
-      
+
       // Show toast with main message or first error
       const errorMessage = errorData?.message || error.message;
-      const firstError = errorData?.errors 
-        ? Object.values(errorData.errors)[0] 
+      const firstError = errorData?.errors
+        ? Object.values(errorData.errors)[0]
         : null;
-      const displayMessage = Array.isArray(firstError) 
-        ? firstError[0] 
+      const displayMessage = Array.isArray(firstError)
+        ? firstError[0]
         : firstError || errorMessage;
-      
+
       setToastMessage(displayMessage || "Registration failed");
       setShowToast(true);
     },
@@ -486,7 +487,7 @@ export default function NewClaimProfile() {
                 className={cn(
                   "h-12 border-gray-300 bg-gray-50 focus-visible:border-gray-400 focus-visible:ring-gray-400 pr-12",
                   errors.password &&
-                    "border-red-500 focus-visible:border-red-500 focus-visible:ring-red-500"
+                  "border-red-500 focus-visible:border-red-500 focus-visible:ring-red-500"
                 )}
               />
               <button
@@ -666,7 +667,8 @@ export default function NewClaimProfile() {
           <p className="text-sm text-gray-500">
             Already have an account?{" "}
             <Link
-              to="/login"
+              to={`/login${redirectTo ? `?redirectTo=${encodeURIComponent(redirectTo)}` : ''}`}
+              state={{ redirectParams: location.state?.redirectParams }}
               className="text-[#1600ff] hover:underline font-medium"
             >
               Sign In

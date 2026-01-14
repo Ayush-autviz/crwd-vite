@@ -3,7 +3,7 @@
 import type React from "react"
 import { useState } from "react"
 import { Eye, EyeOff } from "lucide-react"
-import { Link, useNavigate, useSearchParams } from "react-router-dom"
+import { Link, useNavigate, useSearchParams, useLocation } from "react-router-dom"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Checkbox } from "@/components/ui/checkbox"
@@ -15,6 +15,7 @@ import { Toast } from "@/components/ui/toast"
 
 const LoginPage: React.FC = () => {
   const navigate = useNavigate()
+  const location = useLocation()
   const [searchParams] = useSearchParams()
   const redirectTo = searchParams.get('redirectTo') || '/'
   const { setUser, setToken } = useAuthStore()
@@ -57,7 +58,10 @@ const LoginPage: React.FC = () => {
         })
       } else {
         // Navigate to redirectTo if available, otherwise home page for existing users
-        navigate(redirectTo, { replace: true })
+        navigate(redirectTo, {
+          replace: true,
+          state: { from: 'Login' }
+        })
       }
     },
     onError: (error: any) => {
@@ -140,7 +144,8 @@ const LoginPage: React.FC = () => {
           <p className="text-sm text-gray-600">
             Don't have an account?{" "}
             <Link
-              to="/claim-profile"
+              to={`/claim-profile${redirectTo ? `?redirectTo=${encodeURIComponent(redirectTo)}` : ''}`}
+              state={{ redirectParams: location.state?.redirectParams }}
               className="text-[#1600ff] hover:underline font-medium"
             >
               Sign up

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { ArrowLeft, HelpCircle, Search, X, Loader2, Edit2, Palette, Camera, Users, Check, Minus, Plus, Heart, Eye, Share2, Sparkles } from 'lucide-react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { createCollective, getCausesBySearch } from '@/services/api/crwd';
@@ -25,7 +25,7 @@ const getCategoryById = (categoryId: string | undefined) => {
 // Get category names as an array for multi-letter categories (e.g., "MK" -> ["Relief", "Food"])
 const getCategoryNames = (categoryId: string | undefined): string[] => {
   if (!categoryId) return ['Uncategorized'];
-  
+
   // If category is multiple letters, split and get names for each
   if (categoryId.length > 1) {
     const categoryNames = categoryId
@@ -35,10 +35,10 @@ const getCategoryNames = (categoryId: string | undefined): string[] => {
         return category?.name || char;
       })
       .filter(Boolean);
-    
+
     return categoryNames.length > 0 ? categoryNames : ['Uncategorized'];
   }
-  
+
   // Single letter category
   const category = getCategoryById(categoryId);
   return category?.name ? [category.name] : ['Uncategorized'];
@@ -47,12 +47,12 @@ const getCategoryNames = (categoryId: string | undefined): string[] => {
 // Get category IDs as an array (for getting individual colors)
 const getCategoryIds = (categoryId: string | undefined): string[] => {
   if (!categoryId) return [];
-  
+
   // If category is multiple letters, split into individual IDs
   if (categoryId.length > 1) {
     return categoryId.split('');
   }
-  
+
   // Single letter category
   return [categoryId];
 };
@@ -60,7 +60,7 @@ const getCategoryIds = (categoryId: string | undefined): string[] => {
 // Get category background color for display (use first category's background for multi-letter)
 const getCategoryColor = (categoryId: string | undefined): string => {
   if (!categoryId) return '#10B981';
-  
+
   // For multi-letter categories, use the first category's background color
   const firstChar = categoryId.charAt(0);
   const category = getCategoryById(firstChar);
@@ -70,7 +70,7 @@ const getCategoryColor = (categoryId: string | undefined): string => {
 // Get category text color for display
 const getCategoryTextColor = (categoryId: string | undefined): string => {
   if (!categoryId) return '#FFFFFF';
-  
+
   // For multi-letter categories, use the first category's text color
   const firstChar = categoryId.charAt(0);
   const category = getCategoryById(firstChar);
@@ -99,7 +99,21 @@ const getInitials = (name: string) => {
 export default function NewCreateCollectivePage() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+  const location = useLocation();
   const { user: currentUser, token } = useAuthStore();
+
+  const handleBack = () => {
+    // Check if we came from specific flows
+    const fromScreen = (location.state as any)?.from;
+    const specialFlows = ['NewNonprofitInterests', 'NewCompleteDonation', 'Login'];
+
+    if (fromScreen && specialFlows.includes(fromScreen)) {
+      navigate('/');
+    } else {
+      // Default behavior
+      navigate(-1);
+    }
+  };
 
   // Form state
   const [name, setName] = useState(() => {
@@ -132,11 +146,11 @@ export default function NewCreateCollectivePage() {
   const [uploadedLogo, setUploadedLogo] = useState<File | null>(null); // State for uploaded file
   const [uploadedLogoPreview, setUploadedLogoPreview] = useState<string | null>(null); // State for uploaded image preview
   const [showLogoCustomization, setShowLogoCustomization] = useState(false);
-  
+
   // Dropdown state for sections
   const [isYourCausesOpen, setIsYourCausesOpen] = useState(true);
   const [isSuggestedCausesOpen, setIsSuggestedCausesOpen] = useState(true);
-  
+
   // Loading dots state
   const [dotCount, setDotCount] = useState(0);
   const [showAnimationComplete, setShowAnimationComplete] = useState(false);
@@ -247,14 +261,14 @@ export default function NewCreateCollectivePage() {
     },
     onError: (error: any) => {
       console.error('Create collective error:', error);
-      
+
       // Check for logo_file validation error
       if (error.response?.data?.logo_file && Array.isArray(error.response.data.logo_file) && error.response.data.logo_file.length > 0) {
         setToastMessage(error.response.data.logo_file[0]);
         setShowToast(true);
         return;
       }
-      
+
       // Check for other field-specific errors
       const errorData = error.response?.data;
       if (errorData) {
@@ -264,7 +278,7 @@ export default function NewCreateCollectivePage() {
           setShowToast(true);
           return;
         }
-        
+
         // Check for any other field errors (like description, etc.)
         const fieldErrors = Object.keys(errorData).filter(key => Array.isArray(errorData[key]) && errorData[key].length > 0);
         if (fieldErrors.length > 0) {
@@ -276,7 +290,7 @@ export default function NewCreateCollectivePage() {
           }
         }
       }
-      
+
       // Fallback to general error message
       const errorMessage =
         error.response?.data?.message ||
@@ -401,7 +415,7 @@ export default function NewCreateCollectivePage() {
     try {
       // Check if donation box exists
       const donationBox = await getDonationBox();
-      
+
       // If donation box doesn't exist or has no ID, navigate to setup with props
       if (!donationBox || !donationBox.id) {
         // Prepare causes data for preselection
@@ -486,7 +500,7 @@ export default function NewCreateCollectivePage() {
 
       // Close the modal
       setShowAddToBoxModal(false);
-      
+
       // Navigate to donation setup with preselected causes
       navigate('/donation?tab=setup', {
         state: {
@@ -510,7 +524,7 @@ export default function NewCreateCollectivePage() {
         };
         return causeEntry;
       });
-      
+
       try {
         await addCausesToBox({ causes });
         queryClient.invalidateQueries({ queryKey: ['donationBox', currentUser?.id] });
@@ -535,7 +549,7 @@ export default function NewCreateCollectivePage() {
         {/* header */}
         <div className="sticky top-0 z-10 w-full flex items-center gap-3 md:gap-4 p-3 md:p-4 border-b bg-white">
           <button
-            onClick={() => navigate('/circles')}
+            onClick={handleBack}
             className="p-1.5 md:p-2 hover:bg-gray-100 rounded-full transition-colors"
             aria-label="Go back"
           >
@@ -580,7 +594,7 @@ export default function NewCreateCollectivePage() {
         {/* header */}
         <div className="sticky top-0 z-10 w-full flex items-center gap-3 md:gap-4 p-3 md:p-4 border-b bg-white">
           <button
-            onClick={() => navigate('/circles')}
+            onClick={handleBack}
             className="p-1.5 md:p-2 hover:bg-gray-100 rounded-full transition-colors"
             aria-label="Go back"
           >
@@ -613,7 +627,7 @@ export default function NewCreateCollectivePage() {
               setHasStarted(true);
             }}
             className="bg-[#1600ff] hover:bg-[#1400cc] text-white font-semibold rounded-xl px-3 md:px-6 py-3 md:py-6 text-sm md:text-base w-fit"
-          > 
+          >
             Get Started
           </Button>
         </div>
@@ -686,8 +700,8 @@ export default function NewCreateCollectivePage() {
                   const categoryIds = getCategoryIds(categoryId);
                   const avatarBgColor = getConsistentColor(causeData.id, avatarColors);
                   const initials = getInitials(causeData.name || 'N');
-                  
-                  
+
+
                   return (
                     <div key={cause.id} className="bg-white border border-gray-200 rounded-lg p-3 md:p-4">
                       <div className="flex items-center gap-3 md:gap-4">
@@ -822,10 +836,10 @@ export default function NewCreateCollectivePage() {
                     className="w-full bg-[#1600ff] hover:bg-[#1400cc] text-white font-semibold rounded-lg py-3 md:py-4 text-sm md:text-base flex items-center justify-center gap-2"
                   >
                     <Heart className="w-4 h-4 md:w-5 md:h-5" />
-                   {donationBoxData && donationBoxData.id ? 'Add to Donation Box' : 'Set Up Donation Box'}
+                    {donationBoxData && donationBoxData.id ? 'Add to Donation Box' : 'Set Up Donation Box'}
                   </Button>
                 )}
-                
+
                 <Button
                   onClick={() => navigate(`/groupcrwd/${createdCollective.id}`)}
                   variant="outline"
@@ -834,7 +848,7 @@ export default function NewCreateCollectivePage() {
                   <Eye className="w-4 h-4 md:w-5 md:h-5" />
                   View My Collective
                 </Button>
-                
+
                 <button
                   onClick={() => setShowShareModal(true)}
                   className="w-full text-[#1600ff] hover:text-[#1400cc] font-semibold text-sm md:text-base flex items-center justify-center gap-2 py-2 md:py-3"
@@ -906,7 +920,7 @@ export default function NewCreateCollectivePage() {
         {/* Header */}
         <div className="sticky top-0 z-10 w-full flex items-center gap-3 md:gap-4 p-3 md:p-4 border-b bg-white">
           <button
-            onClick={() => navigate('/circles')}
+            onClick={handleBack}
             className="p-1.5 md:p-2 hover:bg-gray-100 rounded-full transition-colors"
             aria-label="Go back"
           >
@@ -1027,22 +1041,20 @@ export default function NewCreateCollectivePage() {
                           setLogoType('letter');
                           // Don't clear uploaded logo - keep it for when switching back to upload
                         }}
-                        className={`flex-1 font-semibold rounded-lg py-2.5 md:py-3 text-sm md:text-base ${
-                          logoType === 'letter'
-                            ? 'bg-[#1600ff] text-white'
-                            : 'bg-white border border-gray-300 text-foreground hover:bg-gray-50'
-                        }`}
+                        className={`flex-1 font-semibold rounded-lg py-2.5 md:py-3 text-sm md:text-base ${logoType === 'letter'
+                          ? 'bg-[#1600ff] text-white'
+                          : 'bg-white border border-gray-300 text-foreground hover:bg-gray-50'
+                          }`}
                       >
                         <Palette className="w-4 h-4 mr-2" />
                         Letter
                       </Button>
                       <Button
                         onClick={() => setLogoType('upload')}
-                        className={`flex-1 font-semibold rounded-lg py-2.5 md:py-3 text-sm md:text-base ${
-                          logoType === 'upload'
-                            ? 'bg-[#1600ff] text-white'
-                            : 'bg-white border border-gray-300 text-foreground hover:bg-gray-50'
-                        }`}
+                        className={`flex-1 font-semibold rounded-lg py-2.5 md:py-3 text-sm md:text-base ${logoType === 'upload'
+                          ? 'bg-[#1600ff] text-white'
+                          : 'bg-white border border-gray-300 text-foreground hover:bg-gray-50'
+                          }`}
                       >
                         <Camera className="w-4 h-4 mr-2" />
                         Upload
@@ -1059,9 +1071,8 @@ export default function NewCreateCollectivePage() {
                             <button
                               key={color}
                               onClick={() => handleColorSelect(color)}
-                              className={`w-10 h-10 md:w-12 md:h-12 rounded-lg transition-transform hover:scale-110 ${
-                                letterLogoColor === color ? 'ring-2 ring-gray-900' : ''
-                              }`}
+                              className={`w-10 h-10 md:w-12 md:h-12 rounded-lg transition-transform hover:scale-110 ${letterLogoColor === color ? 'ring-2 ring-gray-900' : ''
+                                }`}
                               style={{ backgroundColor: color }}
                               aria-label={`Select color ${color}`}
                             />
@@ -1115,7 +1126,7 @@ export default function NewCreateCollectivePage() {
                     Selected Causes ({selectedCauses.length})
                   </h3>
                   <Button variant="default" className="text-xs rounded-full md:text-sm px-2 md:px-4 py-1.5 md:py-2 font-[800]">
-                    <Check className="w-4 h-4" strokeWidth={3}/>
+                    <Check className="w-4 h-4" strokeWidth={3} />
                     Ready
                   </Button>
                 </div>
@@ -1128,7 +1139,7 @@ export default function NewCreateCollectivePage() {
                     const categoryIds = getCategoryIds(categoryId);
                     const avatarBgColor = getConsistentColor(causeData.id, avatarColors);
                     const initials = getInitials(causeData.name || 'N');
-                    
+
                     return (
                       <div key={cause.id} className="bg-white rounded-lg p-3 md:p-4 shadow-sm hover:shadow-md transition-shadow">
                         <div className="flex items-center gap-3 md:gap-4">
@@ -1180,7 +1191,7 @@ export default function NewCreateCollectivePage() {
               <h3 className="font-bold text-base md:text-lg text-foreground mb-2 md:mb-3">
                 Add or Remove Causes <span className="text-red-500">*</span>
               </h3>
-              
+
               {/* Search Bar */}
               <div className="relative mb-3 md:mb-4">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 md:w-5 md:h-5 text-gray-400" />
@@ -1194,105 +1205,104 @@ export default function NewCreateCollectivePage() {
                 />
               </div>
 
-            {/* Your Causes - Only show if there are favorite causes */}
-            {favoriteCauses.length > 0 && (
-              <div className="mb-3 md:mb-4">
-                <button
-                  onClick={() => setIsYourCausesOpen(!isYourCausesOpen)}
-                  className="flex items-center justify-between w-full gap-2 mb-3 md:mb-4 bg-blue-100 p-3 rounded-xl"
-                >
-                  <div className="flex items-center gap-2">
-                    <div className="w-2 h-2 rounded-full bg-blue-500"></div>
-                    <h3 className="font-semibold text-sm  sm:text-base  md:text-lg text-blue-600">
-                      Your Causes ({favoriteCauses.length})
-                    </h3>
-                  </div>
-                  {/* <ChevronDown
+              {/* Your Causes - Only show if there are favorite causes */}
+              {favoriteCauses.length > 0 && (
+                <div className="mb-3 md:mb-4">
+                  <button
+                    onClick={() => setIsYourCausesOpen(!isYourCausesOpen)}
+                    className="flex items-center justify-between w-full gap-2 mb-3 md:mb-4 bg-blue-100 p-3 rounded-xl"
+                  >
+                    <div className="flex items-center gap-2">
+                      <div className="w-2 h-2 rounded-full bg-blue-500"></div>
+                      <h3 className="font-semibold text-sm  sm:text-base  md:text-lg text-blue-600">
+                        Your Causes ({favoriteCauses.length})
+                      </h3>
+                    </div>
+                    {/* <ChevronDown
                     className={`w-4 h-4 md:w-5 md:h-5 text-blue-600 transition-transform ${
                       isYourCausesOpen ? 'rotate-180' : ''
                     }`}
                   /> */}
-                  {isYourCausesOpen ? (
-                    <Minus className="w-4 h-4 md:w-5 md:h-5 text-blue-600" />
-                  ) : (
-                    <Plus className="w-4 h-4 md:w-5 md:h-5 text-blue-600" />
-                  )}
-                </button>
-                {isYourCausesOpen && (
-                  <div className="space-y-2 md:space-y-3">
-                  {isLoadingFavoriteCauses ? (
-                    <div className="flex items-center justify-center py-6 md:py-8">
-                      <Loader2 className="w-5 h-5 md:w-6 md:h-6 animate-spin text-gray-400" />
-                    </div>
-                  ) : (
-                    favoriteCauses.map((item: any) => {
-                      const cause = item.cause || item;
-                      const categoryId = cause.category || cause.cause_category;
-                      const categoryName = getCategoryNames(categoryId);
-                      const categoryColor = getCategoryColor(categoryId);
-                      const isSelected = isCauseSelected(cause.id);
-                      const avatarBgColor = getConsistentColor(cause.id, avatarColors);
-                      const initials = getInitials(cause.name || 'N');
-                      
-                      return (
-                        <div
-                          key={cause.id}
-                          onClick={() => handleToggleCause(cause)}
-                          className="flex items-center gap-3 md:gap-4 p-3 md:p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors bg-white cursor-pointer"
-                        >
-                          <Avatar className="w-10 h-10 md:w-12 md:h-12 rounded-full flex-shrink-0">
-                            <AvatarImage src={cause.image} alt={cause.name} />
-                            <AvatarFallback
-                              style={{ backgroundColor: avatarBgColor }}
-                              className="text-white font-bold text-xs md:text-sm"
-                            >
-                              {initials}
-                            </AvatarFallback>
-                          </Avatar>
-                          <div className="flex-1 min-w-0">
-                            <div className="flex items-center gap-2 mb-1 flex-wrap">
-                              <h4 className="font-bold text-sm md:text-base text-foreground truncate">{cause.name}</h4>
-                          <span
-                            className="inline-flex items-center rounded-full px-1.5 md:px-2 py-0.5 text-[10px] md:text-xs font-medium flex-shrink-0"
-                            style={{ backgroundColor: categoryColor, color: getCategoryTextColor(cause.category || cause.cause_category) }}
-                          >
-                            {categoryName}
-                          </span>
-                            </div>
-                            <p className="text-xs md:text-sm text-muted-foreground line-clamp-2">
-                              {cause.mission || cause.description}
-                            </p>
-                          </div>
-                          <div className="flex items-center cursor-pointer flex-shrink-0">
-                            <div
-                              className={`w-4 h-4 md:w-5 md:h-5 rounded-full border-2 flex items-center justify-center ${
-                                isSelected
-                                  ? 'border-[#1600ff] bg-[#1600ff]'
-                                  : 'border-gray-300 bg-white'
-                              }`}
-                            >
-                              {isSelected && (
-                                <div className="w-2 h-2 md:w-2.5 md:h-2.5 rounded-full bg-white" />
-                              )}
-                            </div>
-                          </div>
+                    {isYourCausesOpen ? (
+                      <Minus className="w-4 h-4 md:w-5 md:h-5 text-blue-600" />
+                    ) : (
+                      <Plus className="w-4 h-4 md:w-5 md:h-5 text-blue-600" />
+                    )}
+                  </button>
+                  {isYourCausesOpen && (
+                    <div className="space-y-2 md:space-y-3">
+                      {isLoadingFavoriteCauses ? (
+                        <div className="flex items-center justify-center py-6 md:py-8">
+                          <Loader2 className="w-5 h-5 md:w-6 md:h-6 animate-spin text-gray-400" />
                         </div>
-                      );
-                    })
-                  )}
-                  </div>
-                )}
-              </div>
-            )}
+                      ) : (
+                        favoriteCauses.map((item: any) => {
+                          const cause = item.cause || item;
+                          const categoryId = cause.category || cause.cause_category;
+                          const categoryName = getCategoryNames(categoryId);
+                          const categoryColor = getCategoryColor(categoryId);
+                          const isSelected = isCauseSelected(cause.id);
+                          const avatarBgColor = getConsistentColor(cause.id, avatarColors);
+                          const initials = getInitials(cause.name || 'N');
 
-            
+                          return (
+                            <div
+                              key={cause.id}
+                              onClick={() => handleToggleCause(cause)}
+                              className="flex items-center gap-3 md:gap-4 p-3 md:p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors bg-white cursor-pointer"
+                            >
+                              <Avatar className="w-10 h-10 md:w-12 md:h-12 rounded-full flex-shrink-0">
+                                <AvatarImage src={cause.image} alt={cause.name} />
+                                <AvatarFallback
+                                  style={{ backgroundColor: avatarBgColor }}
+                                  className="text-white font-bold text-xs md:text-sm"
+                                >
+                                  {initials}
+                                </AvatarFallback>
+                              </Avatar>
+                              <div className="flex-1 min-w-0">
+                                <div className="flex items-center gap-2 mb-1 flex-wrap">
+                                  <h4 className="font-bold text-sm md:text-base text-foreground truncate">{cause.name}</h4>
+                                  <span
+                                    className="inline-flex items-center rounded-full px-1.5 md:px-2 py-0.5 text-[10px] md:text-xs font-medium flex-shrink-0"
+                                    style={{ backgroundColor: categoryColor, color: getCategoryTextColor(cause.category || cause.cause_category) }}
+                                  >
+                                    {categoryName}
+                                  </span>
+                                </div>
+                                <p className="text-xs md:text-sm text-muted-foreground line-clamp-2">
+                                  {cause.mission || cause.description}
+                                </p>
+                              </div>
+                              <div className="flex items-center cursor-pointer flex-shrink-0">
+                                <div
+                                  className={`w-4 h-4 md:w-5 md:h-5 rounded-full border-2 flex items-center justify-center ${isSelected
+                                    ? 'border-[#1600ff] bg-[#1600ff]'
+                                    : 'border-gray-300 bg-white'
+                                    }`}
+                                >
+                                  {isSelected && (
+                                    <div className="w-2 h-2 md:w-2.5 md:h-2.5 rounded-full bg-white" />
+                                  )}
+                                </div>
+                              </div>
+                            </div>
+                          );
+                        })
+                      )}
+                    </div>
+                  )}
+                </div>
+              )}
+
+
 
               {/* Suggested Causes List */}
               {(() => {
                 const causes = searchTrigger > 0 && searchQuery.trim()
                   ? (causesData?.results || [])
                   : (defaultCausesData?.results || []);
-                
+
                 // Get favorite cause IDs to exclude from search results
                 const favoriteCauseIds = new Set(
                   favoriteCauses.map((item: any) => {
@@ -1300,17 +1310,17 @@ export default function NewCreateCollectivePage() {
                     return cause.id;
                   })
                 );
-                
+
                 // Filter out favorite causes and already selected causes
                 const filteredCauses = causes.filter((cause: any) => {
                   const causeId = cause.id;
                   return causeId && !favoriteCauseIds.has(causeId) && !selectedCauses.some(selected => selected.id === causeId);
                 });
-                
+
                 if (filteredCauses.length === 0 && !(searchTrigger > 0 && searchQuery.trim()) && defaultCausesData?.results?.length === 0) {
                   return null;
                 }
-                
+
                 return (
                   <button
                     onClick={() => setIsSuggestedCausesOpen(!isSuggestedCausesOpen)}
@@ -1334,104 +1344,103 @@ export default function NewCreateCollectivePage() {
               {/* Causes List */}
               {isSuggestedCausesOpen && (
                 <div className="space-y-2 md:space-y-3 max-h-96 overflow-y-auto">
-                {(isCausesLoading || defaultCausesLoading) ? (
-                  <div className="flex items-center justify-center py-6 md:py-8">
-                    <Loader2 className="w-5 h-5 md:w-6 md:h-6 animate-spin text-gray-400" />
-                  </div>
-                ) : (
-                  (() => {
-                    const causes = searchTrigger > 0 && searchQuery.trim()
-                      ? (causesData?.results || [])
-                      : (defaultCausesData?.results || []);
-                    
-                    // Get favorite cause IDs to exclude from search results
-                    const favoriteCauseIds = new Set(
-                      favoriteCauses.map((item: any) => {
-                        const cause = item.cause || item;
-                        return cause.id;
-                      })
-                    );
-                    
-                    // Filter out favorite causes and already selected causes
-                    const availableCauses = causes.filter((cause: any) => {
-                      const causeId = cause.id;
-                      return causeId && !favoriteCauseIds.has(causeId) && !selectedCauses.some(selected => selected.id === causeId);
-                    });
+                  {(isCausesLoading || defaultCausesLoading) ? (
+                    <div className="flex items-center justify-center py-6 md:py-8">
+                      <Loader2 className="w-5 h-5 md:w-6 md:h-6 animate-spin text-gray-400" />
+                    </div>
+                  ) : (
+                    (() => {
+                      const causes = searchTrigger > 0 && searchQuery.trim()
+                        ? (causesData?.results || [])
+                        : (defaultCausesData?.results || []);
 
-                    if (availableCauses.length === 0) {
-                      return (
-                        <p className="text-xs md:text-sm text-muted-foreground text-center py-6 md:py-8">
-                          No causes found
-                        </p>
+                      // Get favorite cause IDs to exclude from search results
+                      const favoriteCauseIds = new Set(
+                        favoriteCauses.map((item: any) => {
+                          const cause = item.cause || item;
+                          return cause.id;
+                        })
                       );
-                    }
 
-                    return availableCauses.map((cause: any) => {
-                      // Get category ID from cause (can be single letter like "F" or multi-letter like "MK")
-                      const categoryId = cause.category || cause.cause_category;
-                      const categoryNames = getCategoryNames(categoryId);
-                      const categoryIds = getCategoryIds(categoryId);
-                      const isSelected = isCauseSelected(cause.id);
+                      // Filter out favorite causes and already selected causes
+                      const availableCauses = causes.filter((cause: any) => {
+                        const causeId = cause.id;
+                        return causeId && !favoriteCauseIds.has(causeId) && !selectedCauses.some(selected => selected.id === causeId);
+                      });
 
-                      const avatarBgColor = getConsistentColor(cause.id, avatarColors);
-                      const initials = getInitials(cause.name || 'N');
-                      
-                      return (
-                        <div
-                          key={cause.id}
-                          onClick={() => handleToggleCause(cause)}
-                          className="flex items-center gap-3 md:gap-4 p-3 md:p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors cursor-pointer"
-                        >
-                          <Avatar className="w-10 h-10 md:w-12 md:h-12 rounded-full flex-shrink-0">
-                            <AvatarImage src={cause.image} alt={cause.name} />
-                            <AvatarFallback
-                              style={{ backgroundColor: avatarBgColor }}
-                              className="text-white font-bold text-xs md:text-sm"
-                            >
-                              {initials}
-                            </AvatarFallback>
-                          </Avatar>
-                          <div className="flex-1 min-w-0">
-                            <div className="flex items-center gap-2 mb-1 flex-wrap">
-                              <h4 className="font-bold text-sm md:text-base text-foreground truncate">{cause.name}</h4>
-                              {categoryNames.map((name, index) => {
-                                const singleCategoryId = categoryIds[index];
-                                const bgColor = getCategoryColor(singleCategoryId);
-                                const textColor = getCategoryTextColor(singleCategoryId);
-                                return (
-                                  <span
-                                    key={index}
-                                    className="inline-flex items-center rounded-full px-1.5 md:px-2 py-0.5 text-[10px] md:text-xs font-medium flex-shrink-0"
-                                    style={{ backgroundColor: bgColor, color: textColor }}
-                                  >
-                                    {name}
-                                  </span>
-                                );
-                              })}
+                      if (availableCauses.length === 0) {
+                        return (
+                          <p className="text-xs md:text-sm text-muted-foreground text-center py-6 md:py-8">
+                            No causes found
+                          </p>
+                        );
+                      }
+
+                      return availableCauses.map((cause: any) => {
+                        // Get category ID from cause (can be single letter like "F" or multi-letter like "MK")
+                        const categoryId = cause.category || cause.cause_category;
+                        const categoryNames = getCategoryNames(categoryId);
+                        const categoryIds = getCategoryIds(categoryId);
+                        const isSelected = isCauseSelected(cause.id);
+
+                        const avatarBgColor = getConsistentColor(cause.id, avatarColors);
+                        const initials = getInitials(cause.name || 'N');
+
+                        return (
+                          <div
+                            key={cause.id}
+                            onClick={() => handleToggleCause(cause)}
+                            className="flex items-center gap-3 md:gap-4 p-3 md:p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors cursor-pointer"
+                          >
+                            <Avatar className="w-10 h-10 md:w-12 md:h-12 rounded-full flex-shrink-0">
+                              <AvatarImage src={cause.image} alt={cause.name} />
+                              <AvatarFallback
+                                style={{ backgroundColor: avatarBgColor }}
+                                className="text-white font-bold text-xs md:text-sm"
+                              >
+                                {initials}
+                              </AvatarFallback>
+                            </Avatar>
+                            <div className="flex-1 min-w-0">
+                              <div className="flex items-center gap-2 mb-1 flex-wrap">
+                                <h4 className="font-bold text-sm md:text-base text-foreground truncate">{cause.name}</h4>
+                                {categoryNames.map((name, index) => {
+                                  const singleCategoryId = categoryIds[index];
+                                  const bgColor = getCategoryColor(singleCategoryId);
+                                  const textColor = getCategoryTextColor(singleCategoryId);
+                                  return (
+                                    <span
+                                      key={index}
+                                      className="inline-flex items-center rounded-full px-1.5 md:px-2 py-0.5 text-[10px] md:text-xs font-medium flex-shrink-0"
+                                      style={{ backgroundColor: bgColor, color: textColor }}
+                                    >
+                                      {name}
+                                    </span>
+                                  );
+                                })}
+                              </div>
+                              <p className="text-xs md:text-sm text-muted-foreground line-clamp-2">
+                                {cause.mission || cause.description}
+                              </p>
                             </div>
-                            <p className="text-xs md:text-sm text-muted-foreground line-clamp-2">
-                              {cause.mission || cause.description}
-                            </p>
-                          </div>
-                          
-                          <div className="flex items-center cursor-pointer flex-shrink-0">
-                            <div
-                              className={`w-4 h-4 md:w-5 md:h-5 rounded-full border-2 flex items-center justify-center ${
-                                isSelected
+
+                            <div className="flex items-center cursor-pointer flex-shrink-0">
+                              <div
+                                className={`w-4 h-4 md:w-5 md:h-5 rounded-full border-2 flex items-center justify-center ${isSelected
                                   ? 'border-[#1600ff] bg-[#1600ff]'
                                   : 'border-gray-300 bg-white'
-                              }`}
-                            >
-                              {isSelected && (
-                                <div className="w-2 h-2 md:w-2.5 md:h-2.5 rounded-full bg-white" />
-                              )}
+                                  }`}
+                              >
+                                {isSelected && (
+                                  <div className="w-2 h-2 md:w-2.5 md:h-2.5 rounded-full bg-white" />
+                                )}
+                              </div>
                             </div>
                           </div>
-                        </div>
-                      );
-                    });
-                  })()
-                )}
+                        );
+                      });
+                    })()
+                  )}
                 </div>
               )}
             </div>
@@ -1442,7 +1451,7 @@ export default function NewCreateCollectivePage() {
             <div className="w-full lg:max-w-[60%] lg:mx-auto">
               {(() => {
                 const isFormComplete = name.trim() !== '' && description.trim() !== '' && selectedCauses.length > 0;
-                
+
                 if (!isFormComplete) {
                   return (
                     <Button
@@ -1453,7 +1462,7 @@ export default function NewCreateCollectivePage() {
                     </Button>
                   );
                 }
-                
+
                 return (
                   <Button
                     onClick={handleContinueToReview}
@@ -1465,7 +1474,7 @@ export default function NewCreateCollectivePage() {
               })()}
             </div>
           </div>
-        
+
         </div>
       </div>
 

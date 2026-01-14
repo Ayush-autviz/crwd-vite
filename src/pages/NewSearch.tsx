@@ -68,7 +68,7 @@ export default function NewSearchPage() {
     isFetchingNextPage
   } = useInfiniteQuery({
     queryKey: categoryId
-      ? ['causes-by-category', categoryId, searchQuery]
+      ? ['causes-by-category', categoryId, searchQuery, activeTab]
       : ['new-search', activeTab, searchQuery],
     queryFn: ({ pageParam = 1 }: { pageParam?: number }) => {
       if (categoryId && activeTab === 'Causes') {
@@ -128,6 +128,22 @@ export default function NewSearchPage() {
         return page.results;
       }
 
+      // Check for tab-specific properties first
+      switch (activeTab) {
+        case 'Causes':
+          if (page.causes || page.cause) return page.causes || page.cause;
+          break;
+        case 'Collectives':
+          if (page.collectives || page.collective) return page.collectives || page.collective;
+          break;
+        case 'Users':
+          if (page.users || page.user) return page.users || page.user;
+          break;
+        case 'Posts':
+          if (page.posts || page.post) return page.posts || page.post;
+          break;
+      }
+
       // The API response structure may vary, but typically it returns results in a results array
       // or directly as an array. Let's handle both cases.
       if (Array.isArray(page)) {
@@ -139,19 +155,7 @@ export default function NewSearchPage() {
         return page.results;
       }
 
-      // If it's an object with tab-specific properties
-      switch (activeTab) {
-        case 'Causes':
-          return page.causes || page.cause || [];
-        case 'Collectives':
-          return page.collectives || page.collective || [];
-        case 'Users':
-          return page.users || page.user || [];
-        case 'Posts':
-          return page.posts || page.post || [];
-        default:
-          return [];
-      }
+      return [];
     });
   };
 
