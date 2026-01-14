@@ -7,6 +7,7 @@ import { useQuery } from "@tanstack/react-query";
 import { getUnreadCount } from "@/services/api/notification";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { useState, useEffect } from "react";
+import NewLogo from "@/assets/newLogo";
 
 
 
@@ -135,8 +136,8 @@ export default function ProfileNavbar({
           {/* Logo on the left */}
           <div className="flex-shrink-0">
             <Link to="/waitlist">
-              {/* <NewLogo /> */}
-              <img src="/icons/FullLogo.png" alt="" width={80} height={80} />
+              <NewLogo />
+              {/* <img src="/icons/FullLogo.png" alt="" width={80} height={80} /> */}
             </Link>
           </div>
 
@@ -297,8 +298,8 @@ export default function ProfileNavbar({
             </Link>
           </div> */}
 
-          {/* <NewLogo /> */}
-          <img src="/icons/FullLogo.png" width={100} height={100} alt="CRWD Logo" className="object-contain" />
+          <NewLogo />
+          {/* <img src="/icons/FullLogo.png" width={100} height={100} alt="CRWD Logo" className="object-contain" /> */}
 
           {/* Action buttons on the right */}
           <div className="flex items-center gap-2.5">

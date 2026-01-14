@@ -583,8 +583,8 @@ export default function NewHome() {
             {showAppBanner && (
                 <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-2 md:px-6 py-3 md:py-4 z-40 shadow-lg block sm:hidden">
                     <div className="max-w-7xl mx-auto flex items-center justify-between gap-3 md:gap-4">
-                        {/* <NewLogo size="sm" /> */}
-                        <img src="/icons/FullLogo.png" width={75} height={75} />
+                        <NewLogo />
+                        {/* <img src="/icons/FullLogo.png" width={75} height={75} /> */}
                         <div className="flex-1 flex flex-col md:flex-row md:items-center gap-1 md:gap-2">
                             <p className="text-xs xs:text-sm md:text-base font-bold text-gray-900">
                                 Get the full experience on iOS
