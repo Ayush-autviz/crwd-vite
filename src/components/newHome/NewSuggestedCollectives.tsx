@@ -53,7 +53,7 @@ export default function NewSuggestedCollectives({
       <div className="flex justify-between items-center mb-3 md:mb-4">
         <h2 className="text-base xs:text-lg sm:text-2xl md:text-3xl font-bold">Suggested Collectives</h2>
         <Link to={seeAllLink}>
-          <Button variant="link" className="text-[#1600ff] p-0 h-auto flex items-center text-[10px] xs:text-xs md:text-sm">
+          <Button variant="link" className="text-[#1600ff] p-0 h-auto flex items-center text-[10px] xs:text-sm md:text-base">
             See all
           </Button>
         </Link>
@@ -96,7 +96,7 @@ export default function NewSuggestedCollectives({
                     </div>
 
                     {/* Title */}
-                    <h3 className="font-bold text-xs xs:text-sm md:text-base text-black flex-shrink-0 line-clamp-1">
+                    <h3 className="font-bold text-xs xs:text-base text-black line-clamp-1">
                       {collective.name}
                     </h3>
                   </div>
@@ -119,19 +119,19 @@ export default function NewSuggestedCollectives({
                           .toUpperCase()}
                       </AvatarFallback>
                     </Avatar>
-                    <p className="text-[10px] xs:text-xs md:text-sm text-muted-foreground">
+                    <p className="text-xs xs:text-sm md:text-base text-muted-foreground">
                       Founded by <span className="font-semibold text-gray-600">{collective.founder.name}</span>
                     </p>
                   </div>
 
                   {/* Nonprofits count */}
-                  <p className="text-[10px] xs:text-xs md:text-sm text-muted-foreground flex-shrink-0">
+                  <p className="text-xs xs:text-sm md:text-base text-muted-foreground flex-shrink-0">
                     Supporting {collective.nonprofit_count} nonprofit
                     {collective.nonprofit_count !== 1 ? "s" : ""}
                   </p>
 
                   {/* Description */}
-                  <p className="text-[10px] xs:text-xs md:text-sm text-muted-foreground leading-relaxed line-clamp-2">
+                  <p className="text-xs xs:text-sm md:text-base text-muted-foreground leading-relaxed line-clamp-2">
                     {collective.description}
                   </p>
                 </div>

@@ -53,7 +53,7 @@ export default function NewFeaturedNonprofits({
       <div className="flex justify-between items-center mb-3 md:mb-4">
         <h2 className="text-base xs:text-lg sm:text-2xl md:text-3xl font-bold">Featured Nonprofits</h2>
         <Link to={seeAllLink}>
-          <Button variant="link" className="text-green-600 p-0 h-auto flex items-center text-[10px] xs:text-xs md:text-sm">
+          <Button variant="link" className="text-green-600 p-0 h-auto flex items-center text-[10px] xs:text-sm md:text-base">
             See all
           </Button>
         </Link>
@@ -87,12 +87,12 @@ export default function NewFeaturedNonprofits({
                   {/* Content */}
                   <div className="flex-1 min-w-0 flex flex-col h-full">
                     {/* Title */}
-                    <h3 className="font-bold text-[11px] xs:text-sm md:text-base text-gray-900 mb-1 line-clamp-1">
+                    <h3 className="font-bold text-[11px] xs:text-base text-gray-900 mb-1 line-clamp-1">
                       {nonprofit.name}
                     </h3>
 
                     {/* Description */}
-                    <p className="text-[10px] xs:text-xs md:text-sm text-gray-600 leading-relaxed line-clamp-3">
+                    <p className="text-[11px] xs:text-xs md:text-sm text-gray-600 leading-relaxed line-clamp-3">
                       {truncateAtFirstPeriod(description)}
                     </p>
                   </div>

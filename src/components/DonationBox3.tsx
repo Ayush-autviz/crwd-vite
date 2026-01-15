@@ -100,7 +100,7 @@ export const DonationBox3 = ({
   };
   const hasCustomPercentages = boxCauses.some((bc: any) => bc.percentage != null);
   const distributionPercentage = totalItems > 0 ? (hasCustomPercentages ? null : 100 / totalItems) : 0;
-  
+
   // Calculate amount per item - use custom percentage if available, otherwise equal split
   const getAmountPerItem = (causeId: number) => {
     const customPercentage = getCausePercentage(causeId);
@@ -153,13 +153,13 @@ export const DonationBox3 = ({
   // Format next charge date
   const formatNextChargeDate = (dateString?: string) => {
     if (!dateString) return 'December 26, 2024'; // Fallback
-    
+
     try {
       const date = new Date(dateString);
-      const options: Intl.DateTimeFormatOptions = { 
-        year: 'numeric', 
-        month: 'long', 
-        day: 'numeric' 
+      const options: Intl.DateTimeFormatOptions = {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
       };
       return date.toLocaleDateString('en-US', options);
     } catch (error) {
@@ -171,7 +171,7 @@ export const DonationBox3 = ({
   // Get day of month from next charge date
   const getChargeDay = (dateString?: string) => {
     if (!dateString) return '26th'; // Fallback
-    
+
     try {
       const date = new Date(dateString);
       const day = date.getDate();
@@ -206,7 +206,7 @@ export const DonationBox3 = ({
     const gross = grossAmount;
     let crwdFee: number;
     let net: number;
-    
+
     if (gross < 10.00) {
       // Flat fee of $1.00
       crwdFee = 1.00;
@@ -216,7 +216,7 @@ export const DonationBox3 = ({
       crwdFee = gross * 0.10;
       net = gross - crwdFee;
     }
-    
+
     return {
       crwdFee: Math.round(crwdFee * 100) / 100,
       net: Math.round(net * 100) / 100,
@@ -257,14 +257,14 @@ export const DonationBox3 = ({
     const fees = calculateFees(editableAmount);
     const net = fees.net;
     const maxCapacity = Math.floor(net / 0.20);
-    
+
     // Check if current causes exceed the new capacity
     if (currentCapacity > maxCapacity) {
       // Show error toast
       toast.error(`You can only support up to ${maxCapacity} cause${maxCapacity !== 1 ? 's' : ''} with $${editableAmount}. Please remove some causes or increase the amount.`);
       return;
     }
-    
+
     // If capacity check passes, update the amount
     updateAmountMutation.mutate(editableAmount);
   };
@@ -307,14 +307,14 @@ export const DonationBox3 = ({
   const handleToggleCollectiveDropdown = async (collectiveId: number) => {
     const isExpanded = expandedCollectives.has(collectiveId);
     const newExpanded = new Set(expandedCollectives);
-    
+
     if (isExpanded) {
       newExpanded.delete(collectiveId);
       setExpandedCollectives(newExpanded);
     } else {
       newExpanded.add(collectiveId);
       setExpandedCollectives(newExpanded);
-      
+
       // Fetch collective details if not already cached
       if (!collectiveDetails[collectiveId]) {
         setLoadingCollectives(prev => new Set(prev).add(collectiveId));
@@ -467,7 +467,7 @@ export const DonationBox3 = ({
             {/* Monthly Donation Section */}
             <div className="mb-4 md:mb-6">
               <h2 className="text-sm md:text-base font-medium text-gray-900 mb-2 md:mb-3">Monthly Donation</h2>
-              
+
               {/* Amount Display with Controls */}
               <div className="flex items-center justify-between mb-1.5 md:mb-2">
                 <div className="flex items-baseline gap-1.5 md:gap-2">
@@ -494,18 +494,17 @@ export const DonationBox3 = ({
                   )}
                   <span className="text-sm md:text-base text-gray-600">/month</span>
                 </div>
-                
+
                 {/* +/- Buttons - Only show when editing */}
                 {isEditingAmount && (
                   <div className="flex items-center gap-2">
                     <button
                       onClick={decrementAmount}
                       disabled={editableAmount <= 5}
-                      className={`flex items-center justify-center w-10 h-10 md:w-12 md:h-12 rounded-lg transition-colors ${
-                        editableAmount > 5 
-                          ? 'bg-gray-100 hover:bg-gray-200' 
-                          : 'bg-gray-200 cursor-not-allowed opacity-50'
-                      }`}
+                      className={`flex items-center justify-center w-10 h-10 md:w-12 md:h-12 rounded-lg transition-colors ${editableAmount > 5
+                        ? 'bg-gray-100 hover:bg-gray-200'
+                        : 'bg-gray-200 cursor-not-allowed opacity-50'
+                        }`}
                     >
                       <Minus size={20} className="text-gray-600 font-bold" strokeWidth={3} />
                     </button>
@@ -517,7 +516,7 @@ export const DonationBox3 = ({
                     </button>
                   </div>
                 )}
-                
+
                 {/* Pencil Icon - Only show when not editing */}
                 {!isEditingAmount && (
                   <button
@@ -529,12 +528,12 @@ export const DonationBox3 = ({
                   </button>
                 )}
               </div>
-              
+
               {/* Lifetime Amount */}
               {lifetimeAmount > 0 && (
                 <p className="text-xs md:text-sm text-gray-600 mb-3 md:mb-4">${lifetimeAmount.toLocaleString()} lifetime</p>
               )}
-              
+
               {/* Billing Cycle Info - Only show when editing and donation box is active */}
               {isEditingAmount && donationBox?.is_active && donationBox?.next_charge_date && (
                 <div className="bg-blue-50 rounded-lg p-3 md:p-4 mb-4 md:mb-6">
@@ -543,7 +542,7 @@ export const DonationBox3 = ({
                   </p>
                 </div>
               )}
-              
+
               {/* Action Buttons - Only show when editing */}
               {isEditingAmount && (
                 <div className="flex items-center gap-2 md:gap-3">
@@ -603,20 +602,23 @@ export const DonationBox3 = ({
         {/* Currently Supporting Section */}
         <div className="mb-4 md:mb-6">
           <div className="flex items-center justify-between mb-3 md:mb-4">
-          <div className="">
-            <h2 className="text-lg md:text-xl font-bold text-gray-900">Currently Supporting</h2>
-            <p className="text-xs md:text-sm text-gray-600 mt-0.5 md:mt-1">
-              Supporting {causes.length} nonprofit{causes.length !== 1 ? 's' : ''}
-            </p>
-          </div>
-          <button
+            <div className="">
+              <h2 className="text-lg md:text-xl font-bold text-gray-900">Your Selected Causes</h2>
+              <p className="text-xs md:text-sm text-gray-600 mt-0.5 md:mt-1">
+                Your Donation Box. Add or remove anytime.
+              </p>
+            </div>
+            {/* <button
               onClick={() => setShowEditSplitSheet(true)}
               className="bg-gray-100 text-gray-600 font-medium py-1.5 px-3 md:py-2 md:px-4 rounded-lg transition-colors flex items-center gap-1.5 md:gap-2 hover:bg-gray-200"
             >
               <Pencil size={16} className="md:w-[18px] md:h-[18px] text-gray-600 flex-shrink-0" />
               <span className="text-xs md:text-sm leading-tight">Edit Split</span>
-            </button>
-</div>
+            </button> */}
+            <div className="bg-[#1600ff] text-white font-medium py-1.5 px-3 rounded-full transition-colors flex items-center gap-1.5 md:gap-2">
+              {causes.length}
+            </div>
+          </div>
           {/* Causes List from box_causes */}
           <div className="space-y-2.5 md:space-y-3">
             {causes.length > 0 ? (
@@ -648,15 +650,15 @@ export const DonationBox3 = ({
                     </div>
 
                     {/* Donation Info & Action */}
-                    <div className="flex items-center gap-3 md:gap-4 ml-2 md:ml-4">
+                    {/* <div className="flex items-center gap-3 md:gap-4 ml-2 md:ml-4">
                       <div className="text-right">
                         <p className="font-bold text-sm md:text-base text-gray-900">
                           {(() => {
                             const customPercentage = getCausePercentage(cause.id);
-                            return customPercentage != null 
-                              ? `${Number(customPercentage).toFixed(1)}%` 
-                              : distributionPercentage != null 
-                                ? `${Number(distributionPercentage).toFixed(1)}%` 
+                            return customPercentage != null
+                              ? `${Number(customPercentage).toFixed(1)}%`
+                              : distributionPercentage != null
+                                ? `${Number(distributionPercentage).toFixed(1)}%`
                                 : '0%';
                           })()}
                         </p>
@@ -672,7 +674,7 @@ export const DonationBox3 = ({
                       >
                         <Trash2 className="w-4 h-4 md:w-5 md:h-5 text-red-500" />
                       </button>
-                    </div>
+                    </div> */}
                   </div>
                 );
               })
@@ -1088,7 +1090,7 @@ export const DonationBox3 = ({
           </div>
         </div> */}
 
-        
+
         {/* <div className="space-y-3 mb-6 fixed bottom-0 w-calc(100%-16px) left-0 right-0 mx-4">
           <button
             onClick={() => setCheckout(true)}
@@ -1135,8 +1137,8 @@ export const DonationBox3 = ({
           </button>
         </div> */}
 
-         {/* checkout button */}
-         {/* <div className="space-y-1 fixed bottom-0 p-4 md:p-6 left-0 right-0 border-t border-gray-200 bg-white">
+        {/* checkout button */}
+        {/* <div className="space-y-1 fixed bottom-0 p-4 md:p-6 left-0 right-0 border-t border-gray-200 bg-white">
            <Button 
              className="w-full bg-[#aeff30] hover:bg-[#91d11c] text-black py-4 md:py-6 rounded-full font-bold transition-colors flex items-center justify-center text-sm md:text-base" 
              onClick={handleCheckout}
@@ -1153,9 +1155,8 @@ export const DonationBox3 = ({
       {/* Remove Cause Bottom Sheet Modal */}
       {isDeleteModalVisible && (
         <div
-          className={`fixed inset-0 z-50 transition-opacity duration-300 ${
-            isDeleteModalAnimating ? 'opacity-100' : 'opacity-0'
-          }`}
+          className={`fixed inset-0 z-50 transition-opacity duration-300 ${isDeleteModalAnimating ? 'opacity-100' : 'opacity-0'
+            }`}
           onClick={() => {
             setShowDeleteModal(false);
             setItemToDelete(null);
@@ -1163,12 +1164,11 @@ export const DonationBox3 = ({
         >
           {/* Backdrop */}
           <div className="absolute inset-0 bg-black/50" />
-          
+
           {/* Bottom Sheet */}
           <div
-            className={`absolute bottom-0 left-0 right-0 bg-white rounded-t-2xl md:rounded-t-3xl shadow-2xl max-h-[90vh] md:max-h-[85vh] overflow-hidden flex flex-col transition-transform duration-300 ${
-              isDeleteModalAnimating ? 'translate-y-0' : 'translate-y-full'
-            }`}
+            className={`absolute bottom-0 left-0 right-0 bg-white rounded-t-2xl md:rounded-t-3xl shadow-2xl max-h-[90vh] md:max-h-[85vh] overflow-hidden flex flex-col transition-transform duration-300 ${isDeleteModalAnimating ? 'translate-y-0' : 'translate-y-full'
+              }`}
             onClick={(e) => e.stopPropagation()}
           >
             {/* Handle Bar */}

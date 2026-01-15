@@ -17,6 +17,7 @@ interface CollectiveResultCardProps {
       last_name?: string;
       username?: string;
       profile_picture?: string;
+      color?: string;
     };
     causes_count?: number;
     supported_causes_count?: number;
@@ -85,7 +86,7 @@ export default function CollectiveResultCard({ collective }: CollectiveResultCar
   // Get founder initials from first name and last name
   const founderInitials = founder
     ? (founder.first_name && founder.last_name
-      ? `${founder.first_name.charAt(0)}${founder.last_name.charAt(0)}`.toUpperCase()
+      ? `${founder.first_name.charAt(0)}`.toUpperCase()
       : founder.first_name
         ? founder.first_name.charAt(0).toUpperCase()
         : getInitials(founderName))
@@ -139,7 +140,7 @@ export default function CollectiveResultCard({ collective }: CollectiveResultCar
                   <AvatarImage src={founder.profile_picture} alt={founderName} />
                   <AvatarFallback
                     style={{
-                      backgroundColor: founderAvatarBgColor,
+                      backgroundColor: founder.color,
                     }}
                     className="text-white text-[10px] md:text-xs font-bold"
                   >

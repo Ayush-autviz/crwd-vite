@@ -208,7 +208,7 @@ function NotificationSummary({ update }: { update: CommunityUpdate }) {
         <div className="flex items-start justify-between mb-2 md:mb-3">
           <div className="flex items-center gap-2 md:gap-3">
             {/* Avatar */}
-            <Avatar className="h-8 w-8 md:h-11 md:w-11 flex-shrink-0 rounded-full">
+            <Avatar className="h-8 w-8 xs:w-9 xs:h-9 md:h-11 md:w-11 flex-shrink-0 rounded-full">
               <AvatarImage src={update.user.avatar} />
               <AvatarFallback
                 style={{ backgroundColor: update.user.color || '#1600ff' }}
@@ -225,11 +225,11 @@ function NotificationSummary({ update }: { update: CommunityUpdate }) {
               <div className="flex items-center gap-1 md:gap-2 lg:gap-3 flex-wrap">
                 <Link
                   to={`/user-profile/${update.user.id}`}
-                  className="font-bold text-xs xs:text-sm md:text-base text-gray-900 hover:underline block"
+                  className="font-bold text-xs xs:text-base text-gray-900 hover:underline block"
                 >
                   {userName}
                 </Link>
-                <p className="text-xs xs:text-sm text-gray-500">@{update.user.username}</p>
+                {/* <p className="text-xs xs:text-base text-gray-500">@{update.user.username}</p> */}
               </div>
               {/* {update.collective && (
                 <p className="text-[10px] md:text-sm text-gray-500">{update.collective.name}</p>
@@ -256,12 +256,12 @@ function NotificationSummary({ update }: { update: CommunityUpdate }) {
           </div>
           <div className="flex flex-col gap-1">
             {/* Action Text */}
-            <p className="text-[10px] xs:text-sm md:text-sm font-semibold text-gray-800 flex-1">
+            <p className="text-xs xs:text-base font-semibold text-gray-800 flex-1">
               {userName} <span className="font-medium">joined</span>  {cleanActionText}
             </p>
             {/* Supporting X nonprofits - Only on second line if it exists */}
             {nonprofitCount > 0 && (
-              <p className="text-[10px] xs:text-xs md:text-sm text-gray-500">
+              <p className="text-xs xs:text-sm text-gray-500">
                 Supporting {nonprofitCount} nonprofit{nonprofitCount !== 1 ? 's' : ''}
               </p>
             )}
@@ -280,7 +280,7 @@ function NotificationSummary({ update }: { update: CommunityUpdate }) {
       <div className="flex items-start justify-between mb-2 md:mb-3">
         <div className="flex items-center gap-2 md:gap-3">
           {/* Avatar */}
-          <Avatar className="h-8 w-8 md:h-11 md:w-11 flex-shrink-0 rounded-full">
+          <Avatar className="h-8 w-8 xs:w-9 xs:h-9 md:h-11 md:w-11 flex-shrink-0 rounded-full">
             <AvatarImage src={update.user.avatar} />
             <AvatarFallback
               style={{ backgroundColor: update.user.color || '#1600ff' }}
@@ -297,11 +297,11 @@ function NotificationSummary({ update }: { update: CommunityUpdate }) {
             <div className="flex items-center gap-1 md:gap-2 lg:gap-3 flex-wrap">
               <Link
                 to={`/user-profile/${update.user.id}`}
-                className="font-bold text-xs xs:text-sm md:text-base text-gray-900 hover:underline block"
+                className="font-bold text-sm xs:text-base md:text-base text-gray-900 hover:underline block"
               >
                 {userName}
               </Link>
-              <p className="text-xs xs:text-sm text-gray-500">@{update.user.username}</p>
+              {/* <p className="text-xs xs:text-sm text-gray-500">@{update.user.username}</p> */}
             </div>
             {/* {update.collective && (
               <p className="text-[10px] md:text-sm text-gray-500">{update.collective.name}</p>

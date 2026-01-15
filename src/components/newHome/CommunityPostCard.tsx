@@ -270,14 +270,14 @@ export default function CommunityPostCard({ post, onCommentPress, showSimplified
 
         <div className="flex gap-2 md:gap-3">
           <Link to={`/user-profile/${post.user.id}`}>
-            <Avatar className="h-8 w-8 md:h-10 md:w-10 flex-shrink-0">
+            <Avatar className="h-8 w-8 xs:w-9 xs:h-9 md:h-10 md:w-10 flex-shrink-0">
               <AvatarImage
                 src={post.user.avatar}
                 alt={displayName}
               />
               <AvatarFallback
                 style={{ backgroundColor: avatarBgColor }}
-                className="text-white font-bold text-[8px] xs:text-[10px] md:text-sm"
+                className="text-white font-bold text-[10px] xs:text-xs md:text-sm"
               >
                 {initials}
               </AvatarFallback>
@@ -457,7 +457,7 @@ export default function CommunityPostCard({ post, onCommentPress, showSimplified
             </>
           ) : (
             <>
-              <div className="text-xs xs:text-sm md:text-base text-gray-900 leading-relaxed mb-2 md:mb-4 whitespace-pre-line">
+              <div className="text-xs xs:text-base text-gray-900 leading-relaxed mb-2 md:mb-4 whitespace-pre-line">
                 {post.content}
               </div>
 
