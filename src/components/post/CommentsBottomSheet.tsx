@@ -522,7 +522,7 @@ export default function CommentsBottomSheet({
                 placeholder={replyingTo ? `Reply to ${replyingTo.username}...` : "Join the conversation"}
                 value={commentText}
                 onChange={(e) => setCommentText(e.target.value)}
-                className="w-full bg-gray-50 border-none focus-visible:ring-0 text-sm md:text-base py-3 pl-4 rounded-md min-h-[35px]"
+                className="w-full bg-gray-50 border-none focus-visible:ring-0 text-base py-3 pl-4 rounded-md min-h-[35px]"
                 disabled={createCommentMutation.isPending || createReplyMutation.isPending || !currentUser}
               />
             </div>

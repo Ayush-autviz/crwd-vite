@@ -49,8 +49,8 @@ export default function ExploreCards() {
                 <IconComponent className="w-6 h-6 md:w-8 md:h-8" strokeWidth={2} />
               </div>
               <div className="space-y-1">
-                <h3 className="font-bold text-xs xs:text-sm md:text-base lg:text-lg text-foreground">{card.title}</h3>
-                <p className="text-[10px] xs:text-xs md:text-sm text-muted-foreground">{card.subtitle}</p>
+                <h3 className="font-bold text-sm xs:text-base md:text-lg lg:text-lg text-foreground">{card.title}</h3>
+                <p className="text-xs xs:text-sm md:text-base text-muted-foreground">{card.subtitle}</p>
               </div>
             </button>
           );

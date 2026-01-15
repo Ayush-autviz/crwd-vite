@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import ProfileActivityCard from "@/components/profile/ProfileActivityCard";
-import { Loader2, Image as ImageIcon, Link as LinkIcon } from "lucide-react";
+import { Loader2, Image as ImageIcon, Link as LinkIcon, X } from "lucide-react";
 import ProfileNavbar from "@/components/profile/ProfileNavbar";
 import { Toast } from "@/components/ui/toast";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
@@ -28,6 +28,8 @@ export default function PostById() {
   const [showDialog, setShowDialog] = useState(false);
   const [expandedComments, setExpandedComments] = useState<Set<number>>(new Set());
   const [loadingReplies, setLoadingReplies] = useState<Set<number>>(new Set());
+  const [replyingTo, setReplyingTo] = useState<CommentData | null>(null);
+  const inputRef = React.useRef<HTMLInputElement>(null);
   const navigate = useNavigate();
   const { token } = useAuthStore();
 
@@ -169,6 +171,8 @@ export default function PostById() {
       queryClient.invalidateQueries({ queryKey: ['postComments', id] });
       // Fetch replies to show the new one and expand
       fetchReplies(variables.commentId);
+      setInputValue("");
+      setReplyingTo(null);
     },
     onError: () => {
       setToastMessage("Failed to add reply. Please try again.");
@@ -177,8 +181,33 @@ export default function PostById() {
   });
 
   const handleReply = (commentId: number, content: string) => {
-    if (content.trim()) {
-      createReplyMutation.mutate({ commentId, data: { content: content.trim() } });
+    // Find the comment object to get username properly
+    const findComment = (commentsList: CommentData[]): CommentData | undefined => {
+      for (const c of commentsList) {
+        if (c.id === commentId) return c;
+        if (c.replies && c.replies.length > 0) {
+          const found = findComment(c.replies);
+          if (found) return found;
+        }
+      }
+      return undefined;
+    };
+
+    const targetComment = findComment(comments);
+
+    if (targetComment) {
+      setReplyingTo(targetComment);
+      inputRef.current?.focus();
+    }
+  };
+
+  const handleSubmit = (content: string) => {
+    if (!content.trim()) return;
+
+    if (replyingTo) {
+      createReplyMutation.mutate({ commentId: replyingTo.id, data: { content: content.trim() } });
+    } else {
+      createCommentMutation.mutate({ content: content.trim() });
     }
   };
 
@@ -428,16 +457,31 @@ export default function PostById() {
       {token?.access_token && (
         <div className="fixed bottom-0 left-0 right-0 bg-white border-t p-4 z-40">
           <div className="mx-auto w-full">
+            {replyingTo && (
+              <div className="flex items-center justify-between bg-gray-50 px-4 py-2 mb-2 rounded-lg border-l-4 border-blue-500">
+                <div className="flex flex-col">
+                  <span className="text-xs font-semibold text-blue-600">Replying to {replyingTo.username}</span>
+                  <span className="text-xs text-gray-500 line-clamp-1">{replyingTo.content}</span>
+                </div>
+                <button
+                  onClick={() => setReplyingTo(null)}
+                  className="p-1 hover:bg-gray-200 rounded-full"
+                >
+                  <X className="w-3 h-3 text-gray-500" />
+                </button>
+              </div>
+            )}
             <div className="relative flex items-center">
               <div className="absolute left-0 top-0 bottom-0 w-1 bg-[#1600ff] rounded-l-md z-10" />
               <input
+                ref={inputRef}
                 type="text"
                 value={inputValue}
                 onChange={(e) => setInputValue(e.target.value)}
                 onKeyPress={handleKeyPress}
-                placeholder="Join the conversation"
-                disabled={createCommentMutation.isPending}
-                className="w-full bg-gray-50 border-none outline-none focus:ring-0 text-sm md:text-base py-3 pl-4 rounded-md min-h-[35px]"
+                placeholder={replyingTo ? `Reply to ${replyingTo.username}...` : "Join the conversation"}
+                disabled={createCommentMutation.isPending || createReplyMutation.isPending}
+                className="w-full bg-gray-50 border-none outline-none focus:ring-0 text-base py-3 pl-4 rounded-md min-h-[35px]"
               />
             </div>
 
@@ -452,14 +496,14 @@ export default function PostById() {
               </div>
 
               <button
-                onClick={() => handleAddComment(inputValue)}
-                disabled={!inputValue.trim() || createCommentMutation.isPending}
-                className={`px-6 py-1.5 rounded-full font-semibold text-sm transition-colors ${inputValue.trim() && !createCommentMutation.isPending
+                onClick={() => handleSubmit(inputValue)}
+                disabled={!inputValue.trim() || createCommentMutation.isPending || createReplyMutation.isPending}
+                className={`px-6 py-1.5 rounded-full font-semibold text-sm transition-colors ${inputValue.trim() && !createCommentMutation.isPending && !createReplyMutation.isPending
                   ? 'bg-[#1600ff] text-white hover:bg-[#1400cc]'
                   : 'bg-gray-100 text-gray-400 cursor-not-allowed'
                   }`}
               >
-                {createCommentMutation.isPending ? (
+                {createCommentMutation.isPending || createReplyMutation.isPending ? (
                   <Loader2 className="w-4 h-4 animate-spin" />
                 ) : (
                   'Reply'

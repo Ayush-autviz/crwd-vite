@@ -212,7 +212,7 @@ function NotificationSummary({ update }: { update: CommunityUpdate }) {
               <AvatarImage src={update.user.avatar} />
               <AvatarFallback
                 style={{ backgroundColor: update.user.color || '#1600ff' }}
-                className="text-white text-[8px] xs:text-[10px] md:text-sm font-semibold"
+                className="text-white text-xs md:text-sm font-semibold"
               >
                 {update.user.name
                   .charAt(0)
