@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { ArrowLeft, Star, MoreHorizontal, Share2, Link2, Flag } from 'lucide-react';
+import { ArrowLeft, Star, MoreHorizontal, Share2, Link2, Flag, CreditCard } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { favoriteCause, unfavoriteCause } from '@/services/api/social';
@@ -11,6 +11,7 @@ interface CauseHeaderProps {
   causeId?: string;
   isFavorite?: boolean;
   onShare?: () => void;
+  onOneTimeDonation?: () => void;
 }
 
 export default function CauseHeader({
@@ -18,6 +19,7 @@ export default function CauseHeader({
   causeId,
   isFavorite: initialIsFavorite = false,
   onShare,
+  onOneTimeDonation,
 }: CauseHeaderProps) {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
@@ -191,6 +193,17 @@ export default function CauseHeader({
               >
                 <Star className={`w-3.5 h-3.5 md:w-4 md:h-4 ${isFavorite ? 'fill-yellow-500 text-yellow-500' : ''}`} strokeWidth={2.5} />
                 {isFavorite ? 'Remove favorite' : 'Add to favorites'}
+              </button>
+              <button
+                onClick={() => {
+                  setShowDropdown(false);
+                  onOneTimeDonation?.();
+                }}
+                disabled={!onOneTimeDonation}
+                className="w-full font-semibold flex items-center gap-2 md:gap-3 px-3 md:px-4 py-1.5 md:py-2 text-xs md:text-sm text-foreground hover:bg-gray-100 transition-colors disabled:opacity-50"
+              >
+                <CreditCard className="w-3.5 h-3.5 md:w-4 md:h-4" strokeWidth={2.5} />
+                One Time Donation
               </button>
               <div className="border-t border-gray-200 my-1"></div>
               <button

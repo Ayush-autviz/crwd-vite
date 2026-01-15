@@ -203,7 +203,7 @@ export default function NewSearchPage() {
                       handleSearch();
                     }
                   }}
-                  className="pl-9 md:pl-10 pr-3 md:pr-4 py-2.5 md:py-3 rounded-lg border border-blue-500 bg-gray-50 focus:bg-white focus:ring-2 focus:ring-blue-500 text-sm md:text-base"
+                  className="pl-9 md:pl-10 pr-3 md:pr-4 py-2.5 md:py-3 rounded-lg border border-blue-500 bg-gray-50 focus:bg-white focus:ring-2 focus:ring-blue-500 text-base"
                 />
               </div>
             </div>

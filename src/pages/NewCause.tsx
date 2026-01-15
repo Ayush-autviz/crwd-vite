@@ -77,20 +77,20 @@ export default function NewCausePage() {
     mutationFn: async () => {
       if (!causeId) throw new Error('Cause ID is missing');
       // Use correct API format: { causes: [{ cause_id: 0 }] } without attributed_collective
-      return addCausesToBox({ 
-        causes: [{ 
-          cause_id: parseInt(causeId) 
-        }] 
+      return addCausesToBox({
+        causes: [{
+          cause_id: parseInt(causeId)
+        }]
       });
     },
     onSuccess: async () => {
       setShowAddToBoxModal(false);
       queryClient.invalidateQueries({ queryKey: ['donationBox', currentUser?.id] });
-      
+
       // Show custom toast
       setToastMessage('Cause added to donation box!');
       setShowToast(true);
-      
+
       // Always navigate to setup tab explicitly
       navigate('/donation?tab=setup', {
         replace: true,
@@ -147,7 +147,7 @@ export default function NewCausePage() {
     // Check if donation box exists first
     try {
       const donationBox = await getDonationBox();
-      
+
       // If donation box is not set up, navigate to donation page with cause preselected
       if (!donationBox || !donationBox.id || donationBox.message === "Donation box not found") {
         setShowAddToBoxModal(false);
@@ -170,7 +170,7 @@ export default function NewCausePage() {
         });
         return;
       }
-      
+
       // If donation box exists, check capacity before adding cause
       // Calculate fees and capacity
       // For donations < $10.00: Flat fee of $1.00
@@ -179,7 +179,7 @@ export default function NewCausePage() {
         const gross = grossAmount;
         let crwdFee: number;
         let net: number;
-        
+
         if (gross < 10.00) {
           // Flat fee of $1.00
           crwdFee = 1.00;
@@ -189,7 +189,7 @@ export default function NewCausePage() {
           crwdFee = gross * 0.10;
           net = gross - crwdFee;
         }
-        
+
         return {
           crwdFee: Math.round(crwdFee * 100) / 100,
           net: Math.round(net * 100) / 100,
@@ -200,11 +200,11 @@ export default function NewCausePage() {
       const fees = calculateFees(monthlyAmount);
       const net = fees.net;
       const maxCapacity = Math.floor(net / 0.20);
-      
+
       // Count current causes in the box
       const boxCauses = donationBox.box_causes || [];
       const currentCapacity = boxCauses.length;
-      
+
       // Check if adding this cause would exceed capacity
       if (currentCapacity >= maxCapacity) {
         setToastMessage(`Your donation box is full. You can only support up to ${maxCapacity} cause${maxCapacity !== 1 ? 's' : ''} for $${monthlyAmount} per month. Please increase your donation amount or remove a cause to add this one.`);
@@ -212,7 +212,7 @@ export default function NewCausePage() {
         setShowAddToBoxModal(false);
         return;
       }
-      
+
       // If capacity check passes, proceed with adding
       addToDonationBoxMutation.mutate();
     } catch (error) {
@@ -245,14 +245,13 @@ export default function NewCausePage() {
       return;
     }
     // Navigate to one-time donation flow
-    navigate('/donation', {
+    navigate('/one-time-donation', {
       state: {
         preselectedItem: {
           id: causeId,
           type: 'cause',
           data: causeData,
         },
-        activeTab: 'nonprofits',
       },
     });
   };
@@ -268,28 +267,29 @@ export default function NewCausePage() {
         causeId={causeId}
         isFavorite={causeData.is_favorite}
         onShare={handleShare}
+        onOneTimeDonation={handleDonate}
       />
 
-        <div className='lg:max-w-[60%] lg:mx-auto'>
+      <div className='lg:max-w-[60%] lg:mx-auto'>
 
-      <CauseProfile causeData={causeData} />
+        <CauseProfile causeData={causeData} />
 
-      <CauseActionButtons
-        onAddToDonationBox={handleAddToDonationBox}
-        onDonate={handleDonate}
-        isAlreadyInBox={isCauseInBox}
-      />
-      
+        <CauseActionButtons
+          onAddToDonationBox={handleAddToDonationBox}
+          onDonate={handleDonate}
+          isAlreadyInBox={isCauseInBox}
+        />
 
-      <VerifiedNonprofitInfo causeData={causeData} />
 
-      <OrganizationMission causeData={causeData} />
+        <VerifiedNonprofitInfo causeData={causeData} />
 
-      <CauseDetails causeData={causeData} />
+        <OrganizationMission causeData={causeData} />
 
-      <SimilarNonprofits similarCauses={similarCauses} isLoading={isLoadingSimilar} />
+        <CauseDetails causeData={causeData} />
 
-</div>
+        <SimilarNonprofits similarCauses={similarCauses} isLoading={isLoadingSimilar} />
+
+      </div>
 
       <Footer />
 
