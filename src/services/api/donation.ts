@@ -112,12 +112,12 @@ export const createFundraiserDonation = async (data: any) => {
 
 // get payment method
 export const getPaymentMethod = async () => {
-    const response = await axiosClient.get('/donations/payment-methods/portal-session/');
+    const response = await axiosClient.get('/donations/payment-methods/');
     return response.data;
 };
 
 // update payment method
-export const updatePaymentMethod = async () => {
-    const response = await axiosClient.post('/donations/payment-methods/portal-session/');
+export const updatePaymentMethod = async (data: any) => {
+    const response = await axiosClient.post('/donations/payment-methods/portal-session/', data);
     return response.data;
 };

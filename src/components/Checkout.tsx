@@ -1,4 +1,4 @@
-import { Settings, X, ChevronDown, ChevronUp, Trash2, Pencil, Plus, Minus, Loader2 } from "lucide-react";
+import { Settings, X, ChevronDown, ChevronUp, Trash2, Pencil, Plus, Minus, Loader2, CreditCard } from "lucide-react";
 import { useState, useEffect } from "react";
 
 import { Button } from "@/components/ui/button";
@@ -14,6 +14,7 @@ import RequestNonprofitModal from "@/components/newsearch/RequestNonprofitModal"
 import EditDonationSplitBottomSheet from "@/components/donation/EditDonationSplitBottomSheet";
 import { toast } from "sonner";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import { PaymentMethodsSheet } from "./profile/PaymentMethodsSheet";
 
 interface DonationOverviewProps {
   donationAmount?: number;
@@ -66,6 +67,7 @@ export const Checkout = ({
   const [selectedPauseOption, setSelectedPauseOption] = useState<number | null>(null);
   const [showEditSplit, setShowEditSplit] = useState(false);
   const [showCancelConfirmModal, setShowCancelConfirmModal] = useState(false);
+  const [showPaymentMethods, setShowPaymentMethods] = useState(false);
 
   // Update showManageDonationBox when initialShowManage changes
   useEffect(() => {
@@ -565,7 +567,7 @@ export const Checkout = ({
           {/* Donation Box Summary Card */}
           <div className="bg-white rounded-xl mb-4 md:mb-6 shadow-sm border border-gray-200 overflow-hidden">
             {/* Gradient Header */}
-            <div className="h-0.5 md:h-1 bg-gradient-to-r from-blue-500 to-purple-500"></div>
+            <div className="h-1 md:h-2 bg-gradient-to-r from-blue-700 to-[#de3982]"></div>
 
             <div className="p-4 md:p-6">
               {/* Monthly Donation Section */}
@@ -693,13 +695,19 @@ export const Checkout = ({
               </div> */}
 
               {/* Add Causes Button */}
-              <Button
-                onClick={() => navigate('/donation/manage')}
-                className="w-full bg-[#1600ff] hover:bg-[#1400cc] text-white font-semibold py-3 rounded-lg transition-colors flex items-center justify-center gap-2"
-              >
-                <Plus size={18} className="text-white" />
-                <span>Add Causes</span>
-              </Button>
+              <div className="flex items-center justify-between">
+                <Button onClick={() => setShowPaymentMethods(true)} className="w-[48%] bg-white hover:bg-gray-100 border border-gray-300 text-gray-900 font-semibold py-5 rounded-lg transition-colors flex items-center justify-center gap-2">
+                  <CreditCard size={18} className="text-gray-900" />
+                  <span>Edit payment</span>
+                </Button>
+                <Button
+                  onClick={() => navigate('/donation/manage')}
+                  className="w-[48%] bg-[#1600ff] hover:bg-[#1400cc] text-white font-semibold py-5 rounded-lg transition-colors flex items-center justify-center gap-2"
+                >
+                  <Plus size={18} className="text-white" />
+                  <span>Add Causes</span>
+                </Button>
+              </div>
             </div>
           </div>
 
@@ -1294,6 +1302,11 @@ export const Checkout = ({
           </div>
         </div>
       )}
+
+      <PaymentMethodsSheet
+        isOpen={showPaymentMethods}
+        onClose={() => setShowPaymentMethods(false)}
+      />
     </div>
   );
 };

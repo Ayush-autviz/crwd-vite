@@ -35,6 +35,7 @@ import {
 import { Toast } from "@/components/ui/toast"
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar"
 import RequestNonprofitModal from '@/components/newsearch/RequestNonprofitModal';
+import { PaymentMethodsSheet } from '@/components/profile/PaymentMethodsSheet';
 
 
 export default function NewSettings() {
@@ -48,6 +49,7 @@ export default function NewSettings() {
   const [toastMessage, setToastMessage] = useState("")
   const [isEditMode, setIsEditMode] = useState(false)
   const [showRequestModal, setShowRequestModal] = useState(false);
+  const [showPaymentMethods, setShowPaymentMethods] = useState(false);
   const [formData, setFormData] = useState({
     first_name: '',
     last_name: '',
@@ -637,7 +639,7 @@ export default function NewSettings() {
             <div className="px-4 md:px-6 pt-4 md:pt-6">
               <Button
                 variant="outline"
-                onClick={() => navigate("/transaction-history")}
+                onClick={() => setShowPaymentMethods(true)}
                 className="w-full justify-start text-sm md:text-base py-2 md:py-2.5"
               >
                 <CreditCard className="h-4 w-4 md:h-5 md:w-5 mr-2 text-gray-500" />
@@ -951,6 +953,11 @@ export default function NewSettings() {
       <RequestNonprofitModal
         isOpen={showRequestModal}
         onClose={() => setShowRequestModal(false)}
+      />
+
+      <PaymentMethodsSheet
+        isOpen={showPaymentMethods}
+        onClose={() => setShowPaymentMethods(false)}
       />
     </div>
   )
