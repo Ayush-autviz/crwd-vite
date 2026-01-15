@@ -7,12 +7,12 @@ interface CauseDetailsProps {
 
 export default function CauseDetails({ causeData }: CauseDetailsProps) {
   const category = categories.find((cat) => cat.id === causeData?.category);
-  
+
   // Get related categories - show related categories based on the main category
   // For Wellness (G), show related: Health (E), Mental (F), Research (H), Science (U)
   const getRelatedCategories = () => {
     if (!category) return [];
-    
+
     // Map of category IDs to related category IDs
     const relatedMap: Record<string, string[]> = {
       'G': ['E', 'F', 'H', 'U'], // Wellness -> Health, Mental, Research, Science
@@ -21,7 +21,7 @@ export default function CauseDetails({ causeData }: CauseDetailsProps) {
       'H': ['E', 'F', 'U', 'G'], // Research -> Health, Mental, Science, Wellness
       'U': ['H', 'E', 'G'], // Science -> Research, Health, Wellness
     };
-    
+
     const relatedIds = relatedMap[category.id] || [];
     return relatedIds
       .map(id => categories.find(cat => cat.id === id))
@@ -37,12 +37,12 @@ export default function CauseDetails({ causeData }: CauseDetailsProps) {
         <div className="flex items-start gap-1.5 md:gap-2 mb-3 md:mb-4">
           <MapPin className="w-4 h-4 md:w-5 md:h-5 text-gray-600 flex-shrink-0 mt-0.5" />
           <div>
-            <h3 className="text-xs md:text-sm font-bold text-gray-900 mb-0.5 md:mb-1">ADDRESS</h3>
-          <div className="text-xs md:text-sm text-gray-700 uppercase">
-            {causeData.street}
-            {causeData.city && `, ${causeData.city}`}
-            {causeData.state && `, ${causeData.state}`}
-          </div>
+            <h3 className="text-xs xs:text-sm md:text-base font-bold text-gray-900 mb-0.5 md:mb-1">ADDRESS</h3>
+            <div className="text-xs xs:text-sm md:text-base text-gray-700 uppercase">
+              {causeData.street}
+              {causeData.city && `, ${causeData.city}`}
+              {causeData.state && `, ${causeData.state}`}
+            </div>
           </div>
         </div>
       )}
@@ -68,8 +68,8 @@ export default function CauseDetails({ causeData }: CauseDetailsProps) {
       {/* Main Focus */}
       {category && (
         <div className="mb-3 md:mb-4">
-          <h3 className="text-xs md:text-sm font-bold text-gray-900 mb-0.5 md:mb-1">MAIN FOCUS</h3>
-          <span className="text-xs md:text-sm font-medium" style={{ color: '#1600ff' }}>
+          <h3 className="text-xs xs:text-sm md:text-base font-bold text-gray-900 mb-0.5 md:mb-1">MAIN FOCUS</h3>
+          <span className="text-xs xs:text-sm md:text-base font-medium" style={{ color: '#1600ff' }}>
             {category.name}
           </span>
         </div>
@@ -78,8 +78,8 @@ export default function CauseDetails({ causeData }: CauseDetailsProps) {
       {/* Tax ID */}
       {causeData?.tax_id_number && (
         <div>
-          <h3 className="text-xs md:text-sm font-bold text-gray-900 mb-0.5 md:mb-1">TAX ID</h3>
-          <span className="text-xs md:text-sm text-gray-700">{causeData.tax_id_number}</span>
+          <h3 className="text-xs xs:text-sm md:text-base font-bold text-gray-900 mb-0.5 md:mb-1">TAX ID</h3>
+          <span className="text-xs xs:text-sm md:text-base text-gray-700">{causeData.tax_id_number}</span>
         </div>
       )}
     </div>

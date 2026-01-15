@@ -11,7 +11,7 @@ const instance = axios.create({
 // const BaseURL = 'https://api.crwdfund.org';
 // const BaseURL = 'http://ec2-65-0-54-143.ap-south-1.compute.amazonaws.com:8200';
 // const BaseURL = "https://crwd.autviz.com";
-const BaseURL = import.meta.env.VITE_BASE_URL;
+const BaseURL = 'https://stage-api.crwdfund.org';
 
 // 🔹 Request Interceptor
 instance.interceptors.request.use((config) => {
