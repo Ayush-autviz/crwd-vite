@@ -120,7 +120,7 @@ export default function NewSavedPage() {
               <button
                 key={tab}
                 onClick={() => setActiveTab(tab as TabType)}
-                className={`flex-1 px-1.5 sm:px-2 md:px-3 py-1 md:py-1.5 rounded-xl text-[10px] xs:text-xs sm:text-xs md:text-sm font-semibold transition-colors whitespace-nowrap ${activeTab === tab
+                className={`flex-1 px-2 md:px-3 py-1.5 rounded-xl text-xs xs:text-sm font-semibold transition-colors whitespace-nowrap ${activeTab === tab
                   ? 'bg-white text-gray-900 shadow-sm'
                   : 'text-gray-600 hover:text-gray-900'
                   }`}
