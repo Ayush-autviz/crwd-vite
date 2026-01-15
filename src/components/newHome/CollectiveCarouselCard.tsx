@@ -332,14 +332,15 @@ export default function CollectiveCarouselCard({
 
               {/* Action Buttons */}
               <div className="flex justify-start items-center gap-1.5 md:gap-2">
-                <Button
+                {/* <Button
                   variant="ghost"
-                  size="sm"
-                  className="text-[#1600ff] hover:text-[#1600ff] text-[10px] xs:text-xs md:text-base font-semibold inline-flex items-center gap-1 hover:underline w-[30%]"
+                  size="sm" */}
+                <span
+                  className="text-[#1600ff] hover:text-[#1600ff] text-[10px] xs:text-xs md:text-base font-semibold inline-flex items-center gap-1 hover:underline w-[20%]"
                   onClick={handleButtonClick}
                 >
                   {isFounder ? "Manage" : "View"} <ArrowRight className="h-3.5 w-3.5 md:h-4 md:w-4" strokeWidth={2.5} />
-                </Button>
+                </span>
                 <Button
                   size="sm"
                   className="bg-[#1600ff] hover:bg-[#1400cc] text-white flex items-center justify-center gap-1 md:gap-1.5 text-[10px] xs:text-xs md:text-sm h-7 md:h-9 px-2 md:px-3 font-semibold w-[30%]"

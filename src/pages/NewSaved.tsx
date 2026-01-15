@@ -114,26 +114,20 @@ export default function NewSavedPage() {
 
       <div className="md:max-w-[60%]  md:mx-auto">
         {/* Tabs */}
-        <div className="border-b border-gray-200 px-4 mt-4">
-          <div className="flex gap-6">
-            <button
-              onClick={() => setActiveTab('Nonprofits')}
-              className={`pb-3 px-2 md:px-4 font-bold text-sm md:text-base transition-colors ${activeTab === 'Nonprofits'
-                ? 'text-[#1600ff] border-b-3 border-[#1600ff]'
-                : 'text-gray-500 hover:text-gray-700'
-                }`}
-            >
-              Nonprofits
-            </button>
-            <button
-              onClick={() => setActiveTab('Collectives')}
-              className={`pb-3 px-2 md:px-4 font-bold text-sm md:text-base transition-colors ${activeTab === 'Collectives'
-                ? 'text-[#1600ff] border-b-3 border-[#1600ff]'
-                : 'text-gray-500 hover:text-gray-700'
-                }`}
-            >
-              Collectives
-            </button>
+        <div className="px-4 mt-4">
+          <div className="flex bg-gray-100 p-1 rounded-xl mb-4 md:mb-6 overflow-x-auto">
+            {['Nonprofits', 'Collectives'].map((tab) => (
+              <button
+                key={tab}
+                onClick={() => setActiveTab(tab as TabType)}
+                className={`flex-1 px-1.5 sm:px-2 md:px-3 py-1 md:py-1.5 rounded-xl text-[10px] xs:text-xs sm:text-xs md:text-sm font-semibold transition-colors whitespace-nowrap ${activeTab === tab
+                  ? 'bg-white text-gray-900 shadow-sm'
+                  : 'text-gray-600 hover:text-gray-900'
+                  }`}
+              >
+                {tab}
+              </button>
+            ))}
           </div>
         </div>
 

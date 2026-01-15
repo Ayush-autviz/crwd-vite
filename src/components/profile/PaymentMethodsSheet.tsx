@@ -111,7 +111,8 @@ export function PaymentMethodsSheet({
                         {updateMethodMutation.isPending ? (
                             <Loader2 className="w-5 h-5 animate-spin" />
                         ) : (
-                            <Plus className="w-5 h-5" />
+                            // <Plus className="w-5 h-5" />
+                            <></>
                         )}
                         {paymentMethodsData?.payment_method ? "Update Payment Method" : "Add Payment Method"}
                     </button>

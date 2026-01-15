@@ -120,21 +120,18 @@ export default function CollectiveStatisticsModal({
         </div>
 
         {/* Tabs */}
-        <div className="px-3 md:px-4 lg:px-6 pt-2 md:pt-3 lg:pt-4 border-b border-gray-200">
-          <div className="flex justify-around gap-2 md:gap-3 lg:gap-6">
+        <div className="px-3 md:px-4 lg:px-6 pt-2 md:pt-3 lg:pt-4">
+          <div className="flex bg-gray-100 p-1 rounded-xl mb-2 md:mb-4 overflow-x-auto">
             {(['Nonprofits', 'Members', 'Donations'] as TabType[]).map((tab) => (
               <button
                 key={tab}
                 onClick={() => setActiveTab(tab)}
-                className={`pb-1.5 md:pb-2 lg:pb-3 px-0.5 md:px-1 font-semibold text-xs md:text-sm lg:text-base transition-colors relative ${activeTab === tab
-                  ? 'text-foreground'
-                  : 'text-muted-foreground'
+                className={`flex-1 px-1.5 sm:px-2 md:px-3 py-1 md:py-1.5 rounded-xl text-[10px] xs:text-xs sm:text-xs md:text-sm font-semibold transition-colors whitespace-nowrap ${activeTab === tab
+                  ? 'bg-white text-gray-900 shadow-sm'
+                  : 'text-gray-600 hover:text-gray-900'
                   }`}
               >
                 {tab}
-                {activeTab === tab && (
-                  <div className="absolute bottom-0 left-0 right-0 h-0.5 md:h-1 rounded-full bg-black"></div>
-                )}
               </button>
             ))}
           </div>
@@ -183,6 +180,7 @@ export default function CollectiveStatisticsModal({
                     return (
                       <div
                         key={nonprofit.id || cause.id}
+                        onClick={() => handleViewNonprofit(cause.id || nonprofit.id)}
                         className="flex items-center gap-2 md:gap-3 lg:gap-4 mb-2 md:mb-3 lg:mb-4 p-2 md:p-3 lg:p-4 border border-gray-100 rounded-lg shadow-md hover:shadow-lg transition-shadow cursor-pointer"
                       >
                         <Avatar className="w-8 h-8 md:w-10 md:h-10 lg:w-12 lg:h-12 rounded-lg flex-shrink-0">
@@ -198,17 +196,17 @@ export default function CollectiveStatisticsModal({
                           <h4 className="font-bold text-xs md:text-sm lg:text-base text-foreground mb-0.5 md:mb-1">
                             {name}
                           </h4>
-                          <p className="text-[10px] md:text-xs lg:text-sm text-muted-foreground line-clamp-3">
-                            {/* {cause.mission || 'No description available'} */}
-                            Actively Supported
+                          <p className="text-[10px] md:text-xs lg:text-sm text-muted-foreground line-clamp-1">
+                            {cause.mission || 'No description available'}
+                            {/* Actively Supported */}
                           </p>
                         </div>
-                        <Button
+                        {/* <Button
                           onClick={() => handleViewNonprofit(cause.id || nonprofit.id)}
                           className="bg-[#1600ff] hover:bg-[#1400cc] text-white font-semibold px-2 md:px-3 lg:px-4 py-1 md:py-1.5 lg:py-2 rounded-lg text-[10px] md:text-xs lg:text-sm flex-shrink-0"
                         >
                           View
-                        </Button>
+                        </Button> */}
                       </div>
                     );
                   })}

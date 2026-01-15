@@ -977,14 +977,23 @@ export const Checkout = ({
 
 
 
-          <div>
+          {/* <div>
             <button
               onClick={() => setShowPauseModal(true)}
               className="text-sm md:text-base text-gray-600 text-center cursor-pointer hover:text-[#1600ff] w-full"
             >
               Pause Donations
             </button>
-          </div>
+          </div> */}
+
+          <button
+            onClick={handleCancelSubscription}
+            disabled={cancelDonationBoxMutation.isPending}
+            // className="w-full text-xs text-red-600 hover:text-red-700 font-medium py-1.5 transition-colors disabled:opacity-50"
+            className="text-sm md:text-base text-red-600 text-center cursor-pointer hover:text-red-700 w-full"
+          >
+            {cancelDonationBoxMutation.isPending ? 'Cancelling...' : 'Cancel subscription completely'}
+          </button>
 
         </div>
       </div>

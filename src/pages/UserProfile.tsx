@@ -516,9 +516,9 @@ export default function ProfilePage() {
                     {/* Show more causes text and link */}
                     {userProfile.recently_supported_causes.length > 5 && (
                       <div className="flex flex-col items-center gap-1.5 md:gap-2 mt-3 md:mt-4">
-                        <p className="text-xs md:text-sm text-gray-500">
+                        {/* <p className="text-xs md:text-sm text-gray-500">
                           + {userProfile.supported_causes_count - 6} more causes
-                        </p>
+                        </p> */}
                         <div onClick={() => {
                           setActiveStatsTab('causes');
                           setShowStatsSheet(true);
