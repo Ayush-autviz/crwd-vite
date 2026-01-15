@@ -110,7 +110,7 @@ export default function ProfileNavbar({
             )}
             {title && (
               <div className="flex flex-col">
-                <h1 className="text-xs xs:text-sm sm:text-base md:text-lg font-bold text-gray-800 tracking-tight">
+                <h1 className="text-sm xs:text-base sm:text-lg md:text-lg font-bold text-gray-800 tracking-tight">
                   {title}
                 </h1>
               </div>

@@ -4,7 +4,7 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme {
-  --breakpoint-xs: 360px;
+  --breakpoint-xs: 370px;
 }
 
 @keyframes scroll {

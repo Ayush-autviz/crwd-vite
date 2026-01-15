@@ -410,7 +410,7 @@ export default function PostById() {
             </div>
           ) : (
             <div className="space-y-4 md:space-y-6">
-              <p className="text-xs md:text-sm text-gray-600 font-medium">
+              <p className="text-xs xs:text-sm md:text-base text-gray-600 font-medium">
                 {comments.length} comment{comments.length !== 1 ? "s" : ""}
               </p>
               {comments.map((comment) => (
