@@ -634,6 +634,16 @@ export default function NewSettings() {
                 <h2 className="text-base md:text-lg font-semibold text-gray-900">Payment & Receipts</h2>
               </div>
             </div>
+            <div className="px-4 md:px-6 pt-4 md:pt-6">
+              <Button
+                variant="outline"
+                onClick={() => navigate("/transaction-history")}
+                className="w-full justify-start text-sm md:text-base py-2 md:py-2.5"
+              >
+                <CreditCard className="h-4 w-4 md:h-5 md:w-5 mr-2 text-gray-500" />
+                Manage Payment Methods
+              </Button>
+            </div>
             <div className="p-4 md:p-6">
               <Button
                 variant="outline"

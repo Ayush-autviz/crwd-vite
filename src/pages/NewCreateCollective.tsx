@@ -116,18 +116,20 @@ export default function NewCreateCollectivePage() {
   };
 
   // Form state
-  const [name, setName] = useState(() => {
-    if (typeof window !== 'undefined') {
-      return localStorage.getItem('createCrwd_name') || '';
-    }
-    return '';
-  });
-  const [description, setDescription] = useState(() => {
-    if (typeof window !== 'undefined') {
-      return localStorage.getItem('createCrwd_desc') || '';
-    }
-    return '';
-  });
+  // const [name, setName] = useState(() => {
+  //   if (typeof window !== 'undefined') {
+  //     return localStorage.getItem('createCrwd_name') || '';
+  //   }
+  //   return '';
+  // });
+  // const [description, setDescription] = useState(() => {
+  //   if (typeof window !== 'undefined') {
+  //     return localStorage.getItem('createCrwd_desc') || '';
+  //   }
+  //   return '';
+  // });
+  const [name, setName] = useState('');
+  const [description, setDescription] = useState('');
   const [selectedCauses, setSelectedCauses] = useState<any[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [searchTrigger, setSearchTrigger] = useState(0);

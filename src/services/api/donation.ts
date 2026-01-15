@@ -109,3 +109,15 @@ export const createFundraiserDonation = async (data: any) => {
     const response = await axiosClient.post(`/donations/fundraiser/`, data);
     return response.data;
 };
+
+// get payment method
+export const getPaymentMethod = async () => {
+    const response = await axiosClient.get('/donations/payment-methods/portal-session/');
+    return response.data;
+};
+
+// update payment method
+export const updatePaymentMethod = async () => {
+    const response = await axiosClient.post('/donations/payment-methods/portal-session/');
+    return response.data;
+};
