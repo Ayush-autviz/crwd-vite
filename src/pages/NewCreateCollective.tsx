@@ -628,7 +628,7 @@ export default function NewCreateCollectivePage() {
               setSelectedCauses([]);
               setHasStarted(true);
             }}
-            className="bg-[#1600ff] hover:bg-[#1400cc] text-white font-semibold rounded-xl px-3 md:px-6 py-3 md:py-6 text-sm md:text-base w-fit"
+            className="bg-[#1600ff] hover:bg-[#1400cc] text-white font-semibold rounded-md px-3 md:px-6 py-3 md:py-6 text-sm md:text-base w-fit"
           >
             Get Started
           </Button>

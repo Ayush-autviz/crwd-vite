@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams, Link } from 'react-router-dom';
-import { ArrowLeft, Share2, MoreHorizontal, Users, TrendingUp } from 'lucide-react';
-import { useQuery } from '@tanstack/react-query';
-import { getFundraiserById } from '@/services/api/crwd';
+import { ArrowLeft, Share2, MoreHorizontal, Users, TrendingUp, Pencil, Flag } from 'lucide-react';
+import { useMutation, useQuery } from '@tanstack/react-query';
+import { getFundraiserById, patchFundraiser } from '@/services/api/crwd';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -11,6 +11,7 @@ import { Loader2 } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import dayjs from 'dayjs';
 import { SharePost } from "@/components/ui/SharePost";
+import { queryClient } from '@/lib/react-query/client';
 
 // Avatar colors for consistent fallback styling
 const avatarColors = [
@@ -45,12 +46,33 @@ export default function FundraiserDetail() {
   const [showDropdown, setShowDropdown] = useState(false);
   const [showShareModal, setShowShareModal] = useState(false);
   const dropdownRef = React.useRef<HTMLDivElement>(null);
+  const [toastMessage, setToastMessage] = useState("");
+  const [showToast, setShowToast] = useState(false);
 
   // Fetch fundraiser data
   const { data: fundraiserData, isLoading, error } = useQuery({
     queryKey: ['fundraiser', id],
     queryFn: () => getFundraiserById(id || ''),
     enabled: !!id,
+  });
+
+  // End Fundraiser Mutation
+  const endFundraiserMutation = useMutation({
+    mutationFn: (fundraiserId: number) => patchFundraiser(fundraiserId.toString(), { is_active: false }),
+    onSuccess: () => {
+      setToastMessage('Fundraiser ended successfully');
+      setShowToast(true);
+      queryClient.invalidateQueries({ queryKey: ['posts'] });
+      queryClient.invalidateQueries({ queryKey: ['fundraiser', id] });
+      navigate(-1);
+      setShowDropdown(false);
+    },
+    onError: (error: any) => {
+      console.error('Error ending fundraiser:', error);
+      setToastMessage(`Failed to end fundraiser: ${error.response?.data?.message || error.message}`);
+      setShowToast(true);
+      setShowDropdown(false);
+    },
   });
 
   // Calculate days left
@@ -79,7 +101,18 @@ export default function FundraiserDetail() {
     });
   };
 
-  console.log(fundraiserData);
+  const handleEditFundraiser = () => {
+    if (id) {
+      navigate(`/edit-fundraiser/${id}`);
+    }
+    setShowDropdown(false);
+  };
+
+  const handleEndFundraiser = () => {
+    if (id) {
+      endFundraiserMutation.mutate(Number(id));
+    }
+  };
 
   // Handle outside click for dropdown
   useEffect(() => {
@@ -176,9 +209,30 @@ export default function FundraiserDetail() {
                   <MoreHorizontal className="w-5 h-5 text-gray-700" />
                 </button>
                 {showDropdown && (
-                  <div className="absolute right-0 mt-2 w-40 md:w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-50">
-                    <button className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                      Report
+                  <div className="absolute right-0 top-8 md:top-10 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-50 min-w-[160px] md:min-w-[180px]">
+                    <button
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        handleEditFundraiser();
+                      }}
+                      className="w-full flex items-center gap-2 md:gap-3 px-3 md:px-4 py-2 md:py-2.5 text-xs md:text-sm text-gray-900 hover:bg-gray-50 transition-colors"
+                    >
+                      <Pencil className="w-4 h-4 md:w-5 md:h-5 text-gray-500" />
+                      <span>Edit Fundraiser</span>
+                    </button>
+                    <div className="border-t border-gray-200 my-1"></div>
+                    <button
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        handleEndFundraiser();
+                      }}
+                      disabled={endFundraiserMutation.isPending}
+                      className="w-full flex items-center gap-2 md:gap-3 px-3 md:px-4 py-2 md:py-2.5 text-xs md:text-sm text-red-600 hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      <Flag className="w-4 h-4 md:w-5 md:h-5 text-red-600" />
+                      <span>{endFundraiserMutation.isPending ? 'Ending...' : 'End Fundraiser'}</span>
                     </button>
                   </div>
                 )}

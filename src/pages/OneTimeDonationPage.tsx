@@ -77,7 +77,7 @@ export default function OneTimeDonationPage() {
   return (
     <div className="w-full h-full bg-white flex flex-col">
       {/* Header */}
-      <div className="sticky top-0 z-10 w-full flex items-center gap-3 md:gap-4 p-3 md:p-4 border-b ">
+      <div className="sticky top-0 bg-white z-10 w-full flex items-center gap-3 md:gap-4 p-3 md:p-4 border-b ">
         <button
           onClick={() => navigate(-1)}
           className="p-1.5 md:p-2 hover:bg-gray-100 rounded-full transition-colors"

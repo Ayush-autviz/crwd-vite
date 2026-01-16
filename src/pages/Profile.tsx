@@ -970,7 +970,7 @@ export default function ProfilePage() {
 
       {/* Founder Collectives Bottom Sheet */}
       <Sheet open={showFounderSheet} onOpenChange={setShowFounderSheet}>
-        <SheetContent side="bottom" className="h-[85vh] max-h-[85vh] p-0 flex flex-col rounded-t-3xl">
+        <SheetContent side="bottom" className="max-h-[85vh] p-0 flex flex-col rounded-t-3xl">
           {/* Drag Handle */}
           <div className="flex justify-center pt-3 pb-2">
             <div className="w-12 h-1.5 bg-gray-300 rounded-full" />

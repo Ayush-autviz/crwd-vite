@@ -12,6 +12,7 @@ import { SharePost } from "@/components/ui/SharePost";
 import { Card, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import { formatDistanceToNow } from 'date-fns';
+import { useAuthStore } from "@/stores/store";
 
 interface CommunityPostCardProps {
   post: {
@@ -72,6 +73,7 @@ export default function CommunityPostCard({ post, onCommentPress, showSimplified
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
   const menuRef = useRef<HTMLDivElement>(null);
+  const currentUser = useAuthStore((state) => state.user);
 
   const likeMutation = useMutation({
     mutationFn: () => likePost(post.id.toString()),
@@ -224,16 +226,18 @@ export default function CommunityPostCard({ post, onCommentPress, showSimplified
               <span className="text-[9px] xs:text-[10px] md:text-sm font-medium text-[#1600ff]">PINNED FUNDRAISER</span>
             </div>
             <div className="relative" ref={menuRef}>
-              <button
-                onClick={(e) => {
-                  e.preventDefault();
-                  e.stopPropagation();
-                  setShowFundraiserMenu(!showFundraiserMenu);
-                }}
-                className="p-1 hover:bg-gray-100 rounded-full transition-colors"
-              >
-                <MoreHorizontal className="w-4 h-4 md:w-5 md:h-5 text-gray-500" />
-              </button>
+              {post.user.id === currentUser?.id && (
+                <button
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    setShowFundraiserMenu(!showFundraiserMenu);
+                  }}
+                  className="p-1 hover:bg-gray-100 rounded-full transition-colors"
+                >
+                  <MoreHorizontal className="w-4 h-4 md:w-5 md:h-5 text-gray-500" />
+                </button>
+              )}
 
               {/* Dropdown Menu */}
               {showFundraiserMenu && (
@@ -293,17 +297,17 @@ export default function CommunityPostCard({ post, onCommentPress, showSimplified
                 >
                   {displayName}
                 </Link>
-                {!showSimplifiedHeader && post.user.username && (
+                {/* {!showSimplifiedHeader && post.user.username && (
                   <>
                     <span className="text-gray-400">•</span>
                     <span className="text-xs xs:text-base md:text-lg text-gray-500">
                       @{post.user.username}
                     </span>
                   </>
-                )}
+                )} */}
                 {post.fundraiser?.is_active && (
                   <span className="px-2 py-0.5 bg-[#1600ff] text-white text-[8px] xs:text-[10px] md:text-[12px] font-medium rounded-full">
-                    Founder
+                    Leader
                   </span>
                 )}
               </div>

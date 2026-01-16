@@ -500,7 +500,7 @@ export default function NewHome() {
                     {/* 1 Post - After Featured Nonprofits */}
                     {token?.access_token && (
                         <CommunityPosts
-                            limit={1}
+                            limit={2}
                             startIndex={2}
                             showHeading={false}
                             onCommentPress={(post) => {
@@ -554,7 +554,7 @@ export default function NewHome() {
                         notificationsLoading ? (
                             null
                         ) : allCommunityUpdates.length > 0 ? (
-                            <CommunityUpdates updates={allCommunityUpdates} showHeading={false} />
+                            <CommunityUpdates updates={allCommunityUpdates.slice(0, 10)} showHeading={false} />
                         ) : null
                     )}
 

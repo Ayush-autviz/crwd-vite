@@ -470,6 +470,7 @@ export default function CollectiveStatisticsModal({
 
                       const avatar = user.profile_picture || '';
                       const isCollectiveDonation = donation.amount_attributed_to_collective > 0;
+                      const type = donation.donation_type || 'donation';
 
                       // Generate consistent avatar color - use a larger palette for more variety
                       const avatarColors = [
@@ -564,7 +565,7 @@ export default function CollectiveStatisticsModal({
                               </h4>
                               {isCollectiveDonation && (
                                 <span className="bg-blue-100 text-blue-500 text-[9px] md:text-xs font-semibold px-1.5 md:px-2 py-0.5 rounded-full">
-                                  Collective
+                                  {type === 'one_time' ? 'One Time' : 'Collective'}
                                 </span>
                               )}
                             </div>
