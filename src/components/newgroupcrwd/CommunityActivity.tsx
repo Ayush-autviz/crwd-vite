@@ -95,7 +95,7 @@ export default function CommunityActivity({
     <div className="px-3 md:px-4 py-4 md:py-6">
       <div className="flex items-center justify-between mb-3 md:mb-4">
         <div>
-          <h3 className="font-bold text-base md:text-lg lg:text-xl text-foreground">
+          <h3 className="font-bold text-base xs:text-lg md:text-xl text-foreground">
             Community Activity
           </h3>
           {/* {posts && posts.length > 0 && (
@@ -106,7 +106,7 @@ export default function CommunityActivity({
         </div>
         {!isJoined ? (
           <div
-            className="bg-white hover:bg-gray-100 text-gray-800 font-semibold border-1 border-gray-200 px-2 md:px-3 lg:px-4 py-1 md:py-1.5 lg:py-2 rounded-full text-[10px] md:text-xs lg:text-sm"
+            className="bg-white hover:bg-gray-100 text-gray-800 font-semibold border-1 border-gray-200 px-2 md:px-3 lg:px-4 py-1 md:py-1.5 lg:py-2 rounded-full text-xs xs:text-sm md:text-base"
           >
             Join to post updates
           </div>
@@ -115,7 +115,7 @@ export default function CommunityActivity({
             <Button
               onClick={isFounder ? toggleMenu : () => navigate("/create-post", { state: { collectiveData } })}
               variant="default"
-              className="px-2 md:px-4 bg-white text-gray-800 shadow-none border-1 border-gray-200 hover:bg-gray-100 hover:text-gray-900  lg:px-6 py-1 md:py-1.5 lg:py-2 rounded-full text-[10px] md:text-xs lg:text-sm font-semibold flex items-center gap-1"
+              className="px-2 md:px-4 bg-white text-gray-800 shadow-none border-1 border-gray-200 hover:bg-gray-100 hover:text-gray-900  lg:px-6 py-1 md:py-1.5 lg:py-2 rounded-full text-xs xs:text-sm md:text-base font-semibold flex items-center gap-1"
             >
               {isFounder ? '+ Create' : 'Create Post'}
             </Button>

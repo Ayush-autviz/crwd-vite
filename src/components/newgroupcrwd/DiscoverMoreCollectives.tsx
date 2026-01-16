@@ -47,7 +47,7 @@ export default function DiscoverMoreCollectives({ collectiveId }: DiscoverMoreCo
   if (isLoading) {
     return (
       <div className="px-3 md:px-4 mt-6 md:mt-8">
-        <h2 className="text-base md:text-lg lg:text-xl font-bold mb-4 md:mb-6">Discover More Collectives</h2>
+        <h2 className="text-base xs:text-lg md:text-xl font-bold mb-4 md:mb-6">Discover More Collectives</h2>
         <div className="flex items-center justify-center py-8">
           <Loader2 className="w-6 h-6 animate-spin mr-2" />
           <span className="text-sm md:text-base text-gray-600">Loading collectives...</span>
@@ -62,13 +62,13 @@ export default function DiscoverMoreCollectives({ collectiveId }: DiscoverMoreCo
 
   return (
     <div className="px-3 md:px-4 mt-6 md:mt-8">
-      <h2 className="text-base md:text-lg lg:text-xl font-bold mb-4 md:mb-6">Discover More Collectives</h2>
-      
+      <h2 className="text-base xs:text-lg md:text-xl font-bold mb-4 md:mb-6">Discover More Collectives</h2>
+
       <div className="space-y-4 md:space-y-5">
         {suggestedCollectives.map((collective: any, index: number) => {
           const hasLogo = collective.logo && (
-            collective.logo.startsWith('http') || 
-            collective.logo.startsWith('/') || 
+            collective.logo.startsWith('http') ||
+            collective.logo.startsWith('/') ||
             collective.logo.startsWith('data:')
           );
           const iconColor = getIconColor(index, collective);
@@ -88,7 +88,7 @@ export default function DiscoverMoreCollectives({ collectiveId }: DiscoverMoreCo
               <div className="flex flex-col  gap-1 md:gap-2 p-3 md:p-4 rounded-lg border border-gray-200 hover:bg-gray-50 cursor-pointer transition-colors">
                 {/* Icon */}
                 <div
-                  className="w-12 h-12 md:w-16 md:h-16 rounded-full flex items-center justify-center flex-shrink-0"
+                  className="w-12 h-12 xs:w-14 xs:h-14 md:w-16 md:h-16 rounded-full flex items-center justify-center flex-shrink-0"
                   style={{ backgroundColor: hasLogo ? undefined : iconColor }}
                 >
                   {hasLogo ? (
@@ -98,7 +98,7 @@ export default function DiscoverMoreCollectives({ collectiveId }: DiscoverMoreCo
                       className="w-full h-full object-cover rounded-full"
                     />
                   ) : (
-                    <span className="text-white font-bold text-xl md:text-2xl">
+                    <span className="text-white font-bold text-xl xs:text-2xl md:text-3xl">
                       {iconLetter}
                     </span>
                   )}
@@ -107,12 +107,12 @@ export default function DiscoverMoreCollectives({ collectiveId }: DiscoverMoreCo
                 {/* Content */}
                 <div className="flex-1 min-w-0">
                   {/* Name */}
-                  <h3 className="font-bold text-base md:text-lg text-black mb-1 md:mb-2">
+                  <h3 className="font-bold text-base xs:text-lg md:text-xl text-black mb-1 md:mb-2">
                     {collective.name || 'Unknown Collective'}
                   </h3>
 
                   {/* Description */}
-                  <p className="text-sm md:text-base text-gray-700 mb-2 md:mb-3 leading-relaxed">
+                  <p className="text-sm xs:text-base md:text-lg text-gray-700 mb-2 md:mb-3 leading-relaxed">
                     {collective.description || ''}
                   </p>
 
@@ -134,13 +134,13 @@ export default function DiscoverMoreCollectives({ collectiveId }: DiscoverMoreCo
                           .slice(0, 2)}
                       </AvatarFallback>
                     </Avatar>
-                    <p className="text-xs md:text-sm text-gray-600">
+                    <p className="text-xs xs:text-sm md:text-base text-gray-600">
                       Founded by <span className="font-semibold">{founderName}</span>
                     </p>
                   </div>
 
                   {/* Nonprofits count */}
-                  <p className="text-xs md:text-sm text-gray-600">
+                  <p className="text-xs xs:text-sm md:text-base text-gray-600">
                     Supporting {nonprofitCount} nonprofit{nonprofitCount !== 1 ? 's' : ''}
                   </p>
                 </div>
@@ -155,7 +155,7 @@ export default function DiscoverMoreCollectives({ collectiveId }: DiscoverMoreCo
         <Link to="/circles">
           <Button
             variant="outline"
-            className="border-[#1600ff] border-2 text-[#1600ff] hover:bg-[#1600ff] hover:text-white font-semibold px-6 md:px-8 py-2 md:py-3 rounded-lg text-sm md:text-base"
+            className="border-[#1600ff] border-2 text-[#1600ff] hover:bg-[#1600ff] hover:text-white font-semibold px-6 md:px-8 py-2 md:py-3 rounded-lg text-sm xs:text-base md:text-lg"
           >
             Browse All Collectives
           </Button>

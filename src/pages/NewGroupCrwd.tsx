@@ -507,11 +507,11 @@ export default function NewGroupCrwdPage() {
             </div>
 
             {/* Content Container */}
-            <div onClick={() => isAdmin ? navigate(`/create-fundraiser/${crwdId}`) : navigate(`/create-crwd`)} className="flex-1 pr-6 cursor-pointer">
-              <h3 className="m-0 mb-1 text-xs md:text-sm lg:text-base xl:text-lg font-bold text-gray-900">
+            <div onClick={() => isAdmin ? navigate(`/create-fundraiser/${crwdId}`) : navigate(`/create-crwd`)} className="flex-1 pr-3 cursor-pointer">
+              <h3 className="m-0 mb-1 text-sm xs:text-base md:text-lg lg:text-base xl:text-lg font-bold text-gray-900">
                 Founder Perk: Create Fundraisers
               </h3>
-              <p className="m-0 text-xs md:text-sm lg:text-base xl:text-lg text-gray-600 leading-relaxed">
+              <p className="m-0 text-sm md:text-base lg:text-base xl:text-lg text-gray-600 leading-relaxed">
                 Respond to current events by creating fundraisers with any nonprofits you choose.
               </p>
             </div>

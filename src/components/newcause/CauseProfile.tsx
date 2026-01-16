@@ -10,7 +10,7 @@ interface CauseProfileProps {
 export default function CauseProfile({ causeData }: CauseProfileProps) {
   const navigate = useNavigate();
   const category = categories.find((cat) => cat.id === causeData?.category);
-  
+
   const handleCategoryClick = () => {
     if (category) {
       // Navigate to search with category name as search query
@@ -23,10 +23,10 @@ export default function CauseProfile({ causeData }: CauseProfileProps) {
       });
     }
   };
-  
+
   // Get first letter for avatar fallback
   const firstLetter = causeData?.name?.charAt(0).toUpperCase() || 'C';
-  
+
   // Get consistent color for avatar
   const avatarColors = [
     '#3B82F6', '#EC4899', '#8B5CF6', '#10B981', '#F59E0B', '#EF4444', '#06B6D4',
@@ -51,7 +51,7 @@ export default function CauseProfile({ causeData }: CauseProfileProps) {
             {firstLetter}
           </AvatarFallback>
         </Avatar>
-        
+
         <div className="flex-1 min-w-0">
           <h1 className="font-bold text-lg md:text-xl text-foreground mb-0.5 md:mb-1">
             {causeData?.name}
@@ -64,10 +64,10 @@ export default function CauseProfile({ causeData }: CauseProfileProps) {
 
       {/* Mission Statement */}
       <div className="space-y-1.5 md:space-y-2">
-        <p className="text-sm md:text-base text-foreground">
+        <p className="text-sm xs:text-base md:text-lg text-foreground">
           {causeData?.mission || causeData?.description}
         </p>
-        
+
         {/* Category Tag */}
         {category && (
           <Badge

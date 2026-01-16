@@ -24,8 +24,8 @@ export default function SimilarNonprofits({ similarCauses, isLoading }: SimilarN
     return (
       <div className="px-3 md:px-4 py-4 md:py-6">
         <div className="flex items-center justify-between mb-3 md:mb-4">
-          <h2 className="text-base xs:text-lg font-bold text-foreground mb-3 md:mb-4">Similar Nonprofits</h2>
-          <Link to="/search" className="text-xs md:text-sm text-[#1600ff] p-0 h-auto flex items-center">See all</Link>
+          <h2 className="text-base xs:text-lg md:text-xl font-bold text-foreground mb-3 md:mb-4">Similar Nonprofits</h2>
+          <Link to="/search" className="text-sm xs:text-base md:text-lg text-[#1600ff] p-0 h-auto flex items-center">See all</Link>
         </div>
         <div className="space-y-3 md:space-y-4">
           {[1, 2].map((i) => (
@@ -53,8 +53,8 @@ export default function SimilarNonprofits({ similarCauses, isLoading }: SimilarN
   return (
     <div className="px-3 md:px-4 py-4 md:py-6">
       <div className="flex items-center justify-between mb-3 md:mb-4">
-        <h2 className="text-base xs:text-lg font-bold text-foreground">Similar Nonprofits</h2>
-        <Link to="/search" className="text-xs xs:text-sm md:text-base text-[#1600ff] p-0 h-auto flex items-center">See all</Link>
+        <h2 className="text-base xs:text-lg md:text-xl font-bold text-foreground">Similar Nonprofits</h2>
+        <Link to="/search" className="text-sm xs:text-base md:text-lg text-[#1600ff] p-0 h-auto flex items-center">See all</Link>
       </div>
       <div className="space-y-3 md:space-y-4">
         {similarCauses.map((cause) => {
@@ -79,7 +79,7 @@ export default function SimilarNonprofits({ similarCauses, isLoading }: SimilarN
                     </AvatarFallback>
                   </Avatar>
                   <div className="flex-1 min-w-0 flex flex-col justify-center">
-                    <h3 className="font-bold text-sm md:text-base text-foreground mb-0.5 md:mb-1 line-clamp-1">
+                    <h3 className="font-bold text-sm xs:text-base md:text-lg text-foreground mb-0.5 md:mb-1 line-clamp-1">
                       {cause.name}
                     </h3>
                     <p className="text-xs md:text-sm text-muted-foreground line-clamp-1">

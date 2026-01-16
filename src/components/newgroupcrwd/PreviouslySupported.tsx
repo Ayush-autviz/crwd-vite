@@ -28,13 +28,13 @@ const getMonthsAgo = (dateString?: string): string => {
   if (!dateString) {
     return '2 months ago'; // Default fallback
   }
-  
+
   try {
     const date = new Date(dateString);
     const now = new Date();
     const diffInMs = now.getTime() - date.getTime();
     const diffInMonths = Math.floor(diffInMs / (1000 * 60 * 60 * 24 * 30));
-    
+
     if (diffInMonths < 1) {
       return 'Less than a month ago';
     } else if (diffInMonths === 1) {
@@ -91,7 +91,7 @@ export default function PreviouslySupported({
 
   return (
     <div className="px-3 md:px-4 py-4 md:py-6">
-      <h3 className="text-[10px] md:text-xs font-bold text-muted-foreground uppercase tracking-wide mb-3 md:mb-4">
+      <h3 className="text-xs md:text-sm font-bold text-muted-foreground uppercase tracking-wide mb-3 md:mb-4">
         PREVIOUSLY SUPPORTED
       </h3>
       <div className="space-y-2 md:space-y-3">
@@ -112,21 +112,21 @@ export default function PreviouslySupported({
             >
               {/* Avatar/Image */}
               {image ? (
-                <Avatar className="w-12 h-12 md:w-14 md:h-14 rounded-lg flex-shrink-0">
+                <Avatar className="w-12 h-12 xs:w-14 xs:h-14 md:w-16 md:h-16 rounded-lg flex-shrink-0">
                   <AvatarImage src={image} alt={name} />
-                  <AvatarFallback 
+                  <AvatarFallback
                     style={{ backgroundColor: avatarBgColor }}
-                    className="text-white rounded-lg font-semibold text-base md:text-lg"
+                    className="text-white rounded-lg font-semibold text-base xs:text-lg md:text-xl"
                   >
                     {name.charAt(0).toUpperCase()}
                   </AvatarFallback>
                 </Avatar>
               ) : (
                 <div
-                  className="w-12 h-12 md:w-14 md:h-14 rounded-lg flex items-center justify-center flex-shrink-0"
+                  className="w-12 h-12 xs:w-14 xs:h-14 md:w-16 md:h-16 rounded-lg flex-center justify-center flex-shrink-0 flex items-center"
                   style={{ backgroundColor: avatarBgColor }}
                 >
-                  <span className="text-lg md:text-xl font-semibold text-white">
+                  <span className="text-lg xs:text-xl md:text-2xl font-semibold text-white">
                     {name.charAt(0).toUpperCase()}
                   </span>
                 </div>
@@ -134,7 +134,7 @@ export default function PreviouslySupported({
 
               {/* Name and Last Supported */}
               <div className="flex-1 min-w-0">
-                <h4 className="font-bold text-sm md:text-base text-gray-900 mb-0.5 md:mb-1">
+                <h4 className="font-bold text-sm xs:text-base md:text-lg text-gray-900 mb-0.5 md:mb-1">
                   {name}
                 </h4>
                 {/* <p className="text-xs md:text-sm text-gray-500">
@@ -146,7 +146,7 @@ export default function PreviouslySupported({
               <Button
                 onClick={() => causeId && navigate(`/cause/${causeId}`)}
                 variant="outline"
-                className="flex-shrink-0 text-xs md:text-sm px-3 md:px-4 py-1.5 md:py-2 border-gray-300 hover:bg-gray-50"
+                className="flex-shrink-0 text-xs xs:text-sm md:text-base px-3 md:px-4 py-1.5 md:py-2 border-gray-300 hover:bg-gray-50"
               >
                 View
               </Button>

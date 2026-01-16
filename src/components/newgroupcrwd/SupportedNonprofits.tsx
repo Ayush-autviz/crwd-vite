@@ -47,7 +47,7 @@ export default function SupportedNonprofits({
     return (
       <div className="px-3 md:px-4 py-4 md:py-6">
         <div className="flex justify-between items-center mb-3 md:mb-4">
-          <h2 className="text-lg md:text-xl  font-bold">Supported Nonprofits</h2>
+          <h2 className="text-base xs:text-lg md:text-xl font-bold">Supported Nonprofits</h2>
         </div>
         <div className="flex items-center justify-center py-6 md:py-8">
           <Loader2 className="w-5 h-5 md:w-6 md:h-6 animate-spin text-gray-400" />
@@ -63,12 +63,12 @@ export default function SupportedNonprofits({
   return (
     <div className="w-full px-3 md:px-4 mt-6 md:mt-8">
       <div className="flex justify-between items-center mb-3 md:mb-4">
-        <h2 className="text-base md:text-lg lg:text-xl  font-bold">Supported Nonprofits</h2>
+        <h2 className="text-base xs:text-lg md:text-xl font-bold">Supported Nonprofits</h2>
         {onSeeAllClick && (
           <Button
             variant="link"
             onClick={onSeeAllClick}
-            className="text-green-600 p-0 h-auto flex items-center text-xs md:text-sm"
+            className="text-green-600 p-0 h-auto flex items-center text-sm xs:text-base md:text-lg"
           >
             See all
           </Button>
@@ -92,13 +92,13 @@ export default function SupportedNonprofits({
               >
                 <div className="flex items-start gap-2.5 md:gap-3 p-3 md:p-4 rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors bg-white min-w-[240px] md:min-w-[280px] max-w-[280px] md:max-w-[320px] h-full">
                   {/* Avatar - Rounded square */}
-                  <Avatar className="h-10 w-10 md:h-12 md:w-12 rounded-lg flex-shrink-0 border border-gray-200">
+                  <Avatar className="h-10 w-10 xs:h-12 xs:w-12 md:h-14 md:w-14 rounded-lg flex-shrink-0 border border-gray-200">
                     <AvatarImage src={image} />
                     <AvatarFallback
                       style={{
                         backgroundColor: iconColor,
                       }}
-                      className="font-semibold rounded-lg text-white text-xs md:text-sm"
+                      className="font-semibold rounded-lg text-white text-xs xs:text-sm md:text-base"
                     >
                       {name.charAt(0).toUpperCase()}
                     </AvatarFallback>
@@ -107,12 +107,12 @@ export default function SupportedNonprofits({
                   {/* Content */}
                   <div className="flex-1 min-w-0 flex flex-col h-full">
                     {/* Title */}
-                    <h3 className="font-bold text-xs md:text-sm text-gray-900 mb-1">
+                    <h3 className="font-bold text-sm xs:text-base md:text-lg text-gray-900 mb-1">
                       {name}
                     </h3>
 
                     {/* Description */}
-                    <p className="text-xs text-gray-600 leading-relaxed line-clamp-1 ">
+                    <p className="text-xs xs:text-sm md:text-base text-gray-600 leading-relaxed line-clamp-1 ">
                       {description}
                     </p>
                   </div>

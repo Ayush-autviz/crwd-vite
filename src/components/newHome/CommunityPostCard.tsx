@@ -3,9 +3,10 @@ import { Link, useNavigate } from "react-router-dom";
 import { Heart, MessageCircle, Share2, MoreHorizontal, Pin, Pencil, Flag } from "lucide-react";
 import dayjs from 'dayjs';
 import { useState, useRef, useEffect } from "react";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { likePost, unlikePost } from "@/services/api/social";
+import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
+import { likePost, unlikePost, followUser, unfollowUser, getUserProfileById } from "@/services/api/social";
 import { patchFundraiser } from "@/services/api/crwd";
+import { toast } from "sonner";
 import { Toast } from "@/components/ui/toast";
 import CommentsBottomSheet from "@/components/post/CommentsBottomSheet";
 import { SharePost } from "@/components/ui/SharePost";
@@ -145,7 +146,51 @@ export default function CommunityPostCard({ post, onCommentPress, showSimplified
     if (post.user.username) {
       return post.user.username.charAt(0).toUpperCase();
     }
-    return "U";
+  };
+
+  // Fetch user profile to check follow status
+  const { data: userProfile, isLoading: isLoadingProfile } = useQuery({
+    queryKey: ['userProfile', String(post.user.id)],
+    queryFn: () => getUserProfileById(post.user.id?.toString() || ''),
+    enabled: !!post.user.id && !!currentUser?.token?.access_token && isHomeFeed && post.user.id !== currentUser?.id,
+  });
+
+  const isFollowing = userProfile?.is_following || false;
+
+  // Follow user mutation
+  const followMutation = useMutation({
+    mutationFn: (userId: string) => followUser(userId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['userProfile', String(post.user.id)] });
+      // toast.success('Following user');
+    },
+    onError: (error) => {
+      console.error('Error following user:', error);
+      toast.error('Failed to follow user');
+    },
+  });
+
+  // Unfollow user mutation
+  const unfollowMutation = useMutation({
+    mutationFn: (userId: string) => unfollowUser(userId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['userProfile', String(post.user.id)] });
+      // toast.success('Unfollowed user');
+    },
+    onError: (error) => {
+      console.error('Error unfollowing user:', error);
+      toast.error('Failed to unfollow user');
+    },
+  });
+
+  const handleFollowClick = () => {
+    if (post.user.id) {
+      if (isFollowing) {
+        unfollowMutation.mutate(post.user.id.toString());
+      } else {
+        followMutation.mutate(post.user.id.toString());
+      }
+    }
   };
 
   // Generate vibrant avatar colors
@@ -273,13 +318,11 @@ export default function CommunityPostCard({ post, onCommentPress, showSimplified
           </div>
         )}
 
-        <div className="flex gap-2 md:gap-3">
+        <div className="flex items-center gap-2 md:gap-3">
+          {/* Avatar */}
           <Link to={`/user-profile/${post.user.id}`}>
             <Avatar className="h-8 w-8 xs:w-9 xs:h-9 md:h-10 md:w-10 flex-shrink-0">
-              <AvatarImage
-                src={post.user.avatar}
-                alt={displayName}
-              />
+              <AvatarImage src={post.user.avatar} alt={displayName} />
               <AvatarFallback
                 style={{ backgroundColor: avatarBgColor }}
                 className="text-white font-bold text-[10px] xs:text-xs md:text-sm"
@@ -288,46 +331,60 @@ export default function CommunityPostCard({ post, onCommentPress, showSimplified
               </AvatarFallback>
             </Avatar>
           </Link>
+
+          {/* User Info and Follow Button */}
           <div className="flex-1 min-w-0">
-            <div className="mb-1.5 md:mb-3">
-              <div className="flex items-center gap-1 md:gap-2  flex-wrap">
-                <Link
-                  to={`/user-profile/${post.user.id}`}
-                  onClick={(e) => e.stopPropagation()}
-                  className="text-xs xs:text-base md:text-lg font-bold text-gray-900 hover:underline cursor-pointer"
-                >
-                  {displayName}
-                </Link>
-                {/* {!showSimplifiedHeader && post.user.username && (
-                  <>
-                    <span className="text-gray-400">•</span>
-                    <span className="text-xs xs:text-base md:text-lg text-gray-500">
-                      @{post.user.username}
+            <div className="mb-1.5 md:mb-3 flex items-center justify-between">
+              <div className="flex flex-col">
+                <div className="flex items-center gap-1 md:gap-2 flex-wrap">
+                  <Link
+                    to={`/user-profile/${post.user.id}`}
+                    onClick={(e) => e.stopPropagation()}
+                    className="text-xs xs:text-base md:text-lg font-bold text-gray-900 hover:underline cursor-pointer"
+                  >
+                    {displayName}
+                  </Link>
+                  {post.fundraiser?.is_active && (
+                    <span className="px-2 py-0.5 bg-[#1600ff] text-white text-[8px] xs:text-[10px] md:text-[12px] font-medium rounded-full">
+                      Organizer
                     </span>
-                  </>
-                )} */}
-                {post.fundraiser?.is_active && (
-                  <span className="px-2 py-0.5 bg-[#1600ff] text-white text-[8px] xs:text-[10px] md:text-[12px] font-medium rounded-full">
-                    Organizer
-                  </span>
+                  )}
+                </div>
+                {!showSimplifiedHeader && post.collective && (
+                  <Link
+                    to={post.collective.id ? `/groupcrwd/${post.collective.id}` : '#'}
+                    onClick={(e) => e.stopPropagation()}
+                    className="text-[11px] xs:text-sm md:text-base text-gray-500 hover:text-gray-700 block"
+                  >
+                    {post.collective.name}
+                  </Link>
+                )}
+                {post.fundraiser && !isHomeFeed && (
+                  <p className="text-[9px] xs:text-[10px] md:text-xs text-gray-500 mb-0.5">Started a fundraiser</p>
+                )}
+                {showSimplifiedHeader && post.timestamp && !post.fundraiser?.is_active && (
+                  <div className="text-[9px] xs:text-[10px] md:text-sm text-gray-500">
+                    {formatDistanceToNow(new Date(post.timestamp), { addSuffix: true })}
+                  </div>
                 )}
               </div>
-              {!showSimplifiedHeader && post.collective && (
-                <Link
-                  to={post.collective.id ? `/groupcrwd/${post.collective.id}` : '#'}
-                  onClick={(e) => e.stopPropagation()}
-                  className="text-[11px] xs:text-sm md:text-base text-gray-500 hover:text-gray-700 block"
+
+              {/* Follow Button - Only show for not current user & in home feed */}
+              {isHomeFeed && post.user.id !== currentUser?.id && (
+                <button
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    handleFollowClick();
+                  }}
+                  disabled={followMutation.isPending || unfollowMutation.isPending || isLoadingProfile}
+                  className={`ml-2 text-[10px] xs:text-xs md:text-sm font-semibold px-2 xs:px-3 md:px-4 py-1 rounded-full flex-shrink-0 transition-colors ${isFollowing
+                    ? 'bg-[#1600ff] text-white border border-[#1600ff] hover:bg-[#1400cc]'
+                    : 'bg-white text-[#1600ff] border border-[#1600ff] hover:bg-blue-50'
+                    }`}
                 >
-                  {post.collective.name}
-                </Link>
-              )}
-              {post.fundraiser && !isHomeFeed && (
-                <p className="text-[9px] xs:text-[10px] md:text-xs text-gray-500 mb-0.5">Started a fundraiser</p>
-              )}
-              {showSimplifiedHeader && post.timestamp && !post.fundraiser?.is_active && (
-                <div className="text-[9px] xs:text-[10px] md:text-sm text-gray-500">
-                  {formatDistanceToNow(new Date(post.timestamp), { addSuffix: true })}
-                </div>
+                  {followMutation.isPending || unfollowMutation.isPending || isLoadingProfile ? '...' : isFollowing ? 'Following' : 'Follow'}
+                </button>
               )}
             </div>
           </div>

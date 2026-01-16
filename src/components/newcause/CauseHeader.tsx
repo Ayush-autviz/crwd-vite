@@ -144,7 +144,7 @@ export default function CauseHeader({
           <ArrowLeft className="w-4 h-4 md:w-5 md:h-5 text-gray-700" />
         </button>
 
-        <h1 className="font-bold text-sm sm:text-base md:text-lg text-foreground flex-1 text-center truncate px-2">
+        <h1 className="font-bold text-sm xs:text-base md:text-lg text-foreground flex-1 text-center truncate px-2">
           {title}
         </h1>
       </div>

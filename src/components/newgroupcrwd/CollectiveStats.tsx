@@ -23,10 +23,10 @@ export default function CollectiveStats({
             onClick={() => onStatClick?.('Nonprofits')}
             className={`${onStatClick ? 'cursor-pointer hover:bg-gray-100 transition-colors rounded-lg py-0.5 md:py-1' : ''}`}
           >
-            <p className="text-sm sm:text-base font-bold text-foreground mb-0.5">
+            <p className="text-lg sm:text-xl lg:text-2xl font-bold text-foreground mb-0.5">
               {nonprofitCount}
             </p>
-            <p className="text-[8px] md:text-[9px] lg:text-[10px] font-semibold text-muted-foreground">
+            <p className="text-[10px] md:text-xs lg:text-sm font-semibold text-muted-foreground">
               Nonprofits
             </p>
           </div>
@@ -34,10 +34,10 @@ export default function CollectiveStats({
             onClick={() => onStatClick?.('Members')}
             className={`${onStatClick ? 'cursor-pointer hover:bg-gray-100 transition-colors rounded-lg py-0.5 md:py-1' : ''}`}
           >
-            <p className="text-base md:text-lg lg:text-xl font-bold text-foreground mb-0.5">
+            <p className="text-lg sm:text-xl lg:text-2xl font-bold text-foreground mb-0.5">
               {memberCount}
             </p>
-            <p className="text-[8px] md:text-[9px] lg:text-[10px] font-semibold text-muted-foreground">
+            <p className="text-[10px] md:text-xs lg:text-sm font-semibold text-muted-foreground">
               Members
             </p>
           </div>
@@ -45,10 +45,10 @@ export default function CollectiveStats({
             onClick={() => onStatClick?.('Donations')}
             className={`${onStatClick ? 'cursor-pointer hover:bg-gray-100 transition-colors rounded-lg py-0.5 md:py-1' : ''}`}
           >
-            <p className="text-base md:text-lg lg:text-xl font-bold text-[#1600ff] mb-0.5">
+            <p className="text-lg sm:text-xl lg:text-2xl font-bold text-[#1600ff] mb-0.5">
               {donationCount}
             </p>
-            <p className="text-[8px] md:text-[9px] lg:text-[10px] font-semibold text-muted-foreground">
+            <p className="text-[10px] md:text-xs lg:text-sm font-semibold text-muted-foreground">
               Donations
             </p>
           </div>

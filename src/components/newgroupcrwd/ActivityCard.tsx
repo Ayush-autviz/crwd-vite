@@ -99,22 +99,22 @@ export default function ActivityCard({ activity }: ActivityCardProps) {
           {/* Profile Avatar */}
           {profileLink !== '#' ? (
             <Link to={profileLink}>
-              <Avatar className="h-7 w-7 sm:h-8 sm:w-8 md:h-10 md:w-10 flex-shrink-0">
+              <Avatar className="h-8 w-8 sm:h-10 sm:w-10 md:h-12 md:w-12 flex-shrink-0">
                 <AvatarImage src={profilePicture} alt={userName} />
                 <AvatarFallback
                   style={{ backgroundColor: avatarBgColor }}
-                  className="text-white font-bold text-[10px] sm:text-xs md:text-sm"
+                  className="text-white font-bold text-xs sm:text-sm md:text-base"
                 >
                   {initials}
                 </AvatarFallback>
               </Avatar>
             </Link>
           ) : (
-            <Avatar className="h-7 w-7 sm:h-8 sm:w-8 md:h-10 md:w-10 flex-shrink-0">
+            <Avatar className="h-8 w-8 sm:h-10 sm:w-10 md:h-12 md:w-12 flex-shrink-0">
               <AvatarImage src={profilePicture} alt={userName} />
               <AvatarFallback
                 style={{ backgroundColor: avatarBgColor }}
-                className="text-white font-bold text-[10px] sm:text-xs md:text-sm"
+                className="text-white font-bold text-xs sm:text-sm md:text-base"
               >
                 {initials}
               </AvatarFallback>
@@ -126,22 +126,22 @@ export default function ActivityCard({ activity }: ActivityCardProps) {
             {/* Name and Timestamp */}
             <div className="flex items-center gap-1.5 sm:gap-2 mb-0.5 sm:mb-1">
               {profileLink !== '#' ? (
-                <Link to={profileLink} className="font-bold text-xs sm:text-sm md:text-base text-gray-900 hover:underline">
+                <Link to={profileLink} className="font-bold text-sm xs:text-base md:text-lg text-gray-900 hover:underline">
                   {userName}
                 </Link>
               ) : (
-                <span className="font-bold text-xs sm:text-sm md:text-base text-gray-900">
+                <span className="font-bold text-sm xs:text-base md:text-lg text-gray-900">
                   {userName}
                 </span>
               )}
-              <span className="text-[10px] sm:text-xs text-gray-500">
+              <span className="text-xs sm:text-sm text-gray-500">
                 {formattedTime}
               </span>
             </div>
 
             {/* Activity Description Box */}
             <div className="bg-green-50 rounded-lg p-2 sm:p-2.5 md:p-3">
-              <p className="font-semibold text-xs sm:text-sm text-gray-900">
+              <p className="font-semibold text-sm xs:text-base md:text-lg text-gray-900">
                 {activityDescription}
               </p>
             </div>
