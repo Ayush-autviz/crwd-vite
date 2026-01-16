@@ -108,7 +108,7 @@ export default function CollectiveProfile({
         </div>
       </div>
       {description && (
-        <p className="text-foreground text-sm xs:text-base md:text-lg leading-relaxed mt-4 md:mt-5">
+        <p className="text-foreground text-base xs:text-lg md:text-xl leading-relaxed mt-4 md:mt-5">
           {description}
         </p>
       )}

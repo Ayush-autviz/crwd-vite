@@ -360,10 +360,10 @@ export default function CommunityPostCard({ post, onCommentPress, showSimplified
                   </Link>
                 )}
                 {post.fundraiser && !isHomeFeed && (
-                  <p className="text-[9px] xs:text-[10px] md:text-xs text-gray-500 mb-0.5">Started a fundraiser</p>
+                  <p className="text-[10px] xs:text-xs md:text-sm text-gray-500 mb-0.5">Started a fundraiser</p>
                 )}
                 {showSimplifiedHeader && post.timestamp && !post.fundraiser?.is_active && (
-                  <div className="text-[9px] xs:text-[10px] md:text-sm text-gray-500">
+                  <div className="text-[10px] xs:text-xs md:text-sm text-gray-500">
                     {formatDistanceToNow(new Date(post.timestamp), { addSuffix: true })}
                   </div>
                 )}
@@ -424,17 +424,17 @@ export default function CommunityPostCard({ post, onCommentPress, showSimplified
 
               {/* Fundraiser Info */}
               <div className="mb-2 md:mb-3 bg-white p-4 rounded-b-lg border border-t-0 border-gray-100">
-                <h3 className="text-xs xs:text-sm md:text-base font-bold text-gray-900 mb-2 md:mb-3">
+                <h3 className="text-sm xs:text-base md:text-lg font-bold text-gray-900 mb-2 md:mb-3">
                   {post.fundraiser.name}
                 </h3>
 
                 {/* Amount and Progress */}
                 <div className="mb-2">
                   <div className="flex items-baseline gap-2 mb-1.5">
-                    <span className="text-base xs:text-lg md:text-2xl font-bold text-[#1600ff]">
+                    <span className="text-lg xs:text-xl md:text-2xl font-bold text-[#1600ff]">
                       ${parseFloat(post.fundraiser.current_amount || '0').toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
                     </span>
-                    <span className="text-[10px] xs:text-xs md:text-sm text-gray-500">
+                    <span className="text-xs xs:text-sm md:text-base text-gray-500">
                       raised of ${parseFloat(post.fundraiser.target_amount || '0').toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 })} goal
                     </span>
                   </div>
@@ -446,7 +446,7 @@ export default function CommunityPostCard({ post, onCommentPress, showSimplified
                     />
                   </div>
                   {/* Donors and Days Left */}
-                  <div className="flex items-center gap-3 md:gap-4 text-[10px] xs:text-xs md:text-sm text-gray-900">
+                  <div className="flex items-center gap-3 md:gap-4 text-xs xs:text-sm md:text-base text-gray-900">
                     {post.fundraiser.total_donors !== undefined && (
                       <span>
                         <span className="font-semibold">{post.fundraiser.total_donors}</span> donor{post.fundraiser.total_donors !== 1 ? 's' : ''}

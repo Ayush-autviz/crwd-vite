@@ -51,7 +51,7 @@ export default function DonationBoxPrompt({ causeCount }: DonationBoxPromptProps
                       e.stopPropagation();
                       navigate('/donation?tab=setup');
                     }}
-                    className="p-0 self-start text-left text-orange-600 font-semibold text-xs xs:text-sm md:text-base hover:underline flex items-center gap-1"
+                    className="p-0 self-start text-left text-orange-600 font-semibold text-sm xs:text-base md:text-lg hover:underline flex items-center gap-1"
                   >
                     Complete Setup - Just 2 minutes!
                     <ArrowRight className="w-3.5 h-3.5 md:w-4 md:h-4" />
@@ -73,10 +73,10 @@ export default function DonationBoxPrompt({ causeCount }: DonationBoxPromptProps
                   <ShoppingBag className="w-4 h-4 md:w-6 md:h-6 text-white" />
                 </div>
                 <div className="flex-1 min-w-0 text-left w-full md:w-auto">
-                  <h3 className="font-bold text-xs xs:text-sm md:text-lg text-foreground">
+                  <h3 className="font-bold text-sm xs:text-base md:text-lg text-foreground">
                     Create a Donation Box
                   </h3>
-                  <p className="text-[10px] xs:text-xs md:text-sm text-gray-600 mb-1.5 md:mb-2 mt-0.5 md:mt-1">
+                  <p className="text-xs xs:text-sm md:text-base text-gray-600 mb-1.5 md:mb-2 mt-0.5 md:mt-1">
                     Support multiple causes with one donation
                   </p>
                   <button
@@ -84,7 +84,7 @@ export default function DonationBoxPrompt({ causeCount }: DonationBoxPromptProps
                       e.stopPropagation();
                       navigate('/donation');
                     }}
-                    className="text-[#1600ff] font-semibold text-[10px] xs:text-xs md:text-sm hover:underline"
+                    className="text-[#1600ff] font-semibold text-sm xs:text-base md:text-lg hover:underline"
                   >
                     Start donating →
                   </button>

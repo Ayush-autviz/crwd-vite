@@ -405,7 +405,7 @@ export default function NewGroupCrwdPage() {
               <Button
                 disabled
                 variant="outline"
-                className="flex-1 font-semibold py-2 md:py-4 lg:py-5 rounded-lg text-xs md:text-sm lg:text-base border-green-600 text-green-600 cursor-not-allowed opacity-75"
+                className="flex-1 font-semibold py-2 md:py-4 lg:py-5 rounded-lg text-xs xs:text-sm lg:text-base border-green-600 text-green-600 cursor-not-allowed opacity-75"
               >
                 <Check className="w-3 h-3 md:w-3.5 md:h-3.5 lg:w-4 lg:h-4 mr-1 md:mr-1.5 lg:mr-2 inline" />
                 Joined
@@ -413,7 +413,7 @@ export default function NewGroupCrwdPage() {
               {/* Share Button */}
               <Button
                 onClick={handleShare}
-                className="flex-1 font-semibold py-2 md:py-4 lg:py-5 rounded-lg text-xs md:text-sm lg:text-base bg-[#1600ff] hover:bg-[#1400cc] text-white shadow-sm"
+                className="flex-1 font-semibold py-2 md:py-4 lg:py-5 rounded-lg text-xs xs:text-sm lg:text-base bg-[#1600ff] hover:bg-[#1400cc] text-white shadow-sm"
               >
                 <Share2 className="w-3 h-3 md:w-3.5 md:h-3.5 lg:w-4 lg:h-4 mr-1 md:mr-1.5 lg:mr-2 inline" />
                 Share
@@ -426,7 +426,7 @@ export default function NewGroupCrwdPage() {
                 onClick={handleJoinCollective}
                 disabled={leaveCollectiveMutation.isPending}
                 variant="outline"
-                className="flex-1 font-semibold py-2 md:py-4 lg:py-5 rounded-lg text-xs md:text-sm lg:text-base border-green-600 text-green-600 hover:bg-green-50"
+                className="flex-1 font-semibold py-2 md:py-4 lg:py-5 rounded-lg text-xs xs:text-sm lg:text-base border-green-600 text-green-600 hover:bg-green-50"
               >
                 {leaveCollectiveMutation.isPending ? (
                   <>
@@ -443,7 +443,7 @@ export default function NewGroupCrwdPage() {
               {/* Share Button */}
               <Button
                 onClick={handleShare}
-                className="flex-1 font-semibold py-2 md:py-4 lg:py-5 rounded-lg text-xs md:text-sm lg:text-base bg-[#1600ff] hover:bg-[#1400cc] text-white shadow-sm"
+                className="flex-1 font-semibold py-2 md:py-4 lg:py-5 rounded-lg text-xs xs:text-sm lg:text-base bg-[#1600ff] hover:bg-[#1400cc] text-white shadow-sm"
               >
                 <Share2 className="w-3 h-3 md:w-3.5 md:h-3.5 lg:w-4 lg:h-4 mr-1 md:mr-1.5 lg:mr-2 inline" />
                 Share
@@ -454,7 +454,7 @@ export default function NewGroupCrwdPage() {
               <Button
                 onClick={handleJoinCollective}
                 disabled={joinCollectiveMutation.isPending}
-                className="flex-1 font-semibold py-2 md:py-4 lg:py-5 rounded-lg text-xs md:text-sm lg:text-base bg-[#1600ff] hover:bg-[#1400cc] text-white"
+                className="flex-1 font-semibold py-2 md:py-4 lg:py-5 rounded-lg text-xs xs:text-sm lg:text-base bg-[#1600ff] hover:bg-[#1400cc] text-white"
               >
                 {joinCollectiveMutation.isPending ? (
                   <>
@@ -468,7 +468,7 @@ export default function NewGroupCrwdPage() {
               <Button
                 onClick={handleOneTimeDonation}
                 variant="outline"
-                className="flex-1 border-[#1600ff] text-[#1600ff] hover:bg-[#1600ff] hover:text-white font-semibold py-2 md:py-4 lg:py-5 rounded-lg text-xs md:text-sm lg:text-base"
+                className="flex-1 border-[#1600ff] text-[#1600ff] hover:bg-[#1600ff] hover:text-white font-semibold py-2 md:py-4 lg:py-5 rounded-lg text-xs xs:text-sm lg:text-base"
               >
                 One-Time Donation
               </Button>
@@ -553,7 +553,7 @@ export default function NewGroupCrwdPage() {
 
         {/* Legal Disclaimer */}
         <div className="px-3 md:px-4 py-4 md:py-6 border-t border-gray-200 mt-6 md:mt-8">
-          <p className="text-[10px] md:text-xs text-gray-500 text-center leading-relaxed">
+          <p className="text-xs md:text-sm text-gray-500 text-center leading-relaxed">
             All donations are made to CRWD Foundation Inc. (EIN: 41-2423690), a 501(c)(3) nonprofit organization. CRWD Foundation grants funds to qualified 501(c)(3) organizations selected by donors.
           </p>
         </div>
