@@ -401,13 +401,13 @@ export default function NewSettings() {
             {/* Header */}
             <div className="flex items-center justify-between px-3 md:px-5 py-3 md:py-4">
               <div className="flex items-center gap-1.5 md:gap-2">
-                <User className="h-4 w-4 md:h-5 md:w-5 text-blue-600" />
-                <h2 className="text-base md:text-lg font-bold text-gray-900">Account</h2>
+                <User className="h-4 h-4 md:h-6 md:w-6 text-blue-600" />
+                <h2 className="text-sm xs:text-base md:text-lg font-bold text-gray-900">Account</h2>
               </div>
               {!isEditMode && (
                 <button
                   onClick={handleEdit}
-                  className="text-sm md:text-base font-medium text-blue-600 hover:text-blue-700"
+                  className="text-sm xs:text-base md:text-lg font-medium text-blue-600 hover:text-blue-700"
                 >
                   Edit
                 </button>
@@ -455,7 +455,7 @@ export default function NewSettings() {
               {isEditMode && (
                 <button
                   onClick={() => fileInputRef.current?.click()}
-                  className="text-[10px] md:text-xs text-gray-500 mt-1.5 md:mt-2 hover:text-gray-700 text-center px-2"
+                  className="text-[10px] xs:text-xs md:text-sm text-gray-500 mt-1.5 md:mt-2 hover:text-gray-700 text-center px-2"
                 >
                   Click to upload profile image (max 5MB)
                 </button>
@@ -466,25 +466,25 @@ export default function NewSettings() {
             <div className="px-3 md:px-5 pb-6 md:pb-8 space-y-4 md:space-y-5">
               {/* First Name */}
               <div>
-                <Label className="mb-1.5 md:mb-2 text-xs md:text-sm font-bold text-gray-900">First Name</Label>
+                <Label className="mb-1.5 md:mb-2 text-xs xs:text-sm md:text-base font-bold text-gray-900">First Name</Label>
                 <Input
                   value={formData.first_name}
                   onChange={(e) => setFormData(prev => ({ ...prev, first_name: e.target.value }))}
                   disabled={!isEditMode}
                   placeholder="First Name"
-                  className="bg-gray-100 border-0 text-sm md:text-base"
+                  className="bg-gray-100 border-0 text-sm xs:text-base md:text-lg"
                 />
               </div>
 
               {/* Last Name */}
               <div>
-                <Label className="mb-1.5 md:mb-2 text-xs md:text-sm font-bold text-gray-900">Last Name</Label>
+                <Label className="mb-1.5 md:mb-2 text-xs xs:text-sm md:text-base font-bold text-gray-900">Last Name</Label>
                 <Input
                   value={formData.last_name}
                   onChange={(e) => setFormData(prev => ({ ...prev, last_name: e.target.value }))}
                   disabled={!isEditMode}
                   placeholder="Last Name"
-                  className="bg-gray-100 border-0 text-sm md:text-base"
+                  className="bg-gray-100 border-0 text-sm xs:text-base md:text-lg"
                 />
               </div>
 
@@ -501,18 +501,18 @@ export default function NewSettings() {
 
               {/* Email */}
               <div>
-                <Label className="mb-1.5 md:mb-2 text-xs md:text-sm font-bold text-gray-900">Email</Label>
+                <Label className="mb-1.5 md:mb-2 text-xs xs:text-sm md:text-base font-bold text-gray-900">Email</Label>
                 <Input
                   value={formData.email}
                   disabled={true}
                   placeholder="Email"
-                  className="bg-gray-100 border-0 text-sm md:text-base opacity-60 cursor-not-allowed"
+                  className="bg-gray-100 border-0 text-sm xs:text-base md:text-lg opacity-60 cursor-not-allowed"
                 />
               </div>
 
               {/* Location */}
               <div>
-                <Label className="mb-1.5 md:mb-2 text-xs md:text-sm font-bold text-gray-900">Location</Label>
+                <Label className="mb-1.5 md:mb-2 text-xs xs:text-sm md:text-base font-bold text-gray-900">Location</Label>
                 <div className="relative">
                   {/* <MapPin className="absolute left-2.5 md:left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 md:h-4 md:w-4 text-gray-500" /> */}
                   <Input
@@ -520,14 +520,14 @@ export default function NewSettings() {
                     onChange={(e) => setFormData(prev => ({ ...prev, location: e.target.value }))}
                     disabled={!isEditMode}
                     placeholder="Location"
-                    className="bg-gray-100 border-0 text-sm md:text-base"
+                    className="bg-gray-100 border-0 text-sm xs:text-base md:text-lg"
                   />
                 </div>
               </div>
 
               {/* Bio */}
               <div>
-                <Label className="mb-1.5 md:mb-2 text-xs md:text-sm font-bold text-gray-900">Bio</Label>
+                <Label className="mb-1.5 md:mb-2 text-xs xs:text-sm md:text-base font-bold text-gray-900">Bio</Label>
                 <Textarea
                   value={formData.bio}
                   onChange={(e) => {
@@ -537,11 +537,11 @@ export default function NewSettings() {
                   }}
                   disabled={!isEditMode}
                   placeholder="Bio"
-                  className="bg-gray-100 border-0 min-h-[80px] md:min-h-[100px] text-sm md:text-base"
+                  className="bg-gray-100 border-0 min-h-[80px] md:min-h-[100px] text-sm xs:text-base md:text-lg"
                   rows={4}
                 />
                 <div className="flex justify-end mt-1">
-                  <p className="text-[10px] md:text-xs text-gray-500">
+                  <p className="text-[10px] xs:text-xs md:text-sm text-gray-500">
                     {formData.bio.length}/160
                   </p>
                 </div>
@@ -554,7 +554,7 @@ export default function NewSettings() {
                 <Button
                   onClick={handleSave}
                   disabled={updateProfileMutation.isPending}
-                  className="flex-1 bg-blue-600 hover:bg-blue-700 text-sm md:text-base py-2 md:py-2.5"
+                  className="flex-1 bg-blue-600 hover:bg-blue-700 text-sm xs:text-base md:text-lg py-2 md:py-2.5"
                 >
                   {updateProfileMutation.isPending ? (
                     <span className="flex items-center gap-1.5 md:gap-2">
@@ -568,7 +568,7 @@ export default function NewSettings() {
                   onClick={handleCancel}
                   disabled={updateProfileMutation.isPending}
                   variant="outline"
-                  className="flex-1 border-gray-300 text-sm md:text-base py-2 md:py-2.5"
+                  className="flex-1 border-gray-300 text-sm xs:text-base md:text-lg py-2 md:py-2.5"
                 >
                   Cancel
                 </Button>
@@ -581,45 +581,45 @@ export default function NewSettings() {
             <div className="bg-white rounded-lg shadow-sm border border-gray-100 mb-4 md:mb-6">
               <div className="px-4 md:px-6 py-3 md:py-4 border-b border-gray-100">
                 <div className="flex items-center gap-2 md:gap-3">
-                  <Lock className="h-4 w-4 md:h-5 md:w-5 text-blue-600" />
-                  <h2 className="text-base md:text-lg font-semibold text-gray-900">Security</h2>
+                  <Lock className="h-4 w-4 md:h-6 md:w-6 text-blue-600" />
+                  <h2 className="text-sm xs:text-base md:text-lg font-semibold text-gray-900">Security</h2>
                 </div>
               </div>
               <div className="p-4 md:p-6 space-y-3 md:space-y-4">
                 <div>
-                  <Label className="mb-1.5 md:mb-2 text-xs md:text-sm">Password</Label>
+                  <Label className="mb-1.5 md:mb-2 text-xs xs:text-sm md:text-base">Password</Label>
                   <div className="flex items-center gap-2 bg-gray-50 rounded-lg px-3 md:px-4 py-2 mb-2.5 md:mb-3">
                     <Input
                       type={showPasswords.current ? "text" : "password"}
                       value="••••••••••"
                       readOnly
-                      className="text-sm md:text-base"
+                      className="text-sm xs:text-base md:text-lg"
                     />
                     <Eye className="h-4 w-4 md:h-5 md:w-5 text-gray-500" />
                   </div>
                   <Button
                     variant="outline"
                     onClick={() => setShowPasswordDialog(true)}
-                    className="w-full text-sm md:text-base py-2 md:py-2.5"
+                    className="w-full text-sm xs:text-base md:text-lg py-2 md:py-2.5"
                   >
                     Change Password
                   </Button>
                 </div>
                 <div>
-                  <Label className="mb-1.5 md:mb-2 text-xs md:text-sm">Email</Label>
+                  <Label className="mb-1.5 md:mb-2 text-xs xs:text-sm md:text-base">Email</Label>
                   <div className="flex items-center gap-2 bg-gray-50 rounded-lg px-3 md:px-4 py-2 mb-2.5 md:mb-3">
                     <Input
                       type="text"
                       value={currentUser.email || ""}
                       readOnly
-                      className="text-sm md:text-base"
+                      className="text-sm xs:text-base md:text-lg"
                     />
                     <Mail className="h-4 w-4 md:h-5 md:w-5 text-gray-500" />
                   </div>
                   <Button
                     variant="outline"
                     onClick={() => setShowEmailDialog(true)}
-                    className="w-full text-sm md:text-base py-2 md:py-2.5"
+                    className="w-full text-sm xs:text-base md:text-lg py-2 md:py-2.5"
                   >
                     Change Email
                   </Button>
@@ -632,15 +632,15 @@ export default function NewSettings() {
           <div className="bg-white rounded-lg shadow-sm border border-gray-100 mb-4 md:mb-6">
             <div className="px-4 md:px-6 py-3 md:py-4 border-b border-gray-100">
               <div className="flex items-center gap-2 md:gap-3">
-                <CreditCard className="h-4 w-4 md:h-5 md:w-5 text-blue-600" />
-                <h2 className="text-base md:text-lg font-semibold text-gray-900">Payment & Receipts</h2>
+                <CreditCard className="h-4 w-4 md:h-6 md:w-6 text-blue-600" />
+                <h2 className="text-sm xs:text-base md:text-lg font-semibold text-gray-900">Payment & Receipts</h2>
               </div>
             </div>
             <div className="px-4 md:px-6 pt-4 md:pt-6">
               <Button
                 variant="outline"
                 onClick={() => setShowPaymentMethods(true)}
-                className="w-full justify-start text-sm md:text-base py-2 md:py-2.5"
+                className="w-full justify-start text-sm xs:text-base md:text-lg py-2 md:py-2.5"
               >
                 <CreditCard className="h-4 w-4 md:h-5 md:w-5 mr-2 text-gray-500" />
                 Manage Payment Methods
@@ -650,7 +650,7 @@ export default function NewSettings() {
               <Button
                 variant="outline"
                 onClick={() => navigate("/transaction-history")}
-                className="w-full justify-start text-sm md:text-base py-2 md:py-2.5"
+                className="w-full justify-start text-sm xs:text-base md:text-lg py-2 md:py-2.5"
               >
                 <FileText className="h-4 w-4 md:h-5 md:w-5 mr-2 text-gray-500" />
                 View Financial Records
@@ -662,15 +662,15 @@ export default function NewSettings() {
           <div className="bg-white rounded-lg shadow-sm border border-gray-100 mb-4 md:mb-6">
             <div className="px-4 md:px-6 py-3 md:py-4 border-b border-gray-100">
               <div className="flex items-center gap-2 md:gap-3">
-                <Heart className="h-4 w-4 md:h-5 md:w-5 text-blue-600" />
-                <h2 className="text-base md:text-lg font-semibold text-gray-900">Saved Content</h2>
+                <Heart className="h-4 w-4 md:h-6 md:w-6 text-blue-600" />
+                <h2 className="text-sm xs:text-base md:text-lg font-semibold text-gray-900">Saved Content</h2>
               </div>
             </div>
             <div className="p-4 md:p-6">
               <Button
                 variant="outline"
                 onClick={() => navigate("/saved")}
-                className="w-full justify-start text-sm md:text-base py-2 md:py-2.5"
+                className="w-full justify-start text-sm xs:text-base md:text-lg py-2 md:py-2.5"
               >
                 <Heart className="h-4 w-4 md:h-5 md:w-5 mr-2 text-gray-500" />
                 Favorites
@@ -682,8 +682,8 @@ export default function NewSettings() {
           <div className="bg-white rounded-lg shadow-sm border border-gray-100 mb-4 md:mb-6">
             <div className="px-4 md:px-6 py-3 md:py-4 border-b border-gray-100">
               <div className="flex items-center gap-2 md:gap-3">
-                <CircleHelp className="h-4 w-4 md:h-5 md:w-5 text-blue-600" />
-                <h2 className="text-base md:text-lg font-semibold text-gray-900">Help & Support</h2>
+                <CircleHelp className="h-4 w-4 md:h-6 md:w-6 text-blue-600" />
+                <h2 className="text-sm xs:text-base md:text-lg font-semibold text-gray-900">Help & Support</h2>
               </div>
             </div>
             <div className="p-4 md:p-6">
@@ -696,7 +696,7 @@ export default function NewSettings() {
                       onClick={() => toggleFAQ(index)}
                       className="w-full flex items-center justify-between py-3 md:py-4 px-0 hover:bg-gray-50 rounded-lg transition-colors"
                     >
-                      <span className="text-sm md:text-base font-semibold text-gray-900 text-left flex-1 mr-2 md:mr-3">
+                      <span className="text-sm xs:text-base md:text-lg font-semibold text-gray-900 text-left flex-1 mr-2 md:mr-3">
                         {faq.question}
                       </span>
                       <ChevronDown
@@ -706,7 +706,7 @@ export default function NewSettings() {
                     </button>
                     {expandedFAQ === index && (
                       <div className="pb-3 md:pb-4 px-0">
-                        <p className="text-xs md:text-sm text-gray-600 leading-relaxed">{faq.answer}</p>
+                        <p className="text-xs xs:text-sm md:text-base text-gray-600 leading-relaxed">{faq.answer}</p>
                       </div>
                     )}
                   </div>
@@ -717,31 +717,31 @@ export default function NewSettings() {
               <div className="mt-6 md:mt-8 space-y-0">
                 <button
                   onClick={() => navigate("/settings/report")}
-                  className="w-full text-left py-2.5 md:py-3 px-0 text-sm md:text-base font-semibold text-gray-900 hover:text-blue-600 transition-colors"
+                  className="w-full text-left py-2.5 md:py-3 px-0 text-sm xs:text-base md:text-lg font-semibold text-gray-900 hover:text-blue-600 transition-colors"
                 >
                   Contact Support
                 </button>
                 <button
                   onClick={() => setShowRequestModal(true)}
-                  className="w-full text-left py-2.5 md:py-3 px-0 text-sm md:text-base font-semibold text-gray-900 hover:text-blue-600 transition-colors"
+                  className="w-full text-left py-2.5 md:py-3 px-0 text-sm xs:text-base md:text-lg font-semibold text-gray-900 hover:text-blue-600 transition-colors"
                 >
                   Suggest a Nonprofit
                 </button>
                 <button
                   onClick={() => navigate("/settings/terms")}
-                  className="w-full text-left py-2.5 md:py-3 px-0 text-sm md:text-base font-semibold text-gray-900 hover:text-blue-600 transition-colors"
+                  className="w-full text-left py-2.5 md:py-3 px-0 text-sm xs:text-base md:text-lg font-semibold text-gray-900 hover:text-blue-600 transition-colors"
                 >
                   Terms of Service
                 </button>
                 <button
                   onClick={() => navigate("/settings/privacy")}
-                  className="w-full text-left py-2.5 md:py-3 px-0 text-sm md:text-base font-semibold text-gray-900 hover:text-blue-600 transition-colors"
+                  className="w-full text-left py-2.5 md:py-3 px-0 text-sm xs:text-base md:text-lg font-semibold text-gray-900 hover:text-blue-600 transition-colors"
                 >
                   Privacy Policy
                 </button>
                 <button
                   onClick={() => navigate("/settings/about")}
-                  className="w-full text-left py-2.5 md:py-3 px-0 text-sm md:text-base font-semibold   text-gray-900 hover:text-blue-600 transition-colors"
+                  className="w-full text-left py-2.5 md:py-3 px-0 text-sm xs:text-base md:text-lg font-semibold   text-gray-900 hover:text-blue-600 transition-colors"
                 >
                   About CRWD
                 </button>
@@ -763,21 +763,21 @@ export default function NewSettings() {
 
           <div className="px-3 md:px-4 flex-1 overflow-y-auto">
             <SheetHeader>
-              <SheetTitle className="text-xl md:text-2xl font-bold text-gray-900">Change Password</SheetTitle>
-              <SheetDescription className="text-xs md:text-sm text-gray-500">
+              <SheetTitle className="text-lg xs:text-xl md:text-2xl font-bold text-gray-900">Change Password</SheetTitle>
+              <SheetDescription className="text-xs xs:text-sm md:text-base text-gray-500">
                 Update your password. Make sure it's strong and secure.
               </SheetDescription>
             </SheetHeader>
 
             <form onSubmit={handlePasswordSubmit} className="mt-4 md:mt-6 space-y-3 md:space-y-4">
               <div>
-                <Label className="text-xs md:text-sm">Current Password</Label>
+                <Label className="text-xs xs:text-sm md:text-base">Current Password</Label>
                 <div className="relative">
                   <Input
                     type={showPasswords.current ? "text" : "password"}
                     value={passwordForm.currentPassword}
                     onChange={(e) => setPasswordForm({ ...passwordForm, currentPassword: e.target.value })}
-                    className={`text-sm md:text-base ${passwordErrors.currentPassword ? "border-red-500" : ""}`}
+                    className={`text-sm xs:text-base md:text-lg ${passwordErrors.currentPassword ? "border-red-500" : ""}`}
                   />
                   <button
                     type="button"
@@ -788,17 +788,17 @@ export default function NewSettings() {
                   </button>
                 </div>
                 {passwordErrors.currentPassword && (
-                  <p className="text-xs md:text-sm text-red-500 mt-1">{passwordErrors.currentPassword}</p>
+                  <p className="text-xs xs:text-sm md:text-base text-red-500 mt-1">{passwordErrors.currentPassword}</p>
                 )}
               </div>
               <div>
-                <Label className="text-xs md:text-sm">New Password</Label>
+                <Label className="text-xs xs:text-sm md:text-base">New Password</Label>
                 <div className="relative">
                   <Input
                     type={showPasswords.new ? "text" : "password"}
                     value={passwordForm.newPassword}
                     onChange={(e) => setPasswordForm({ ...passwordForm, newPassword: e.target.value })}
-                    className={`text-sm md:text-base ${passwordErrors.newPassword ? "border-red-500" : ""}`}
+                    className={`text-sm xs:text-base md:text-lg ${passwordErrors.newPassword ? "border-red-500" : ""}`}
                   />
                   <button
                     type="button"
@@ -809,17 +809,17 @@ export default function NewSettings() {
                   </button>
                 </div>
                 {passwordErrors.newPassword && (
-                  <p className="text-xs md:text-sm text-red-500 mt-1">{passwordErrors.newPassword}</p>
+                  <p className="text-xs xs:text-sm md:text-base text-red-500 mt-1">{passwordErrors.newPassword}</p>
                 )}
               </div>
               <div>
-                <Label className="text-xs md:text-sm">Confirm New Password</Label>
+                <Label className="text-xs xs:text-sm md:text-base">Confirm New Password</Label>
                 <div className="relative">
                   <Input
                     type={showPasswords.confirm ? "text" : "password"}
                     value={passwordForm.confirmPassword}
                     onChange={(e) => setPasswordForm({ ...passwordForm, confirmPassword: e.target.value })}
-                    className={`text-sm md:text-base ${passwordErrors.confirmPassword ? "border-red-500" : ""}`}
+                    className={`text-sm xs:text-base md:text-lg ${passwordErrors.confirmPassword ? "border-red-500" : ""}`}
                   />
                   <button
                     type="button"
@@ -830,14 +830,14 @@ export default function NewSettings() {
                   </button>
                 </div>
                 {passwordErrors.confirmPassword && (
-                  <p className="text-xs md:text-sm text-red-500 mt-1">{passwordErrors.confirmPassword}</p>
+                  <p className="text-xs xs:text-sm md:text-base text-red-500 mt-1">{passwordErrors.confirmPassword}</p>
                 )}
               </div>
               <div className="flex gap-2 pt-3 md:pt-4 pb-4 md:pb-6">
-                <Button type="button" variant="outline" onClick={() => setShowPasswordDialog(false)} className="flex-1 text-sm md:text-base py-2 md:py-2.5">
+                <Button type="button" variant="outline" onClick={() => setShowPasswordDialog(false)} className="flex-1 text-sm xs:text-base md:text-lg py-2 md:py-2.5">
                   Cancel
                 </Button>
-                <Button type="submit" disabled={changePasswordMutation.isPending} className="flex-1 text-sm md:text-base py-2 md:py-2.5">
+                <Button type="submit" disabled={changePasswordMutation.isPending} className="flex-1 text-sm xs:text-base md:text-lg py-2 md:py-2.5">
                   {changePasswordMutation.isPending ? "Updating..." : "Update Password"}
                 </Button>
               </div>
@@ -856,42 +856,42 @@ export default function NewSettings() {
 
           <div className="px-3 md:px-4 flex-1 overflow-y-auto">
             <SheetHeader>
-              <SheetTitle className="text-xl md:text-2xl font-bold text-gray-900">Change Email</SheetTitle>
-              <SheetDescription className="text-xs md:text-sm text-gray-500">
+              <SheetTitle className="text-lg xs:text-xl md:text-2xl font-bold text-gray-900">Change Email</SheetTitle>
+              <SheetDescription className="text-xs xs:text-sm md:text-base text-gray-500">
                 Update your email address. You'll need to verify your new email address after the change.
               </SheetDescription>
             </SheetHeader>
 
             <form onSubmit={handleEmailSubmit} className="mt-4 md:mt-6 space-y-3 md:space-y-4">
               <div>
-                <Label className="text-xs md:text-sm">New Email</Label>
+                <Label className="text-xs xs:text-sm md:text-base">New Email</Label>
                 <Input
                   type="email"
                   value={emailForm.newEmail}
                   onChange={(e) => setEmailForm({ ...emailForm, newEmail: e.target.value })}
-                  className={`text-sm md:text-base ${emailErrors.newEmail ? "border-red-500" : ""}`}
+                  className={`text-sm xs:text-base md:text-lg ${emailErrors.newEmail ? "border-red-500" : ""}`}
                 />
                 {emailErrors.newEmail && (
-                  <p className="text-xs md:text-sm text-red-500 mt-1">{emailErrors.newEmail}</p>
+                  <p className="text-xs xs:text-sm md:text-base text-red-500 mt-1">{emailErrors.newEmail}</p>
                 )}
               </div>
               <div>
-                <Label className="text-xs md:text-sm">Confirm New Email</Label>
+                <Label className="text-xs xs:text-sm md:text-base">Confirm New Email</Label>
                 <Input
                   type="email"
                   value={emailForm.confirmEmail}
                   onChange={(e) => setEmailForm({ ...emailForm, confirmEmail: e.target.value })}
-                  className={`text-sm md:text-base ${emailErrors.confirmEmail ? "border-red-500" : ""}`}
+                  className={`text-sm xs:text-base md:text-lg ${emailErrors.confirmEmail ? "border-red-500" : ""}`}
                 />
                 {emailErrors.confirmEmail && (
-                  <p className="text-xs md:text-sm text-red-500 mt-1">{emailErrors.confirmEmail}</p>
+                  <p className="text-xs xs:text-sm md:text-base text-red-500 mt-1">{emailErrors.confirmEmail}</p>
                 )}
               </div>
               <div className="flex gap-2 pt-3 md:pt-4 pb-4 md:pb-6">
-                <Button type="button" variant="outline" onClick={() => setShowEmailDialog(false)} className="flex-1 text-sm md:text-base py-2 md:py-2.5">
+                <Button type="button" variant="outline" onClick={() => setShowEmailDialog(false)} className="flex-1 text-sm xs:text-base md:text-lg py-2 md:py-2.5">
                   Cancel
                 </Button>
-                <Button type="submit" disabled={updateEmailMutation.isPending} className="flex-1 text-sm md:text-base py-2 md:py-2.5">
+                <Button type="submit" disabled={updateEmailMutation.isPending} className="flex-1 text-sm xs:text-base md:text-lg py-2 md:py-2.5">
                   {updateEmailMutation.isPending ? "Sending..." : "Send Verification Code"}
                 </Button>
               </div>
@@ -910,29 +910,29 @@ export default function NewSettings() {
 
           <div className="px-3 md:px-4 flex-1 overflow-y-auto">
             <SheetHeader>
-              <SheetTitle className="text-xl md:text-2xl font-bold text-gray-900">Verify Email</SheetTitle>
-              <SheetDescription className="text-xs md:text-sm text-gray-500">
+              <SheetTitle className="text-lg xs:text-xl md:text-2xl font-bold text-gray-900">Verify Email</SheetTitle>
+              <SheetDescription className="text-xs xs:text-sm md:text-base text-gray-500">
                 Enter the verification code sent to your new email address.
               </SheetDescription>
             </SheetHeader>
 
             <form onSubmit={handleOTPSubmit} className="mt-4 md:mt-6 space-y-3 md:space-y-4">
               <div>
-                <Label className="text-xs md:text-sm">Verification Code</Label>
+                <Label className="text-xs xs:text-sm md:text-base">Verification Code</Label>
                 <Input
                   type="text"
                   value={otp}
                   onChange={(e) => setOtp(e.target.value)}
                   placeholder="Enter 6-digit code"
                   maxLength={6}
-                  className="text-sm md:text-base"
+                  className="text-sm xs:text-base md:text-lg"
                 />
               </div>
               <div className="flex gap-2 pt-3 md:pt-4 pb-4 md:pb-6">
-                <Button type="button" variant="outline" onClick={() => setShowOTPDialog(false)} className="flex-1 text-sm md:text-base py-2 md:py-2.5">
+                <Button type="button" variant="outline" onClick={() => setShowOTPDialog(false)} className="flex-1 text-sm xs:text-base md:text-lg py-2 md:py-2.5">
                   Cancel
                 </Button>
-                <Button type="submit" disabled={verifyEmailMutation.isPending} className="flex-1 text-sm md:text-base py-2 md:py-2.5">
+                <Button type="submit" disabled={verifyEmailMutation.isPending} className="flex-1 text-sm xs:text-base md:text-lg py-2 md:py-2.5">
                   {verifyEmailMutation.isPending ? "Verifying..." : "Verify"}
                 </Button>
               </div>

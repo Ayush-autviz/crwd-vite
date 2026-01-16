@@ -207,7 +207,7 @@ export default function ProfileNavbar({
                             </AvatarFallback>
                           </Avatar>
                           <div className="flex-1">
-                            <h3 className="font-bold text-sm xs:text-base sm:text-lg text-gray-900">
+                            <h3 className="font-bold text-base xs:text-lg sm:text-xl text-gray-900">
                               {user?.first_name && user?.last_name
                                 ? `${user.first_name} ${user.last_name}`
                                 : user?.username || "User"}
@@ -216,7 +216,7 @@ export default function ProfileNavbar({
                             <Link
                               to="/profile"
                               onClick={handleClose}
-                              className="text-[#1600ff] text-[10px] xs:text-xs sm:text-sm"
+                              className="text-[#1600ff] text-xs xs:text-sm sm:text-base"
                             >
                               View Profile
                             </Link>
@@ -232,7 +232,7 @@ export default function ProfileNavbar({
                           className="flex items-center gap-2 sm:gap-3 py-2.5 sm:py-3 px-2 rounded-lg hover:bg-gray-100 transition-colors"
                         >
                           <Users className="h-4 w-4 sm:h-5 sm:w-5 text-gray-700" />
-                          <span className="text-gray-900 font-medium text-xs xs:text-sm sm:text-base">Collectives</span>
+                          <span className="text-gray-900 font-medium text-sm xs:text-base sm:text-lg">Collectives</span>
                         </Link>
                         <Link
                           to="/donation"
@@ -240,7 +240,7 @@ export default function ProfileNavbar({
                           className="flex items-center gap-2 sm:gap-3 py-2.5 sm:py-3 px-2 rounded-lg hover:bg-gray-100 transition-colors"
                         >
                           <Mail className="h-4 w-4 sm:h-5 sm:w-5 text-gray-700" />
-                          <span className="text-gray-900 font-medium text-xs xs:text-sm sm:text-base">Donation Box</span>
+                          <span className="text-gray-900 font-medium text-sm xs:text-base sm:text-lg">Donation Box</span>
                         </Link>
                         <Link
                           to="/settings"
@@ -248,7 +248,7 @@ export default function ProfileNavbar({
                           className="flex items-center gap-2 sm:gap-3 py-2.5 sm:py-3 px-2 rounded-lg hover:bg-gray-100 transition-colors"
                         >
                           <Settings className="h-4 w-4 sm:h-5 sm:w-5 text-gray-700" />
-                          <span className="text-gray-900 font-medium text-xs xs:text-sm sm:text-base">Settings</span>
+                          <span className="text-gray-900 font-medium text-sm xs:text-base sm:text-lg">Settings</span>
                         </Link>
                       </div>
 
@@ -262,7 +262,7 @@ export default function ProfileNavbar({
                           className="flex items-center gap-2 text-red-600 hover:text-red-700 transition-colors"
                         >
                           <LogOut className="h-4 w-4 sm:h-5 sm:w-5" />
-                          <span className="font-medium text-xs xs:text-sm sm:text-base">Log Out</span>
+                          <span className="font-medium text-sm xs:text-base sm:text-lg">Log Out</span>
                           <ArrowRight className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                         </button>
                       </div>
