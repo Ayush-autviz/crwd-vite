@@ -128,6 +128,7 @@ export default function CommunityPosts({
             key={post.id}
             post={post}
             onCommentPress={onCommentPress}
+            isHomeFeed={true}
           />
         ))}
       </div>

@@ -61,7 +61,7 @@ export default function CreateFundraiser() {
   const [uploadedCoverImage, setUploadedCoverImage] = useState<File | null>(null);
   const [uploadedCoverImagePreview, setUploadedCoverImagePreview] = useState<string | null>(null);
   const [campaignTitle, setCampaignTitle] = useState('');
-  const [fundraisingGoal, setFundraisingGoal] = useState('100');
+  const [fundraisingGoal, setFundraisingGoal] = useState('');
   const [endDate, setEndDate] = useState<Dayjs | null>(null);
   const [campaignStory, setCampaignStory] = useState('');
 
@@ -627,7 +627,7 @@ export default function CreateFundraiser() {
                   type="number"
                   value={fundraisingGoal}
                   onChange={(e) => setFundraisingGoal(e.target.value)}
-                  placeholder="1000"
+                  placeholder="100"
                   className="w-full pl-8"
                 />
               </div>

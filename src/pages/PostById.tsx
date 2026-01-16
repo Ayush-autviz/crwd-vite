@@ -180,7 +180,7 @@ export default function PostById() {
     },
   });
 
-  const handleReply = (commentId: number, content: string) => {
+  const handleReply = (commentId: number, _content: string) => {
     // Find the comment object to get username properly
     const findComment = (commentsList: CommentData[]): CommentData | undefined => {
       for (const c of commentsList) {

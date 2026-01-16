@@ -400,7 +400,7 @@ export default function CollectiveStatisticsModal({
                             </h4>
                             {isFounder && (
                               <span className="bg-red-500 text-white text-[9px] md:text-[10px] lg:text-xs font-semibold px-1 md:px-1.5 lg:px-2 py-0.5 rounded-full">
-                                Leader
+                                Organizer
                               </span>
                             )}
                           </div>

@@ -636,10 +636,10 @@ export default function ProfilePage() {
                 {activeStatsTab === 'following' && 'Following'}
               </SheetTitle>
               <SheetDescription className="text-sm text-gray-500">
-                {activeStatsTab === 'causes' && 'All nonprofits that you support'}
-                {activeStatsTab === 'crwds' && "Collectives you're part of"}
-                {activeStatsTab === 'followers' && 'People following you'}
-                {activeStatsTab === 'following' && "People you're follow"}
+                {activeStatsTab === 'causes' && `All nonprofits that ${fullName} support`}
+                {activeStatsTab === 'crwds' && `Collectives ${fullName} is part of`}
+                {activeStatsTab === 'followers' && `People following ${fullName}`}
+                {activeStatsTab === 'following' && `People ${fullName} is following`}
               </SheetDescription>
             </SheetHeader>
           </div>

@@ -3,6 +3,7 @@ import { Loader2 } from 'lucide-react';
 import { Link, useNavigate } from "react-router-dom";
 import { useQueries } from "@tanstack/react-query";
 import { getUserProfileById } from "@/services/api/social";
+import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 
 // Avatar colors for consistent coloring
 const avatarColors = [
@@ -221,7 +222,7 @@ const RegularNotifications: React.FC<RegularNotificationsProps> = ({
         memberName: memberName,
         donationAmount: donationAmount,
         time: formatTimeAgo(notification.created_at || notification.updated_at),
-        avatarUrl: notification.user?.profile_picture || notification.data?.profile_picture || '',
+        avatarUrl: notification.data?.user_profile_picture || '',
         collectiveId: collectiveId,
         nonprofitId: nonprofitId,
         postId: postId,
@@ -229,6 +230,7 @@ const RegularNotifications: React.FC<RegularNotificationsProps> = ({
         firstName: firstName,
         lastName: lastName,
         username: extractedUsername,
+        color: notification.data?.user_color || ""
       };
     });
   }, [personalNotifications, userProfilesMap]);
@@ -283,12 +285,24 @@ const RegularNotifications: React.FC<RegularNotificationsProps> = ({
                   className="flex-shrink-0"
                   onClick={(e) => e.stopPropagation()}
                 >
-                  <div
+                  {/* <div
                     className="w-12 h-12 md:w-14 md:h-14 rounded-full flex items-center justify-center text-white text-sm md:text-base font-bold"
-                    style={{ backgroundColor: bgColor }}
+                    style={{ backgroundColor: notification.color ? notification.color : bgColor }}
                   >
                     {getInitials(notification.firstName, notification.lastName, notification.username)}
-                  </div>
+                  </div> */}
+                  <Avatar className="h-8 w-8 xs:w-9 xs:h-9 md:h-10 md:w-10 flex-shrink-0">
+                    <AvatarImage
+                      src={notification.avatarUrl}
+                      alt={notification.firstName + ' ' + notification.lastName}
+                    />
+                    <AvatarFallback
+                      style={{ backgroundColor: notification.color ? notification.color : bgColor }}
+                      className="text-white font-bold text-[10px] xs:text-xs md:text-sm"
+                    >
+                      {getInitials(notification.firstName, notification.lastName, notification.username)}
+                    </AvatarFallback>
+                  </Avatar>
                 </Link>
               ) : (
                 <div className="flex-shrink-0">

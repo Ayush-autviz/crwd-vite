@@ -112,7 +112,7 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
             className={`bg-pink-100 rounded-full py-1 px-3 mb-2 ${onFounderClick ? 'cursor-pointer hover:bg-pink-200 transition-colors' : ''}`}
             onClick={onFounderClick}
           >
-            <p className="text-pink-500 font-medium text-xs md:text-sm">Leader</p>
+            <p className="text-pink-500 font-medium text-xs md:text-sm">Organizer</p>
           </div>
         )}
         {location && (

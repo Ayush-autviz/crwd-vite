@@ -60,9 +60,10 @@ interface CommunityPostCardProps {
   };
   onCommentPress?: (post: CommunityPostCardProps['post']) => void;
   showSimplifiedHeader?: boolean; // When true, only show name and timestamp (for collective view)
+  isHomeFeed?: boolean;
 }
 
-export default function CommunityPostCard({ post, onCommentPress, showSimplifiedHeader = false }: CommunityPostCardProps) {
+export default function CommunityPostCard({ post, onCommentPress, showSimplifiedHeader = false, isHomeFeed = false }: CommunityPostCardProps) {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
   const [isLiked, setIsLiked] = useState(post.isLiked || false);
@@ -218,8 +219,8 @@ export default function CommunityPostCard({ post, onCommentPress, showSimplified
       )}
     >
       <CardContent className={cn("p-2.5 md:p-4", post.fundraiser?.is_active && "bg-[#fbfcff] p-4 rounded-t-lg")}>
-        {/* Pinned Fundraiser Header - Only show if active */}
-        {post.fundraiser?.is_active && (
+        {/* Pinned Fundraiser Header - Only show if active and not in home feed */}
+        {post.fundraiser?.is_active && !isHomeFeed && (
           <div className="flex items-center justify-between mb-2 md:mb-3">
             <div className="flex items-center gap-1.5 md:gap-2">
               <Pin className="w-3 h-3 md:w-4 md:h-4 text-[#1600ff]" />
@@ -307,7 +308,7 @@ export default function CommunityPostCard({ post, onCommentPress, showSimplified
                 )} */}
                 {post.fundraiser?.is_active && (
                   <span className="px-2 py-0.5 bg-[#1600ff] text-white text-[8px] xs:text-[10px] md:text-[12px] font-medium rounded-full">
-                    Leader
+                    Organizer
                   </span>
                 )}
               </div>
@@ -320,7 +321,7 @@ export default function CommunityPostCard({ post, onCommentPress, showSimplified
                   {post.collective.name}
                 </Link>
               )}
-              {post.fundraiser?.is_active && (
+              {post.fundraiser && !isHomeFeed && (
                 <p className="text-[9px] xs:text-[10px] md:text-xs text-gray-500 mb-0.5">Started a fundraiser</p>
               )}
               {showSimplifiedHeader && post.timestamp && !post.fundraiser?.is_active && (
@@ -333,8 +334,7 @@ export default function CommunityPostCard({ post, onCommentPress, showSimplified
         </div>
 
         <Link to={post.fundraiser ? `/fundraiser/${post.fundraiser.id}` : `/post/${post.id}`} className="block">
-          {/* Fundraiser Post UI */}
-          {post.fundraiser?.is_active ? (
+          {post.fundraiser ? (
             <>
               {/* Fundraiser Cover Image/Color */}
               <div className="w-full rounded-t-lg overflow-hidden" style={{ height: '180px' }}>
@@ -366,7 +366,7 @@ export default function CommunityPostCard({ post, onCommentPress, showSimplified
               </div>
 
               {/* Fundraiser Info */}
-              <div className="mb-2 md:mb-3 bg-white p-4 rounded-b-lg">
+              <div className="mb-2 md:mb-3 bg-white p-4 rounded-b-lg border border-t-0 border-gray-100">
                 <h3 className="text-xs xs:text-sm md:text-base font-bold text-gray-900 mb-2 md:mb-3">
                   {post.fundraiser.name}
                 </h3>
@@ -395,66 +395,16 @@ export default function CommunityPostCard({ post, onCommentPress, showSimplified
                         <span className="font-semibold">{post.fundraiser.total_donors}</span> donor{post.fundraiser.total_donors !== 1 ? 's' : ''}
                       </span>
                     )}
-                    {post.fundraiser.end_date && (
+                    {post.fundraiser.end_date && post.fundraiser.is_active && (
                       <span>
                         <span className="font-semibold">
                           {Math.max(0, dayjs(post.fundraiser.end_date).diff(dayjs(), 'day'))}
                         </span> days left
                       </span>
                     )}
-                  </div>
-                </div>
-              </div>
-            </>
-          ) : post.fundraiser ? (
-            <>
-              {/* Legacy Fundraiser UI for inactive fundraisers */}
-              <div className="w-full rounded-t-lg overflow-hidden" style={{ height: '180px' }}>
-                {post.fundraiser.color ? (
-                  <div
-                    className="w-full h-full flex items-center justify-center"
-                    style={{ backgroundColor: post.fundraiser.color }}
-                  >
-                    <span className="text-white text-sm xs:text-base md:text-lg font-bold">
-                      {post.fundraiser.name}
-                    </span>
-                  </div>
-                ) : post.fundraiser.image ? (
-                  <img
-                    src={post.fundraiser.image}
-                    alt={post.fundraiser.name}
-                    className="w-full h-full object-cover"
-                  />
-                ) : (
-                  <div
-                    className="w-full h-full flex items-center justify-center"
-                    style={{ backgroundColor: '#1600ff' }}
-                  >
-                    <span className="text-white text-lg xs:text-xl md:text-2xl font-bold">
-                      {post.fundraiser.name}
-                    </span>
-                  </div>
-                )}
-              </div>
-              <div className="mb-2 md:mb-3 bg-blue-50 p-4 rounded-b-lg">
-                <p className="text-[10px] xs:text-xs md:text-sm text-gray-500 mb-1">Started a fundraiser</p>
-                <h3 className="text-xs xs:text-sm md:text-base font-bold text-gray-900 mb-2 md:mb-3">
-                  {post.fundraiser.name}
-                </h3>
-                <div className="mb-2">
-                  <div className="flex items-baseline gap-2 mb-1.5">
-                    <span className="text-base xs:text-lg md:text-xl font-bold text-[#1600ff]">
-                      ${parseFloat(post.fundraiser.current_amount || '0').toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
-                    </span>
-                    <span className="text-[10px] xs:text-xs md:text-sm text-gray-700">
-                      raised of ${parseFloat(post.fundraiser.target_amount || '0').toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 })} goal
-                    </span>
-                  </div>
-                  <div className="w-full h-1.5 md:h-2 bg-gray-200 rounded-full overflow-hidden">
-                    <div
-                      className="h-full bg-[#1600ff] transition-all duration-300"
-                      style={{ width: `${Math.min(post.fundraiser.progress_percentage || 0, 100)}%` }}
-                    />
+                    {!post.fundraiser.is_active && (
+                      <span className="text-gray-500 font-medium">Fundraiser Ended</span>
+                    )}
                   </div>
                 </div>
               </div>
