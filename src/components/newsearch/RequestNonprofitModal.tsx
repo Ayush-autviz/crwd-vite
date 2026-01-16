@@ -137,7 +137,7 @@ export default function RequestNonprofitModal({
           >
             {/* Header */}
             <div className="sticky top-0 bg-white  px-4 md:px-6 py-3 md:py-4 flex items-center justify-between z-10">
-              <h2 className="text-xl md:text-2xl font-bold text-foreground">Request a Nonprofit</h2>
+              <h2 className="text-lg xs:text-xl md:text-2xl font-bold text-foreground">Request a Nonprofit</h2>
               <button
                 onClick={onClose}
                 className="p-1.5 md:p-2 hover:bg-gray-100 rounded-full transition-colors"
@@ -150,7 +150,7 @@ export default function RequestNonprofitModal({
             {/* Content */}
             <div className="px-4 md:px-6 py-4 md:py-6">
               {/* Introductory Text */}
-              <p className="text-sm md:text-base text-gray-700 mb-4 md:mb-6 leading-relaxed">
+              <p className="text-xs xs:text-sm md:text-base text-gray-700 mb-4 md:mb-6 leading-relaxed">
                 Can't find the nonprofit you're looking for? Let us know and if everything checks out we'll add it within{' '}
                 <span className="text-[#1600ff] font-semibold">72 hours</span>.
               </p>
@@ -161,7 +161,7 @@ export default function RequestNonprofitModal({
                 <div>
                   <label
                     htmlFor="nonprofit-name"
-                    className="block text-xs md:text-sm font-medium text-gray-900 mb-1.5 md:mb-2"
+                    className="block text-xs xs:text-sm md:text-base font-medium text-gray-900 mb-1.5 md:mb-2"
                   >
                     Nonprofit Name
                   </label>
@@ -171,7 +171,7 @@ export default function RequestNonprofitModal({
                     placeholder="e.g., Local Food Bank"
                     value={nonprofitName}
                     onChange={(e) => setNonprofitName(e.target.value)}
-                    className="w-full border-blue-500 focus:ring-2 focus:ring-blue-500 text-sm md:text-base py-2 md:py-2.5"
+                    className="w-full border-blue-500 focus:ring-2 focus:ring-blue-500 text-sm xs:text-base md:text-lg py-2 md:py-2.5"
                   />
                 </div>
 
@@ -179,7 +179,7 @@ export default function RequestNonprofitModal({
                 <div>
                   <label
                     htmlFor="ein"
-                    className="block text-xs md:text-sm font-medium text-gray-900 mb-1.5 md:mb-2"
+                    className="block text-xs xs:text-sm md:text-base font-medium text-gray-900 mb-1.5 md:mb-2"
                   >
                     EIN (Employer Identification Number)
                   </label>
@@ -189,7 +189,7 @@ export default function RequestNonprofitModal({
                     placeholder="e.g., 12-3456789"
                     value={ein}
                     onChange={(e) => setEin(e.target.value)}
-                    className="w-full border-blue-500 focus:ring-2 focus:ring-blue-500 text-sm md:text-base py-2 md:py-2.5"
+                    className="w-full border-blue-500 focus:ring-2 focus:ring-blue-500 text-sm xs:text-base md:text-lg py-2 md:py-2.5"
                   />
                 </div>
 
@@ -197,7 +197,7 @@ export default function RequestNonprofitModal({
                 <div>
                   <label
                     htmlFor="reason"
-                    className="block text-xs md:text-sm font-medium text-gray-900 mb-1.5 md:mb-2"
+                    className="block text-xs xs:text-sm md:text-base font-medium text-gray-900 mb-1.5 md:mb-2"
                   >
                     Why do you care about this cause?
                   </label>
@@ -207,7 +207,7 @@ export default function RequestNonprofitModal({
                     value={reason}
                     onChange={(e) => setReason(e.target.value)}
                     rows={4}
-                    className="w-full border-l-4 border-blue-500 focus:ring-2 focus:ring-blue-500 resize-none text-sm md:text-base"
+                    className="w-full border-l-4 border-blue-500 focus:ring-2 focus:ring-blue-500 resize-none text-sm xs:text-base md:text-lg"
                   />
                 </div>
 
@@ -216,7 +216,7 @@ export default function RequestNonprofitModal({
                   <button
                     type="button"
                     onClick={onClose}
-                    className="text-sm md:text-base text-gray-700 hover:text-gray-900 font-medium"
+                    className="text-sm xs:text-base md:text-lg text-gray-700 hover:text-gray-900 font-medium"
                   >
                     Cancel
                   </button>
@@ -224,19 +224,19 @@ export default function RequestNonprofitModal({
                   <Button
                     type="submit"
                     disabled={!isFormValid || isSubmitting}
-                    className={`flex items-center gap-1.5 md:gap-2 px-4 md:px-6 py-1.5 md:py-2 rounded-full font-medium transition-colors text-sm md:text-base ${isFormValid && !isSubmitting
+                    className={`flex items-center gap-1.5 md:gap-2 px-4 md:px-6 py-1.5 md:py-2.5 rounded-full font-medium transition-colors text-sm xs:text-base md:text-lg ${isFormValid && !isSubmitting
                       ? 'bg-gradient-to-r from-[#1600ff] to-purple-700 text-white hover:bg-gray-400'
                       : 'bg-gray-200 text-gray-400 cursor-not-allowed'
                       }`}
                   >
                     {isSubmitting ? (
                       <>
-                        <Loader2 className="w-3.5 h-3.5 md:w-4 md:h-4 animate-spin" />
+                        <Loader2 className="w-4 h-4 md:w-5 md:h-5 animate-spin" />
                         Submitting...
                       </>
                     ) : (
                       <>
-                        <Send className="w-3.5 h-3.5 md:w-4 md:h-4" />
+                        <Send className="w-4 h-4 md:w-5 md:h-5" />
                         Submit Request
                       </>
                     )}

@@ -62,25 +62,25 @@ export default function CauseResultCard({ cause }: CauseResultCardProps) {
       onClick={() => navigate(`/cause/${cause.id}`)}
       className="cursor-pointer hover:shadow-md py-0 transition-shadow border border-gray-200"
     >
-      <CardContent className="px-3 md:px-4 py-3 md:py-4">
-        <div className="flex items-start gap-3 md:gap-4">
-          <Avatar className="w-10 h-10 md:w-12 md:h-12 rounded-lg flex-shrink-0">
+      <CardContent className="p-3 md:p-6">
+        <div className="flex items-start gap-2.5 md:gap-4">
+          <Avatar className="w-8 h-8 md:w-12 md:h-12 rounded-lg flex-shrink-0">
             <AvatarImage src={cause.image || undefined} alt={cause.name} />
             <AvatarFallback
               style={{ backgroundColor: avatarBgColor }}
-              className="text-white rounded-lg font-bold text-sm md:text-base"
+              className="text-white rounded-lg font-bold text-xs md:text-base"
             >
               {initials}
             </AvatarFallback>
           </Avatar>
           <div className="flex-1 min-w-0">
-            <h3 className="font-bold text-sm md:text-base text-foreground mb-0.5 md:mb-1">
+            <h3 className="font-bold text-sm xs:text-base md:text-lg text-foreground mb-0.5 md:mb-1">
               {cause.name}
             </h3>
             {location && (
-              <p className="text-xs md:text-sm text-gray-600 mb-1.5 md:mb-2">{location}</p>
+              <p className="text-xs xs:text-sm md:text-base text-gray-600 mb-1 md:mb-2">{location}</p>
             )}
-            <p className="text-xs md:text-sm text-gray-700">
+            <p className="text-xs xs:text-sm md:text-base text-gray-700">
               {truncatedDescription}
             </p>
           </div>

@@ -182,7 +182,7 @@ export default function NewSearchPage() {
           >
             <ArrowLeft className="w-4 h-4 md:w-5 md:h-5 text-gray-700" />
           </button>
-          <h1 className="font-bold text-lg md:text-xl text-foreground flex-1">Search</h1>
+          <h1 className="font-bold text-base xs:text-lg md:text-xl text-foreground flex-1">Search</h1>
         </div>
       )}
 
@@ -203,14 +203,14 @@ export default function NewSearchPage() {
                       handleSearch();
                     }
                   }}
-                  className="pl-9 md:pl-10 pr-3 md:pr-4 py-2.5 md:py-3 rounded-lg border border-blue-500 bg-gray-50 focus:bg-white focus:ring-2 focus:ring-blue-500 text-base"
+                  className="pl-9 md:pl-11 pr-3 md:pr-4 py-2.5 md:py-3 rounded-lg border border-blue-500 bg-gray-50 focus:bg-white focus:ring-2 focus:ring-blue-500 text-sm xs:text-base md:text-lg"
                 />
               </div>
             </div>
 
             {/* Not Sure Where to Start Section */}
             <div className="mb-4 md:mb-6">
-              <h2 className="text-xs md:text-sm font-bold text-gray-900 uppercase mb-3 md:mb-4">
+              <h2 className="text-xs xs:text-sm md:text-base font-bold text-gray-900 uppercase mb-3 md:mb-4">
                 NOT SURE WHERE TO START?
               </h2>
 
@@ -218,21 +218,21 @@ export default function NewSearchPage() {
                 onClick={handleSurpriseMe}
                 className="shadow-none border py-4 border-gray-200 rounded-lg cursor-pointer hover:border-1 hover:border-purple-500 transition-colors"
               >
-                <CardContent className="px-3 md:px-4 py-3 md:py-4">
-                  <div className="flex items-center gap-3 md:gap-4">
+                <CardContent className="p-3 md:p-6">
+                  <div className="flex items-center gap-2.5 md:gap-4">
                     {/* Purple Gradient Icon with Star and Plus */}
-                    <div className="relative w-10 h-10 md:w-12 md:h-12 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center flex-shrink-0">
-                      <Sparkles className="w-4 h-4 md:w-5 md:h-5 text-white" />
+                    <div className="relative w-8 h-8 md:w-12 md:h-12 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center flex-shrink-0">
+                      <Sparkles className="w-4 h-4 md:w-6 md:h-6 text-white" />
                       <div className="absolute top-0 right-0 w-2.5 h-2.5 md:w-3 md:h-3 bg-white rounded-full flex items-center justify-center">
                         <Plus className="w-1.5 h-1.5 md:w-2 md:h-2 text-purple-500" strokeWidth={3} />
                       </div>
                     </div>
 
                     <div className="flex-1">
-                      <h3 className="font-bold text-sm md:text-base text-foreground mb-0.5 md:mb-1">
+                      <h3 className="font-bold text-sm xs:text-base md:text-lg text-foreground mb-0.5 md:mb-1">
                         Surprise Me
                       </h3>
-                      <p className="text-xs md:text-sm text-gray-600">
+                      <p className="text-xs xs:text-sm md:text-base text-gray-600">
                         We'll pick 5 amazing nonprofits for you
                       </p>
                     </div>
@@ -245,7 +245,7 @@ export default function NewSearchPage() {
           <>
             {/* Results Header */}
             <div className="mb-3 md:mb-4">
-              <h2 className="text-lg md:text-xl font-bold text-foreground">
+              <h2 className="text-base xs:text-lg md:text-xl font-bold text-foreground">
                 Results for '{searchQuery}'
               </h2>
             </div>
@@ -256,7 +256,7 @@ export default function NewSearchPage() {
             {/* Results Section */}
             <div className="mt-4 md:mt-6">
               {/* Section Header */}
-              <h3 className="text-xs md:text-sm font-bold text-gray-500 uppercase mb-3 md:mb-4">
+              <h3 className="text-xs xs:text-sm md:text-base font-bold text-gray-500 uppercase mb-3 md:mb-4">
                 {activeTab.toUpperCase()} ({resultsCount})
               </h3>
 
@@ -311,12 +311,12 @@ export default function NewSearchPage() {
                 <>
                   {/* Causes Empty State */}
                   <div className="text-center py-8 md:py-12 border-2 border-dashed border-gray-300 rounded-lg mb-6 md:mb-8">
-                    <p className="text-gray-700 text-sm md:text-base mb-3 md:mb-4">
+                    <p className="text-gray-700 text-sm xs:text-base md:text-lg mb-3 md:mb-4">
                       No organizations found matching your search.
                     </p>
                     <button
                       onClick={() => setShowRequestModal(true)}
-                      className="text-xs md:text-sm text-[#1600ff] hover:underline"
+                      className="text-xs xs:text-sm md:text-base text-[#1600ff] hover:underline"
                     >
                       Can't find your nonprofit? Request it here
                     </button>
@@ -324,12 +324,12 @@ export default function NewSearchPage() {
 
                   {/* Try searching for section */}
                   <div className="mb-6 md:mb-8">
-                    <h4 className="text-sm md:text-base font-semibold text-gray-900 mb-3 md:mb-4">
+                    <h4 className="text-sm xs:text-base md:text-lg font-semibold text-gray-900 mb-3 md:mb-4">
                       Try searching for:
                     </h4>
                     <ul className="space-y-2 md:space-y-3 text-left">
                       {['Animals', 'Homelessness', 'Mental Health', 'Health & Medical', 'Education', 'Environment'].map((category) => (
-                        <li key={category} className="text-sm md:text-base text-gray-700">
+                        <li key={category} className="text-sm xs:text-base md:text-lg text-gray-700">
                           • {category}
                         </li>
                       ))}
@@ -340,7 +340,7 @@ export default function NewSearchPage() {
                   <div className="text-center">
                     <Button
                       variant="outline"
-                      className="w-full md:w-auto px-6 md:px-8 py-2.5 md:py-3 text-sm md:text-base"
+                      className="w-full md:w-auto px-6 md:px-8 py-2.5 md:py-3 text-sm xs:text-base md:text-lg"
                       onClick={() => {
                         setSearchQuery('');
                         setHasSearched(false);
@@ -355,10 +355,10 @@ export default function NewSearchPage() {
                   {/* Collectives Empty State */}
                   <div className="text-center py-8 md:py-12 border-2 border-dashed border-gray-300 rounded-lg mb-6 md:mb-8">
                     <SearchIcon className="w-12 h-12 md:w-16 md:h-16 mx-auto mb-4 text-gray-400" />
-                    <p className="font-semibold mb-2 text-gray-700 text-sm md:text-base">
+                    <p className="font-semibold mb-2 text-gray-700 text-sm xs:text-base md:text-lg">
                       No "{searchQuery}" collective found
                     </p>
-                    <p className="text-sm md:text-base text-gray-500">
+                    <p className="text-sm xs:text-base md:text-lg text-gray-500">
                       Want to start one?
                     </p>
                   </div>
@@ -366,7 +366,7 @@ export default function NewSearchPage() {
                   {/* Create Collective Button */}
                   <div className="text-center">
                     <Button
-                      className="w-full md:w-auto px-6 md:px-8 py-2.5 md:py-3 text-sm md:text-base bg-[#2c7fff] text-white hover:bg-[#2c7fff]/90"
+                      className="w-full md:w-auto px-6 md:px-8 py-2.5 md:py-3 text-sm xs:text-base md:text-lg bg-[#2c7fff] text-white hover:bg-[#2c7fff]/90"
                       onClick={() => {
                         localStorage.setItem('createCrwd_name', searchQuery);
                         navigate('/create-crwd');
@@ -379,10 +379,10 @@ export default function NewSearchPage() {
               ) : (
                 <div className="text-center py-8 md:py-12 border-2 border-dashed border-gray-300 rounded-lg">
                   <SearchIcon className="w-12 h-12 md:w-16 md:h-16 mx-auto mb-4 text-gray-300" />
-                  <p className="font-semibold mb-2 text-gray-500 text-sm md:text-base">
+                  <p className="font-semibold mb-2 text-gray-500 text-sm xs:text-base md:text-lg">
                     No {activeTab.toLowerCase()} found for "{searchQuery}"
                   </p>
-                  <p className="text-xs md:text-sm text-gray-400">
+                  <p className="text-xs xs:text-sm md:text-base text-gray-400">
                     Try another search or switch tabs.
                   </p>
                 </div>

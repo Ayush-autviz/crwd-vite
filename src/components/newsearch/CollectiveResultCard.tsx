@@ -102,11 +102,11 @@ export default function CollectiveResultCard({ collective }: CollectiveResultCar
       onClick={() => navigate(`/groupcrwd/${collective.id}`)}
       className="cursor-pointer py-0 hover:shadow-md transition-shadow border border-gray-200 bg-white rounded-lg"
     >
-      <CardContent className="px-3 md:px-4 py-3 md:py-4">
-        <div className="flex items-start gap-3 md:gap-4">
+      <CardContent className="p-3 md:p-6">
+        <div className="flex items-start gap-2.5 md:gap-4">
           {/* Icon with priority: color > logo > generated color with letter */}
           <div
-            className="w-10 h-10 md:w-12 md:h-12 rounded-lg flex items-center justify-center flex-shrink-0"
+            className="w-8 h-8 md:w-12 md:h-12 rounded-lg flex items-center justify-center flex-shrink-0"
             style={iconColor ? { backgroundColor: iconColor } : {}}
           >
             {showImage && imageUrl ? (
@@ -116,7 +116,7 @@ export default function CollectiveResultCard({ collective }: CollectiveResultCar
                 className="w-full h-full object-cover rounded-lg"
               />
             ) : (
-              <span className="text-white font-bold text-lg md:text-xl">
+              <span className="text-white font-bold text-sm md:text-xl">
                 {iconLetter}
               </span>
             )}
@@ -124,30 +124,30 @@ export default function CollectiveResultCard({ collective }: CollectiveResultCar
 
           <div className="flex-1 min-w-0">
             {/* Title */}
-            <h3 className="font-bold text-sm md:text-base text-gray-900 mb-0.5 md:mb-1">
+            <h3 className="font-bold text-sm xs:text-base md:text-lg text-gray-900 mb-0.5 md:mb-1">
               {collective.name}
             </h3>
 
             {/* Description */}
-            <p className="text-xs md:text-sm text-gray-600 mb-2.5 md:mb-3">
+            <p className="text-xs xs:text-sm md:text-base text-gray-600 mb-2 md:mb-3">
               {collective.description || 'No description available'}
             </p>
 
             {/* Founder Information */}
             {founder && (
               <div className="flex items-center gap-1.5 md:gap-2 mb-1.5 md:mb-2">
-                <Avatar className="w-5 h-5 md:w-6 md:h-6 rounded-full flex-shrink-0">
+                <Avatar className="w-5 h-5 md:w-7 md:h-7 rounded-full flex-shrink-0">
                   <AvatarImage src={founder.profile_picture} alt={founderName} />
                   <AvatarFallback
                     style={{
                       backgroundColor: founder.color,
                     }}
-                    className="text-white text-[10px] md:text-xs font-bold"
+                    className="text-white text-[10px] md:text-sm font-bold"
                   >
                     {founderInitials}
                   </AvatarFallback>
                 </Avatar>
-                <span className="text-xs md:text-sm text-gray-600">
+                <span className="text-xs xs:text-sm md:text-base text-gray-600">
                   Founded by{' '}
                   {founder.id ? (
                     <Link
@@ -165,7 +165,7 @@ export default function CollectiveResultCard({ collective }: CollectiveResultCar
             )}
 
             {/* Supporting nonprofits count */}
-            <p className="text-xs md:text-sm text-gray-600">
+            <p className="text-xs xs:text-sm md:text-base text-gray-600">
               Supporting {nonprofitCount} nonprofit{nonprofitCount !== 1 ? 's' : ''}
             </p>
           </div>

@@ -68,15 +68,15 @@ export default function PostResultCard({ post }: PostResultCardProps) {
   const navigate = useNavigate();
   const user = post.user;
   const avatarBgColor = user ? getConsistentColor(user.id, avatarColors) : '#6B7280';
-  
+
   // Get user initials
   const initials = user?.first_name && user?.last_name
     ? `${user.first_name.charAt(0)}${user.last_name.charAt(0)}`.toUpperCase()
     : user?.username?.charAt(0).toUpperCase() || 'U';
 
   // Get full name
-  const fullName = user?.full_name || 
-    (user?.first_name && user?.last_name 
+  const fullName = user?.full_name ||
+    (user?.first_name && user?.last_name
       ? `${user.first_name} ${user.last_name}`
       : user?.first_name || user?.username || 'Unknown User');
 
@@ -86,13 +86,13 @@ export default function PostResultCard({ post }: PostResultCardProps) {
   return (
     <Card
       onClick={() => navigate(`/post/${post.id}`)}
-      className="cursor-pointer hover:shadow-md transition-shadow border border-gray-200 bg-white rounded-lg"
+      className="cursor-pointer hover:shadow-md transition-shadow border border-gray-200 bg-white rounded-lg py-3"
     >
-      <CardContent className="px-3 md:px-4 py-3 md:py-4">
+      <CardContent className="px-3 md:px-6">
         {/* User Header */}
         <div className="flex items-start gap-2.5 md:gap-3 mb-2.5 md:mb-3">
           {user && (
-            <Avatar className="w-9 h-9 md:w-10 md:h-10 rounded-full flex-shrink-0">
+            <Avatar className="w-8 h-8 md:w-11 md:h-11 rounded-full flex-shrink-0">
               <AvatarImage src={user.profile_picture} alt={fullName} />
               <AvatarFallback
                 style={{ backgroundColor: avatarBgColor }}
@@ -108,7 +108,7 @@ export default function PostResultCard({ post }: PostResultCardProps) {
                 <Link
                   to={`/user-profile/${user.id}`}
                   onClick={(e) => e.stopPropagation()}
-                  className="font-bold text-xs md:text-sm text-gray-900 hover:text-blue-600 transition-colors cursor-pointer"
+                  className="font-bold text-xs xs:text-sm md:text-base text-gray-900 hover:text-blue-600 transition-colors cursor-pointer"
                 >
                   {fullName}
                 </Link>
@@ -116,19 +116,19 @@ export default function PostResultCard({ post }: PostResultCardProps) {
               {post.collective && (
                 <>
                   <span className="text-gray-400">•</span>
-                  <span className="text-xs md:text-sm text-[#1600ff] font-medium">
+                  <span className="text-xs xs:text-sm md:text-base text-[#1600ff] font-medium">
                     {post.collective.name}
                   </span>
                 </>
               )}
             </div>
-            <p className="text-[10px] md:text-xs text-gray-500">{timeAgo}</p>
+            <p className="text-[10px] xs:text-xs md:text-sm text-gray-500">{timeAgo}</p>
           </div>
         </div>
 
         {/* Post Content */}
         {post.content && (
-          <p className="text-xs md:text-sm text-gray-900 mb-2.5 md:mb-3 line-clamp-3">
+          <p className="text-xs xs:text-sm md:text-base text-gray-900 mb-2.5 md:mb-3 line-clamp-3">
             {post.content}
           </p>
         )}
@@ -156,22 +156,22 @@ export default function PostResultCard({ post }: PostResultCardProps) {
               {/* Preview Content */}
               <div className="flex-1 p-2.5 md:p-3">
                 {post.preview_details.site_name && (
-                  <div className="text-[9px] md:text-[10px] text-gray-500 uppercase tracking-wide mb-0.5 md:mb-1">
+                  <div className="text-[9px] xs:text-[10px] md:text-xs text-gray-500 uppercase tracking-wide mb-0.5 md:mb-1">
                     {post.preview_details.site_name}
                   </div>
                 )}
                 {post.preview_details.title && (
-                  <h3 className="text-xs md:text-sm font-semibold text-gray-900 mb-0.5 md:mb-1 line-clamp-2">
+                  <h3 className="text-xs xs:text-sm md:text-base font-semibold text-gray-900 mb-0.5 md:mb-1 line-clamp-2">
                     {post.preview_details.title}
                   </h3>
                 )}
                 {post.preview_details.description && (
-                  <p className="text-[10px] md:text-xs text-gray-500 mb-0.5 md:mb-1 line-clamp-2">
+                  <p className="text-[10px] xs:text-xs md:text-sm text-gray-500 mb-0.5 md:mb-1 line-clamp-2">
                     {post.preview_details.description}
                   </p>
                 )}
                 {post.preview_details.domain && (
-                  <div className="text-[10px] md:text-[11px] text-gray-500 truncate">
+                  <div className="text-[10px] xs:text-[11px] md:text-xs text-gray-500 truncate">
                     {post.preview_details.domain}
                   </div>
                 )}
@@ -182,8 +182,8 @@ export default function PostResultCard({ post }: PostResultCardProps) {
           (() => {
             // Check if media is likely an image URL
             const isImage = /\.(jpg|jpeg|png|gif|webp|svg|bmp)(\?|$)/i.test(post.media) ||
-                           /unsplash\.com|s3\.amazonaws\.com|crwd-bucket|imgur\.com/i.test(post.media);
-            
+              /unsplash\.com|s3\.amazonaws\.com|crwd-bucket|imgur\.com/i.test(post.media);
+
             if (isImage) {
               return (
                 <a
@@ -206,7 +206,7 @@ export default function PostResultCard({ post }: PostResultCardProps) {
                 const url = new URL(post.media);
                 const domain = url.hostname.replace('www.', '');
                 const siteName = domain.split('.')[0].toUpperCase();
-                
+
                 return (
                   <a
                     href={post.media}
@@ -217,11 +217,11 @@ export default function PostResultCard({ post }: PostResultCardProps) {
                   >
                     <div className="flex flex-col md:flex-row bg-white">
                       {/* Preview Content - styled like preview card */}
-                      <div className="flex-1 p-2.5 md:p-3">
-                        <div className="text-[9px] md:text-[10px] text-gray-500 uppercase tracking-wide mb-0.5 md:mb-1">
+                      <div className="flex-1 p-2.5 md:p-4">
+                        <div className="text-[9px] xs:text-[10px] md:text-xs text-gray-500 uppercase tracking-wide mb-0.5 md:mb-1">
                           {siteName}
                         </div>
-                        <div className="text-[10px] md:text-[11px] text-gray-500 truncate">
+                        <div className="text-[10px] xs:text-[11px] md:text-xs text-gray-500 truncate">
                           {domain}
                         </div>
                       </div>
@@ -237,13 +237,13 @@ export default function PostResultCard({ post }: PostResultCardProps) {
         ) : null}
 
         {/* Like and Comment Counts */}
-        <div className="flex items-center gap-3 md:gap-4 text-xs md:text-sm text-gray-600">
+        <div className="flex items-center gap-3 md:gap-4 text-xs xs:text-sm md:text-base text-gray-600">
           <div className="flex items-center gap-1">
-            <Heart className={`w-3.5 h-3.5 md:w-4 md:h-4 ${post.is_liked ? 'fill-red-500 text-red-500' : ''}`} />
+            <Heart className={`w-4 h-4 md:w-5 md:h-5 ${post.is_liked ? 'fill-red-500 text-red-500' : ''}`} />
             <span>{post.likes_count}</span>
           </div>
           <div className="flex items-center gap-1">
-            <MessageCircle className="w-3.5 h-3.5 md:w-4 md:h-4" />
+            <MessageCircle className="w-4 h-4 md:w-5 md:h-5" />
             <span>{post.comments_count}</span>
           </div>
         </div>

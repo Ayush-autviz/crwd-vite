@@ -42,25 +42,25 @@ export default function UserResultCard({ user }: UserResultCardProps) {
       onClick={() => navigate(`/user-profile/${user.id}`)}
       className="cursor-pointer py-0 hover:shadow-md transition-shadow border border-gray-200 bg-white rounded-lg"
     >
-      <CardContent className="px-3 md:px-4 py-3 md:py-4">
-        <div className="flex items-center gap-3 md:gap-4">
-          <Avatar className="w-10 h-10 md:w-12 md:h-12 rounded-full flex-shrink-0">
+      <CardContent className="p-3 md:p-6">
+        <div className="flex items-center gap-2.5 md:gap-4">
+          <Avatar className="w-8 h-8 md:w-12 md:h-12 rounded-full flex-shrink-0">
             <AvatarImage src={user.profile_picture} alt={fullName} />
             <AvatarFallback
               style={{ backgroundColor: avatarBgColor }}
-              className="text-white font-bold text-sm md:text-base"
+              className="text-white font-bold text-xs md:text-base"
             >
               {initials}
             </AvatarFallback>
           </Avatar>
           <div className="flex-1 min-w-0">
             {/* First Name and Last Name */}
-            <h3 className="font-bold text-sm md:text-base text-gray-900">
+            <h3 className="font-bold text-sm xs:text-base md:text-lg text-gray-900">
               {fullName}
             </h3>
             {/* Bio */}
             {user.bio && (
-              <p className="text-xs md:text-sm text-gray-600 mt-0.5 md:mt-1">{user.bio}</p>
+              <p className="text-xs xs:text-sm md:text-base text-gray-600 mt-0.5 md:mt-1">{user.bio}</p>
             )}
           </div>
         </div>
