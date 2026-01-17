@@ -97,7 +97,7 @@ export default function OneTimeDonationReviewBottomSheet({
     const gross = grossAmount;
     let crwdFee: number;
     let net: number;
-    
+
     if (gross < 10.00) {
       // Flat fee of $1.00
       crwdFee = 1.00;
@@ -107,7 +107,7 @@ export default function OneTimeDonationReviewBottomSheet({
       crwdFee = gross * 0.10;
       net = gross - crwdFee;
     }
-    
+
     return {
       crwdFee: Math.round(crwdFee * 100) / 100,
       net: Math.round(net * 100) / 100,
@@ -116,10 +116,10 @@ export default function OneTimeDonationReviewBottomSheet({
 
   const actualDonationAmount = parseFloat(donationAmount.toString());
   const fees = calculateFees(actualDonationAmount);
-  
+
   // Platform fee = CRWD fee (covers all platform + processing costs)
   const platformFee = fees.crwdFee;
-  
+
   // Calculate totals - only count causes (not collectives)
   const totalCauses = selectedCauses.length;
   const perCause = totalCauses > 0 ? fees.net / totalCauses : 0;
@@ -175,15 +175,15 @@ export default function OneTimeDonationReviewBottomSheet({
       const causeEntry: { cause_id: number; attributed_collective?: number } = {
         cause_id: causeId,
       };
-      
+
       // Only include attributed_collective if it exists and is not "manual"
-      if (cause.attributed_collective && 
-          cause.attributed_collective > 0 && 
-          cause.attributed_collective !== 'manual' &&
-          cause.attributed_collective !== 'Manual') {
+      if (cause.attributed_collective &&
+        cause.attributed_collective > 0 &&
+        cause.attributed_collective !== 'manual' &&
+        cause.attributed_collective !== 'Manual') {
         causeEntry.attributed_collective = cause.attributed_collective;
       }
-      
+
       causes.push(causeEntry);
     });
 
@@ -299,7 +299,7 @@ export default function OneTimeDonationReviewBottomSheet({
                   return (
                     <div key={cause.id} className="flex items-center gap-2.5 md:gap-3 p-2.5 md:p-3 bg-gray-50 rounded-lg">
                       <Avatar className="w-9 h-9 md:w-10 md:h-10 rounded-lg flex-shrink-0 border border-gray-200">
-                        <AvatarImage src={cause.image} />
+                        <AvatarImage src={cause.image || cause.logo} />
                         <AvatarFallback
                           style={{ backgroundColor: avatarBgColor }}
                           className="font-semibold rounded-lg text-white text-xs md:text-sm"

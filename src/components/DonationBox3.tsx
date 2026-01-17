@@ -632,7 +632,7 @@ export const DonationBox3 = ({
                   >
                     {/* Avatar */}
                     <Avatar className="w-10 h-10 md:w-12 md:h-12 rounded-lg flex-shrink-0 border border-gray-200 mr-3 md:mr-4">
-                      <AvatarImage src={cause.image} />
+                      <AvatarImage src={cause.image || cause.logo} />
                       <AvatarFallback
                         style={{ backgroundColor: avatarBgColor }}
                         className="font-semibold rounded-lg text-white text-base md:text-lg"

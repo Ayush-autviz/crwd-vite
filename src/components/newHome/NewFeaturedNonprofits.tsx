@@ -92,7 +92,7 @@ export default function NewFeaturedNonprofits({
                     </h3>
 
                     {/* Description */}
-                    <p className="text-[11px] xs:text-xs md:text-sm text-gray-600 leading-relaxed line-clamp-3">
+                    <p className="text-[11px] xs:text-xs md:text-sm text-gray-600 leading-relaxed ">
                       {truncateAtFirstPeriod(description)}
                     </p>
                   </div>
