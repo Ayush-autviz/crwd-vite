@@ -2,10 +2,10 @@
 import { useState, useEffect } from "react";
 import { CROWDS, RECENTS, SUGGESTED } from "@/constants";
 import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
-import { removeCauseFromBox, removeCollectiveFromBox, activateDonationBox, getDonationHistory, updateDonationBox } from "@/services/api/donation";
+import { removeCauseFromBox, removeCollectiveFromBox, activateDonationBox, getDonationHistory, updateDonationBox, addCausesToBox } from "@/services/api/donation";
 import { useAuthStore } from "@/stores/store";
-import { getCollectiveById } from "@/services/api/crwd";
-import { ChevronDown, ChevronUp, Pencil, FileText, Plus, Minus, Trash2 } from "lucide-react";
+import { getCollectiveById, getCausesBySearch } from "@/services/api/crwd";
+import { ChevronDown, ChevronUp, Pencil, FileText, Plus, Minus, Trash2, Search, Loader2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import EditDonationSplitBottomSheet from "@/components/donation/EditDonationSplitBottomSheet";
@@ -63,6 +63,27 @@ export const DonationBox3 = ({
   const [isEditingAmount, setIsEditingAmount] = useState(false);
   const [editableAmount, setEditableAmount] = useState(parseFloat(donationBox?.monthly_amount || donationAmount.toString()));
   const [showEditSplitSheet, setShowEditSplitSheet] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+
+  // Query for searching causes to add
+  const { data: searchCausesData, isLoading: searchCausesLoading } = useQuery({
+    queryKey: ['searchCauses', searchQuery],
+    queryFn: () => getCausesBySearch(searchQuery || '', '', 1),
+    enabled: true,
+  });
+
+  // Mutation for adding causes to donation box
+  const addCausesMutation = useMutation({
+    mutationFn: (causeId: number) => addCausesToBox({ causes: [{ cause_id: causeId }] }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['donationBox'] });
+      toast.success('Cause added to your Donation Box!');
+    },
+    onError: (error: any) => {
+      console.error('Add cause error:', error);
+      toast.error('Failed to add cause. Please try again.');
+    },
+  });
 
   // Get box_causes from donation box (only causes, no collectives)
   const boxCauses = donationBox?.box_causes || [];
@@ -228,6 +249,12 @@ export const DonationBox3 = ({
     mutationFn: (amount: number) => updateDonationBox({ monthly_amount: amount }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['donationBox'] });
+      setIsEditingAmount(false);
+      toast.success('Monthly donation amount updated successfully!');
+    },
+    onError: (error: any) => {
+      console.error('Update amount error:', error);
+      toast.error('Failed to update donation amount. Please try again.');
     },
   });
 
@@ -458,121 +485,90 @@ export const DonationBox3 = ({
   return (
     <div className="w-full h-full bg-gray-50 flex flex-col pb-20 md:pb-24">
       <div className="flex-1 overflow-auto mt-2 mx-3 md:mx-4">
+        {/* Header Section */}
+        <div className="text-center my-4 md:my-6">
+          <h1 className="text-xl md:text-2xl font-bold text-[#1600ff] mb-1 md:mb-2">
+            Set your monthly gift
+          </h1>
+          <p className="text-gray-600 text-xs text-center mt-1.5 md:mt-2">
+            Support multiple causes with one donation, split evenly. Change anytime.
+          </p>
+        </div>
+
         {/* Donation Box Summary Card */}
         <div className="bg-white rounded-xl mb-4 md:mb-6 shadow-sm border border-gray-200 overflow-hidden">
-          {/* Gradient Header */}
-          <div className="h-0.5 md:h-1 bg-gradient-to-r from-blue-500 to-purple-500"></div>
-
           <div className="p-4 md:p-6">
-            {/* Monthly Donation Section */}
+            {/* Your Monthly Impact Section */}
             <div className="mb-4 md:mb-6">
-              <h2 className="text-sm md:text-base font-medium text-gray-900 mb-2 md:mb-3">Monthly Donation</h2>
+              <h2 className="text-lg md:text-xl font-bold text-gray-900 text-center mb-4 md:mb-6">
+                Your Monthly Impact
+              </h2>
 
-              {/* Amount Display with Controls */}
-              <div className="flex items-center justify-between mb-1.5 md:mb-2">
-                <div className="flex items-baseline gap-1.5 md:gap-2">
-                  {isEditingAmount ? (
-                    <input
-                      type="number"
-                      value={Math.round(editableAmount)}
-                      onChange={(e) => {
-                        const value = parseInt(e.target.value) || 5;
-                        setEditableAmount(Math.max(5, value));
-                      }}
-                      onKeyDown={(e) => {
-                        if (e.key === 'Enter') {
-                          handleSaveAmount();
-                        } else if (e.key === 'Escape') {
-                          handleCancelEdit();
-                        }
-                      }}
-                      autoFocus
-                      className="text-3xl md:text-4xl font-bold text-gray-900 w-20 md:w-24 border-none focus:outline-none"
-                    />
-                  ) : (
-                    <span className="text-3xl md:text-4xl font-bold text-gray-900">${Math.round(editableAmount)}</span>
-                  )}
-                  <span className="text-sm md:text-base text-gray-600">/month</span>
-                </div>
+              {/* Amount Selector with Plus/Minus */}
+              <div className="flex items-center justify-center gap-3 md:gap-4">
+                <button
+                  onClick={() => {
+                    if (!isEditingAmount) {
+                      setIsEditingAmount(true);
+                    }
+                    decrementAmount();
+                  }}
+                  disabled={editableAmount <= 5}
+                  className={`flex items-center justify-center w-10 h-10 md:w-12 md:h-12 rounded-lg transition-colors ${editableAmount > 5
+                    ? 'bg-[#1600ff] hover:bg-[#1400cc]'
+                    : 'bg-gray-200 cursor-not-allowed'
+                    }`}
+                >
+                  <Minus size={18} className="md:w-5 md:h-5 text-white font-bold" strokeWidth={3} />
+                </button>
 
-                {/* +/- Buttons - Only show when editing */}
-                {isEditingAmount && (
-                  <div className="flex items-center gap-2">
-                    <button
-                      onClick={decrementAmount}
-                      disabled={editableAmount <= 5}
-                      className={`flex items-center justify-center w-10 h-10 md:w-12 md:h-12 rounded-lg transition-colors ${editableAmount > 5
-                        ? 'bg-gray-100 hover:bg-gray-200'
-                        : 'bg-gray-200 cursor-not-allowed opacity-50'
-                        }`}
-                    >
-                      <Minus size={20} className="text-gray-600 font-bold" strokeWidth={3} />
-                    </button>
-                    <button
-                      onClick={incrementAmount}
-                      className="flex items-center justify-center w-10 h-10 md:w-12 md:h-12 rounded-lg bg-gray-100 hover:bg-gray-200 transition-colors"
-                    >
-                      <Plus size={20} className="text-gray-600" strokeWidth={3} />
-                    </button>
+                <div className="text-center">
+                  <div className="text-[#1600ff] text-3xl md:text-4xl font-bold">
+                    ${Math.round(editableAmount)}
                   </div>
-                )}
+                  <div className="text-gray-900 text-xs md:text-sm mt-1">
+                    per month
+                  </div>
+                </div>
 
-                {/* Pencil Icon - Only show when not editing */}
-                {!isEditingAmount && (
-                  <button
-                    onClick={() => setIsEditingAmount(true)}
-                    className="w-9 h-9 md:w-10 md:h-10 rounded-lg bg-gray-100 hover:bg-gray-200 flex items-center justify-center transition-colors"
-                    aria-label="Edit amount"
-                  >
-                    <Pencil className="w-3.5 h-3.5 md:w-4 md:h-4 text-gray-600" />
-                  </button>
-                )}
+                <button
+                  onClick={() => {
+                    if (!isEditingAmount) {
+                      setIsEditingAmount(true);
+                    }
+                    incrementAmount();
+                  }}
+                  className="flex items-center justify-center w-10 h-10 md:w-12 md:h-12 rounded-lg bg-[#1600ff] hover:bg-[#1400cc] transition-colors"
+                >
+                  <Plus size={18} className="md:w-5 md:h-5 text-white font-bold" strokeWidth={3} />
+                </button>
               </div>
-
-              {/* Lifetime Amount */}
-              {lifetimeAmount > 0 && (
-                <p className="text-xs md:text-sm text-gray-600 mb-3 md:mb-4">${lifetimeAmount.toLocaleString()} lifetime</p>
-              )}
-
-              {/* Billing Cycle Info - Only show when editing and donation box is active */}
-              {isEditingAmount && donationBox?.is_active && donationBox?.next_charge_date && (
-                <div className="bg-blue-50 rounded-lg p-3 md:p-4 mb-4 md:mb-6">
-                  <p className="text-xs md:text-sm text-blue-600 text-center">
-                    Changes take effect on your next billing cycle ({getChargeDay(donationBox.next_charge_date)} of the month)
-                  </p>
-                </div>
-              )}
-
-              {/* Action Buttons - Only show when editing */}
-              {isEditingAmount && (
-                <div className="flex items-center gap-2 md:gap-3">
-                  <button
-                    onClick={handleCancelEdit}
-                    disabled={updateAmountMutation.isPending}
-                    className="flex-1 bg-white border border-gray-300 text-gray-900 font-semibold py-3  rounded-lg transition-colors disabled:opacity-50 hover:bg-gray-50"
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    onClick={handleSaveAmount}
-                    disabled={updateAmountMutation.isPending}
-                    className="flex-1 bg-[#1600ff] hover:bg-[#1400cc] text-white font-semibold py-3  rounded-lg transition-colors disabled:opacity-50"
-                  >
-                    {updateAmountMutation.isPending ? 'Saving...' : 'Save'}
-                  </button>
-                </div>
-              )}
             </div>
 
-            {/* Supported Entities */}
-            <div className="bg-gray-100 rounded-lg px-3 md:px-4 py-2.5 md:py-3 mb-4 md:mb-6 text-center">
-              <p className="text-xs md:text-sm font-bold text-gray-900">
-                {totalCausesCount} Cause{totalCausesCount !== 1 ? 's' : ''} • {totalCollectivesCount} Collective{totalCollectivesCount !== 1 ? 's' : ''}
-              </p>
-            </div>
+            {/* Save/Cancel Buttons - Only show when editing */}
+            {isEditingAmount && (
+              <div className="flex items-center gap-2 md:gap-3 mt-4 md:mt-6">
+                <button
+                  onClick={handleCancelEdit}
+                  disabled={updateAmountMutation.isPending}
+                  className="flex-1 bg-white border border-gray-300 text-gray-900 font-semibold py-3 rounded-lg transition-colors disabled:opacity-50 hover:bg-gray-50"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleSaveAmount}
+                  disabled={updateAmountMutation.isPending}
+                  className="flex-1 bg-[#1600ff] hover:bg-[#1400cc] text-white font-semibold py-3 rounded-lg transition-colors disabled:opacity-50"
+                >
+                  {updateAmountMutation.isPending ? 'Saving...' : 'Save'}
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
 
-            {/* Donation Box Capacity */}
-            {/* <div className="bg-gradient-to-br from-blue-50 to-purple-50 rounded-lg p-3 md:p-4 mb-4 md:mb-6">
+        {/* Donation Box Capacity */}
+        {/* <div className="bg-gradient-to-br from-blue-50 to-purple-50 rounded-lg p-3 md:p-4 mb-4 md:mb-6">
               <div className="flex items-center justify-between mb-1.5 md:mb-2">
                 <h3 className="text-xs md:text-sm font-bold text-blue-600">Donation Box Capacity</h3>
                 <span className="text-xs md:text-sm text-gray-900">{currentCapacity}/{maxCapacity} causes</span>
@@ -588,8 +584,8 @@ export const DonationBox3 = ({
               </p>
             </div> */}
 
-            {/* Add Causes Button */}
-            <button
+        {/* Add Causes Button */}
+        {/* <button
               onClick={() => navigate('/donation/manage')}
               className="w-full bg-[#1600ff] hover:bg-[#1400cc] text-white font-semibold py-3 rounded-lg transition-colors flex items-center justify-center gap-2"
             >
@@ -597,7 +593,7 @@ export const DonationBox3 = ({
               <span>Add Causes</span>
             </button>
           </div>
-        </div>
+        </div> */}
 
         {/* Currently Supporting Section */}
         <div className="mb-4 md:mb-6">
@@ -683,6 +679,94 @@ export const DonationBox3 = ({
             )}
           </div>
         </div>
+
+        {/* Add More Causes Section */}
+        <div className="mb-4 md:mb-6">
+          <h2 className="text-lg md:text-xl font-bold text-gray-800 mb-3 md:mb-4">
+            Add More Causes
+          </h2>
+
+          {/* Search Bar */}
+          <div className="flex gap-2 mb-3 md:mb-4">
+            <div className="relative flex-1">
+              <Search className="absolute left-2.5 md:left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4 md:w-5 md:h-5" />
+              <input
+                type="text"
+                placeholder="Search for causes..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full pl-8 md:pl-10 pr-3 md:pr-4 py-2 md:py-2.5 border border-gray-300 rounded-xl text-sm md:text-base"
+
+              />
+            </div>
+          </div>
+
+          {/* Request Nonprofit Link */}
+          <div className="mb-3 md:mb-4 flex justify-center">
+            <button
+              onClick={() => navigate('/request-nonprofit')}
+              className="text-xs md:text-sm text-[#1600ff] underline font-medium"
+            >
+              Can't find your nonprofit? Request it here
+            </button>
+          </div>
+
+          {/* Causes List */}
+          <div className="space-y-2 md:space-y-3">
+            {searchCausesLoading ? (
+              <div className="flex justify-center py-6 md:py-8">
+                <Loader2 className="w-5 h-5 md:w-6 md:h-6 animate-spin text-gray-400" />
+              </div>
+            ) : searchCausesData?.results?.length > 0 ? (
+              searchCausesData.results
+                .filter((cause: any) => !causes.some((c: any) => c.id === cause.id))
+                .slice(0, 10)
+                .map((cause: any) => {
+                  const avatarBgColor = getConsistentColor(cause.id, avatarColors);
+                  const initials = getInitials(cause.name);
+                  return (
+                    <div
+                      key={cause.id}
+                      className="flex items-center p-2.5 md:p-3 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
+                    >
+                      <Avatar className="w-10 h-10 md:w-12 md:h-12 rounded-lg flex-shrink-0 border border-gray-200 mr-2.5 md:mr-3">
+                        <AvatarImage src={cause.image || cause.logo} />
+                        <AvatarFallback
+                          style={{ backgroundColor: avatarBgColor }}
+                          className="font-semibold rounded-lg text-white text-sm md:text-base"
+                        >
+                          {initials}
+                        </AvatarFallback>
+                      </Avatar>
+                      <div className="flex-1 min-w-0">
+                        <h3 className="font-bold text-sm md:text-base text-gray-900 mb-0.5 md:mb-1">{cause.name}</h3>
+                        <p className="text-xs md:text-sm text-gray-600 line-clamp-1">
+                          {cause.mission || cause.description || 'No description available'}
+                        </p>
+                      </div>
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          addCausesMutation.mutate(cause.id);
+                        }}
+                        disabled={addCausesMutation.isPending}
+                        className="w-7 h-7 md:w-8 md:h-8 rounded-full bg-red-100 hover:bg-red-200 flex items-center justify-center transition-colors flex-shrink-0 disabled:opacity-50"
+                      >
+                        {addCausesMutation.isPending ? (
+                          <Loader2 size={14} className="md:w-4 md:h-4 text-pink-600 animate-spin" />
+                        ) : (
+                          <Plus size={14} className="md:w-4 md:h-4 text-pink-600" strokeWidth={3} />
+                        )}
+                      </button>
+                    </div>
+                  );
+                })
+            ) : (
+              <p className="text-gray-500 text-center py-6 md:py-8 text-sm md:text-base">No nonprofits found</p>
+            )}
+          </div>
+        </div>
+
 
         {/* Attributing Collectives Section */}
         {/* <div className="bg-white rounded-xl mb-6 p-6 shadow-sm border border-gray-100">
