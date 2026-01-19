@@ -17,15 +17,15 @@ export default function CreatePostPage() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { user: currentUser } = useAuthStore();
   const queryClient = useQueryClient();
-  
+
   // Get collective_id from location state
   const collectiveData = location.state?.collectiveData;
-  
+
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
 
   const [form, setForm] = useState({
-    
+
     content: "",
     url: "",
   });
@@ -41,10 +41,10 @@ export default function CreatePostPage() {
 
   // Track URL validation
   const [urlError, setUrlError] = useState<string | null>(null);
-  
+
   // Track link preview
   const [showPreview, setShowPreview] = useState(false);
-  
+
   // Validate URL format - defined before useQuery
   const validateUrl = (url: string): boolean => {
     try {
@@ -54,14 +54,14 @@ export default function CreatePostPage() {
       return false;
     }
   };
-  
+
   // Fetch link preview automatically when URL is valid
   const { data: previewData, isLoading: isLoadingPreview, refetch: fetchPreview } = useQuery({
     queryKey: ['link-preview', form.url],
     queryFn: () => getLinkPreview(form.url),
     enabled: form.url.trim().length > 0 && validateUrl(form.url) && !urlError,
   });
-  
+
   // Show preview when data is available
   useEffect(() => {
     if (previewData && form.url && validateUrl(form.url) && !urlError) {
@@ -78,7 +78,7 @@ export default function CreatePostPage() {
       console.log('Post created successfully:', response);
       setToastMessage("Post created successfully!");
       setShowToast(true);
-      
+
       // Invalidate posts queries to refresh the list
       if (collectiveData?.id) {
         // Invalidate posts for the specific collective
@@ -86,7 +86,7 @@ export default function CreatePostPage() {
       }
       // Also invalidate all posts query to refresh home page and other places
       queryClient.invalidateQueries({ queryKey: ['posts'] });
-      
+
       // Navigate back to the collective page or home
       setTimeout(() => {
         navigate(-1); // Go back to previous page
@@ -156,12 +156,12 @@ export default function CreatePostPage() {
   const canSubmitPost = () => {
     // Post can be submitted with just content (text-only post)
     if (!form.content.trim()) return false;
-    
+
     // If URL is provided, it must be valid
     if (form.url.trim() && (!validateUrl(form.url) || urlError)) {
       return false;
     }
-    
+
     // Allow text-only posts, posts with image, posts with link, or any combination
     // Image and link are optional
     return true;
@@ -179,7 +179,7 @@ export default function CreatePostPage() {
     if (postType === "image" && selectedImage) {
       formData.append('media_file', selectedImage);
     }
-    
+
     // Add media_url if URL is provided (for link posts or when URL is filled)
     if (form.url.trim() && validateUrl(form.url)) {
       formData.append('media_url', form.url);
@@ -217,7 +217,7 @@ export default function CreatePostPage() {
         </div>
       </div>
     );
-  } 
+  }
 
   // Check if collective_id is provided
   if (!collectiveData) {
@@ -427,7 +427,7 @@ export default function CreatePostPage() {
               <img
                 src={imagePreview}
                 alt="Selected"
-                className="w-full max-h-64 object-cover"
+                className="w-full h-[140px] md:h-[200px] object-contain bg-gray-50"
               />
               <button
                 onClick={() => {

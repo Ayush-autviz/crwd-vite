@@ -1,10 +1,10 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Link, useNavigate } from "react-router-dom";
-import { Heart, MessageCircle, Share2, MoreHorizontal, Pin, Pencil, Flag } from "lucide-react";
+import { Heart, MessageCircle, Share2, MoreHorizontal, Pin, Pencil, Flag, Trash2 } from "lucide-react";
 import dayjs from 'dayjs';
 import { useState, useRef, useEffect } from "react";
 import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
-import { likePost, unlikePost, followUser, unfollowUser, getUserProfileById } from "@/services/api/social";
+import { likePost, unlikePost, followUser, unfollowUser, getUserProfileById, deletePost } from "@/services/api/social";
 import { patchFundraiser } from "@/services/api/crwd";
 import { toast } from "sonner";
 import { Toast } from "@/components/ui/toast";
@@ -14,6 +14,15 @@ import { Card, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import { formatDistanceToNow } from 'date-fns';
 import { useAuthStore } from "@/stores/store";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
 
 interface CommunityPostCardProps {
   post: {
@@ -72,9 +81,12 @@ export default function CommunityPostCard({ post, onCommentPress, showSimplified
   const [showCommentsSheet, setShowCommentsSheet] = useState(false);
   const [showShareModal, setShowShareModal] = useState(false);
   const [showFundraiserMenu, setShowFundraiserMenu] = useState(false);
+  const [showPostMenu, setShowPostMenu] = useState(false);
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
   const menuRef = useRef<HTMLDivElement>(null);
+  const postMenuRef = useRef<HTMLDivElement>(null);
   const currentUser = useAuthStore((state) => state.user);
 
   const likeMutation = useMutation({
@@ -104,6 +116,7 @@ export default function CommunityPostCard({ post, onCommentPress, showSimplified
   });
 
   // End Fundraiser Mutation
+  // End Fundraiser Mutation
   const endFundraiserMutation = useMutation({
     mutationFn: (fundraiserId: number) => patchFundraiser(fundraiserId.toString(), { is_active: false }),
     onSuccess: () => {
@@ -120,6 +133,25 @@ export default function CommunityPostCard({ post, onCommentPress, showSimplified
       setShowFundraiserMenu(false);
     },
   });
+
+  const deletePostMutation = useMutation({
+    mutationFn: () => deletePost(post.id.toString()),
+    onSuccess: () => {
+      setToastMessage("Post deleted successfully");
+      setShowToast(true);
+      queryClient.invalidateQueries({ queryKey: ['posts'] });
+      setShowPostMenu(false);
+    },
+    onError: (error) => {
+      console.error('Error deleting post:', error);
+      toast.error('Failed to delete post');
+    },
+  });
+
+  const handleDeleteClick = () => {
+    deletePostMutation.mutate();
+    setShowDeleteDialog(false);
+  };
 
   const handleLikeClick = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -232,16 +264,19 @@ export default function CommunityPostCard({ post, onCommentPress, showSimplified
       if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
         setShowFundraiserMenu(false);
       }
+      if (postMenuRef.current && !postMenuRef.current.contains(event.target as Node)) {
+        setShowPostMenu(false);
+      }
     };
 
-    if (showFundraiserMenu) {
+    if (showFundraiserMenu || showPostMenu) {
       document.addEventListener('mousedown', handleClickOutside);
     }
 
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
-  }, [showFundraiserMenu]);
+  }, [showFundraiserMenu, showPostMenu]);
 
   const handleEditFundraiser = () => {
     if (post.fundraiser?.id) {
@@ -386,6 +421,41 @@ export default function CommunityPostCard({ post, onCommentPress, showSimplified
                   {followMutation.isPending || unfollowMutation.isPending || isLoadingProfile ? '...' : isFollowing ? 'Following' : 'Follow'}
                 </button>
               )}
+
+              {/* Ellipsis Menu for User's Own Posts */}
+              {post.user.id === currentUser?.id && (
+                <div className="relative ml-2" ref={postMenuRef}>
+                  <button
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      setShowPostMenu(!showPostMenu);
+                    }}
+                    className="p-1 hover:bg-gray-100 rounded-full transition-colors flex-shrink-0"
+                  >
+                    <MoreHorizontal className="w-4 h-4 md:w-5 md:h-5 text-gray-500" />
+                  </button>
+
+                  {/* Dropdown Menu */}
+                  {showPostMenu && (
+                    <div className="absolute right-0 top-8 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-50 min-w-[140px]">
+                      <button
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          setShowPostMenu(false);
+                          setShowDeleteDialog(true);
+                        }}
+                        disabled={deletePostMutation.isPending}
+                        className="w-full flex items-center gap-2 px-3 py-2 text-xs md:text-sm text-red-600 hover:bg-gray-50 transition-colors"
+                      >
+                        <Trash2 className="w-4 h-4 text-red-600" />
+                        <span>Delete Post</span>
+                      </button>
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -519,12 +589,18 @@ export default function CommunityPostCard({ post, onCommentPress, showSimplified
                 // </a>
               ) : post.imageUrl ? (
                 <div
-                  className="block w-full rounded-lg overflow-hidden mb-2 md:mb-3 border border-gray-200 cursor-pointer hover:opacity-90 transition-opacity"
+                  className="block w-full rounded-lg overflow-hidden mb-2 md:mb-3 border border-gray-200 cursor-pointer hover:opacity-90 transition-opacity bg-gray-50"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    // Add logic to open image modal if desired, or just navigate to post
+                    navigate(post.fundraiser ? `/fundraiser/${post.fundraiser.id}` : `/post/${post.id}`);
+                  }}
                 >
                   <img
                     src={post.imageUrl}
                     alt="Post"
-                    className="w-full h-[140px] md:h-[200px] object-cover"
+                    className="w-full h-[140px] md:h-[200px] object-contain bg-gray-50"
                   />
                 </div>
               ) : null}
@@ -626,6 +702,39 @@ export default function CommunityPostCard({ post, onCommentPress, showSimplified
         onHide={() => setShowToast(false)}
         message={toastMessage}
       />
+      {/* Delete Confirmation Dialog */}
+      <Dialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
+        <DialogContent className="sm:max-w-[425px] bg-white border-0 shadow-lg rounded-xl" onClick={(e) => e.stopPropagation()}>
+          <DialogHeader>
+            <DialogTitle className="text-xl font-bold text-gray-900">Delete Post?</DialogTitle>
+            <DialogDescription className="text-gray-500 mt-2">
+              This action cannot be undone. Are you sure you want to delete this post from the community?
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="mt-4 gap-2 sm:gap-0">
+            <Button
+              variant="outline"
+              onClick={(e) => {
+                e.stopPropagation();
+                setShowDeleteDialog(false);
+              }}
+              className="border-gray-200 text-gray-700 hover:bg-gray-50 hover:text-gray-900 rounded-lg"
+            >
+              Cancel
+            </Button>
+            <Button
+              onClick={(e) => {
+                e.stopPropagation();
+                handleDeleteClick();
+              }}
+              disabled={deletePostMutation.isPending}
+              className="bg-red-600 hover:bg-red-700 text-white border-0 rounded-lg ml-0 sm:ml-2"
+            >
+              {deletePostMutation.isPending ? "Deleting..." : "Delete"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </Card>
   );
 }
