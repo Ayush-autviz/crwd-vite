@@ -384,7 +384,7 @@ export function MobileShareModal({
             </button>
 
             {/* Twitter */}
-            <button
+            {/* <button
               onClick={handleTwitterShare}
               className="flex flex-col items-center gap-2 cursor-pointer hover:opacity-80 transition-opacity"
             >
@@ -392,7 +392,7 @@ export function MobileShareModal({
                 <X className="w-5 h-5 text-gray-900" />
               </div>
               <span className="text-xs font-medium text-gray-900">Twitter</span>
-            </button>
+            </button> */}
 
             {/* Messenger */}
             <button
