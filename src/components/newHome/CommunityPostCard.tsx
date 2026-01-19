@@ -518,11 +518,7 @@ export default function CommunityPostCard({ post, onCommentPress, showSimplified
                 </div>
                 // </a>
               ) : post.imageUrl ? (
-                <a
-                  href={post.imageUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  onClick={(e) => e.stopPropagation()}
+                <div
                   className="block w-full rounded-lg overflow-hidden mb-2 md:mb-3 border border-gray-200 cursor-pointer hover:opacity-90 transition-opacity"
                 >
                   <img
@@ -530,7 +526,7 @@ export default function CommunityPostCard({ post, onCommentPress, showSimplified
                     alt="Post"
                     className="w-full h-[140px] md:h-[200px] object-cover"
                   />
-                </a>
+                </div>
               ) : null}
             </>
           )}
