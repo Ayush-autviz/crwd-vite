@@ -230,6 +230,7 @@ import {
   Linkedin,
   Camera,
   X,
+  MessageSquare,
 } from "lucide-react";
 
 interface MobileShareModalProps {
@@ -324,6 +325,13 @@ export function MobileShareModal({
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     });
+    handleClose();
+  };
+
+  const handleTextShare = () => {
+    const textBody = title ? `${title}\n${url}` : (message ? `${message}\n${url}` : url);
+    // Use window.location.href for sms: scheme to ensure it opens the app
+    window.location.href = `sms:?&body=${encodeURIComponent(textBody)}`;
     handleClose();
   };
 
@@ -428,6 +436,17 @@ export function MobileShareModal({
                 <Camera className="w-5 h-5 text-gray-900" />
               </div>
               <span className="text-xs font-medium text-gray-900">Instagram</span>
+            </button>
+
+            {/* Text Message */}
+            <button
+              onClick={handleTextShare}
+              className="flex flex-col items-center gap-2 cursor-pointer hover:opacity-80 transition-opacity"
+            >
+              <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
+                <MessageSquare className="w-5 h-5 text-green-600" />
+              </div>
+              <span className="text-xs font-medium text-gray-900">Text</span>
             </button>
           </div>
         </div>
