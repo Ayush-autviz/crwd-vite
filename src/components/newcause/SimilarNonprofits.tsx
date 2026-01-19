@@ -5,9 +5,11 @@ import { Card, CardContent } from '@/components/ui/card';
 interface SimilarNonprofitsProps {
   similarCauses: any[];
   isLoading?: boolean;
+  categoryName?: string;
+  categoryId?: string;
 }
 
-export default function SimilarNonprofits({ similarCauses, isLoading }: SimilarNonprofitsProps) {
+export default function SimilarNonprofits({ similarCauses, isLoading, categoryName, categoryId }: SimilarNonprofitsProps) {
   const navigate = useNavigate();
 
   // Get consistent color for avatar
@@ -25,7 +27,13 @@ export default function SimilarNonprofits({ similarCauses, isLoading }: SimilarN
       <div className="px-3 md:px-4 py-4 md:py-6">
         <div className="flex items-center justify-between mb-3 md:mb-4">
           <h2 className="text-base xs:text-lg md:text-xl font-bold text-foreground mb-3 md:mb-4">Similar Nonprofits</h2>
-          <Link to="/search" className="text-sm xs:text-base md:text-lg text-[#1600ff] p-0 h-auto flex items-center">See all</Link>
+          <Link
+            to="/search"
+            state={{ categoryName, categoryId, searchQuery: categoryName }}
+            className="text-sm xs:text-base md:text-lg text-[#1600ff] p-0 h-auto flex items-center"
+          >
+            See all
+          </Link>
         </div>
         <div className="space-y-3 md:space-y-4">
           {[1, 2].map((i) => (
@@ -54,7 +62,13 @@ export default function SimilarNonprofits({ similarCauses, isLoading }: SimilarN
     <div className="px-3 md:px-4 py-4 md:py-6">
       <div className="flex items-center justify-between mb-3 md:mb-4">
         <h2 className="text-base xs:text-lg md:text-xl font-bold text-foreground">Similar Nonprofits</h2>
-        <Link to="/search" className="text-sm xs:text-base md:text-lg text-[#1600ff] p-0 h-auto flex items-center">See all</Link>
+        <Link
+          to="/search"
+          state={{ categoryName, categoryId, searchQuery: categoryName }}
+          className="text-sm xs:text-base md:text-lg text-[#1600ff] p-0 h-auto flex items-center"
+        >
+          See all
+        </Link>
       </div>
       <div className="space-y-3 md:space-y-4">
         {similarCauses.map((cause) => {

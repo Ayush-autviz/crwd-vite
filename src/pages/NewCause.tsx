@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import { categories } from '@/constants/categories';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -287,7 +288,12 @@ export default function NewCausePage() {
 
         <CauseDetails causeData={causeData} />
 
-        <SimilarNonprofits similarCauses={similarCauses} isLoading={isLoadingSimilar} />
+        <SimilarNonprofits
+          similarCauses={similarCauses}
+          isLoading={isLoadingSimilar}
+          categoryName={categories.find(c => c.id === causeData?.category)?.name || causeData?.category}
+          categoryId={causeData?.category}
+        />
 
       </div>
 
