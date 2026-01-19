@@ -169,7 +169,7 @@ export default function CollectiveHeader({
         <ArrowLeft className="w-4 h-4 md:w-5 md:h-5 text-gray-700" />
       </button>
 
-      <h1 className="font-bold text-base xs:text-lg md:text-xl text-foreground flex-1 px-2 md:px-4">
+      <h1 className="font-bold text-base xs:text-lg md:text-xl text-foreground flex-1 px-2 md:px-4 line-clamp-1">
         {title}
       </h1>
 

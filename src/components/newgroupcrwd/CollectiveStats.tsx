@@ -26,7 +26,7 @@ export default function CollectiveStats({
             <p className="text-lg sm:text-xl lg:text-2xl font-bold text-foreground mb-0.5">
               {nonprofitCount}
             </p>
-            <p className="text-[10px] md:text-xs lg:text-sm font-semibold text-muted-foreground">
+            <p className="text-sm md:text-base  font-semibold text-muted-foreground">
               Nonprofits
             </p>
           </div>
@@ -37,7 +37,7 @@ export default function CollectiveStats({
             <p className="text-lg sm:text-xl lg:text-2xl font-bold text-foreground mb-0.5">
               {memberCount}
             </p>
-            <p className="text-[10px] md:text-xs lg:text-sm font-semibold text-muted-foreground">
+            <p className="text-sm md:text-base  font-semibold text-muted-foreground">
               Members
             </p>
           </div>
@@ -48,7 +48,7 @@ export default function CollectiveStats({
             <p className="text-lg sm:text-xl lg:text-2xl font-bold text-[#1600ff] mb-0.5">
               {donationCount}
             </p>
-            <p className="text-[10px] md:text-xs lg:text-sm font-semibold text-muted-foreground">
+            <p className="text-sm md:text-base font-semibold text-muted-foreground">
               Donations
             </p>
           </div>

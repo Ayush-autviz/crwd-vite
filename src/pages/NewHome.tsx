@@ -545,7 +545,7 @@ export default function NewHome() {
                     ) : (
                         <NewSuggestedCollectives
                             collectives={filteredSuggestedCollectives}
-                            seeAllLink="/search"
+                            seeAllLink="/circles"
                         />
                     )}
 

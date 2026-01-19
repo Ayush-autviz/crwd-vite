@@ -426,7 +426,7 @@ const Circles = () => {
   return (
     <div className="">
       <ProfileNavbar
-        title="CRWD Collectives"
+        title="Collectives"
         showMobileMenu={true}
         showDesktopMenu={true}
         showBackButton={true}

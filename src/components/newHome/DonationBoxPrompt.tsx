@@ -54,7 +54,7 @@ export default function DonationBoxPrompt({ causeCount }: DonationBoxPromptProps
                     className="p-0 self-start text-left text-orange-600 font-semibold text-sm xs:text-base md:text-lg hover:underline flex items-center gap-1"
                   >
                     Complete Setup - Just 2 minutes!
-                    <ArrowRight className="w-3.5 h-3.5 md:w-4 md:h-4" />
+                    <ArrowRight className="w-3.5 h-3.5 md:w-4 md:h-4" strokeWidth={2.5} />
                   </button>
                 </div>
               </div>
@@ -84,9 +84,10 @@ export default function DonationBoxPrompt({ causeCount }: DonationBoxPromptProps
                       e.stopPropagation();
                       navigate('/donation');
                     }}
-                    className="text-[#1600ff] font-semibold text-sm xs:text-base md:text-lg hover:underline"
+                    className="text-[#1600ff] font-semibold text-sm xs:text-base md:text-lg hover:underline flex items-center gap-1"
                   >
-                    Start donating →
+                    Start donating
+                    <ArrowRight className="w-3.5 h-3.5 md:w-4 md:h-4" strokeWidth={2.5} />
                   </button>
                 </div>
               </div>

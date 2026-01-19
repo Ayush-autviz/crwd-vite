@@ -606,13 +606,16 @@ export default function ProfilePage() {
               <div className="py-4">
                 <div className="w-full my-4 mb-6 md:px-0 md:my-8 md:mb-10">
                   <div className="mb-3 md:mb-6">
-                    <h2 className="text-sm xs:text-base sm:text-xl md:text-3xl font-bold text-gray-900 mb-1 md:mb-2">
-                      Recent Activity
-                    </h2>
                     {userPosts.length > 0 && (
-                      <p className="text-[10px] sm:text-xs md:text-sm text-gray-600">
-                        Activity, updates, and discoveries from your community
-                      </p>
+                      <>
+                        <h2 className="text-sm xs:text-base sm:text-xl md:text-3xl font-bold text-gray-900 mb-1 md:mb-2">
+                          Recent Activity
+                        </h2>
+
+                        <p className="text-[10px] sm:text-xs md:text-sm text-gray-600">
+                          Activity, updates, and discoveries from your community
+                        </p>
+                      </>
                     )}
                   </div>
 

@@ -24,7 +24,7 @@ interface NewSuggestedCollectivesProps {
 
 export default function NewSuggestedCollectives({
   collectives = [],
-  seeAllLink = "/search",
+  seeAllLink = "/circles",
 }: NewSuggestedCollectivesProps) {
   // Generate color for icon if not provided
   const getIconColor = (index: number): string => {

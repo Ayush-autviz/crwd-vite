@@ -404,7 +404,7 @@ export default function CollectiveStatisticsModal({
                               </span>
                             )}
                           </div>
-                          <p className="text-[10px] md:text-xs lg:text-sm text-gray-500 mt-0.5 md:mt-1">
+                          <p className="text-[10px] md:text-xs lg:text-sm text-gray-500 mt-0.5 md:mt-1 line-clamp-2">
                             {user.bio || user.location || 'Actively Supporting'}
                           </p>
                         </div>
