@@ -923,18 +923,20 @@ const RegularNotifications: React.FC<RegularNotificationsProps> = ({
               {/* Description: Base xs, XS sm, MD sm */}
               <p className="text-gray-700 text-xs xs:text-sm md:text-sm mb-1.5 md:mb-2">
                 {notification.type === 'donation' ? (
-                  notification.description && notification.description.includes('donated to') ? (
+                  notification.description && (notification.description.includes('donated') || notification.description.includes('donation')) ? (
                     (() => {
-                      // Format: "@username donated to Nonprofit Name and X other"
+                      // Format: "Arpit Parmar donated $5 to test 14" or "Arpit Parmar donated $5 to ZERO - The End of Prostate Cancer"
                       const description = notification.description;
-                      const parts: React.ReactNode[] = [];
+                      
+                      // Check if it matches donation format patterns
+                      const donatedMatch = description.match(/^(.+?)\s+donated\s+\$[\d.]+?\s+to\s+(.+)$/i);
+                      
+                      if (donatedMatch) {
+                        const donorPart = donatedMatch[1].trim();
+                        const recipientPart = donatedMatch[2].trim();
+                        const parts: React.ReactNode[] = [];
 
-                      const donatedSplit = description.split(' donated to ');
-                      if (donatedSplit.length === 2) {
-                        const donorPart = donatedSplit[0];
-                        const restPart = donatedSplit[1];
-
-                        // Handle Donor Link
+                        // Handle Donor Link - check if it's a username or full name
                         if (donorPart.startsWith('@') && notification.userId) {
                           parts.push(
                             <Link
@@ -946,19 +948,46 @@ const RegularNotifications: React.FC<RegularNotificationsProps> = ({
                               {donorPart}
                             </Link>
                           );
+                        } else if (notification.userId) {
+                          // Use extracted name or username
+                          const donorName = notification.firstName && notification.lastName
+                            ? `${notification.firstName} ${notification.lastName}`
+                            : notification.username
+                            ? `@${notification.username}`
+                            : donorPart;
+                          parts.push(
+                            <Link
+                              key="donor"
+                              to={`/user-profile/${notification.userId}`}
+                              className="font-semibold text-gray-700 hover:underline"
+                              onClick={(e) => e.stopPropagation()}
+                            >
+                              {donorName}
+                            </Link>
+                          );
                         } else {
                           parts.push(donorPart);
                         }
 
-                        parts.push(' donated to ');
+                        // Extract the donation amount and recipient
+                        const amountMatch = description.match(/\$[\d.]+/);
+                        const amount = amountMatch ? amountMatch[0] : '';
+                        
+                        parts.push(` donated ${amount} to `);
 
-                        // Handle Nonprofit Link
-                        // Check for " and X other"
-                        const otherMatch = restPart.match(/(.*)( and \d+ other.*)/);
-                        const nonprofitName = otherMatch ? otherMatch[1] : restPart;
-                        const suffix = otherMatch ? otherMatch[2] : '';
-
-                        if (notification.nonprofitId) {
+                        // Handle recipient - could be collective or nonprofit
+                        if (notification.collectiveId) {
+                          parts.push(
+                            <Link
+                              key="collective"
+                              to={`/groupcrwd/${notification.collectiveId}`}
+                              className="font-semibold text-gray-700 hover:underline"
+                              onClick={(e) => e.stopPropagation()}
+                            >
+                              {recipientPart}
+                            </Link>
+                          );
+                        } else if (notification.nonprofitId) {
                           parts.push(
                             <Link
                               key="nonprofit"
@@ -966,38 +995,38 @@ const RegularNotifications: React.FC<RegularNotificationsProps> = ({
                               className="font-semibold text-gray-700 hover:underline"
                               onClick={(e) => e.stopPropagation()}
                             >
-                              {nonprofitName}
+                              {recipientPart}
                             </Link>
                           );
                         } else {
-                          parts.push(nonprofitName);
-                        }
-
-                        if (suffix) {
-                          parts.push(suffix);
+                          parts.push(recipientPart);
                         }
 
                         return <>{parts}</>;
                       }
 
+                      // Fallback: return the description as-is if it doesn't match expected format
                       return description;
                     })()
                   ) : (
-                    <>
-                      Your collective{' '}
-                      {notification.collectiveId && notification.collectiveName ? (
-                        <Link
-                          to={`/groupcrwd/${notification.collectiveId}`}
-                          className="font-semibold text-gray-700 hover:underline"
-                          onClick={(e) => e.stopPropagation()}
-                        >
-                          {notification.collectiveName}
-                        </Link>
-                      ) : (
-                        notification.collectiveName || 'Community Champions'
-                      )}
-                      {' '}received a {notification.donationAmount || '$50'} donation
-                    </>
+                    // Fallback for donation notifications without proper description
+                    notification.description || (
+                      <>
+                        Your collective{' '}
+                        {notification.collectiveId && notification.collectiveName ? (
+                          <Link
+                            to={`/groupcrwd/${notification.collectiveId}`}
+                            className="font-semibold text-gray-700 hover:underline"
+                            onClick={(e) => e.stopPropagation()}
+                          >
+                            {notification.collectiveName}
+                          </Link>
+                        ) : (
+                          notification.collectiveName || 'Community Champions'
+                        )}
+                        {' '}received a {notification.donationAmount || '$50'} donation
+                      </>
+                    )
                   )
                 ) : notification.type === 'new_member' ? (
                   (() => {

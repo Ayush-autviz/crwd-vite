@@ -8,7 +8,7 @@ export default function ShowStandFor() {
                 {/* Left Side - Image Placeholder */}
                 <div className="w-full flex justify-center md:justify-end">
                     {/* Using a placeholder visual that mimics a profile card */}
-                    <div className="relative w-full max-w-md aspect-[4/3] bg-gradient-to-br from-gray-50 to-gray-100 rounded-2xl border border-gray-100 shadow-xl overflow-hidden flex flex-col items-center justify-center p-6">
+                    {/* <div className="relative w-full max-w-md aspect-[4/3] bg-gradient-to-br from-gray-50 to-gray-100 rounded-2xl border border-gray-100 shadow-xl overflow-hidden flex flex-col items-center justify-center p-6">
                         <div className="w-20 h-20 rounded-full bg-blue-100 mb-4 flex items-center justify-center text-2xl font-bold text-[#1600ff]">
                             AC
                         </div>
@@ -22,7 +22,8 @@ export default function ShowStandFor() {
                         </div>
 
                         <div className="absolute top-0 left-0 w-full h-full bg-white/10"></div>
-                    </div>
+                    </div> */}
+                    <img src="/learn/stand.jpeg" alt="Show Stand For" className="w-full h-80 object-contain" />
                 </div>
 
                 {/* Right Side - Content */}
