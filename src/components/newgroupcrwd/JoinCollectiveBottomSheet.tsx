@@ -214,10 +214,10 @@ export default function JoinCollectiveBottomSheet({
         <div className="sticky top-0 bg-white px-3 sm:px-4 md:px-6 py-2.5 sm:py-3 md:py-4 border-b border-gray-200 z-10">
           <div className="flex items-start justify-between">
             <div className="flex-1 pr-2">
-              <h2 className="text-lg sm:text-xl md:text-2xl font-bold text-foreground mb-0.5 sm:mb-1">
+              <h2 className="text-xl sm:text-2xl md:text-2xl font-bold text-foreground mb-0.5 sm:mb-1">
                 You've joined {collectiveName}!
               </h2>
-              <p className="text-[10px] sm:text-xs md:text-sm text-gray-600">
+              <p className="text-xs sm:text-base md:text-base text-gray-600">
                 {isAtCapacity 
                   ? "Your donation box is at capacity. Increase your donation to add more nonprofits."
                   : hasDonationBox
@@ -268,11 +268,11 @@ export default function JoinCollectiveBottomSheet({
                     </svg>
                   )}
                 </div>
-                <span className="text-xs sm:text-sm md:text-base font-medium text-gray-900">
+                <span className="text-sm sm:text-base md:text-base font-medium text-gray-900">
                   {allSelected ? 'Deselect All' : 'Select All'}
                 </span>
               </div>
-              <span className="text-xs sm:text-sm md:text-base font-medium text-[#1600ff]">
+              <span className="text-sm sm:text-base md:text-base font-medium text-[#1600ff]">
                 {selectedCount} of {availableNonprofits.length} selected
               </span>
             </button>
@@ -353,7 +353,7 @@ export default function JoinCollectiveBottomSheet({
 
                   {/* Nonprofit Name */}
                   <div className="flex-1 min-w-0">
-                    <h4 className="font-semibold text-xs sm:text-sm md:text-base text-gray-900 truncate">
+                    <h4 className="font-semibold text-sm sm:text-sm md:text-base text-gray-900 truncate">
                       {nonprofitName}
                     </h4>
                     {isDisabled && !isAtCapacity && (
@@ -371,7 +371,7 @@ export default function JoinCollectiveBottomSheet({
           {/* Info Banner - Only show if not at capacity */}
           {!isAtCapacity && (
             <div className="bg-indigo-50 border border-indigo-200 rounded-lg p-2.5 sm:p-3 md:p-4 mb-3 sm:mb-4 md:mb-6">
-              <p className="text-[10px] sm:text-xs md:text-sm text-indigo-900 leading-relaxed">
+              <p className="text-xs sm:text-xs md:text-sm text-indigo-900 leading-relaxed">
                 {/* {hasDonationBox
                   ? "Selected nonprofits will be added to your donation box. You can manage them anytime from your profile."
                   : "Set up your donation box to start supporting these nonprofits with a monthly donation."
