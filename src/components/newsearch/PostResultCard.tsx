@@ -33,6 +33,7 @@ interface PostResultCardProps {
       full_name?: string;
       profile_picture?: string;
       bio?: string;
+      color?: string;
     };
     collective?: {
       id: number;
@@ -84,11 +85,11 @@ export default function PostResultCard({ post }: PostResultCardProps) {
   const navigate = useNavigate();
   const [showShareModal, setShowShareModal] = useState(false);
   const user = post.user;
-  const avatarBgColor = user ? getConsistentColor(user.id, avatarColors) : '#6B7280';
+  const avatarBgColor = user ? user.color || getConsistentColor(user.id, avatarColors) : '#6B7280';
 
   // Get user initials
   const initials = user?.first_name && user?.last_name
-    ? `${user.first_name.charAt(0)}${user.last_name.charAt(0)}`.toUpperCase()
+    ? `${user.first_name.charAt(0)}`.toUpperCase()
     : user?.username?.charAt(0).toUpperCase() || 'U';
 
   // Get full name
@@ -154,6 +155,21 @@ export default function PostResultCard({ post }: PostResultCardProps) {
           </p>
         )}
 
+        {/* Show fundraiser image like normal post image */}
+        {post.fundraiser?.image ? (
+          <a
+            href={`/fundraiser/${post.fundraiser.id}`}
+            onClick={(e) => e.stopPropagation()}
+            className="block w-full rounded-lg overflow-hidden mb-2.5 md:mb-3 border border-gray-200 cursor-pointer hover:opacity-90 transition-opacity bg-gray-50"
+          >
+            <img
+              src={post.fundraiser.image}
+              alt="Fundraiser"
+              className="w-full h-[180px] md:h-[200px] object-contain bg-gray-50"
+            />
+          </a>
+        ) : null}
+
         {/* Fundraiser UI - show if fundraiser exists, otherwise show preview/media */}
         {post.fundraiser ? (
           <Link
@@ -161,34 +177,30 @@ export default function PostResultCard({ post }: PostResultCardProps) {
             onClick={(e) => e.stopPropagation()}
             className="block mb-2.5 md:mb-3 rounded-lg overflow-hidden border border-gray-200 bg-white"
           >
-            {/* Fundraiser Cover Image/Color */}
-            <div className="w-full rounded-t-lg overflow-hidden" style={{ height: '180px' }}>
-              {post.fundraiser.color ? (
-                <div
-                  className="w-full h-full flex items-center justify-center"
-                  style={{ backgroundColor: post.fundraiser.color }}
-                >
-                  <span className="text-white text-sm xs:text-base md:text-lg font-bold">
-                    {post.fundraiser.name}
-                  </span>
-                </div>
-              ) : post.fundraiser.image ? (
-                <img
-                  src={post.fundraiser.image}
-                  alt={post.fundraiser.name}
-                  className="w-full h-full object-cover"
-                />
-              ) : (
-                <div
-                  className="w-full h-full flex items-center justify-center"
-                  style={{ backgroundColor: '#1600ff' }}
-                >
-                  <span className="text-white text-lg xs:text-xl md:text-2xl font-bold">
-                    {post.fundraiser.name}
-                  </span>
-                </div>
-              )}
-            </div>
+            {/* Fundraiser Cover Image/Color - Only show if no image (show color/default) */}
+            {!post.fundraiser.image && (
+              <div className="w-full rounded-t-lg overflow-hidden" style={{ height: '180px' }}>
+                {post.fundraiser.color ? (
+                  <div
+                    className="w-full h-full flex items-center justify-center"
+                    style={{ backgroundColor: post.fundraiser.color }}
+                  >
+                    <span className="text-white text-sm xs:text-base md:text-lg font-bold">
+                      {post.fundraiser.name}
+                    </span>
+                  </div>
+                ) : (
+                  <div
+                    className="w-full h-full flex items-center justify-center"
+                    style={{ backgroundColor: '#1600ff' }}
+                  >
+                    <span className="text-white text-lg xs:text-xl md:text-2xl font-bold">
+                      {post.fundraiser.name}
+                    </span>
+                  </div>
+                )}
+              </div>
+            )}
 
             {/* Fundraiser Info */}
             <div className="bg-white p-4 rounded-b-lg border border-t-0 border-gray-100">

@@ -178,7 +178,7 @@ export default function CommunityActivity({
             </div>
           ) : (
             <div className="text-center py-6 md:py-8">
-              <p className="text-xs md:text-sm text-muted-foreground">
+              <p className="text-sm xs:text-base md:text-lg text-muted-foreground">
                 No community activity yet. Be the first to post!
               </p>
             </div>

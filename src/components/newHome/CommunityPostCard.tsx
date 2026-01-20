@@ -463,34 +463,55 @@ export default function CommunityPostCard({ post, onCommentPress, showSimplified
         <Link to={post.fundraiser ? `/fundraiser/${post.fundraiser.id}` : `/post/${post.id}`} className="block">
           {post.fundraiser ? (
             <>
-              {/* Fundraiser Cover Image/Color */}
-              <div className="w-full rounded-t-lg overflow-hidden" style={{ height: '180px' }}>
-                {post.fundraiser.color ? (
-                  <div
-                    className="w-full h-full flex items-center justify-center"
-                    style={{ backgroundColor: post.fundraiser.color }}
-                  >
-                    <span className="text-white text-sm xs:text-base md:text-lg font-bold">
-                      {post.fundraiser.name}
-                    </span>
-                  </div>
-                ) : post.fundraiser.image ? (
+              {/* Post Content */}
+              {post.content && (
+                <div className="text-xs xs:text-base text-gray-900 leading-relaxed mb-2 md:mb-4 whitespace-pre-line">
+                  {post.content}
+                </div>
+              )}
+
+              {/* Show fundraiser image like normal post image */}
+              {post.fundraiser.image ? (
+                <div
+                  className="block w-full rounded-lg overflow-hidden mb-2 md:mb-3 border border-gray-200 cursor-pointer hover:opacity-90 transition-opacity bg-gray-50"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    navigate(`/fundraiser/${post.fundraiser.id}`);
+                  }}
+                >
                   <img
                     src={post.fundraiser.image}
-                    alt={post.fundraiser.name}
-                    className="w-full h-full object-cover"
+                    alt="Fundraiser"
+                    className="w-full h-[140px] md:h-[200px] object-contain bg-gray-50"
                   />
-                ) : (
-                  <div
-                    className="w-full h-full flex items-center justify-center"
-                    style={{ backgroundColor: '#1600ff' }}
-                  >
-                    <span className="text-white text-lg xs:text-xl md:text-2xl font-bold">
-                      {post.fundraiser.name}
-                    </span>
-                  </div>
-                )}
-              </div>
+                </div>
+              ) : null}
+
+              {/* Fundraiser Cover Image/Color - Only show if no image (show color/default) */}
+              {!post.fundraiser.image && (
+                <div className="w-full rounded-t-lg overflow-hidden" style={{ height: '180px' }}>
+                  {post.fundraiser.color ? (
+                    <div
+                      className="w-full h-full flex items-center justify-center"
+                      style={{ backgroundColor: post.fundraiser.color }}
+                    >
+                      <span className="text-white text-sm xs:text-base md:text-lg font-bold">
+                        {post.fundraiser.name}
+                      </span>
+                    </div>
+                  ) : (
+                    <div
+                      className="w-full h-full flex items-center justify-center"
+                      style={{ backgroundColor: '#1600ff' }}
+                    >
+                      <span className="text-white text-lg xs:text-xl md:text-2xl font-bold">
+                        {post.fundraiser.name}
+                      </span>
+                    </div>
+                  )}
+                </div>
+              )}
 
               {/* Fundraiser Info */}
               <div className="mb-2 md:mb-3 bg-white p-4 rounded-b-lg border border-t-0 border-gray-100">

@@ -559,22 +559,23 @@ export default function CreateFundraiser() {
                     id="cover-image-upload-input"
                   />
                   {uploadedCoverImagePreview ? (
-                    <div className="relative rounded-lg border border-gray-200 overflow-hidden" style={{ height: '180px' }}>
-                      <img
-                        src={uploadedCoverImagePreview}
-                        alt="Campaign cover"
-                        className="w-full h-full object-cover"
-                      />
-                      <button
-                        onClick={() => {
-                          setUploadedCoverImage(null);
-                          setUploadedCoverImagePreview(null);
-                        }}
-                        className="absolute top-2 right-2 p-1.5 bg-white rounded-full shadow-md hover:bg-gray-100 transition-colors"
-                        aria-label="Remove image"
-                      >
-                        <X className="w-4 h-4 text-gray-700" />
-                      </button>
+                    <div className="mb-4">
+                      <div className="relative rounded-lg overflow-hidden">
+                        <img
+                          src={uploadedCoverImagePreview}
+                          alt="Selected"
+                          className="w-full h-[140px] md:h-[200px] object-contain bg-gray-50"
+                        />
+                        <button
+                          onClick={() => {
+                            setUploadedCoverImage(null);
+                            setUploadedCoverImagePreview(null);
+                          }}
+                          className="absolute top-2 right-2 w-8 h-8 bg-black bg-opacity-50 rounded-full flex items-center justify-center text-white hover:bg-opacity-70"
+                        >
+                          <X size={16} />
+                        </button>
+                      </div>
                     </div>
                   ) : (
                     <div
