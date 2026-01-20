@@ -108,7 +108,7 @@ export default function ProfilePage() {
     mutationFn: () => followUserById(userId || ''),
     onSuccess: () => {
       setIsFollowing(true);
-      // setToastMessage("Followed successfully!");
+      setToastMessage("Followed successfully!");
       setShowToast(true);
       queryClient.invalidateQueries({ queryKey: ['userProfile', userId] });
     },
@@ -124,7 +124,7 @@ export default function ProfilePage() {
     mutationFn: () => unfollowUserById(userId || ''),
     onSuccess: () => {
       setIsFollowing(false);
-      // setToastMessage("Unfollowed successfully!");
+      setToastMessage("Unfollowed successfully!");
       setShowToast(true);
       queryClient.invalidateQueries({ queryKey: ['userProfile', userId] });
     },
