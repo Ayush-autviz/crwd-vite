@@ -4,12 +4,14 @@ import { Card, CardContent } from './ui/card'
 import { ChevronRight, Search, Menu, Users, CheckSquare, Settings, LogIn, X } from 'lucide-react';
 import { useNavigate, Link } from 'react-router-dom';
 import AutomaticImpact from './guest/AutomaticImpact';
+import ShowStandFor from './guest/ShowStandFor';
 import PopularCollectives from './guest/PopularCollectives';
 import LearnAndGetInspired from './guest/LearnAndGetInspired';
 import CommunityTestimonials from './guest/CommunityTestimonials';
 import StartMakingDifference from './guest/StartMakingDifference';
 import Footer from './Footer';
 import { NewLogo } from '@/assets/newLogo';
+import { Check } from 'lucide-react';
 
 // Define two sets of causes with their styling
 const causeSets = [
@@ -105,7 +107,7 @@ export default function GuestHome() {
                         onClick={() => navigate("/login")}
                         className="bg-[#ff3366] hover:bg-[#ff0033] text-white font-bold px-3 py-1 xs:px-4  md:px-6 md:py-2 rounded-full text-xs xs:text-sm md:text-base whitespace-nowrap"
                     >
-                        Sign In
+                        Get Started
                     </button>
 
                     {/* Get the App Button
@@ -149,23 +151,42 @@ export default function GuestHome() {
                     </Button>
 
                 </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 justify-center items-center gap-2 md:gap-6 mb-3 md:mb-6">
+                    <div className="flex items-center justify-center md:justify-end gap-1.5 md:gap-2">
+                        <div className="w-4 h-4 md:w-6 md:h-6 rounded-full flex items-center justify-center flex-shrink-0">
+                            <Check className="w-3.5 h-3.5 md:w-4 md:h-4 text-blue-600" />
+                        </div>
+                        <p className="text-gray-700 font-[600] text-sm xs:text-base md:text-base">
+                            Thousands of verified nonprofits
+                        </p>
+                    </div>
+                    <div className="flex items-center justify-center gap-1.5 md:gap-2">
+                        <div className="w-4 h-4 md:w-6 md:h-6 rounded-full flex items-center justify-center flex-shrink-0">
+                            <Check className="w-3.5 h-3.5 md:w-4 md:h-4 text-blue-600" />
+                        </div>
+                        <p className="text-gray-700 font-[600] text-sm xs:text-base md:text-base">
+                            Start with any amount
+                        </p>
+                    </div>
+                </div>
             </div>
 
             {/* See the Magic in Action Section */}
             <div className="bg-gradient-to-br from-[#f1f6ff] via-[#f7f6ff] to-[#fdf3f8] py-4 md:py-16 px-4 md:px-6">
                 <div className="max-w-4xl mx-auto">
                     <h2 className="font-[800] text-foreground mb-1.5 md:mb-4 text-center text-xl xs:text-2xl md:text-2xl" style={{ fontSize: 'clamp(1.5rem, 5vw, 2.5rem)' }}>
-                        See the <span className="text-[#1600ff]">Magic</span> in Action
+                        One Donation. <span className="text-[#1600ff]">Every</span> Cause You Care About.
                     </h2>
                     <p className="text-muted-foreground my-4 md:my-8 text-center text-sm xs:text-base md:text-base" style={{ fontSize: 'clamp(0.9rem, 2vw, 1.25rem)' }}>
-                        Pick your causes. Give once. Multiply your impact.
+                        Set your monthly amount. We split it automatically.
                     </p>
 
                     {/* Demo Card */}
                     <Card className="max-w-[90%] md:max-w-[80%] lg:max-w-3xl mx-auto">
-                        <CardContent className="p-2.5 md:p-8 lg:p-12">
+                        <CardContent className="p-2.5 md:p-8">
                             <div className="text-gray-500 mb-2 md:mb-4 text-center text-sm xs:text-base md:text-base" style={{ fontSize: 'clamp(0.875rem, 2vw, 1.125rem)' }}>
-                                You can give <span className="text-[#1600ff] font-[900]" style={{ fontSize: 'clamp(1.75rem, 5vw, 3rem)' }}>${donationAmount}</span>/month to
+                                <p>Move the slider to see your impact:</p>
+                                You can give <span className="text-[#1600ff] font-[900]" style={{ fontSize: 'clamp(1.65rem, 5vw, 2.9rem)' }}>${donationAmount}</span>/month to
                             </div>
 
                             {/* Slider */}
@@ -226,6 +247,9 @@ export default function GuestHome() {
 
             {/* Automatic Impact Section */}
             <AutomaticImpact />
+
+            {/* Show What You Stand For Section */}
+            <ShowStandFor />
 
             {/* Popular Collectives Section */}
             <PopularCollectives />

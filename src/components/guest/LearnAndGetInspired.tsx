@@ -62,10 +62,13 @@ export default function LearnAndGetInspired({
     <div className="bg-card py-6 md:py-16 px-4 md:px-6">
       <div className="max-w-6xl mx-auto">
         {/* Header with Title and Link */}
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 md:mb-8 gap-3 md:gap-4">
+        <div className="flex flex-col mb-4 md:mb-8 gap-3 md:gap-4">
           <h2 className="font-[800] text-foreground text-2xl xs:text-3xl md:text-2xl" style={{ fontSize: 'clamp(1.5rem, 4vw, 2.5rem)' }}>
-            Learn & Get Inspired
+            New to Giving? Start Here.
           </h2>
+          <p className="text-muted-foreground text-sm md:text-sm">Whether you've never donated before or you're looking to give more effectively, these guides will help.
+
+          </p>
           {/* <Link
             to={seeAllLink} */}
           {/* <a href={seeAllLink}

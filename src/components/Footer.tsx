@@ -59,13 +59,13 @@ const Footer = () => {
                 to="/create-crwd"
                 className="block text-white hover:text-gray-300 transition-colors text-xs md:text-sm lg:text-base"
               >
-                Create a CRWD
+                Start a Collective
               </Link>
               <Link
                 to="/circles"
                 className="block text-white hover:text-gray-300 transition-colors text-xs md:text-sm lg:text-base"
               >
-                Browse Giving Groups
+                Browse Collectives
               </Link>
             </nav>
           </div>

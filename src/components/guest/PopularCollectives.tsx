@@ -5,6 +5,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { getCollectives } from "@/services/api/crwd";
+import { useNavigate } from "react-router-dom";
 
 interface Collective {
   id: string | number;
@@ -33,6 +34,7 @@ export default function PopularCollectives({
     enabled: true,
   });
 
+  const navigate = useNavigate();
   // Generate color for icon if not provided
   const getIconColor = (name: string): string => {
     const colors = [
@@ -85,9 +87,10 @@ export default function PopularCollectives({
     return (
       <div className="bg-card py-10 md:py-16 px-4 md:px-6">
         <div className="max-w-6xl mx-auto">
-          <h2 className="font-[800] text-foreground mb-6 md:mb-8" style={{ fontSize: 'clamp(1.5rem, 4vw, 2.5rem)' }}>
-            Popular Collectives
+          <h2 className="font-[800] text-center text-foreground mb-6 md:mb-8" style={{ fontSize: 'clamp(1.3rem, 4vw, 2rem)' }}>
+            Give With Others - Join or Start a Collective
           </h2>
+          <p className="text-center text-muted-foreground text-sm md:text-base mb-4 md:mb-8">Groups giving together to shared causes. Join free or start your own.</p>
           <div className="flex items-center justify-center py-12">
             <Loader2 className="h-8 w-8 animate-spin text-[#1600ff]" />
           </div>
@@ -101,12 +104,13 @@ export default function PopularCollectives({
   }
 
   return (
-    <div className="bg-card py-6 md:py-16 px-4 md:px-6">
+    <div className="bg-card py-6 md:py-16 px-4 md:px-6 bg-gray-50">
       <div className="max-w-6xl mx-auto">
         {/* Title */}
-        <h2 className="font-[800] text-foreground mb-4 md:mb-8 text-2xl xs:text-3xl md:text-2xl" style={{ fontSize: 'clamp(1.5rem, 4vw, 2.5rem)' }}>
-          Popular Collectives
+        <h2 className="font-[800] text-center text-foreground mb-4 md:mb-8 text-2xl xs:text-3xl md:text-2xl" style={{ fontSize: 'clamp(1.3rem, 4vw, 2rem)' }}>
+          Give With Others - Join or Start a Collective
         </h2>
+        <p className="text-center text-muted-foreground text-sm md:text-base mb-4 md:mb-8">Groups giving together to shared causes. Join free or start your own.</p>
 
         {/* Grid Layout: 3 cards top row, 1 card bottom left */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-6 mb-4 md:mb-8">
@@ -193,17 +197,23 @@ export default function PopularCollectives({
         </div>
 
         {/* See All Collectives Button */}
-        <div className="flex justify-center">
-          {/* <Link to={seeAllLink}> */}
-          <a href={seeAllLink}>
+        <div className="flex flex-col sm:flex-row justify-center items-center gap-3 w-full px-4 sm:px-0">
+          <Button
+            variant="default"
+            onClick={() => navigate("/create-crwd")}
+            className="w-full sm:w-auto rounded-full px-6 md:px-8 py-2 md:py-3 text-sm xs:text-base md:text-lg font-medium"
+          >
+            Start Your Own Collective
+          </Button>
+
+          <a href={seeAllLink} className="w-full sm:w-auto">
             <Button
               variant="outline"
-              className="border-[#a854f7] rounded-full text-[#a854f7] hover:bg-[#a854f7] hover:text-white px-6 md:px-8 py-2 md:py-3 text-sm xs:text-base md:text-lg font-medium"
+              className="w-full sm:w-auto border-[#a854f7] rounded-full text-[#a854f7] hover:bg-[#a854f7] hover:text-white px-6 md:px-8 py-2 md:py-3 text-sm xs:text-base md:text-lg font-medium"
             >
               See All Collectives
             </Button>
           </a>
-          {/* </Link> */}
         </div>
       </div>
     </div>

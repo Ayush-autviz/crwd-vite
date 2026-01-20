@@ -19,7 +19,7 @@ export default function HelloGreeting() {
   return (
     <div className="w-full md:max-w-2xl md:mx-auto">
       <h1 className="text-base xs:text-lg md:text-2xl font-bold text-foreground mb-3 ">
-        Hi {userName}, keep up the great work!
+        Hi {userName}!, You're making a difference.
       </h1>
     </div>
   );

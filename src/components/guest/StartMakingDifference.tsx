@@ -9,12 +9,12 @@ export default function StartMakingDifference() {
       <div className="max-w-4xl mx-auto text-center">
         {/* Headline */}
         <h2 className="font-[900] text-white mb-3 md:mb-6 text-2xl xs:text-3xl md:text-3xl" style={{ fontSize: 'clamp(2rem, 5vw, 3.5rem)' }}>
-          Start Making a Difference
+          Ready to Turn Caring Into Doing?
         </h2>
 
         {/* Subtitle */}
         <p className="text-white mb-4 md:mb-8 text-base xs:text-lg md:text-xl max-w-2xl mx-auto">
-          The simplest way to support every cause you care about.
+          Ready to Turn Caring Into Doing? The simplest way to support every cause you care about.
         </p>
 
         {/* Call-to-Action Button */}

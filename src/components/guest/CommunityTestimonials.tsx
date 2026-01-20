@@ -83,8 +83,11 @@ export default function CommunityTestimonials({
       <div className="max-w-4xl lg:max-w-5xl xl:max-w-6xl mx-auto">
         {/* Title */}
         <h2 className="font-[800] text-foreground mb-4 md:mb-8 lg:mb-10 xl:mb-12 text-center text-2xl xs:text-3xl md:text-3xl" style={{ fontSize: 'clamp(1.5rem, 4vw, 3rem)' }}>
-          What Our Community Is Saying
+          See What's Happening in the Community
         </h2>
+
+        <p className="text-muted-foreground text-center text-sm md:text-sm mb-4 md:mb-8">Real posts from people showing up for causes they care about.
+        </p>
 
         {/* Posts List */}
         {isLoading ? (
