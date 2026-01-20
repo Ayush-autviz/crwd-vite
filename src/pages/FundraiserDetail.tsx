@@ -260,9 +260,14 @@ export default function FundraiserDetail() {
               <span className="text-xs md:text-sm text-gray-600">
                 {(fundraiserData.progress_percentage || 0).toFixed(2)}% of goal
               </span>
-              {daysLeft > 0 && (
+              {fundraiserData.is_active && daysLeft > 0 && (
                 <span className="text-xs md:text-sm text-gray-600">
                   {daysLeft} day{daysLeft !== 1 ? 's' : ''} left
+                </span>
+              )}
+              {!fundraiserData.is_active && (
+                <span className="text-xs md:text-sm text-gray-600">
+                  Fundraiser Ended
                 </span>
               )}
             </div>

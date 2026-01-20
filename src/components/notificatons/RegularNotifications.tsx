@@ -702,13 +702,27 @@ const RegularNotifications: React.FC<RegularNotificationsProps> = ({
       // Extract collective name from body or title
       let collectiveName = '';
       if (notification.body) {
+        // Pattern 1: "received donation to [collective]"
         const receivedMatch = notification.body.match(/received.*?donation.*?to (.+)/i);
         if (receivedMatch) {
           collectiveName = receivedMatch[1].trim();
         } else {
-          const joinedMatch = notification.body.match(/joined (.+)/i);
+          // Pattern 2: "joined [collective]" or "@username joined [collective]"
+          const joinedMatch = notification.body.match(/joined\s+(.+?)(?:\.|Supporting)/i);
           if (joinedMatch) {
             collectiveName = joinedMatch[1].trim();
+          } else {
+            // Pattern 3: "posted in [collective]"
+            const postedMatch = notification.body.match(/posted\s+in\s+(.+)/i);
+            if (postedMatch) {
+              collectiveName = postedMatch[1].trim();
+            } else {
+              // Pattern 4: Just "joined [collective]" without period
+              const simpleJoinedMatch = notification.body.match(/joined\s+(.+)/i);
+              if (simpleJoinedMatch) {
+                collectiveName = simpleJoinedMatch[1].trim();
+              }
+            }
           }
         }
       }
@@ -744,6 +758,7 @@ const RegularNotifications: React.FC<RegularNotificationsProps> = ({
         notification.data?.user_id;
 
       // Extract username from body if it contains @username pattern (e.g., "@jake_long liked your post")
+      // Also check data.follower_username for follower notifications
       let username = '';
       if (notification.body) {
         const usernameMatch = notification.body.match(/@(\w+)/);
@@ -751,25 +766,50 @@ const RegularNotifications: React.FC<RegularNotificationsProps> = ({
           username = usernameMatch[1];
         }
       }
+      // Use follower_username from data if available
+      if (!username && notification.data?.follower_username) {
+        username = notification.data.follower_username;
+      }
 
       // Get user profile from fetched profiles map if available
       const userProfile = userId ? userProfilesMap.get(userId.toString()) : null;
       const profileUser = userProfile?.user || userProfile;
 
-      // Get user info from fetched profile, notification.user, or notification.data
+      // Extract full name from body text if it appears (e.g., "Aayush Bajaj commented", "Jake Smith joined", "Chad F has started")
+      let extractedFirstName = '';
+      let extractedLastName = '';
+      if (notification.body && !username) {
+        // Try to extract full name pattern: "First Last" or "First L" at the start
+        // Matches: "Aayush Bajaj", "Jake Smith", "Chad F", etc.
+        const fullNameMatch = notification.body.match(/^([A-Z][a-z]+(?:\s+[A-Z][a-z]*)?)\s/);
+        if (fullNameMatch) {
+          const nameParts = fullNameMatch[1].split(/\s+/);
+          if (nameParts.length >= 2) {
+            extractedFirstName = nameParts[0];
+            extractedLastName = nameParts.slice(1).join(' ');
+          } else if (nameParts.length === 1) {
+            extractedFirstName = nameParts[0];
+          }
+        }
+      }
+
+      // Get user info from fetched profile, notification.user, notification.data, or extracted from body
       const firstName =
         profileUser?.first_name ||
         notification.user?.first_name ||
-        notification.data?.first_name || '';
+        notification.data?.first_name ||
+        extractedFirstName || '';
       const lastName =
         profileUser?.last_name ||
         notification.user?.last_name ||
-        notification.data?.last_name || '';
+        notification.data?.last_name ||
+        extractedLastName || '';
       const extractedUsername =
         username ||
         profileUser?.username ||
         notification.user?.username ||
-        notification.data?.username || '';
+        notification.data?.username ||
+        notification.data?.follower_username || '';
 
       const postId = notification.data?.post_id || notification.data?.post?.id || notification.post_id;
       const collectiveId = notification.data?.collective_id || notification.data?.collective?.id;
@@ -784,7 +824,7 @@ const RegularNotifications: React.FC<RegularNotificationsProps> = ({
         memberName: memberName,
         donationAmount: donationAmount,
         time: formatTimeAgo(notification.created_at || notification.updated_at),
-        avatarUrl: notification.data?.user_profile_picture || '',
+        avatarUrl: notification.data?.user_profile_picture || profileUser?.profile_picture || notification.user?.profile_picture || '',
         collectiveId: collectiveId,
         nonprofitId: nonprofitId,
         postId: postId,
@@ -792,7 +832,7 @@ const RegularNotifications: React.FC<RegularNotificationsProps> = ({
         firstName: firstName,
         lastName: lastName,
         username: extractedUsername,
-        color: notification.data?.user_color || ""
+        color: notification.data?.user_color || profileUser?.color || notification.user?.color || ""
       };
     });
   }, [personalNotifications, userProfilesMap]);
@@ -1028,66 +1068,113 @@ const RegularNotifications: React.FC<RegularNotificationsProps> = ({
                   })()
                 ) : (
                   (() => {
-                    // Parse description for @username mentions and collective names
+                    // Parse description for full names, @username mentions, and collective names
                     const description = notification.description;
                     if (!description) return '';
 
-                    // Split description into parts and create clickable links
-                    const parts: React.ReactNode[] = [];
-                    let lastIndex = 0;
+                    // Collect all matches with their positions
+                    const matches: Array<{ index: number; length: number; type: 'username' | 'fullname' | 'collective'; userId?: string; collectiveId?: string }> = [];
 
-                    // Find @username mentions
-                    if (notification.userId && notification.username) {
-                      const usernamePattern = new RegExp(`@${notification.username}\\b`, 'gi');
-                      let match;
-                      while ((match = usernamePattern.exec(description)) !== null) {
-                        // Add text before match
-                        if (match.index > lastIndex) {
-                          parts.push(description.substring(lastIndex, match.index));
-                        }
-                        // Add clickable link
-                        parts.push(
-                          <Link
-                            key={`user-${match.index}`}
-                            to={`/user-profile/${notification.userId}`}
-                            className="font-semibold text-gray-700 hover:underline"
-                            onClick={(e) => e.stopPropagation()}
-                          >
-                            {match[0]}
-                          </Link>
+                    // Find @username mentions - make them clickable if we have userId
+                    const usernamePattern = /@(\w+)/gi;
+                    let match: RegExpExecArray | null;
+                    while ((match = usernamePattern.exec(description)) !== null) {
+                      // If we have userId, make the @username clickable (it's the user who triggered the notification)
+                      if (notification.userId) {
+                        matches.push({
+                          index: match.index,
+                          length: match[0].length,
+                          type: 'username',
+                          userId: notification.userId.toString()
+                        });
+                      }
+                    }
+
+                    // Find full names (pattern: "First Last")
+                    if (notification.userId && notification.firstName && notification.lastName) {
+                      const fullNamePattern = new RegExp(`\\b${notification.firstName}\\s+${notification.lastName}\\b`, 'gi');
+                      let nameMatch: RegExpExecArray | null;
+                      while ((nameMatch = fullNamePattern.exec(description)) !== null) {
+                        const isOverlapping = matches.some(m => 
+                          nameMatch!.index >= m.index && nameMatch!.index < m.index + m.length
                         );
-                        lastIndex = match.index + match[0].length;
+                        if (!isOverlapping) {
+                          matches.push({
+                            index: nameMatch.index,
+                            length: nameMatch[0].length,
+                            type: 'fullname',
+                            userId: notification.userId.toString()
+                          });
+                        }
                       }
                     }
 
                     // Find collective name mentions
                     if (notification.collectiveId && notification.collectiveName) {
                       const collectivePattern = new RegExp(notification.collectiveName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'gi');
-                      let match;
-                      while ((match = collectivePattern.exec(description)) !== null) {
-                        // Check if this part is already a link
-                        if (match.index >= lastIndex) {
-                          // Add text before match if needed
-                          if (match.index > lastIndex) {
-                            parts.push(description.substring(lastIndex, match.index));
-                          }
-                          // Add clickable link
-                          parts.push(
-                            <Link
-                              key={`collective-${match.index}`}
-                              to={`/groupcrwd/${notification.collectiveId}`}
-                              className="font-semibold text-gray-700 hover:underline"
-                              onClick={(e) => e.stopPropagation()}
-                            >
-                              {match[0]}
-                            </Link>
-                          );
-                          lastIndex = match.index + match[0].length;
+                      let collectiveMatch: RegExpExecArray | null;
+                      while ((collectiveMatch = collectivePattern.exec(description)) !== null) {
+                        const isOverlapping = matches.some(m => 
+                          collectiveMatch!.index >= m.index && collectiveMatch!.index < m.index + m.length
+                        );
+                        if (!isOverlapping) {
+                          matches.push({
+                            index: collectiveMatch.index,
+                            length: collectiveMatch[0].length,
+                            type: 'collective',
+                            collectiveId: notification.collectiveId.toString()
+                          });
                         }
                       }
                     }
 
-                    // Add remaining text
+                    // Sort matches by index
+                    matches.sort((a, b) => a.index - b.index);
+
+                    // Build parts array
+                    const parts: React.ReactNode[] = [];
+                    let lastIndex = 0;
+
+                    for (const matchItem of matches) {
+                      if (matchItem.index > lastIndex) {
+                        parts.push(description.substring(lastIndex, matchItem.index));
+                      }
+
+                      if (matchItem.type === 'username' || matchItem.type === 'fullname') {
+                        if (matchItem.userId) {
+                          parts.push(
+                            <Link
+                              key={`user-${matchItem.index}`}
+                              to={`/user-profile/${matchItem.userId}`}
+                              className="font-semibold text-gray-700 hover:underline"
+                              onClick={(e) => e.stopPropagation()}
+                            >
+                              {description.substring(matchItem.index, matchItem.index + matchItem.length)}
+                            </Link>
+                          );
+                        } else {
+                          parts.push(description.substring(matchItem.index, matchItem.index + matchItem.length));
+                        }
+                      } else if (matchItem.type === 'collective') {
+                        if (matchItem.collectiveId) {
+                          parts.push(
+                            <Link
+                              key={`collective-${matchItem.index}`}
+                              to={`/groupcrwd/${matchItem.collectiveId}`}
+                              className="font-semibold text-gray-700 hover:underline"
+                              onClick={(e) => e.stopPropagation()}
+                            >
+                              {description.substring(matchItem.index, matchItem.index + matchItem.length)}
+                            </Link>
+                          );
+                        } else {
+                          parts.push(description.substring(matchItem.index, matchItem.index + matchItem.length));
+                        }
+                      }
+
+                      lastIndex = matchItem.index + matchItem.length;
+                    }
+
                     if (lastIndex < description.length) {
                       parts.push(description.substring(lastIndex));
                     }
