@@ -937,7 +937,7 @@ const ManageDonationBox: React.FC<ManageDonationBoxProps> = ({
                                 )}
                               </div>
                               <div className="flex items-center gap-3 md:gap-4">
-                                <div className="text-right">
+                                {/* <div className="text-right">
                                   <div className="font-bold text-gray-900 text-sm md:text-base">
                                     {(() => {
                                       const customPercentage = getCausePercentage(causeId);
@@ -951,7 +951,7 @@ const ManageDonationBox: React.FC<ManageDonationBoxProps> = ({
                                   <div className="text-xs md:text-sm text-gray-500">
                                     ${getAmountPerItem(causeId).toFixed(2)}/mo
                                   </div>
-                                </div>
+                                </div> */}
                                 <button
                                   className="text-red-500 hover:text-red-600 transition-colors flex-shrink-0"
                                   onClick={() => handleDeselectCause(causeId, org.isNewlySelected, org.name)}
