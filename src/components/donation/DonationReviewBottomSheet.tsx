@@ -184,9 +184,13 @@ export default function DonationReviewBottomSheet({
                 <span className="text-sm md:text-base font-semibold text-gray-900">{totalCauses} cause{totalCauses !== 1 ? 's' : ''}</span>
               </div>
               <div className="flex justify-between items-center">
-                <div className="flex items-center gap-1 md:gap-1.5">
+                <div className="flex items-center gap-1 md:gap-1.5 group relative">
                   <span className="text-xs md:text-sm text-gray-600">Platform fee:</span>
-                  <Info className="w-3.5 h-3.5 md:w-4 md:h-4 text-gray-400" />
+                  <Info className="w-3.5 h-3.5 md:w-4 md:h-4 text-gray-400 cursor-pointer" />
+                  <div className="absolute bottom-full left-5/3 transform -translate-x-1/2 mb-2 px-2.5 md:px-3 py-1.5 md:py-2 bg-gray-900 text-white text-xs md:text-sm rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none z-10 w-[300px] text-center">
+                    This fee covers payment processing and platform operations
+                    {/* <div className="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-gray-900"></div> */}
+                  </div>
                 </div>
                 <span className="text-sm md:text-base font-semibold text-gray-900">${platformFee.toFixed(2)}</span>
               </div>

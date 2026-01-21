@@ -36,6 +36,7 @@ import {
   SheetTitle,
   SheetDescription,
 } from "@/components/ui/sheet";
+import { SharePost } from "@/components/ui/SharePost";
 
 // Avatar colors for consistent fallback styling
 const avatarColors = [
@@ -59,6 +60,7 @@ export default function ProfilePage() {
   const [showStatsSheet, setShowStatsSheet] = useState(false);
   const [activeStatsTab, setActiveStatsTab] = useState<'causes' | 'crwds' | 'followers' | 'following'>('causes');
   const [showFounderSheet, setShowFounderSheet] = useState(false);
+  const [showShareModal, setShowShareModal] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
   const { user: currentUser } = useAuthStore();
   const queryClient = useQueryClient();
@@ -147,18 +149,9 @@ export default function ProfilePage() {
     }
   };
 
-  const handleShareProfile = async () => {
-    try {
-      const profileUrl = `${window.location.origin}/user-profile/${userId}`;
-      await navigator.clipboard.writeText(profileUrl);
-      setToastMessage("Profile link copied to clipboard");
-      setShowToast(true);
-      setShowMenu(false);
-    } catch (err) {
-      console.error("Failed to copy profile link:", err);
-      setToastMessage("Failed to copy profile link");
-      setShowToast(true);
-    }
+  const handleShareProfile = () => {
+    setShowMenu(false);
+    setShowShareModal(true);
   };
 
   // Statistics bottom sheet queries
@@ -388,7 +381,7 @@ export default function ProfilePage() {
                 <Share className="h-4 w-4" />
                 Share Profile
               </button>
-              <button
+              {/* <button
                 onClick={() => {
                   setShowMenu(false);
                   // Handle report profile
@@ -398,7 +391,7 @@ export default function ProfilePage() {
               >
                 <Flag className="h-4 w-4" />
                 Report Profile
-              </button>
+              </button> */}
             </div>
           )}
         </div>
@@ -1049,6 +1042,15 @@ export default function ProfilePage() {
           </div>
         </SheetContent>
       </Sheet>
+
+      {/* Share Modal */}
+      <SharePost
+        isOpen={showShareModal}
+        onClose={() => setShowShareModal(false)}
+        url={`${window.location.origin}/user-profile/${userId}`}
+        title={`Check out ${userProfile?.first_name} ${userProfile?.last_name}'s profile on CRWD`}
+        description={`See the causes and collectives supported by ${userProfile?.first_name} ${userProfile?.last_name} on CRWD.`}
+      />
 
       {/* Toast notification */}
       <Toast
