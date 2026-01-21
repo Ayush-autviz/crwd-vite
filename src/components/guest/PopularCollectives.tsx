@@ -197,23 +197,29 @@ export default function PopularCollectives({
         </div>
 
         {/* See All Collectives Button */}
-        <div className="flex flex-col sm:flex-row justify-center items-center gap-3 w-full px-4 sm:px-0">
+        <div className="flex flex-col sm:flex-row justify-center items-center gap-5 w-full px-4 sm:px-2 mt-2">
           <Button
             variant="default"
+            size="lg"
             onClick={() => navigate("/create-crwd")}
-            className="w-full sm:w-auto rounded-full px-6 md:px-8 py-2 md:py-3 text-sm xs:text-base md:text-lg font-medium"
+            // className="w-full sm:w-auto rounded-full h-9 px-6 md:px-8 py-2 md:py-3 text-sm xs:text-base md:text-lg font-medium"
+            className="h-10 md:h-14 px-8 md:px-10 py-1 md:py-4 rounded-full bg-[#1600ff] text-white font-bold text-lg md:text-lg"
+
           >
             Start Your Own Collective
           </Button>
 
-          <a href={seeAllLink} className="w-full sm:w-auto">
+          {/* <a href={seeAllLink} className="w-full sm:w-auto"> */}
             <Button
               variant="outline"
-              className="w-full sm:w-auto border-[#a854f7] rounded-full text-[#a854f7] hover:bg-[#a854f7] hover:text-white px-6 md:px-8 py-2 md:py-3 text-sm xs:text-base md:text-lg font-medium"
+              size="lg"
+              onClick={() => navigate("/circles")}
+              // className="w-full sm:w-auto border-[#a854f7] rounded-full text-[#a854f7] hover:bg-[#a854f7] hover:text-white px-6 md:px-8 py-2 md:py-3 text-sm xs:text-base md:text-lg font-medium"
+              className="h-10 md:h-14 px-8 md:px-10 py-1 md:py-4 rounded-full border-[#a854f7] text-[#a854f7] hover:bg-[#a854f7] hover:text-white font-bold text-lg md:text-lg"
             >
               See All Collectives
             </Button>
-          </a>
+          {/* </a> */}
         </div>
       </div>
     </div>

@@ -33,7 +33,7 @@ export default function MyDonationBoxCard({
           </p>
           <Link
             to="/donation"
-            className="text-[#1600ff] text-[10px] xs:text-xs md:text-base font-semibold inline-flex items-center gap-1 hover:underline"
+            className="text-[#1600ff] text-xs xs:text-sm md:text-base font-semibold inline-flex items-center gap-1 hover:underline"
           >
             Manage <ArrowRight className="h-3.5 w-3.5 md:h-4 md:w-4" strokeWidth={2.5} />
           </Link>

@@ -880,7 +880,7 @@ export default function ProfilePage() {
                                   ? `${userData.first_name} ${userData.last_name}`
                                   : userData.first_name || userData.name || 'Unknown User'}
                               </p>
-                              <p className="text-[10px] md:text-xs text-gray-500">@{userData.username || 'unknown'}</p>
+                              <p className="text-[10px] md:text-xs text-gray-500 line-clamp-1">{userData.bio || userData.location}</p>
                             </div>
                           </Link>
                           {userData.id !== currentUser?.id && (
@@ -944,7 +944,7 @@ export default function ProfilePage() {
                                   ? `${userData.first_name} ${userData.last_name}`
                                   : userData.first_name || userData.name || 'Unknown User'}
                               </p>
-                              <p className="text-[10px] md:text-xs text-gray-500">@{userData.username || 'unknown'}</p>
+                              <p className="text-[10px] md:text-xs text-gray-500 line-clamp-1">{userData.bio || userData.location}</p>
                             </div>
                           </Link>
                           {userData.id !== currentUser?.id && (

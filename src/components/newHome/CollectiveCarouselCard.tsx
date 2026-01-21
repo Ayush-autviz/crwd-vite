@@ -527,14 +527,15 @@ export default function CollectiveCarouselCard({
               {/* Action Buttons */}
               <div className="flex justify-start items-center gap-1.5 md:gap-2">
                 <span
-                  className="text-[#1600ff] hover:text-[#1600ff]  text-base md:text-base font-semibold inline-flex items-center gap-1 hover:underline w-[20%] cursor-pointer"
+                  // className="text-[#1600ff] hover:text-[#1600ff]  text-base md:text-base font-semibold inline-flex items-center gap-1 hover:underline w-[35%] cursor-pointer"
+            className="text-[#1600ff] text-xs xs:text-sm   md:text-base font-semibold inline-flex items-center gap-1 hover:underline w-[35%] cursor-pointer"
                   onClick={(e) => { e.stopPropagation(); handleButtonClick(); }}
                 >
                   {isFounder ? "Manage" : "View"} <ArrowRight className="h-3.5 w-3.5 md:h-4 md:w-4" strokeWidth={2.5} />
                 </span>
                 <Button
                   size="sm"
-                  className="bg-[#1600ff] hover:bg-[#1400cc] text-white flex items-center justify-center gap-1 md:gap-1.5 text-sm md:text-base h-7 md:h-9 px-2 md:px-3 font-semibold w-[30%]"
+                  className="bg-[#1600ff] hover:bg-[#1400cc] text-white flex items-center justify-center gap-1 md:gap-1.5 text-sm md:text-base h-7 md:h-9 px-2 md:px-3 font-semibold w-[35%]"
                   onClick={(e) => { e.stopPropagation(); setShowShareModal(true); }}
                 >
                   Share

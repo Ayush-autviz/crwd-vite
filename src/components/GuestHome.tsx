@@ -152,12 +152,12 @@ export default function GuestHome() {
                     </Button>
 
                 </div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 justify-center items-center gap-2  mb-3 md:mb-6">
+                <div className="flex flex-col sm:flex-row justify-center items-center gap-2  mb-3 md:mb-6">
                     <div className="flex items-center justify-center gap-1.5 md:gap-2">
                         <div className="w-4 h-4 md:w-6 md:h-6 rounded-full flex items-center justify-center flex-shrink-0">
                             <Check className="w-3.5 h-3.5 md:w-4 md:h-4 text-blue-600" />
                         </div>
-                        <p className="text-gray-700 font-[600] text-sm xs:text-base md:text-base">
+                        <p className="text-gray-700 font-[600] text-sm xs:text-base md:text-lg">
                             Thousands of verified nonprofits
                         </p>
                     </div>
@@ -165,7 +165,7 @@ export default function GuestHome() {
                         <div className="w-4 h-4 md:w-6 md:h-6 rounded-full flex items-center justify-center flex-shrink-0">
                             <Check className="w-3.5 h-3.5 md:w-4 md:h-4 text-blue-600" />
                         </div>
-                        <p className="text-gray-700 font-[600] text-sm xs:text-base md:text-base">
+                        <p className="text-gray-700 font-[600] text-sm xs:text-base md:text-lg">
                             Start with any amount
                         </p>
                     </div>
@@ -240,7 +240,7 @@ export default function GuestHome() {
                             >
                                 Start Supporting <ChevronRight className="ml-1.5 md:ml-2 h-3.5 w-3.5 md:h-5 md:w-5" />
                             </Button>
-                            <p className="text-gray-500 text-center mt-2 md:mt-4 text-xs xs:text-sm md:text-base" style={{ fontSize: 'clamp(0.75rem, 2vw, 1rem)' }}>Every dollar makes a difference</p>
+                            {/* <p className="text-gray-500 text-center mt-2 md:mt-4 text-xs xs:text-sm md:text-base" style={{ fontSize: 'clamp(0.75rem, 2vw, 1rem)' }}>Every dollar makes a difference</p> */}
                         </CardContent>
                     </Card>
                 </div>
