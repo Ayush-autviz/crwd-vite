@@ -73,7 +73,7 @@ export default function NewSearchPage() {
     queryFn: ({ pageParam = 1 }: { pageParam?: number }) => {
       if (categoryId && activeTab === 'Causes') {
         // Use getCausesBySearch for category filtering
-        // If the search query matches the category name (passed from navigation), don't filter by text
+        // When searching by category, pass empty string for search term to get all causes in that category
         const categoryName = location.state?.categoryName;
         const searchTerm = (categoryName && searchQuery === categoryName) ? '' : searchQuery;
 

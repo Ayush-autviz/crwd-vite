@@ -140,7 +140,8 @@ export default function GuestHome() {
                     </h1>
 
                     <p className="text-muted-foreground my-8  max-w-2xl mx-auto text-base md:text-base" style={{ fontSize: 'clamp(1.2rem, 2vw, 1.5rem)' }}>
-                        What if you could support every cause you care about automatically, affordably, and powerfully?
+                        {/* What if you could support every cause you care about automatically, affordably, and powerfully? */}
+                        Support multiple charities with one donation.                    
                     </p>
 
                     <Button
@@ -151,8 +152,8 @@ export default function GuestHome() {
                     </Button>
 
                 </div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 justify-center items-center gap-2 md:gap-6 mb-3 md:mb-6">
-                    <div className="flex items-center justify-center md:justify-end gap-1.5 md:gap-2">
+                <div className="grid grid-cols-1 sm:grid-cols-2 justify-center items-center gap-2  mb-3 md:mb-6">
+                    <div className="flex items-center justify-center gap-1.5 md:gap-2">
                         <div className="w-4 h-4 md:w-6 md:h-6 rounded-full flex items-center justify-center flex-shrink-0">
                             <Check className="w-3.5 h-3.5 md:w-4 md:h-4 text-blue-600" />
                         </div>

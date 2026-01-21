@@ -13,12 +13,12 @@ export default function CauseProfile({ causeData }: CauseProfileProps) {
 
   const handleCategoryClick = () => {
     if (category) {
-      // Navigate to search with category name as search query
-      // This will trigger a search for that category
+      // Navigate to search with categoryId to filter by category, not search by name
       navigate('/search', {
         state: {
-          searchQuery: category.name,
           categoryId: category.id,
+          categoryName: category.name,
+          searchQuery: category.name, // Keep for display but search will use categoryId
         },
       });
     }
