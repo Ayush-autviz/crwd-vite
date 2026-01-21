@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { ArrowLeft, Info, Palette, Image as ImageIcon, Camera, X, Check, Search, Building2, Eye, Share2, Sparkles } from 'lucide-react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
@@ -16,6 +16,7 @@ import { categories } from '@/constants/categories';
 import { SharePost } from '@/components/ui/SharePost';
 import Confetti from 'react-confetti';
 import { CrwdAnimation } from '@/assets/newLogo';
+import Cropper, { Area } from 'react-easy-crop';
 
 // Avatar colors for consistent fallback styling
 const avatarColors = [
@@ -64,6 +65,13 @@ export default function CreateFundraiser() {
   const [fundraisingGoal, setFundraisingGoal] = useState('');
   const [endDate, setEndDate] = useState<Dayjs | null>(null);
   const [campaignStory, setCampaignStory] = useState('');
+
+  // Crop state
+  const [showCropModal, setShowCropModal] = useState(false);
+  const [cropImageSrc, setCropImageSrc] = useState<string>("");
+  const [crop, setCrop] = useState({ x: 0, y: 0 });
+  const [zoom, setZoom] = useState(1);
+  const [croppedAreaPixels, setCroppedAreaPixels] = useState<Area | null>(null);
 
   // Step 2 state
   const [searchQuery, setSearchQuery] = useState('');
@@ -155,16 +163,103 @@ export default function CreateFundraiser() {
     setCoverType('color');
   };
 
+  // Create cropped image utility function
+  const createImage = (url: string): Promise<HTMLImageElement> =>
+    new Promise((resolve, reject) => {
+      const image = new Image();
+      image.addEventListener("load", () => resolve(image));
+      image.addEventListener("error", (error) => reject(error));
+      image.src = url;
+    });
+
+  const getCroppedImg = async (
+    imageSrc: string,
+    pixelCrop: Area
+  ): Promise<Blob> => {
+    const image = await createImage(imageSrc);
+    const canvas = document.createElement("canvas");
+    const ctx = canvas.getContext("2d");
+
+    if (!ctx) {
+      throw new Error("No 2d context");
+    }
+
+    canvas.width = pixelCrop.width;
+    canvas.height = pixelCrop.height;
+
+    ctx.drawImage(
+      image,
+      pixelCrop.x,
+      pixelCrop.y,
+      pixelCrop.width,
+      pixelCrop.height,
+      0,
+      0,
+      pixelCrop.width,
+      pixelCrop.height
+    );
+
+    return new Promise((resolve, reject) => {
+      canvas.toBlob((blob) => {
+        if (!blob) {
+          reject(new Error("Canvas is empty"));
+          return;
+        }
+        resolve(blob);
+      }, "image/jpeg");
+    });
+  };
+
+  const onCropComplete = useCallback(
+    (_croppedArea: Area, croppedAreaPixels: Area) => {
+      setCroppedAreaPixels(croppedAreaPixels);
+    },
+    []
+  );
+
+  const handleCropComplete = async () => {
+    if (!cropImageSrc || !croppedAreaPixels) return;
+
+    try {
+      const croppedBlob = await getCroppedImg(cropImageSrc, croppedAreaPixels);
+      const croppedFile = new File([croppedBlob], "cropped-image.jpg", {
+        type: "image/jpeg",
+      });
+      
+      setUploadedCoverImage(croppedFile);
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        setUploadedCoverImagePreview(e.target?.result as string);
+      };
+      reader.readAsDataURL(croppedFile);
+      
+      setShowCropModal(false);
+      setCropImageSrc("");
+      setCrop({ x: 0, y: 0 });
+      setZoom(1);
+      setCroppedAreaPixels(null);
+      setCoverType('image');
+    } catch (error) {
+      console.error("Error cropping image:", error);
+      setToastMessage("Failed to crop image. Please try again.");
+      setShowToast(true);
+    }
+  };
+
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      setUploadedCoverImage(file);
       const reader = new FileReader();
-      reader.onloadend = () => {
-        setUploadedCoverImagePreview(reader.result as string);
+      reader.onload = (e) => {
+        const imageSrc = e.target?.result as string;
+        setCropImageSrc(imageSrc);
+        setShowCropModal(true);
       };
       reader.readAsDataURL(file);
-      setCoverType('image');
+    }
+    // Reset input value to allow selecting the same file again
+    if (e.target) {
+      e.target.value = "";
     }
   };
 
@@ -560,11 +655,12 @@ export default function CreateFundraiser() {
                   />
                   {uploadedCoverImagePreview ? (
                     <div className="mb-4">
-                      <div className="relative rounded-lg overflow-hidden">
+                      <div className="relative rounded-lg overflow-hidden border border-gray-200 bg-gray-50 mx-auto" style={{ maxWidth: '600px' }}>
                         <img
                           src={uploadedCoverImagePreview}
                           alt="Selected"
-                          className="w-full h-[140px] md:h-[200px] object-contain bg-gray-50"
+                          className="w-full h-[140px] md:h-[200px] object-cover"
+                          style={{ objectPosition: 'center' }}
                         />
                         <button
                           onClick={() => {
@@ -799,11 +895,14 @@ export default function CreateFundraiser() {
 
                   </div>
                 ) : uploadedCoverImagePreview ? (
-                  <img
-                    src={uploadedCoverImagePreview}
-                    alt="Campaign cover"
-                    className="w-full h-full object-cover"
-                  />
+                  <div className="w-full h-full mx-auto flex items-center justify-center" style={{ maxWidth: '600px' }}>
+                    <img
+                      src={uploadedCoverImagePreview}
+                      alt="Campaign cover"
+                      className="w-full h-full object-cover"
+                      style={{ objectPosition: 'center' }}
+                    />
+                  </div>
                 ) : (
                   <div
                     className="w-full h-full flex items-center justify-center"
@@ -962,6 +1061,62 @@ export default function CreateFundraiser() {
         onHide={() => setShowToast(false)}
         message={toastMessage}
       />
+
+      {/* Crop Modal */}
+      {showCropModal && cropImageSrc && (
+        <div className="fixed inset-0 z-50 bg-black bg-opacity-75 flex flex-col">
+          <div className="flex-1 relative">
+            <Cropper
+              image={cropImageSrc}
+              crop={crop}
+              zoom={zoom}
+              aspect={600 / 200}
+              onCropChange={setCrop}
+              onZoomChange={setZoom}
+              onCropComplete={onCropComplete}
+              style={{
+                containerStyle: {
+                  width: "100%",
+                  height: "100%",
+                  position: "relative",
+                },
+              }}
+            />
+          </div>
+          <div className="bg-black p-4 flex items-center justify-between">
+            <input
+              type="range"
+              value={zoom}
+              min={1}
+              max={3}
+              step={0.1}
+              onChange={(e) => setZoom(Number(e.target.value))}
+              className="flex-1 mr-4"
+            />
+            <div className="flex gap-3">
+              <Button
+                onClick={() => {
+                  setShowCropModal(false);
+                  setCropImageSrc("");
+                  setCrop({ x: 0, y: 0 });
+                  setZoom(1);
+                  setCroppedAreaPixels(null);
+                }}
+                variant="outline"
+                className="bg-white text-black hover:bg-gray-100"
+              >
+                Cancel
+              </Button>
+              <Button
+                onClick={handleCropComplete}
+                className="bg-[#1600ff] hover:bg-[#1400cc] text-white"
+              >
+                Apply
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

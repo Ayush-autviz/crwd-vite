@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useNavigate, useLocation } from "react-router-dom";
@@ -9,6 +9,7 @@ import { Toast } from "@/components/ui/toast";
 import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
 import { createPost, getLinkPreview } from "@/services/api/social";
 import { useAuthStore } from "@/stores/store";
+import Cropper, { Area } from "react-easy-crop";
 
 
 export default function CreatePostPage() {
@@ -38,6 +39,13 @@ export default function CreatePostPage() {
   // Track selected image
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
+
+  // Crop state
+  const [showCropModal, setShowCropModal] = useState(false);
+  const [cropImageSrc, setCropImageSrc] = useState<string>("");
+  const [crop, setCrop] = useState({ x: 0, y: 0 });
+  const [zoom, setZoom] = useState(1);
+  const [croppedAreaPixels, setCroppedAreaPixels] = useState<Area | null>(null);
 
   // Track URL validation
   const [urlError, setUrlError] = useState<string | null>(null);
@@ -118,16 +126,103 @@ export default function CreatePostPage() {
     }
   };
 
-  // Handle image selection
-  const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      setSelectedImage(file);
+  // Create cropped image utility function
+  const createImage = (url: string): Promise<HTMLImageElement> =>
+    new Promise((resolve, reject) => {
+      const image = new Image();
+      image.addEventListener("load", () => resolve(image));
+      image.addEventListener("error", (error) => reject(error));
+      image.src = url;
+    });
+
+  const getCroppedImg = async (
+    imageSrc: string,
+    pixelCrop: Area
+  ): Promise<Blob> => {
+    const image = await createImage(imageSrc);
+    const canvas = document.createElement("canvas");
+    const ctx = canvas.getContext("2d");
+
+    if (!ctx) {
+      throw new Error("No 2d context");
+    }
+
+    canvas.width = pixelCrop.width;
+    canvas.height = pixelCrop.height;
+
+    ctx.drawImage(
+      image,
+      pixelCrop.x,
+      pixelCrop.y,
+      pixelCrop.width,
+      pixelCrop.height,
+      0,
+      0,
+      pixelCrop.width,
+      pixelCrop.height
+    );
+
+    return new Promise((resolve, reject) => {
+      canvas.toBlob((blob) => {
+        if (!blob) {
+          reject(new Error("Canvas is empty"));
+          return;
+        }
+        resolve(blob);
+      }, "image/jpeg");
+    });
+  };
+
+  const onCropComplete = useCallback(
+    (_croppedArea: Area, croppedAreaPixels: Area) => {
+      setCroppedAreaPixels(croppedAreaPixels);
+    },
+    []
+  );
+
+  const handleCropComplete = async () => {
+    if (!cropImageSrc || !croppedAreaPixels) return;
+
+    try {
+      const croppedBlob = await getCroppedImg(cropImageSrc, croppedAreaPixels);
+      const croppedFile = new File([croppedBlob], "cropped-image.jpg", {
+        type: "image/jpeg",
+      });
+      
+      setSelectedImage(croppedFile);
       const reader = new FileReader();
       reader.onload = (e) => {
         setImagePreview(e.target?.result as string);
       };
+      reader.readAsDataURL(croppedFile);
+      
+      setShowCropModal(false);
+      setCropImageSrc("");
+      setCrop({ x: 0, y: 0 });
+      setZoom(1);
+      setCroppedAreaPixels(null);
+    } catch (error) {
+      console.error("Error cropping image:", error);
+      setToastMessage("Failed to crop image. Please try again.");
+      setShowToast(true);
+    }
+  };
+
+  // Handle image selection
+  const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const imageSrc = e.target?.result as string;
+        setCropImageSrc(imageSrc);
+        setShowCropModal(true);
+      };
       reader.readAsDataURL(file);
+    }
+    // Reset input value to allow selecting the same file again
+    if (e.target) {
+      e.target.value = "";
     }
   };
 
@@ -423,11 +518,12 @@ export default function CreatePostPage() {
         {/* Image Preview */}
         {selectedImage && imagePreview && (
           <div className="mb-4">
-            <div className="relative rounded-lg overflow-hidden">
+            <div className="relative rounded-lg overflow-hidden border border-gray-200 bg-gray-50 mx-auto" style={{ maxWidth: '600px' }}>
               <img
                 src={imagePreview}
                 alt="Selected"
-                className="w-full h-[140px] md:h-[200px] object-contain bg-gray-50"
+                className="w-full h-[140px] md:h-[200px] object-cover"
+                style={{ objectPosition: 'center' }}
               />
               <button
                 onClick={() => {
@@ -486,6 +582,62 @@ export default function CreatePostPage() {
         onHide={() => setShowToast(false)}
         duration={2000}
       />
+
+      {/* Crop Modal */}
+      {showCropModal && cropImageSrc && (
+        <div className="fixed inset-0 z-50 bg-black bg-opacity-75 flex flex-col">
+          <div className="flex-1 relative">
+            <Cropper
+              image={cropImageSrc}
+              crop={crop}
+              zoom={zoom}
+              aspect={600 / 200}
+              onCropChange={setCrop}
+              onZoomChange={setZoom}
+              onCropComplete={onCropComplete}
+              style={{
+                containerStyle: {
+                  width: "100%",
+                  height: "100%",
+                  position: "relative",
+                },
+              }}
+            />
+          </div>
+          <div className="bg-black p-4 flex items-center justify-between">
+            <input
+              type="range"
+              value={zoom}
+              min={1}
+              max={3}
+              step={0.1}
+              onChange={(e) => setZoom(Number(e.target.value))}
+              className="flex-1 mr-4"
+            />
+            <div className="flex gap-3">
+              <Button
+                onClick={() => {
+                  setShowCropModal(false);
+                  setCropImageSrc("");
+                  setCrop({ x: 0, y: 0 });
+                  setZoom(1);
+                  setCroppedAreaPixels(null);
+                }}
+                variant="outline"
+                className="bg-white text-black hover:bg-gray-100"
+              >
+                Cancel
+              </Button>
+              <Button
+                onClick={handleCropComplete}
+                className="bg-[#1600ff] hover:bg-[#1400cc] text-white"
+              >
+                Apply
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

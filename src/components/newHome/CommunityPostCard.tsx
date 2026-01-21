@@ -471,19 +471,21 @@ export default function CommunityPostCard({ post, onCommentPress, showSimplified
               )}
 
               {/* Show fundraiser image like normal post image */}
-              {post.fundraiser.image ? (
+              {post.fundraiser?.image ? (
                 <div
-                  className="block w-full rounded-lg overflow-hidden mb-2 md:mb-3 border border-gray-200 cursor-pointer hover:opacity-90 transition-opacity bg-gray-50"
+                  className="w-full rounded-lg overflow-hidden mb-2 md:mb-3 border border-gray-200 cursor-pointer hover:opacity-90 transition-opacity bg-gray-50 relative mx-auto"
+                  style={{ maxWidth: '600px' }}
                   onClick={(e) => {
                     e.preventDefault();
                     e.stopPropagation();
-                    navigate(`/fundraiser/${post.fundraiser.id}`);
+                    navigate(`/fundraiser/${post.fundraiser?.id}`);
                   }}
                 >
                   <img
                     src={post.fundraiser.image}
                     alt="Fundraiser"
-                    className="w-full h-[140px] md:h-[200px] object-contain bg-gray-50"
+                    className="w-full h-[140px] md:h-[200px] object-cover"
+                    style={{ objectPosition: 'center' }}
                   />
                 </div>
               ) : null}
@@ -610,7 +612,8 @@ export default function CommunityPostCard({ post, onCommentPress, showSimplified
                 // </a>
               ) : post.imageUrl ? (
                 <div
-                  className="block w-full rounded-lg overflow-hidden mb-2 md:mb-3 border border-gray-200 cursor-pointer hover:opacity-90 transition-opacity bg-gray-50"
+                  className="w-full rounded-lg overflow-hidden mb-2 md:mb-3 border border-gray-200 cursor-pointer hover:opacity-90 transition-opacity bg-gray-50 relative mx-auto"
+                  style={{ maxWidth: '600px' }}
                   onClick={(e) => {
                     e.preventDefault();
                     e.stopPropagation();
@@ -621,7 +624,8 @@ export default function CommunityPostCard({ post, onCommentPress, showSimplified
                   <img
                     src={post.imageUrl}
                     alt="Post"
-                    className="w-full h-[140px] md:h-[200px] object-contain bg-gray-50"
+                    className="w-full h-[140px] md:h-[200px] object-cover"
+                    style={{ objectPosition: 'center' }}
                   />
                 </div>
               ) : null}
