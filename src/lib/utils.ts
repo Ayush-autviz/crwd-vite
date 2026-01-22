@@ -5,12 +5,28 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
 
-// Helper function to truncate description at first period
+// Helper function to truncate description at first period (character-based)
 export const truncateAtFirstPeriod = (text: string): string => {
   if (!text) return text;
-  if (text.length < 30) return text;
-  const periodIndex = text.indexOf('.');
-  const newText = periodIndex !== -1 ? text.substring(0, periodIndex + 1) : text;
-  if (newText.length < 30) return text;
-  else return newText
+
+  const charCount = text.length;
+
+  // If text is short enough, return as is
+  if (charCount <= 75) {
+    return text;
+  }
+
+  // Limit text to max 125 characters
+  const limitedText = text.slice(0, 125);
+
+  // Find first full stop within the limited range
+  const periodIndex = limitedText.indexOf('.');
+
+  // If a period exists, cut at that point
+  if (periodIndex !== -1) {
+    return limitedText.substring(0, periodIndex + 1);
+  }
+
+  // Fallback: return limited text if no period found
+  return `${limitedText}...`;
 };

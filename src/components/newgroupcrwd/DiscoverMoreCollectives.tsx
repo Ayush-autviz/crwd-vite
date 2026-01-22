@@ -112,7 +112,7 @@ export default function DiscoverMoreCollectives({ collectiveId }: DiscoverMoreCo
                   </h3>
 
                   {/* Description */}
-                  <p className="text-sm xs:text-base md:text-lg text-gray-700 mb-2 md:mb-3 leading-relaxed">
+                  <p className="text-sm xs:text-base md:text-lg text-gray-700 mb-2 md:mb-3 leading-relaxed line-clamp-2 md:line-clamp-1">
                     {collective.description || ''}
                   </p>
 

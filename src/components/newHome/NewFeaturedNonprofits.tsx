@@ -3,6 +3,7 @@ import { ChevronRight } from "lucide-react";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
+import { truncateAtFirstPeriod } from "@/lib/utils";
 
 interface Nonprofit {
   id: string | number;
@@ -31,14 +32,14 @@ const getIconColor = (id: number | string): string => {
   return colors[hash % colors.length];
 };
 
-const truncateAtFirstPeriod = (text: string): string => {
-  if (!text) return text;
-  if (text.length < 30) return text;
-  const periodIndex = text.indexOf('.');
-  const newText = periodIndex !== -1 ? text.substring(0, periodIndex + 1) : text;
-  if (newText.length < 30) return text;
-  else return newText
-};
+// const truncateAtFirstPeriod = (text: string): string => {
+//   if (!text) return text;
+//   if (text.length < 30) return text;
+//   const periodIndex = text.indexOf('.');
+//   const newText = periodIndex !== -1 ? text.substring(0, periodIndex + 1) : text;
+//   if (newText.length < 30) return text;
+//   else return newText
+// };
 
 export default function NewFeaturedNonprofits({
   nonprofits = [],
@@ -53,7 +54,7 @@ export default function NewFeaturedNonprofits({
       <div className="flex justify-between items-center mb-3 md:mb-4">
         <h2 className="text-base xs:text-lg sm:text-2xl md:text-3xl font-bold">Featured Nonprofits</h2>
         <Link to={seeAllLink}>
-          <Button variant="link" className="text-green-600 p-0 h-auto flex items-center text-[10px] xs:text-sm md:text-base">
+          <Button variant="link" className="text-[#1600ff] p-0 h-auto flex items-center text-[10px] xs:text-sm md:text-base">
             See all
           </Button>
         </Link>
@@ -70,7 +71,7 @@ export default function NewFeaturedNonprofits({
                 key={nonprofit.id}
                 className="block"
               >
-                <div className="flex items-start gap-2.5 md:gap-3 p-3 md:p-4 rounded-lg border border-gray-200 hover:bg-gray-50 cursor-pointer transition-colors bg-white min-w-[240px] md:min-w-[280px] max-w-[280px] md:max-w-[320px] h-full">
+                <div className="flex items-start gap-2.5 md:gap-3 p-3 md:p-4 rounded-lg border border-gray-200 hover:bg-gray-50 cursor-pointer transition-colors bg-white min-w-[250px] md:min-w-[280px] max-w-[280px] md:max-w-[320px] h-full">
                   {/* Avatar - Rounded square */}
                   <Avatar className="h-10 w-10 md:h-12 md:w-12 rounded-lg flex-shrink-0 border border-gray-200">
                     <AvatarImage src={nonprofit.image} />

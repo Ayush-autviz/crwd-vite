@@ -1,6 +1,7 @@
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { categories } from '@/constants/categories';
+import { truncateAtFirstPeriod } from '@/lib/utils';
 import { useNavigate } from 'react-router-dom';
 
 interface CauseProfileProps {
@@ -38,15 +39,6 @@ export default function CauseProfile({ causeData }: CauseProfileProps) {
   };
   const avatarBgColor = getConsistentColor(causeData?.id || 'default', avatarColors);
 
-  // Helper function to truncate description at first period
-  const truncateAtFirstPeriod = (text: string): string => {
-    if (!text) return text;
-    if (text.length < 30) return text;
-    const periodIndex = text.indexOf('.');
-    const newText = periodIndex !== -1 ? text.substring(0, periodIndex + 1) : text;
-    if (newText.length < 30) return text;
-    else return newText
-  };
 
   return (
     <div className="px-3 md:px-4 py-4 md:py-6 space-y-3 md:space-y-4">

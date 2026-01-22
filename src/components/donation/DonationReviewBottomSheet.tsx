@@ -188,7 +188,7 @@ export default function DonationReviewBottomSheet({
                   <span className="text-xs md:text-sm text-gray-600">Platform fee:</span>
                   <Info className="w-3.5 h-3.5 md:w-4 md:h-4 text-gray-400 cursor-pointer" />
                   <div className="absolute bottom-full left-5/3 transform -translate-x-1/2 mb-2 px-2.5 md:px-3 py-1.5 md:py-2 bg-gray-900 text-white text-xs md:text-sm rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none z-10 w-[300px] text-center">
-                    This fee covers payment processing and platform operations
+                  The platform fee covers payment processing and keeps CRWD running at no cost to nonprofits.
                     {/* <div className="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-gray-900"></div> */}
                   </div>
                 </div>

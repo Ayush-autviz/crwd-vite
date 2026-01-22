@@ -377,7 +377,7 @@
 
 import { useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowRight, ChevronLeft, ChevronRight, Share2 } from "lucide-react";
+import { ArrowRight, ChevronLeft, ChevronRight, Share2, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { SharePost } from "@/components/ui/SharePost";
 import { Card, CardContent } from "@/components/ui/card";
@@ -455,7 +455,7 @@ export default function CollectiveCarouselCard({
 
   return (
     <div className="w-full py-2 md:max-w-2xl md:mx-auto">
-      <Card className="cursor-pointer py-2 md:py-4 shadow-none border border-gray-200 bg-white relative">
+      <Card className=" py-2 md:py-4 shadow-none border border-gray-200 bg-white relative">
         <CardContent className="px-3 md:px-6 py-0 md:py-0">
           {/* Carousel Navigation */}
           {showNavigation && (
@@ -487,7 +487,7 @@ export default function CollectiveCarouselCard({
               className="flex flex-row items-center gap-2.5 md:gap-4 w-full"
             >
               {/* Circular Icon */}
-              <div
+              {/* <div
                 className="w-8 h-8 md:w-12 md:h-12 rounded-lg flex items-center justify-center flex-shrink-0"
                 style={iconColor ? { backgroundColor: iconColor } : {}}
               >
@@ -502,25 +502,33 @@ export default function CollectiveCarouselCard({
                     {iconLetter}
                   </span>
                 )}
+              </div> */}
+
+              <div
+                className="w-8 h-8 md:w-12 md:h-12 rounded-full flex items-center justify-center flex-shrink-0 bg-purple-600"
+              >
+                <Users className="w-3.5 h-3.5 md:w-6 md:h-6 text-white" strokeWidth={2.5} />
               </div>
 
               {/* Title and Badge - Added padding-right logic here */}
               <div className={`flex-1 min-w-0 ${showNavigation ? 'pr-28 md:pr-36' : ''}`}>
                 <h3 className="font-bold text-xs xs:text-base md:text-lg text-gray-900 mb-0.5 md:mb-1 truncate">
-                  {currentCollective.name}
+                  {/* {currentCollective.name} */}
+                  My Collectives
                 </h3>
-                {currentCollective.role === 'Admin' && (
+                {/* {currentCollective.role === 'Admin' && (
                   <p className={`${currentCollective.role === 'Admin' ? 'bg-pink-100 text-red-600' : 'bg-[#a955f7] text-white'} text-[10px] xs:text-xs md:text-sm font-medium px-1.5 md:px-2 py-0.5 rounded-md whitespace-nowrap w-fit`}>
                     {currentCollective.role === 'Admin' ? 'Organizer' : currentCollective.role}
                   </p>
-                )}
+                )} */}
               </div>
             </div>
 
             {/* Content */}
             <div className="w-full text-left">
               <p className="text-xs xs:text-sm md:text-base font-medium text-gray-700 mb-2 md:mb-4 leading-relaxed text-left">
-                <span className="font-bold text-gray-800">{currentCollective.memberCount} {currentCollective.memberCount === 1 ? 'member' : 'members'}</span> {currentCollective.memberCount === 1 ? 'is' : 'are'} currently donating{" "}
+                <span onClick={() => navigate(`/groupcrwd/${currentCollective.id}`)} className="cursor-pointer text-gray-800 font-bold">{currentCollective.name} </span>
+                has <span className="font-bold text-gray-800">{currentCollective.memberCount} {currentCollective.memberCount === 1 ? 'member' : 'members'}</span> donating{" "}
                 to <span className="font-bold text-gray-800">{currentCollective.causeCount} {currentCollective.causeCount === 1 ? 'cause' : 'causes'}</span>.
               </p>
 

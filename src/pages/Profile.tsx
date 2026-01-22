@@ -480,9 +480,9 @@ export default function ProfilePage() {
                 <ProfileBio bio={profileData?.bio} />
               )}
 
-              {profileData?.inspired_people_count > 0 && (
+              {/* {profileData?.inspired_people_count > 0 && (
                 <p className="text-xs md:text-sm lg:text-base mx-auto font-bold text-gray-900">{profileData?.inspired_people_count} {profileData?.inspired_people_count === 1 ? 'Person' : 'People'} Inspired</p>
-              )}
+              )} */}
 
               {/* Edit Profile and Share Profile buttons */}
               <div className="flex items-center justify-center gap-3 md:gap-4 mt-1">
@@ -612,9 +612,9 @@ export default function ProfilePage() {
                           Recent Activity
                         </h2>
 
-                        <p className="text-[10px] sm:text-xs md:text-sm text-gray-600">
+                        {/* <p className="text-[10px] sm:text-xs md:text-sm text-gray-600">
                           Activity, updates, and discoveries from your community
-                        </p>
+                        </p> */}
                       </>
                     )}
                   </div>

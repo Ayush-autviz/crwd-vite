@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
+import { truncateAtFirstPeriod } from "@/lib/utils";
 
 interface Collective {
   id: string | number;
@@ -75,7 +76,7 @@ export default function NewSuggestedCollectives({
                 key={collective.id}
                 className="block"
               >
-                <div className="flex flex-col gap-2.5 md:gap-3 p-3 md:p-4 rounded-lg border border-gray-200 hover:bg-gray-50 cursor-pointer transition-colors min-w-[240px] md:min-w-[280px] max-w-[280px] md:max-w-[320px] h-[190px] md:h-[200px]">
+                <div className="flex flex-col gap-2.5 md:gap-3 p-3 md:p-4 rounded-lg border border-gray-200 hover:bg-gray-50 cursor-pointer transition-colors min-w-[240px] md:min-w-[280px] max-w-[280px] md:max-w-[320px] h-full">
                   {/* Icon */}
                   <div className="flex items-center gap-2">
                     <div
@@ -131,8 +132,8 @@ export default function NewSuggestedCollectives({
                   </p>
 
                   {/* Description */}
-                  <p className="text-xs xs:text-sm md:text-base text-muted-foreground leading-relaxed line-clamp-2">
-                    {collective.description}
+                  <p className="text-xs xs:text-sm md:text-base text-muted-foreground leading-relaxed line-clamp-3">
+                    {truncateAtFirstPeriod(collective.description)}
                   </p>
                 </div>
               </Link>
