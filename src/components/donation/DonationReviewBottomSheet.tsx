@@ -23,6 +23,7 @@ export default function DonationReviewBottomSheet({
   const [isVisible, setIsVisible] = useState(false);
   const [isAnimating, setIsAnimating] = useState(false);
   const [showLogoAnimation, setShowLogoAnimation] = useState(false);
+  const [showFeeInfo, setShowFeeInfo] = useState(false);
 
   // Mutation to activate donation box
   const activateBoxMutation = useMutation({
@@ -54,6 +55,7 @@ export default function DonationReviewBottomSheet({
     let timer: NodeJS.Timeout;
     if (isOpen) {
       setIsVisible(true);
+      setShowFeeInfo(false);
       setIsAnimating(false);
       timer = setTimeout(() => setIsAnimating(true), 20);
     } else if (isVisible) {
@@ -184,11 +186,14 @@ export default function DonationReviewBottomSheet({
                 <span className="text-sm md:text-base font-semibold text-gray-900">{totalCauses} cause{totalCauses !== 1 ? 's' : ''}</span>
               </div>
               <div className="flex justify-between items-center">
-                <div className="flex items-center gap-1 md:gap-1.5 group relative">
+                <div
+                  className="flex items-center gap-1 md:gap-1.5 group relative cursor-pointer"
+                  onClick={() => setShowFeeInfo(!showFeeInfo)}
+                >
                   <span className="text-xs md:text-sm text-gray-600">Platform fee:</span>
-                  <Info className="w-3.5 h-3.5 md:w-4 md:h-4 text-gray-400 cursor-pointer" />
-                  <div className="absolute bottom-full left-5/3 transform -translate-x-1/2 mb-2 px-2.5 md:px-3 py-1.5 md:py-2 bg-gray-900 text-white text-xs md:text-sm rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none z-10 w-[300px] text-center">
-                  The platform fee covers payment processing and keeps CRWD running at no cost to nonprofits.
+                  <Info className="w-3.5 h-3.5 md:w-4 md:h-4 text-gray-400" />
+                  <div className={`absolute bottom-full left-5/3 transform -translate-x-1/2 mb-2 px-2.5 md:px-3 py-1.5 md:py-2 bg-gray-900 text-white text-xs md:text-sm rounded-lg transition-opacity duration-200 pointer-events-none z-10 w-[200px] md:w-[300px] text-center ${showFeeInfo ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'}`}>
+                    The platform fee covers payment processing and keeps CRWD running at no cost to nonprofits.
                     {/* <div className="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-gray-900"></div> */}
                   </div>
                 </div>
