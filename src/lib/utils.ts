@@ -6,27 +6,35 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 // Helper function to truncate description at first period (character-based)
-export const truncateAtFirstPeriod = (text: string): string => {
+export const truncateAtFirstPeriod = (
+  text: string,
+  minChars = 75,
+  maxChars = 125
+): string => {
   if (!text) return text;
 
-  const charCount = text.length;
-
-  // If text is short enough, return as is
-  if (charCount <= 75) {
+  // If text is already short
+  if (text.length <= minChars) {
     return text;
   }
 
-  // Limit text to max 125 characters
-  const limitedText = text.slice(0, 125);
+  // Limit search range to maxChars
+  const limitedText = text.slice(0, maxChars);
 
-  // Find first full stop within the limited range
-  const periodIndex = limitedText.indexOf('.');
+  // Find first period AFTER minChars (but before maxChars)
+  const periodIndex = limitedText.indexOf('.', minChars);
 
-  // If a period exists, cut at that point
+  // If a valid period is found in range, cut there
   if (periodIndex !== -1) {
-    return limitedText.substring(0, periodIndex + 1);
+    return limitedText.slice(0, periodIndex + 1);
   }
 
-  // Fallback: return limited text if no period found
-  return `${limitedText}...`;
+  // Otherwise hard cut at maxChars
+  if (text.length > maxChars) {
+    return limitedText + '...';
+  }
+
+  return text;
 };
+
+

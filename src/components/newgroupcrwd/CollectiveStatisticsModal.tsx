@@ -5,6 +5,7 @@ import { getCollectiveCauses, getCollectiveMembers, getCollectiveDonationHistory
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
+import { truncateAtFirstPeriod } from '@/lib/utils';
 
 interface CollectiveStatisticsModalProps {
   isOpen: boolean;
@@ -196,8 +197,8 @@ export default function CollectiveStatisticsModal({
                           <h4 className="font-bold text-sm md:text-base lg:text-base text-foreground mb-0.5 md:mb-1">
                             {name}
                           </h4>
-                          <p className="text-xs lg:text-sm text-muted-foreground line-clamp-1">
-                            {cause.mission || 'No description available'}
+                          <p className="text-xs lg:text-sm text-muted-foreground line-clamp-2">
+                            {truncateAtFirstPeriod(cause.mission || 'No description available')}
                           </p>
                         </div>
                       </div>
@@ -398,7 +399,7 @@ export default function CollectiveStatisticsModal({
                             )}
                           </div>
                           <p className="text-xs md:text-sm text-gray-500 mt-0.5 md:mt-1 line-clamp-2">
-                            {user.bio || user.location || 'Actively Supporting'}
+                            {user.bio || user.location || ''}
                           </p>
                         </div>
                       </div>

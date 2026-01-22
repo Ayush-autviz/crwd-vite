@@ -2,6 +2,7 @@ import { useNavigate } from 'react-router-dom';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Loader2 } from 'lucide-react';
+import { truncateAtFirstPeriod } from '@/lib/utils';
 
 interface Nonprofit {
   id: number;
@@ -68,13 +69,13 @@ export default function SupportedNonprofits({
           <Button
             variant="link"
             onClick={onSeeAllClick}
-            className="text-green-600 p-0 h-auto flex items-center text-sm xs:text-base md:text-lg"
+            className="text-[#1600ff] p-0 h-auto flex items-center text-sm xs:text-base md:text-lg"
           >
             See all
           </Button>
         )}
       </div>
-      <div className="overflow-x-auto pb-2 -mx-3 md:-mx-4 px-3 md:px-4  md:px-0">
+      <div className="overflow-x-auto pb-2 -mx-3 md:-mx-4 px-3 md:px-4  ">
         <div className="flex gap-3 md:gap-4 w-max items-stretch">
           {nonprofits.map((nonprofit) => {
             const cause = nonprofit.cause || nonprofit;
@@ -107,13 +108,13 @@ export default function SupportedNonprofits({
                   {/* Content */}
                   <div className="flex-1 min-w-0 flex flex-col h-full">
                     {/* Title */}
-                    <h3 className="font-bold text-sm xs:text-base md:text-lg text-gray-900 mb-1">
+                    <h3 className="font-bold text-sm xs:text-base md:text-lg text-gray-900 mb-1 line-clamp-1">
                       {name}
                     </h3>
 
                     {/* Description */}
-                    <p className="text-xs xs:text-sm md:text-base text-gray-600 leading-relaxed line-clamp-1 ">
-                      {description}
+                    <p className="text-xs xs:text-sm md:text-base text-gray-600 leading-relaxed line-clamp-3 ">
+                      {truncateAtFirstPeriod(description)}
                     </p>
                   </div>
                 </div>

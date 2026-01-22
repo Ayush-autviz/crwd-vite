@@ -42,6 +42,7 @@ import {
   SheetTitle,
   SheetDescription,
 } from "@/components/ui/sheet";
+import { truncateAtFirstPeriod } from "@/lib/utils";
 
 // Avatar colors for consistent fallback styling (same as NewCreateCollective.tsx)
 const avatarColors = [
@@ -760,11 +761,11 @@ export default function ProfilePage() {
                             </div>
                           )}
                           <div className="flex-1 min-w-0">
-                            <p className="text-xs md:text-sm font-semibold text-gray-900 mb-0.5 md:mb-1">
+                            <p className="text-sm md:text-base font-semibold text-gray-900 mb-0.5 md:mb-1">
                               {cause.name || 'Unknown Cause'}
                             </p>
-                            <p className="text-[10px] md:text-xs text-gray-500 line-clamp-1">
-                              {cause.mission || 'Supporting this cause'}
+                            <p className="text-xs md:text-sm text-gray-500">
+                              {truncateAtFirstPeriod(cause.mission || 'Supporting this cause')}
                             </p>
                           </div>
                         </Link>
@@ -814,10 +815,10 @@ export default function ProfilePage() {
                               </AvatarFallback>
                             </Avatar>
                             <div className="flex-1 min-w-0">
-                              <p className="text-xs md:text-sm font-semibold text-gray-900 mb-0.5 md:mb-1">
+                              <p className="text-sm md:text-base font-semibold text-gray-900 mb-0.5 md:mb-1">
                                 {collective.name || 'Unknown Collective'}
                               </p>
-                              <p className="text-[10px] md:text-xs text-gray-500 line-clamp-1">
+                              <p className="text-xs md:text-sm text-gray-500 line-clamp-1">
                                 {collective.member_count || 0} members
                               </p>
                             </div>
@@ -875,12 +876,12 @@ export default function ProfilePage() {
                               </AvatarFallback>
                             </Avatar>
                             <div className="flex-1 min-w-0">
-                              <p className="text-xs md:text-sm font-medium text-gray-900">
+                              <p className="text-sm md:text-base font-medium text-gray-900">
                                 {userData.first_name && userData.last_name
                                   ? `${userData.first_name} ${userData.last_name}`
                                   : userData.first_name || userData.name || 'Unknown User'}
                               </p>
-                              <p className="text-[10px] md:text-xs text-gray-500 line-clamp-1">{userData.bio || userData.location}</p>
+                              <p className="text-xs md:text-sm text-gray-500 line-clamp-1">{userData.bio || userData.location}</p>
                             </div>
                           </Link>
                           {userData.id !== currentUser?.id && (
@@ -939,12 +940,12 @@ export default function ProfilePage() {
                               </AvatarFallback>
                             </Avatar>
                             <div className="flex-1 min-w-0">
-                              <p className="text-xs md:text-sm font-medium text-gray-900">
+                              <p className="text-sm md:text-base font-medium text-gray-900">
                                 {userData.first_name && userData.last_name
                                   ? `${userData.first_name} ${userData.last_name}`
                                   : userData.first_name || userData.name || 'Unknown User'}
                               </p>
-                              <p className="text-[10px] md:text-xs text-gray-500 line-clamp-1">{userData.bio || userData.location}</p>
+                              <p className="text-xs md:text-sm text-gray-500 line-clamp-1">{userData.bio || userData.location}</p>
                             </div>
                           </Link>
                           {userData.id !== currentUser?.id && (
