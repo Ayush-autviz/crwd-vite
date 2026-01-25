@@ -3,7 +3,6 @@ import { X, Loader2 } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import { getCollectiveCauses, getCollectiveMembers, getCollectiveDonationHistory } from '@/services/api/crwd';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
-import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
 import { truncateAtFirstPeriod } from '@/lib/utils';
 
@@ -198,7 +197,7 @@ export default function CollectiveStatisticsModal({
                             {name}
                           </h4>
                           <p className="text-xs lg:text-sm text-muted-foreground line-clamp-2">
-                            {truncateAtFirstPeriod(cause.mission || 'No description available')}
+                            {truncateAtFirstPeriod(cause.mission || cause.description || 'No description available')}
                           </p>
                         </div>
                       </div>
@@ -217,7 +216,7 @@ export default function CollectiveStatisticsModal({
                   <h3 className="text-[10px] md:text-xs font-bold text-muted-foreground uppercase tracking-wide mb-2 md:mb-3 lg:mb-4">
                     PREVIOUSLY SUPPORTED
                   </h3>
-                  <div className="space-y-2 md:space-y-3">
+                  <div className="space-y-0">
                     {previouslySupported.map((nonprofit) => {
                       const cause = nonprofit.cause || nonprofit;
                       const name = cause.name || nonprofit.name || 'Unknown Nonprofit';
@@ -246,74 +245,31 @@ export default function CollectiveStatisticsModal({
                       const avatarColorIndex = nonprofitId ? (Number(nonprofitId) % avatarColors.length) : (name?.charCodeAt(0) || 0) % avatarColors.length;
                       const avatarBgColor = avatarColors[avatarColorIndex];
 
-                      // Calculate months ago
-                      const getMonthsAgo = (dateString?: string): string => {
-                        if (!dateString) {
-                          return '2 months ago';
-                        }
-                        try {
-                          const date = new Date(dateString);
-                          const now = new Date();
-                          const diffInMs = now.getTime() - date.getTime();
-                          const diffInMonths = Math.floor(diffInMs / (1000 * 60 * 60 * 24 * 30));
-                          if (diffInMonths < 1) {
-                            return 'Less than a month ago';
-                          } else if (diffInMonths === 1) {
-                            return '1 month ago';
-                          } else {
-                            return `${diffInMonths} months ago`;
-                          }
-                        } catch (error) {
-                          return '2 months ago';
-                        }
-                      };
-                      const lastSupported = getMonthsAgo(nonprofit.removed_at || nonprofit.last_supported);
+
 
                       return (
                         <div
                           key={nonprofit.id}
-                          className="bg-white border border-gray-200 rounded-lg p-2 md:p-3 lg:p-4 flex items-center gap-2 md:gap-3 lg:gap-4 hover:shadow-md transition-shadow"
+                          onClick={() => causeId && handleViewNonprofit(causeId)}
+                          className="flex items-center gap-3 md:gap-3 lg:gap-4 py-3 md:py-3 lg:py-4 border-b border-gray-100 last:border-b-0 cursor-pointer hover:bg-gray-50 transition-colors"
                         >
-                          {/* Avatar/Image */}
-                          {image ? (
-                            <Avatar className="w-10 h-10 md:w-12 md:h-12 lg:w-14 lg:h-14 rounded-lg flex-shrink-0">
-                              <AvatarImage src={image} alt={name} />
-                              <AvatarFallback
-                                style={{ backgroundColor: avatarBgColor }}
-                                className="text-white rounded-lg font-semibold text-sm md:text-base lg:text-lg"
-                              >
-                                {name.charAt(0).toUpperCase()}
-                              </AvatarFallback>
-                            </Avatar>
-                          ) : (
-                            <div
-                              className="w-10 h-10 md:w-12 md:h-12 lg:w-14 lg:h-14 rounded-lg flex items-center justify-center flex-shrink-0"
+                          <Avatar className="w-8 h-8 md:w-10 md:h-10 lg:w-12 lg:h-12 rounded-lg flex-shrink-0">
+                            <AvatarImage src={image} alt={name} />
+                            <AvatarFallback
                               style={{ backgroundColor: avatarBgColor }}
+                              className="text-white rounded-lg font-semibold text-sm md:text-base lg:text-lg"
                             >
-                              <span className="text-sm md:text-lg lg:text-xl font-semibold text-white">
-                                {name.charAt(0).toUpperCase()}
-                              </span>
-                            </div>
-                          )}
-
-                          {/* Name and Last Supported */}
+                              {name.charAt(0).toUpperCase()}
+                            </AvatarFallback>
+                          </Avatar>
                           <div className="flex-1 min-w-0">
-                            <h4 className="font-bold text-xs md:text-sm lg:text-base text-gray-900 mb-0.5 md:mb-1">
+                            <h4 className="font-bold text-sm md:text-base lg:text-base text-foreground mb-0.5 md:mb-1">
                               {name}
                             </h4>
-                            <p className="text-[10px] md:text-xs lg:text-sm text-gray-500">
-                              Last supported {lastSupported}
+                            <p className="text-xs lg:text-sm text-muted-foreground line-clamp-2">
+                              {truncateAtFirstPeriod(cause.mission || cause.description || 'No description available')}
                             </p>
                           </div>
-
-                          {/* View Button */}
-                          <Button
-                            onClick={() => causeId && handleViewNonprofit(causeId)}
-                            variant="outline"
-                            className="flex-shrink-0 text-[10px] md:text-xs lg:text-sm px-2 md:px-3 lg:px-4 py-1 md:py-1.5 lg:py-2 border-gray-300 hover:bg-gray-50"
-                          >
-                            View
-                          </Button>
                         </div>
                       );
                     })}
