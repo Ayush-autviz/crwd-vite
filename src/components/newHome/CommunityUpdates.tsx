@@ -354,7 +354,7 @@ export default function CommunityUpdates({
         <div className="mb-3 md:mb-6">
           <h2 className="text-sm xs:text-base sm:text-xl md:text-3xl font-bold text-gray-900 mb-1 md:mb-2">Community Updates</h2>
           <p className="text-[10px] xs:text-xs md:text-sm text-gray-600">
-            Activity, updates, and discoveries from your community
+            Updates and discoveries from your community
           </p>
         </div>
       )}

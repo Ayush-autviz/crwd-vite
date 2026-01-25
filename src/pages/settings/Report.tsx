@@ -46,7 +46,7 @@ export default function SettingsReport() {
     e.preventDefault();
 
     // Validate required fields
-    if (!formData.type || !formData.title || !formData.description) {
+    if (!formData.type || !formData.description) {
       toast.error("Please fill in all required fields.");
       return;
     }

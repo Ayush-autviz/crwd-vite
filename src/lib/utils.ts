@@ -8,8 +8,8 @@ export function cn(...inputs: ClassValue[]) {
 // Helper function to truncate description at first period (character-based)
 export const truncateAtFirstPeriod = (
   text: string,
-  minChars = 75,
-  maxChars = 125
+  minChars = 50,
+  maxChars = 100
 ): string => {
   if (!text) return text;
 
