@@ -86,7 +86,7 @@ export default function CommunityTestimonials({
           See What's Happening in the Community
         </h2>
 
-        <p className="text-muted-foreground text-center text-sm md:text-sm mb-4 md:mb-8">Real posts from people showing up for causes they care about.
+        <p className="text-muted-foreground text-center text-sm md:text-base mb-4 md:mb-8">Real posts from people showing up for causes they care about.
         </p>
 
         {/* Posts List */}

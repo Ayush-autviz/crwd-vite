@@ -85,10 +85,10 @@ export default function GuestHome() {
             <div className="sticky top-0 z-10 w-full flex items-center justify-between px-4 py-2.5 sm:p-4 md:px-6 border-b bg-background">
                 {/* Logo with colored circles */}
 
-                <Link to="/waitlist" className="flex-shrink-0">
-                    <NewLogo />
-                    {/* <img src="/icons/FullLogo.png" alt="CRWD Logo" className="w-20 md:w-[100px] object-contain" /> */}
-                </Link>
+                {/* <Link to="/waitlist" className="flex-shrink-0"> */}
+                <NewLogo />
+                {/* <img src="/icons/FullLogo.png" alt="CRWD Logo" className="w-20 md:w-[100px] object-contain" /> */}
+                {/* </Link> */}
 
 
                 {/* Right side buttons */}
@@ -141,7 +141,7 @@ export default function GuestHome() {
 
                     <p className="text-muted-foreground my-8  max-w-2xl mx-auto text-base md:text-base" style={{ fontSize: 'clamp(1.2rem, 2vw, 1.5rem)' }}>
                         {/* What if you could support every cause you care about automatically, affordably, and powerfully? */}
-                        Support multiple charities with one donation.                    
+                        Support multiple charities with one donation.
                     </p>
 
                     <Button
@@ -235,12 +235,12 @@ export default function GuestHome() {
                             </p>
 
                             <Button
-                                onClick={() => navigate("/waitlist")}
+                                onClick={() => navigate("/onboarding")}
                                 className="w-full h-9 md:h-12 rounded-full font-bold text-xs md:text-base lg:text-lg px-6 md:px-10 py-2 md:py-4 bg-[#1600ff] text-white"
                             >
                                 Start Supporting <ChevronRight className="ml-1.5 md:ml-2 h-3.5 w-3.5 md:h-5 md:w-5" />
                             </Button>
-                            {/* <p className="text-gray-500 text-center mt-2 md:mt-4 text-xs xs:text-sm md:text-base" style={{ fontSize: 'clamp(0.75rem, 2vw, 1rem)' }}>Every dollar makes a difference</p> */}
+                            <p className="text-gray-500 text-center mt-2 md:mt-4 text-xs xs:text-sm md:text-base" style={{ fontSize: 'clamp(0.75rem, 2vw, 1rem)' }}>All nonprofits are verified 501(c)(3) organizations</p>
                         </CardContent>
                     </Card>
                 </div>

@@ -1,7 +1,9 @@
 import { Button } from "@/components/ui/button";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 export default function ShowStandFor() {
+    const navigate = useNavigate()
+
     return (
         <div className="bg-background py-12 md:py-24 px-4 md:px-6">
             <div className="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-16 items-center">
@@ -29,7 +31,7 @@ export default function ShowStandFor() {
                 {/* Right Side - Content */}
                 <div className="text-center md:text-left flex flex-col items-center md:items-start">
                     {/* Image for small screens (shown above button, hidden on md+) */}
-                    
+
 
                     <h2 className="font-[800] text-foreground mb-4 md:mb-6 text-2xl md:text-3xl lg:text-4xl leading-tight">
                         Show What You Stand For
@@ -42,7 +44,7 @@ export default function ShowStandFor() {
                         <img src="/learn/stand.jpeg" alt="Show Stand For" className="w-full h-80 object-contain" />
                     </div>
 
-                    <Button className="bg-[#1600ff] hover:bg-[#1100cc] text-white rounded-full px-8 py-1.5 sm:py-3 text-base md:text-lg font-bold h-auto">
+                    <Button onClick={() => navigate("/onboarding")} className="bg-[#1600ff] hover:bg-[#1100cc] text-white rounded-full px-8 py-1.5 sm:py-2.5 text-base md:text-lg font-bold h-auto">
                         See How It Works
                     </Button>
 

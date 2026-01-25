@@ -1,6 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { Card, CardContent } from '@/components/ui/card';
+import { truncateAtFirstPeriod } from '@/lib/utils';
 
 interface CauseResultCardProps {
   cause: {
@@ -33,15 +34,6 @@ const getConsistentColor = (id: number | string, colors: string[]) => {
   return colors[hash % colors.length];
 };
 
-// Helper function to truncate description at first period
-const truncateAtFirstPeriod = (text: string): string => {
-  if (!text) return text;
-  if (text.length < 30) return text;
-  const periodIndex = text.indexOf('.');
-  const newText = periodIndex !== -1 ? text.substring(0, periodIndex + 1) : text;
-  if (newText.length < 30) return text;
-  else return newText
-};
 
 export default function CauseResultCard({ cause }: CauseResultCardProps) {
   const navigate = useNavigate();

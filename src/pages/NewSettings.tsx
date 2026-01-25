@@ -536,7 +536,7 @@ export default function NewSettings() {
                     }
                   }}
                   disabled={!isEditMode}
-                  placeholder="Bio"
+                  placeholder="Passionate about making a difference through strategic giving."
                   className="bg-gray-100 border-0 min-h-[80px] md:min-h-[100px] text-sm xs:text-base md:text-lg"
                   rows={4}
                 />

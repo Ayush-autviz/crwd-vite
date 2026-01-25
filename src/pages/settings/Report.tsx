@@ -53,11 +53,11 @@ export default function SettingsReport() {
 
     // Prepare payload according to API requirements
     const payload = {
-      title: formData.title,
+      title: 'no title',
       description: formData.description,
       issue_type: formData.type,
       status: "pending",
-      reproduce_steps: formData.steps || "",
+      reproduce_steps: 'no steps',
     };
 
     reportIssueMutation.mutate(payload);
