@@ -9,6 +9,8 @@ import { cn } from "@/lib/utils";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { updateDonationBox } from "@/services/api/donation";
 import { toast } from "sonner";
+import Slider from "rc-slider";
+import "rc-slider/assets/index.css";
 
 interface EditDonationSplitBottomSheetProps {
   isOpen: boolean;
@@ -495,21 +497,25 @@ export default function EditDonationSplitBottomSheet({
 
                     <span className="text-[10px] md:text-xs text-gray-500 flex justify-center mt-2 md:mt-4">percent</span>
 
-                    <div className="relative h-6 flex items-center mt-0">
-                      <input
-                        type="range"
+                    <div className="px-2">
+                      <Slider
                         min={calculateMinPercentage()}
-                        max="100"
-                        step="0.01"
+                        max={100}
+                        step={0.01}
                         value={percentage}
-                        onChange={(e) => handlePercentageChange(cause.id, parseFloat(e.target.value))}
-                        className="w-full bg-transparent appearance-none"
-                        style={{
-                          // Gradient fills track up to value
-                          background: `linear-gradient(to right, ${sliderColor} 0%, ${sliderColor} ${percentage}%, #E5E7EB ${percentage}%, #E5E7EB 100%)`,
-                          // Used by the thumb border via 'currentColor'
-                          color: sliderColor
+                        onChange={(val) => handlePercentageChange(cause.id, val as number)}
+                        trackStyle={{ backgroundColor: sliderColor, height: 6 }} // Active track
+                        handleStyle={{
+                          borderColor: sliderColor,
+                          height: 16,
+                          width: 16,
+                          marginTop: -5,
+                          backgroundColor: '#ffffff',
+                          borderWidth: 2,
+                          opacity: 1,
+                          boxShadow: '0 1px 3px rgba(0,0,0,0.3)',
                         }}
+                        railStyle={{ backgroundColor: '#E5E7EB', height: 6 }} // Inactive track
                       />
                     </div>
                   </div>

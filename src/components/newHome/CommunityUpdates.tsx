@@ -29,6 +29,10 @@ interface CommunityUpdate {
   commentsCount?: number;
   postId?: string | number | null;
   isJoinNotification?: boolean;
+  data?: {
+    profile_picture?: string;
+    color?: string;
+  };
 }
 
 interface CommunityUpdatesProps {
@@ -209,9 +213,9 @@ function NotificationSummary({ update }: { update: CommunityUpdate }) {
           <div className="flex items-center gap-2 md:gap-3">
             {/* Avatar */}
             <Avatar className="h-8 w-8 xs:w-9 xs:h-9 md:h-11 md:w-11 flex-shrink-0 rounded-full">
-              <AvatarImage src={update.user.avatar} />
+              <AvatarImage src={update.data?.profile_picture} />
               <AvatarFallback
-                style={{ backgroundColor: update.user.color || '#1600ff' }}
+                style={{ backgroundColor: update.data?.color || '#1600ff' }}
                 className="text-white text-xs md:text-sm font-semibold"
               >
                 {update.user.name
@@ -281,9 +285,9 @@ function NotificationSummary({ update }: { update: CommunityUpdate }) {
         <div className="flex items-center gap-2 md:gap-3">
           {/* Avatar */}
           <Avatar className="h-8 w-8 xs:w-9 xs:h-9 md:h-11 md:w-11 flex-shrink-0 rounded-full">
-            <AvatarImage src={update.user.avatar} />
+            <AvatarImage src={update.data?.profile_picture} />
             <AvatarFallback
-              style={{ backgroundColor: update.user.color || '#1600ff' }}
+              style={{ backgroundColor: update.data?.color || '#1600ff' }}
               className="text-white text-xs font-semibold md:text-sm"
             >
               {update.user.name

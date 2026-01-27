@@ -45,7 +45,7 @@ export default function NewSearchPage() {
   return (
     <div className="min-h-screen bg-white">
       {/* Search Header */}
-      <div className="sticky top-0 z-10 w-full flex items-center gap-3 md:gap-4 p-3 md:p-4 border-b bg-white">
+      <div className="sticky top-0 z-10 w-full flex items-center gap-3 md:gap-4 h-16 px-3 border-b bg-white">
         <button
           onClick={() => navigate(-1)}
           className="p-1.5 md:p-2 hover:bg-gray-100 rounded-full transition-colors"

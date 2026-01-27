@@ -82,7 +82,7 @@ export default function GuestHome() {
 
 
             {/* Navbar */}
-            <div className="sticky top-0 z-10 w-full flex items-center justify-between px-4 py-2.5 sm:p-4 md:px-6 border-b bg-background">
+            <div className="sticky top-0 z-10 w-full flex items-center justify-between h-16 px-3 border-b bg-background">
                 {/* Logo with colored circles */}
 
                 {/* <Link to="/waitlist" className="flex-shrink-0"> */}

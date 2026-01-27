@@ -352,6 +352,10 @@ export default function NewHome() {
                     commentsCount: 0, // Not available in notification API
                     postId: notification.data?.post_id || null, // Extract post_id if available
                     isJoinNotification: isJoinNotification, // Flag for join notifications
+                    data: {
+                        profile_picture: notification.data?.user_profile_picture,
+                        color: notification.data?.user_color,
+                    }
                 };
             }) || [];
     }, [notificationsData, userProfilesMap]);

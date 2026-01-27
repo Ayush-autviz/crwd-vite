@@ -404,7 +404,7 @@ export default function ProfilePage() {
   return (
     <div className="">
       {/* Custom Navbar for Profile Page */}
-      <header className="w-full flex items-center justify-between h-16 px-3 md:px-6 bg-gray-50 border-b sticky top-0 z-10">
+      <header className="w-full flex items-center justify-between h-16 px-3 bg-gray-50 border-b sticky top-0 z-10">
         {/* Left Section */}
         <div className="flex items-center gap-3">
           <button

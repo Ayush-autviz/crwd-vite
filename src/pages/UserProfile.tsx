@@ -352,7 +352,7 @@ export default function ProfilePage() {
   return (
     <div className="min-h-screen bg-white">
       {/* Custom Header with back arrow, name, and menu dots */}
-      <div className="sticky top-0 z-10 w-full flex items-center justify-between px-4 py-4 border-b bg-white">
+      <div className="sticky top-0 z-10 w-full flex items-center justify-between h-16 px-3 border-b bg-white">
         <div className="flex items-center gap-3">
           <button
             onClick={() => navigate(-1)}
