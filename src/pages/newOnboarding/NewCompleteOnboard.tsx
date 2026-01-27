@@ -8,7 +8,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { getSurpriseMe, getCausesBySearch } from "@/services/api/crwd";
-import { addCausesToBox } from "@/services/api/donation";
+import { createDonationBox } from "@/services/api/donation";
 import { toast } from "sonner";
 import { categories } from "@/constants/categories";
 
@@ -70,18 +70,18 @@ export default function NewCompleteOnboard() {
     refetchOnMount: true,
   });
 
-  // Add causes to donation box mutation
-  const addToBoxMutation = useMutation({
-    mutationFn: async (causeIds: number[]) => {
-      return await addCausesToBox({ cause_ids: causeIds });
+  // Create donation box mutation
+  const createBoxMutation = useMutation({
+    mutationFn: async (data: any) => {
+      return await createDonationBox(data);
     },
     onSuccess: () => {
-      toast.success('Nonprofits added to donation box!');
+      toast.success('Donation box created!');
       queryClient.invalidateQueries({ queryKey: ['donationBox'] });
-      navigate('/new-home');
+      navigate('/');
     },
     onError: (error: any) => {
-      toast.error(error?.response?.data?.message || 'Failed to add nonprofits to donation box');
+      toast.error(error?.response?.data?.message || 'Failed to create donation box');
     },
   });
 
@@ -134,26 +134,11 @@ export default function NewCompleteOnboard() {
 
   const handleStartWithNonprofits = () => {
     if (selectedCauses.length > 0) {
-      // Get full cause data for selected causes based on current view
-      let selectedCausesData: any[] = [];
-
-      if (view === 'surprise') {
-        selectedCausesData = surpriseCauses.filter((cause: any) =>
-          selectedCauses.includes(cause.id)
-        );
-      } else if (view === 'browse') {
-        selectedCausesData = browseCauses.filter((cause: any) =>
-          selectedCauses.includes(cause.id)
-        );
-      }
-
-      // Navigate to donation box setup with preselected causes (both IDs and data)
-      navigate('/donation?tab=setup', {
-        state: {
-          preselectedCauses: selectedCauses, // IDs
-          preselectedCausesData: selectedCausesData, // Full cause objects
-        },
-      });
+      const requestData = {
+        monthly_amount: "10",
+        causes: selectedCauses.map(id => ({ cause_id: id }))
+      };
+      createBoxMutation.mutate(requestData);
     } else {
       navigate('/');
     }
@@ -402,13 +387,13 @@ export default function NewCompleteOnboard() {
               </Button>
               <Button
                 onClick={handleStartWithNonprofits}
-                disabled={selectedCauses.length === 0 || addToBoxMutation.isPending}
+                disabled={selectedCauses.length === 0 || createBoxMutation.isPending}
                 className="flex-1 h-11 sm:h-12 bg-blue-600 hover:bg-blue-700 text-white text-sm sm:text-base"
               >
-                {addToBoxMutation.isPending ? (
+                {createBoxMutation.isPending ? (
                   <>
                     <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                    Adding...
+                    Creating...
                   </>
                 ) : (
                   `Start with ${selectedCauses.length} Nonprofit${selectedCauses.length > 1 ? 's' : ''} →`
@@ -549,13 +534,13 @@ export default function NewCompleteOnboard() {
             </Button>
             <Button
               onClick={handleStartWithNonprofits}
-              disabled={selectedCauses.length === 0 || addToBoxMutation.isPending}
+              disabled={selectedCauses.length === 0 || createBoxMutation.isPending}
               className="flex-1 h-11 sm:h-12 bg-[#1600ff] hover:bg-[#0039CC] text-white text-sm sm:text-base"
             >
-              {addToBoxMutation.isPending ? (
+              {createBoxMutation.isPending ? (
                 <>
                   <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                  Adding...
+                  Creating...
                 </>
               ) : (
                 `Start with ${selectedCauses.length} Nonprofit${selectedCauses.length > 1 ? 's' : ''} →`

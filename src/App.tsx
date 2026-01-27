@@ -19,6 +19,7 @@ import Verify from "./pages/auth/Verify";
 import Search from "./pages/Search";
 import Search2 from "./pages/Search2";
 import NewSearch from "./pages/NewSearch";
+import SearchResults from "./pages/SearchResults";
 import Donation from "./pages/Donation";
 import ManageDonationBox from "./pages/ManageDonationBox";
 import Notifications from "./pages/Notifications";
@@ -179,6 +180,7 @@ function App() {
                     <Route path="/waitlist" element={<Waitlist />} />
                     {/* <Route path="/search" element={<Search />} /> */}
                     <Route path="/search" element={<NewSearch />} />
+                    <Route path="/search-results" element={<SearchResults />} />
                     <Route path="/surprise-me" element={<SurpriseMe />} />
                     <Route path="/search2" element={<Search2 />} />
                     <Route path="/donation" element={<Donation />} />

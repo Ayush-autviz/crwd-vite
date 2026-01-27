@@ -28,8 +28,7 @@ export default function SimilarNonprofits({ similarCauses, isLoading, categoryNa
         <div className="flex items-center justify-between mb-3 md:mb-4">
           <h2 className="text-base xs:text-lg md:text-xl font-bold text-foreground mb-3 md:mb-4">Similar Nonprofits</h2>
           <Link
-            to="/search"
-            state={{ categoryName, categoryId, searchQuery: categoryName }}
+            to={`/search-results?categoryId=${categoryId || ''}&categoryName=${encodeURIComponent(categoryName || '')}&q=${encodeURIComponent(categoryName || '')}`}
             className="text-sm xs:text-base md:text-lg text-[#1600ff] p-0 h-auto flex items-center"
           >
             See all
@@ -63,8 +62,7 @@ export default function SimilarNonprofits({ similarCauses, isLoading, categoryNa
       <div className="flex items-center justify-between mb-3 md:mb-4">
         <h2 className="text-base xs:text-lg md:text-xl font-bold text-foreground">Similar Nonprofits</h2>
         <Link
-          to="/search"
-          state={{ categoryName, categoryId, searchQuery: categoryName }}
+          to={`/search-results?categoryId=${categoryId || ''}&categoryName=${encodeURIComponent(categoryName || '')}&q=${encodeURIComponent(categoryName || '')}`}
           className="text-sm xs:text-base md:text-lg text-[#1600ff] p-0 h-auto flex items-center"
         >
           See all

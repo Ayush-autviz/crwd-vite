@@ -153,13 +153,13 @@ const Footer = () => {
 
         {/* App Download Section - Left Side */}
         <div className="mb-8 md:mb-12">
-          <p className="text-xs md:text-sm lg:text-base text-gray-300 mb-2 md:mb-3">Get the full experience on iOS</p>
           <a
-            href="https://apps.apple.com"
+            href="https://apps.apple.com/us/app/crwd-app/id6748994882"
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center gap-2 md:gap-3 border-2 border-white rounded-lg px-3 md:px-4 py-1.5 md:py-2 hover:bg-gray-900 transition-colors"
           >
+            <p className="text-xs md:text-sm lg:text-base text-gray-300 mb-2 md:mb-3">Get the full experience on iOS</p>
             {/* Apple Logo SVG */}
             <svg
               viewBox="0 0 24 24"
