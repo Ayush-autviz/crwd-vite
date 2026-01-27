@@ -2060,7 +2060,7 @@ export default function NewCreateCollectivePage() {
           Lead a Giving Community
         </h2>
         <p className="text-sm xs:text-base md:text-lg text-gray-700 text-center max-w-md mb-8 md:mb-12 px-4">
-          You pick the causes. You invite the people. They give monthly. No money touches your hands. You just rally the movement.
+          Pick your causes. Name your collective. Invite your people. Crwd handles the donations, you rally the movement.
         </p>
         <div className="w-full max-w-sm px-4 flex gap-3">
           <Button
@@ -2105,7 +2105,7 @@ export default function NewCreateCollectivePage() {
           Lead a Giving Community
         </h2>
         <p className="text-sm xs:text-base md:text-lg text-gray-700 text-center max-w-md mb-8 md:mb-12 px-4">
-          You pick the causes. You invite the people. They give monthly. No money touches your hands. You just rally the movement.
+          Pick your causes. Name your collective. Invite your people. Crwd handles the donations, you rally the movement.
         </p>
         <div className="w-fit ">
           <Button

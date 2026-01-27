@@ -34,10 +34,10 @@ export default function ShowStandFor() {
 
 
                     <h2 className="font-[800] text-foreground mb-4 md:mb-6 text-2xl md:text-3xl lg:text-4xl leading-tight">
-                        Show What You Stand For
+                        Be Someone Who Shows Up
                     </h2>
                     <p className="text-muted-foreground text-base md:text-lg mb-6 md:mb-8 max-w-md">
-                        Get a public profile showing what you support. Inspire others and connect with your community.
+                        Your profile shows what you stand for. Share the causes you support, inspire your community, and turn caring into action.
                     </p>
 
                     <div className="md:hidden w-full mb-6 flex justify-center">

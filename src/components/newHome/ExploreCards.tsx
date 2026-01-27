@@ -28,7 +28,7 @@ export default function ExploreCards() {
       icon: Users,
       iconColor: 'text-purple-500',
       bgColor: 'bg-purple-50',
-      title: 'Browse CRWDs',
+      title: 'Browse Collectives',
       subtitle: 'Discover communities you can join',
       onClick: () => navigate('/circles'),
     },
