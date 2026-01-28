@@ -29,7 +29,7 @@ export default function UserResultCard({ user }: UserResultCardProps) {
   const navigate = useNavigate();
   const avatarBgColor = user.color || getConsistentColor(user.id, avatarColors);
   const initials = user.first_name && user.last_name
-    ? `${user.first_name.charAt(0)}${user.last_name.charAt(0)}`.toUpperCase()
+    ? `${user.first_name.charAt(0)}`.toUpperCase()
     : user.username?.charAt(0).toUpperCase() || 'U';
 
   // Get full name
