@@ -135,10 +135,10 @@ export default function ProfileNavbar({
         <header className="w-full flex items-center justify-between px-2.5 py-4 border-b-2 border-gray-200 bg-gray-50 sticky top-0 z-10 md:hidden">
           {/* Logo on the left */}
           <div className="flex-shrink-0">
-            <Link to="/waitlist">
-              <NewLogo />
-              {/* <img src="/icons/FullLogo.png" alt="" width={80} height={80} /> */}
-            </Link>
+            {/* <Link to="/waitlist"> */}
+            {/* <NewLogo /> */}
+            <img src="/icons/FullLogo.png" alt="" width={80} height={80} />
+            {/* </Link> */}
           </div>
 
           {/* Action buttons on the right */}
@@ -298,8 +298,8 @@ export default function ProfileNavbar({
             </Link>
           </div> */}
 
-          <NewLogo />
-          {/* <img src="/icons/FullLogo.png" width={100} height={100} alt="CRWD Logo" className="object-contain" /> */}
+          {/* <NewLogo /> */}
+          <img src="/icons/FullLogo.png" width={100} height={100} alt="CRWD Logo" className="object-contain" />
 
           {/* Action buttons on the right */}
           <div className="flex items-center gap-2.5">

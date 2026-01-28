@@ -74,7 +74,8 @@ export default function NewOnboard() {
     <div className="min-h-screen bg-white flex flex-col items-center justify-center px-4">
       {/* Logo */}
       {/* <img src="/logo3.png" width={150} height={150} alt="CRWD Logo" className="mb-10" /> */}
-      <NewLogo size="lg" />
+      {/* <NewLogo size="lg" /> */}
+      <img src="/icons/FullLogo.png" width={180} height={180} alt="CRWD Logo" className="mb-10" />
 
 
       {/* Headings */}
