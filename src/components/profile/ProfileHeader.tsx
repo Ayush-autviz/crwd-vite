@@ -102,7 +102,7 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
             </AvatarFallback>
           </Avatar>
         </ImageModal>
-        <div className="font-bold text-sm sm:text-base md:text-lg leading-tight">{name}</div>
+        <div className="font-bold text-base sm:text-lg md:text-xl leading-tight">{name}</div>
       </div>
 
       <div className="flex-1 flex flex-col items-center">
@@ -112,13 +112,13 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
             className={`bg-pink-100 rounded-full py-1 px-3 mb-2 ${onFounderClick ? 'cursor-pointer hover:bg-pink-200 transition-colors' : ''}`}
             onClick={onFounderClick}
           >
-            <p className="text-pink-500 font-medium text-xs md:text-sm">Organizer</p>
+            <p className="text-pink-500 font-medium text-sm md:text-base">Organizer</p>
           </div>
         )}
         {location && (
           <div className="flex items-center gap-0.5 md:gap-1">
             <MapPin className="w-3.5 h-3.5 md:w-4 md:h-4" />
-            <span className="text-xs md:text-sm">{location}</span>
+            <span className="text-sm md:text-base">{location}</span>
           </div>
         )}
         {/* </div> */}

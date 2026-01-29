@@ -414,7 +414,7 @@ export default function ProfilePage() {
           >
             <ChevronLeft size={18} />
           </button>
-          <h1 className="text-sm sm:text-base md:text-lg font-bold text-gray-800 tracking-tight">
+          <h1 className="text-base sm:text-lg md:text-xl font-bold text-gray-800 tracking-tight">
             Me
           </h1>
         </div>
@@ -435,7 +435,7 @@ export default function ProfilePage() {
                   setShowMenu(false);
                   handleShareProfile();
                 }}
-                className="flex items-center gap-1.5 md:gap-2 w-full px-2.5 md:px-3 py-1.5 md:py-2 text-xs md:text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+                className="flex items-center gap-1.5 md:gap-2 w-full px-2.5 md:px-3 py-1.5 md:py-2 text-sm md:text-base text-gray-700 hover:bg-gray-50 transition-colors"
               >
                 <Share className="h-3.5 w-3.5 md:h-4 md:w-4" />
                 Share Profile
@@ -447,7 +447,7 @@ export default function ProfilePage() {
                   handleLogout();
                 }}
                 disabled={logoutMutation.isPending}
-                className="flex items-center gap-1.5 md:gap-2 w-full px-2.5 md:px-3 py-1.5 md:py-2 text-xs md:text-sm text-red-600 hover:bg-gray-50 transition-colors disabled:opacity-50"
+                className="flex items-center gap-1.5 md:gap-2 w-full px-2.5 md:px-3 py-1.5 md:py-2 text-sm md:text-base text-red-600 hover:bg-gray-50 transition-colors disabled:opacity-50"
               >
                 {logoutMutation.isPending ? (
                   <Loader2 className="h-3.5 w-3.5 md:h-4 md:w-4 animate-spin" />
@@ -492,7 +492,7 @@ export default function ProfilePage() {
                   variant="outline"
                   className="px-3 md:px-4 py-2 md:py-2.5 border border-gray-300 rounded-lg min-w-[100px] md:min-w-[120px]"
                 >
-                  <span className="text-xs md:text-sm font-semibold text-gray-700">Edit Profile</span>
+                  <span className="text-sm md:text-base font-semibold text-gray-700">Edit Profile</span>
                 </Button>
                 <Button
                   onClick={handleShareProfile}
@@ -501,7 +501,7 @@ export default function ProfilePage() {
                 >
                   <div className="flex items-center gap-1">
                     <Share2 className="w-3.5 h-3.5 md:w-4 md:h-4 text-gray-700" />
-                    <span className="text-xs md:text-sm font-semibold text-gray-700">Share Profile</span>
+                    <span className="text-sm md:text-base font-semibold text-gray-700">Share Profile</span>
                   </div>
                 </Button>
               </div>
@@ -569,7 +569,7 @@ export default function ProfilePage() {
                                 {cause.name}
                               </p> */}
                               <div className="flex items-center justify-center flex-grow">
-                                <p className="text-[10px] sm:text-xs font-semibold text-gray-900 text-center line-clamp-2">
+                                <p className="text-xs sm:text-sm font-semibold text-gray-900 text-center line-clamp-2">
                                   {cause.name}
                                 </p>
                               </div>

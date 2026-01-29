@@ -9,7 +9,7 @@ export function cn(...inputs: ClassValue[]) {
 export const truncateAtFirstPeriod = (
   text: string,
   minChars = 50,
-  maxChars = 100
+  maxChars = 125
 ): string => {
   if (!text) return text;
 

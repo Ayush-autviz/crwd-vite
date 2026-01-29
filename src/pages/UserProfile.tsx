@@ -715,7 +715,7 @@ export default function ProfilePage() {
                             <p className="text-sm md:text-base font-semibold text-gray-900 mb-1">
                               {cause.name || 'Unknown Cause'}
                             </p>
-                            <p className="text-xs md:text-sm text-gray-500 line-clamp-2">
+                            <p className="text-xs md:text-sm text-gray-500">
                               {truncateAtFirstPeriod(cause.mission || 'Supporting this cause')}
                             </p>
                           </div>

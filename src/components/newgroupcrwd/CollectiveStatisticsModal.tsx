@@ -196,7 +196,7 @@ export default function CollectiveStatisticsModal({
                           <h4 className="font-bold text-sm md:text-base lg:text-base text-foreground mb-0.5 md:mb-1">
                             {name}
                           </h4>
-                          <p className="text-xs lg:text-sm text-muted-foreground line-clamp-2">
+                          <p className="text-xs lg:text-sm text-muted-foreground">
                             {truncateAtFirstPeriod(cause.mission || cause.description || 'No description available')}
                           </p>
                         </div>

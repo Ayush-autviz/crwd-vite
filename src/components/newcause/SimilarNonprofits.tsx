@@ -1,6 +1,7 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { Card, CardContent } from '@/components/ui/card';
+import { truncateAtFirstPeriod } from '@/lib/utils';
 
 interface SimilarNonprofitsProps {
   similarCauses: any[];
@@ -94,8 +95,8 @@ export default function SimilarNonprofits({ similarCauses, isLoading, categoryNa
                     <h3 className="font-bold text-sm xs:text-base md:text-lg text-foreground mb-0.5 md:mb-1 line-clamp-1">
                       {cause.name}
                     </h3>
-                    <p className="text-xs md:text-sm text-muted-foreground line-clamp-2 md:line-clamp-1 ">
-                      {cause.mission || cause.description}
+                    <p className="text-xs md:text-sm text-muted-foreground ">
+                      {truncateAtFirstPeriod(cause.mission || cause.description)}
                     </p>
                   </div>
                 </div>
