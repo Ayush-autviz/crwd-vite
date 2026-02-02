@@ -134,7 +134,7 @@ export default function NewNonProfitInterests() {
                 style={{
                   backgroundColor: category.background,
                   color: category.text,
-                  opacity: isSelected ? 1 : 0.6,
+                  opacity: isSelected ? 1 : 0.3,
                 }}
               >
                 <span>{category.name}</span>

@@ -14,14 +14,7 @@ export default function CauseProfile({ causeData }: CauseProfileProps) {
 
   const handleCategoryClick = () => {
     if (category) {
-      // Navigate to search with categoryId to filter by category, not search by name
-      navigate('/search', {
-        state: {
-          categoryId: category.id,
-          categoryName: category.name,
-          searchQuery: category.name, // Keep for display but search will use categoryId
-        },
-      });
+      navigate(`/search-results?categoryId=${category.id}&categoryName=${encodeURIComponent(category.name)}&q=${encodeURIComponent(category.name)}`);
     }
   };
 
@@ -59,7 +52,15 @@ export default function CauseProfile({ causeData }: CauseProfileProps) {
             {causeData?.name}
           </h1>
           <p className="text-xs md:text-sm text-muted-foreground">
-            in {causeData?.collective_count || 0} Collectives • {causeData?.donation_count || 0} donations
+            {causeData?.collective_count > 0 && (
+              <span>in {causeData.collective_count} Collectives</span>
+            )}
+            {causeData?.collective_count > 0 && causeData?.donation_count > 0 && (
+              <span> • </span>
+            )}
+            {causeData?.donation_count > 0 && (
+              <span>in {causeData.donation_count} donations</span>
+            )}
           </p>
         </div>
       </div>

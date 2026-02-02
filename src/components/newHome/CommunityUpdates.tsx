@@ -32,6 +32,7 @@ interface CommunityUpdate {
   data?: {
     profile_picture?: string;
     color?: string;
+    collective_id?: string | number;
   };
 }
 
@@ -112,6 +113,7 @@ function NotificationSummary({ update }: { update: CommunityUpdate }) {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const { user: currentUser, token } = useAuthStore();
+  const collectiveId = update.collective?.id || update.data?.collective_id;
   const actionText = update.content || "";
   const isJoinNotification = update.isJoinNotification || false;
   const isDonationNotification = !isJoinNotification && actionText.toLowerCase().includes('donated');
@@ -197,13 +199,21 @@ function NotificationSummary({ update }: { update: CommunityUpdate }) {
       nonprofitCount = parseInt(countMatch[1], 10);
     }
 
-    // Clean action text - remove the supporting text if it exists
-    let cleanActionText = actionText;
-    if (countMatch) {
-      cleanActionText = actionText
-        .replace(/\s*(Supporting\s+\d+\s+nonprofit[s]?|joined)/gi, '')
-        .trim();
+    // Logic to extract content after "joined" and before the first full stop
+    const joinedMatch = actionText.match(/\sjoined\s(.*?)(?:\.|$)/i);
+    let cleanActionText = joinedMatch ? joinedMatch[1].trim() : actionText;
 
+    // Fallback: if no "joined" found (unlikely for isJoinNotification), stick to basic cleanup or original text
+    if (!joinedMatch && userName) {
+       // Escape special regex characters in userName
+      const escapedUserName = userName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      const userNameRegex = new RegExp(escapedUserName, 'gi');
+      cleanActionText = cleanActionText.replace(userNameRegex, '');
+      
+      cleanActionText = cleanActionText
+        .replace(/\s*joined\s*/gi, '')
+        .replace(/\s*Supporting\s+\d+\s+nonprofit[s]?/gi, '')
+        .trim();
     }
 
     return (
@@ -260,8 +270,16 @@ function NotificationSummary({ update }: { update: CommunityUpdate }) {
           </div>
           <div className="flex flex-col gap-1">
             {/* Action Text */}
-            <p className="text-xs xs:text-base font-semibold text-gray-800 flex-1">
-              {userName} <span className="font-medium">joined</span>  {cleanActionText}
+            <p className="text-xs xs:text-base font-semibold text-gray-800 flex-1"> 
+              <Link to={`/user-profile/${update.user.id}`} className="hover:underline">
+                {userName}
+              </Link> <span className="font-medium">joined</span> {
+                collectiveId ? (
+                  <Link to={`/groupcrwd/${collectiveId}`} className="hover:underline">
+                    {cleanActionText}
+                  </Link>
+                ) : cleanActionText
+              }
             </p>
             {/* Supporting X nonprofits - Only on second line if it exists */}
             {nonprofitCount > 0 && (
@@ -303,7 +321,7 @@ function NotificationSummary({ update }: { update: CommunityUpdate }) {
                 to={`/user-profile/${update.user.id}`}
                 className="font-bold text-sm xs:text-base md:text-base text-gray-900 hover:underline block"
               >
-                {userName}
+                {userName} 
               </Link>
               {/* <p className="text-xs xs:text-sm text-gray-500">@{update.user.username}</p> */}
             </div>

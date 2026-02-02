@@ -2538,7 +2538,13 @@ export default function NewCreateCollectivePage() {
                         Letter
                       </Button>
                       <Button
-                        onClick={() => setLogoType('upload')}
+                        onClick={() => {
+                          setLogoType('upload');
+                          setTimeout(() => {
+                            const input = document.getElementById('logo-upload-input');
+                            input?.click();
+                          }, 0);
+                        }}
                         className={`flex-1 font-semibold rounded-lg py-2.5 md:py-3 text-sm md:text-base ${logoType === 'upload'
                           ? 'bg-[#1600ff] text-white'
                           : 'bg-white border border-gray-300 text-foreground hover:bg-gray-50'
@@ -2579,23 +2585,6 @@ export default function NewCreateCollectivePage() {
                           className="hidden"
                           id="logo-upload-input"
                         />
-                        <label
-                          htmlFor="logo-upload-input"
-                          className="cursor-pointer"
-                        >
-                          <Button
-                            type="button"
-                            variant="outline"
-                            className="w-full border-gray-300"
-                            onClick={() => {
-                              const input = document.getElementById('logo-upload-input');
-                              input?.click();
-                            }}
-                          >
-                            <Camera className="w-4 h-4 mr-2" />
-                            Upload
-                          </Button>
-                        </label>
                       </div>
                     )}
                   </div>
