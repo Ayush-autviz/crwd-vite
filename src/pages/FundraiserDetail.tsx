@@ -187,7 +187,7 @@ export default function FundraiserDetail() {
           <div className="flex items-center justify-between mb-4">
             <button
               onClick={() => navigate(-1)}
-              className="p-1.5 hover:bg-gray-100 rounded-full transition-colors"
+              className="p-1.5 bg-white hover:bg-gray-100 rounded-full transition-colors shadow-sm"
               aria-label="Go back"
             >
               <ArrowLeft className="w-5 h-5 text-gray-700" />
@@ -195,7 +195,7 @@ export default function FundraiserDetail() {
             <div className="flex items-center gap-3">
               <button
                 onClick={() => setShowShareModal(true)}
-                className="p-1.5 hover:bg-gray-100 rounded-full transition-colors"
+                className="p-1.5 bg-white hover:bg-gray-100 rounded-full transition-colors shadow-sm"
                 aria-label="Share"
               >
                 <Share2 className="w-5 h-5 text-gray-700" />
@@ -203,7 +203,7 @@ export default function FundraiserDetail() {
               <div className="relative" ref={dropdownRef}>
                 <button
                   onClick={() => setShowDropdown(!showDropdown)}
-                  className="p-1.5 hover:bg-gray-100 rounded-full transition-colors"
+                  className="p-1.5 bg-white hover:bg-gray-100 rounded-full transition-colors shadow-sm"
                   aria-label="More options"
                 >
                   <MoreHorizontal className="w-5 h-5 text-gray-700" />

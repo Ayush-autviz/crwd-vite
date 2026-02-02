@@ -447,8 +447,11 @@ export const Comment: React.FC<CommentProps> = ({
 
   const handleUserClick = (e: React.MouseEvent) => {
     e.stopPropagation();
-    if (userId) {
-      navigate(`/profile/${userId}`);
+    if (isOwnComment) {
+      navigate(`/profile/`);
+    }
+    else {
+      navigate(`/user-profile/${userId}`);
     }
   };
 
@@ -491,12 +494,12 @@ export const Comment: React.FC<CommentProps> = ({
             </AvatarFallback>
           </Avatar>
         </div>
-        <div className="flex-1">
+        <div className="flex-1 min-w-0">
           {/* Increased Padding: p-3 (was p-2) */}
           <div className="bg-muted p-3 md:p-4 rounded-lg">
             <div className="flex items-center justify-between mb-1 md:mb-1.5">
               <span
-                onClick={handleUserClick}
+                onClick={handleUserClick} 
                 // Increased Name Size: text-sm (was text-xs)
                 className="font-medium text-sm md:text-base cursor-pointer hover:underline"
               >
@@ -536,7 +539,7 @@ export const Comment: React.FC<CommentProps> = ({
               )}
             </div>
             {/* Increased Content Size: text-sm (was text-xs) */}
-            <p className="text-sm md:text-base text-gray-800">{content}</p>
+            <p className="text-sm md:text-base text-gray-800 break-words whitespace-pre-wrap">{content}</p>
           </div>
           {/* Increased Action Text Size: text-xs/sm (was text-xs) */}
           <div className="flex items-center gap-3 md:gap-4 mt-1.5 md:mt-2 text-xs md:text-sm">

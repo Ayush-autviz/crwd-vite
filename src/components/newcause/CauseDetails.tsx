@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 import { MapPin } from 'lucide-react';
 import { categories } from '@/constants/categories';
 
@@ -69,9 +70,11 @@ export default function CauseDetails({ causeData }: CauseDetailsProps) {
       {category && (
         <div className="mb-3 md:mb-4">
           <h3 className="text-xs xs:text-sm md:text-base font-bold text-gray-900 mb-0.5 md:mb-1">MAIN FOCUS</h3>
-          <span className="text-xs xs:text-sm md:text-base font-medium" style={{ color: '#1600ff' }}>
+          <Link to={`/search-results?categoryId=${category.id}&categoryName=${encodeURIComponent(category.name)}&q=${encodeURIComponent(category.name)}`}
+            className="text-xs xs:text-sm md:text-base font-medium hover:underline"
+            style={{ color: '#1600ff' }}>
             {category.name}
-          </span>
+          </Link>
         </div>
       )}
 
