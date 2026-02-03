@@ -25,7 +25,6 @@ import SimilarNonprofits from '@/components/newcause/SimilarNonprofits';
 import { SharePost } from '@/components/ui/SharePost';
 import { useAuthStore } from '@/stores/store';
 import { Toast } from '@/components/ui/toast';
-import { getCausesBySearch } from '@/services/api/crwd';
 import Footer from '@/components/Footer';
 import AddToDonationBoxBottomSheet from '@/components/newcause/AddToDonationBoxBottomSheet';
 
@@ -48,17 +47,8 @@ export default function NewCausePage() {
     staleTime: 0,
   });
 
-  // Fetch similar causes (same category, excluding current cause)
-  const { data: similarCausesData, isLoading: isLoadingSimilar } = useQuery({
-    queryKey: ['similar-causes', causeData?.category, causeId],
-    queryFn: () => getCausesBySearch('', causeData?.category, 1),
-    enabled: !!causeData?.category && !!causeId,
-  });
-
   // Filter out current cause and limit to 2 similar causes
-  const similarCauses = similarCausesData?.results
-    ?.filter((cause: any) => cause.id.toString() !== causeId)
-    .slice(0, 2) || [];
+  const similarCauses = causeData?.similar_causes?.slice(0, 2) || [];
 
   // Fetch donation box to check if cause is already added
   const { data: donationBoxData } = useQuery({
@@ -290,8 +280,8 @@ export default function NewCausePage() {
 
         <SimilarNonprofits
           similarCauses={similarCauses}
-          isLoading={isLoadingSimilar}
-          categoryName={categories.find(c => c.id === causeData?.category)?.name || causeData?.category}
+          isLoading={false}
+          categoryName={categories.find(c => causeData?.category?.includes(c.id) && c.id !== '')?.name || causeData?.category}
           categoryId={causeData?.category}
         />
 

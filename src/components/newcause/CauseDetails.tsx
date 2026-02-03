@@ -7,12 +7,15 @@ interface CauseDetailsProps {
 }
 
 export default function CauseDetails({ causeData }: CauseDetailsProps) {
-  const category = categories.find((cat) => cat.id === causeData?.category);
+  // Get all matching categories from the category string (e.g., "MP" -> "M", "P")
+  const displayedCategories = categories.filter(
+    (cat) => cat.id && typeof causeData?.category === 'string' && causeData.category.includes(cat.id)
+  );
+  const mainCategory = displayedCategories[0];
 
-  // Get related categories - show related categories based on the main category
-  // For Wellness (G), show related: Health (E), Mental (F), Research (H), Science (U)
+  // Get related categories - show related categories based on the first category
   const getRelatedCategories = () => {
-    if (!category) return [];
+    if (!mainCategory) return [];
 
     // Map of category IDs to related category IDs
     const relatedMap: Record<string, string[]> = {
@@ -23,7 +26,7 @@ export default function CauseDetails({ causeData }: CauseDetailsProps) {
       'U': ['H', 'E', 'G'], // Science -> Research, Health, Wellness
     };
 
-    const relatedIds = relatedMap[category.id] || [];
+    const relatedIds = relatedMap[mainCategory.id] || [];
     return relatedIds
       .map(id => categories.find(cat => cat.id === id))
       .filter(Boolean) as typeof categories;
@@ -67,14 +70,21 @@ export default function CauseDetails({ causeData }: CauseDetailsProps) {
       )}
 
       {/* Main Focus */}
-      {category && (
+      {displayedCategories.length > 0 && (
         <div className="mb-3 md:mb-4">
           <h3 className="text-xs xs:text-sm md:text-base font-bold text-gray-900 mb-0.5 md:mb-1">MAIN FOCUS</h3>
-          <Link to={`/search-results?categoryId=${category.id}&categoryName=${encodeURIComponent(category.name)}&q=${encodeURIComponent(category.name)}`}
-            className="text-xs xs:text-sm md:text-base font-medium hover:underline"
-            style={{ color: '#1600ff' }}>
-            {category.name}
-          </Link>
+          <div className="flex flex-wrap gap-x-1.5">
+            {displayedCategories.map((cat, index) => (
+              <span key={cat.id}>
+                <Link to={`/search-results?categoryId=${cat.id}&categoryName=${encodeURIComponent(cat.name)}&q=${encodeURIComponent(cat.name)}`}
+                  className="text-xs xs:text-sm md:text-base font-medium hover:underline"
+                  style={{ color: '#1600ff' }}>
+                  {cat.name}
+                </Link>
+                {index < displayedCategories.length - 1 && <span className="text-xs xs:text-sm md:text-base text-gray-500">,</span>}
+              </span>
+            ))}
+          </div>
         </div>
       )}
 

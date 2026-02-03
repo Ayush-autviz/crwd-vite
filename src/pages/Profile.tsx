@@ -16,6 +16,8 @@ import {
   LogOut,
   ChevronLeft,
   Users,
+  DoorOpenIcon,
+  Share2Icon,
 } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { Toast } from "../components/ui/toast";
@@ -437,7 +439,7 @@ export default function ProfilePage() {
                 }}
                 className="flex items-center gap-1.5 md:gap-2 w-full px-2.5 md:px-3 py-1.5 md:py-2 text-sm md:text-base text-gray-700 hover:bg-gray-50 transition-colors"
               >
-                <Share className="h-3.5 w-3.5 md:h-4 md:w-4" />
+                <Share2Icon className="h-3.5 w-3.5 md:h-4 md:w-4" />
                 Share Profile
               </button>
 
@@ -452,7 +454,7 @@ export default function ProfilePage() {
                 {logoutMutation.isPending ? (
                   <Loader2 className="h-3.5 w-3.5 md:h-4 md:w-4 animate-spin" />
                 ) : (
-                  <LogOut className="h-3.5 w-3.5 md:h-4 md:w-4" />
+                  <DoorOpenIcon className="h-3.5 w-3.5 md:h-4 md:w-4" />
                 )}
                 {logoutMutation.isPending ? 'Logging out...' : 'Logout'}
               </button>

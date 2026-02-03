@@ -226,6 +226,12 @@ export default function NewGroupCrwdPage() {
 
   // Check if current user is the admin/creator
   const isAdmin = currentUser?.id === crwdData?.created_by?.id;
+  const founder = crwdData?.created_by;
+  const founderName = founder
+    ? (founder.first_name
+      ? `${founder.first_name} ${founder.last_name || ''}`.trim()
+      : founder.username)
+    : undefined;
 
   const handleJoinConfirm = async (selectedNonprofits: any[], collectiveId: string, shouldSetupDonationBox: boolean) => {
     if (!crwdId) return;
@@ -592,6 +598,7 @@ export default function NewGroupCrwdPage() {
         onJoin={handleJoinConfirm}
         isJoining={false}
         donationBox={donationBoxData}
+        founderName={founderName}
       />
 
       {/* Unjoin Confirmation Dialog */}

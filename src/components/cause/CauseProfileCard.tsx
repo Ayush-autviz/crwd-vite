@@ -97,7 +97,9 @@ const CauseProfileCard: React.FC<CauseProfileCardProps> = ({
   //   },
   // ];
 
-  const category = categories.find((category) => category.id === causeData?.category);
+  const displayedCategories = categories.filter(
+    (cat) => cat.id && typeof causeData?.category === 'string' && causeData.category.includes(cat.id)
+  );
 
   return (
     <div className="bg-white px-3 py-4 mx-3 mb-2 flex flex-col space-y-4">
@@ -141,19 +143,19 @@ const CauseProfileCard: React.FC<CauseProfileCardProps> = ({
         {/* <button className="border-1 border-gray-500 rounded-md h-9 px-3 py-2"> */}
         <div className="flex items-center gap-2">
           {currentUser?.id && (
-          <Heart
-            className={`
+            <Heart
+              className={`
                 w-6 h-6
                 ${isFavorited
-                ? "stroke-red-500 fill-red-500"
-                : "stroke-gray-500 fill-transparent"
-              }
+                  ? "stroke-red-500 fill-red-500"
+                  : "stroke-gray-500 fill-transparent"
+                }
                 hover:stroke-red-500 hover:fill-red-500
                 cursor-pointer transition-colors duration-200
                 ${(favoriteMutation.isPending || unfavoriteMutation.isPending) ? 'opacity-50 cursor-not-allowed' : ''}
               `}
-            onClick={handleFavoriteClick}
-          />
+              onClick={handleFavoriteClick}
+            />
           )}
           {/* {(favoriteMutation.isPending || unfavoriteMutation.isPending) && (
             <Loader2 className="w-4 h-4 animate-spin text-gray-500" />
@@ -164,7 +166,7 @@ const CauseProfileCard: React.FC<CauseProfileCardProps> = ({
       </div>
       {/* Bio */}
       <div className="text-lg text-gray-700">
-      {causeData?.mission}
+        {causeData?.mission}
         <div className="mt-2">
           <button
             onClick={onLearnMoreClick}
@@ -183,21 +185,20 @@ const CauseProfileCard: React.FC<CauseProfileCardProps> = ({
       {/* Categories Section */}
 
       <div className="overflow-x-auto pb-2">
-        <div className="flex space-x-2 min-w-max">
-          {/* {categories.map((category) => (
-            <Link to={`/interests`} key={category.name}> */}
-              <Badge
-                variant="secondary"
-                className="bg-muted/50 hover:bg-muted text-foreground rounded-md px-4 py-2 whitespace-nowrap"
-                style={{
-                  backgroundColor: category?.background,
-                  color: category?.text,
-                }}
-              >
-                {category?.name}
-              </Badge>
-            {/* </Link>
-          ))} */}
+        <div className="flex gap-2 min-w-max">
+          {displayedCategories.map((cat) => (
+            <Badge
+              key={cat.id}
+              variant="secondary"
+              className="bg-muted/50 hover:bg-muted text-foreground rounded-md px-4 py-2 whitespace-nowrap"
+              style={{
+                backgroundColor: cat.background,
+                color: cat.text,
+              }}
+            >
+              {cat.name}
+            </Badge>
+          ))}
         </div>
       </div>
 

@@ -29,6 +29,7 @@ interface JoinCollectiveBottomSheetProps {
   onJoin: (selectedNonprofits: Nonprofit[], collectiveId: string, shouldSetupDonationBox: boolean) => void;
   isJoining?: boolean;
   donationBox?: any;
+  founderName?: string;
 }
 
 export default function JoinCollectiveBottomSheet({
@@ -40,6 +41,7 @@ export default function JoinCollectiveBottomSheet({
   onJoin,
   isJoining = false,
   donationBox,
+  founderName,
 }: JoinCollectiveBottomSheetProps) {
   const [isVisible, setIsVisible] = useState(false);
   const [isAnimating, setIsAnimating] = useState(false);
@@ -61,12 +63,12 @@ export default function JoinCollectiveBottomSheet({
 
   // Check if donation box exists
   const hasDonationBox = donationBox && donationBox.id;
-  
+
   // Check capacity: compare box_causes.length with capacity
   const currentCapacity = donationBox?.box_causes?.length || 0;
   const maxCapacity = donationBox?.capacity || 0;
   const isAtCapacity = hasDonationBox && currentCapacity >= maxCapacity;
-  
+
   // Get available nonprofits (excluding those already in donation box)
   const availableNonprofits = nonprofits.filter((np) => {
     const cause = np.cause || np;
@@ -85,7 +87,7 @@ export default function JoinCollectiveBottomSheet({
             return existingCauseIds.has(causeId) ? null : causeId;
           })
           .filter((id): id is number => id !== null);
-        
+
         setSelectedNonprofitIds(new Set(availableIds));
       } else if (isAtCapacity) {
         // Clear selection if at capacity
@@ -119,7 +121,7 @@ export default function JoinCollectiveBottomSheet({
     if (isAtCapacity || existingCauseIds.has(id)) {
       return;
     }
-    
+
     setSelectedNonprofitIds((prev) => {
       const newSet = new Set(prev);
       if (newSet.has(id)) {
@@ -136,7 +138,7 @@ export default function JoinCollectiveBottomSheet({
     if (isAtCapacity) {
       return;
     }
-    
+
     if (selectedNonprofitIds.size === availableNonprofits.length) {
       // If all available selected, deselect all
       setSelectedNonprofitIds(new Set());
@@ -218,11 +220,9 @@ export default function JoinCollectiveBottomSheet({
                 You've joined {collectiveName}!
               </h2>
               <p className="text-xs sm:text-base md:text-base text-gray-600">
-                {isAtCapacity 
+                {isAtCapacity
                   ? "Your donation box is at capacity. Increase your donation to add more nonprofits."
-                  : hasDonationBox
-                  ? "Optionally add these nonprofits to your donation box. You can manage them anytime from your profile."
-                  : "Would you like to set up your donation box to support these nonprofits?"
+                  : `${founderName || collectiveName} chose these nonprofits to support. Add them to your donation box to support them too.`
                 }
               </p>
             </div>
@@ -289,7 +289,7 @@ export default function JoinCollectiveBottomSheet({
               const isDisabled = existingCauseIds.has(nonprofitId);
               const avatarBgColor = getConsistentColor(nonprofitId, avatarColors);
               const initials = getInitials(nonprofitName);
-              
+
               return (
                 <button
                   key={nonprofit.id}
@@ -298,7 +298,7 @@ export default function JoinCollectiveBottomSheet({
                   className={cn(
                     "w-full flex items-center gap-2 sm:gap-3 md:gap-4 p-2.5 sm:p-3 md:p-4 bg-gray-50   border border-gray-200 rounded-lg transition-colors text-left",
                     (isDisabled || isAtCapacity)
-                      ? "opacity-50 cursor-not-allowed" 
+                      ? "opacity-50 cursor-not-allowed"
                       : "hover:bg-gray-100"
                   )}
                 >
@@ -309,8 +309,8 @@ export default function JoinCollectiveBottomSheet({
                       (isDisabled || isAtCapacity)
                         ? "bg-gray-200 border-gray-300"
                         : isSelected
-                        ? "bg-[#1600ff] border-[#1600ff]"
-                        : "bg-white border-gray-300"
+                          ? "bg-[#1600ff] border-[#1600ff]"
+                          : "bg-white border-gray-300"
                     )}
                   >
                     {(isDisabled || isAtCapacity) ? (

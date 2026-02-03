@@ -10,12 +10,13 @@ interface CauseProfileProps {
 
 export default function CauseProfile({ causeData }: CauseProfileProps) {
   const navigate = useNavigate();
-  const category = categories.find((cat) => cat.id === causeData?.category);
+  // Get all matching categories from the category string (e.g., "MP" -> "M", "P")
+  const displayedCategories = categories.filter(
+    (cat) => cat.id && typeof causeData?.category === 'string' && causeData.category.includes(cat.id)
+  );
 
-  const handleCategoryClick = () => {
-    if (category) {
-      navigate(`/search-results?categoryId=${category.id}&categoryName=${encodeURIComponent(category.name)}&q=${encodeURIComponent(category.name)}`);
-    }
+  const handleCategoryClick = (cat: typeof categories[0]) => {
+    navigate(`/search-results?categoryId=${cat.id}&categoryName=${encodeURIComponent(cat.name)}&q=${encodeURIComponent(cat.name)}`);
   };
 
   // Get first letter for avatar fallback
@@ -71,18 +72,23 @@ export default function CauseProfile({ causeData }: CauseProfileProps) {
           {truncateAtFirstPeriod(causeData?.mission || causeData?.description)}
         </p>
 
-        {/* Category Tag */}
-        {category && (
-          <Badge
-            variant="secondary"
-            onClick={handleCategoryClick}
-            className="rounded-full px-2.5 md:px-3 py-0.5 md:py-1 text-xs md:text-sm font-medium text-white cursor-pointer hover:opacity-90 transition-opacity"
-            style={{
-              backgroundColor: category.background,
-            }}
-          >
-            {category.name}
-          </Badge>
+        {/* Category Tags */}
+        {displayedCategories.length > 0 && (
+          <div className="flex flex-wrap gap-2">
+            {displayedCategories.map((cat) => (
+              <Badge
+                key={cat.id}
+                variant="secondary"
+                onClick={() => handleCategoryClick(cat)}
+                className="rounded-full px-2.5 md:px-3 py-0.5 md:py-1 text-xs md:text-sm font-medium text-white cursor-pointer hover:opacity-90 transition-opacity"
+                style={{
+                  backgroundColor: cat.background,
+                }}
+              >
+                {cat.name}
+              </Badge>
+            ))}
+          </div>
         )}
       </div>
     </div>
