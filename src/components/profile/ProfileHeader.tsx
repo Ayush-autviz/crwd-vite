@@ -91,7 +91,12 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
       </div> */}
       {/* Avatar and info */}
       <div className="flex flex-col items-center gap-3 md:gap-4 mb-2.5 md:mb-3">
-        <ImageModal src={avatarUrl} alt={name}>
+        <ImageModal
+          src={avatarUrl}
+          alt={name}
+          fallbackText={name.charAt(0).toUpperCase()}
+          fallbackColor={avatarBgColor}
+        >
           <Avatar className="w-28 h-28 md:w-28 md:h-28 rounded-full object-contain cursor-pointer hover:opacity-80 transition-opacity">
             <AvatarImage src={avatarUrl} alt={name} />
             <AvatarFallback

@@ -1521,6 +1521,7 @@ import { SharePost } from '@/components/ui/SharePost';
 import { useAuthStore } from '@/stores/store';
 import { CrwdAnimation } from '@/assets/newLogo';
 import JoinCollectiveBottomSheet from '@/components/newgroupcrwd/JoinCollectiveBottomSheet';
+import { truncateAtFirstPeriod } from '@/lib/utils';
 
 const getCategoryById = (categoryId: string | undefined) => {
   return categories.find(cat => cat.id === categoryId) || null;
@@ -2211,7 +2212,7 @@ export default function NewCreateCollectivePage() {
                         <div className="flex-1 min-w-0">
                           <h4 className="font-bold text-sm xs:text-base md:text-lg text-foreground mb-1">{causeData.name}</h4>
                           <p className="text-xs xs:text-sm md:text-base text-gray-600 line-clamp-2 mb-2">
-                            {causeData.mission || causeData.description}
+                            {truncateAtFirstPeriod(causeData.mission || causeData.description)}
                           </p>
                           <div className="flex flex-wrap gap-1.5 md:gap-2">
                             {categoryNames.map((name, index) => {
@@ -2648,7 +2649,7 @@ export default function NewCreateCollectivePage() {
                               })}
                             </div>
                             <p className="text-xs xs:text-sm md:text-base text-gray-600 line-clamp-2 mb-2">
-                              {causeData.mission || causeData.description}
+                              {truncateAtFirstPeriod(causeData.mission || causeData.description)}
                             </p>
                           </div>
                           <button
@@ -2745,7 +2746,7 @@ export default function NewCreateCollectivePage() {
                                   </span>
                                 </div>
                                 <p className="text-xs xs:text-sm md:text-base text-muted-foreground line-clamp-2">
-                                  {cause.mission || cause.description}
+                                  {truncateAtFirstPeriod(cause.mission || cause.description)}
                                 </p>
                               </div>
                               <div className="flex items-center cursor-pointer flex-shrink-0">
@@ -2894,7 +2895,7 @@ export default function NewCreateCollectivePage() {
                                 })}
                               </div>
                               <p className="text-xs xs:text-sm md:text-base text-muted-foreground line-clamp-2">
-                                {cause.mission || cause.description}
+                                {truncateAtFirstPeriod(cause.mission || cause.description)}
                               </p>
                             </div>
 

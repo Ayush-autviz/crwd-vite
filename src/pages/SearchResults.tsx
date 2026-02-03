@@ -53,7 +53,7 @@ export default function SearchResultsPage() {
     };
 
     const handleClearSearch = () => {
-        navigate('/search');
+        navigate(-1);
     };
 
     // Map tab names to API tab values
