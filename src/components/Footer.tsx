@@ -25,7 +25,12 @@ const Footer = () => {
       <div className="max-w-7xl mx-auto px-3 md:px-4 lg:px-8 py-8 md:py-12 lg:py-16">
         {/* Logo at Top */}
         <div className="mb-4 md:mb-6">
-          <div className="text-xl md:text-2xl lg:text-3xl font-bold">crwd</div>
+          <div 
+            className="text-xl md:text-2xl lg:text-3xl font-bold cursor-pointer"
+            onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+          >
+            crwd
+          </div>
         </div>
 
         {/* Divider Line */}
@@ -159,7 +164,7 @@ const Footer = () => {
             rel="noopener noreferrer"
             className="inline-flex items-center gap-2 md:gap-3 border-2 border-white rounded-lg px-3 md:px-4 py-1.5 md:py-2 hover:bg-gray-900 transition-colors"
           >
-            <p className="text-xs md:text-sm lg:text-base text-gray-300 mb-2 md:mb-3">Get the full experience on iOS</p>
+            {/* <p className="text-xs md:text-sm lg:text-base text-gray-300 mb-2 md:mb-3">Get the full experience on iOS</p> */}
             {/* Apple Logo SVG */}
             <svg
               viewBox="0 0 24 24"

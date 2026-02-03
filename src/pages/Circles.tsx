@@ -7,6 +7,7 @@ import Footer from "@/components/Footer";
 import { getCollectives, getJoinCollective } from "@/services/api/crwd";
 import { useQuery } from "@tanstack/react-query";
 import { useAuthStore } from "@/stores/store";
+import { truncateAtFirstPeriod } from "@/lib/utils";
 
 const Circles = () => {
   const { user: currentUser, token } = useAuthStore();
@@ -67,6 +68,7 @@ const Circles = () => {
         showBackButton={true}
         showPostButton={false}
         backPath="/"
+        showDesktopBackButton={true}
       />
 
       <div className="md:min-h-screen">
@@ -194,7 +196,7 @@ const Circles = () => {
 
                             {/* Description - Sizing Updated */}
                             <p className="text-xs xs:text-sm md:text-base text-gray-600 mb-2 md:mb-3 line-clamp-2">
-                              {circle.description}
+                              {truncateAtFirstPeriod(circle.description || '')}
                             </p>
 
                             {/* Founder Info */}
@@ -301,7 +303,7 @@ const Circles = () => {
 
                     {/* Description - Sizing Updated */}
                     <p className="text-xs xs:text-sm md:text-base text-gray-600 mb-2 md:mb-3 line-clamp-2">
-                      {circle.description}
+                      {truncateAtFirstPeriod(circle.description || '')}
                     </p>
 
                     {/* Founder Info */}
