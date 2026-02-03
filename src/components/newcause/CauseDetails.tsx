@@ -52,7 +52,7 @@ export default function CauseDetails({ causeData }: CauseDetailsProps) {
       )}
 
       {/* Related Causes */}
-      {relatedCategories.length > 0 && (
+      {/* {relatedCategories.length > 0 && (
         <div className="mb-3 md:mb-4">
           <h3 className="text-xs md:text-sm font-bold text-gray-900 mb-1.5 md:mb-2">RELATED CAUSES</h3>
           <div className="flex flex-wrap gap-1.5 md:gap-2">
@@ -67,7 +67,7 @@ export default function CauseDetails({ causeData }: CauseDetailsProps) {
             ))}
           </div>
         </div>
-      )}
+      )} */}
 
       {/* Main Focus */}
       {displayedCategories.length > 0 && (
