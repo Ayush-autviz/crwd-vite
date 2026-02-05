@@ -525,14 +525,16 @@ export default function NewHome() {
                     {token?.access_token && (
                         <div className="w-full px-4 my-4 mb-6 md:px-0 md:my-8 md:mb-10">
                             {/* Heading for the feed */}
-                            <div className="mb-3 md:mb-6">
-                                <h2 className="text-base xs:text-lg sm:text-xl md:text-3xl font-bold text-gray-900 mb-1 md:mb-2">
-                                    Community Updates
-                                </h2>
-                                <p className="text-[10px] xs:text-[11px] sm:text-xs md:text-sm text-gray-600">
-                                    Updates, and discoveries from your community
-                                </p>
-                            </div>
+                            {feedPart1.length > 0 && (
+                                <div className="mb-3 md:mb-6">
+                                    <h2 className="text-base xs:text-lg sm:text-xl md:text-3xl font-bold text-gray-900 mb-1 md:mb-2">
+                                        Community Updates
+                                    </h2>
+                                    <p className="text-[10px] xs:text-[11px] sm:text-xs md:text-sm text-gray-600">
+                                        Updates, and discoveries from your community
+                                    </p>
+                                </div>
+                            )}
                             <div className="space-y-2.5 md:space-y-4">
                                 {communityUpdatesLoading && (
                                     <div className="bg-white rounded-lg border border-gray-200 p-2.5 md:p-4 animate-pulse">
