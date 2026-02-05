@@ -26,9 +26,7 @@ const Footer = () => {
         {/* Logo at Top */}
         <div className="mb-4 md:mb-6">
           <div 
-            className="text-xl md:text-2xl lg:text-3xl font-bold cursor-pointer"
-            onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-          >
+            className="text-xl md:text-2xl lg:text-3xl font-bold cursor-pointer">
             crwd
           </div>
         </div>
