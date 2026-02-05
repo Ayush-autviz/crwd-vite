@@ -878,7 +878,7 @@ export default function ProfilePage() {
                               </AvatarFallback>
                             </Avatar>
                             <div className="flex-1 min-w-0">
-                              <p className="text-sm md:text-base font-medium text-gray-900">
+                              <p className="text-sm md:text-base font-semibold text-gray-900">
                                 {userData.first_name && userData.last_name
                                   ? `${userData.first_name} ${userData.last_name}`
                                   : userData.first_name || userData.name || 'Unknown User'}
@@ -942,7 +942,7 @@ export default function ProfilePage() {
                               </AvatarFallback>
                             </Avatar>
                             <div className="flex-1 min-w-0">
-                              <p className="text-sm md:text-base font-medium text-gray-900">
+                              <p className="text-sm md:text-base font-semibold text-gray-900">
                                 {userData.first_name && userData.last_name
                                   ? `${userData.first_name} ${userData.last_name}`
                                   : userData.first_name || userData.name || 'Unknown User'}
@@ -1045,10 +1045,10 @@ export default function ProfilePage() {
                         </Avatar>
                         {/* Collective Info */}
                         <div className="flex-1 min-w-0">
-                          <h3 className="font-bold text-sm md:text-base text-gray-900 mb-1 md:mb-2">
+                          <h3 className="font-semibold text-sm md:text-base text-gray-900 mb-1 md:mb-2">
                             {collective.name || 'Unknown Collective'}
                           </h3>
-                          <p className="text-xs md:text-sm text-gray-600 leading-relaxed">
+                          <p className="text-xs md:text-sm text-gray-500 leading-relaxed">
                             {collective.description || 'No description available'}
                           </p>
                         </div>

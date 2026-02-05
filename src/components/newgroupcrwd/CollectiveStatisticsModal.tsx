@@ -138,7 +138,7 @@ export default function CollectiveStatisticsModal({
         </div>
 
         {/* Content */}
-        <div className="px-3 md:px-4 lg:px-6 py-3 md:py-4 lg:py-6 flex-1 overflow-y-auto">
+        <div className="px-3 md:px-4 lg:px-6  flex-1 overflow-y-auto">
           {activeTab === 'Nonprofits' && (
             <div>
               <h3 className="text-xs md:text-sm font-bold text-muted-foreground uppercase tracking-wide mb-2 md:mb-3 lg:mb-4">
@@ -344,7 +344,7 @@ export default function CollectiveStatisticsModal({
                         </Avatar>
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center gap-1 md:gap-1.5 lg:gap-2 flex-wrap">
-                            <h4 className="font-bold text-sm md:text-base lg:text-base text-foreground">
+                            <h4 className="font-semibold text-sm md:text-base lg:text-base text-foreground">
                               {/* @{username || name.toLowerCase().replace(/\s+/g, '_')} */}
                               {name}
                             </h4>

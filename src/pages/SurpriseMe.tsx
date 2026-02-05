@@ -49,7 +49,7 @@ export default function SurpriseMePage() {
   // Get categories from URL params or location state
   const categoriesFromParams = searchParams.get('categories');
   const categoriesFromState = (location.state as any)?.categories;
-  const categories = categoriesFromParams 
+  const categories = categoriesFromParams
     ? categoriesFromParams.split(',').filter(Boolean)
     : categoriesFromState || undefined;
 
@@ -107,7 +107,7 @@ export default function SurpriseMePage() {
     const hasDonationBox = donationBoxData && !isDonationBoxNotFound && donationBoxData.id;
 
     if (!hasDonationBox) {
-    
+
       // Donation box not set up - navigate to donation box setup with preselected causes
       const causeIds = surpriseCauses.map((cause) => cause.id);
       navigate('/donation?tab=setup', {
@@ -125,7 +125,7 @@ export default function SurpriseMePage() {
         const gross = grossAmount;
         let crwdFee: number;
         let net: number;
-        
+
         if (gross < 10.00) {
           // Flat fee of $1.00
           crwdFee = 1.00;
@@ -135,7 +135,7 @@ export default function SurpriseMePage() {
           crwdFee = gross * 0.10;
           net = gross - crwdFee;
         }
-        
+
         return {
           crwdFee: Math.round(crwdFee * 100) / 100,
           net: Math.round(net * 100) / 100,
@@ -146,15 +146,15 @@ export default function SurpriseMePage() {
       const fees = calculateFees(monthlyAmount);
       const net = fees.net;
       const maxCapacity = Math.floor(net / 0.20);
-      
+
       // Count current causes in the box
       const boxCauses = donationBoxData.box_causes || [];
       const currentCapacity = boxCauses.length;
-      
+
       // Check if adding all surprise causes would exceed capacity
       const newCausesCount = surpriseCauses.length;
       const totalAfterAdding = currentCapacity + newCausesCount;
-      
+
       if (totalAfterAdding > maxCapacity) {
         const availableSlots = maxCapacity - currentCapacity;
         if (availableSlots <= 0) {
@@ -168,7 +168,7 @@ export default function SurpriseMePage() {
         }
         return;
       }
-      
+
       // If capacity check passes, proceed with adding
       const causes = surpriseCauses.map((cause) => ({
         cause_id: cause.id,
@@ -209,106 +209,106 @@ export default function SurpriseMePage() {
           className="flex items-center gap-1 md:gap-1.5 text-purple-600 hover:text-purple-700 font-medium text-xs md:text-sm"
         >
           <Sparkles className="w-3.5 h-3.5 md:w-4 md:h-4" />
-          Surprise Again
+          Surprise Me Again
         </button>
       </div>
 
       {/* Main Content */}
       <div className="md:max-w-[60%] mx-auto">
-      <div className="px-3 md:px-4 py-4 md:py-6">
-        {/* Sparkle Icons */}
-        <div className="flex justify-center mb-3 md:mb-4">
-          <div className="flex gap-1.5 md:gap-2">
-            <Sparkles className="w-5 h-5 md:w-6 md:h-6 text-yellow-500" />
-            <Sparkles className="w-5 h-5 md:w-6 md:h-6 text-yellow-500" />
+        <div className="px-3 md:px-4 py-4 md:py-6">
+          {/* Sparkle Icons */}
+          <div className="flex justify-center mb-3 md:mb-4">
+            <div className="flex gap-1.5 md:gap-2">
+              <Sparkles className="w-5 h-5 md:w-6 md:h-6 text-yellow-500" />
+              <Sparkles className="w-5 h-5 md:w-6 md:h-6 text-yellow-500" />
+            </div>
+          </div>
+
+          {/* Title */}
+          <h1 className="text-2xl md:text-3xl font-bold text-foreground text-center mb-1.5 md:mb-2">
+            Your Surprise Nonprofits!
+          </h1>
+
+          {/* Subtitle */}
+          <p className="text-sm md:text-base text-gray-600 text-center mb-6 md:mb-8">
+            We picked these 5 amazing organizations for you
+          </p>
+
+          {/* Nonprofit Cards */}
+          <div className="space-y-3 md:space-y-4 mb-6 md:mb-8">
+            {surpriseCauses.map((cause) => {
+              const avatarBgColor = getConsistentColor(cause.id, avatarColors);
+              const initials = getInitials(cause.name || 'N');
+
+              return (
+                <Card
+                  key={cause.id}
+                  onClick={() => navigate(`/cause/${cause.id}`)}
+                  className="cursor-pointer hover:shadow-md transition-shadow border border-gray-200"
+                >
+                  <CardContent className="px-3 md:px-4 ">
+                    <div className="flex items-start gap-3 md:gap-4">
+                      <Avatar className="w-10 h-10 md:w-12 md:h-12 rounded-lg flex-shrink-0">
+                        <AvatarImage src={cause.image || undefined} alt={cause.name} />
+                        <AvatarFallback
+                          style={{ backgroundColor: avatarBgColor }}
+                          className="text-white rounded-lg font-bold text-sm md:text-base"
+                        >
+                          {initials}
+                        </AvatarFallback>
+                      </Avatar>
+                      <div className="flex-1 min-w-0">
+                        <h3 className="font-bold text-sm md:text-base text-foreground mb-0.5 md:mb-1">
+                          {cause.name}
+                        </h3>
+                        {(cause.city || cause.state) && (
+                          <p className="text-xs md:text-sm text-gray-600 mb-1.5 md:mb-2">
+                            {[cause.city, cause.state].filter(Boolean).join(', ')}
+                          </p>
+                        )}
+                        <p className="text-xs md:text-sm text-gray-700">
+                          {truncateAtFirstPeriod(cause.mission || cause.description || 'No description available')}
+                        </p>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              );
+            })}
           </div>
         </div>
 
-        {/* Title */}
-        <h1 className="text-2xl md:text-3xl font-bold text-foreground text-center mb-1.5 md:mb-2">
-          Your Surprise Nonprofits!
-        </h1>
-
-        {/* Subtitle */}
-        <p className="text-sm md:text-base text-gray-600 text-center mb-6 md:mb-8">
-          We picked these 5 amazing organizations for you
-        </p>
-
-        {/* Nonprofit Cards */}
-        <div className="space-y-3 md:space-y-4 mb-6 md:mb-8">
-          {surpriseCauses.map((cause) => {
-            const avatarBgColor = getConsistentColor(cause.id, avatarColors);
-            const initials = getInitials(cause.name || 'N');
-
-            return (
-              <Card
-                key={cause.id}
-                onClick={() => navigate(`/cause/${cause.id}`)}
-                className="cursor-pointer hover:shadow-md transition-shadow border border-gray-200"
-              >
-                <CardContent className="px-3 md:px-4 ">
-                  <div className="flex items-start gap-3 md:gap-4">
-                    <Avatar className="w-10 h-10 md:w-12 md:h-12 rounded-lg flex-shrink-0">
-                      <AvatarImage src={cause.image || undefined} alt={cause.name} />
-                      <AvatarFallback
-                        style={{ backgroundColor: avatarBgColor }}
-                        className="text-white rounded-lg font-bold text-sm md:text-base"
-                      >
-                        {initials}
-                      </AvatarFallback>
-                    </Avatar>
-                    <div className="flex-1 min-w-0">
-                      <h3 className="font-bold text-sm md:text-base text-foreground mb-0.5 md:mb-1">
-                        {cause.name}
-                      </h3>
-                      {(cause.city || cause.state) && (
-                        <p className="text-xs md:text-sm text-gray-600 mb-1.5 md:mb-2">
-                          {[cause.city, cause.state].filter(Boolean).join(', ')}
-                        </p>
-                      )}
-                      <p className="text-xs md:text-sm text-gray-700">
-                        {truncateAtFirstPeriod(cause.mission || cause.description || 'No description available')}
-                      </p>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            );
-          })}
-        </div>
-      </div>
-
-      {/* Footer */}
-      <div className="fixed bottom-0 left-0 right-0 bg-white px-3 md:px-4 py-3 md:py-4 space-y-3 md:space-y-4 safe-area-bottom md:max-w-[60%] mx-auto">
-        {/* Add All Button */}
-        <Button
-          onClick={handleAddAllToBox}
-          disabled={addToBoxMutation.isPending || surpriseCauses.length === 0}
-          className="w-full bg-[#1600ff] hover:bg-[#1400cc] text-white font-semibold rounded-lg py-4 md:py-6 text-sm md:text-base"
-        >
-          {addToBoxMutation.isPending ? (
-            <>
-              <Loader2 className="w-3.5 h-3.5 md:w-4 md:h-4 mr-1.5 md:mr-2 animate-spin" />
-              Adding...
-            </>
-          ) : (
-            `Add All ${surpriseCauses.length} to Donation Box`
-          )}
-        </Button>
-
-        {/* Surprise Me Again */}
-        <div className="text-center">
-          <button
-            onClick={handleSurpriseAgain}
-            className="flex items-center gap-1 md:gap-1.5 text-purple-600 hover:text-purple-700 font-medium mx-auto text-xs md:text-sm"
+        {/* Footer */}
+        <div className="fixed bottom-0 left-0 right-0 bg-white px-3 md:px-4 py-3 md:py-4 space-y-3 md:space-y-4 safe-area-bottom md:max-w-[60%] mx-auto">
+          {/* Add All Button */}
+          <Button
+            onClick={handleAddAllToBox}
+            disabled={addToBoxMutation.isPending || surpriseCauses.length === 0}
+            className="w-full bg-[#1600ff] hover:bg-[#1400cc] text-white font-semibold rounded-lg py-4 md:py-6 text-sm md:text-base"
           >
-            <Sparkles className="w-3.5 h-3.5 md:w-4 md:h-4 text-yellow-500" />
-            Surprise Me Again
-          </button>
+            {addToBoxMutation.isPending ? (
+              <>
+                <Loader2 className="w-3.5 h-3.5 md:w-4 md:h-4 mr-1.5 md:mr-2 animate-spin" />
+                Adding...
+              </>
+            ) : (
+              `Add All ${surpriseCauses.length} to Donation Box`
+            )}
+          </Button>
+
+          {/* Surprise Me Again */}
+          <div className="text-center">
+            <button
+              onClick={handleSurpriseAgain}
+              className="flex items-center gap-1 md:gap-1.5 text-purple-600 hover:text-purple-700 font-medium mx-auto text-xs md:text-sm"
+            >
+              <Sparkles className="w-3.5 h-3.5 md:w-4 md:h-4 text-yellow-500" />
+              Surprise Me Again
+            </button>
+          </div>
+
+
         </div>
-
-
-      </div>
 
       </div>
 
