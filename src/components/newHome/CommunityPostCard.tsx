@@ -1,6 +1,6 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Link, useNavigate } from "react-router-dom";
-import { Heart, MessageCircle, Share2, MoreHorizontal, Pin, Pencil, Flag, Trash2 } from "lucide-react";
+import { Heart, MessageCircle, Share2, MoreHorizontal, Pin, Pencil, Flag, Trash2, Users } from "lucide-react";
 import dayjs from 'dayjs';
 import { useState, useRef, useEffect } from "react";
 import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
@@ -389,8 +389,9 @@ export default function CommunityPostCard({ post, onCommentPress, showSimplified
                   <Link
                     to={post.collective.id ? `/groupcrwd/${post.collective.id}` : '#'}
                     onClick={(e) => e.stopPropagation()}
-                    className="text-[11px] xs:text-sm md:text-base text-gray-500 hover:text-gray-700 block"
+                    className="text-[11px] xs:text-sm md:text-base text-gray-500 hover:text-gray-700 flex items-center gap-1"
                   >
+                    <Users color="#1600ff" className="w-3 h-3 md:w-4 md:h-4" />
                     {post.collective.name}
                   </Link>
                 )}

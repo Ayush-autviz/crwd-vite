@@ -75,6 +75,13 @@ export default function ProfileNavbar({
     setOpen(false);
   };
 
+  const handleScrollToTop = () => {
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
+  };
+
   const getUserInitials = () => {
     // if (user?.first_name && user?.last_name) {
     //   return `${user.first_name.charAt(0)}${user.last_name.charAt(0)}`.toUpperCase();
@@ -134,7 +141,7 @@ export default function ProfileNavbar({
       {showMobileMenu && title === "Home" && (
         <header className="w-full flex items-center justify-between px-2.5 py-4 border-b-2 border-gray-200 bg-gray-50 sticky top-0 z-10 md:hidden">
           {/* Logo on the left */}
-          <div className="flex-shrink-0">
+          <div className="flex-shrink-0 cursor-pointer" onClick={handleScrollToTop}>
             {/* <Link to="/waitlist"> */}
             {/* <NewLogo /> */}
             <img src="/icons/FullLogo.png" alt="" width={80} height={80} />
@@ -299,7 +306,14 @@ export default function ProfileNavbar({
           </div> */}
 
           {/* <NewLogo /> */}
-          <img src="/icons/FullLogo.png" width={100} height={100} alt="CRWD Logo" className="object-contain" />
+          <img
+            src="/icons/FullLogo.png"
+            width={100}
+            height={100}
+            alt="CRWD Logo"
+            className="object-contain cursor-pointer"
+            onClick={handleScrollToTop}
+          />
 
           {/* Action buttons on the right */}
           <div className="flex items-center gap-2.5">

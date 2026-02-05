@@ -75,37 +75,28 @@ export default function NewOnboard() {
       {/* Logo */}
       {/* <img src="/logo3.png" width={150} height={150} alt="CRWD Logo" className="mb-10" /> */}
       {/* <NewLogo size="lg" /> */}
-      <img src="/icons/FullLogo.png" width={180} height={180} alt="CRWD Logo" className="mb-10" />
+      <img src="/icons/FullLogo.png" width={180} height={180} alt="CRWD Logo" className="" />
 
 
       {/* Headings */}
-      <div className="text-center my-12 space-y-3">
+      <div className="text-center my-12 space-y-3 md:max-w-4xl mx-auto">
         {isFromCreateCollective ? (
           <>
-            <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-[800] text-[#1600ff]">
-              Start Your Movement.
+            <h1 className="text-4xl sm:text-5xl font-[900] text-gray-900 ">
+              <span className="text-[#1600ff]">Start Your Movement.</span> Create Your Collective & Lead Change
             </h1>
-            <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-[800] text-gray-900">
-              Create Your Collective & Lead Change
-            </h2>
           </>
         ) : isFromCollective ? (
           <>
-            <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-[800] text-[#1600ff]">
-              Join a Movement.
+            <h1 className="text-4xl sm:text-5xl font-[900] text-gray-900">
+              <span className="text-[#1600ff]">Join a Movement.</span> Connect with a Collective
             </h1>
-            <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-[800] text-gray-900">
-              Connect with a Collective
-            </h2>
           </>
         ) : (
           <>
-            <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-[800] text-gray-900">
-              Stop Wishing You Made a Difference.
+            <h1 className="text-4xl sm:text-5xl font-[900] text-gray-900">
+              Stop Wishing You Made a Difference. <span className="text-[#1600ff]">Start Being Someone Who Does.</span>
             </h1>
-            <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-[800] text-[#1600ff]">
-              Start Being Someone Who Does.
-            </h2>
           </>
         )}
       </div>

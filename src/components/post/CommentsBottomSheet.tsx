@@ -3,7 +3,6 @@ import { X, MessageCircle, Loader2, Image as ImageIcon, Link as LinkIcon } from 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { getPostComments, createPostComment, getCommentReplies } from '@/services/api/social';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
-import { Input } from '@/components/ui/input';
 import { useAuthStore } from '@/stores/store';
 import { Comment } from './Comment';
 
@@ -48,7 +47,7 @@ export default function CommentsBottomSheet({
   const [comments, setComments] = useState<CommentData[]>([]);
   const [expandedComments, setExpandedComments] = useState<Set<number>>(new Set());
   const [loadingReplies, setLoadingReplies] = useState<Set<number>>(new Set());
-  const inputRef = useRef<HTMLInputElement>(null);
+  const inputRef = useRef<HTMLTextAreaElement>(null);
   const { user: currentUser } = useAuthStore();
   const queryClient = useQueryClient();
 
@@ -70,6 +69,14 @@ export default function CommentsBottomSheet({
     }
     return () => clearTimeout(timer);
   }, [isOpen, isVisible]);
+
+  // Auto-resize textarea
+  useEffect(() => {
+    if (inputRef.current) {
+      inputRef.current.style.height = 'auto';
+      inputRef.current.style.height = `${inputRef.current.scrollHeight}px`;
+    }
+  }, [commentText]);
 
   // Handle window resize - close sheet if viewport changes significantly
   useEffect(() => {
@@ -308,7 +315,7 @@ export default function CommentsBottomSheet({
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = (e: React.SyntheticEvent) => {
     e.preventDefault();
     if (commentText.trim()) {
       if (replyingTo) {
@@ -516,14 +523,20 @@ export default function CommentsBottomSheet({
           <form onSubmit={handleSubmit} className="flex flex-col">
             <div className="relative flex items-center">
               <div className="absolute left-0 top-0 bottom-0 w-1 bg-[#1600ff] rounded-l-md z-10" />
-              <Input
+              <textarea
                 ref={inputRef}
-                type="text"
                 placeholder={replyingTo ? `Reply to ${replyingTo.username}...` : "Join the conversation"}
                 value={commentText}
                 onChange={(e) => setCommentText(e.target.value)}
-                className="w-full bg-gray-50 border-none focus-visible:ring-0 text-base py-3 pl-4 rounded-md min-h-[35px]"
+                className="w-full bg-gray-50 border-none focus:ring-0 focus:outline-none text-base py-3 pl-4 rounded-md min-h-[45px] max-h-[120px] resize-none overflow-y-auto"
                 disabled={createCommentMutation.isPending || createReplyMutation.isPending || !currentUser}
+                rows={1}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    handleSubmit(e);
+                  }
+                }}
               />
             </div>
 

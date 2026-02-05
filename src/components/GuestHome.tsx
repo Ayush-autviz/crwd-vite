@@ -77,6 +77,13 @@ export default function GuestHome() {
         }, 300);
     };
 
+    const handleScrollToTop = () => {
+        window.scrollTo({
+            top: 0,
+            behavior: "smooth",
+        });
+    };
+
     return (
         <div className="min-h-screen bg-background ">
 
@@ -87,7 +94,12 @@ export default function GuestHome() {
 
                 {/* <Link to="/waitlist" className="flex-shrink-0"> */}
                 {/* <NewLogo /> */}
-                <img src="/icons/FullLogo.png" alt="CRWD Logo" className="w-20 md:w-[100px] object-contain" />
+                <img
+                    src="/icons/FullLogo.png"
+                    alt="CRWD Logo"
+                    className="w-20 md:w-[100px] object-contain cursor-pointer"
+                    onClick={handleScrollToTop}
+                />
                 {/* </Link> */}
 
 
@@ -107,7 +119,7 @@ export default function GuestHome() {
                         onClick={() => navigate("/login")}
                         className="bg-[#ff3366] hover:bg-[#ff0033] text-white font-bold px-3 py-1 xs:px-4  md:px-6 md:py-2 rounded-full text-xs xs:text-sm md:text-base whitespace-nowrap"
                     >
-                        Get Started
+                        Sign up
                     </button>
 
                     {/* Get the App Button
@@ -271,17 +283,24 @@ export default function GuestHome() {
             {showAppBanner && (
                 <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-4 md:px-6 py-3 md:py-4 z-40 shadow-lg block sm:hidden">
                     <div className="max-w-7xl mx-auto flex items-center justify-between gap-2 md:gap-4">
-                        {/* <NewLogo /> */}
-                        <img src="/icons/FullLogo.png" width={75} height={75} />
+                        <a
+                            href="https://apps.apple.com/us/app/crwd-collective-giving/id6748994882"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="flex items-center gap-2 md:gap-4 flex-1 cursor-pointer"
+                        >
+                            {/* <NewLogo /> */}
+                            <img src="/icons/FullLogo.png" width={75} height={75} />
 
-                        <div className="flex-1 flex flex-col md:flex-row md:items-center gap-1 md:gap-2">
-                            <p className="text-xs xs:text-sm md:text-base font-bold text-gray-900">
-                                Get the full experience on iOS
-                            </p>
-                            <p className="text-xs xs:text-sm md:text-sm text-gray-500">
-                                Easily manage all of your giving
-                            </p>
-                        </div>
+                            <div className="flex-1 flex flex-col md:flex-row md:items-center gap-1 md:gap-2">
+                                <p className="text-xs xs:text-sm md:text-base font-bold text-gray-900">
+                                    Get the full experience on iOS
+                                </p>
+                                <p className="text-xs xs:text-sm md:text-sm text-gray-500">
+                                    Easily manage all of your giving
+                                </p>
+                            </div>
+                        </a>
                         <button
                             onClick={() => setShowAppBanner(false)}
                             className="text-gray-400 hover:text-gray-600 transition-colors flex-shrink-0"
