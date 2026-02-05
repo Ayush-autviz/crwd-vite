@@ -16,21 +16,18 @@ export default function NewNonProfitInterests() {
   // Only show specific categories from the image
   const allowedCategoryNames = [
     "Animals",
-    "Arts",
     "Community",
     "Education",
-    "Environment",
-    "Food",
+    "Climate",
+    "Hunger",
     "Health",
     "Housing",
-    "Jobs",
-    "Legal",
-    "Mental", // "Mental Health" is stored as "Mental" in categories
-    "Public",
-    "Research",
-    "Science",
-    "Society",
-    "Sports"
+    "Mental Health",
+    "Disaster",
+    "Justice",
+    "Faith",
+    "Veterans",
+    "Kids",
   ];
 
   const mainCategories = categories.filter((cat) =>

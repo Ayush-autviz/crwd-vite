@@ -1,5 +1,5 @@
 import { useQuery, useQueries } from "@tanstack/react-query";
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import CommentsBottomSheet from "@/components/post/CommentsBottomSheet";
 import NewSuggestedCollectives from "@/components/newHome/NewSuggestedCollectives";
 import NewFeaturedNonprofits from "@/components/newHome/NewFeaturedNonprofits";
@@ -8,14 +8,13 @@ import MyDonationBoxCard from "@/components/newHome/MyDonationBoxCard";
 import DonationBoxPrompt from "@/components/newHome/DonationBoxPrompt";
 import CollectiveCarouselCard from "@/components/newHome/CollectiveCarouselCard";
 import CreateCollectiveCard from "@/components/newHome/CreateCollectiveCard";
-import CommunityUpdates from "@/components/newHome/CommunityUpdates";
-import CommunityPosts from "@/components/newHome/CommunityPosts";
+import CommunityPostCard from "@/components/newHome/CommunityPostCard";
+import { NotificationSummary } from "@/components/newHome/CommunityUpdates";
 import ExploreCards from "@/components/newHome/ExploreCards";
 import ProfileNavbar from "@/components/profile/ProfileNavbar";
 import { getCollectives, getCauses, getJoinCollective } from "@/services/api/crwd";
 import { getDonationBox } from "@/services/api/donation";
-import { getNotifications } from "@/services/api/notification";
-import { getUserProfileById } from "@/services/api/social";
+import { getUserProfileById, getCommunityUpdatesPosts } from "@/services/api/social";
 import { useAuthStore } from "@/stores/store";
 import GuestHome from "@/components/GuestHome";
 import Footer from "@/components/Footer";
@@ -56,19 +55,24 @@ export default function NewHome() {
         enabled: !!user?.id && !!token?.access_token,
     });
 
-    // Fetch community updates (notifications)
-    const { data: notificationsData, isLoading: notificationsLoading } = useQuery({
-        queryKey: ["notifications", "community"],
-        queryFn: getNotifications,
+    // Fetch community updates (posts and notifications mixed)
+    const { data: communityUpdatesPostsData, isLoading: communityUpdatesLoading } = useQuery({
+        queryKey: ["communityUpdatesPosts"],
+        queryFn: getCommunityUpdatesPosts,
         enabled: !!token?.access_token,
     });
 
-    // Extract unique user IDs from community notifications
+    useEffect(() => {
+        if (communityUpdatesPostsData) {
+            console.log("Community Updates Posts Result:", communityUpdatesPostsData);
+        }
+    }, [communityUpdatesPostsData]);
+
+    // Extract unique user IDs from notifications in the feed
     const uniqueUserIds = useMemo(() => {
-        const communityNotifications = notificationsData?.results?.filter((n: any) => n.type === "community") || [];
+        const notifications = communityUpdatesPostsData?.results?.filter((n: any) => n.item_type === "notification") || [];
         return Array.from(new Set(
-            communityNotifications
-                .slice(0, 5)
+            notifications
                 .map((notification: any) => {
                     const usernameMatch = notification.body?.match(/@(\w+)/);
                     if (usernameMatch) {
@@ -86,7 +90,7 @@ export default function NewHome() {
                 })
                 .filter((id: any) => id !== null)
         )) as (string | number)[];
-    }, [notificationsData]);
+    }, [communityUpdatesPostsData]);
 
     // Fetch user profiles for all unique user IDs
     const userProfileQueries = useQueries({
@@ -159,7 +163,6 @@ export default function NewHome() {
         })) || [];
 
     // Check if donation box exists
-    // API returns {"status_code":200,"message":"Donation box not found"} when not set up
     const isDonationBoxNotFound = donationBoxData?.message === "Donation box not found";
     const isDonationBoxActive = donationBoxData?.is_active === true;
 
@@ -223,145 +226,221 @@ export default function NewHome() {
         return [];
     }, [joinedCollectivesData]);
 
-    // Use only attributing collectives from donation box
+    // Transform feed data (posts and notifications)
+    const transformedFeedItems = useMemo(() => {
+        return communityUpdatesPostsData?.results
+            ?.map((item: any) => {
+                if (item.item_type === 'post') {
+                    // Start of post transformation
+                    return {
+                        uniqueKey: `post-${item.id}`,
+                        type: 'post',
+                        data: {
+                            id: item.id,
+                            user: {
+                                id: item.user?.id,
+                                name: item.user?.first_name && item.user?.last_name
+                                    ? `${item.user.first_name} ${item.user.last_name}`
+                                    : item.user?.username || 'Unknown User',
+                                firstName: item.user?.first_name,
+                                lastName: item.user?.last_name,
+                                username: item.user?.username || '',
+                                avatar: item.user?.profile_picture || '',
+                                color: item.user?.color,
+                            },
+                            collective: item.collective
+                                ? {
+                                    name: item.collective.name,
+                                    id: item.collective.id,
+                                }
+                                : undefined,
+                            content: item.content || '',
+                            imageUrl: item.media || undefined,
+                            likes: item.likes_count || 0,
+                            comments: item.comments_count || 0,
+                            isLiked: item.is_liked || false,
+                            timestamp: item.created_at,
+                            fundraiser: item.fundraiser ? {
+                                id: item.fundraiser.id,
+                                name: item.fundraiser.name,
+                                description: item.fundraiser.description,
+                                image: item.fundraiser.image,
+                                color: item.fundraiser.color,
+                                target_amount: item.fundraiser.target_amount,
+                                current_amount: item.fundraiser.current_amount,
+                                progress_percentage: item.fundraiser.progress_percentage,
+                                is_active: item.fundraiser.is_active,
+                                total_donors: item.fundraiser.total_donors,
+                                end_date: item.fundraiser.end_date,
+                            } : undefined,
+                            previewDetails: item.preview_details || item.previewDetails ? {
+                                url: item.preview_details?.url || item.previewDetails?.url,
+                                title: item.preview_details?.title || item.previewDetails?.title,
+                                description: item.preview_details?.description || item.previewDetails?.description,
+                                image: item.preview_details?.image || item.previewDetails?.image,
+                                site_name: item.preview_details?.site_name || item.previewDetails?.site_name,
+                                domain: item.preview_details?.domain || item.previewDetails?.domain,
+                            } : undefined,
+                        }
+                    };
+                } else if (item.item_type === 'notification') {
+                    // Notification Logic
+                    const notification = item;
 
-    // Transform notifications data for community updates
-    // Only show type "community" (not "community_post")
-    // Filter out items with postId (post type items)
-    // Use useMemo to make it reactive to userProfilesMap changes
-    const transformedCommunityUpdates = useMemo(() => {
-        return notificationsData?.results
-            ?.filter((notification: any) =>
-                notification.type === "community" &&
-                !notification.data?.post_id // Filter out post type items
-            )
-            .map((notification: any) => {
-                // Extract username from body if it contains @username pattern
-                // Example: "@drake_ji donated $7.0 to test" -> "drake_ji"
-                let username = '';
-                const usernameMatch = notification.body?.match(/@(\w+)/);
-                if (usernameMatch) {
-                    username = usernameMatch[1];
-                } else {
-                    // Fallback to data fields
-                    username = notification.data?.follower_username ||
-                        notification.data?.donor_id ||
-                        notification.data?.creator_id ||
-                        notification.data?.new_member_id ||
-                        'unknown';
-                }
-
-                let collectiveName = '';
-                if (notification.body) {
-                    // Try pattern: "to [collective name]" (for donations)
-                    const toMatch = notification.body.match(/to (.+)$/);
-                    if (toMatch) {
-                        collectiveName = toMatch[1].trim();
+                    // Extract username from body if it contains @username pattern
+                    let username = '';
+                    const usernameMatch = notification.body?.match(/@(\w+)/);
+                    if (usernameMatch) {
+                        username = usernameMatch[1];
                     } else {
-                        // Try pattern: "in [collective name]"
-                        const inMatch = notification.body.match(/in (.+)$/);
-                        if (inMatch) {
-                            collectiveName = inMatch[1].trim();
-                        } else if (notification.body.includes('joined')) {
-                            // Try pattern: "joined [collective name]"
-                            const joinMatch = notification.body.match(/joined (.+)$/);
-                            if (joinMatch) {
-                                collectiveName = joinMatch[1].trim();
+                        // Fallback to data fields
+                        username = notification.data?.follower_username ||
+                            notification.data?.donor_id ||
+                            notification.data?.creator_id ||
+                            notification.data?.new_member_id ||
+                            'unknown';
+                    }
+
+                    let collectiveName = '';
+                    if (notification.body) {
+                        // Try pattern: "to [collective name]"
+                        const toMatch = notification.body.match(/to (.+)$/);
+                        if (toMatch) {
+                            collectiveName = toMatch[1].trim();
+                        } else {
+                            // Try pattern: "in [collective name]"
+                            const inMatch = notification.body.match(/in (.+)$/);
+                            if (inMatch) {
+                                collectiveName = inMatch[1].trim();
+                            } else if (notification.body.includes('joined')) {
+                                // Try pattern: "joined [collective name]"
+                                const joinMatch = notification.body.match(/joined (.+)$/);
+                                if (joinMatch) {
+                                    collectiveName = joinMatch[1].trim();
+                                }
                             }
                         }
                     }
-                }
 
-                // If not found in body, try extracting from title
-                if (!collectiveName && notification.title) {
-                    const titleMatch = notification.title.match(/in (.+)$/);
-                    if (titleMatch) {
-                        collectiveName = titleMatch[1].trim();
-                    }
-                }
-
-                // Extract user ID from notification data
-                const userId = notification.data?.donor_id ||
-                    notification.data?.follower_id ||
-                    notification.data?.creator_id ||
-                    notification.data?.new_member_id ||
-                    username;
-
-                // Get user profile from the fetched profiles map
-                const userProfile = userId ? userProfilesMap.get(userId.toString()) : null;
-
-                // Use first_name and last_name from profile, fallback to username
-                // Handle both flat structure and nested "user" structure
-                const profileUser = userProfile?.user || userProfile;
-                let firstName = profileUser?.first_name || '';
-                let lastName = profileUser?.last_name || '';
-                let fullName = '';
-
-                if (firstName && lastName) {
-                    fullName = `${firstName} ${lastName}`;
-                } else if (profileUser?.full_name) {
-                    fullName = profileUser.full_name;
-                } else {
-                    fullName = username || "Unknown User";
-                }
-
-                // Get avatar from profile if available
-                const avatar = profileUser?.profile_picture || "";
-
-                // Extract cleaner action text (remove @username from body)
-                // Example: "@drake_ji donated $7.0 to test" -> "Donated $7.0 to test"
-                let actionText = notification.body || notification.message || "";
-                if (actionText && username) {
-                    // Remove @username from the beginning
-                    actionText = actionText.replace(`@${username} `, "").trim();
-                    // Capitalize first letter
-                    actionText = actionText.charAt(0).toUpperCase() + actionText.slice(1);
-                }
-
-                // Check if this is a join notification
-                const isJoinNotification =
-                    notification.body?.toLowerCase().includes('joined') ||
-                    notification.data?.new_member_id !== undefined ||
-                    notification.title?.toLowerCase().includes('new member');
-
-                // Extract collective ID from notification data if available
-                const collectiveId = notification.data?.collective_id ||
-                    notification.data?.collectiveId ||
-                    notification.data?.crwd_id ||
-                    null;
-
-                return {
-                    id: notification.id,
-                    user: {
-                        id: userId,
-                        name: fullName,
-                        firstName: firstName,
-                        lastName: lastName,
-                        username: username,
-                        avatar: avatar,
-                    },
-                    collective: collectiveName
-                        ? {
-                            name: collectiveName,
-                            id: collectiveId,
+                    // If not found in body, try extracting from title
+                    if (!collectiveName && notification.title) {
+                        const titleMatch = notification.title.match(/in (.+)$/);
+                        if (titleMatch) {
+                            collectiveName = titleMatch[1].trim();
                         }
-                        : undefined,
-                    content: actionText,
-                    timestamp: notification.created_at || notification.timestamp,
-                    likesCount: 0, // Not available in notification API
-                    commentsCount: 0, // Not available in notification API
-                    postId: notification.data?.post_id || null, // Extract post_id if available
-                    isJoinNotification: isJoinNotification, // Flag for join notifications
-                    data: {
-                        profile_picture: notification.data?.user_profile_picture,
-                        color: notification.data?.user_color,
                     }
-                };
-            }) || [];
-    }, [notificationsData, userProfilesMap]);
 
-    // All community updates (no splitting needed - show all below suggested collectives)
-    const allCommunityUpdates = transformedCommunityUpdates;
+                    // Extract user ID from notification data
+                    const userId = notification.data?.donor_id ||
+                        notification.data?.follower_id ||
+                        notification.data?.creator_id ||
+                        notification.data?.new_member_id ||
+                        username;
+
+                    // Get user profile from the fetched profiles map
+                    const userProfile = userId ? userProfilesMap.get(userId.toString()) : null;
+
+                    // Use first_name and last_name from profile, fallback to username
+                    const profileUser = userProfile?.user || userProfile;
+                    let firstName = profileUser?.first_name || '';
+                    let lastName = profileUser?.last_name || '';
+                    let fullName = '';
+
+                    if (firstName && lastName) {
+                        fullName = `${firstName} ${lastName}`;
+                    } else if (profileUser?.full_name) {
+                        fullName = profileUser.full_name;
+                    } else {
+                        fullName = username || "Unknown User";
+                    }
+
+                    // Get avatar from profile if available
+                    const avatar = profileUser?.profile_picture || "";
+
+                    // Extract cleaner action text
+                    let actionText = notification.body || notification.message || "";
+                    if (actionText && username) {
+                        actionText = actionText.replace(`@${username} `, "").trim();
+                        actionText = actionText.charAt(0).toUpperCase() + actionText.slice(1);
+                    }
+
+                    // Check if this is a join notification
+                    const isJoinNotification =
+                        notification.body?.toLowerCase().includes('joined') ||
+                        notification.data?.new_member_id !== undefined ||
+                        notification.title?.toLowerCase().includes('new member');
+
+                    const collectiveId = notification.data?.collective_id ||
+                        notification.data?.collectiveId ||
+                        notification.data?.crwd_id ||
+                        null;
+
+                    return {
+                        uniqueKey: `notification-${notification.id}`,
+                        type: 'notification',
+                        data: {
+                            id: notification.id,
+                            user: {
+                                id: userId,
+                                name: fullName,
+                                firstName: firstName,
+                                lastName: lastName,
+                                username: username,
+                                avatar: avatar,
+                            },
+                            collective: collectiveName
+                                ? {
+                                    name: collectiveName,
+                                    id: collectiveId,
+                                }
+                                : undefined,
+                            content: actionText,
+                            timestamp: notification.created_at || notification.timestamp,
+                            likesCount: 0,
+                            commentsCount: 0,
+                            postId: notification.data?.post_id || null,
+                            isJoinNotification: isJoinNotification,
+                            data: {
+                                profile_picture: notification.data?.user_profile_picture,
+                                color: notification.data?.user_color,
+                            }
+                        }
+                    };
+                }
+                return null;
+            })
+            .filter(Boolean) || [];
+    }, [communityUpdatesPostsData, userProfilesMap]);
+
+    const feedPart1 = transformedFeedItems.slice(0, 2);
+    const feedPart2 = transformedFeedItems.slice(2, 4);
+    const feedPart3 = transformedFeedItems.slice(4);
+
+    // Helper to render feed items
+    const renderFeedItem = (item: any) => {
+        if (item.type === 'post') {
+            return (
+                <CommunityPostCard
+                    key={item.uniqueKey}
+                    post={item.data}
+                    onCommentPress={(post) => {
+                        setSelectedPost({
+                            ...post,
+                            // Ensure numeric ID if possible
+                            id: typeof post.id === 'string' ? parseInt(post.id) : post.id,
+                        });
+                        setShowCommentsSheet(true);
+                    }}
+                    isHomeFeed={true}
+                />
+            );
+        } else if (item.type === 'notification') {
+            return (
+                <NotificationSummary key={item.uniqueKey} update={item.data} />
+            );
+        }
+        return null;
+    };
 
 
     if (!user?.id) {
@@ -376,10 +455,8 @@ export default function NewHome() {
                 showDesktopMenu={true}
                 showBackButton={false}
             />
-            {/* Main Content - Takes full width on mobile, 12 columns on desktop */}
+            {/* Main Content */}
             <div className="bg-gradient-to-r from-blue-50 via-purple-50 to-pink-50 px-4 md:px-6 py-2 md:py-6">
-                {/* Personalized Greeting */}
-
                 {/* My Donation Box Card or Prompt */}
                 {token?.access_token && (
                     donationBoxLoading ? (
@@ -407,7 +484,6 @@ export default function NewHome() {
                             />
                         </>
                     ) : donationBoxData && !isDonationBoxNotFound && !isDonationBoxActive && inactiveBoxCauseCount > 0 ? (
-                        // Donation box exists but is not active - show prompt with cause count
                         <DonationBoxPrompt
                             causeCount={inactiveBoxCauseCount}
                             hasJoinedCollectives={transformedAttributingCollectives.length > 0}
@@ -441,40 +517,43 @@ export default function NewHome() {
                         <CreateCollectiveCard />
                     )
                 )}
-
-                {/* Explore Cards */}
-
             </div>
-
-            {/* <div className="md:grid md:grid-cols-12 md:gap-6 md:pt-6 md:px-6">
-                <div className="md:col-span-12"> */}
 
             <div className="w-full max-w-7xl mx-auto">
                 <div className="mx-0 md:mx-6">
-                    {/* 2 Posts - Above Featured Nonprofits */}
+                    {/* Feed Part 1 - 2 Items */}
                     {token?.access_token && (
-                        <CommunityPosts
-                            limit={2}
-                            startIndex={0}
-                            showHeading={true}
-                            onCommentPress={(post) => {
-                                setSelectedPost({
-                                    id: typeof post.id === 'string' ? parseInt(post.id) : post.id,
-                                    username: post.user.username,
-                                    text: post.content,
-                                    avatarUrl: post.user.avatar,
-                                    firstName: post.user.firstName,
-                                    lastName: post.user.lastName,
-                                    color: post.user.color,
-                                });
-                                setShowCommentsSheet(true);
-                            }}
-                        />
+                        <div className="w-full px-4 my-4 mb-6 md:px-0 md:my-8 md:mb-10">
+                            {/* Heading for the feed */}
+                            <div className="mb-3 md:mb-6">
+                                <h2 className="text-base xs:text-lg sm:text-xl md:text-3xl font-bold text-gray-900 mb-1 md:mb-2">
+                                    Community Updates
+                                </h2>
+                                <p className="text-[10px] xs:text-[11px] sm:text-xs md:text-sm text-gray-600">
+                                    Updates, and discoveries from your community
+                                </p>
+                            </div>
+                            <div className="space-y-2.5 md:space-y-4">
+                                {communityUpdatesLoading && (
+                                    <div className="bg-white rounded-lg border border-gray-200 p-2.5 md:p-4 animate-pulse">
+                                        <div className="flex items-start gap-2 md:gap-4">
+                                            <div className="w-8 h-8 md:w-12 md:h-12 bg-gray-200 rounded-full flex-shrink-0"></div>
+                                            <div className="flex-1 space-y-2">
+                                                <div className="h-4 bg-gray-200 rounded w-3/4"></div>
+                                                <div className="h-3 bg-gray-200 rounded w-full"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                )}
+                                {feedPart1.map(renderFeedItem)}
+                            </div>
+                        </div>
                     )}
 
                     {/* Featured Nonprofits Section */}
                     {nonprofitsLoading ? (
                         <div className="py-4 md:py-6">
+                            {/* ... loading skeleton ... */}
                             <div className="flex items-center justify-between mb-4 md:mb-6">
                                 <div className="h-6 bg-gray-200 rounded w-1/3 animate-pulse"></div>
                                 <div className="h-8 bg-gray-200 rounded-full w-20 animate-pulse"></div>
@@ -486,8 +565,6 @@ export default function NewHome() {
                                             <div className="w-12 h-12 bg-gray-200 rounded-lg flex-shrink-0"></div>
                                             <div className="flex-1 space-y-2">
                                                 <div className="h-4 bg-gray-200 rounded w-3/4"></div>
-                                                <div className="h-3 bg-gray-200 rounded w-full"></div>
-                                                <div className="h-3 bg-gray-200 rounded w-5/6"></div>
                                             </div>
                                         </div>
                                     ))}
@@ -501,46 +578,27 @@ export default function NewHome() {
                         />
                     )}
 
-                    {/* 1 Post - After Featured Nonprofits */}
+                    {/* Feed Part 2 - 2 Items */}
                     {token?.access_token && (
-                        <CommunityPosts
-                            limit={2}
-                            startIndex={2}
-                            showHeading={false}
-                            onCommentPress={(post) => {
-                                setSelectedPost({
-                                    id: typeof post.id === 'string' ? parseInt(post.id) : post.id,
-                                    username: post.user.username,
-                                    text: post.content,
-                                    avatarUrl: post.user.avatar,
-                                    firstName: post.user.firstName,
-                                    lastName: post.user.lastName,
-                                    color: post.user.color,
-                                });
-                                setShowCommentsSheet(true);
-                            }}
-                        />
+                        <div className="w-full px-4 my-4 mb-6 md:px-0 md:my-8 md:mb-10">
+                            <div className="space-y-2.5 md:space-y-4">
+                                {feedPart2.map(renderFeedItem)}
+                            </div>
+                        </div>
                     )}
 
                     {/* Suggested Collectives Section */}
                     {collectivesLoading ? (
                         <div className="py-4 md:py-6">
+                            {/* ... loading skeleton ... */}
                             <div className="flex items-center justify-between mb-4 md:mb-6">
                                 <div className="h-6 bg-gray-200 rounded w-1/3 animate-pulse"></div>
-                                <div className="h-8 bg-gray-200 rounded-full w-20 animate-pulse"></div>
                             </div>
                             <div className="overflow-x-auto pb-2 -mx-4 px-4 md:mx-0 md:px-0">
                                 <div className="flex gap-3 md:gap-4 w-max">
-                                    {[1, 2, 3, 4].map((i) => (
+                                    {[1, 2, 3].map((i) => (
                                         <div key={i} className="flex flex-col gap-3 p-4 rounded-lg bg-gray-50 min-w-[240px] md:min-w-[280px] animate-pulse">
                                             <div className="w-12 h-12 bg-gray-200 rounded-lg"></div>
-                                            <div className="h-4 bg-gray-200 rounded w-3/4"></div>
-                                            <div className="flex items-center gap-2">
-                                                <div className="w-6 h-6 bg-gray-200 rounded-full"></div>
-                                                <div className="h-3 bg-gray-200 rounded w-1/2"></div>
-                                            </div>
-                                            <div className="h-3 bg-gray-200 rounded w-full"></div>
-                                            <div className="h-3 bg-gray-200 rounded w-5/6"></div>
                                         </div>
                                     ))}
                                 </div>
@@ -553,20 +611,18 @@ export default function NewHome() {
                         />
                     )}
 
-                    {/* All Community Updates - Below Suggested Collectives */}
+                    {/* Feed Part 3 - Rest of Items */}
                     {token?.access_token && (
-                        notificationsLoading ? (
-                            null
-                        ) : allCommunityUpdates.length > 0 ? (
-                            <CommunityUpdates updates={allCommunityUpdates.slice(0, 10)} showHeading={false} />
-                        ) : null
+                        <div className="w-full px-4 my-4 mb-6 md:px-0 md:my-8 md:mb-10">
+                            <div className="space-y-2.5 md:space-y-4">
+                                {feedPart3.map(renderFeedItem)}
+                            </div>
+                        </div>
                     )}
 
                 </div>
             </div>
 
-            {/* </div>
-            </div> */}
             <ExploreCards />
 
             <Footer />
@@ -618,4 +674,3 @@ export default function NewHome() {
         </div>
     );
 }
-

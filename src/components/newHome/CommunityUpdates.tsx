@@ -109,7 +109,7 @@ function PostWithData({ update }: { update: CommunityUpdate }) {
 }
 
 // Component to display notification summary
-function NotificationSummary({ update }: { update: CommunityUpdate }) {
+export function NotificationSummary({ update }: { update: CommunityUpdate }) {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const { user: currentUser, token } = useAuthStore();
@@ -205,11 +205,11 @@ function NotificationSummary({ update }: { update: CommunityUpdate }) {
 
     // Fallback: if no "joined" found (unlikely for isJoinNotification), stick to basic cleanup or original text
     if (!joinedMatch && userName) {
-       // Escape special regex characters in userName
+      // Escape special regex characters in userName
       const escapedUserName = userName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
       const userNameRegex = new RegExp(escapedUserName, 'gi');
       cleanActionText = cleanActionText.replace(userNameRegex, '');
-      
+
       cleanActionText = cleanActionText
         .replace(/\s*joined\s*/gi, '')
         .replace(/\s*Supporting\s+\d+\s+nonprofit[s]?/gi, '')
@@ -270,7 +270,7 @@ function NotificationSummary({ update }: { update: CommunityUpdate }) {
           </div>
           <div className="flex flex-col gap-1">
             {/* Action Text */}
-            <p className="text-xs xs:text-base font-semibold text-gray-800 flex-1"> 
+            <p className="text-xs xs:text-base font-semibold text-gray-800 flex-1">
               <Link to={`/user-profile/${update.user.id}`} className="hover:underline">
                 {userName}
               </Link> <span className="font-medium">joined</span> {
@@ -321,7 +321,7 @@ function NotificationSummary({ update }: { update: CommunityUpdate }) {
                 to={`/user-profile/${update.user.id}`}
                 className="font-bold text-sm xs:text-base md:text-base text-gray-900 hover:underline block"
               >
-                {userName} 
+                {userName}
               </Link>
               {/* <p className="text-xs xs:text-sm text-gray-500">@{update.user.username}</p> */}
             </div>
