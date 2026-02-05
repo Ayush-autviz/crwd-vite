@@ -499,7 +499,7 @@ export const Comment: React.FC<CommentProps> = ({
           <div className="bg-muted p-3 md:p-4 rounded-lg">
             <div className="flex items-center justify-between mb-1 md:mb-1.5">
               <span
-                onClick={handleUserClick} 
+                onClick={handleUserClick}
                 // Increased Name Size: text-sm (was text-xs)
                 className="font-medium text-sm md:text-base cursor-pointer hover:underline"
               >
@@ -544,7 +544,10 @@ export const Comment: React.FC<CommentProps> = ({
           {/* Increased Action Text Size: text-xs/sm (was text-xs) */}
           <div className="flex items-center gap-3 md:gap-4 mt-1.5 md:mt-2 text-xs md:text-sm">
             <span className="text-muted-foreground">
-              {formatDistanceToNow(timestamp, { addSuffix: true })}
+              {(() => {
+                const timeAgo = formatDistanceToNow(timestamp, { addSuffix: true });
+                return timeAgo === 'less than a minute ago' ? 'just now' : timeAgo;
+              })()}
             </span>
             {showReplyButton && (
               <button

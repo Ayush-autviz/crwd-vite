@@ -824,7 +824,7 @@ const RegularNotifications: React.FC<RegularNotificationsProps> = ({
         memberName: memberName,
         donationAmount: donationAmount,
         time: formatTimeAgo(notification.created_at || notification.updated_at),
-        avatarUrl: notification.data?.user_profile_picture || profileUser?.profile_picture || notification.user?.profile_picture || '',
+        avatarUrl: notification.data?.user_profile_picture,
         collectiveId: collectiveId,
         nonprofitId: nonprofitId,
         postId: postId,
@@ -927,10 +927,10 @@ const RegularNotifications: React.FC<RegularNotificationsProps> = ({
                     (() => {
                       // Format: "Arpit Parmar donated $5 to test 14" or "Arpit Parmar donated $5 to ZERO - The End of Prostate Cancer"
                       const description = notification.description;
-                      
+
                       // Check if it matches donation format patterns
                       const donatedMatch = description.match(/^(.+?)\s+donated\s+\$[\d.]+?\s+to\s+(.+)$/i);
-                      
+
                       if (donatedMatch) {
                         const donorPart = donatedMatch[1].trim();
                         const recipientPart = donatedMatch[2].trim();
@@ -953,8 +953,8 @@ const RegularNotifications: React.FC<RegularNotificationsProps> = ({
                           const donorName = notification.firstName && notification.lastName
                             ? `${notification.firstName} ${notification.lastName}`
                             : notification.username
-                            ? `@${notification.username}`
-                            : donorPart;
+                              ? `@${notification.username}`
+                              : donorPart;
                           parts.push(
                             <Link
                               key="donor"
@@ -972,7 +972,7 @@ const RegularNotifications: React.FC<RegularNotificationsProps> = ({
                         // Extract the donation amount and recipient
                         const amountMatch = description.match(/\$[\d.]+/);
                         const amount = amountMatch ? amountMatch[0] : '';
-                        
+
                         parts.push(` donated ${amount} to `);
 
                         // Handle recipient - could be collective or nonprofit
@@ -1124,7 +1124,7 @@ const RegularNotifications: React.FC<RegularNotificationsProps> = ({
                       const fullNamePattern = new RegExp(`\\b${notification.firstName}\\s+${notification.lastName}\\b`, 'gi');
                       let nameMatch: RegExpExecArray | null;
                       while ((nameMatch = fullNamePattern.exec(description)) !== null) {
-                        const isOverlapping = matches.some(m => 
+                        const isOverlapping = matches.some(m =>
                           nameMatch!.index >= m.index && nameMatch!.index < m.index + m.length
                         );
                         if (!isOverlapping) {
@@ -1143,7 +1143,7 @@ const RegularNotifications: React.FC<RegularNotificationsProps> = ({
                       const collectivePattern = new RegExp(notification.collectiveName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'gi');
                       let collectiveMatch: RegExpExecArray | null;
                       while ((collectiveMatch = collectivePattern.exec(description)) !== null) {
-                        const isOverlapping = matches.some(m => 
+                        const isOverlapping = matches.some(m =>
                           collectiveMatch!.index >= m.index && collectiveMatch!.index < m.index + m.length
                         );
                         if (!isOverlapping) {

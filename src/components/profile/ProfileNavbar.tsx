@@ -180,7 +180,7 @@ export default function ProfileNavbar({
                 >
                   <Avatar className="h-8 w-8">
                     <AvatarImage src={user?.profile_picture} />
-                    <AvatarFallback className="text-white font-bold text-[8px] xs:text-[10px] md:text-sm" style={{ backgroundColor: user?.color }}>
+                    <AvatarFallback className="text-white font-bold md:text-sm" style={{ backgroundColor: user?.color }}>
                       {getUserInitials()}
                     </AvatarFallback>
                   </Avatar>

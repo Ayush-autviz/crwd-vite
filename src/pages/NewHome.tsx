@@ -425,9 +425,14 @@ export default function NewHome() {
                     post={item.data}
                     onCommentPress={(post) => {
                         setSelectedPost({
-                            ...post,
                             // Ensure numeric ID if possible
                             id: typeof post.id === 'string' ? parseInt(post.id) : post.id,
+                            text: post.content,
+                            username: post.user.username,
+                            firstName: post.user.firstName,
+                            lastName: post.user.lastName,
+                            avatarUrl: post.user.avatar,
+                            color: post.user.color,
                         });
                         setShowCommentsSheet(true);
                     }}

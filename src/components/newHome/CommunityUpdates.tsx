@@ -353,8 +353,29 @@ export function NotificationSummary({ update }: { update: CommunityUpdate }) {
           <HandHeart className="h-4 w-4 md:h-5 md:w-5 text-white" />
         </div>
         {/* Action Text */}
-        <p className="text-[10px] xs:text-sm md:text-sm font-semibold text-gray-900 flex-1">
-          {actionText}
+        <p className={`text-[10px] xs:text-sm md:text-sm text-gray-900 flex-1 ${isDonationNotification ? '' : 'font-semibold'}`}>
+          {(() => {
+            if (isDonationNotification) {
+              const match = actionText.match(/^(.*?) (donated) (\$[\d,.]+) (to) (.*)$/i);
+              if (match) {
+                return (
+                  <>
+                    {update.user.id ? (
+                      <Link
+                        to={`/user-profile/${update.user.id}`}
+                        className="font-bold hover:underline text-gray-900"
+                      >
+                        {match[1]}
+                      </Link>
+                    ) : (
+                      <span className="font-bold">{match[1]}</span>
+                    )} {match[2]} <span className="font-bold">{match[3]}</span> {match[4]} {match[5]}
+                  </>
+                );
+              }
+            }
+            return actionText;
+          })()}
         </p>
       </div>
     </div>
