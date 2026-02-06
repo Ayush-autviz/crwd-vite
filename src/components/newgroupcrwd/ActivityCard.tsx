@@ -20,37 +20,71 @@ const avatarColors = [
   '#ec4899', '#f43f5e'
 ];
 
-// Format date to relative time
+// Format date to match App style
 const formatTimeAgo = (dateString: string): string => {
   if (!dateString) return '';
 
-  try {
-    const date = new Date(dateString);
-    // Check if date is valid
-    if (isNaN(date.getTime())) {
-      return '';
-    }
-
-    const now = new Date();
-    const diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000);
-
-    if (diffInSeconds < 60) return 'just now';
-    if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)}m ago`;
-    if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)}h ago`;
-    if (diffInSeconds < 604800) return `${Math.floor(diffInSeconds / 86400)}d ago`;
-    return date.toLocaleDateString();
-  } catch {
-    return '';
+  // Check if it's already a relative time string (like "1h ago", "2d ago")
+  if (dateString.includes('ago') || dateString.includes('just now')) {
+    return dateString;
   }
+
+  let date: Date;
+  // Handle DD/MM/YYYY format
+  const ddmmyyyyMatch = dateString.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+  if (ddmmyyyyMatch) {
+    const [, day, month, year] = ddmmyyyyMatch;
+    date = new Date(`${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`);
+  } else {
+    date = new Date(dateString);
+  }
+
+  if (isNaN(date.getTime())) {
+    return dateString;
+  }
+
+  const now = new Date();
+  const diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000);
+  const diffInMinutes = Math.floor(diffInSeconds / 60);
+  const diffInHours = Math.floor(diffInSeconds / 3600);
+
+  if (diffInSeconds < 60) {
+    return 'just now';
+  } else if (diffInMinutes < 60) {
+    return `${diffInMinutes} minute${diffInMinutes === 1 ? '' : 's'} ago`;
+  } else if (diffInHours < 24) {
+    return `${diffInHours} hour${diffInHours === 1 ? '' : 's'} ago`;
+  } else {
+    const currentYear = now.getFullYear();
+    const postYear = date.getFullYear();
+    const options: Intl.DateTimeFormatOptions = {
+      month: 'long',
+      day: 'numeric',
+    };
+    if (postYear !== currentYear) {
+      options.year = 'numeric';
+    }
+    return date.toLocaleDateString('en-US', options);
+  }
+};
+
+// Helper to extract name from body text
+const extractNameFromBody = (body: string): string | null => {
+  if (!body) return null;
+  // Common activity patterns
+  const actions = [' donated', ' joined', ' created', ' posted', ' commented', ' started', ' updated'];
+  for (const action of actions) {
+    const index = body.indexOf(action);
+    if (index > 0) {
+      return body.substring(0, index);
+    }
+  }
+  return null;
 };
 
 // Get user initials
 const getInitials = (name: string): string => {
   if (!name) return 'U';
-  const parts = name.trim().split(' ');
-  if (parts.length >= 2) {
-    return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
-  }
   return name.charAt(0).toUpperCase();
 };
 
@@ -69,9 +103,10 @@ export default function ActivityCard({ activity }: ActivityCardProps) {
     null;
 
   // Get user name from activity body or data
+  const nameFromBody = extractNameFromBody(activity.body);
   const userName = activity.data?.first_name && activity.data?.last_name
     ? `${activity.data.first_name} ${activity.data.last_name}`
-    : activity.data?.username || username || 'Unknown User';
+    : activity.data?.username || username || nameFromBody || 'Unknown User';
 
   // Get profile picture
   const profilePicture = activity.data?.user_profile_picture || '';

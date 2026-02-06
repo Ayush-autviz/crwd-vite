@@ -186,7 +186,10 @@ export default function CommunityActivity({
 
           {/* Recent Activities Section */}
           {recentActivities.length > 0 && (
-            <div className="mt-4 md:mt-6 space-y-0">
+            <div className="mt-6 md:mt-8 space-y-0">
+              <h3 className="font-bold text-base xs:text-lg md:text-xl text-foreground mb-3 md:mb-4">
+                Recent Activities
+              </h3>
               {recentActivities.map((activity: any) => (
                 <ActivityCard key={activity.id} activity={activity} />
               ))}
