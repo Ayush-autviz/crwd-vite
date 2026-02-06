@@ -263,9 +263,8 @@ export default function ProfileNavbar({
                       <div className="border-t border-gray-200 mx-4 sm:mx-6"></div>
 
                       {/* Log Out Section */}
-                      <div className="px-4 sm:px-6 m-4 sm:m-6 rounded-lg py-3 sm:py-4 border border-gray-200 flex items-center justify-center">
+                      <div onClick={handleLogout} className="px-4 sm:px-6 m-4 sm:m-6 rounded-lg py-3 sm:py-4 border border-gray-200 flex items-center justify-center">
                         <button
-                          onClick={handleLogout}
                           className="flex items-center gap-2 text-red-600 hover:text-red-700 transition-colors"
                         >
                           <LogOut className="h-4 w-4 sm:h-5 sm:w-5" />
