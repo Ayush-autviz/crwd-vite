@@ -14,7 +14,7 @@ import { toast } from "sonner";
 import { categories } from "@/constants/categories";
 import { truncateAtFirstPeriod } from "@/lib/utils";
 
-type ViewType = 'initial' | 'surprise' | 'browse' | 'collective';
+type ViewType = 'initial' | 'surprise' | 'browse' | 'collective' | 'success';
 
 // Get consistent color for avatar
 const avatarColors = [
@@ -43,12 +43,14 @@ export default function NewCompleteOnboard() {
   const redirectTo = searchParams.get('redirectTo') || '/';
   const queryClient = useQueryClient();
   const [view, setView] = useState<ViewType>('initial');
+  const [previousView, setPreviousView] = useState<ViewType>('initial');
   const [selectedCauses, setSelectedCauses] = useState<number[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCollectiveIds, setSelectedCollectiveIds] = useState<string[]>([]);
   const [expandedCollectiveIds, setExpandedCollectiveIds] = useState<string[]>([]);
   const [searchTrigger, setSearchTrigger] = useState(0);
   const [isProcessingCollectives, setIsProcessingCollectives] = useState(false);
+  const [addedNonprofitsCount, setAddedNonprofitsCount] = useState(0);
   const [isJoinLoading, setIsJoinLoading] = useState(false);
   const [isBrowseLoading, setIsBrowseLoading] = useState(false);
   const [isSurpriseLoading, setIsSurpriseLoading] = useState(false);
@@ -89,7 +91,7 @@ export default function NewCompleteOnboard() {
     onSuccess: () => {
       toast.success('Donation box created!');
       queryClient.invalidateQueries({ queryKey: ['donationBox'] });
-      navigate('/');
+      // navigate('/'); // Navigation is now handled in specific functions
     },
     onError: (error: any) => {
       toast.error(error?.response?.data?.message || 'Failed to create donation box');
@@ -235,7 +237,14 @@ export default function NewCompleteOnboard() {
         monthly_amount: "10",
         causes: selectedCauses.map(id => ({ cause_id: id }))
       };
-      createBoxMutation.mutate(requestData);
+      createBoxMutation.mutate(requestData, {
+        onSuccess: () => {
+             // navigate('/');
+             setAddedNonprofitsCount(selectedCauses.length);
+             setPreviousView(view);
+             setView('success');
+        }
+      });
     } else {
       navigate('/');
     }
@@ -319,6 +328,10 @@ export default function NewCompleteOnboard() {
         // Use mutateAsync to handle the promise and loading state
         try {
             await createBoxMutation.mutateAsync(requestData);
+            setAddedNonprofitsCount(allCauses.length);
+            setIsProcessingCollectives(false);
+            setPreviousView(view);
+            setView('success');
         } catch (e) {
             // Error is handled by mutation onError
              setIsProcessingCollectives(false);
@@ -833,6 +846,55 @@ export default function NewCompleteOnboard() {
               </Button>
             </div>
           </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Success view
+  if (view === 'success') {
+    return (
+      <div className="h-screen bg-white flex flex-col items-center justify-center px-4 py-8 relative">
+        <div className="w-full max-w-xl flex flex-col items-center text-center">
+            
+            <div className="relative mb-8 flex items-center justify-center">
+               <div className="w-20 h-20 rounded-full bg-[#10B981] flex items-center justify-center relative z-10 shadow-sm">
+                   <Check className="w-10 h-10 text-white stroke-[4px]" />
+               </div>
+               <div className="absolute w-22 h-22 bg-[#D1FAE5] rounded-full"></div>
+            </div>
+
+            <h1 className="text-2xl md:text-3xl font-bold text-gray-900 mb-6 leading-tight">
+                {addedNonprofitsCount} nonprofits have been added to<br className="hidden sm:block"/> your donation box.
+            </h1>
+
+            <p className="text-gray-600 mb-10 text-base md:text-lg leading-relaxed max-w-[460px]">
+                When you're ready, choose an amount. We split it evenly across what you support. Add or remove causes anytime without changing your amount.
+            </p>
+
+            <Button
+                onClick={() => {
+                    navigate('/');
+                }}
+                className="w-full sm:w-auto min-w-[280px] h-14 bg-[#1600ff] hover:bg-[#0039CC] text-white text-lg font-bold rounded-full mb-8 shadow-md hover:shadow-lg transition-all"
+            >
+                Continue to CRWD
+            </Button>
+
+            <button 
+                onClick={() => setView(previousView)}
+                className="text-gray-500 hover:text-gray-800 text-sm font-medium transition-colors flex items-center gap-2"
+            >
+                <span>←</span> Change My Selection
+            </button>
+
+        </div>
+        
+        {/* Help Button */}
+        <div className="absolute bottom-8 right-8 hidden md:block">
+            <button className="w-10 h-10 rounded-full border border-gray-200 bg-white flex items-center justify-center text-gray-500 hover:bg-gray-50 transition-colors shadow-sm">
+                <span className="text-lg font-medium">?</span>
+            </button>
         </div>
       </div>
     );
