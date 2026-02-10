@@ -16,6 +16,7 @@ import { useAuthStore } from "@/stores/store";
 import ProfileNavbar from "./profile/ProfileNavbar";
 import RequestNonprofitModal from "./newsearch/RequestNonprofitModal";
 import DonationReviewBottomSheet from "./donation/DonationReviewBottomSheet";
+import AmountBottomSheet from "./donation/AmountBottomSheet";
 import { toast } from "sonner";
 
 interface DonationBoxProps {
@@ -68,6 +69,7 @@ const DonationBox = ({ tab = "setup", preselectedItem, activeTab, fromPaymentRes
   const [loadingCollectives, setLoadingCollectives] = useState<Set<number>>(new Set());
   const [showRequestModal, setShowRequestModal] = useState(false);
   const [showReviewBottomSheet, setShowReviewBottomSheet] = useState(false);
+  const [showAmountBottomSheet, setShowAmountBottomSheet] = useState(false);
   const [justCreatedBox, setJustCreatedBox] = useState(false);
   const [preselectedCausesProcessed, setPreselectedCausesProcessed] = useState(false);
 
@@ -731,7 +733,10 @@ const DonationBox = ({ tab = "setup", preselectedItem, activeTab, fromPaymentRes
                           >
                             <Minus size={18} className="md:w-5 md:h-5 text-white font-bold" strokeWidth={3} />
                           </button>
-                          <div className="text-center">
+                          <div 
+                            className="text-center cursor-pointer hover:opacity-80 transition-opacity"
+                            onClick={() => setShowAmountBottomSheet(true)}
+                          >
                             <div className="text-[#1600ff] text-3xl md:text-4xl font-bold">
                               ${donationAmount}
                             </div>
@@ -1409,6 +1414,14 @@ const DonationBox = ({ tab = "setup", preselectedItem, activeTab, fromPaymentRes
           setJustCreatedBox(false); // Reset flag
           setCheckout(true);
         }}
+      />
+
+      {/* Amount Bottom Sheet */}
+      <AmountBottomSheet
+        isOpen={showAmountBottomSheet}
+        onClose={() => setShowAmountBottomSheet(false)}
+        initialAmount={donationAmount}
+        onSave={(amount) => setDonationAmount(amount)}
       />
     </div>
   );

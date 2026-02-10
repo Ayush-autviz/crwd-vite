@@ -1,6 +1,5 @@
 
 import { Minus, Plus, Trash2 } from "lucide-react";
-import { Link } from 'react-router-dom';
 import { Button } from "./ui/button";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { useState, useEffect } from "react";
@@ -9,6 +8,7 @@ import { useMutation } from '@tanstack/react-query';
 import { createOneTimeDonation, createFundraiserDonation } from '@/services/api/donation';
 import RequestNonprofitModal from '@/components/newsearch/RequestNonprofitModal';
 import OneTimeDonationReviewBottomSheet from '@/components/donation/OneTimeDonationReviewBottomSheet';
+import AmountBottomSheet from '@/components/donation/AmountBottomSheet';
 import { toast } from 'sonner';
 
 interface OneTimeDonationProps {
@@ -58,6 +58,7 @@ export default function OneTimeDonation({
   const [preselectedItemAdded, setPreselectedItemAdded] = useState(false);
   const [preselectedCausesProcessed, setPreselectedCausesProcessed] = useState(false);
   const [showRequestModal, setShowRequestModal] = useState(false);
+  const [showAmountSheet, setShowAmountSheet] = useState(false);
 
   // Avatar colors for consistent coloring
   const avatarColors = [
@@ -207,59 +208,40 @@ export default function OneTimeDonation({
     }
   };
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    // Allow only numbers
-    const value = e.target.value.replace(/[^0-9]/g, '');
-    setInputValue(value);
-  };
-
-  const handleInputBlur = () => {
-    // Convert to number and ensure minimum value is 1
-    const numValue = parseInt(inputValue) || 1;
+  const handleSaveAmountFromSheet = (amount: number) => {
     // Ensure minimum donation is $5
-    const finalValue = numValue < 5 ? 5 : numValue;
+    const finalAmount = amount < 5 ? 5 : amount;
 
-    // Only validate if the amount is being lowered
-    if (finalValue < donationAmount) {
-      // Calculate max capacity for new amount
-      // For donations < $10.00: Flat fee of $1.00
-      // For donations ≥ $10.00: 10% of total (covers all platform + processing costs)
-      const calculateFees = (grossAmount: number) => {
-        const gross = grossAmount;
-        let crwdFee: number;
-        let net: number;
+    // Calculate max capacity for new amount
+    // For donations < $10.00: Flat fee of $1.00
+    // For donations ≥ $10.00: 10% of total (covers all platform + processing costs)
+    let crwdFee: number;
+    let net: number;
 
-        if (gross < 10.00) {
-          // Flat fee of $1.00
-          crwdFee = 1.00;
-          net = gross - crwdFee;
-        } else {
-          // 10% of total
-          crwdFee = gross * 0.10;
-          net = gross - crwdFee;
-        }
+    if (finalAmount < 10.00) {
+      // Flat fee of $1.00
+      crwdFee = 1.00;
+      net = finalAmount - crwdFee;
+    } else {
+      // 10% of total
+      crwdFee = finalAmount * 0.10;
+      net = finalAmount - crwdFee;
+    }
+    
+    // Round to 2 decimal places
+    net = Math.round(net * 100) / 100;
 
-        return {
-          crwdFee: Math.round(crwdFee * 100) / 100,
-          net: Math.round(net * 100) / 100,
-        };
-      };
-      const fees = calculateFees(finalValue);
-      const net = fees.net;
-      const newMaxCapacity = Math.floor(net / 0.20);
-      const currentCapacity = selectedItems.length;
+    const maxCapacity = Math.floor(net / 0.20);
+    const currentCapacity = selectedItems.length;
 
-      // Check if new amount would reduce capacity below current causes
-      if (currentCapacity > newMaxCapacity) {
-        toast.error(`You have ${currentCapacity} cause${currentCapacity !== 1 ? 's' : ''} selected. Please remove ${currentCapacity - newMaxCapacity} cause${currentCapacity - newMaxCapacity !== 1 ? 's' : ''} to lower the donation amount to $${finalValue}.`);
-        // Revert to current donation amount
-        setInputValue(donationAmount.toString());
-        return;
-      }
+    // Check if new amount would reduce capacity below current causes
+    if (currentCapacity > maxCapacity) {
+      toast.error(`You have ${currentCapacity} cause${currentCapacity !== 1 ? 's' : ''} selected. Please remove ${currentCapacity - maxCapacity} cause${currentCapacity - maxCapacity !== 1 ? 's' : ''} to lower the donation amount to $${finalAmount}.`);
+      return;
     }
 
-    setDonationAmount(finalValue);
-    setInputValue(finalValue.toString());
+    setDonationAmount(finalAmount);
+    setInputValue(finalAmount.toString());
   };
 
   const handleSelectItem = (item: SelectedItem) => {
@@ -332,65 +314,6 @@ export default function OneTimeDonation({
   const handleCheckout = () => {
     // Show the review bottom sheet instead of directly calling the API
     setShowReviewBottomSheet(true);
-  };
-
-  const handleCompleteDonation = () => {
-    // If this is a fundraiser donation, use the fundraiser API
-    if (fundraiserId) {
-      const selectedCauseIds = selectedItems
-        .filter(item => item.type === 'cause')
-        .map(item => parseInt(item.id));
-
-      const requestBody = {
-        fundraiser_id: fundraiserId,
-        amount: donationAmount.toString(),
-        selected_cause_ids: selectedCauseIds.length > 0 ? selectedCauseIds : [0],
-      };
-
-      console.log('Sending fundraiser donation request:', requestBody);
-      fundraiserDonationMutation.mutate(requestBody);
-      return;
-    }
-
-    // Regular one-time donation
-    // Prepare request body according to API specification
-    // Format: { amount: string, causes: [{ cause_id: number, attributed_collective?: number }] }
-    const causes: Array<{ cause_id: number; attributed_collective?: number }> = [];
-
-    // Process selected items and build causes array
-    selectedItems.forEach(item => {
-      if (item.type === 'cause') {
-        const causeId = parseInt(item.id);
-        const causeEntry: { cause_id: number; attributed_collective?: number } = {
-          cause_id: causeId,
-        };
-
-        // Only include attributed_collective if this cause came from a collective (has attributedCollectiveId)
-        // Causes added from search will not have attributedCollectiveId
-        // Always preserve the collective ID for causes that came from a collective
-        if (item.attributedCollectiveId && item.attributedCollectiveId > 0 && causeId > 0) {
-          causeEntry.attributed_collective = item.attributedCollectiveId;
-        } else if (item.data?.attributed_collective && item.data.attributed_collective > 0 && causeId > 0) {
-          // Also check if the cause data itself has an attributed_collective field and preserve it
-          causeEntry.attributed_collective = item.data.attributed_collective;
-        }
-
-        causes.push(causeEntry);
-      }
-      // Note: For one-time donations, we're only handling causes, not collectives directly
-    });
-
-    // Build request body
-    const requestBody: {
-      amount: string;
-      causes: Array<{ cause_id: number; attributed_collective?: number }>;
-    } = {
-      amount: donationAmount.toString(),
-      causes: causes.length > 0 ? causes : [{ cause_id: 0 }], // Fallback if no causes selected (no attributed_collective for fallback)
-    };
-
-    console.log('Sending one-time donation request:', requestBody);
-    oneTimeDonationMutation.mutate(requestBody);
   };
 
   // Calculate fees and capacity using the provided formula
@@ -474,7 +397,7 @@ export default function OneTimeDonation({
               >
                 <Minus size={18} className="md:w-5 md:h-5 text-white font-bold" strokeWidth={3} />
               </button>
-              <div className="text-center">
+              <div className="text-center cursor-pointer" onClick={() => setShowAmountSheet(true)}>
                 <div className="text-[#1600ff] text-3xl md:text-4xl font-bold">
                   ${donationAmount}
                 </div>
@@ -622,6 +545,14 @@ export default function OneTimeDonation({
         onComplete={() => {
           setShowReviewBottomSheet(false);
         }}
+      />
+
+      <AmountBottomSheet
+        isOpen={showAmountSheet}
+        onClose={() => setShowAmountSheet(false)}
+        initialAmount={donationAmount}
+        onSave={handleSaveAmountFromSheet}
+        label="One-Time Donation"
       />
     </div>
   );

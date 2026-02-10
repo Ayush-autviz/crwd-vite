@@ -8,6 +8,7 @@ import { getCollectiveById, getCausesBySearch } from "@/services/api/crwd";
 import { ChevronDown, ChevronUp, Pencil, FileText, Plus, Minus, Trash2, Search, Loader2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
+import AmountBottomSheet from "@/components/donation/AmountBottomSheet";
 import EditDonationSplitBottomSheet from "@/components/donation/EditDonationSplitBottomSheet";
 import {
   Select,
@@ -62,6 +63,7 @@ export const DonationBox3 = ({
   const [loadingCollectives, setLoadingCollectives] = useState<Set<number>>(new Set());
   const [isEditingAmount, setIsEditingAmount] = useState(false);
   const [editableAmount, setEditableAmount] = useState(parseFloat(donationBox?.monthly_amount || donationAmount.toString()));
+  const [showAmountSheet, setShowAmountSheet] = useState(false);
   const [showEditSplitSheet, setShowEditSplitSheet] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -296,6 +298,24 @@ export const DonationBox3 = ({
     updateAmountMutation.mutate(editableAmount);
   };
 
+  const handleSaveAmountFromSheet = (amount: number) => {
+    // Calculate capacity for the new amount
+    const fees = calculateFees(amount);
+    const net = fees.net;
+    const maxCapacity = Math.floor(net / 0.20);
+
+    // Check if current causes exceed the new capacity
+    if (currentCapacity > maxCapacity) {
+      // Show error toast
+      toast.error(`You can only support up to ${maxCapacity} cause${maxCapacity !== 1 ? 's' : ''} with $${amount}. Please remove some causes or increase the amount.`);
+      return;
+    }
+
+    setEditableAmount(amount);
+    // If capacity check passes, update the amount
+    updateAmountMutation.mutate(amount);
+  };
+
   const handleCancelEdit = () => {
     if (donationBox?.monthly_amount) {
       setEditableAmount(Math.round(parseFloat(donationBox.monthly_amount)));
@@ -523,7 +543,7 @@ export const DonationBox3 = ({
                   <Minus size={18} className="md:w-5 md:h-5 text-white font-bold" strokeWidth={3} />
                 </button>
 
-                <div className="text-center">
+                <div className="text-center cursor-pointer" onClick={() => setShowAmountSheet(true)}>
                   <div className="text-[#1600ff] text-3xl md:text-4xl font-bold">
                     ${Math.round(editableAmount)}
                   </div>
@@ -1309,6 +1329,13 @@ export const DonationBox3 = ({
         causes={causes}
         monthlyAmount={actualDonationAmount}
         boxCauses={boxCauses}
+      />
+
+      <AmountBottomSheet
+        isOpen={showAmountSheet}
+        onClose={() => setShowAmountSheet(false)}
+        initialAmount={Math.round(editableAmount)}
+        onSave={handleSaveAmountFromSheet}
       />
     </div>
   );

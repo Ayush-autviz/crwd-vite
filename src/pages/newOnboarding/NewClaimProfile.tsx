@@ -348,9 +348,9 @@ export default function NewClaimProfile() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-100 via-purple-50 to-pink-50 flex flex-col items-center justify-center px-4 py-8">
+    <div className="h-screen w-full bg-gradient-to-br from-blue-100 via-purple-50 to-pink-50 flex items-center justify-center p-4 overflow-hidden">
 
-      <div className="w-full max-w-md bg-white rounded-xl p-6">
+      <div className="w-full max-w-md bg-white rounded-3xl p-6 shadow-xl flex flex-col max-h-full overflow-y-auto scrollbar-hide">
         {/* Progress Indicator - Step 2 */}
         <div className="flex items-center justify-center space-x-1.5 sm:space-x-2 mb-6 sm:mb-8">
           <div className="h-1 w-8 sm:w-10 md:w-12 bg-gray-300 rounded-full"></div>
@@ -360,11 +360,11 @@ export default function NewClaimProfile() {
         </div>
 
         {/* Title and Subtitle */}
-        <div className="text-center mb-8">
-          <h1 className="text-2xl md:text-3xl font-bold text-gray-900 mb-2">
+        <div className="text-center mb-6 shrink-0">
+          <h1 className="text-2xl font-extrabold text-gray-900 mb-1">
             Finish your profile
           </h1>
-          <p className="text-sm text-gray-600">
+          <p className="text-sm text-gray-500">
             So others can connect with you on CRWD
           </p>
         </div>
@@ -393,62 +393,57 @@ export default function NewClaimProfile() {
         </div>
 
         {/* Form Fields */}
-        <div className="space-y-4 mb-6">
-          {/* First Name */}
-          <div className="space-y-2">
-            <label className="text-sm font-medium text-gray-900">
-              First Name <span className="text-red-500">*</span>
-            </label>
-            <input
-              type="text"
-              name="firstName"
-              placeholder="Enter your first name"
-              value={formData.firstName}
-              onChange={(e) => {
-                setFormData((prev) => ({ ...prev, firstName: e.target.value }));
-                clearError("firstName");
-              }}
-              className={cn(
-                "w-full h-12 border rounded-lg px-4 bg-gray-50 text-gray-900 text-sm focus:outline-none focus:ring-2 transition-colors",
-                errors.firstName
-                  ? "border-red-500 focus:border-red-500 focus:ring-red-500"
-                  : "border-gray-300 focus:border-gray-400 focus:ring-gray-400"
-              )}
-            />
-            {errors.firstName && (
-              <p className="text-red-500 text-xs">{errors.firstName}</p>
-            )}
-          </div>
+        <div className="space-y-3 mb-4 shrink-0">
+          {/* First Name & Last Name */}
+          <div className="grid grid-cols-2 gap-3">
+            <div className="space-y-1">
+              <label className="text-xs font-bold text-gray-900 ml-1">
+                First Name <span className="text-red-500">*</span>
+              </label>
+              <input
+                type="text"
+                name="firstName"
+                placeholder="First name"
+                value={formData.firstName}
+                onChange={(e) => {
+                  setFormData((prev) => ({ ...prev, firstName: e.target.value }));
+                  clearError("firstName");
+                }}
+                className={cn(
+                  "w-full h-10 border rounded-xl px-3 bg-gray-50/50 text-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-400 transition-all placeholder:text-gray-400",
+                  errors.firstName
+                    ? "border-red-300 bg-red-50/50"
+                    : "border-gray-200"
+                )}
+              />
+            </div>
 
-          {/* Last Name */}
-          <div className="space-y-2">
-            <label className="text-sm font-medium text-gray-900">
-              Last Name <span className="text-red-500">*</span>
-            </label>
-            <input
-              type="text"
-              name="lastName"
-              placeholder="Enter your last name"
-              value={formData.lastName}
-              onChange={(e) => {
-                setFormData((prev) => ({ ...prev, lastName: e.target.value }));
-                clearError("lastName");
-              }}
-              className={cn(
-                "w-full h-12 border rounded-lg px-4 bg-gray-50 text-gray-900 text-sm focus:outline-none focus:ring-2 transition-colors",
-                errors.lastName
-                  ? "border-red-500 focus:border-red-500 focus:ring-red-500"
-                  : "border-gray-300 focus:border-gray-400 focus:ring-gray-400"
-              )}
-            />
-            {errors.lastName && (
-              <p className="text-red-500 text-xs">{errors.lastName}</p>
-            )}
+            <div className="space-y-1">
+              <label className="text-xs font-bold text-gray-900 ml-1">
+                Last Name <span className="text-red-500">*</span>
+              </label>
+              <input
+                type="text"
+                name="lastName"
+                placeholder="Last name"
+                value={formData.lastName}
+                onChange={(e) => {
+                  setFormData((prev) => ({ ...prev, lastName: e.target.value }));
+                  clearError("lastName");
+                }}
+                className={cn(
+                  "w-full h-10 border rounded-xl px-3 bg-gray-50/50 text-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-400 transition-all placeholder:text-gray-400",
+                  errors.lastName
+                    ? "border-red-300 bg-red-50/50"
+                    : "border-gray-200"
+                )}
+              />
+            </div>
           </div>
 
           {/* Email */}
-          <div className="space-y-2">
-            <label className="text-sm font-medium text-gray-900">
+          <div className="space-y-1">
+            <label className="text-xs font-bold text-gray-900 ml-1">
               Email <span className="text-red-500">*</span>
             </label>
             <input
@@ -461,44 +456,41 @@ export default function NewClaimProfile() {
                 clearError("email");
               }}
               className={cn(
-                "w-full h-12 border rounded-lg px-4 bg-gray-50 text-gray-900 text-sm focus:outline-none focus:ring-2 transition-colors",
+                "w-full h-10 border rounded-xl px-3 bg-gray-50/50 text-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-400 transition-all placeholder:text-gray-400",
                 errors.email
-                  ? "border-red-500 focus:border-red-500 focus:ring-red-500"
-                  : "border-gray-300 focus:border-gray-400 focus:ring-gray-400"
+                  ? "border-red-300 bg-red-50/50"
+                  : "border-gray-200"
               )}
             />
-            {errors.email && (
-              <p className="text-red-500 text-xs">{errors.email}</p>
-            )}
           </div>
 
           {/* Password */}
-          <div className="space-y-2">
-            <label className="text-sm font-medium text-gray-900">
+          <div className="space-y-1">
+            <label className="text-xs font-bold text-gray-900 ml-1">
               Password <span className="text-red-500">*</span>
             </label>
             <div className="relative">
               <Input
                 type={showPassword ? "text" : "password"}
                 name="password"
-                placeholder="Enter your password"
+                placeholder="Enter password"
                 value={formData.password}
                 onChange={handleInputChange}
                 className={cn(
-                  "h-12 border-gray-300 bg-gray-50 focus-visible:border-gray-400 focus-visible:ring-gray-400 pr-12",
+                  "h-10 border-gray-200 rounded-xl bg-gray-50/50 focus-visible:ring-blue-100 focus-visible:border-blue-400 pr-10 placeholder:text-gray-400",
                   errors.password &&
-                  "border-red-500 focus-visible:border-red-500 focus-visible:ring-red-500"
+                  "border-red-300 bg-red-50/50 focus-visible:border-red-400 focus-visible:ring-red-100"
                 )}
               />
               <button
                 type="button"
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
                 onClick={() => setShowPassword(!showPassword)}
               >
                 {showPassword ? (
-                  <EyeOff className="h-5 w-5" />
+                  <EyeOff className="h-4 w-4" />
                 ) : (
-                  <Eye className="h-5 w-5" />
+                  <Eye className="h-4 w-4" />
                 )}
               </button>
             </div>
@@ -601,7 +593,6 @@ export default function NewClaimProfile() {
                 </div>
               </div>
             )}
-
             {errors.password && (
               <p className="text-red-500 text-xs mt-1">{errors.password}</p>
             )}
@@ -609,32 +600,30 @@ export default function NewClaimProfile() {
         </div>
 
         {/* Terms and Privacy Checkbox */}
-        <div className="flex items-start gap-3 mb-6">
-          <input
-            type="checkbox"
-            id="terms"
-            checked={formData.termsAccepted}
-            onChange={(e) => {
-              setFormData((prev) => ({
-                ...prev,
-                termsAccepted: e.target.checked,
-              }));
-              clearError("terms");
-            }}
-            className={cn(
-              "mt-1 w-5 h-5 rounded border-2 cursor-pointer",
-              errors.terms
-                ? "border-red-500"
-                : "border-gray-300"
-            )}
-          />
-          <label htmlFor="terms" className="text-sm text-gray-700 flex-1">
+        <div className="flex items-start gap-3 mb-6 shrink-0 px-1">
+          <div className="relative flex items-center">
+            <input
+              type="checkbox"
+              id="terms"
+              checked={formData.termsAccepted}
+              onChange={(e) => {
+                setFormData((prev) => ({
+                  ...prev,
+                  termsAccepted: e.target.checked,
+                }));
+                clearError("terms");
+              }}
+              className="peer h-5 w-5 cursor-pointer appearance-none rounded-md border-2 border-gray-200 transition-all checked:border-blue-500 checked:bg-blue-500 hover:border-blue-400"
+            />
+            <Check className="pointer-events-none absolute left-1/2 top-1/2 h-3.5 w-3.5 -translate-x-1/2 -translate-y-1/2 text-white opacity-0 transition-opacity peer-checked:opacity-100" />
+          </div>
+          <label htmlFor="terms" className="text-xs text-gray-600 flex-1 leading-5">
             By checking this box, you acknowledge and agree to CRWD's{" "}
-            <a href="/terms" className="text-[#1600ff] hover:underline">
+            <a href="/terms" className="text-blue-600 font-semibold hover:underline">
               Terms of Use
             </a>{" "}
             and{" "}
-            <a href="/privacy" className="text-[#1600ff] hover:underline">
+            <a href="/privacy" className="text-blue-600 font-semibold hover:underline">
               Privacy Policy
             </a>
             . <span className="text-red-500">*</span>
@@ -648,28 +637,28 @@ export default function NewClaimProfile() {
         <Button
           onClick={handleContinue}
           disabled={emailRegistrationMutation.isPending}
-          className="w-full h-12 bg-indigo-500 text-white font-medium rounded-lg flex items-center justify-center gap-2 mb-6"
+          className="w-full h-12 bg-[#B4B9F6] hover:bg-[#9FA4F0] text-white font-bold text-lg rounded-xl shadow-sm hover:shadow-md transition-all mb-4 shrink-0"
         >
           {emailRegistrationMutation.isPending ? (
             <>
-              <Loader2 className="w-5 h-5 animate-spin" />
+              <Loader2 className="w-5 h-5 animate-spin mr-2" />
               Creating Account...
             </>
           ) : (
             <>
-              Continue <ArrowRight className="w-4 h-4" />
+              Continue <ArrowRight className="w-5 h-5 ml-2" />
             </>
           )}
         </Button>
 
         {/* Sign In Link */}
-        <div className="text-center">
+        <div className="text-center shrink-0 mt-auto">
           <p className="text-sm text-gray-500">
             Already have an account?{" "}
             <Link
               to={`/login${redirectTo ? `?redirectTo=${encodeURIComponent(redirectTo)}` : ''}`}
               state={{ redirectParams: location.state?.redirectParams }}
-              className="text-[#1600ff] hover:underline font-medium"
+              className="text-blue-600 font-bold hover:underline"
             >
               Sign In
             </Link>

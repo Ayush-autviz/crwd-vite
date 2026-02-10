@@ -102,7 +102,7 @@ export default function ProfileNavbar({
   return (
     <>
       {showMobileMenu && title !== "Home" && (
-        <header className="w-full flex items-center justify-between h-16 px-3 bg-gray-50 border-b sticky top-0 z-10 md:hidden">
+        <header className="w-full flex items-center justify-between h-16 px-3 bg-gray-50 border-b sticky top-0 z-50 md:hidden">
           {/* Left Section */}
           <div className="flex items-center gap-3">
             {showBackButton && (
@@ -139,7 +139,7 @@ export default function ProfileNavbar({
       )}
 
       {showMobileMenu && title === "Home" && (
-        <header className="w-full flex items-center justify-between px-2.5 py-4 border-b-2 border-gray-200 bg-gray-50 sticky top-0 z-10 md:hidden">
+        <header className="w-full flex items-center justify-between px-2.5 py-4 border-b-2 border-gray-200 bg-gray-50 sticky top-0 z-50 md:hidden">
           {/* Logo on the left */}
           <div className="flex-shrink-0 cursor-pointer" onClick={handleScrollToTop}>
             {/* <Link to="/waitlist"> */}
@@ -290,7 +290,7 @@ export default function ProfileNavbar({
       )}
 
       {showDesktopMenu && title === "Home" && (
-        <header className="w-full items-center justify-between px-6 py-4 border-b-2 border-gray-200 bg-gray-50 sticky top-0 z-10 hidden md:flex">
+        <header className="w-full items-center justify-between px-6 py-4 border-b-2 border-gray-200 bg-gray-50 sticky top-0 z-50 hidden md:flex">
           {/* Logo on the left */}
           {/* <div className="flex-shrink-0">
             <Link to="/waitlist">
@@ -459,7 +459,7 @@ export default function ProfileNavbar({
       )}
 
       {showDesktopMenu && title !== "Home" && (
-        <header className="w-full bg-card border-b hidden h-16 px-6 md:flex items-center justify-between z-10 sticky top-0">
+        <header className="w-full bg-card border-b hidden h-16 px-6 md:flex items-center justify-between z-50 sticky top-0">
           <div className="flex items-center gap-3">
             {showDesktopBackButton && (
               <button

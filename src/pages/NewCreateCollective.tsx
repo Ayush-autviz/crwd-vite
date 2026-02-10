@@ -2050,7 +2050,7 @@ export default function NewCreateCollectivePage() {
           >
             <ArrowLeft className="w-4 h-4 md:w-5 md:h-5 text-gray-700" />
           </button>
-          <h1 className="font-bold text-lg md:text-xl text-foreground">Create a Collective</h1>
+          <h1 className="font-bold text-lg md:text-xl text-foreground">Start a Collective</h1>
         </div>
         <div className="mb-6 md:mb-8">
           <div className="w-12 h-12 md:w-16 md:h-16 rounded-full mt-4 md:mt-5 bg-blue-100 flex items-center justify-center">
@@ -2095,7 +2095,7 @@ export default function NewCreateCollectivePage() {
           >
             <ArrowLeft className="w-4 h-4 md:w-5 md:h-5 text-gray-700" />
           </button>
-          <h1 className="font-bold text-lg md:text-xl text-foreground">Create a Collective</h1>
+          <h1 className="font-bold text-lg md:text-xl text-foreground">Start a Collective</h1>
         </div>
         <div className="mb-6 md:mb-8">
           <div className="w-12 h-12 md:w-16 md:h-16 rounded-full mt-4 md:mt-5 bg-blue-100 flex items-center justify-center">
@@ -2103,11 +2103,16 @@ export default function NewCreateCollectivePage() {
           </div>
         </div>
         <h2 className="text-xl md:text-2xl font-bold text-foreground text-center mb-4 md:mb-6 px-4">
-          Lead a Giving Community
+          Bring people together around causes
         </h2>
-        <p className="text-sm xs:text-base md:text-lg text-gray-700 text-center max-w-md mb-8 md:mb-12 px-4">
-          Pick your causes. Name your collective. Invite your people. Crwd handles the donations, you rally the movement.
-        </p>
+        <div className="text-sm xs:text-base md:text-lg text-gray-700 text-center max-w-md mb-8 md:mb-12 px-4 flex flex-col gap-6">
+          <p>You choose the causes. You invite the people.</p>
+          <p>
+            Start conversations and share why you support the nonprofits you
+            care about.
+          </p>
+          <p>No money touches your hands.</p>
+        </div>
         <div className="w-fit ">
           <Button
             onClick={() => {
@@ -2421,7 +2426,7 @@ export default function NewCreateCollectivePage() {
           >
             <ArrowLeft className="w-4 h-4 md:w-5 md:h-5 text-gray-700" />
           </button>
-          <h1 className="font-bold text-lg md:text-xl text-foreground">Create a Collective</h1>
+          <h1 className="font-bold text-lg md:text-xl text-foreground">Start a Collective</h1>
         </div>
 
         <div className="px-3 md:px-4 py-4 md:py-6 pb-24 md:pb-28 lg:max-w-[60%] lg:mx-auto">

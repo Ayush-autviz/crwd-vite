@@ -109,7 +109,7 @@ export default function NewNonProfitInterests() {
 
         {/* Subtitle */}
         <p className="text-xs sm:text-sm md:text-base text-gray-600 text-center mb-6 sm:mb-8 px-2">
-          Select one or more categories to personalize your experience. We'll show you nonprofits and collectives that match your interests.
+          Select one or more interests to personalize your experience. We'll show you nonprofits and collectives that match.
         </p>
 
         {/* Category Tags - Organic Layout */}

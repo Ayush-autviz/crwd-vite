@@ -133,6 +133,7 @@ export default function NewGroupCrwdPage() {
       // Invalidate queries to refresh data
       queryClient.invalidateQueries({ queryKey: ['crwd', crwdId] });
       queryClient.invalidateQueries({ queryKey: ['joined-collectives'] });
+      queryClient.invalidateQueries({ queryKey: ['join-collective'] }); // For Circles page
       queryClient.invalidateQueries({ queryKey: ['joined-collectives', currentUser?.id] });
       queryClient.invalidateQueries({ queryKey: ['joined-collectives-manage'] });
       queryClient.invalidateQueries({ queryKey: ['joinedCollectives'] });
@@ -163,6 +164,7 @@ export default function NewGroupCrwdPage() {
       // Invalidate queries to refresh data
       queryClient.invalidateQueries({ queryKey: ['crwd', crwdId] });
       queryClient.invalidateQueries({ queryKey: ['joined-collectives'] });
+      queryClient.invalidateQueries({ queryKey: ['join-collective'] }); // For Circles page
       queryClient.invalidateQueries({ queryKey: ['joined-collectives', currentUser?.id] });
       queryClient.invalidateQueries({ queryKey: ['joined-collectives-manage'] });
       queryClient.invalidateQueries({ queryKey: ['joinedCollectives'] });

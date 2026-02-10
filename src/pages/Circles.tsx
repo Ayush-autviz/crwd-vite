@@ -59,6 +59,10 @@ const Circles = () => {
     }
   }, [joinCollectiveData]);
 
+  const joinedCollectiveIds = new Set(
+    joinCollectiveData?.data?.map((item: any) => (item.collective || item).id) || []
+  );
+
   return (
     <div className="">
       <ProfileNavbar
@@ -242,7 +246,7 @@ const Circles = () => {
           ) : (
             /* Discover Tab Content */
             <div className="space-y-3 md:space-y-4 pb-12 md:pb-16">
-              {collectiveData?.results?.map((circle: any, index: number) => {
+              {collectiveData?.results?.filter((circle: any) => !joinedCollectiveIds.has(circle.id)).map((circle: any, index: number) => {
                 // Generate color for icon if not provided
                 const getIconColor = (index: number): string => {
                   const colors = [
