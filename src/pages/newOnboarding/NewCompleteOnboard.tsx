@@ -394,12 +394,12 @@ export default function NewCompleteOnboard() {
 
             {/* Title */}
             <h1 className="text-2xl md:text-3xl font-bold text-gray-900 text-center mb-3">
-              Set Up Your Donation Box
+             Start Supporting Causes
             </h1>
 
             {/* Description */}
             <p className="text-sm md:text-base text-gray-600 text-center mb-6">
-              Choose nonprofits to support. Your donation gets split evenly among them. You can change these anytime!
+              Choose how you'd like to select nonprofits
             </p>
 
             {/* Selected Categories Tags */}
@@ -543,10 +543,10 @@ export default function NewCompleteOnboard() {
             </div>
 
             <h1 className="text-2xl md:text-3xl font-bold text-gray-900 text-center mb-3">
-              Set Up Your Donation Box
+             Start Supporting Causes
             </h1>
             <p className="text-sm md:text-base text-gray-600 text-center mb-8">
-              Choose nonprofits to support. Your donation gets split evenly among them. You can change these anytime!
+              Choose how you'd like to select nonprofits
             </p>
 
             {/* Your Random Selection Section */}
