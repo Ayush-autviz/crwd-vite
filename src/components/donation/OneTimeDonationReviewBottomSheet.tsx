@@ -5,6 +5,7 @@ import { createOneTimeDonation, createFundraiserDonation } from "@/services/api/
 import CrwdAnimation from "@/assets/newLogo/CrwdAnimation";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { cn } from "@/lib/utils";
+import PlatformFeeInfoBottomSheet from "./PlatformFeeInfoBottomSheet";
 
 interface OneTimeDonationReviewBottomSheetProps {
   isOpen: boolean;
@@ -26,6 +27,7 @@ export default function OneTimeDonationReviewBottomSheet({
   const [isVisible, setIsVisible] = useState(false);
   const [isAnimating, setIsAnimating] = useState(false);
   const [showLogoAnimation, setShowLogoAnimation] = useState(false);
+  const [isPlatformFeeInfoOpen, setIsPlatformFeeInfoOpen] = useState(false);
 
   // One-time donation mutation
   const oneTimeDonationMutation = useMutation({
@@ -79,6 +81,7 @@ export default function OneTimeDonationReviewBottomSheet({
     let timer: NodeJS.Timeout;
     if (isOpen) {
       setIsVisible(true);
+      setIsPlatformFeeInfoOpen(false);
       setIsAnimating(false);
       timer = setTimeout(() => setIsAnimating(true), 20);
     } else if (isVisible) {
@@ -268,10 +271,16 @@ export default function OneTimeDonationReviewBottomSheet({
                 <span className="text-sm md:text-base font-semibold text-gray-900">{totalCauses} cause{totalCauses !== 1 ? 's' : ''}</span>
               </div>
               <div className="flex justify-between items-center">
-                <div className="flex items-center gap-1 md:gap-1.5">
+                <button
+                  type="button"
+                  className="flex items-center gap-1.5 group cursor-pointer"
+                  onClick={() => setIsPlatformFeeInfoOpen(true)}
+                >
                   <span className="text-xs md:text-sm text-gray-600">Platform fee:</span>
-                  <Info className="w-3.5 h-3.5 md:w-4 md:h-4 text-gray-400" />
-                </div>
+                  <div className="bg-gray-100 p-0.5 rounded-full text-gray-400 group-hover:text-gray-600 transition-colors">
+                    <Info className="w-3.5 h-3.5 md:w-4 md:h-4" />
+                  </div>
+                </button>
                 <span className="text-sm md:text-base font-semibold text-gray-900">${platformFee.toFixed(2)}</span>
               </div>
               <div className="flex justify-between items-center">
@@ -344,6 +353,11 @@ export default function OneTimeDonationReviewBottomSheet({
           </div>
         </div>
       </div>
+
+      <PlatformFeeInfoBottomSheet
+        isOpen={isPlatformFeeInfoOpen}
+        onClose={() => setIsPlatformFeeInfoOpen(false)}
+      />
     </>
   );
 }

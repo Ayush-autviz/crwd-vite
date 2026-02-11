@@ -419,17 +419,17 @@ export default function NewCompleteOnboard() {
           </div>
 
           {/* Scrollable Content Section */}
-          <div className="p-6 md:p-8 pt-0 overflow-y-auto flex-1">
+          <div className="px-6 md:px-8 pt-0 overflow-y-auto flex-1 scrollbar-hide">
             {/* Three Option Cards */}
-            <div className="grid grid-cols-1 gap-4 mb-8">
+            <div className="grid grid-cols-1 gap-4 mb-6">
               {/* Join a Collective Card */}
               <button
                 onClick={handleJoinCollective}
                 disabled={isJoinLoading}
-                className="bg-white border border-gray-200 rounded-3xl p-8 text-center hover:shadow-md transition-all group disabled:opacity-70 disabled:cursor-not-allowed"
+                className="bg-white border border-gray-100 rounded-[32px] p-10 text-center hover:shadow-sm transition-all group disabled:opacity-70 disabled:cursor-not-allowed"
               >
-                <div className="flex justify-center mb-4">
-                  <div className="w-14 h-14 rounded-full bg-[#d946ef] flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                <div className="flex justify-center mb-6">
+                  <div className="w-14 h-14 rounded-full bg-[#d946ef] flex items-center justify-center group-hover:scale-105 transition-transform duration-300">
                     {isJoinLoading ? (
                       <Loader2 className="w-7 h-7 text-white animate-spin" />
                     ) : (
@@ -437,8 +437,8 @@ export default function NewCompleteOnboard() {
                     )}
                   </div>
                 </div>
-                <h3 className="font-bold text-xl text-gray-900 mb-2">Join a Collective</h3>
-                <p className="text-gray-500">
+                <h3 className="font-bold text-xl text-gray-900 mb-4">Join a Collective</h3>
+                <p className="text-gray-400 text-sm">
                   Join curated giving communities
                 </p>
               </button>
@@ -447,10 +447,10 @@ export default function NewCompleteOnboard() {
               <button
                 onClick={handleBrowseSearch}
                 disabled={isBrowseLoading}
-                className="bg-white border border-gray-200 rounded-3xl p-8 text-center hover:shadow-md transition-all group disabled:opacity-70 disabled:cursor-not-allowed"
+                className="bg-white border border-gray-100 rounded-[32px] p-10 text-center hover:shadow-sm transition-all group disabled:opacity-70 disabled:cursor-not-allowed"
               >
-                <div className="flex justify-center mb-4">
-                  <div className="w-14 h-14 rounded-full bg-[#8b5cf6] flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                <div className="flex justify-center mb-6">
+                  <div className="w-14 h-14 rounded-full bg-[#8b5cf6] flex items-center justify-center group-hover:scale-105 transition-transform duration-300">
                     {isBrowseLoading ? (
                       <Loader2 className="w-7 h-7 text-white animate-spin" />
                     ) : (
@@ -458,8 +458,8 @@ export default function NewCompleteOnboard() {
                     )}
                   </div>
                 </div>
-                <h3 className="font-bold text-xl text-gray-900 mb-2">I'll Choose My Own</h3>
-                <p className="text-gray-500">
+                <h3 className="font-bold text-xl text-gray-900 mb-4">I'll Choose My Own</h3>
+                <p className="text-gray-400 text-sm">
                   Select nonprofits to add to your box
                 </p>
               </button>
@@ -468,10 +468,10 @@ export default function NewCompleteOnboard() {
               <button
                 onClick={handleSurpriseMe}
                 disabled={isSurpriseLoading}
-                className="bg-white border border-gray-200 rounded-3xl p-8 text-center hover:shadow-md transition-all group disabled:opacity-70 disabled:cursor-not-allowed"
+                className="bg-white border border-gray-100 rounded-[32px] p-10 text-center hover:shadow-sm transition-all group disabled:opacity-70 disabled:cursor-not-allowed"
               >
-                <div className="flex justify-center mb-4">
-                  <div className="w-14 h-14 rounded-full bg-[#ec4899] flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                <div className="flex justify-center mb-6">
+                  <div className="w-14 h-14 rounded-full bg-[#ec4899] flex items-center justify-center group-hover:scale-105 transition-transform duration-300">
                     {isSurpriseLoading ? (
                       <Loader2 className="w-7 h-7 text-white animate-spin" />
                     ) : (
@@ -479,35 +479,43 @@ export default function NewCompleteOnboard() {
                     )}
                   </div>
                 </div>
-                <h3 className="font-bold text-xl text-gray-900 mb-2">Surprise Me</h3>
-                <p className="text-gray-500">
+                <h3 className="font-bold text-xl text-gray-900 mb-4">Surprise Me</h3>
+                <p className="text-gray-400 text-sm">
                   We'll pick nonprofits based on your interests
                 </p>
               </button>
             </div>
           </div>
 
-          {/* Bottom Buttons - Fixed */}
-          {selectedCauses.length === 0 && (
-            <div className="p-6 md:p-8 pt-0 flex-shrink-0">
-              <div className="flex gap-3 justify-center">
+          {/* Bottom Buttons - Matching Image */}
+          <div className="p-6 md:p-8 pt-2 flex-shrink-0 bg-white">
+            <div className="flex flex-col items-center gap-6">
+              <div className="flex gap-4 w-full">
                 <Button
                   onClick={handleEditCategories}
                   variant="outline"
-                  className="px-6 py-3 rounded-full border border-gray-300 bg-white text-gray-900 font-bold hover:bg-gray-50 shadow-sm"
+                  className="flex-1 py-5 rounded-2xl border border-gray-200 bg-white text-gray-900 font-bold hover:bg-gray-50 text-lg"
                 >
-                  Edit Categories
+                  Back
                 </Button>
                 <Button
-                  onClick={handleSkip}
-                  className="px-6 py-3 rounded-full bg-blue-600 hover:bg-blue-700 text-white font-bold shadow-sm flex items-center gap-2"
+                  disabled={true}
+                  onClick={handleSurpriseMe}
+                  className="flex-1 py-5 rounded-2xl bg-[#1600ff] hover:bg-[#1600ff] text-white font-bold flex items-center justify-center gap-2 text-lg shadow-lg shadow-purple-100"
                 >
-                  Skip for Now
-                  <ArrowRight className="w-4 h-4" />
+                  Continue
+                  <ArrowRight className="w-5 h-5" />
                 </Button>
               </div>
+              
+              <button
+                onClick={handleSkip}
+                className="text-[#4b6bfb] font-semibold text-sm hover:underline transition-all"
+              >
+                Skip for now
+              </button>
             </div>
-          )}
+          </div>
         </div>
       </div>
     );
