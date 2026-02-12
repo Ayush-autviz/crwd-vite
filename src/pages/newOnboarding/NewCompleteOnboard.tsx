@@ -118,8 +118,8 @@ export default function NewCompleteOnboard() {
       return await leaveCollective(id);
     },
     onSuccess: () => {
-        toast.success('Left collective successfully');
-        queryClient.invalidateQueries({ queryKey: ['collectives'] });
+      toast.success('Left collective successfully');
+      queryClient.invalidateQueries({ queryKey: ['collectives'] });
     },
     onError: (error: any) => {
       toast.error(error?.response?.data?.message || 'Failed to leave collective');
@@ -150,13 +150,13 @@ export default function NewCompleteOnboard() {
         const joinedIds = results
           .filter((c: any) => c.is_joined === true)
           .map((c: any) => String(c.id || c.pk || c.uuid));
-        
+
         if (joinedIds.length > 0) {
-            setSelectedCollectiveIds(prev => {
-                // Merge new joined IDs with existing ones, avoiding duplicates
-                const uniqueIds = new Set([...prev, ...joinedIds]);
-                return Array.from(uniqueIds);
-            });
+          setSelectedCollectiveIds(prev => {
+            // Merge new joined IDs with existing ones, avoiding duplicates
+            const uniqueIds = new Set([...prev, ...joinedIds]);
+            return Array.from(uniqueIds);
+          });
         }
       }
     }
@@ -239,10 +239,10 @@ export default function NewCompleteOnboard() {
       };
       createBoxMutation.mutate(requestData, {
         onSuccess: () => {
-             // navigate('/');
-             setAddedNonprofitsCount(selectedCauses.length);
-             setPreviousView(view);
-             setView('success');
+          // navigate('/');
+          setAddedNonprofitsCount(selectedCauses.length);
+          setPreviousView(view);
+          setView('success');
         }
       });
     } else {
@@ -254,17 +254,17 @@ export default function NewCompleteOnboard() {
     // Robustly get the ID, handling potential variations
     const rawId = collective.id || collective.pk || collective.uuid;
     if (!rawId) {
-        console.error("Collective has no ID:", collective);
-        return;
+      console.error("Collective has no ID:", collective);
+      return;
     }
     const collectiveId = String(rawId);
 
     const isJoined = selectedCollectiveIds.includes(collectiveId);
 
     if (isJoined) {
-        leaveCollectiveMutation.mutate(collectiveId);
+      leaveCollectiveMutation.mutate(collectiveId);
     } else {
-        joinCollectiveMutation.mutate(collectiveId);
+      joinCollectiveMutation.mutate(collectiveId);
     }
 
     setSelectedCollectiveIds((prev) => {
@@ -294,25 +294,25 @@ export default function NewCompleteOnboard() {
     setIsProcessingCollectives(true);
     try {
       const allCauses: any[] = [];
-      
+
       // Fetch details for each selected collective to get their causes
       for (const collectiveId of selectedCollectiveIds) {
         try {
           const collectiveDetails = await getCollectiveById(collectiveId.toString());
           if (collectiveDetails && collectiveDetails.causes) {
-             // collectiveDetails.causes might be array of objects with { cause: { id, ... } } or just { id, ... }
-             collectiveDetails.causes.forEach((c: any) => {
-                const causeId = c.cause?.id || c.id;
-                if (causeId) {
-                    // Check if cause is already added to avoid duplicates
-                    if (!allCauses.some(existing => existing.cause_id === causeId)) {
-                        allCauses.push({
-                            cause_id: causeId,
-                            attributed_collective: collectiveId
-                        });
-                    }
+            // collectiveDetails.causes might be array of objects with { cause: { id, ... } } or just { id, ... }
+            collectiveDetails.causes.forEach((c: any) => {
+              const causeId = c.cause?.id || c.id;
+              if (causeId) {
+                // Check if cause is already added to avoid duplicates
+                if (!allCauses.some(existing => existing.cause_id === causeId)) {
+                  allCauses.push({
+                    cause_id: causeId,
+                    attributed_collective: collectiveId
+                  });
                 }
-             });
+              }
+            });
           }
         } catch (err) {
           console.error(`Failed to fetch details for collective ${collectiveId}`, err);
@@ -322,19 +322,19 @@ export default function NewCompleteOnboard() {
       if (allCauses.length > 0) {
         // Create donation box with these causes
         const requestData = {
-            monthly_amount: "10",
-            causes: allCauses
+          monthly_amount: "10",
+          causes: allCauses
         };
         // Use mutateAsync to handle the promise and loading state
         try {
-            await createBoxMutation.mutateAsync(requestData);
-            setAddedNonprofitsCount(allCauses.length);
-            setIsProcessingCollectives(false);
-            setPreviousView(view);
-            setView('success');
+          await createBoxMutation.mutateAsync(requestData);
+          setAddedNonprofitsCount(allCauses.length);
+          setIsProcessingCollectives(false);
+          setPreviousView(view);
+          setView('success');
         } catch (e) {
-            // Error is handled by mutation onError
-             setIsProcessingCollectives(false);
+          // Error is handled by mutation onError
+          setIsProcessingCollectives(false);
         }
       } else {
         toast.error("No nonprofits found in selected collectives.");
@@ -375,7 +375,6 @@ export default function NewCompleteOnboard() {
     return (
       <div className="h-screen bg-gradient-to-br from-blue-100 via-purple-50 to-pink-50 flex flex-col items-center justify-center px-4 py-8 overflow-hidden">
         <div className="w-full max-w-2xl bg-white rounded-xl shadow-lg max-h-full flex flex-col overflow-hidden">
-          {/* Header Section - Fixed */}
           <div className="p-6 md:p-8 pb-0 flex-shrink-0">
             {/* Progress Indicator - Step 4 */}
             <div className="flex items-center justify-center space-x-1.5 sm:space-x-2 mb-6 sm:mb-8">
@@ -386,29 +385,29 @@ export default function NewCompleteOnboard() {
             </div>
 
             {/* Heart Icon with Gradient */}
-            <div className="flex justify-center mb-8">
-              <div className="w-20 h-20 rounded-full bg-gradient-to-br from-purple-500 via-pink-500 to-blue-500 flex items-center justify-center shadow-lg">
-                <Heart className="w-10 h-10 text-white fill-white" />
+            <div className="flex justify-center mb-6">
+              <div className="w-16 h-16 rounded-full bg-gradient-to-br from-purple-500 via-pink-500 to-blue-500 flex items-center justify-center shadow-lg">
+                <Heart className="w-8 h-8 text-white fill-white" />
               </div>
             </div>
 
             {/* Title */}
-            <h1 className="text-2xl md:text-3xl font-bold text-gray-900 text-center mb-3">
-             Start Supporting Causes
+            <h1 className="text-2xl md:text-3xl font-bold text-gray-900 text-center mb-2">
+              Start Supporting Causes
             </h1>
 
             {/* Description */}
-            <p className="text-sm md:text-base text-gray-600 text-center mb-6">
+            <p className="text-sm md:text-base text-gray-600 text-center mb-4">
               Choose how you'd like to select nonprofits
             </p>
 
             {/* Selected Categories Tags */}
             {selectedCategoryObjects.length > 0 && (
-              <div className="flex flex-wrap justify-center gap-2 mb-8">
+              <div className="flex flex-wrap justify-center gap-2 mb-6">
                 {selectedCategoryObjects.map((category) => (
                   <div
                     key={category.id}
-                    className="px-4 py-2 rounded-full text-sm font-medium text-white border border-gray-200"
+                    className="px-4 py-1.5 rounded-full text-xs font-bold text-white border border-gray-200"
                     style={{ backgroundColor: category.background }}
                   >
                     {category.name}
@@ -426,7 +425,7 @@ export default function NewCompleteOnboard() {
               <button
                 onClick={handleJoinCollective}
                 disabled={isJoinLoading}
-                className="bg-white border border-gray-100 rounded-[32px] p-10 text-center hover:shadow-sm transition-all group disabled:opacity-70 disabled:cursor-not-allowed"
+                className="bg-white border border-gray-100 rounded-2xl p-4 text-center hover:shadow-sm transition-all group disabled:opacity-70 disabled:cursor-not-allowed"
               >
                 <div className="flex justify-center mb-6">
                   <div className="w-14 h-14 rounded-full bg-[#d946ef] flex items-center justify-center group-hover:scale-105 transition-transform duration-300">
@@ -437,7 +436,7 @@ export default function NewCompleteOnboard() {
                     )}
                   </div>
                 </div>
-                <h3 className="font-bold text-xl text-gray-900 mb-4">Join a Collective</h3>
+                <h3 className="font-bold text-xl text-gray-900 sm:mb-2">Join a Collective</h3>
                 <p className="text-gray-400 text-sm">
                   Join curated giving communities
                 </p>
@@ -447,7 +446,7 @@ export default function NewCompleteOnboard() {
               <button
                 onClick={handleBrowseSearch}
                 disabled={isBrowseLoading}
-                className="bg-white border border-gray-100 rounded-[32px] p-10 text-center hover:shadow-sm transition-all group disabled:opacity-70 disabled:cursor-not-allowed"
+                className="bg-white border border-gray-100 rounded-2xl p-4 text-center hover:shadow-sm transition-all group disabled:opacity-70 disabled:cursor-not-allowed"
               >
                 <div className="flex justify-center mb-6">
                   <div className="w-14 h-14 rounded-full bg-[#8b5cf6] flex items-center justify-center group-hover:scale-105 transition-transform duration-300">
@@ -458,7 +457,7 @@ export default function NewCompleteOnboard() {
                     )}
                   </div>
                 </div>
-                <h3 className="font-bold text-xl text-gray-900 mb-4">I'll Choose My Own</h3>
+                <h3 className="font-bold text-xl text-gray-900 sm:mb-2">I'll Choose My Own</h3>
                 <p className="text-gray-400 text-sm">
                   Select nonprofits to add to your box
                 </p>
@@ -468,7 +467,7 @@ export default function NewCompleteOnboard() {
               <button
                 onClick={handleSurpriseMe}
                 disabled={isSurpriseLoading}
-                className="bg-white border border-gray-100 rounded-[32px] p-10 text-center hover:shadow-sm transition-all group disabled:opacity-70 disabled:cursor-not-allowed"
+                className="bg-white border border-gray-100 rounded-2xl p-4 text-center hover:shadow-sm transition-all group disabled:opacity-70 disabled:cursor-not-allowed"
               >
                 <div className="flex justify-center mb-6">
                   <div className="w-14 h-14 rounded-full bg-[#ec4899] flex items-center justify-center group-hover:scale-105 transition-transform duration-300">
@@ -479,7 +478,7 @@ export default function NewCompleteOnboard() {
                     )}
                   </div>
                 </div>
-                <h3 className="font-bold text-xl text-gray-900 mb-4">Surprise Me</h3>
+                <h3 className="font-bold text-xl text-gray-900 sm:mb-2">Surprise Me</h3>
                 <p className="text-gray-400 text-sm">
                   We'll pick nonprofits based on your interests
                 </p>
@@ -487,33 +486,31 @@ export default function NewCompleteOnboard() {
             </div>
           </div>
 
-          {/* Bottom Buttons - Matching Image */}
-          <div className="p-6 md:p-8 pt-2 flex-shrink-0 bg-white">
-            <div className="flex flex-col items-center gap-6">
+          <div className="p-3 md:p-6 flex-shrink-0 bg-white border-t border-gray-200">
+            <div className="flex flex-col items-center gap-3">
               <div className="flex gap-4 w-full">
                 <Button
                   onClick={handleEditCategories}
                   variant="outline"
-                  className="flex-1 py-5 rounded-2xl border border-gray-200 bg-white text-gray-900 font-bold hover:bg-gray-50 text-lg"
+                  className="flex-1 py-5 rounded-full border border-gray-200 bg-white text-gray-900 font-bold hover:bg-gray-50 text-base"
                 >
                   Back
                 </Button>
-                <Button
+                {/* <Button
                   disabled={true}
-                  onClick={handleSurpriseMe}
-                  className="flex-1 py-5 rounded-2xl bg-[#1600ff] hover:bg-[#1600ff] text-white font-bold flex items-center justify-center gap-2 text-lg shadow-lg shadow-purple-100"
+                  className="flex-1 py-6 rounded-full bg-[#1600ff] opacity-50 text-white font-bold flex items-center justify-center gap-2 text-base shadow-lg shadow-blue-100"
                 >
                   Continue
                   <ArrowRight className="w-5 h-5" />
-                </Button>
+                </Button> */}
+                <button
+                  onClick={handleSkip}
+                  className="flex-1 text-gray-500 font-semibold text-sm hover:text-gray-900 transition-all"
+                >
+                  Skip for now
+                </button>
               </div>
-              
-              <button
-                onClick={handleSkip}
-                className="text-[#4b6bfb] font-semibold text-sm hover:underline transition-all"
-              >
-                Skip for now
-              </button>
+
             </div>
           </div>
         </div>
@@ -524,9 +521,9 @@ export default function NewCompleteOnboard() {
   // Surprise Me view
   if (view === 'surprise') {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-100 via-purple-50 to-pink-50">
-        <div className="max-w-4xl mx-auto px-4 py-6">
-          <div className="bg-white rounded-xl p-6 md:p-8 shadow-lg mt-8">
+      <div className="h-screen bg-gradient-to-br from-blue-100 via-purple-50 to-pink-50 flex flex-col items-center justify-center px-4 py-8 overflow-hidden">
+        <div className="w-full max-w-2xl bg-white rounded-xl shadow-lg max-h-full flex flex-col overflow-hidden">
+          <div className="p-6 md:p-8 pb-0 flex-shrink-0">
             {/* Progress Indicator - Step 4 */}
             <div className="flex items-center justify-center space-x-1.5 sm:space-x-2 mb-6 sm:mb-8">
               <div className="h-1 w-8 sm:w-10 md:w-12 bg-gray-300 rounded-full"></div>
@@ -535,27 +532,48 @@ export default function NewCompleteOnboard() {
               <div className="h-1 w-8 sm:w-10 md:w-12 bg-gray-800 rounded-full"></div>
             </div>
 
-            {/* Header */}
+            {/* Heart Icon with Gradient */}
             <div className="flex justify-center mb-6">
-              <div className="w-20 h-20 rounded-full bg-gradient-to-br from-purple-500 via-pink-500 to-blue-500 flex items-center justify-center shadow-lg">
-                <Heart className="w-10 h-10 text-white fill-white" />
+              <div className="w-16 h-16 rounded-full bg-gradient-to-br from-purple-500 via-pink-500 to-blue-500 flex items-center justify-center shadow-lg">
+                <Heart className="w-8 h-8 text-white fill-white" />
               </div>
             </div>
 
-            <h1 className="text-2xl md:text-3xl font-bold text-gray-900 text-center mb-3">
-             Start Supporting Causes
+            {/* Title */}
+            <h1 className="text-2xl md:text-3xl font-bold text-gray-900 text-center mb-2">
+              Start Supporting Causes
             </h1>
-            <p className="text-sm md:text-base text-gray-600 text-center mb-8">
-              Choose how you'd like to select nonprofits
+
+            {/* Description */}
+            <p className="text-sm md:text-base text-gray-600 text-center mb-4">
+              We've curated a selection for you
             </p>
 
+            {/* Selected Categories Tags */}
+            {selectedCategoryObjects.length > 0 && (
+              <div className="flex flex-wrap justify-center gap-2 mb-6">
+                {selectedCategoryObjects.map((category) => (
+                  <div
+                    key={category.id}
+                    className="px-4 py-1.5 rounded-full text-xs font-bold text-white border border-gray-200"
+                    style={{ backgroundColor: category.background }}
+                  >
+                    {category.name}
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Scrollable Content Section */}
+          <div className="px-6 md:px-8 pt-0 overflow-y-auto flex-1 scrollbar-hide">
             {/* Your Random Selection Section */}
             <div className="mb-6">
-              <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-0 mb-4">
-                <h2 className="text-base sm:text-lg font-bold text-gray-900">Your Random Selection</h2>
+              <div className="flex justify-between items-center mb-4">
+                <h2 className="text-lg font-bold text-gray-900">Your Random Selection</h2>
                 <button
                   onClick={handleChangeMethod}
-                  className="px-3 sm:px-4 py-1.5 sm:py-2 border border-gray-300 hover:bg-gray-100 rounded-full text-xs sm:text-sm font-medium text-gray-700"
+                  className="px-4 py-2 border border-gray-300 hover:bg-gray-100 rounded-full text-sm font-medium text-gray-700 transition-all"
                 >
                   Change Method
                 </button>
@@ -565,7 +583,7 @@ export default function NewCompleteOnboard() {
                 <div className="flex justify-center py-10">
                   <Loader2 className="w-8 h-8 animate-spin text-gray-400" />
                 </div>
-              ) : (
+              ) : surpriseCauses.length > 0 ? (
                 <>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
                     {surpriseCauses.slice(0, 6).map((cause: any) => {
@@ -623,32 +641,56 @@ export default function NewCompleteOnboard() {
                     </button>
                   </div>
                 </>
+              ) : (
+                <div className="flex flex-col items-center justify-center py-12">
+                  <div className="w-16 h-16 rounded-full bg-blue-50 flex items-center justify-center mb-4">
+                    <Sparkles className="w-8 h-8 text-[#1600ff]" strokeWidth={1.5} />
+                  </div>
+                  <h3 className="text-lg font-bold text-gray-900 mb-2">No suggestions found</h3>
+                  <p className="text-sm text-gray-600 text-center max-w-md px-4">
+                    We couldn't find any nonprofits for your selected interests. Try changing your interests or browsing manually.
+                  </p>
+                </div>
               )}
             </div>
+          </div>
 
-            {/* Footer Navigation */}
-            <div className="flex flex-col sm:flex-row gap-3">
-              <Button
-                onClick={handleChangeMethod}
-                variant="outline"
-                className="flex-1 h-11 sm:h-12 border-gray-300 text-gray-900 hover:bg-gray-50 text-sm sm:text-base"
+          {/* Fixed Footer Navigation */}
+          <div className="p-3 md:p-6 flex-shrink-0 border-t border-gray-200 bg-white">
+            <div className="flex flex-col items-center gap-3">
+              <div className="flex gap-4 w-full">
+                <Button
+                  onClick={handleChangeMethod}
+                  variant="outline"
+                  className="flex-1 py-5 rounded-full border border-gray-200 bg-white text-gray-900 font-bold hover:bg-gray-50 text-base"
+                >
+                  Back
+                </Button>
+                <Button
+                  onClick={handleStartWithNonprofits}
+                  disabled={selectedCauses.length === 0 || createBoxMutation.isPending}
+                  className="flex-1 py-5 rounded-full bg-[#1600ff] hover:bg-[#1100cc] text-white font-bold flex items-center justify-center gap-2 text-base shadow-lg shadow-blue-100"
+                >
+                  {createBoxMutation.isPending ? (
+                    <>
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                      Saving...
+                    </>
+                  ) : (
+                    <>
+                      Continue
+                      <ArrowRight className="w-5 h-5" />
+                    </>
+                  )}
+                </Button>
+              </div>
+
+              <button
+                onClick={handleSkip}
+                className="text-gray-500 font-bold text-sm hover:text-gray-900 transition-all"
               >
-                Back
-              </Button>
-              <Button
-                onClick={handleStartWithNonprofits}
-                disabled={selectedCauses.length === 0 || createBoxMutation.isPending}
-                className="flex-1 h-11 sm:h-12 bg-blue-600 hover:bg-blue-700 text-white text-sm sm:text-base"
-              >
-                {createBoxMutation.isPending ? (
-                  <>
-                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                    Creating...
-                  </>
-                ) : (
-                  `Start with ${selectedCauses.length} Nonprofit${selectedCauses.length > 1 ? 's' : ''} →`
-                )}
-              </Button>
+                Skip for now
+              </button>
             </div>
           </div>
         </div>
@@ -707,15 +749,15 @@ export default function NewCompleteOnboard() {
           </div>
 
           {/* Scrollable Content Section */}
-          <div className="p-6 md:p-8 pt-0 overflow-y-auto flex-1">
+          <div className="p-4 md:p-6 pt-0 overflow-y-auto flex-1">
             {/* What's a Collective Card */}
-            <div className="bg-purple-50 rounded-xl p-6 mb-8 border border-purple-100">
+            <div className="bg-purple-100 rounded-xl p-2 mb-8 border border-purple-200">
               <div className="flex items-start gap-4">
                 <div className="w-10 h-10 rounded-full bg-[#d946ef] flex items-center justify-center flex-shrink-0">
                   <Users className="w-5 h-5 text-white" />
                 </div>
                 <div>
-                  <h3 className="font-bold text-lg text-gray-900 mb-2">What's a Collective?</h3>
+                  <h3 className="font-bold text-lg text-gray-900">What's a Collective?</h3>
                   <p className="text-gray-600 text-sm leading-relaxed">
                     A giving community around shared causes where you can discover nonprofits, join discussions, and connect with others. Collectives are free to start or join.
                   </p>
@@ -725,10 +767,10 @@ export default function NewCompleteOnboard() {
 
             {/* Join a Collective Header */}
             <div className="flex justify-between items-center mb-4">
-              <h2 className="text-xl font-bold text-gray-900">Join a Collective</h2>
+              <h2 className="text-lg font-bold text-gray-900">Join a Collective</h2>
               <button
                 onClick={handleChangeMethod}
-                className="px-4 py-2 border border-gray-200 rounded-full text-sm font-medium text-gray-700 hover:bg-gray-50"
+                className="px-4 py-2 border border-gray-300 hover:bg-gray-100 rounded-full text-sm font-medium text-gray-700 transition-all"
               >
                 Change Method
               </button>
@@ -740,8 +782,8 @@ export default function NewCompleteOnboard() {
                 <div className="flex justify-center py-10">
                   <Loader2 className="w-8 h-8 animate-spin text-gray-400" />
                 </div>
-              ) : (
-                displayCollectives.map((collective: any, index: number) => {
+              ) : displayCollectives.length > 0 ? (
+                displayCollectives.slice(0, 10).map((collective: any, index: number) => {
                   const collectiveId = String(collective.id || collective.pk || collective.uuid || index);
                   const isSelected = selectedCollectiveIds.includes(collectiveId);
                   const isExpanded = expandedCollectiveIds.includes(collectiveId);
@@ -750,108 +792,126 @@ export default function NewCompleteOnboard() {
                   return (
                     <div
                       key={collectiveId}
-                      className="bg-white border border-gray-200 rounded-xl p-4 sm:p-6 hover:shadow-md transition-all"
+                      className="bg-white border border-gray-200 rounded-xl p-3 sm:p-6 hover:shadow-md transition-all"
                     >
                       <div className="flex items-start gap-3 sm:gap-4">
-                        <Avatar className="w-12 h-12 rounded-full border border-gray-200 flex-shrink-0">
-                          <AvatarImage src={collective.logo || collective.image} />
-                          <AvatarFallback 
-                              style={{ backgroundColor: collective.color || '#f3f4f6' }}
-                              className={`font-bold ${collective.color ? 'text-white' : 'text-gray-600'}`}
+                        <Avatar className="w-12 h-12 rounded-xl border border-gray-200 flex-shrink-0">
+                          <AvatarImage src={collective.logo || collective.image} className="rounded-xl" />
+                          <AvatarFallback
+                            style={{ backgroundColor: collective.color || '#f3f4f6' }}
+                            className={`font-bold rounded-xl ${collective.color ? 'text-white' : 'text-gray-600'}`}
                           >
                             {getInitials(collective.name)}
                           </AvatarFallback>
                         </Avatar>
                         <div className="flex-1 min-w-0">
                           <div className="flex justify-between items-start gap-2 mb-1">
-                            <h3 className="font-bold text-lg text-gray-900 leading-tight">{collective.name}</h3>
+                            <h3 className="font-bold text-lg text-gray-900 ">{collective.name}</h3>
                             <Button
                               onClick={(e) => {
                                 e.stopPropagation();
                                 handleJoinCollectiveAction(collective);
                               }}
                               size="sm"
-                              className={`font-bold rounded-full px-4 h-8 text-xs sm:h-9 sm:px-6 sm:text-sm transition-all duration-200 flex-shrink-0 ${
-                                isSelected 
-                                  ? 'bg-green-500 hover:bg-green-600 text-white shadow-sm' 
-                                  : 'bg-blue-600 hover:bg-blue-700 text-white'
-                              }`}
+                              className={`font-bold rounded-full px-4 h-8 text-xs sm:h-9 sm:px-6 sm:text-sm transition-all duration-200 flex-shrink-0 ${isSelected
+                                ? 'bg-green-500 hover:bg-green-600 text-white shadow-sm'
+                                : 'bg-blue-600 hover:bg-blue-700 text-white'
+                                }`}
                             >
                               {isSelected ? 'Joined' : 'Join'}
                             </Button>
                           </div>
-                          <p className="text-sm text-gray-500 mb-2">
+                          <p className="text-sm text-gray-500 mb-1">
                             Created by {collective.created_by?.full_name || collective.creator?.name || collective.creator || "Unknown"}
                           </p>
-                          <p className="text-gray-600 text-sm mb-3">
+                          <p className="text-gray-600 text-sm mb-2">
                             {truncateAtFirstPeriod(collective.description || "")}
                           </p>
-                          <button 
-                              onClick={(e) => toggleCollectiveExpansion(collectiveId, e)}
-                              className="text-blue-600 font-bold text-sm text-left flex items-center hover:underline"
+                          <button
+                            onClick={(e) => toggleCollectiveExpansion(collectiveId, e)}
+                            className="text-blue-600 font-bold text-sm text-left flex items-center hover:underline"
                           >
                             Supporting {collective.causes?.length || collective.cause_count || 0} nonprofits
                             <ChevronDown className={`w-4 h-4 ml-1 transition-transform ${isExpanded ? 'rotate-180' : ''}`} />
                           </button>
                         </div>
                       </div>
-                      
+
                       {isExpanded && causes.length > 0 && (
                         <div className="mt-4 bg-[#f8f9fa] rounded-xl p-4 space-y-3">
-                            {causes.map((causeItem: any) => {
-                                const cause = causeItem.cause || causeItem;
-                                const causeInitials = getInitials(cause.name);
-                                const causeAvatarBgColor = getConsistentColor(cause.id, avatarColors);
-                                return (
-                                    <div key={cause.id} className="flex items-center gap-3">
-                                        <Avatar className="w-6 h-6 rounded-full border border-gray-100 flex-shrink-0 bg-white">
-                                            <AvatarImage src={cause.image} />
-                                            <AvatarFallback 
-                                                style={{ backgroundColor: causeAvatarBgColor }}
-                                                className="text-[10px] text-white"
-                                            >
-                                                {causeInitials}
-                                            </AvatarFallback>
-                                        </Avatar>
-                                        <span className="text-sm text-gray-700 font-medium leading-tight">{cause.name}</span>
-                                    </div>
-                                );
-                            })}
+                          {causes.map((causeItem: any) => {
+                            const cause = causeItem.cause || causeItem;
+                            const causeInitials = getInitials(cause.name);
+                            const causeAvatarBgColor = getConsistentColor(cause.id, avatarColors);
+                            return (
+                              <div key={cause.id} className="flex items-center gap-3">
+                                <Avatar className="w-6 h-6 rounded-full border border-gray-100 flex-shrink-0 bg-white">
+                                  <AvatarImage src={cause.image} />
+                                  <AvatarFallback
+                                    style={{ backgroundColor: causeAvatarBgColor }}
+                                    className="text-[10px] text-white"
+                                  >
+                                    {causeInitials}
+                                  </AvatarFallback>
+                                </Avatar>
+                                <span className="text-sm text-gray-700 font-medium leading-tight">{cause.name}</span>
+                              </div>
+                            );
+                          })}
                         </div>
                       )}
                     </div>
                   );
                 })
+              ) : (
+                <div className="flex flex-col items-center justify-center py-12">
+                  <div className="w-16 h-16 rounded-full bg-blue-50 flex items-center justify-center mb-4">
+                    <Users className="w-8 h-8 text-[#1600ff]" strokeWidth={1.5} />
+                  </div>
+                  <h3 className="text-lg font-bold text-gray-900 mb-2">No collectives found</h3>
+                  <p className="text-sm text-gray-600 text-center max-w-md px-4">
+                    There are no collectives available for your selected interests right now. Try searching or picking individual nonprofits.
+                  </p>
+                </div>
               )}
             </div>
           </div>
 
-          {/* Footer Navigation - Fixed */}
-          <div className="p-6 md:p-8 pt-0 flex-shrink-0">
-            <div className="flex flex-col sm:flex-row gap-3">
-              <Button
-                onClick={handleChangeMethod}
-                variant="outline"
-                className="flex-1 h-11 sm:h-12 border-gray-300 text-gray-900 hover:bg-gray-50 text-sm sm:text-base rounded-full"
+          <div className="p-3 md:p-6 flex-shrink-0 border-t border-gray-200">
+            <div className="flex flex-col items-center gap-3">
+              <div className="flex gap-4 w-full">
+                <Button
+                  onClick={handleChangeMethod}
+                  variant="outline"
+                  className="flex-1 py-5 rounded-full border border-gray-200 bg-white text-gray-900 font-bold hover:bg-gray-50 text-base"
+                >
+                  Back
+                </Button>
+                <Button
+                  onClick={handleContinueWithCollective}
+                  disabled={selectedCollectiveIds.length === 0 || isProcessingCollectives || createBoxMutation.isPending}
+                  className="flex-1 py-5 rounded-full bg-[#1600ff] hover:bg-[#1100cc] text-white font-bold flex items-center justify-center gap-2 text-base shadow-lg shadow-blue-100"
+                >
+                  {isProcessingCollectives || createBoxMutation.isPending ? (
+                    <>
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                      Processing...
+                    </>
+                  ) : (
+                    <>
+                      Continue
+                      <ArrowRight className="w-5 h-5" />
+                    </>
+                  )}
+                </Button>
+              </div>
+
+              <button
+                onClick={handleSkip}
+                className="text-gray-500 font-bold text-sm hover:text-gray-900 transition-all"
               >
-                Back
-              </Button>
-              <Button
-                onClick={handleContinueWithCollective}
-                disabled={selectedCollectiveIds.length === 0 || isProcessingCollectives || createBoxMutation.isPending}
-                className="flex-1 h-11 sm:h-12 bg-[#1600ff] hover:bg-[#0039CC] text-white text-sm sm:text-base rounded-full"
-              >
-                {isProcessingCollectives || createBoxMutation.isPending ? (
-                  <>
-                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                    Processing...
-                  </>
-                ) : (
-                  <>
-                    Continue <ArrowRight className="w-4 h-4 ml-2" />
-                  </>
-                )}
-              </Button>
+                Skip for now
+              </button>
             </div>
           </div>
         </div>
@@ -864,45 +924,45 @@ export default function NewCompleteOnboard() {
     return (
       <div className="h-screen bg-white flex flex-col items-center justify-center px-4 py-8 relative">
         <div className="w-full max-w-xl flex flex-col items-center text-center">
-            
-            <div className="relative mb-8 flex items-center justify-center">
-               <div className="w-20 h-20 rounded-full bg-[#10B981] flex items-center justify-center relative z-10 shadow-sm">
-                   <Check className="w-10 h-10 text-white stroke-[4px]" />
-               </div>
-               <div className="absolute w-22 h-22 bg-[#D1FAE5] rounded-full"></div>
+
+          <div className="relative mb-8 flex items-center justify-center">
+            <div className="w-20 h-20 rounded-full bg-[#10B981] flex items-center justify-center relative z-10 shadow-sm">
+              <Check className="w-10 h-10 text-white stroke-[4px]" />
             </div>
+            <div className="absolute w-22 h-22 bg-[#D1FAE5] rounded-full"></div>
+          </div>
 
-            <h1 className="text-2xl md:text-3xl font-bold text-gray-900 mb-6 leading-tight">
-                {addedNonprofitsCount} nonprofits have been added to<br className="hidden sm:block"/> your donation box.
-            </h1>
+          <h1 className="text-2xl md:text-3xl font-bold text-gray-900 mb-6 leading-tight">
+            {addedNonprofitsCount} nonprofits have been added to<br className="hidden sm:block" /> your donation box.
+          </h1>
 
-            <p className="text-gray-600 mb-10 text-base md:text-lg leading-relaxed max-w-[460px]">
-                When you're ready, choose an amount. We split it evenly across what you support. Add or remove causes anytime without changing your amount.
-            </p>
+          <p className="text-gray-600 mb-10 text-base md:text-lg leading-relaxed max-w-[460px]">
+            When you're ready, choose an amount. We split it evenly across what you support. Add or remove causes anytime without changing your amount.
+          </p>
 
-            <Button
-                onClick={() => {
-                    navigate('/');
-                }}
-                className="w-full sm:w-auto min-w-[280px] h-14 bg-[#1600ff] hover:bg-[#0039CC] text-white text-lg font-bold rounded-full mb-8 shadow-md hover:shadow-lg transition-all"
-            >
-                Continue to CRWD
-            </Button>
+          <Button
+            onClick={() => {
+              navigate('/');
+            }}
+            className="w-full sm:w-auto min-w-[280px] h-14 bg-[#1600ff] hover:bg-[#0039CC] text-white text-lg font-bold rounded-full mb-8 shadow-md hover:shadow-lg transition-all"
+          >
+            Continue to CRWD
+          </Button>
 
-            <button 
-                onClick={() => setView(previousView)}
-                className="text-gray-500 hover:text-gray-800 text-sm font-medium transition-colors flex items-center gap-2"
-            >
-                <span>←</span> Change My Selection
-            </button>
+          <button
+            onClick={() => setView(previousView)}
+            className="text-gray-500 hover:text-gray-800 text-sm font-medium transition-colors flex items-center gap-2"
+          >
+            <span>←</span> Change My Selection
+          </button>
 
         </div>
-        
+
         {/* Help Button */}
         <div className="absolute bottom-8 right-8 hidden md:block">
-            <button className="w-10 h-10 rounded-full border border-gray-200 bg-white flex items-center justify-center text-gray-500 hover:bg-gray-50 transition-colors shadow-sm">
-                <span className="text-lg font-medium">?</span>
-            </button>
+          <button className="w-10 h-10 rounded-full border border-gray-200 bg-white flex items-center justify-center text-gray-500 hover:bg-gray-50 transition-colors shadow-sm">
+            <span className="text-lg font-medium">?</span>
+          </button>
         </div>
       </div>
     );
@@ -910,9 +970,9 @@ export default function NewCompleteOnboard() {
 
   // Browse & Search view
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-100 via-purple-50 to-pink-50">
-      <div className="max-w-3xl mx-auto px-4 py-6">
-        <div className="bg-white rounded-xl p-6 md:p-8 shadow-lg mt-8">
+    <div className="h-screen bg-gradient-to-br from-blue-100 via-purple-50 to-pink-50 flex flex-col items-center justify-center px-4 py-8 overflow-hidden">
+      <div className="w-full max-w-2xl bg-white rounded-xl shadow-lg max-h-full flex flex-col overflow-hidden">
+        <div className="p-6 md:p-8 pb-0 flex-shrink-0">
           {/* Progress Indicator - Step 4 */}
           <div className="flex items-center justify-center space-x-1.5 sm:space-x-2 mb-6 sm:mb-8">
             <div className="h-1 w-8 sm:w-10 md:w-12 bg-gray-300 rounded-full"></div>
@@ -921,27 +981,30 @@ export default function NewCompleteOnboard() {
             <div className="h-1 w-8 sm:w-10 md:w-12 bg-gray-800 rounded-full"></div>
           </div>
 
-          {/* Header */}
+          {/* Heart Icon with Gradient */}
           <div className="flex justify-center mb-6">
-            <div className="w-20 h-20 rounded-full bg-gradient-to-br from-purple-500 via-pink-500 to-blue-500 flex items-center justify-center shadow-lg">
-              <Heart className="w-10 h-10 text-white fill-white" />
+            <div className="w-16 h-16 rounded-full bg-gradient-to-br from-purple-500 via-pink-500 to-blue-500 flex items-center justify-center shadow-lg">
+              <Heart className="w-8 h-8 text-white fill-white" />
             </div>
           </div>
 
-          <h1 className="text-2xl md:text-3xl font-bold text-gray-900 text-center mb-3">
+          {/* Title */}
+          <h1 className="text-2xl md:text-3xl font-bold text-gray-900 text-center mb-2">
             Start Supporting Causes
           </h1>
+
+          {/* Description */}
           <p className="text-sm md:text-base text-gray-600 text-center mb-4">
-            Choose how you'd like to select nonprofits
+            Browse and select your own causes
           </p>
-          
+
           {/* Selected Categories Tags */}
           {selectedCategoryObjects.length > 0 && (
-            <div className="flex flex-wrap justify-center gap-2 mb-8">
+            <div className="flex flex-wrap justify-center gap-2 mb-6">
               {selectedCategoryObjects.map((category) => (
                 <div
                   key={category.id}
-                  className="px-4 py-1.5 rounded-full text-xs font-bold text-white uppercase tracking-wide"
+                  className="px-4 py-1.5 rounded-full text-xs font-bold text-white border border-gray-200"
                   style={{ backgroundColor: category.background }}
                 >
                   {category.name}
@@ -949,14 +1012,17 @@ export default function NewCompleteOnboard() {
               ))}
             </div>
           )}
+        </div>
 
+        {/* Scrollable Content Section */}
+        <div className="px-6 md:px-8 pt-0 overflow-y-auto flex-1 scrollbar-hide">
           {/* Browse Nonprofits Section */}
           <div className="mb-6">
-            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-0 mb-4">
-              <h2 className="text-base sm:text-lg font-bold text-gray-900">Browse Nonprofits</h2>
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-lg font-bold text-gray-900">Browse Nonprofits</h2>
               <button
                 onClick={handleChangeMethod}
-                className="px-3 sm:px-4 py-1.5 sm:py-2 border border-gray-300 hover:bg-gray-100 rounded-full text-xs sm:text-sm font-medium text-gray-700"
+                className="px-4 py-2 border border-gray-300 hover:bg-gray-100 rounded-full text-sm font-medium text-gray-700 transition-all"
               >
                 Change Method
               </button>
@@ -984,9 +1050,9 @@ export default function NewCompleteOnboard() {
               <div className="flex justify-center py-10">
                 <Loader2 className="w-8 h-8 animate-spin text-gray-400" />
               </div>
-            ) : (
-              <div className="space-y-3 max-h-[500px] overflow-y-auto">
-                {browseCauses.map((cause: any) => {
+            ) : browseCauses.length > 0 ? (
+              <div className="space-y-3">
+                {browseCauses.slice(0, 10).map((cause: any) => {
                   const isSelected = selectedCauses.includes(cause.id);
                   const avatarBgColor = getConsistentColor(cause.id, avatarColors);
                   const initials = getInitials(cause.name);
@@ -996,9 +1062,8 @@ export default function NewCompleteOnboard() {
                     <div
                       key={cause.id}
                       onClick={() => handleCauseToggle(cause.id)}
-                      className={`bg-white border-2 rounded-2xl p-4 cursor-pointer transition-all hover:shadow-md ${
-                        isSelected ? 'border-blue-500' : 'border-blue-100'
-                      }`}
+                      className={`bg-white border-2 rounded-2xl p-3 cursor-pointer transition-all hover:shadow-md ${isSelected ? 'border-blue-500' : 'border-blue-100'
+                        }`}
                     >
                       <div className="flex items-center justify-between gap-4">
                         <div className="flex items-center gap-4">
@@ -1011,7 +1076,7 @@ export default function NewCompleteOnboard() {
                               {initials}
                             </AvatarFallback>
                           </Avatar>
-                          
+
                           <div>
                             <h3 className="font-bold text-gray-900 mb-1">
                               {cause.name}
@@ -1026,9 +1091,8 @@ export default function NewCompleteOnboard() {
                         </div>
 
                         {/* Selection Circle */}
-                        <div className={`w-6 h-6 rounded-full flex items-center justify-center transition-colors ${
-                          isSelected ? 'bg-blue-600' : 'border-2 border-gray-200'
-                        }`}>
+                        <div className={`w-6 h-6 rounded-full flex items-center justify-center transition-colors ${isSelected ? 'bg-blue-600' : 'border-2 border-gray-200'
+                          }`}>
                           {isSelected && <Check className="w-4 h-4 text-white" />}
                         </div>
                       </div>
@@ -1036,34 +1100,56 @@ export default function NewCompleteOnboard() {
                   );
                 })}
               </div>
+            ) : (
+              <div className="flex flex-col items-center justify-center py-12">
+                <div className="w-16 h-16 rounded-full bg-blue-50 flex items-center justify-center mb-4">
+                  <Search className="w-8 h-8 text-[#1600ff]" strokeWidth={1.5} />
+                </div>
+                <h3 className="text-lg font-bold text-gray-900 mb-2">No nonprofits found</h3>
+                <p className="text-sm text-gray-600 text-center max-w-md px-4">
+                  We couldn't find any nonprofits matching your search or interests. Try different keywords or categories.
+                </p>
+              </div>
             )}
           </div>
+        </div>
 
-          {/* Footer Navigation */}
-          <div className="flex flex-col sm:flex-row gap-3 mt-6">
-            <Button
-              onClick={handleChangeMethod}
-              variant="outline"
-              className="flex-1 h-11 sm:h-12 border-gray-300 text-gray-900 hover:bg-gray-50 text-sm sm:text-base"
+        {/* Fixed Footer Navigation */}
+        <div className="p-3 md:p-6 flex-shrink-0 border-t border-gray-200 bg-white">
+          <div className="flex flex-col items-center gap-3">
+            <div className="flex gap-4 w-full">
+              <Button
+                onClick={handleChangeMethod}
+                variant="outline"
+                className="flex-1 py-5 rounded-full border border-gray-200 bg-white text-gray-900 font-bold hover:bg-gray-50 text-base"
+              >
+                Back
+              </Button>
+              <Button
+                onClick={handleStartWithNonprofits}
+                disabled={selectedCauses.length === 0 || createBoxMutation.isPending}
+                className="flex-1 py-5 rounded-full bg-[#1600ff] hover:bg-[#1100cc] text-white font-bold flex items-center justify-center gap-2 text-base shadow-lg shadow-blue-100"
+              >
+                {createBoxMutation.isPending ? (
+                  <>
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                    Saving...
+                  </>
+                ) : (
+                  <>
+                    Continue
+                    <ArrowRight className="w-5 h-5" />
+                  </>
+                )}
+              </Button>
+            </div>
+
+            <button
+              onClick={handleSkip}
+              className="text-gray-500 font-bold text-sm hover:text-gray-900 transition-all"
             >
-              Back
-            </Button>
-            <Button
-              onClick={handleStartWithNonprofits}
-              disabled={selectedCauses.length === 0 || createBoxMutation.isPending}
-              className="flex-1 h-11 sm:h-12 bg-[#1600ff] hover:bg-[#0039CC] text-white text-sm sm:text-base rounded-full font-bold"
-            >
-              {createBoxMutation.isPending ? (
-                <>
-                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                  Creating...
-                </>
-              ) : (
-                <>
-                  Continue <ArrowRight className="w-4 h-4 ml-2" />
-                </>
-              )}
-            </Button>
+              Skip for now
+            </button>
           </div>
         </div>
       </div>

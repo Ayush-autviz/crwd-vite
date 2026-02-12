@@ -28,13 +28,20 @@ export default function NewNonProfitInterests() {
     "Faith",
     "Veterans",
     "Kids",
+    "Environment",
+    "Wildlife",
+    "LGBTQ+",
+    "Poverty",
+    "Women's Health",
   ];
 
-  const mainCategories = categories.filter((cat) =>
-    cat.id !== "" &&
-    cat.name !== "All" &&
-    allowedCategoryNames.includes(cat.name)
-  );
+  const mainCategories = categories
+    .filter((cat) =>
+      cat.id !== "" &&
+      cat.name !== "All" &&
+      allowedCategoryNames.includes(cat.name)
+    )
+    .sort((a, b) => a.name.localeCompare(b.name));
 
   const handleCategoryToggle = (categoryId: string) => {
     setSelectedCategories((prev) => {
@@ -143,52 +150,47 @@ export default function NewNonProfitInterests() {
         {/* Selected Count */}
         {selectedCategories.length > 0 && (
           <div className="mb-4 sm:mb-6">
-            <p className="text-xs sm:text-sm text-indigo-600 font-medium">
-              {selectedCategories.length} {selectedCategories.length === 1 ? "category" : "categories"} selected
+            <p className="text-xs sm:text-sm text-gray-600 font-medium text-center">
+              {selectedCategories.length} {selectedCategories.length === 1 ? "interest" : "interests"} selected
             </p>
           </div>
         )}
 
         {/* Navigation Buttons */}
-        <div className="space-y-2 sm:space-y-3">
-          {/* Back and Continue Buttons */}
-          <div className="flex gap-2 sm:gap-3">
-            {/* <Button
-              onClick={handleBack}
+        <div className="flex flex-col items-center gap-3 mt-4">
+          <div className="flex gap-4 w-full">
+            <Button
+              onClick={() => navigate(-1)}
               variant="outline"
-              className="flex-1 h-12 border-gray-300 text-gray-900 hover:bg-gray-50"
+              className="flex-1 py-5 rounded-full border border-gray-200 bg-white text-gray-900 font-bold hover:bg-gray-50 text-base"
             >
               Back
-            </Button> */}
+            </Button>
             <Button
               onClick={handleContinue}
               disabled={selectedCategories.length === 0 || postInterestsMutation.isPending}
-              className="flex-1 h-11 sm:h-12 bg-indigo-500 hover:bg-indigo-600 text-white flex items-center justify-center gap-2 text-sm sm:text-base"
+              className="flex-1 py-5 rounded-full bg-[#1600ff] hover:bg-[#1100cc] text-white font-bold flex items-center justify-center gap-2 text-base shadow-lg shadow-blue-100"
             >
               {postInterestsMutation.isPending ? (
                 <>
                   <Loader2 className="w-4 h-4 animate-spin" />
-                  <span className="hidden sm:inline">Saving...</span>
-                  <span className="sm:hidden">Saving</span>
+                  Saving...
                 </>
               ) : (
                 <>
                   Continue
-                  <ArrowRight className="w-4 h-4" />
+                  <ArrowRight className="w-5 h-5" />
                 </>
               )}
             </Button>
           </div>
 
-          {/* Skip Link */}
-          <div className="text-center">
-            <button
-              onClick={handleSkip}
-              className="text-xs sm:text-sm text-gray-600 hover:text-gray-900 underline"
-            >
-              Skip for now
-            </button>
-          </div>
+          <button
+            onClick={handleSkip}
+            className="text-gray-500 font-bold text-sm hover:text-gray-900 transition-all mt-2"
+          >
+            Skip for now
+          </button>
         </div>
       </div>
     </div>
