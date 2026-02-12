@@ -698,6 +698,10 @@ const RegularNotifications: React.FC<RegularNotificationsProps> = ({
       const isNewMember = notification.title?.toLowerCase().includes('member') ||
         notification.body?.toLowerCase().includes('joined') ||
         notification.data?.new_member_id;
+      const isFollower = notification.title?.toLowerCase().includes('follow') ||
+        notification.body?.toLowerCase().includes('followed') ||
+        notification.body?.toLowerCase().includes('following') ||
+        notification.data?.follower_id;
 
       // Extract collective name from body or title
       let collectiveName = '';
@@ -817,8 +821,8 @@ const RegularNotifications: React.FC<RegularNotificationsProps> = ({
 
       return {
         id: notification.id,
-        type: isDonation ? 'donation' : isNewMember ? 'new_member' : 'other',
-        title: isDonation ? 'Donation Received' : isNewMember ? 'New Member' : notification.title || 'Notification',
+        type: isDonation ? 'donation' : isNewMember ? 'new_member' : isFollower ? 'follower' : 'other',
+        title: isDonation ? 'Donation Received' : isNewMember ? 'New Member' : isFollower ? 'New Follower' : notification.title || 'Notification',
         description: notification.body || notification.title || '',
         collectiveName: collectiveName,
         memberName: memberName,
@@ -1094,6 +1098,52 @@ const RegularNotifications: React.FC<RegularNotificationsProps> = ({
                     }
 
                     return parts.length > 0 ? <>{parts}</> : description;
+                  })()
+                ) : notification.type === 'follower' ? (
+                  (() => {
+                    const description = notification.description;
+                    if (!description) return '';
+
+                    const parts: React.ReactNode[] = [];
+                    let matchedName = '';
+
+                    if (notification.firstName && notification.lastName && description.toLowerCase().includes(`${notification.firstName} ${notification.lastName}`.toLowerCase())) {
+                      matchedName = description.substring(0, `${notification.firstName} ${notification.lastName}`.length);
+                    } else if (notification.username && description.toLowerCase().includes(notification.username.toLowerCase())) {
+                      const index = description.toLowerCase().indexOf(notification.username.toLowerCase());
+                      if (index !== -1) {
+                        matchedName = description.substring(index, index + notification.username.length);
+                      }
+                    } else if (notification.firstName && description.toLowerCase().includes(notification.firstName.toLowerCase())) {
+                      const index = description.toLowerCase().indexOf(notification.firstName.toLowerCase());
+                      if (index !== -1) {
+                        matchedName = description.substring(index, index + notification.firstName.length);
+                      }
+                    }
+
+                    if (matchedName && notification.userId) {
+                      const index = description.indexOf(matchedName);
+                      if (index !== -1) {
+                        if (index > 0) {
+                          parts.push(description.substring(0, index));
+                        }
+                        parts.push(
+                          <Link
+                            key="follower-name"
+                            to={`/user-profile/${notification.userId}`}
+                            className="font-semibold text-gray-700 hover:underline"
+                            onClick={(e) => e.stopPropagation()}
+                          >
+                            {matchedName}
+                          </Link>
+                        );
+                        if (index + matchedName.length < description.length) {
+                          parts.push(description.substring(index + matchedName.length));
+                        }
+                        return <>{parts}</>;
+                      }
+                    }
+                    return description;
                   })()
                 ) : (
                   (() => {

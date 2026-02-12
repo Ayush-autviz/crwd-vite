@@ -942,13 +942,7 @@ export default function NewCompleteOnboard() {
           </div>
 
           <h1 className="text-2xl md:text-3xl font-bold text-gray-900 mb-6 leading-tight">
-            {addedNonprofitsCount > 0 ? (
-              <>
-                {addedNonprofitsCount} nonprofits have been added to<br className="hidden sm:block" /> your donation box.
-              </>
-            ) : (
-              "Your donation box is ready."
-            )}
+            {addedNonprofitsCount} nonprofits have been added to<br className="hidden sm:block" /> your donation box.
           </h1>
 
           <p className="text-gray-600 mb-10 text-base md:text-lg leading-relaxed max-w-[460px]">
