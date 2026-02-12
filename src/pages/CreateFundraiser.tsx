@@ -225,14 +225,14 @@ export default function CreateFundraiser() {
       const croppedFile = new File([croppedBlob], "cropped-image.jpg", {
         type: "image/jpeg",
       });
-      
+
       setUploadedCoverImage(croppedFile);
       const reader = new FileReader();
       reader.onload = (e) => {
         setUploadedCoverImagePreview(e.target?.result as string);
       };
       reader.readAsDataURL(croppedFile);
-      
+
       setShowCropModal(false);
       setCropImageSrc("");
       setCrop({ x: 0, y: 0 });
@@ -630,7 +630,7 @@ export default function CreateFundraiser() {
                   </div>
 
                   {/* Color Preview Box */}
-                  <div className="rounded-lg border border-gray-200 overflow-hidden" style={{ height: '180px' }}>
+                  <div className="rounded-lg border border-gray-200 overflow-hidden" style={{ height: '300px' }}>
                     <div
                       className="w-full h-full flex items-center justify-center"
                       style={{ backgroundColor: coverColor }}
@@ -655,11 +655,11 @@ export default function CreateFundraiser() {
                   />
                   {uploadedCoverImagePreview ? (
                     <div className="mb-4">
-                      <div className="relative rounded-lg overflow-hidden border border-gray-200 bg-gray-50 mx-auto" style={{ maxWidth: '600px' }}>
+                      <div className="relative rounded-lg overflow-hidden border border-gray-200 bg-gray-50 mx-auto w-full" style={{ height: '300px', maxWidth: '600px' }}>
                         <img
                           src={uploadedCoverImagePreview}
                           alt="Selected"
-                          className="w-full h-[140px] md:h-[200px] object-cover"
+                          className="w-full h-full object-cover"
                           style={{ objectPosition: 'center' }}
                         />
                         <button
@@ -679,8 +679,8 @@ export default function CreateFundraiser() {
                         const input = document.getElementById('cover-image-upload-input');
                         input?.click();
                       }}
-                      className="relative rounded-lg border-2 border-dashed border-gray-300 bg-gray-50 hover:bg-gray-100 transition-colors cursor-pointer flex items-center justify-center"
-                      style={{ height: '200px' }}
+                      className="relative rounded-lg border-2 border-dashed border-gray-300 bg-gray-50 hover:bg-gray-100 transition-colors cursor-pointer flex items-center justify-center w-full mx-auto"
+                      style={{ height: '300px', maxWidth: '600px' }}
                     >
                       <div className="text-center">
                         <Camera className="w-8 h-8 md:w-10 md:h-10 text-gray-400 mx-auto mb-2" />
@@ -886,7 +886,7 @@ export default function CreateFundraiser() {
             {/* Campaign Preview Card */}
             <div className="bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 p-4 rounded-2xl overflow-hidden">
               {/* Cover Section - Color or Image */}
-              <div className="w-full rounded-xl overflow-hidden" style={{ height: '200px' }}>
+              <div className="w-full rounded-xl overflow-hidden" style={{ height: '300px' }}>
                 {coverType === 'color' ? (
                   <div
                     className="w-full h-full flex items-center justify-center"
@@ -1070,7 +1070,7 @@ export default function CreateFundraiser() {
               image={cropImageSrc}
               crop={crop}
               zoom={zoom}
-              aspect={600 / 200}
+              aspect={600 / 300}
               onCropChange={setCrop}
               onZoomChange={setZoom}
               onCropComplete={onCropComplete}

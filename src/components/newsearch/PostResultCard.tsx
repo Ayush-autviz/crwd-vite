@@ -165,7 +165,7 @@ export default function PostResultCard({ post }: PostResultCardProps) {
             <img
               src={post.fundraiser.image}
               alt="Fundraiser"
-              className="w-full h-[180px] md:h-[200px] object-contain bg-gray-50"
+              className="w-full aspect-[2/1] object-contain bg-gray-50 mb-2"
             />
           </a>
         ) : null}
@@ -179,7 +179,7 @@ export default function PostResultCard({ post }: PostResultCardProps) {
           >
             {/* Fundraiser Cover Image/Color - Only show if no image (show color/default) */}
             {!post.fundraiser.image && (
-              <div className="w-full rounded-t-lg overflow-hidden" style={{ height: '180px' }}>
+              <div className="w-full rounded-t-lg overflow-hidden aspect-[2/1]">
                 {post.fundraiser.color ? (
                   <div
                     className="w-full h-full flex items-center justify-center"
@@ -257,7 +257,7 @@ export default function PostResultCard({ post }: PostResultCardProps) {
             <div className="flex flex-col md:flex-row bg-white">
               {/* Preview Image */}
               {post.preview_details.image && (
-                <div className="w-full md:w-48 h-[180px] md:h-[200px] lg:h-auto flex-shrink-0">
+                <div className="w-full md:w-48 aspect-[2/1] md:aspect-auto lg:h-auto flex-shrink-0">
                   <img
                     src={post.preview_details.image}
                     alt={post.preview_details.title || 'Link preview'}
@@ -308,7 +308,7 @@ export default function PostResultCard({ post }: PostResultCardProps) {
                   <img
                     src={post.media}
                     alt="Post"
-                    className="w-full h-[180px] md:h-[200px] object-cover"
+                    className="w-full aspect-[2/1] object-cover"
                   />
                 </a>
               );

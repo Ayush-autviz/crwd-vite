@@ -474,7 +474,7 @@ export default function CommunityPostCard({ post, onCommentPress, showSimplified
               {/* Show fundraiser image like normal post image */}
               {post.fundraiser?.image ? (
                 <div
-                  className="w-full rounded-lg overflow-hidden mb-2 md:mb-3 border border-gray-200 cursor-pointer hover:opacity-90 transition-opacity bg-gray-50 relative mx-auto"
+                  className="w-full rounded-lg overflow-hidden mb-2 md:mb-3 border border-gray-200 cursor-pointer hover:opacity-90 transition-opacity bg-gray-50 relative mx-auto aspect-[2/1]"
                   style={{ maxWidth: '600px' }}
                   onClick={(e) => {
                     e.preventDefault();
@@ -485,7 +485,7 @@ export default function CommunityPostCard({ post, onCommentPress, showSimplified
                   <img
                     src={post.fundraiser.image}
                     alt="Fundraiser"
-                    className="w-full h-[140px] md:h-[200px] object-cover"
+                    className="w-full h-full object-cover"
                     style={{ objectPosition: 'center' }}
                   />
                 </div>
@@ -613,7 +613,7 @@ export default function CommunityPostCard({ post, onCommentPress, showSimplified
                 // </a>
               ) : post.imageUrl ? (
                 <div
-                  className="w-full rounded-lg overflow-hidden mb-2 md:mb-3 border border-gray-200 cursor-pointer hover:opacity-90 transition-opacity bg-gray-50 relative mx-auto"
+                  className="w-full rounded-lg overflow-hidden mb-2 md:mb-3 border border-gray-200 cursor-pointer hover:opacity-90 transition-opacity bg-gray-50 relative mx-auto aspect-[2/1]"
                   style={{ maxWidth: '600px' }}
                   onClick={(e) => {
                     e.preventDefault();
@@ -625,7 +625,7 @@ export default function CommunityPostCard({ post, onCommentPress, showSimplified
                   <img
                     src={post.imageUrl}
                     alt="Post"
-                    className="w-full h-[140px] md:h-[200px] object-cover"
+                    className="w-full h-full object-cover"
                     style={{ objectPosition: 'center' }}
                   />
                 </div>

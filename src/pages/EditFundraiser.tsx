@@ -614,7 +614,7 @@ export default function EditFundraiser() {
               </div>
 
               {/* Color Preview Box */}
-              <div className="rounded-lg border border-gray-200 overflow-hidden" style={{ height: '200px' }}>
+              <div className="rounded-lg border border-gray-200 overflow-hidden" style={{ height: '300px' }}>
                 <div
                   className="w-full h-full flex items-center justify-center"
                   style={{ backgroundColor: coverColor }}
@@ -638,7 +638,7 @@ export default function EditFundraiser() {
                 id="cover-image-upload-input"
               />
               {uploadedCoverImagePreview ? (
-                <div className="relative rounded-lg border border-gray-200 overflow-hidden" style={{ height: '200px' }}>
+                <div className="relative rounded-lg border border-gray-200 overflow-hidden" style={{ height: '300px' }}>
                   <img
                     src={uploadedCoverImagePreview}
                     alt="Campaign cover"
@@ -659,7 +659,7 @@ export default function EditFundraiser() {
                     input?.click();
                   }}
                   className="relative rounded-lg border-2 border-dashed border-gray-300 bg-gray-50 hover:bg-gray-100 transition-colors cursor-pointer flex items-center justify-center"
-                  style={{ height: '200px' }}
+                  style={{ height: '300px' }}
                 >
                   <div className="text-center">
                     <Camera className="w-8 h-8 md:w-10 md:h-10 text-gray-400 mx-auto mb-2" />

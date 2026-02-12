@@ -188,14 +188,14 @@ export default function CreatePostPage() {
       const croppedFile = new File([croppedBlob], "cropped-image.jpg", {
         type: "image/jpeg",
       });
-      
+
       setSelectedImage(croppedFile);
       const reader = new FileReader();
       reader.onload = (e) => {
         setImagePreview(e.target?.result as string);
       };
       reader.readAsDataURL(croppedFile);
-      
+
       setShowCropModal(false);
       setCropImageSrc("");
       setCrop({ x: 0, y: 0 });
@@ -478,7 +478,7 @@ export default function CreatePostPage() {
                 <div className="flex flex-col md:flex-row bg-white">
                   {/* Preview Image */}
                   {previewData.image && (
-                    <div className="w-full md:w-48 h-[180px] md:h-[200px] lg:h-auto flex-shrink-0">
+                    <div className="w-full md:w-48 aspect-[2/1] md:aspect-auto flex-shrink-0">
                       <img
                         src={previewData.image}
                         alt={previewData.title || 'Link preview'}
@@ -518,11 +518,11 @@ export default function CreatePostPage() {
         {/* Image Preview */}
         {selectedImage && imagePreview && (
           <div className="mb-4">
-            <div className="relative rounded-lg overflow-hidden border border-gray-200 bg-gray-50 mx-auto" style={{ maxWidth: '600px' }}>
+            <div className="relative rounded-lg overflow-hidden border border-gray-200 bg-gray-50 mx-auto w-full aspect-[2/1]" style={{ maxWidth: '600px' }}>
               <img
                 src={imagePreview}
                 alt="Selected"
-                className="w-full h-[140px] md:h-[200px] object-cover"
+                className="w-full h-full object-cover"
                 style={{ objectPosition: 'center' }}
               />
               <button
@@ -591,7 +591,7 @@ export default function CreatePostPage() {
               image={cropImageSrc}
               crop={crop}
               zoom={zoom}
-              aspect={600 / 200}
+              aspect={600 / 300}
               onCropChange={setCrop}
               onZoomChange={setZoom}
               onCropComplete={onCropComplete}

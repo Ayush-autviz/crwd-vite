@@ -805,24 +805,7 @@ export default function ProfileActivityCard({
     };
   }, [showMenu]);
 
-  // Generate consistent color for org tag based on post ID
-  const tagColors = [
-    '#ec4899', // pink
-    '#3b82f6', // blue
-    '#10b981', // green
-    '#f59e0b', // amber
-    '#8b5cf6', // purple
-    '#ef4444', // red
-    '#06b6d4', // cyan
-    '#f97316', // orange
-    '#84cc16', // lime
-    '#a855f7', // violet
-    '#14b8a6', // teal
-    '#f43f5e', // rose
-    '#6366f1', // indigo
-  ];
-  const tagColorIndex = post.id ? (String(post.id).charCodeAt(String(post.id).length - 1) || 0) % tagColors.length : 0;
-  const tagBgColor = tagColors[tagColorIndex];
+
 
   // Generate random vibrant avatar colors
   const avatarColors = [
@@ -982,7 +965,7 @@ export default function ProfileActivityCard({
                 {post.fundraiser ? (
                   <>
                     {/* Fundraiser Cover Image/Color */}
-                    <div className="w-full rounded-lg overflow-hidden mb-3 md:mb-3" style={{ height: '250px' }}>
+                    <div className="w-full rounded-lg overflow-hidden mb-3 md:mb-3 aspect-[2/1]" style={{ maxWidth: '600px' }}>
                       {post.fundraiser.image ? (
                         <img
                           src={post.fundraiser.image}
@@ -1048,7 +1031,7 @@ export default function ProfileActivityCard({
                         <div className="flex flex-col md:flex-row bg-white">
                           {/* Preview Image */}
                           {post.previewDetails.image && (
-                            <div className="w-full md:w-48 h-[200px] md:h-auto flex-shrink-0">
+                            <div className="w-full md:w-48 aspect-[2/1] md:aspect-auto flex-shrink-0">
                               <img
                                 src={post.previewDetails.image}
                                 alt={post.previewDetails.title || 'Link preview'}
@@ -1092,7 +1075,7 @@ export default function ProfileActivityCard({
                         <img
                           src={post.imageUrl}
                           alt="Post"
-                          className="w-full h-[200px] md:h-[200px] object-cover"
+                          className="w-full aspect-[2/1] object-cover"
                         />
                       </a>
                     ) : null}
