@@ -58,13 +58,13 @@ export default function AmountBottomSheet({
       <SheetContent side="bottom" className="rounded-t-3xl pt-6 pb-8 px-6 h-auto max-h-[90vh] overflow-y-auto">
         <div className="flex flex-col items-center">
           <div className="w-12 h-1 bg-gray-200 rounded-full mb-6 mx-auto" />
-          
-          <SheetHeader className="mb-6">
-            <SheetTitle className="text-center text-lg font-bold text-gray-900">Set Amount</SheetTitle>
+
+          <SheetHeader>
+            <SheetTitle className="text-center text-2xl md:text-3xl font-bold text-gray-900">Set Amount</SheetTitle>
           </SheetHeader>
 
           <div className="text-center mb-8">
-            <div className="text-[#1600ff] text-5xl font-bold mb-2">
+            <div className="text-[#1600ff] text-4xl md:text-5xl font-bold mb-2">
               $ {amountString}
             </div>
             <div className="text-gray-400 text-sm font-medium">
@@ -77,7 +77,7 @@ export default function AmountBottomSheet({
               <button
                 key={num}
                 onClick={() => handleNumberClick(num)}
-                className="text-2xl font-bold text-gray-900 hover:text-[#1600ff] transition-colors py-2"
+                className="text-2xl md:text-3xl font-bold text-gray-900 hover:text-[#1600ff] transition-colors py-2"
               >
                 {num}
               </button>

@@ -7,7 +7,7 @@ import { useQuery } from "@tanstack/react-query";
 import { getUnreadCount } from "@/services/api/notification";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { useState, useEffect } from "react";
-import NewLogo from "@/assets/newLogo";
+
 
 
 
@@ -20,6 +20,8 @@ interface ProfileNavbarProps {
   readonly showDesktopBackButton?: boolean;
   readonly showPostButton?: boolean;
   readonly backPath?: string;
+  readonly onLogoClick?: () => void;
+  readonly onBackClick?: () => void;
 }
 
 export default function ProfileNavbar({
@@ -31,6 +33,8 @@ export default function ProfileNavbar({
   showDesktopBackButton = false,
   showPostButton = false,
   backPath,
+  onLogoClick,
+  onBackClick,
 }: ProfileNavbarProps) {
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
@@ -107,7 +111,13 @@ export default function ProfileNavbar({
           <div className="flex items-center gap-3">
             {showBackButton && (
               <button
-                onClick={() => backPath ? navigate(backPath) : navigate(-1)}
+                onClick={() => {
+                  if (onBackClick) {
+                    onBackClick();
+                  } else {
+                    backPath ? navigate(backPath) : navigate(-1);
+                  }
+                }}
                 className="flex items-center justify-center h-6 w-6 sm:h-8 sm:w-8 rounded-full bg-gray-100 text-gray-700 hover:bg-gray-200 transition-colors mr-2 cursor-pointer"
                 aria-label="Go back"
               >
@@ -141,7 +151,7 @@ export default function ProfileNavbar({
       {showMobileMenu && title === "Home" && (
         <header className="w-full flex items-center justify-between px-2.5 py-4 border-b-2 border-gray-200 bg-gray-50 sticky top-0 z-50 md:hidden">
           {/* Logo on the left */}
-          <div className="flex-shrink-0 cursor-pointer" onClick={handleScrollToTop}>
+          <div className="flex-shrink-0 cursor-pointer" onClick={onLogoClick || handleScrollToTop}>
             {/* <Link to="/waitlist"> */}
             {/* <NewLogo /> */}
             <img src="/icons/FullLogo.png" alt="" width={80} height={80} />
@@ -311,7 +321,7 @@ export default function ProfileNavbar({
             height={100}
             alt="CRWD Logo"
             className="object-contain cursor-pointer"
-            onClick={handleScrollToTop}
+            onClick={onLogoClick || handleScrollToTop}
           />
 
           {/* Action buttons on the right */}
@@ -463,7 +473,13 @@ export default function ProfileNavbar({
           <div className="flex items-center gap-3">
             {showDesktopBackButton && (
               <button
-                onClick={() => backPath ? navigate(backPath) : navigate(-1)}
+                onClick={() => {
+                  if (onBackClick) {
+                    onBackClick();
+                  } else {
+                    backPath ? navigate(backPath) : navigate(-1);
+                  }
+                }}
                 className="flex items-center justify-center h-8 w-8 rounded-full bg-gray-100 text-gray-700 hover:bg-gray-200 transition-colors cursor-pointer"
                 aria-label="Go back"
               >

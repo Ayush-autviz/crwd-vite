@@ -13,8 +13,6 @@ import {
   Eye,
   EyeOff,
   User,
-  MapPin,
-  Camera
 } from "lucide-react"
 import { useAuthStore } from '@/stores/store'
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
@@ -32,6 +30,13 @@ import {
   SheetTitle,
   SheetDescription,
 } from "@/components/ui/sheet"
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog"
 import { Toast } from "@/components/ui/toast"
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar"
 import RequestNonprofitModal from '@/components/newsearch/RequestNonprofitModal';
@@ -50,6 +55,7 @@ export default function NewSettings() {
   const [isEditMode, setIsEditMode] = useState(false)
   const [showRequestModal, setShowRequestModal] = useState(false);
   const [showPaymentMethods, setShowPaymentMethods] = useState(false);
+  const [showExitConfirmation, setShowExitConfirmation] = useState(false);
   const [formData, setFormData] = useState({
     first_name: '',
     last_name: '',
@@ -205,6 +211,49 @@ export default function NewSettings() {
 
   const handleEdit = () => {
     setIsEditMode(true)
+    // Push a dummy state to history to capture the browser back button
+    window.history.pushState({ editMode: true }, '')
+  }
+
+  // Handle browser back and page refresh
+  useEffect(() => {
+    const handleBeforeUnload = () => {
+      if (isEditMode) {
+        // Standard way to trigger browser's own confirmation
+        return '';
+      }
+    };
+
+    const handlePopState = () => {
+      if (isEditMode) {
+        // Stop the back navigation by pushing the state back
+        window.history.pushState({ editMode: true }, '');
+        setShowExitConfirmation(true);
+      }
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    window.addEventListener('popstate', handlePopState);
+
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+      window.removeEventListener('popstate', handlePopState);
+    };
+  }, [isEditMode]);
+
+  const handleBackClick = () => {
+    if (isEditMode) {
+      setShowExitConfirmation(true)
+    } else {
+      navigate(-1)
+    }
+  }
+
+  const confirmExit = () => {
+    setIsEditMode(false)
+    setShowExitConfirmation(false)
+    // Use -2 because we pushed a dummy state manually during handleEdit
+    navigate(-2)
   }
 
   const handleCancel = () => {
@@ -392,7 +441,11 @@ export default function NewSettings() {
 
   return (
     <div className="h-full flex flex-col">
-      <ProfileNavbar title="Settings" />
+      <ProfileNavbar
+        title="Settings"
+        onBackClick={handleBackClick}
+        showDesktopBackButton={true}
+      />
 
       <div className="flex-1 w-full bg-white overflow-y-auto">
         <div className="max-w-4xl mx-auto p-4 md:p-6">
@@ -554,7 +607,7 @@ export default function NewSettings() {
                 <Button
                   onClick={handleSave}
                   disabled={updateProfileMutation.isPending}
-                  className="flex-1 bg-blue-600 hover:bg-blue-700 text-sm xs:text-base md:text-lg py-2 md:py-2.5"
+                  className="flex-1 bg-blue-600 hover:bg-blue-700 text-sm xs:text-base md:text-lg py-4 md:py-5"
                 >
                   {updateProfileMutation.isPending ? (
                     <span className="flex items-center gap-1.5 md:gap-2">
@@ -568,7 +621,7 @@ export default function NewSettings() {
                   onClick={handleCancel}
                   disabled={updateProfileMutation.isPending}
                   variant="outline"
-                  className="flex-1 border-gray-300 text-sm xs:text-base md:text-lg py-2 md:py-2.5"
+                  className="flex-1 border-gray-300 text-sm xs:text-base md:text-lg py-4 md:py-5"
                 >
                   Cancel
                 </Button>
@@ -979,6 +1032,32 @@ export default function NewSettings() {
         isOpen={showPaymentMethods}
         onClose={() => setShowPaymentMethods(false)}
       />
+      {/* Exit Confirmation Dialog */}
+      <Dialog open={showExitConfirmation} onOpenChange={setShowExitConfirmation}>
+        <DialogContent className="w-[90%] max-w-[400px] rounded-[32px] p-8 md:p-10 border-none shadow-2xl">
+          <DialogHeader className="flex flex-col items-center text-center">
+            <DialogTitle className="text-2xl font-bold text-gray-900 mb-2">Unsaved Changes</DialogTitle>
+            <DialogDescription className="text-gray-500 text-[15px] leading-relaxed text-center">
+              You are currently in edit mode. If you leave now, any changes you've made will be lost. Are you sure you want to go back?
+            </DialogDescription>
+          </DialogHeader>
+          <div className="flex flex-col gap-3 mt-8">
+            <Button
+              variant="outline"
+              onClick={() => setShowExitConfirmation(false)}
+              className="w-full rounded-2xl py-5 border-gray-200 text-gray-800 font-bold text-base hover:bg-gray-50 transition-colors"
+            >
+              Stay and Edit
+            </Button>
+            <Button
+              onClick={confirmExit}
+              className="w-full rounded-2xl py-5 bg-red-600 hover:bg-red-700 text-white font-bold text-base shadow-sm transition-colors"
+            >
+              Discard Changes
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }

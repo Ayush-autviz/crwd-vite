@@ -17,10 +17,31 @@
   }
 }
 
+@keyframes progress-loading {
+  0% {
+    transform: scaleX(0);
+    transform-origin: left;
+  }
+
+  50% {
+    transform: scaleX(0.5);
+    transform-origin: left;
+  }
+
+  100% {
+    transform: scaleX(1);
+    transform-origin: left;
+  }
+}
+
 .animate-scroll {
   display: flex;
   width: max-content;
   animation: scroll 10s linear infinite;
+}
+
+.animate-progress-loading {
+  animation: progress-loading 2s ease-in-out infinite;
 }
 
 @theme inline {

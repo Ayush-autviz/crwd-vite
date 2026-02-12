@@ -1,4 +1,4 @@
-import { useQuery, useQueries } from "@tanstack/react-query";
+import { useQuery, useQueries, useQueryClient, useIsFetching } from "@tanstack/react-query";
 import { useMemo, useState, useEffect } from "react";
 import CommentsBottomSheet from "@/components/post/CommentsBottomSheet";
 import NewSuggestedCollectives from "@/components/newHome/NewSuggestedCollectives";
@@ -19,10 +19,12 @@ import { useAuthStore } from "@/stores/store";
 import GuestHome from "@/components/GuestHome";
 import Footer from "@/components/Footer";
 import { X } from "lucide-react";
-import { NewLogo } from "@/assets/newLogo";
+
 
 export default function NewHome() {
     const { user, token } = useAuthStore();
+    const queryClient = useQueryClient();
+    const isFetching = useIsFetching();
     const [showAppBanner, setShowAppBanner] = useState(true);
     const [showCommentsSheet, setShowCommentsSheet] = useState(false);
     const [selectedPost, setSelectedPost] = useState<any>(null);
@@ -448,17 +450,30 @@ export default function NewHome() {
     };
 
 
+    const handleLogoClick = () => {
+        // Scroll to top fast
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth'
+        });
+
+        // Refetch all queries related to home screen
+        queryClient.invalidateQueries();
+    };
+
     if (!user?.id) {
         return <GuestHome />;
     }
 
     return (
-        <div className="">
+        <div className="relative">
+
             <ProfileNavbar
                 title="Home"
                 showMobileMenu={true}
                 showDesktopMenu={true}
                 showBackButton={false}
+                onLogoClick={handleLogoClick}
             />
             {/* Main Content */}
             <div className="bg-gradient-to-r from-blue-50 via-purple-50 to-pink-50 px-4 md:px-6 py-2 md:py-6">

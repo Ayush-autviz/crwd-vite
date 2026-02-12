@@ -24,9 +24,9 @@ export default function PlatformFeeInfoBottomSheet({
         <div className="flex flex-col">
           {/* Handle Bar */}
           <div className="w-12 h-1 bg-gray-200 rounded-full mb-6 mx-auto" />
-          
-          <SheetHeader className="mb-6">
-            <SheetTitle className="text-center text-lg md:text-xl font-bold text-gray-900">
+
+          <SheetHeader className="">
+            <SheetTitle className="text-center text-2xl md:text-3xl font-bold text-gray-900">
               About the Platform Fee
             </SheetTitle>
           </SheetHeader>
@@ -72,7 +72,7 @@ export default function PlatformFeeInfoBottomSheet({
               >
                 Got it
               </Button>
-              
+
               {/* <button 
                 className="w-full text-gray-400 text-xs md:text-sm font-medium hover:text-gray-600 transition-colors"
               >

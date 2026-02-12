@@ -1,7 +1,7 @@
 
 import { useState, useEffect } from "react";
 import { useNavigate, useLocation, useSearchParams } from "react-router-dom";
-import { Heart, Sparkles, Search, Check, Loader2, ArrowRight, Users, ChevronDown } from "lucide-react";
+import { Heart, Sparkles, Search, Check, Loader2, ArrowRight, Users, ChevronDown, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
@@ -54,6 +54,7 @@ export default function NewCompleteOnboard() {
   const [isJoinLoading, setIsJoinLoading] = useState(false);
   const [isBrowseLoading, setIsBrowseLoading] = useState(false);
   const [isSurpriseLoading, setIsSurpriseLoading] = useState(false);
+  const [collectivePreparedCauses, setCollectivePreparedCauses] = useState<any[]>([]);
 
   // Get selected categories from navigation state
   const selectedCategoryIds = (location.state?.selectedCategories as string[]) || [];
@@ -94,7 +95,12 @@ export default function NewCompleteOnboard() {
       // navigate('/'); // Navigation is now handled in specific functions
     },
     onError: (error: any) => {
-      toast.error(error?.response?.data?.message || 'Failed to create donation box');
+      console.error("Mutation Error:", error);
+      const errorMessage = error?.response?.data?.message ||
+        error?.response?.data?.error ||
+        error?.message ||
+        'Failed to create donation box';
+      toast.error(errorMessage);
     },
   });
 
@@ -233,20 +239,11 @@ export default function NewCompleteOnboard() {
 
   const handleStartWithNonprofits = () => {
     if (selectedCauses.length > 0) {
-      const requestData = {
-        monthly_amount: "10",
-        causes: selectedCauses.map(id => ({ cause_id: id }))
-      };
-      createBoxMutation.mutate(requestData, {
-        onSuccess: () => {
-          // navigate('/');
-          setAddedNonprofitsCount(selectedCauses.length);
-          setPreviousView(view);
-          setView('success');
-        }
-      });
+      setAddedNonprofitsCount(selectedCauses.length);
+      setPreviousView(view);
+      setView('success');
     } else {
-      navigate('/');
+      navigate(redirectTo);
     }
   };
 
@@ -320,22 +317,11 @@ export default function NewCompleteOnboard() {
       }
 
       if (allCauses.length > 0) {
-        // Create donation box with these causes
-        const requestData = {
-          monthly_amount: "10",
-          causes: allCauses
-        };
-        // Use mutateAsync to handle the promise and loading state
-        try {
-          await createBoxMutation.mutateAsync(requestData);
-          setAddedNonprofitsCount(allCauses.length);
-          setIsProcessingCollectives(false);
-          setPreviousView(view);
-          setView('success');
-        } catch (e) {
-          // Error is handled by mutation onError
-          setIsProcessingCollectives(false);
-        }
+        setAddedNonprofitsCount(allCauses.length);
+        setCollectivePreparedCauses(allCauses);
+        setIsProcessingCollectives(false);
+        setPreviousView(view);
+        setView('success');
       } else {
         toast.error("No nonprofits found in selected collectives.");
         setIsProcessingCollectives(false);
@@ -352,8 +338,31 @@ export default function NewCompleteOnboard() {
   };
 
   const handleSkip = () => {
-    // Navigate to redirectTo if available, otherwise to home
-    navigate(redirectTo, { state: { from: 'NewCompleteDonation' } });
+    setAddedNonprofitsCount(0);
+    setPreviousView(view);
+    setView('success');
+  };
+
+  const handleFinalContinue = () => {
+    if (addedNonprofitsCount === 0) {
+      navigate(redirectTo);
+      return;
+    }
+
+    const causesBody = previousView === 'collective'
+      ? collectivePreparedCauses
+      : selectedCauses.map(id => ({ cause_id: id }));
+
+    console.log("causesBody", causesBody);
+
+    createBoxMutation.mutate({
+      monthly_amount: "10",
+      causes: causesBody
+    }, {
+      onSuccess: () => {
+        navigate(redirectTo);
+      }
+    });
   };
 
   const getCategoryInfo = (categoryId: string) => {
@@ -933,27 +942,42 @@ export default function NewCompleteOnboard() {
           </div>
 
           <h1 className="text-2xl md:text-3xl font-bold text-gray-900 mb-6 leading-tight">
-            {addedNonprofitsCount} nonprofits have been added to<br className="hidden sm:block" /> your donation box.
+            {addedNonprofitsCount > 0 ? (
+              <>
+                {addedNonprofitsCount} nonprofits have been added to<br className="hidden sm:block" /> your donation box.
+              </>
+            ) : (
+              "Your donation box is ready."
+            )}
           </h1>
 
           <p className="text-gray-600 mb-10 text-base md:text-lg leading-relaxed max-w-[460px]">
-            When you're ready, choose an amount. We split it evenly across what you support. Add or remove causes anytime without changing your amount.
+            {addedNonprofitsCount > 0
+              ? "When you're ready, choose an amount. We split it evenly across what you support. Add or remove causes anytime without changing your amount."
+              : "You haven't selected any nonprofits yet. You can always browse and add causes to your donation box later from your profile."}
           </p>
 
           <Button
-            onClick={() => {
-              navigate('/');
-            }}
-            className="w-full sm:w-auto min-w-[280px] h-14 bg-[#1600ff] hover:bg-[#0039CC] text-white text-lg font-bold rounded-full mb-8 shadow-md hover:shadow-lg transition-all"
+            onClick={handleFinalContinue}
+            disabled={createBoxMutation.isPending}
+            className="w-full sm:w-auto min-w-[280px] h-14 bg-[#1600ff] hover:bg-[#0039CC] text-white text-lg font-bold rounded-xl mb-8 shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2"
           >
-            Continue to CRWD
+            {createBoxMutation.isPending ? (
+              <>
+                <Loader2 className="w-5 h-5 animate-spin" />
+                Setting up Box...
+              </>
+            ) : (
+              'Continue to CRWD'
+            )}
           </Button>
 
           <button
             onClick={() => setView(previousView)}
-            className="text-gray-500 hover:text-gray-800 text-sm font-medium transition-colors flex items-center gap-2"
+            disabled={createBoxMutation.isPending}
+            className="text-gray-500 hover:text-gray-800 text-base font-medium transition-colors flex items-center gap-2 disabled:opacity-50"
           >
-            <span>←</span> Change My Selection
+            <ArrowLeft className="w-5 h-5" /> {addedNonprofitsCount > 0 ? "Change My Selection" : "Go Back and Choose"}
           </button>
 
         </div>
