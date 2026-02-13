@@ -116,6 +116,15 @@ export default function NewClaimProfile() {
 
   const isPasswordStrong = Object.values(passwordStrength).every(Boolean);
 
+  const isFormValid =
+    formData.firstName.trim().length > 0 &&
+    formData.lastName.trim().length > 0 &&
+    formData.email.trim().length > 0 &&
+    formData.password.length > 0 &&
+    isPasswordStrong &&
+    formData.termsAccepted;
+
+
   // Form validation
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
@@ -410,7 +419,7 @@ export default function NewClaimProfile() {
                   clearError("firstName");
                 }}
                 className={cn(
-                  "w-full h-10 border rounded-xl px-3 bg-gray-50/50 text-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-400 transition-all placeholder:text-gray-400",
+                  "w-full h-10 border rounded-lg px-3 bg-gray-50/50 text-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-400 transition-all placeholder:text-gray-400",
                   errors.firstName
                     ? "border-red-300 bg-red-50/50"
                     : "border-gray-200"
@@ -456,7 +465,7 @@ export default function NewClaimProfile() {
                 clearError("email");
               }}
               className={cn(
-                "w-full h-10 border rounded-xl px-3 bg-gray-50/50 text-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-400 transition-all placeholder:text-gray-400",
+                "w-full h-10 border rounded-lg px-3 bg-gray-50/50 text-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-400 transition-all placeholder:text-gray-400",
                 errors.email
                   ? "border-red-300 bg-red-50/50"
                   : "border-gray-200"
@@ -477,7 +486,7 @@ export default function NewClaimProfile() {
                 value={formData.password}
                 onChange={handleInputChange}
                 className={cn(
-                  "h-10 border-gray-200 rounded-xl bg-gray-50/50 focus-visible:ring-blue-100 focus-visible:border-blue-400 pr-10 placeholder:text-gray-400",
+                  "h-10 border-gray-200 rounded-lg bg-gray-50/50 focus-visible:ring-blue-100 focus-visible:border-blue-400 pr-10 placeholder:text-gray-400",
                   errors.password &&
                   "border-red-300 bg-red-50/50 focus-visible:border-red-400 focus-visible:ring-red-100"
                 )}
@@ -636,8 +645,13 @@ export default function NewClaimProfile() {
         {/* Continue Button */}
         <Button
           onClick={handleContinue}
-          disabled={emailRegistrationMutation.isPending}
-          className="w-full h-12 bg-[#B4B9F6] hover:bg-[#9FA4F0] text-white font-bold text-lg rounded-xl shadow-sm hover:shadow-md transition-all mb-4 shrink-0"
+          disabled={emailRegistrationMutation.isPending || !isFormValid}
+          className={cn(
+            "w-full h-12 text-white font-bold text-lg rounded-lg shadow-sm transition-all mb-4 shrink-0",
+            (emailRegistrationMutation.isPending || !isFormValid)
+              ? "bg-indigo-300 cursor-not-allowed opacity-70"
+              : "bg-[#525ae2] hover:bg-[#434ac9] shadow-md"
+          )}
         >
           {emailRegistrationMutation.isPending ? (
             <>
@@ -705,12 +719,16 @@ export default function NewClaimProfile() {
               />
             </div>
 
-            {/* Action Buttons */}
             <div className="space-y-3">
               <Button
                 onClick={handleEmailVerification}
                 disabled={otp.length !== 6 || emailVerificationMutation.isPending}
-                className="w-full h-12 bg-indigo-500 text-white font-medium rounded-lg"
+                className={cn(
+                  "w-full h-12 text-white font-bold text-lg rounded-lg shadow-sm transition-all",
+                  (otp.length !== 6 || emailVerificationMutation.isPending)
+                    ? "bg-indigo-300 cursor-not-allowed opacity-70"
+                    : "bg-[#525ae2] hover:bg-[#434ac9] shadow-md"
+                )}
               >
                 {emailVerificationMutation.isPending ? (
                   <>

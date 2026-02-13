@@ -384,9 +384,9 @@ export default function NewCompleteOnboard() {
     return (
       <div className="h-screen bg-gradient-to-br from-blue-100 via-purple-50 to-pink-50 flex flex-col items-center justify-center px-4 py-8 overflow-hidden">
         <div className="w-full max-w-2xl bg-white rounded-xl shadow-lg max-h-full flex flex-col overflow-hidden">
-          <div className="p-6 md:p-8 pb-0 flex-shrink-0">
+          <div className="p-4 md:p-6 pb-0 flex-shrink-0">
             {/* Progress Indicator - Step 4 */}
-            <div className="flex items-center justify-center space-x-1.5 sm:space-x-2 mb-6 sm:mb-8">
+            <div className="flex items-center justify-center space-x-1.5 sm:space-x-2 mb-4">
               <div className="h-1 w-8 sm:w-10 md:w-12 bg-gray-300 rounded-full"></div>
               <div className="h-1 w-8 sm:w-10 md:w-12 bg-gray-300 rounded-full"></div>
               <div className="h-1 w-8 sm:w-10 md:w-12 bg-gray-300 rounded-full"></div>
@@ -394,29 +394,29 @@ export default function NewCompleteOnboard() {
             </div>
 
             {/* Heart Icon with Gradient */}
-            <div className="flex justify-center mb-6">
-              <div className="w-16 h-16 rounded-full bg-gradient-to-br from-purple-500 via-pink-500 to-blue-500 flex items-center justify-center shadow-lg">
-                <Heart className="w-8 h-8 text-white fill-white" />
+            <div className="flex justify-center mb-4">
+              <div className="w-12 h-12 md:w-14 md:h-14 rounded-full bg-gradient-to-br from-purple-500 via-pink-500 to-blue-500 flex items-center justify-center shadow-md">
+                <Heart className="w-6 h-6 md:w-7 md:h-7 text-white fill-white" />
               </div>
             </div>
 
             {/* Title */}
-            <h1 className="text-2xl md:text-3xl font-bold text-gray-900 text-center mb-2">
+            <h1 className="text-xl md:text-2xl font-bold text-gray-900 text-center mb-1">
               Start Supporting Causes
             </h1>
 
             {/* Description */}
-            <p className="text-sm md:text-base text-gray-600 text-center mb-4">
+            <p className="text-xs md:text-sm text-gray-600 text-center mb-3">
               Choose how you'd like to select nonprofits
             </p>
 
             {/* Selected Categories Tags */}
             {selectedCategoryObjects.length > 0 && (
-              <div className="flex flex-wrap justify-center gap-2 mb-6">
+              <div className="flex flex-wrap justify-center gap-1.5 mb-4">
                 {selectedCategoryObjects.map((category) => (
                   <div
                     key={category.id}
-                    className="px-4 py-1.5 rounded-full text-xs font-bold text-white border border-gray-200"
+                    className="px-3 py-1 rounded-full text-[10px] md:text-xs font-bold text-white border border-gray-200"
                     style={{ backgroundColor: category.background }}
                   >
                     {category.name}
@@ -434,63 +434,69 @@ export default function NewCompleteOnboard() {
               <button
                 onClick={handleJoinCollective}
                 disabled={isJoinLoading}
-                className="bg-white border border-gray-100 rounded-2xl p-4 text-center hover:shadow-sm transition-all group disabled:opacity-70 disabled:cursor-not-allowed"
+                className="bg-white border border-gray-200 rounded-xl p-3 text-center hover:shadow-sm transition-all group disabled:opacity-70 disabled:cursor-not-allowed flex flex-col items-center"
               >
-                <div className="flex justify-center mb-6">
-                  <div className="w-14 h-14 rounded-full bg-[#d946ef] flex items-center justify-center group-hover:scale-105 transition-transform duration-300">
+                <div className="mb-2">
+                  <div className="w-10 h-10 rounded-full bg-[#d946ef] flex items-center justify-center group-hover:scale-105 transition-transform duration-300">
                     {isJoinLoading ? (
-                      <Loader2 className="w-7 h-7 text-white animate-spin" />
+                      <Loader2 className="w-5 h-5 text-white animate-spin" />
                     ) : (
-                      <Users className="w-7 h-7 text-white" />
+                      <Users className="w-5 h-5 text-white" />
                     )}
                   </div>
                 </div>
-                <h3 className="font-bold text-xl text-gray-900 sm:mb-2">Join a Collective</h3>
-                <p className="text-gray-400 text-sm">
-                  Join curated giving communities
-                </p>
+                <div>
+                  <h3 className="font-bold text-sm md:text-base text-gray-900">Join a Collective</h3>
+                  <p className="text-gray-400 text-[10px] md:text-xs">
+                    Join curated giving communities
+                  </p>
+                </div>
               </button>
 
               {/* I'll Choose My Own Card */}
               <button
                 onClick={handleBrowseSearch}
                 disabled={isBrowseLoading}
-                className="bg-white border border-gray-100 rounded-2xl p-4 text-center hover:shadow-sm transition-all group disabled:opacity-70 disabled:cursor-not-allowed"
+                className="bg-white border border-gray-200 rounded-xl p-3 text-center hover:shadow-sm transition-all group disabled:opacity-70 disabled:cursor-not-allowed flex flex-col items-center"
               >
-                <div className="flex justify-center mb-6">
-                  <div className="w-14 h-14 rounded-full bg-[#8b5cf6] flex items-center justify-center group-hover:scale-105 transition-transform duration-300">
+                <div className="mb-2">
+                  <div className="w-10 h-10 rounded-full bg-[#8b5cf6] flex items-center justify-center group-hover:scale-105 transition-transform duration-300">
                     {isBrowseLoading ? (
-                      <Loader2 className="w-7 h-7 text-white animate-spin" />
+                      <Loader2 className="w-5 h-5 text-white animate-spin" />
                     ) : (
-                      <Search className="w-7 h-7 text-white" />
+                      <Search className="w-5 h-5 text-white" />
                     )}
                   </div>
                 </div>
-                <h3 className="font-bold text-xl text-gray-900 sm:mb-2">I'll Choose My Own</h3>
-                <p className="text-gray-400 text-sm">
-                  Select nonprofits to add to your box
-                </p>
+                <div>
+                  <h3 className="font-bold text-sm md:text-base text-gray-900">I'll Choose My Own</h3>
+                  <p className="text-gray-400 text-[10px] md:text-xs">
+                    Select nonprofits to add to your box
+                  </p>
+                </div>
               </button>
 
               {/* Surprise Me Card */}
               <button
                 onClick={handleSurpriseMe}
                 disabled={isSurpriseLoading}
-                className="bg-white border border-gray-100 rounded-2xl p-4 text-center hover:shadow-sm transition-all group disabled:opacity-70 disabled:cursor-not-allowed"
+                className="bg-white border border-gray-200 rounded-xl p-3 text-center hover:shadow-sm transition-all group disabled:opacity-70 disabled:cursor-not-allowed flex flex-col items-center"
               >
-                <div className="flex justify-center mb-6">
-                  <div className="w-14 h-14 rounded-full bg-[#ec4899] flex items-center justify-center group-hover:scale-105 transition-transform duration-300">
+                <div className="mb-2">
+                  <div className="w-10 h-10 rounded-full bg-[#ec4899] flex items-center justify-center group-hover:scale-105 transition-transform duration-300">
                     {isSurpriseLoading ? (
-                      <Loader2 className="w-7 h-7 text-white animate-spin" />
+                      <Loader2 className="w-5 h-5 text-white animate-spin" />
                     ) : (
-                      <Sparkles className="w-7 h-7 text-white" />
+                      <Sparkles className="w-5 h-5 text-white" />
                     )}
                   </div>
                 </div>
-                <h3 className="font-bold text-xl text-gray-900 sm:mb-2">Surprise Me</h3>
-                <p className="text-gray-400 text-sm">
-                  We'll pick nonprofits based on your interests
-                </p>
+                <div>
+                  <h3 className="font-bold text-sm md:text-base text-gray-900">Surprise Me</h3>
+                  <p className="text-gray-400 text-[10px] md:text-xs">
+                    We'll pick nonprofits based on interests
+                  </p>
+                </div>
               </button>
             </div>
           </div>
@@ -534,7 +540,7 @@ export default function NewCompleteOnboard() {
         <div className="w-full max-w-2xl bg-white rounded-xl shadow-lg max-h-full flex flex-col overflow-hidden">
           <div className="p-6 md:p-8 pb-0 flex-shrink-0">
             {/* Progress Indicator - Step 4 */}
-            <div className="flex items-center justify-center space-x-1.5 sm:space-x-2 mb-6 sm:mb-8">
+            <div className="flex items-center justify-center space-x-1.5 sm:space-x-2 mb-4">
               <div className="h-1 w-8 sm:w-10 md:w-12 bg-gray-300 rounded-full"></div>
               <div className="h-1 w-8 sm:w-10 md:w-12 bg-gray-300 rounded-full"></div>
               <div className="h-1 w-8 sm:w-10 md:w-12 bg-gray-300 rounded-full"></div>
@@ -604,7 +610,7 @@ export default function NewCompleteOnboard() {
                       return (
                         <Card
                           key={cause.id}
-                          className={`border-2 cursor-pointer transition-all ${isSelected ? 'border-blue-500' : 'border-blue-100'
+                          className={`py-4 border-2 cursor-pointer transition-all ${isSelected ? 'border-blue-500' : 'border-blue-100'
                             }`}
                           onClick={() => handleCauseToggle(cause.id)}
                         >
@@ -717,7 +723,7 @@ export default function NewCompleteOnboard() {
           {/* Header Section - Fixed */}
           <div className="p-6 md:p-8 pb-0 flex-shrink-0">
             {/* Progress Indicator - Step 4 */}
-            <div className="flex items-center justify-center space-x-1.5 sm:space-x-2 mb-6 sm:mb-8">
+            <div className="flex items-center justify-center space-x-1.5 sm:space-x-2 mb-4">
               <div className="h-1 w-8 sm:w-10 md:w-12 bg-gray-300 rounded-full"></div>
               <div className="h-1 w-8 sm:w-10 md:w-12 bg-gray-300 rounded-full"></div>
               <div className="h-1 w-8 sm:w-10 md:w-12 bg-gray-300 rounded-full"></div>
@@ -801,7 +807,7 @@ export default function NewCompleteOnboard() {
                   return (
                     <div
                       key={collectiveId}
-                      className="bg-white border border-gray-200 rounded-xl p-3 sm:p-6 hover:shadow-md transition-all"
+                      className="bg-white border border-gray-200 rounded-xl p-2 hover:shadow-md transition-all"
                     >
                       <div className="flex items-start gap-3 sm:gap-4">
                         <Avatar className="w-12 h-12 rounded-xl border border-gray-200 flex-shrink-0">
@@ -814,7 +820,7 @@ export default function NewCompleteOnboard() {
                           </AvatarFallback>
                         </Avatar>
                         <div className="flex-1 min-w-0">
-                          <div className="flex justify-between items-start gap-2 mb-1">
+                          <div className="flex justify-between items-start gap-2">
                             <h3 className="font-bold text-lg text-gray-900 ">{collective.name}</h3>
                             <Button
                               onClick={(e) => {
@@ -942,7 +948,7 @@ export default function NewCompleteOnboard() {
           </div>
 
           <h1 className="text-2xl md:text-3xl font-bold text-gray-900 mb-6 leading-tight">
-            {addedNonprofitsCount} nonprofits have been added to<br className="hidden sm:block" /> your donation box.
+            {addedNonprofitsCount} nonprofit{addedNonprofitsCount < 2 ? '' : 's'} have been added to<br className="hidden sm:block" /> your donation box.
           </h1>
 
           <p className="text-gray-600 mb-10 text-base md:text-lg leading-relaxed max-w-[460px]">
@@ -992,7 +998,7 @@ export default function NewCompleteOnboard() {
       <div className="w-full max-w-2xl bg-white rounded-xl shadow-lg max-h-full flex flex-col overflow-hidden">
         <div className="p-6 md:p-8 pb-0 flex-shrink-0">
           {/* Progress Indicator - Step 4 */}
-          <div className="flex items-center justify-center space-x-1.5 sm:space-x-2 mb-6 sm:mb-8">
+          <div className="flex items-center justify-center space-x-1.5 sm:space-x-2 mb-4">
             <div className="h-1 w-8 sm:w-10 md:w-12 bg-gray-300 rounded-full"></div>
             <div className="h-1 w-8 sm:w-10 md:w-12 bg-gray-300 rounded-full"></div>
             <div className="h-1 w-8 sm:w-10 md:w-12 bg-gray-300 rounded-full"></div>
