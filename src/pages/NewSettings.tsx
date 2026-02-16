@@ -30,13 +30,6 @@ import {
   SheetTitle,
   SheetDescription,
 } from "@/components/ui/sheet"
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-} from "@/components/ui/dialog"
 import { Toast } from "@/components/ui/toast"
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar"
 import RequestNonprofitModal from '@/components/newsearch/RequestNonprofitModal';
@@ -56,6 +49,17 @@ export default function NewSettings() {
   const [showRequestModal, setShowRequestModal] = useState(false);
   const [showPaymentMethods, setShowPaymentMethods] = useState(false);
   const [showExitConfirmation, setShowExitConfirmation] = useState(false);
+
+  useEffect(() => {
+    const handleResize = () => {
+      if (showExitConfirmation) {
+        setShowExitConfirmation(false);
+      }
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, [showExitConfirmation]);
+
   const [formData, setFormData] = useState({
     first_name: '',
     last_name: '',
@@ -525,7 +529,7 @@ export default function NewSettings() {
                   onChange={(e) => setFormData(prev => ({ ...prev, first_name: e.target.value }))}
                   disabled={!isEditMode}
                   placeholder="First Name"
-                  className="bg-gray-100 border-0 text-sm xs:text-base md:text-lg"
+                  className={`bg-gray-100 border-0 text-sm xs:text-base md:text-lg ${isEditMode ? 'text-black' : ''}`}
                 />
               </div>
 
@@ -537,7 +541,7 @@ export default function NewSettings() {
                   onChange={(e) => setFormData(prev => ({ ...prev, last_name: e.target.value }))}
                   disabled={!isEditMode}
                   placeholder="Last Name"
-                  className="bg-gray-100 border-0 text-sm xs:text-base md:text-lg"
+                  className={`bg-gray-100 border-0 text-sm xs:text-base md:text-lg ${isEditMode ? 'text-black' : ''}`}
                 />
               </div>
 
@@ -559,7 +563,7 @@ export default function NewSettings() {
                   value={formData.email}
                   disabled={true}
                   placeholder="Email"
-                  className="bg-gray-100 border-0 text-sm xs:text-base md:text-lg opacity-60 cursor-not-allowed"
+                  className={`bg-gray-100 border-0 text-sm xs:text-base md:text-lg opacity-60 cursor-not-allowed ${isEditMode ? 'text-black' : ''}`}
                 />
               </div>
 
@@ -573,7 +577,7 @@ export default function NewSettings() {
                     onChange={(e) => setFormData(prev => ({ ...prev, location: e.target.value }))}
                     disabled={!isEditMode}
                     placeholder="Location"
-                    className="bg-gray-100 border-0 text-sm xs:text-base md:text-lg"
+                    className={`bg-gray-100 border-0 text-sm xs:text-base md:text-lg ${isEditMode ? 'text-black' : ''}`}
                   />
                 </div>
               </div>
@@ -590,7 +594,7 @@ export default function NewSettings() {
                   }}
                   disabled={!isEditMode}
                   placeholder="Passionate about making a difference through strategic giving."
-                  className="bg-gray-100 border-0 min-h-[80px] md:min-h-[100px] text-sm xs:text-base md:text-lg"
+                  className={`bg-gray-100 border-0 min-h-[80px] md:min-h-[100px] text-sm xs:text-base md:text-lg ${isEditMode ? 'text-black' : ''}`}
                   rows={4}
                 />
                 <div className="flex justify-end mt-1">
@@ -1032,32 +1036,32 @@ export default function NewSettings() {
         isOpen={showPaymentMethods}
         onClose={() => setShowPaymentMethods(false)}
       />
-      {/* Exit Confirmation Dialog */}
-      <Dialog open={showExitConfirmation} onOpenChange={setShowExitConfirmation}>
-        <DialogContent className="w-[90%] max-w-[400px] rounded-[32px] p-8 md:p-10 border-none shadow-2xl">
-          <DialogHeader className="flex flex-col items-center text-center">
-            <DialogTitle className="text-2xl font-bold text-gray-900 mb-2">Unsaved Changes</DialogTitle>
-            <DialogDescription className="text-gray-500 text-[15px] leading-relaxed text-center">
+      {/* Exit Confirmation Sheet */}
+      <Sheet open={showExitConfirmation} onOpenChange={setShowExitConfirmation}>
+        <SheetContent side="bottom" className="py-8 md:py-10 border-none shadow-2xl rounded-t-[32px]">
+          <SheetHeader className="flex flex-col items-center text-center">
+            <SheetTitle className="text-2xl font-bold text-gray-900 mb-2">Unsaved Changes</SheetTitle>
+            <SheetDescription className="text-gray-500 text-[15px] leading-relaxed text-center">
               You are currently in edit mode. If you leave now, any changes you've made will be lost. Are you sure you want to go back?
-            </DialogDescription>
-          </DialogHeader>
-          <div className="flex flex-col gap-3 mt-8">
+            </SheetDescription>
+          </SheetHeader>
+          <div className="flex flex-col gap-3 mt-2 max-w-[500px] mx-auto w-full px-4">
             <Button
               variant="outline"
               onClick={() => setShowExitConfirmation(false)}
-              className="w-full rounded-2xl py-5 border-gray-200 text-gray-800 font-bold text-base hover:bg-gray-50 transition-colors"
+              className="w-full rounded-2xl py-6 border-gray-200 text-gray-800 font-bold text-lg hover:bg-gray-50 transition-colors"
             >
               Stay and Edit
             </Button>
             <Button
               onClick={confirmExit}
-              className="w-full rounded-2xl py-5 bg-red-600 hover:bg-red-700 text-white font-bold text-base shadow-sm transition-colors"
+              className="w-full rounded-2xl py-6 bg-red-600 hover:bg-red-700 text-white font-bold text-lg shadow-sm transition-colors"
             >
               Discard Changes
             </Button>
           </div>
-        </DialogContent>
-      </Dialog>
+        </SheetContent>
+      </Sheet>
     </div>
   )
 }

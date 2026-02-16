@@ -1,6 +1,7 @@
 import { useNavigate, Link } from 'react-router-dom';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { Card, CardContent } from '@/components/ui/card';
+import { truncateAtFirstPeriod } from '@/lib/utils';
 
 interface CollectiveResultCardProps {
   collective: {
@@ -130,7 +131,7 @@ export default function CollectiveResultCard({ collective }: CollectiveResultCar
 
             {/* Description */}
             <p className="text-xs xs:text-sm md:text-base text-gray-600 mb-2 md:mb-3">
-              {collective.description || 'No description available'}
+              {truncateAtFirstPeriod(collective.description || '') || 'No description available'}
             </p>
 
             {/* Founder Information */}

@@ -90,7 +90,7 @@ export default function NewCompleteOnboard() {
       return await createDonationBox(data);
     },
     onSuccess: () => {
-      toast.success('Donation box created!');
+      // toast.success('Donation box created!');
       queryClient.invalidateQueries({ queryKey: ['donationBox'] });
       // navigate('/'); // Navigation is now handled in specific functions
     },
@@ -110,7 +110,7 @@ export default function NewCompleteOnboard() {
       return await joinCollective(id);
     },
     onSuccess: () => {
-      toast.success('Joined collective successfully!');
+      // toast.success('Joined collective successfully!');
       queryClient.invalidateQueries({ queryKey: ['collectives'] });
     },
     onError: (error: any) => {
@@ -124,7 +124,7 @@ export default function NewCompleteOnboard() {
       return await leaveCollective(id);
     },
     onSuccess: () => {
-      toast.success('Left collective successfully');
+      // toast.success('Left collective successfully');
       queryClient.invalidateQueries({ queryKey: ['collectives'] });
     },
     onError: (error: any) => {
@@ -323,7 +323,7 @@ export default function NewCompleteOnboard() {
         setPreviousView(view);
         setView('success');
       } else {
-        toast.error("No nonprofits found in selected collectives.");
+        // toast.error("No nonprofits found in selected collectives.");
         setIsProcessingCollectives(false);
       }
     } catch (error) {

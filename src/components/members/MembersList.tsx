@@ -25,7 +25,7 @@ const MembersList: React.FC<MembersListProps> = ({ members, isLoading }) => {
   const { user } = useAuthStore();
   const queryClient = useQueryClient();
   console.log('MembersList - members:', members);
- 
+
   // Filter members based on search query
   const filtered = members?.filter(
     (m) => {
@@ -45,8 +45,8 @@ const MembersList: React.FC<MembersListProps> = ({ members, isLoading }) => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['followers'] });
       queryClient.invalidateQueries({ queryKey: ['following'] });
-      setToastMessage("Followed");
-      setShowToast(true);
+      // setToastMessage("Followed");
+      // setShowToast(true);
     },
     onError: (error) => {
       setToastMessage("Error following user");
@@ -60,8 +60,8 @@ const MembersList: React.FC<MembersListProps> = ({ members, isLoading }) => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['followers'] });
       queryClient.invalidateQueries({ queryKey: ['following'] });
-      setToastMessage("Unfollowed");
-      setShowToast(true);
+      // setToastMessage("Unfollowed");
+      // setShowToast(true);
     },
     onError: (error) => {
       setToastMessage("Error unfollowing user");
@@ -71,16 +71,16 @@ const MembersList: React.FC<MembersListProps> = ({ members, isLoading }) => {
   });
 
   // const handleFollowToggle = (index: number, member: any) => {
-    // const isCurrentlyFollowing = followStatus[index] ?? member?.user?.connected;
-    // const newFollowStatus = !isCurrentlyFollowing;
+  // const isCurrentlyFollowing = followStatus[index] ?? member?.user?.connected;
+  // const newFollowStatus = !isCurrentlyFollowing;
 
-    // setFollowStatus((prev) => ({
-    //   ...prev,
-    //   [index]: newFollowStatus,
-    // }));
+  // setFollowStatus((prev) => ({
+  //   ...prev,
+  //   [index]: newFollowStatus,
+  // }));
 
-    // setToastMessage(newFollowStatus ? "Followed" : "Unfollowed");
-    // setShowToast(true);
+  // setToastMessage(newFollowStatus ? "Followed" : "Unfollowed");
+  // setShowToast(true);
   // };
 
   const handleFollowToggle = (userId: string, isFollowing: boolean) => {
@@ -120,7 +120,7 @@ const MembersList: React.FC<MembersListProps> = ({ members, isLoading }) => {
             const userName = userData?.username || 'unknown';
             const profilePic = userData?.profile_picture || '';
             const isFollowing = userData?.is_following || false;
-            
+
             return (
               <div key={member?.id || index} className="flex items-center justify-between py-3">
                 <div className="flex items-center">
@@ -143,11 +143,10 @@ const MembersList: React.FC<MembersListProps> = ({ members, isLoading }) => {
                   <Button
                     variant="outline"
                     onClick={() => handleFollowToggle(userData?.id?.toString(), isFollowing)}
-                    className={`border-0 text-sm mr-2 cursor-pointer hover:text-blue-500 ${
-                      isFollowing
-                        ? "bg-[#4367FF] text-white"
-                        : "bg-[#F0F2FB] text-[#4367FF]"
-                    }`}
+                    className={`border-0 text-sm mr-2 cursor-pointer hover:text-blue-500 ${isFollowing
+                      ? "bg-[#4367FF] text-white"
+                      : "bg-[#F0F2FB] text-[#4367FF]"
+                      }`}
                     size="sm"
                     disabled={followUserMutation.isPending || unfollowUserMutation.isPending}
                   >

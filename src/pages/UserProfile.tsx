@@ -111,8 +111,8 @@ export default function ProfilePage() {
     mutationFn: () => followUserById(userId || ''),
     onSuccess: () => {
       setIsFollowing(true);
-      setToastMessage("Followed successfully!");
-      setShowToast(true);
+      // setToastMessage("Followed successfully!");
+      // setShowToast(true);
       queryClient.invalidateQueries({ queryKey: ['userProfile', userId] });
     },
     onError: (error) => {
@@ -127,8 +127,8 @@ export default function ProfilePage() {
     mutationFn: () => unfollowUserById(userId || ''),
     onSuccess: () => {
       setIsFollowing(false);
-      setToastMessage("Unfollowed successfully!");
-      setShowToast(true);
+      // setToastMessage("Unfollowed successfully!");
+      // setShowToast(true);
       queryClient.invalidateQueries({ queryKey: ['userProfile', userId] });
     },
     onError: (error) => {
@@ -209,8 +209,8 @@ export default function ProfilePage() {
       queryClient.invalidateQueries({ queryKey: ['followers', targetUserId] });
       queryClient.invalidateQueries({ queryKey: ['following', targetUserId] });
       queryClient.invalidateQueries({ queryKey: ['userProfile', userId] });
-      setToastMessage('Followed');
-      setShowToast(true);
+      // setToastMessage('Followed');
+      // setShowToast(true);
     },
     onError: (error) => {
       console.error('Error following user:', error);
@@ -225,8 +225,8 @@ export default function ProfilePage() {
       queryClient.invalidateQueries({ queryKey: ['followers', targetUserId] });
       queryClient.invalidateQueries({ queryKey: ['following', targetUserId] });
       queryClient.invalidateQueries({ queryKey: ['userProfile', userId] });
-      setToastMessage('Unfollowed');
-      setShowToast(true);
+      // setToastMessage('Unfollowed');
+      // setShowToast(true);
     },
     onError: (error) => {
       console.error('Error unfollowing user:', error);

@@ -554,6 +554,7 @@ export default function NewGroupCrwdPage() {
           collectiveId={crwdId}
           isJoined={crwdData.is_joined}
           collectiveData={crwdData}
+          onJoin={handleJoinCollective}
         />
 
         {/* Discover More Collectives */}

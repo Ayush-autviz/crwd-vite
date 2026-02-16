@@ -54,7 +54,7 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
 
   const handleFollowClick = () => {
     setIsFollowing(!isFollowing);
-    showToast(isFollowing ? `Unfollowed ${name}` : `Following ${name}`);
+    // showToast(isFollowing ? `Unfollowed ${name}` : `Following ${name}`);
   };
 
   return (

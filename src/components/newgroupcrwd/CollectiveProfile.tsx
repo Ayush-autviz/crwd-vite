@@ -1,4 +1,5 @@
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
+import { truncateAtFirstPeriod } from '@/lib/utils';
 import { useNavigate } from 'react-router-dom';
 
 interface CollectiveProfileProps {
@@ -109,7 +110,7 @@ export default function CollectiveProfile({
       </div>
       {description && (
         <p className="text-foreground text-base xs:text-lg md:text-xl leading-relaxed mt-4 md:mt-5">
-          {description}
+          {truncateAtFirstPeriod(description || '')}
         </p>
       )}
     </div>

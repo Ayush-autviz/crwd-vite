@@ -2,7 +2,7 @@ import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
 import { useState, useRef, useEffect } from 'react';
 import { useAuthStore } from '@/stores/store';
-import { MessageCircle, Calendar, Heart } from 'lucide-react';
+import { MessageCircle, Heart } from 'lucide-react';
 import ActivityCard from './ActivityCard';
 import CommunityPostCard from '@/components/newHome/CommunityPostCard';
 
@@ -12,6 +12,7 @@ interface CommunityActivityProps {
   collectiveId?: string;
   isJoined?: boolean;
   collectiveData?: any;
+  onJoin?: () => void;
 }
 
 export default function CommunityActivity({
@@ -20,6 +21,7 @@ export default function CommunityActivity({
   collectiveId,
   isJoined = false,
   collectiveData,
+  onJoin,
 }: CommunityActivityProps) {
   const navigate = useNavigate();
   const { user } = useAuthStore();
@@ -106,7 +108,9 @@ export default function CommunityActivity({
         </div>
         {!isJoined ? (
           <div
-            className="bg-white hover:bg-gray-100 text-gray-800 font-semibold border-1 border-gray-200 px-2 md:px-3 lg:px-4 py-1 md:py-1.5 lg:py-2 rounded-full text-xs xs:text-sm md:text-base"
+            onClick={onJoin}
+            role="button"
+            className="bg-white hover:bg-gray-100 text-gray-800 font-semibold border-1 border-gray-200 px-2 md:px-3 lg:px-4 py-1 md:py-1.5 lg:py-2 rounded-full text-xs xs:text-sm md:text-base cursor-pointer transition-colors"
           >
             Join to post updates
           </div>

@@ -145,8 +145,8 @@ export default function PostById() {
     mutationFn: (data: { content: string }) => createPostComment(id || '', { content: data.content }), // No parent_comment_id for main comments
     onSuccess: () => {
       setInputValue("");
-      setToastMessage("Comment added successfully!");
-      setShowToast(true);
+      // setToastMessage("Comment added successfully!");
+      // setShowToast(true);
       queryClient.invalidateQueries({ queryKey: ['postComments', id] });
     },
     onError: () => {
@@ -166,8 +166,8 @@ export default function PostById() {
     mutationFn: ({ commentId, data }: { commentId: number; data: { content: string } }) =>
       createPostComment(id || '', { content: data.content, parent_comment_id: commentId }), // Use createPostComment with parent_comment_id
     onSuccess: (_, variables) => {
-      setToastMessage("Reply added successfully!");
-      setShowToast(true);
+      // setToastMessage("Reply added successfully!");
+      // setShowToast(true);
       queryClient.invalidateQueries({ queryKey: ['postComments', id] });
       // Fetch replies to show the new one and expand
       fetchReplies(variables.commentId);
@@ -213,7 +213,7 @@ export default function PostById() {
 
   const handleLike = (_commentId: number) => {
     // For now, just show a toast - you can add like comment API later
-    setShowToast(true);
+    // setShowToast(true);
   };
 
   const fetchReplies = async (commentId: number) => {
