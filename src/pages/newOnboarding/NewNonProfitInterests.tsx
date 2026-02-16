@@ -159,17 +159,17 @@ export default function NewNonProfitInterests() {
         {/* Navigation Buttons */}
         <div className="flex flex-col items-center gap-3 mt-4">
           <div className="flex gap-4 w-full">
-            <Button
+            {/* <Button
               onClick={() => navigate(-1)}
               variant="outline"
               className="flex-1 py-5 rounded-full border border-gray-200 bg-white text-gray-900 font-bold hover:bg-gray-50 text-base"
             >
               Back
-            </Button>
+            </Button> */}
             <Button
               onClick={handleContinue}
               disabled={selectedCategories.length === 0 || postInterestsMutation.isPending}
-              className="flex-1 py-5 rounded-full bg-[#1600ff] hover:bg-[#1100cc] text-white font-bold flex items-center justify-center gap-2 text-base shadow-lg shadow-blue-100"
+              className="flex-1 py-5 rounded-lg bg-[#1600ff] hover:bg-[#1100cc] text-white font-bold flex items-center justify-center gap-2 text-base shadow-lg shadow-blue-100"
             >
               {postInterestsMutation.isPending ? (
                 <>

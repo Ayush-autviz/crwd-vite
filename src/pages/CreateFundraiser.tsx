@@ -12,11 +12,13 @@ import { Loader2 } from 'lucide-react';
 import { DatePicker } from 'antd';
 import type { Dayjs } from 'dayjs';
 import dayjs from 'dayjs';
+import { useMemo } from 'react';
 import { categories } from '@/constants/categories';
 import { SharePost } from '@/components/ui/SharePost';
 import Confetti from 'react-confetti';
 import { CrwdAnimation } from '@/assets/newLogo';
 import Cropper, { Area } from 'react-easy-crop';
+import { DiscardSheet } from '@/components/ui/DiscardSheet';
 
 // Avatar colors for consistent fallback styling
 const avatarColors = [
@@ -90,6 +92,8 @@ export default function CreateFundraiser() {
   const [showShareModal, setShowShareModal] = useState(false);
   const [showConfetti, setShowConfetti] = useState(false);
   const [showAnimationComplete, setShowAnimationComplete] = useState(false);
+  const [showDiscardSheet, setShowDiscardSheet] = useState(false);
+  const [isConfirmedDiscard, setIsConfirmedDiscard] = useState(false);
 
   const colorSwatches = [
     '#0000FF', // Blue
@@ -101,6 +105,53 @@ export default function CreateFundraiser() {
     '#EF4444', // Red
     '#6366F1', // Indigo
   ];
+
+  const hasUnsavedChanges = useMemo(() => {
+    return (
+      campaignTitle.trim() !== '' ||
+      fundraisingGoal.trim() !== '' ||
+      endDate !== null ||
+      campaignStory.trim() !== '' ||
+      uploadedCoverImage !== null ||
+      selectedNonprofits.length > 0
+    );
+  }, [campaignTitle, fundraisingGoal, endDate, campaignStory, uploadedCoverImage, selectedNonprofits]);
+
+  useEffect(() => {
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      if (hasUnsavedChanges && !showSuccessModal && !isConfirmedDiscard) {
+        e.preventDefault();
+        e.returnValue = '';
+      }
+    };
+
+    const handlePopState = () => {
+      if (hasUnsavedChanges && !showSuccessModal && !isConfirmedDiscard) {
+        window.history.pushState(null, '', window.location.pathname);
+        setShowDiscardSheet(true);
+      }
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    window.addEventListener('popstate', handlePopState);
+
+    if (hasUnsavedChanges && !showSuccessModal && !isConfirmedDiscard) {
+      window.history.pushState(null, '', window.location.pathname);
+    }
+
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+      window.removeEventListener('popstate', handlePopState);
+    };
+  }, [hasUnsavedChanges, showSuccessModal, isConfirmedDiscard]);
+
+  const handleBackConfirmation = () => {
+    if (hasUnsavedChanges && !showSuccessModal && !isConfirmedDiscard) {
+      setShowDiscardSheet(true);
+    } else {
+      handleBack();
+    }
+  };
 
   // Fetch collective data
   const { data: collectiveData, isLoading } = useQuery({
@@ -509,7 +560,7 @@ export default function CreateFundraiser() {
       <div className="sticky top-0 z-10 bg-white border-b px-4 py-3 md:px-6 md:py-4">
         <div className="flex items-center gap-3 md:gap-4 mb-2">
           <button
-            onClick={handleBack}
+            onClick={handleBackConfirmation}
             className="p-1.5 hover:bg-gray-100 rounded-full transition-colors"
             aria-label="Go back"
           >
@@ -1117,6 +1168,18 @@ export default function CreateFundraiser() {
           </div>
         </div>
       )}
+      {/* Discard Confirmation Sheet */}
+      <DiscardSheet
+        isOpen={showDiscardSheet}
+        onClose={() => setShowDiscardSheet(false)}
+        onDiscard={() => {
+          setIsConfirmedDiscard(true);
+          setShowDiscardSheet(false);
+          setTimeout(() => {
+            handleBack();
+          }, 0);
+        }}
+      />
     </div>
   );
 }

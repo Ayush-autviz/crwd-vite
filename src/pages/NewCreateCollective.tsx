@@ -1503,7 +1503,7 @@
 
 
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { ArrowLeft, HelpCircle, Search, X, Loader2, Edit2, Palette, Camera, Users, Check, Minus, Plus, Heart, Eye, Share2, Sparkles } from 'lucide-react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
@@ -1522,6 +1522,7 @@ import { useAuthStore } from '@/stores/store';
 import { CrwdAnimation } from '@/assets/newLogo';
 import JoinCollectiveBottomSheet from '@/components/newgroupcrwd/JoinCollectiveBottomSheet';
 import { truncateAtFirstPeriod } from '@/lib/utils';
+import { DiscardSheet } from '@/components/ui/DiscardSheet';
 
 const getCategoryById = (categoryId: string | undefined) => {
   return categories.find(cat => cat.id === categoryId) || null;
@@ -1607,6 +1608,9 @@ export default function NewCreateCollectivePage() {
   const location = useLocation();
   const { user: currentUser, token } = useAuthStore();
 
+  const [showDiscardSheet, setShowDiscardSheet] = useState(false);
+  const [isConfirmedDiscard, setIsConfirmedDiscard] = useState(false);
+
   const handleBack = () => {
     // Check if we came from specific flows
     const fromScreen = (location.state as any)?.from;
@@ -1635,6 +1639,48 @@ export default function NewCreateCollectivePage() {
   const [toastMessage, setToastMessage] = useState('');
   const [showAddToBoxModal, setShowAddToBoxModal] = useState(false);
 
+  const hasUnsavedChanges = useMemo(() => {
+    return name.trim() !== '' || description.trim() !== '' || selectedCauses.length > 0;
+  }, [name, description, selectedCauses]);
+
+  const handleBackConfirmation = () => {
+    if (hasUnsavedChanges && step !== 3 && !isConfirmedDiscard) {
+      setShowDiscardSheet(true);
+    } else {
+      handleBack();
+    }
+  };
+
+  useEffect(() => {
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      if (hasUnsavedChanges && step !== 3 && !isConfirmedDiscard) {
+        e.preventDefault();
+        e.returnValue = '';
+      }
+    };
+
+    const handlePopState = () => {
+      if (hasUnsavedChanges && step !== 3 && !isConfirmedDiscard) {
+        // Push state back to stay on page
+        window.history.pushState(null, '', window.location.pathname);
+        setShowDiscardSheet(true);
+      }
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    window.addEventListener('popstate', handlePopState);
+
+    // Push an initial state so we have something to pop
+    if (hasUnsavedChanges && step !== 3 && !isConfirmedDiscard) {
+      window.history.pushState(null, '', window.location.pathname);
+    }
+
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+      window.removeEventListener('popstate', handlePopState);
+    };
+  }, [hasUnsavedChanges, step, isConfirmedDiscard]);
+
   // Logo customization state - separate states for letter and upload
   const [logoType, setLogoType] = useState<'letter' | 'upload'>('letter');
   const [letterLogoColor, setLetterLogoColor] = useState('#1600ff'); // State for letter logo background color
@@ -1645,6 +1691,11 @@ export default function NewCreateCollectivePage() {
   // Dropdown state for sections
   const [isYourCausesOpen, setIsYourCausesOpen] = useState(true);
   const [isSuggestedCausesOpen, setIsSuggestedCausesOpen] = useState(true);
+
+  // Placeholder visibility states
+  const [isNameFocused, setIsNameFocused] = useState(false);
+  const [isDescriptionFocused, setIsDescriptionFocused] = useState(false);
+  const [isSearchFocused, setIsSearchFocused] = useState(false);
 
   // Loading dots state
   const [dotCount, setDotCount] = useState(0);
@@ -2420,7 +2471,7 @@ export default function NewCreateCollectivePage() {
         {/* Header */}
         <div className="sticky top-0 z-10 w-full flex items-center gap-3 md:gap-4 p-3 md:p-4 border-b bg-white">
           <button
-            onClick={handleBack}
+            onClick={handleBackConfirmation}
             className="p-1.5 md:p-2 hover:bg-gray-100 rounded-full transition-colors"
             aria-label="Go back"
           >
@@ -2447,7 +2498,9 @@ export default function NewCreateCollectivePage() {
             <Input
               value={name}
               onChange={(e) => setName(e.target.value)}
-              placeholder='"Atlanta Climate Action"'
+              onFocus={() => setIsNameFocused(true)}
+              onBlur={() => setIsNameFocused(false)}
+              placeholder={isNameFocused ? "" : '"Atlanta Climate Action"'}
               className={`w-full bg-gray-50 rounded-2xl text-sm md:text-base ${name.length > 0 ? '' : 'italic'}`}
             />
           </div>
@@ -2469,7 +2522,9 @@ export default function NewCreateCollectivePage() {
             <Textarea
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              placeholder={`"We're classmates giving back to Atlanta."\n"Our office team supporting local families."\n"A community of friends passionate about clean water."`}
+              onFocus={() => setIsDescriptionFocused(true)}
+              onBlur={() => setIsDescriptionFocused(false)}
+              placeholder={isDescriptionFocused ? "" : `"We're classmates giving back to Atlanta."\n"Our office team supporting local families."\n"A community of friends passionate about clean water."`}
               className={`w-full min-h-[100px] bg-gray-50 rounded-2xl text-xs xs:text-sm md:text-base ${description.length > 0 ? '' : 'italic'}`}
             />
           </div>
@@ -2682,9 +2737,11 @@ export default function NewCreateCollectivePage() {
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 md:w-5 md:h-5 text-gray-400" />
                 <Input
                   type="text"
-                  placeholder="Search causes or nonprofits"
+                  placeholder={isSearchFocused ? "" : "Search causes or nonprofits"}
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
+                  onFocus={() => setIsSearchFocused(true)}
+                  onBlur={() => setIsSearchFocused(false)}
                   onKeyPress={handleSearchKeyPress}
                   className="pl-9 md:pl-10 bg-gray-100 rounded-lg text-sm md:text-base py-5 sm:py-6"
                 />
@@ -2963,6 +3020,19 @@ export default function NewCreateCollectivePage() {
         message={toastMessage}
         show={showToast}
         onHide={() => setShowToast(false)}
+      />
+      {/* Discard Confirmation Sheet */}
+      <DiscardSheet
+        isOpen={showDiscardSheet}
+        onClose={() => setShowDiscardSheet(false)}
+        onDiscard={() => {
+          setIsConfirmedDiscard(true);
+          setShowDiscardSheet(false);
+          // Small timeout to let state update
+          setTimeout(() => {
+            handleBack();
+          }, 0);
+        }}
       />
     </>
   );

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import ProfileActivityCard from "@/components/profile/ProfileActivityCard";
 import { Loader2, Image as ImageIcon, Link as LinkIcon, X } from "lucide-react";
@@ -8,24 +8,17 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { getPostById, getPostComments, createPostComment, getCommentReplies } from "@/services/api/social";
 import type { PostDetail } from "@/lib/types";
 import { formatDistanceToNow } from 'date-fns';
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
 import { Comment, CommentData } from "@/components/post/Comment";
 import { useAuthStore } from "@/stores/store";
+import { DiscardSheet } from "@/components/ui/DiscardSheet";
 
 export default function PostById() {
   const { id } = useParams();
   const [inputValue, setInputValue] = useState("");
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState("Comment added successfully!");
-  const [showDialog, setShowDialog] = useState(false);
+  const [showDiscardSheet, setShowDiscardSheet] = useState(false);
+  const [isConfirmedLeave, setIsConfirmedLeave] = useState(false);
   const [expandedComments, setExpandedComments] = useState<Set<number>>(new Set());
   const [loadingReplies, setLoadingReplies] = useState<Set<number>>(new Set());
   const [replyingTo, setReplyingTo] = useState<CommentData | null>(null);
@@ -283,32 +276,44 @@ export default function PostById() {
     }
   };
 
-  // useEffect(() => {
-  //   const handleBackButton = () => {
-  //     window.history.pushState(null, "", window.location.href);
-  //     window.onpopstate = function () {
-  //       if (inputValue.trim()) {
-  //         window.history.pushState(null, "", window.location.href);
-  //         setShowDialog(true);
-  //       } else {
-  //         navigate("/");
-  //       }
-  //     };
-  //   };
+  useEffect(() => {
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      if (inputValue.trim() && !isConfirmedLeave) {
+        e.preventDefault();
+        e.returnValue = '';
+      }
+    };
 
-  //   handleBackButton();
-  //   return () => {
-  //     window.onpopstate = null;
-  //   };
-  // }, [inputValue, navigate]);
+    const handlePopState = () => {
+      if (inputValue.trim() && !isConfirmedLeave) {
+        window.history.pushState(null, '', window.location.pathname);
+        setShowDiscardSheet(true);
+      }
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    window.addEventListener('popstate', handlePopState);
+
+    if (inputValue.trim() && !isConfirmedLeave) {
+      window.history.pushState(null, '', window.location.pathname);
+    }
+
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+      window.removeEventListener('popstate', handlePopState);
+    };
+  }, [inputValue, isConfirmedLeave]);
 
   const handleConfirmLeave = () => {
-    setShowDialog(false);
-    navigate("/");
+    setIsConfirmedLeave(true);
+    setShowDiscardSheet(false);
+    setTimeout(() => {
+      navigate("/");
+    }, 0);
   };
 
   const handleCancelLeave = () => {
-    setShowDialog(false);
+    setShowDiscardSheet(false);
   };
 
 
@@ -520,25 +525,11 @@ export default function PostById() {
         message={toastMessage}
       />
 
-      <Dialog open={showDialog} onOpenChange={setShowDialog}>
-        <DialogContent className="sm:max-w-[425px] max-w-[90vw]">
-          <DialogHeader>
-            <DialogTitle className="text-base md:text-lg">Leave this page?</DialogTitle>
-            <DialogDescription className="text-sm md:text-base">
-              You have typed a comment. If you leave now, your comment will be
-              lost.
-            </DialogDescription>
-          </DialogHeader>
-          <DialogFooter className="flex-col sm:flex-row gap-2">
-            <Button variant="outline" onClick={handleCancelLeave} className="w-full sm:w-auto text-sm md:text-base">
-              Stay on this page
-            </Button>
-            <Button variant="destructive" onClick={handleConfirmLeave} className="w-full sm:w-auto text-sm md:text-base">
-              Leave anyway
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      <DiscardSheet
+        isOpen={showDiscardSheet}
+        onClose={handleCancelLeave}
+        onDiscard={handleConfirmLeave}
+      />
     </div>
   );
 }
