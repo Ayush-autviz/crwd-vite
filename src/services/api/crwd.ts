@@ -27,6 +27,12 @@ export const getCauseById = async (id: string) => {
     return response.data;
 };
 
+export const getCauseByName = async (name: string) => {
+    const encodedName = encodeURIComponent(name);
+    const response = await axiosClient.get(`/crwd/causes/by-name/${encodedName}/`);
+    return response.data;
+};
+
 export const updateCause = async (id: string, data: any) => {
     const response = await axiosClient.put(`/crwd/causes/${id}/`, data);
     return response.data;
@@ -65,6 +71,12 @@ export const createCollective = async (data: any) => {
 
 export const getCollectiveById = async (id: string) => {
     const response = await axiosClient.get(`/crwd/collectives/${id}/`);
+    return response.data;
+};
+
+export const getCollectiveByName = async (name: string) => {
+    const encodedName = encodeURIComponent(name);
+    const response = await axiosClient.get(`/crwd/collectives/by-name/${encodedName}/`);
     return response.data;
 };
 

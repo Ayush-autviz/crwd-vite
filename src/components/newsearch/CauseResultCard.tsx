@@ -12,6 +12,7 @@ interface CauseResultCardProps {
     mission?: string;
     description?: string;
     image?: string | null;
+    sort_name?: string;
   };
 }
 
@@ -51,7 +52,7 @@ export default function CauseResultCard({ cause }: CauseResultCardProps) {
 
   return (
     <Card
-      onClick={() => navigate(`/cause/${cause.id}`)}
+      onClick={() => navigate(`/cause/${cause.sort_name}`)}
       className="cursor-pointer hover:shadow-md py-0 transition-shadow border border-gray-200"
     >
       <CardContent className="p-3 md:p-6">

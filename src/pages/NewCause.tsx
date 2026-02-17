@@ -12,7 +12,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import { getCauseById } from '@/services/api/crwd';
+import { getCauseByName } from '@/services/api/crwd';
 import { addCausesToBox } from '@/services/api/donation';
 import { getDonationBox } from '@/services/api/donation';
 import CauseHeader from '@/components/newcause/CauseHeader';
@@ -38,10 +38,10 @@ export default function NewCausePage() {
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState('');
 
-  // Fetch cause data
+  // Fetch cause data by name/slug
   const { data: causeData, isLoading: isLoadingCause, error: causeError } = useQuery({
     queryKey: ['cause', causeId],
-    queryFn: () => getCauseById(causeId || ''),
+    queryFn: () => getCauseByName(causeId || ''),
     enabled: !!causeId,
     refetchOnMount: true,
     staleTime: 0,
@@ -57,21 +57,21 @@ export default function NewCausePage() {
     enabled: !!currentUser?.id,
   });
 
-  // Check if current cause is already in the donation box
+  // Check if current cause is already in the donation box (use causeData.id when loaded)
+  const effectiveCauseId = causeData?.id?.toString() ?? causeId;
   const isCauseInBox = donationBoxData?.box_causes?.some((boxCause: any) => {
     const cause = boxCause.cause || boxCause;
-    return cause?.id?.toString() === causeId || boxCause.cause_id?.toString() === causeId;
+    return cause?.id?.toString() === effectiveCauseId || boxCause.cause_id?.toString() === effectiveCauseId;
   }) || false;
 
   // Add cause to donation box mutation
   const addToDonationBoxMutation = useMutation({
     mutationFn: async () => {
-      if (!causeId) throw new Error('Cause ID is missing');
+      const id = causeData?.id ?? (causeId ? parseInt(causeId, 10) : NaN);
+      if (!id || isNaN(id)) throw new Error('Cause ID is missing');
       // Use correct API format: { causes: [{ cause_id: 0 }] } without attributed_collective
       return addCausesToBox({
-        causes: [{
-          cause_id: parseInt(causeId)
-        }]
+        causes: [{ cause_id: id }],
       });
     },
     onSuccess: async () => {
@@ -145,11 +145,11 @@ export default function NewCausePage() {
         navigate('/donation?tab=setup', {
           state: {
             preselectedItem: {
-              id: causeId || '',
+              id: (causeData?.id ?? causeId)?.toString() || '',
               type: 'cause',
               data: causeData,
             },
-            preselectedCauses: causeId ? [parseInt(causeId)] : [],
+            preselectedCauses: causeData?.id ? [causeData.id] : (causeId && /^\d+$/.test(causeId) ? [parseInt(causeId)] : []),
             preselectedCausesData: causeData ? [{
               id: causeData.id,
               name: causeData.name,
@@ -213,11 +213,11 @@ export default function NewCausePage() {
       navigate('/donation?tab=setup', {
         state: {
           preselectedItem: {
-            id: causeId || '',
+            id: (causeData?.id ?? causeId)?.toString() || '',
             type: 'cause',
             data: causeData,
           },
-          preselectedCauses: causeId ? [parseInt(causeId)] : [],
+          preselectedCauses: causeData?.id ? [causeData.id] : (causeId && /^\d+$/.test(causeId) ? [parseInt(causeId)] : []),
           preselectedCausesData: causeData ? [{
             id: causeData.id,
             name: causeData.name,
@@ -239,7 +239,7 @@ export default function NewCausePage() {
     navigate('/one-time-donation', {
       state: {
         preselectedItem: {
-          id: causeId,
+          id: (causeData?.id ?? causeId)?.toString() ?? '',
           type: 'cause',
           data: causeData,
         },
@@ -255,7 +255,7 @@ export default function NewCausePage() {
     <div className="min-h-screen bg-white">
       <CauseHeader
         title={causeData.name || 'Nonprofit'}
-        causeId={causeId}
+        causeId={(causeData?.id ?? causeId)?.toString() ?? ''}
         isFavorite={causeData.is_favorite}
         onShare={handleShare}
         onOneTimeDonation={handleDonate}

@@ -11,6 +11,7 @@ interface Nonprofit {
   image?: string;
   description?: string;
   mission?: string;
+  sort_name?: string;
 }
 
 interface NewFeaturedNonprofitsProps {
@@ -67,7 +68,7 @@ export default function NewFeaturedNonprofits({
 
             return (
               <Link
-                to={`/cause/${nonprofit.id}`}
+                to={`/cause/${nonprofit.sort_name}`}
                 key={nonprofit.id}
                 className="block"
               >

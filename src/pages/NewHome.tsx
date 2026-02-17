@@ -124,6 +124,7 @@ export default function NewHome() {
 
             return {
                 id: collective.id,
+                sort_name: collective.sort_name || "",
                 name: collective.name || "Unknown Collective",
                 iconColor: collective.color, // Use color from API if available
                 icon: collective.logo || undefined, // Use logo from API if available
@@ -162,6 +163,7 @@ export default function NewHome() {
             image: nonprofit.image || "",
             description: nonprofit.mission || nonprofit.description || "",
             mission: nonprofit.mission || "",
+            sort_name: nonprofit.sort_name || "",
         })) || [];
 
     // Check if donation box exists
@@ -222,6 +224,7 @@ export default function NewHome() {
                     image: collective.logo || collective.created_by?.profile_picture || "",
                     logo: collective.logo || undefined,
                     color: collective.color || undefined,
+                    sort_name: collective.sort_name || "",
                 };
             });
         }
@@ -254,6 +257,7 @@ export default function NewHome() {
                                 ? {
                                     name: item.collective.name,
                                     id: item.collective.id,
+                                    sort_name: item.collective.sort_name,
                                 }
                                 : undefined,
                             content: item.content || '',
@@ -394,6 +398,7 @@ export default function NewHome() {
                                 ? {
                                     name: collectiveName,
                                     id: collectiveId,
+                                    // sort_name: collectiveSortName,
                                 }
                                 : undefined,
                             content: actionText,

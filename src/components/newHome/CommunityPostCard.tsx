@@ -39,6 +39,7 @@ interface CommunityPostCardProps {
     collective?: {
       name: string;
       id?: string | number;
+      sort_name?: string;
     };
     content: string;
     imageUrl?: string;
@@ -88,6 +89,7 @@ export default function CommunityPostCard({ post, onCommentPress, showSimplified
   const menuRef = useRef<HTMLDivElement>(null);
   const postMenuRef = useRef<HTMLDivElement>(null);
   const currentUser = useAuthStore((state) => state.user);
+  console.log("post.collective", post.collective);
 
   const likeMutation = useMutation({
     mutationFn: () => likePost(post.id.toString()),
@@ -387,7 +389,7 @@ export default function CommunityPostCard({ post, onCommentPress, showSimplified
                 </div>
                 {!showSimplifiedHeader && post.collective && (
                   <Link
-                    to={post.collective.id ? `/groupcrwd/${post.collective.id}` : '#'}
+                    to={post.collective.id ? `/groupcrwd/${post.collective.sort_name}` : '#'}
                     onClick={(e) => e.stopPropagation()}
                     className="text-[11px] xs:text-sm md:text-base text-gray-500 hover:text-gray-700 flex items-center gap-1"
                   >

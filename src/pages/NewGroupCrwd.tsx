@@ -11,7 +11,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import { getCollectiveById, getCollectiveCauses, getCollectiveStats, joinCollective, leaveCollective } from '@/services/api/crwd';
+import { getCollectiveByName, getCollectiveCauses, getCollectiveStats, joinCollective, leaveCollective } from '@/services/api/crwd';
 import { getPosts } from '@/services/api/social';
 import { getDonationBox, addCausesToBox } from '@/services/api/donation';
 import CollectiveHeader from '@/components/newgroupcrwd/CollectiveHeader';
@@ -55,20 +55,22 @@ export default function NewGroupCrwdPage() {
   const [toastMessage, setToastMessage] = useState('');
   const [showFounderPerk, setShowFounderPerk] = useState(true);
 
-  // Fetch collective data
+  // Fetch collective data by name/slug
   const { data: crwdData, isLoading: isLoadingCrwd, error: crwdError } = useQuery({
     queryKey: ['crwd', crwdId],
-    queryFn: () => getCollectiveById(crwdId || ''),
+    queryFn: () => getCollectiveByName(crwdId || ''),
     enabled: !!crwdId,
     refetchOnMount: true,
     staleTime: 0,
   });
 
-  // Fetch collective causes (nonprofits)
+  const collectiveId = crwdData?.id?.toString() ?? crwdId;
+
+  // Fetch collective causes (nonprofits) - use resolved collective id
   const { data: causesData, isLoading: isLoadingCauses } = useQuery({
-    queryKey: ['collective-causes', crwdId],
-    queryFn: () => getCollectiveCauses(crwdId || ''),
-    enabled: !!crwdId,
+    queryKey: ['collective-causes', collectiveId],
+    queryFn: () => getCollectiveCauses(collectiveId || ''),
+    enabled: !!collectiveId,
   });
 
   // Fetch donation box to check for existing causes and capacity
@@ -78,20 +80,20 @@ export default function NewGroupCrwdPage() {
     enabled: !!currentUser?.id && !!token?.access_token, // Fetch when user is logged in
   });
 
-  // Fetch collective stats
+  // Fetch collective stats - use resolved collective id
   const { data: statsData } = useQuery({
-    queryKey: ['collective-stats', crwdId],
-    queryFn: () => getCollectiveStats(crwdId || ''),
-    enabled: !!crwdId && !!token?.access_token,
+    queryKey: ['collective-stats', collectiveId],
+    queryFn: () => getCollectiveStats(collectiveId || ''),
+    enabled: !!collectiveId && !!token?.access_token,
   });
 
-  // Fetch posts
+  // Fetch posts - use resolved collective id
   const {
     data: postsData,
     isLoading: isLoadingPosts,
   } = useInfiniteQuery({
-    queryKey: ['posts', crwdId],
-    queryFn: ({ pageParam = 1 }) => getPosts('', crwdId, pageParam),
+    queryKey: ['posts', collectiveId],
+    queryFn: ({ pageParam = 1 }) => getPosts('', collectiveId, pageParam),
     getNextPageParam: (lastPage) => {
       if (lastPage.next) {
         const url = new URL(lastPage.next);
@@ -101,7 +103,7 @@ export default function NewGroupCrwdPage() {
       return undefined;
     },
     initialPageParam: 1,
-    enabled: !!crwdId,
+    enabled: !!collectiveId,
   });
 
   // Flatten posts
@@ -132,6 +134,7 @@ export default function NewGroupCrwdPage() {
 
       // Invalidate queries to refresh data
       queryClient.invalidateQueries({ queryKey: ['crwd', crwdId] });
+      queryClient.invalidateQueries({ queryKey: ['crwd', collectiveId] });
       queryClient.invalidateQueries({ queryKey: ['joined-collectives'] });
       queryClient.invalidateQueries({ queryKey: ['join-collective'] }); // For Circles page
       queryClient.invalidateQueries({ queryKey: ['joined-collectives', currentUser?.id] });
@@ -163,6 +166,7 @@ export default function NewGroupCrwdPage() {
 
       // Invalidate queries to refresh data
       queryClient.invalidateQueries({ queryKey: ['crwd', crwdId] });
+      queryClient.invalidateQueries({ queryKey: ['crwd', collectiveId] });
       queryClient.invalidateQueries({ queryKey: ['joined-collectives'] });
       queryClient.invalidateQueries({ queryKey: ['join-collective'] }); // For Circles page
       queryClient.invalidateQueries({ queryKey: ['joined-collectives', currentUser?.id] });
@@ -221,8 +225,8 @@ export default function NewGroupCrwdPage() {
       // If already joined, show unjoin confirmation
       setShowConfirmDialog(true);
     } else {
-      // Join immediately - drawer will show after successful join
-      joinCollectiveMutation.mutate(crwdId || '');
+      // Join immediately - drawer will show after successful join (use collectiveId for API)
+      joinCollectiveMutation.mutate(collectiveId || '');
     }
   };
 
@@ -301,8 +305,8 @@ export default function NewGroupCrwdPage() {
   };
 
   const handleConfirmUnjoin = () => {
-    if (!leaveCollectiveMutation.isPending && crwdId) {
-      leaveCollectiveMutation.mutate(crwdId);
+    if (!leaveCollectiveMutation.isPending && collectiveId) {
+      leaveCollectiveMutation.mutate(collectiveId);
     }
   };
 
@@ -338,7 +342,7 @@ export default function NewGroupCrwdPage() {
         activeTab: 'onetime',
         preselectedCauses: causeIds,
         preselectedCausesData: collectiveCauses,
-        preselectedCollectiveId: parseInt(crwdId || '0'),
+        preselectedCollectiveId: parseInt(collectiveId || '0'),
         collectiveName: crwdData.name,
       },
     });
@@ -349,8 +353,8 @@ export default function NewGroupCrwdPage() {
   };
 
   const handleManageCollective = () => {
-    if (crwdId) {
-      navigate(`/edit-collective/${crwdId}`);
+    if (collectiveId) {
+      navigate(`/edit-collective/${collectiveId}`);
     }
   };
 
@@ -358,7 +362,7 @@ export default function NewGroupCrwdPage() {
     <div className="min-h-screen bg-white">
       <CollectiveHeader
         title={crwdData.name || 'Collective'}
-        collectiveId={crwdId}
+        collectiveId={collectiveId}
         isFavorite={crwdData.is_favorite}
         isAdmin={isAdmin}
         isJoined={crwdData.is_joined}
@@ -515,7 +519,7 @@ export default function NewGroupCrwdPage() {
             </div>
 
             {/* Content Container */}
-            <div onClick={() => isAdmin ? navigate(`/create-fundraiser/${crwdId}`) : navigate(`/create-crwd`)} className="flex-1 pr-3 cursor-pointer">
+            <div onClick={() => isAdmin ? navigate(`/create-fundraiser/${collectiveId}`) : navigate(`/create-crwd`)} className="flex-1 pr-3 cursor-pointer">
               <h3 className="m-0 mb-1 text-sm xs:text-base md:text-lg lg:text-base xl:text-lg font-bold text-gray-900">
                 Founder Perk: Create Fundraisers
               </h3>
@@ -551,14 +555,14 @@ export default function NewGroupCrwdPage() {
         <CommunityActivity
           posts={posts?.results || []}
           isLoading={isLoadingPosts}
-          collectiveId={crwdId}
+          collectiveId={collectiveId}
           isJoined={crwdData.is_joined}
           collectiveData={crwdData}
           onJoin={handleJoinCollective}
         />
 
         {/* Discover More Collectives */}
-        <DiscoverMoreCollectives collectiveId={crwdId} />
+        <DiscoverMoreCollectives collectiveId={collectiveId} />
 
         {/* Legal Disclaimer */}
         <div className="px-3 md:px-4 py-4 md:py-6 border-t border-gray-200 mt-6 md:mt-8">
@@ -581,7 +585,7 @@ export default function NewGroupCrwdPage() {
         <CollectiveStatisticsModal
           isOpen={showStatisticsModal}
           onClose={() => setShowStatisticsModal(false)}
-          collectiveId={crwdId}
+          collectiveId={collectiveId}
           collectiveName={crwdData.name}
           initialTab={statisticsTab}
           previouslySupported={inactiveCauses}
@@ -597,7 +601,7 @@ export default function NewGroupCrwdPage() {
         onClose={handleCloseJoinModal}
         collectiveName={crwdData.name || 'Collective'}
         nonprofits={nonprofits}
-        collectiveId={crwdId || ''}
+        collectiveId={collectiveId || ''}
         onJoin={handleJoinConfirm}
         isJoining={false}
         donationBox={donationBoxData}

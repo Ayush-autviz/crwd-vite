@@ -9,11 +9,13 @@ interface Nonprofit {
   name: string;
   mission?: string;
   image?: string;
+  sort_name?: string;
   cause?: {
     id: number;
     name: string;
     mission?: string;
     image?: string;
+    sort_name?: string
   };
 }
 
@@ -84,11 +86,12 @@ export default function SupportedNonprofits({
             const description = cause.mission || nonprofit.mission || '';
             const causeId = cause.id || nonprofit.id;
             const iconColor = getIconColor(causeId);
+            const sort_name = cause?.sort_name || nonprofit?.sort_name || '';
 
             return (
               <div
                 key={nonprofit.id}
-                onClick={() => causeId && navigate(`/cause/${causeId}`)}
+                onClick={() => causeId && navigate(`/cause/${sort_name}`)}
                 className="block cursor-pointer"
               >
                 <div className="flex items-start gap-2.5 md:gap-3 p-3 md:p-4 rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors bg-white min-w-[240px] md:min-w-[280px] max-w-[280px] md:max-w-[320px] h-full">

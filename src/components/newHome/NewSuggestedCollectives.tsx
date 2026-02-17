@@ -7,6 +7,7 @@ import { truncateAtFirstPeriod } from "@/lib/utils";
 interface Collective {
   id: string | number;
   name: string;
+  sort_name?: string;
   icon?: string; // Optional logo URL, if not provided will use first letter
   iconColor?: string; // Optional color for the icon background (from API color field)
   founder: {
@@ -72,7 +73,7 @@ export default function NewSuggestedCollectives({
 
             return (
               <Link
-                to={`/groupcrwd/${collective.id}`}
+                to={`/groupcrwd/${collective.sort_name}`}
                 key={collective.id}
                 className="block"
               >

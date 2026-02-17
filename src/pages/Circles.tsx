@@ -171,7 +171,7 @@ const Circles = () => {
 
                         return (
                           <Link
-                            to={`/groupcrwd/${circle.id}`}
+                            to={`/groupcrwd/${circle.sort_name}`}
                             key={collective.id}
                             className="flex flex-col p-3 md:p-4 rounded-lg border border-gray-200 bg-white hover:bg-gray-50 transition-colors"
                           >
@@ -278,7 +278,7 @@ const Circles = () => {
 
                 return (
                   <Link
-                    to={`/groupcrwd/${circle.id}`}
+                    to={`/groupcrwd/${circle.sort_name}`}
                     key={circle.id}
                     className="flex flex-col p-3 md:p-4 rounded-lg border border-gray-200 bg-white hover:bg-gray-50 transition-colors"
                   >
