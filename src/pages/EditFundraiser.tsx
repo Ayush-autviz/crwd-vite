@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { ArrowLeft, Info, Palette, Image as ImageIcon, Camera, X, Search, Trash2, Plus, Calendar } from 'lucide-react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
@@ -19,6 +19,8 @@ import { Loader2 } from 'lucide-react';
 import type { Dayjs } from 'dayjs';
 import dayjs from 'dayjs';
 import { categories } from '@/constants/categories';
+import { DiscardSheet } from '@/components/ui/DiscardSheet';
+import { useUnsavedChanges } from '@/hooks/use-unsaved-changes';
 
 // Avatar colors for consistent fallback styling
 const avatarColors = [
@@ -74,6 +76,8 @@ export default function EditFundraiser() {
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState('');
   const [showExtendModal, setShowExtendModal] = useState(false);
+  const [showDiscardSheet, setShowDiscardSheet] = useState(false);
+  const [isConfirmedDiscard, setIsConfirmedDiscard] = useState(false);
 
   // Store initial values to track changes
   const [initialTitle, setInitialTitle] = useState('');
@@ -176,6 +180,34 @@ export default function EditFundraiser() {
     : fundraiserData?.end_date
       ? Math.max(0, dayjs(fundraiserData.end_date).diff(dayjs(), 'day'))
       : 0;
+
+  const hasUnsavedChanges = useMemo(() => {
+    // Check what has changed
+    const titleChanged = campaignTitle.trim() !== initialTitle;
+    const storyChanged = campaignStory.trim() !== initialStory;
+    const goalAmountChanged = goalAmount !== initialGoalAmount && !hasDonations;
+    const endDateChanged = endDate ? !endDate.isSame(initialEndDate) : false;
+    // Simple array comparison (assuming logic handles sorting elsewhere or order matters, but here we sort)
+    const sortedSelected = [...selectedNonprofits].sort();
+    const sortedInitial = [...initialNonprofits].sort();
+    const nonprofitsChanged = JSON.stringify(sortedSelected) !== JSON.stringify(sortedInitial);
+
+    const hasNewImage = coverType === 'image' && uploadedCoverImage !== null;
+    const colorChanged = coverType === 'color' && coverColor !== initialCoverColor;
+    const coverTypeChanged = coverType !== initialCoverType;
+
+    return titleChanged || storyChanged || goalAmountChanged || endDateChanged || nonprofitsChanged || hasNewImage || colorChanged || coverTypeChanged;
+  }, [campaignTitle, campaignStory, goalAmount, endDate, selectedNonprofits, coverType, coverColor, uploadedCoverImage, initialTitle, initialStory, initialGoalAmount, initialEndDate, initialNonprofits, initialCoverColor, initialCoverType, hasDonations]);
+
+  useUnsavedChanges(hasUnsavedChanges, setShowDiscardSheet, isConfirmedDiscard);
+
+  const handleDiscard = () => {
+    setIsConfirmedDiscard(true);
+    setShowDiscardSheet(false);
+    setTimeout(() => {
+      navigate(-1);
+    }, 0);
+  };
 
   // Update fundraiser mutation
   const updateFundraiserMutation = useMutation({
@@ -914,6 +946,11 @@ export default function EditFundraiser() {
           </div>
         </DialogContent>
       </Dialog>
+      <DiscardSheet
+        isOpen={showDiscardSheet}
+        onClose={() => setShowDiscardSheet(false)}
+        onDiscard={handleDiscard}
+      />
     </div>
   );
 }

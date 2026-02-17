@@ -11,6 +11,7 @@ import { formatDistanceToNow } from 'date-fns';
 import { Comment, CommentData } from "@/components/post/Comment";
 import { useAuthStore } from "@/stores/store";
 import { DiscardSheet } from "@/components/ui/DiscardSheet";
+import { useUnsavedChanges } from "@/hooks/use-unsaved-changes";
 
 export default function PostById() {
   const { id } = useParams();
@@ -276,33 +277,8 @@ export default function PostById() {
     }
   };
 
-  useEffect(() => {
-    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
-      if (inputValue.trim() && !isConfirmedLeave) {
-        e.preventDefault();
-        e.returnValue = '';
-      }
-    };
-
-    const handlePopState = () => {
-      if (inputValue.trim() && !isConfirmedLeave) {
-        window.history.pushState(null, '', window.location.pathname);
-        setShowDiscardSheet(true);
-      }
-    };
-
-    window.addEventListener('beforeunload', handleBeforeUnload);
-    window.addEventListener('popstate', handlePopState);
-
-    if (inputValue.trim() && !isConfirmedLeave) {
-      window.history.pushState(null, '', window.location.pathname);
-    }
-
-    return () => {
-      window.removeEventListener('beforeunload', handleBeforeUnload);
-      window.removeEventListener('popstate', handlePopState);
-    };
-  }, [inputValue, isConfirmedLeave]);
+  // Navigation guard
+  useUnsavedChanges(!!inputValue.trim(), setShowDiscardSheet, isConfirmedLeave);
 
   const handleConfirmLeave = () => {
     setIsConfirmedLeave(true);

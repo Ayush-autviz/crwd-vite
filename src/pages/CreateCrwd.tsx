@@ -22,6 +22,9 @@ import { useAuthStore } from "@/stores/store";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 
 
+import { DiscardSheet } from "@/components/ui/DiscardSheet";
+import { useUnsavedChanges } from "@/hooks/use-unsaved-changes";
+
 export default function CreateCRWDPage() {
   // Load saved form data from localStorage on mount
   const [step, setStep] = useState(1);
@@ -52,6 +55,37 @@ export default function CreateCRWDPage() {
   const { user: currentUser } = useAuthStore();
   const queryClient = useQueryClient();
 
+  // Navigation guard state
+  const [showDiscardSheet, setShowDiscardSheet] = useState(false);
+  const [isConfirmedLeave, setIsConfirmedLeave] = useState(false);
+
+  // Check for unsaved changes
+  const hasUnsavedChanges = React.useMemo(() => {
+    return (
+      (name.trim() !== "" || desc.trim() !== "" || selectedCauses.length > 0) &&
+      step === 1 &&
+      !createdCollective
+    );
+  }, [name, desc, selectedCauses, step, createdCollective]);
+
+  // Use navigation guard hook
+  useUnsavedChanges(hasUnsavedChanges, setShowDiscardSheet, isConfirmedLeave);
+
+  const handleDiscard = () => {
+    setIsConfirmedLeave(true);
+    setShowDiscardSheet(false);
+    // Allow navigation to proceed
+    // Since we pushed state, one back pops the dummy state
+    // Another back leaves the page
+    // navigate(-2); // This depends on history. simpler is to just navigate where they wanted, but we don't know where.
+    navigate(-1); // This usually goes back to previous page
+  };
+
+  const handleCancelLeave = () => {
+    setShowDiscardSheet(false);
+    // No need to push state here, we are already at the dummy state (if triggered by back)
+  };
+
   // Save form data to localStorage whenever it changes
   React.useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -75,14 +109,14 @@ export default function CreateCRWDPage() {
 
 
 
-    // Get causes with search and category filtering
-    const { data: causesData, isLoading: isCausesLoading } = useQuery({
-      queryKey: ['causes', searchTrigger],
-      queryFn: () => {
-        return getCausesBySearch(searchQuery, '', 1);
-      },
-      enabled: true,
-    });
+  // Get causes with search and category filtering
+  const { data: causesData, isLoading: isCausesLoading } = useQuery({
+    queryKey: ['causes', searchTrigger],
+    queryFn: () => {
+      return getCausesBySearch(searchQuery, '', 1);
+    },
+    enabled: true,
+  });
 
   // Create collective mutation
   const createCollectiveMutation = useMutation({
@@ -125,16 +159,16 @@ export default function CreateCRWDPage() {
 
   const handleCauseToggle = (cause: any, isFavorite: boolean = false) => {
     const causeId = isFavorite ? cause.cause?.id : cause.id;
-    const causeData = isFavorite 
-      ? { ...cause.cause, id: cause.cause.id, image: cause.image, logo: cause.image } 
+    const causeData = isFavorite
+      ? { ...cause.cause, id: cause.cause.id, image: cause.image, logo: cause.image }
       : { ...cause, id: cause.id, image: cause.image || cause.logo, logo: cause.logo || cause.image };
-    
+
     setSelectedCauses((prev) => {
       const isSelected = prev.includes(causeId);
       const newSelection = isSelected
         ? prev.filter((id) => id !== causeId)
         : [...prev, causeId];
-      
+
       // Update cause data array
       setSelectedCausesData((prevData) => {
         if (isSelected) {
@@ -148,7 +182,7 @@ export default function CreateCRWDPage() {
           return prevData;
         }
       });
-      
+
       return newSelection;
     });
   };
@@ -206,20 +240,20 @@ export default function CreateCRWDPage() {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
             </svg>
           </div>
-          
+
           {/* Title */}
           <h2 className="text-2xl font-bold text-gray-900 mb-3">
             Sign in to create a CRWD
           </h2>
-          
+
           {/* Description */}
           <p className="text-gray-600 mb-8 leading-relaxed">
             Sign in to create a CRWD, manage your causes, and connect with your community.
           </p>
-          
+
           {/* CTA Button */}
-          <Button 
-            size="lg" 
+          <Button
+            size="lg"
             className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-lg font-medium transition-colors duration-200 shadow-lg hover:shadow-xl"
           >
             <Link to="/onboarding" className="flex items-center gap-2">
@@ -229,10 +263,10 @@ export default function CreateCRWDPage() {
               Sign In to Continue
             </Link>
           </Button>
-          
+
           {/* Additional Info */}
           <p className="text-sm text-gray-500 mt-6">
-            Don't have an account? 
+            Don't have an account?
             <Link to="/claim-profile" className="text-blue-600 hover:text-blue-700 font-medium ml-1">
               Create one here
             </Link>
@@ -363,78 +397,76 @@ export default function CreateCRWDPage() {
 
                 <div className="bg-gray-50 border border-gray-200 rounded-lg p-3">
                   <div className="font-semibold text-xs text-blue-600 mb-3 flex items-center justify-between">
-                   <p className="text-sm text-gray-500">Select from your causes (if any)</p>
-                   <Link to="/non-profit-interests" className="text-xs text-blue-600 flex items-center hover:underline">
-                   <Plus className="w-4 h-4" />
-                   </Link>
+                    <p className="text-sm text-gray-500">Select from your causes (if any)</p>
+                    <Link to="/non-profit-interests" className="text-xs text-blue-600 flex items-center hover:underline">
+                      <Plus className="w-4 h-4" />
+                    </Link>
                   </div>
 
-                {
-                isLoadingFavoriteCauses ? (
-                  <div className="flex items-center justify-center">
-                    <Loader2 className="w-4 h-4 animate-spin" />
-                  </div>
-                ) : favoriteCauses.results.length === 0 ? (
-                 <div className="text-center mb-5">
-                  <p className="text-sm text-gray-500">No causes found</p>
-                 </div>
-                ) : (    
-                favoriteCauses?.results?.map((cause: any) => (
-                    <div
-                      key={cause.cause.id}
-                      className={`flex items-center gap-3 py-3 px-2 mb-1 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer ${
-                        selectedCauses.includes(cause.cause.id)
-                          ? "border-2 border-blue-500 bg-blue-50"
-                          : "border-2 border-transparent"
-                      }`}
-                      onClick={() => handleCauseToggle(cause, true)}
-                    >
-                      <Avatar className="w-10 h-10">
-                        <AvatarImage src={cause.image} alt={cause.cause.name} />
-                        <AvatarFallback className="bg-blue-100 text-blue-600 text-sm font-semibold">
-                          {cause.cause.name?.charAt(0)?.toUpperCase() || 'C'}
-                        </AvatarFallback>
-                      </Avatar>
-                      <div className="flex-1">
-                        <div className="font-semibold text-sm text-gray-900">
-                          {cause.cause.name}
-                        </div>
-                        <div className="text-xs text-gray-500">
-                          {cause.cause.mission}
-                        </div>
+                  {
+                    isLoadingFavoriteCauses ? (
+                      <div className="flex items-center justify-center">
+                        <Loader2 className="w-4 h-4 animate-spin" />
                       </div>
-                      <div className="relative">
-                        <input
-                          type="checkbox"
-                          checked={selectedCauses.includes(cause.cause.id)}
-                          onChange={() => handleCauseToggle(cause, true)}
-                          className="sr-only"
-                          id={`cause-${cause.cause.id}`}
-                        />
+                    ) : favoriteCauses.results.length === 0 ? (
+                      <div className="text-center mb-5">
+                        <p className="text-sm text-gray-500">No causes found</p>
+                      </div>
+                    ) : (
+                      favoriteCauses?.results?.map((cause: any) => (
                         <div
-                          className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all ${
-                            selectedCauses.includes(cause.cause.id)
-                              ? "bg-blue-600 border-blue-600"
-                              : "border-gray-300 bg-white"
-                          }`}
+                          key={cause.cause.id}
+                          className={`flex items-center gap-3 py-3 px-2 mb-1 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer ${selectedCauses.includes(cause.cause.id)
+                            ? "border-2 border-blue-500 bg-blue-50"
+                            : "border-2 border-transparent"
+                            }`}
+                          onClick={() => handleCauseToggle(cause, true)}
                         >
-                          {selectedCauses.includes(cause.cause.id) && (
-                            <svg
-                              className="w-4 h-4 text-white"
-                              fill="currentColor"
-                              viewBox="0 0 20 20"
+                          <Avatar className="w-10 h-10">
+                            <AvatarImage src={cause.image} alt={cause.cause.name} />
+                            <AvatarFallback className="bg-blue-100 text-blue-600 text-sm font-semibold">
+                              {cause.cause.name?.charAt(0)?.toUpperCase() || 'C'}
+                            </AvatarFallback>
+                          </Avatar>
+                          <div className="flex-1">
+                            <div className="font-semibold text-sm text-gray-900">
+                              {cause.cause.name}
+                            </div>
+                            <div className="text-xs text-gray-500">
+                              {cause.cause.mission}
+                            </div>
+                          </div>
+                          <div className="relative">
+                            <input
+                              type="checkbox"
+                              checked={selectedCauses.includes(cause.cause.id)}
+                              onChange={() => handleCauseToggle(cause, true)}
+                              className="sr-only"
+                              id={`cause-${cause.cause.id}`}
+                            />
+                            <div
+                              className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all ${selectedCauses.includes(cause.cause.id)
+                                ? "bg-blue-600 border-blue-600"
+                                : "border-gray-300 bg-white"
+                                }`}
                             >
-                              <path
-                                fillRule="evenodd"
-                                d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                                clipRule="evenodd"
-                              />
-                            </svg>
-                          )}
+                              {selectedCauses.includes(cause.cause.id) && (
+                                <svg
+                                  className="w-4 h-4 text-white"
+                                  fill="currentColor"
+                                  viewBox="0 0 20 20"
+                                >
+                                  <path
+                                    fillRule="evenodd"
+                                    d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                                    clipRule="evenodd"
+                                  />
+                                </svg>
+                              )}
+                            </div>
+                          </div>
                         </div>
-                      </div>
-                    </div>
-                  )))}
+                      )))}
                   <div className="font-semibold text-xs text-blue-600 mt-4 mb-3">
                     Suggested Causes
                   </div>
@@ -452,7 +484,7 @@ export default function CreateCRWDPage() {
                   </div>
                   {isCausesLoading ? (
                     <div className="flex items-center justify-center mt-4">
-                      <Loader2 className="w-4 h-4 animate-spin" /> 
+                      <Loader2 className="w-4 h-4 animate-spin" />
                     </div>
                   ) : causesData?.results?.length === 0 ? (
                     <div className="flex justify-center mt-4">
@@ -469,73 +501,71 @@ export default function CreateCRWDPage() {
                         })
                         .filter((id: any) => id !== null)
                     );
-                    
+
                     // Filter out favorite causes from search results
                     const filteredCauses = (causesData?.results || []).filter((cause: any) => {
                       const causeId = cause?.id ? String(cause.id) : null;
                       // Exclude if this cause is in favorites
                       return causeId && !favoriteCauseIds.has(causeId);
                     });
-                    
+
                     return filteredCauses.length === 0 ? (
                       <div className="flex justify-center mt-4">
                         <p className="text-sm text-gray-500">No causes found</p>
                       </div>
                     ) : (
                       filteredCauses.slice(0, 10).map((cause: any) => (
-                    <div
-                      key={cause.name}
-                      className={`flex items-center gap-3 py-3 px-2 my-1 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer ${
-                        selectedCauses.includes(cause.id)
-                          ? "border-2 border-blue-500 bg-blue-50"
-                          : "border-2 border-transparent"
-                      }`}
-                      onClick={() => handleCauseToggle(cause, false)}
-                    >
-                      <Avatar className="w-10 h-10">
-                        <AvatarImage src={cause.image || cause.logo} alt={cause.name} />
-                        <AvatarFallback className="bg-blue-100 text-blue-600 text-sm font-semibold">
-                          {cause.name?.charAt(0)?.toUpperCase() || 'C'}
-                        </AvatarFallback>
-                      </Avatar>
-                      <div className="flex-1">
-                        <div className="font-semibold text-sm text-gray-900">
-                          {cause.name}
-                        </div>
-                        <div className="text-xs text-gray-500">
-                          {cause.mission || cause.description || `Building ${cause.name.toLowerCase()} communities`}
-                        </div>
-                      </div>
-                      <div className="relative">
-                        <input
-                          type="checkbox"
-                          checked={selectedCauses.includes(cause.id)}
-                          onChange={() => handleCauseToggle(cause, false)}
-                          className="sr-only"
-                          id={`cause-${cause.id}`}
-                        />
                         <div
-                          className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all ${
-                            selectedCauses.includes(cause.id)
-                              ? "bg-blue-600 border-blue-600"
-                              : "border-gray-300 bg-white"
-                          }`}
+                          key={cause.name}
+                          className={`flex items-center gap-3 py-3 px-2 my-1 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer ${selectedCauses.includes(cause.id)
+                            ? "border-2 border-blue-500 bg-blue-50"
+                            : "border-2 border-transparent"
+                            }`}
+                          onClick={() => handleCauseToggle(cause, false)}
                         >
-                          {selectedCauses.includes(cause.id) && (
-                            <svg
-                              className="w-4 h-4 text-white"
-                              fill="currentColor"
-                              viewBox="0 0 20 20"
+                          <Avatar className="w-10 h-10">
+                            <AvatarImage src={cause.image || cause.logo} alt={cause.name} />
+                            <AvatarFallback className="bg-blue-100 text-blue-600 text-sm font-semibold">
+                              {cause.name?.charAt(0)?.toUpperCase() || 'C'}
+                            </AvatarFallback>
+                          </Avatar>
+                          <div className="flex-1">
+                            <div className="font-semibold text-sm text-gray-900">
+                              {cause.name}
+                            </div>
+                            <div className="text-xs text-gray-500">
+                              {cause.mission || cause.description || `Building ${cause.name.toLowerCase()} communities`}
+                            </div>
+                          </div>
+                          <div className="relative">
+                            <input
+                              type="checkbox"
+                              checked={selectedCauses.includes(cause.id)}
+                              onChange={() => handleCauseToggle(cause, false)}
+                              className="sr-only"
+                              id={`cause-${cause.id}`}
+                            />
+                            <div
+                              className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all ${selectedCauses.includes(cause.id)
+                                ? "bg-blue-600 border-blue-600"
+                                : "border-gray-300 bg-white"
+                                }`}
                             >
-                              <path
-                                fillRule="evenodd"
-                                d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                              />
-                            </svg>
-                          )}
+                              {selectedCauses.includes(cause.id) && (
+                                <svg
+                                  className="w-4 h-4 text-white"
+                                  fill="currentColor"
+                                  viewBox="0 0 20 20"
+                                >
+                                  <path
+                                    fillRule="evenodd"
+                                    d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                                  />
+                                </svg>
+                              )}
+                            </div>
+                          </div>
                         </div>
-                      </div>
-                    </div>
                       ))
                     );
                   })()}
@@ -625,6 +655,11 @@ export default function CreateCRWDPage() {
           />
         </div>
       </div>
+      <DiscardSheet
+        isOpen={showDiscardSheet}
+        onClose={handleCancelLeave}
+        onDiscard={handleDiscard}
+      />
     </>
   );
 }

@@ -18,6 +18,7 @@ import { useAuthStore } from '@/stores/store'
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
 import { getUserProfileById } from "@/services/api/social"
 import { updateProfile, changePassword, updateEmail, updateEmailVerification } from "@/services/api/auth"
+import { useUnsavedChanges } from "@/hooks/use-unsaved-changes"
 import { useNavigate } from "react-router-dom"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -215,35 +216,11 @@ export default function NewSettings() {
 
   const handleEdit = () => {
     setIsEditMode(true)
-    // Push a dummy state to history to capture the browser back button
-    window.history.pushState({ editMode: true }, '')
+    // Hook handles history push
   }
 
   // Handle browser back and page refresh
-  useEffect(() => {
-    const handleBeforeUnload = () => {
-      if (isEditMode) {
-        // Standard way to trigger browser's own confirmation
-        return '';
-      }
-    };
-
-    const handlePopState = () => {
-      if (isEditMode) {
-        // Stop the back navigation by pushing the state back
-        window.history.pushState({ editMode: true }, '');
-        setShowExitConfirmation(true);
-      }
-    };
-
-    window.addEventListener('beforeunload', handleBeforeUnload);
-    window.addEventListener('popstate', handlePopState);
-
-    return () => {
-      window.removeEventListener('beforeunload', handleBeforeUnload);
-      window.removeEventListener('popstate', handlePopState);
-    };
-  }, [isEditMode]);
+  useUnsavedChanges(isEditMode, setShowExitConfirmation, false);
 
   const handleBackClick = () => {
     if (isEditMode) {

@@ -6,11 +6,14 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
-import { getCollectiveById, patchCollective, getCollectiveCauses, createCollectiveCause, deleteCollectiveCause } from '@/services/api/crwd';
+import { getCollectiveById, patchCollective, getCollectiveCauses } from '@/services/api/crwd';
 import { getCausesBySearch } from '@/services/api/crwd';
 import { useAuthStore } from '@/stores/store';
 import { categories } from '@/constants/categories';
 import { toast } from 'sonner';
+import { useUnsavedChanges } from '@/hooks/use-unsaved-changes';
+import { DiscardSheet } from '@/components/ui/DiscardSheet';
+import { useMemo } from 'react';
 
 // Helper function to get category by ID
 const getCategoryById = (categoryId: string | undefined) => {
@@ -51,6 +54,10 @@ export default function EditCollectivePage() {
   const [uploadedLogoPreview, setUploadedLogoPreview] = useState<string | null>(null); // State for uploaded image preview
   const [showLogoCustomization, setShowLogoCustomization] = useState(false);
 
+  // Navigation guard state
+  const [showDiscardSheet, setShowDiscardSheet] = useState(false);
+  const [isConfirmedDiscard, setIsConfirmedDiscard] = useState(false);
+
   // Store default values from API
   const [defaultColor, setDefaultColor] = useState<string>('');
   const [defaultLogo, setDefaultLogo] = useState<string | null>(null);
@@ -62,7 +69,7 @@ export default function EditCollectivePage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCauses, setSelectedCauses] = useState<any[]>([]);
   const [searchTrigger, setSearchTrigger] = useState(0);
-  const [initialCauseCount, setInitialCauseCount] = useState(0); // Track initial cause count
+
 
   const colorSwatches = [
     '#0000FF', // Blue
@@ -148,9 +155,6 @@ export default function EditCollectivePage() {
         return item.cause || item;
       });
       setSelectedCauses(mappedCauses);
-      // Store initial cause count
-      setInitialCauseCount(mappedCauses.length);
-      // Store initial cause IDs
       const initialIds = mappedCauses.map((cause: any) => cause.id);
       setInitialCauseIds(initialIds);
     }
@@ -171,6 +175,46 @@ export default function EditCollectivePage() {
       console.error('Update collective error:', error);
     },
   });
+
+  const hasUnsavedChanges = useMemo(() => {
+    // Prepare cause_ids array
+    const causeIds = selectedCauses.map(cause => cause.id);
+
+    // Check what has changed
+    const nameChanged = name.trim() !== initialName;
+    const descriptionChanged = description.trim() !== initialDescription;
+    const causeIdsChanged = JSON.stringify(causeIds.sort()) !== JSON.stringify(initialCauseIds.sort());
+
+    // Logo check
+    const hasNewLogo = logoType === 'upload' && uploadedLogo !== null;
+    const colorChanged = logoType === 'letter' && letterLogoColor !== defaultColor;
+
+    // If switched to default mode and default was different
+    // This is tricky without knowing exactly if logoType changed from initial. 
+    // Simplified: if logoType is 'upload' but no new file, and we had a string URL logo initially, we assume no change unless we track "logo removed".
+    // But here we only have "upload" or "letter".
+
+    // Let's rely on what handleSave checks, essentially.
+
+    // Check if we switched logo type effectively
+    // Initial state:
+    // If crwdData.logo existed -> initial is 'upload'
+    // Else -> initial is 'letter' (or 'color' as per code)
+    const initialLogoType = defaultLogo ? 'upload' : 'letter';
+    const logoTypeChanged = logoType !== initialLogoType;
+
+    return nameChanged || descriptionChanged || causeIdsChanged || hasNewLogo || colorChanged || logoTypeChanged;
+  }, [name, description, selectedCauses, logoType, uploadedLogo, letterLogoColor, initialName, initialDescription, initialCauseIds, defaultColor, defaultLogo]);
+
+  useUnsavedChanges(hasUnsavedChanges, setShowDiscardSheet, isConfirmedDiscard);
+
+  const handleDiscard = () => {
+    setIsConfirmedDiscard(true);
+    setShowDiscardSheet(false);
+    setTimeout(() => {
+      navigate(-1);
+    }, 0);
+  };
 
   const handleSave = () => {
     if (!name.trim()) {
@@ -308,25 +352,7 @@ export default function EditCollectivePage() {
     if (!crwdId) return;
 
     // Get current collective causes
-    const currentCauses = collectiveCausesData?.results || collectiveCausesData || [];
-    const currentCauseIds = new Set(currentCauses.map((item: any) => (item.cause || item).id));
-    const selectedCauseIds = new Set(selectedCauses.map(c => c.id));
-
-    // Add new causes
-    // for (const cause of selectedCauses) {
-    //   if (!currentCauseIds.has(cause.id)) {
-    //     await addCauseMutation.mutateAsync(cause.id);
-    //   }
-    // }
-
-    // Remove causes that are no longer selected
-    // for (const item of currentCauses) {
-    //   const cause = item.cause || item;
-    //   if (!selectedCauseIds.has(cause.id)) {
-    //     const causePk = item.id || cause.id;
-    //     await removeCauseMutation.mutateAsync(causePk.toString());
-    //   }
-    // }
+    // const currentCauses = collectiveCausesData?.results || collectiveCausesData || [];
 
     queryClient.invalidateQueries({ queryKey: ['collective-causes', crwdId] });
     queryClient.invalidateQueries({ queryKey: ['crwd', crwdId] });
@@ -580,10 +606,11 @@ export default function EditCollectivePage() {
                   {selectedCauses.map((cause) => {
                     const causeData = cause.cause || cause;
                     // Get category ID from cause (it's a single letter like "X", "G")
-                    const categoryId = causeData.category || causeData.cause_category;
-                    const category = getCategoryById(categoryId);
-                    const categoryName = category?.name || 'Uncategorized';
-                    const categoryColor = category?.text || '#10B981';
+                    // const categoryId = causeData.category || causeData.cause_category;
+
+                    // const category = getCategoryById(categoryId);
+                    // const categoryName = category?.name || 'Uncategorized';
+                    // const categoryColor = category?.text || '#10B981';
 
                     const avatarBgColor = getConsistentColor(causeData.id, avatarColors);
                     const initials = getInitials(causeData.name || 'N');
@@ -674,10 +701,10 @@ export default function EditCollectivePage() {
 
                     return availableCauses.map((cause: any) => {
                       // Get category ID from cause (it's a single letter like "X", "G")
-                      const categoryId = cause.category || cause.cause_category;
-                      const category = getCategoryById(categoryId);
-                      const categoryName = category?.name || 'Uncategorized';
-                      const categoryColor = category?.text || '#10B981';
+                      // const categoryId = cause.category || cause.cause_category;
+                      // const category = getCategoryById(categoryId);
+                      // const categoryName = category?.name || 'Uncategorized';
+                      // const categoryColor = category?.text || '#10B981';
                       const isSelected = isCauseSelected(cause.id);
                       const avatarBgColor = getConsistentColor(cause.id, avatarColors);
                       const initials = getInitials(cause.name || 'N');
@@ -734,7 +761,13 @@ export default function EditCollectivePage() {
       {/* Footer Buttons */}
       <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 p-3 md:p-4 flex items-center justify-between gap-3 md:gap-4 z-10">
         <Button
-          onClick={() => navigate(-1)}
+          onClick={() => {
+            if (hasUnsavedChanges) {
+              setShowDiscardSheet(true);
+            } else {
+              navigate(-1);
+            }
+          }}
           variant="outline"
           className="border-gray-300 rounded-full font-semibold text-xs md:text-sm text-foreground w-[48%] py-2 md:py-3"
         >
@@ -761,6 +794,11 @@ export default function EditCollectivePage() {
           )}
         </Button>
       </div>
+      <DiscardSheet
+        isOpen={showDiscardSheet}
+        onClose={() => setShowDiscardSheet(false)}
+        onDiscard={handleDiscard}
+      />
     </div>
   );
 }

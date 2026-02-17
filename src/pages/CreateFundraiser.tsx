@@ -19,6 +19,7 @@ import Confetti from 'react-confetti';
 import { CrwdAnimation } from '@/assets/newLogo';
 import Cropper, { Area } from 'react-easy-crop';
 import { DiscardSheet } from '@/components/ui/DiscardSheet';
+import { useUnsavedChanges } from '@/hooks/use-unsaved-changes';
 
 // Avatar colors for consistent fallback styling
 const avatarColors = [
@@ -108,48 +109,26 @@ export default function CreateFundraiser() {
 
   const hasUnsavedChanges = useMemo(() => {
     return (
-      campaignTitle.trim() !== '' ||
-      fundraisingGoal.trim() !== '' ||
-      endDate !== null ||
-      campaignStory.trim() !== '' ||
-      uploadedCoverImage !== null ||
-      selectedNonprofits.length > 0
+      (campaignTitle.trim() !== '' ||
+        fundraisingGoal.trim() !== '' ||
+        endDate !== null ||
+        campaignStory.trim() !== '' ||
+        uploadedCoverImage !== null ||
+        selectedNonprofits.length > 0) &&
+      !showSuccessModal &&
+      !createdFundraiser
     );
-  }, [campaignTitle, fundraisingGoal, endDate, campaignStory, uploadedCoverImage, selectedNonprofits]);
+  }, [campaignTitle, fundraisingGoal, endDate, campaignStory, uploadedCoverImage, selectedNonprofits, showSuccessModal, createdFundraiser]);
 
-  useEffect(() => {
-    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
-      if (hasUnsavedChanges && !showSuccessModal && !isConfirmedDiscard) {
-        e.preventDefault();
-        e.returnValue = '';
-      }
-    };
-
-    const handlePopState = () => {
-      if (hasUnsavedChanges && !showSuccessModal && !isConfirmedDiscard) {
-        window.history.pushState(null, '', window.location.pathname);
-        setShowDiscardSheet(true);
-      }
-    };
-
-    window.addEventListener('beforeunload', handleBeforeUnload);
-    window.addEventListener('popstate', handlePopState);
-
-    if (hasUnsavedChanges && !showSuccessModal && !isConfirmedDiscard) {
-      window.history.pushState(null, '', window.location.pathname);
-    }
-
-    return () => {
-      window.removeEventListener('beforeunload', handleBeforeUnload);
-      window.removeEventListener('popstate', handlePopState);
-    };
-  }, [hasUnsavedChanges, showSuccessModal, isConfirmedDiscard]);
+  // Use navigation guard hook
+  useUnsavedChanges(hasUnsavedChanges, setShowDiscardSheet, isConfirmedDiscard);
 
   const handleBackConfirmation = () => {
     if (hasUnsavedChanges && !showSuccessModal && !isConfirmedDiscard) {
       setShowDiscardSheet(true);
     } else {
-      handleBack();
+      // Use navigate(-1) directly as handleBack might not be defined or I should define it
+      navigate(-1);
     }
   };
 
