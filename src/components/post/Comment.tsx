@@ -451,7 +451,7 @@ export const Comment: React.FC<CommentProps> = ({
       navigate(`/profile/`);
     }
     else {
-      navigate(`/user-profile/${userId}`);
+      navigate(`/u/${username}`);
     }
   };
 

@@ -253,7 +253,7 @@ function App() {
                     {/* <Route path="/menu" element={<Menu />} /> */}
                     {/* <Route path="/mobile-menu" element={<MobileMenu />} /> */}
                     <Route path="/donation-test" element={<DonationTest />} />
-                    <Route path="/user-profile/:userId" element={<UserProfile />} />
+                    <Route path="/u/:userId" element={<UserProfile />} />
                     <Route path="/circles" element={<Circles />} />
                     <Route path="/articles" element={<Articles />} />
                     <Route path="/article/:slug" element={<ArticleDetail />} />

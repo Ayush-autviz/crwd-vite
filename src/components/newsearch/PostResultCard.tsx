@@ -125,7 +125,7 @@ export default function PostResultCard({ post }: PostResultCardProps) {
             <div className="flex items-center gap-1.5 md:gap-2 flex-wrap">
               {user && (
                 <Link
-                  to={`/user-profile/${user.id}`}
+                  to={`/u/${user.username}`}
                   onClick={(e) => e.stopPropagation()}
                   className="font-bold text-xs xs:text-sm md:text-base text-gray-900 hover:text-blue-600 transition-colors cursor-pointer"
                 >

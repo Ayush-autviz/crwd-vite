@@ -123,7 +123,7 @@ const RecentDonationsList: React.FC<RecentDonationsListProps> = ({
             >
               <div className="flex items-start gap-4">
                 {/* Donor Avatar */}
-                <Link to={`/user-profile/${donation.donor.id}`} className="flex-shrink-0">
+                <Link to={`/u/${donation.donor.username}`} className="flex-shrink-0">
                   <Avatar className="w-14 h-14 ring-2 ring-gray-100 hover:ring-green-200 transition-all">
                     <AvatarFallback className="bg-gradient-to-br from-green-100 to-green-200 text-green-700 font-semibold text-lg">
                       {donorName.charAt(0).toUpperCase()}
@@ -136,7 +136,7 @@ const RecentDonationsList: React.FC<RecentDonationsListProps> = ({
                   {/* Top Row: Donor Name and Amount */}
                   <div className="flex items-start justify-between gap-4 ">
                     <div className="flex-1 min-w-0">
-                      <Link to={`/user-profile/${donation.donor.id}`} className="block group">
+                      <Link to={`/u/${donation.donor.username}`} className="block group">
                         <div className="flex items-center gap-2 mb-1">
                           <span className="font-semibold text-base text-gray-900 group-hover:text-green-600 transition-colors">
                             {donorName}

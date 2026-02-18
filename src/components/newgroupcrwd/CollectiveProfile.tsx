@@ -35,8 +35,8 @@ export default function CollectiveProfile({
     : 'Unknown';
 
   const handleFounderClick = () => {
-    if (founder?.id) {
-      navigate(`/user-profile/${founder.id}`);
+    if (founder?.username) {
+      navigate(`/u/${founder.username}`);
     }
   };
 

@@ -864,7 +864,7 @@ export default function ProfilePage() {
                           className="flex items-center justify-between py-2.5 md:py-3 border-b border-gray-100"
                         >
                           <Link
-                            to={`/user-profile/${userData.id}`}
+                            to={`/u/${userData.username}`}
                             onClick={() => setShowStatsSheet(false)}
                             className="flex items-center gap-2.5 md:gap-3 flex-1 min-w-0 cursor-pointer hover:opacity-80 transition-opacity"
                           >
@@ -928,7 +928,7 @@ export default function ProfilePage() {
                           className="flex items-center justify-between py-2.5 md:py-3 border-b border-gray-100"
                         >
                           <Link
-                            to={`/user-profile/${userData.id}`}
+                            to={`/u/${userData.username}`}
                             onClick={() => setShowStatsSheet(false)}
                             className="flex items-center gap-2.5 md:gap-3 flex-1 min-w-0 cursor-pointer hover:opacity-80 transition-opacity"
                           >
@@ -1092,7 +1092,7 @@ export default function ProfilePage() {
       <SharePost
         isOpen={showShareModal}
         onClose={() => setShowShareModal(false)}
-        url={`${window.location.origin}/user-profile/${currentUser?.id}`}
+        url={`${window.location.origin}/u/${currentUser?.username}`}
         title={`Check out ${fullName}'s profile on CRWD`}
         description={`See the causes and collectives supported by ${fullName} on CRWD.`}
       />

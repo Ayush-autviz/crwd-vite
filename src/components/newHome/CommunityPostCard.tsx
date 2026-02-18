@@ -357,7 +357,7 @@ export default function CommunityPostCard({ post, onCommentPress, showSimplified
 
         <div className="flex items-center gap-2 md:gap-3">
           {/* Avatar */}
-          <Link to={`/user-profile/${post.user.id}`}>
+          <Link to={`/u/${post.user.username}`}>
             <Avatar className="h-8 w-8 xs:w-9 xs:h-9 md:h-10 md:w-10 flex-shrink-0">
               <AvatarImage src={post.user.avatar} alt={displayName} />
               <AvatarFallback
@@ -375,7 +375,7 @@ export default function CommunityPostCard({ post, onCommentPress, showSimplified
               <div className="flex flex-col">
                 <div className="flex items-center gap-1 md:gap-2 flex-wrap">
                   <Link
-                    to={`/user-profile/${post.user.id}`}
+                    to={`/u/${post.user.username}`}
                     onClick={(e) => e.stopPropagation()}
                     className="text-xs xs:text-base md:text-lg font-bold text-gray-900 hover:underline cursor-pointer"
                   >

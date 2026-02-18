@@ -127,11 +127,11 @@ const CommunityUpdates: React.FC<CommunityUpdatesProps> = ({
           if (isCurrentUser) {
             return '/profile';
           }
-          if (userId) {
-            return `/user-profile/${userId}`;
-          }
+          // if (userId) {
+          //   return `/user-profile/${userId}`;
+          // }
           if (username) {
-            return `/user-profile/${username}`;
+            return `/u/${username}`;
           }
           return undefined;
         };

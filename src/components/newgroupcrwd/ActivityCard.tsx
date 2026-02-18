@@ -125,7 +125,7 @@ export default function ActivityCard({ activity }: ActivityCardProps) {
   const activityDescription = activity.body || activity.title || '';
 
   // Get profile link
-  const profileLink = userId ? `/user-profile/${userId}` : username ? `/user-profile/${username}` : '#';
+  const profileLink = username ? `/u/${username}` : '#';
 
   return (
     <Card className="bg-white py-0 rounded-xl border border-gray-200 mb-2 sm:mb-3 md:mb-4 overflow-hidden shadow-none">

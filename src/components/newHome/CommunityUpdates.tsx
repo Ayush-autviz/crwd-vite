@@ -238,7 +238,7 @@ export function NotificationSummary({ update }: { update: CommunityUpdate }) {
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-1 md:gap-2 lg:gap-3 flex-wrap">
                 <Link
-                  to={`/user-profile/${update.user.id}`}
+                  to={`/u/${update.user.username}`}
                   className="font-bold text-xs xs:text-base text-gray-900 hover:underline block"
                 >
                   {userName}
@@ -271,7 +271,7 @@ export function NotificationSummary({ update }: { update: CommunityUpdate }) {
           <div className="flex flex-col gap-1">
             {/* Action Text */}
             <p className="text-xs xs:text-base font-semibold text-gray-800 flex-1">
-              <Link to={`/user-profile/${update.user.id}`} className="hover:underline">
+              <Link to={`/u/${update.user.username}`} className="hover:underline">
                 {userName}
               </Link> <span className="font-medium">joined</span> {
                 collectiveId ? (
@@ -318,7 +318,7 @@ export function NotificationSummary({ update }: { update: CommunityUpdate }) {
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-1 md:gap-2 lg:gap-3 flex-wrap">
               <Link
-                to={`/user-profile/${update.user.id}`}
+                to={`/u/${update.user.username}`}
                 className="font-bold text-sm xs:text-base md:text-base text-gray-900 hover:underline block"
               >
                 {userName}
@@ -362,7 +362,7 @@ export function NotificationSummary({ update }: { update: CommunityUpdate }) {
                   <>
                     {update.user.id ? (
                       <Link
-                        to={`/user-profile/${update.user.id}`}
+                        to={`/u/${update.user.username}`}
                         className="font-bold hover:underline text-gray-900"
                       >
                         {match[1]}

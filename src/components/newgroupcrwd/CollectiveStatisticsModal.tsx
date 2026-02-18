@@ -327,8 +327,8 @@ export default function CollectiveStatisticsModal({
                         key={member.id || user.id}
                         className="flex items-center gap-2 md:gap-3 lg:gap-4 py-2 md:py-3 lg:py-4 border-b border-gray-100 last:border-b-0 cursor-pointer hover:bg-gray-50 transition-colors"
                         onClick={() => {
-                          if (user.id) {
-                            navigate(`/user-profile/${user.id}`);
+                          if (user.username) {
+                            navigate(`/u/${user.username}`);
                             handleClose();
                           }
                         }}
