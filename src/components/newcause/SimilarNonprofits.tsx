@@ -78,7 +78,7 @@ export default function SimilarNonprofits({ similarCauses, isLoading, categoryNa
             <Card
               key={cause.id}
               className="cursor-pointer hover:shadow-md transition-shadow h-[80px] md:h-[96px]"
-              onClick={() => navigate(`/cause/${cause.sort_name}`)}
+              onClick={() => navigate(`/c/${cause.sort_name}`)}
             >
               <CardContent className="px-3 md:px-4 py-2.5 md:py-3 h-full flex items-center">
                 <div className="flex gap-3 md:gap-4 w-full">

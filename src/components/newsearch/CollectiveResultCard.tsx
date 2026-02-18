@@ -101,7 +101,7 @@ export default function CollectiveResultCard({ collective }: CollectiveResultCar
 
   return (
     <Card
-      onClick={() => navigate(`/groupcrwd/${collective.sort_name}`)}
+      onClick={() => navigate(`/g/${collective.sort_name}`)}
       className="cursor-pointer py-0 hover:shadow-md transition-shadow border border-gray-200 bg-white rounded-lg"
     >
       <CardContent className="p-3 md:p-6">

@@ -806,7 +806,7 @@ export default function ProfilePage() {
                           key={collective.id || index}
                           className="flex items-center justify-between py-2.5 md:py-3 border-b border-gray-100"
                         >
-                          <div onClick={() => navigate(`/groupcrwd/${collective.id}`)} className="flex items-center gap-2.5 md:gap-3 flex-1 min-w-0">
+                          <div onClick={() => navigate(`/g/${collective.sort_name}`)} className="flex items-center gap-2.5 md:gap-3 flex-1 min-w-0">
                             <Avatar className="w-9 h-9 md:w-10 md:h-10 flex-shrink-0 rounded-lg">
                               <AvatarImage src={imageUrl} alt={collective.name} />
                               <AvatarFallback
@@ -1028,7 +1028,7 @@ export default function ProfilePage() {
                       key={collective.id || index}
                       onClick={() => {
                         setShowFounderSheet(false);
-                        navigate(`/groupcrwd/${collective.id}`);
+                        navigate(`/g/${collective.sort_name}`);
                       }}
                       className="bg-white border border-gray-200 rounded-lg p-3 md:p-4 cursor-pointer hover:shadow-md transition-shadow"
                     >

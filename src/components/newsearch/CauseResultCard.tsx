@@ -52,7 +52,7 @@ export default function CauseResultCard({ cause }: CauseResultCardProps) {
 
   return (
     <Card
-      onClick={() => navigate(`/cause/${cause.sort_name}`)}
+      onClick={() => navigate(`/c/${cause.sort_name}`)}
       className="cursor-pointer hover:shadow-md py-0 transition-shadow border border-gray-200"
     >
       <CardContent className="p-3 md:p-6">

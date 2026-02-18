@@ -18,7 +18,6 @@ import {
 import { Toast } from "../components/ui/toast";
 import { useQuery, useMutation, useQueryClient, useInfiniteQuery } from "@tanstack/react-query";
 import {
-  getUserProfileById,
   followUserById,
   unfollowUserById,
   getPosts,
@@ -26,6 +25,7 @@ import {
   getUserFollowers,
   getUserFollowing,
 } from "@/services/api/social";
+import { getUserByUsername } from "@/services/api/auth";
 import { getJoinCollective } from "@/services/api/crwd";
 import { useAuthStore } from "@/stores/store";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
@@ -66,17 +66,19 @@ export default function ProfilePage() {
   const { user: currentUser } = useAuthStore();
   const queryClient = useQueryClient();
   const navigate = useNavigate();
-  // Check if viewing own profile
-  const isOwnProfile = currentUser?.id == userId;
-
-  // Fetch user profile
-  const { data: userProfile, isLoading, error } = useQuery({
+  // Fetch user by username; use id from response for all API calls and components
+  const { data: userProfileRaw, isLoading, error } = useQuery({
     queryKey: ['userProfile', userId],
-    queryFn: () => getUserProfileById(userId || ''),
+    queryFn: () => getUserByUsername(userId || ''),
     enabled: !!userId,
   });
+  // Extract user - handle both { user: {...} } and flat { id, username, ... } response shapes
+  const userProfile = userProfileRaw?.user ?? userProfileRaw;
+  const resolvedId = userProfile?.id?.toString() || '';
+  const effectiveUserId = resolvedId;
+  const isOwnProfile = currentUser?.id?.toString() === resolvedId;
 
-  // Fetch user posts with pagination
+  // Fetch user posts with pagination (use resolved id for API)
   const {
     data: postsData,
     isLoading: postsLoading,
@@ -84,8 +86,8 @@ export default function ProfilePage() {
     hasNextPage,
     isFetchingNextPage,
   } = useInfiniteQuery({
-    queryKey: ['posts', userId],
-    queryFn: ({ pageParam = 1 }) => getPosts(userId || '', '', pageParam),
+    queryKey: ['posts', effectiveUserId],
+    queryFn: ({ pageParam = 1 }) => getPosts(effectiveUserId, '', pageParam),
     getNextPageParam: (lastPage) => {
       // Extract page number from next URL if available
       if (lastPage.next) {
@@ -96,7 +98,7 @@ export default function ProfilePage() {
       return undefined;
     },
     initialPageParam: 1,
-    enabled: !!userId,
+    enabled: !!effectiveUserId,
   });
 
   // Flatten pages into a single array
@@ -106,13 +108,11 @@ export default function ProfilePage() {
     count: postsData.pages[0]?.count || 0,
   } : undefined;
 
-  // Follow user mutation
+  // Follow user mutation (use resolved id for API)
   const followMutation = useMutation({
-    mutationFn: () => followUserById(userId || ''),
+    mutationFn: () => followUserById(effectiveUserId),
     onSuccess: () => {
       setIsFollowing(true);
-      // setToastMessage("Followed successfully!");
-      // setShowToast(true);
       queryClient.invalidateQueries({ queryKey: ['userProfile', userId] });
     },
     onError: (error) => {
@@ -122,13 +122,11 @@ export default function ProfilePage() {
     },
   });
 
-  // Unfollow user mutation
+  // Unfollow user mutation (use resolved id for API)
   const unfollowMutation = useMutation({
-    mutationFn: () => unfollowUserById(userId || ''),
+    mutationFn: () => unfollowUserById(effectiveUserId),
     onSuccess: () => {
       setIsFollowing(false);
-      // setToastMessage("Unfollowed successfully!");
-      // setShowToast(true);
       queryClient.invalidateQueries({ queryKey: ['userProfile', userId] });
     },
     onError: (error) => {
@@ -156,7 +154,7 @@ export default function ProfilePage() {
   };
 
   // Statistics bottom sheet queries
-  const targetUserId = userProfile?.id?.toString() || userId || '';
+  const targetUserId = effectiveUserId;
 
   const { data: statsCausesData, isLoading: statsCausesLoading } = useQuery({
     queryKey: ['supportedCauses', targetUserId],
@@ -438,7 +436,7 @@ export default function ProfilePage() {
 
 
               <ProfileStats
-                profileId={userProfile.id?.toString() || ''}
+                profileId={effectiveUserId}
                 causes={userProfile.supported_causes_count || 0}
                 crwds={userProfile.joined_collectives_count || 0}
                 followers={userProfile.followers_count || 0}
@@ -984,7 +982,7 @@ export default function ProfilePage() {
                       key={collective.id || index}
                       onClick={() => {
                         setShowFounderSheet(false);
-                        navigate(`/groupcrwd/${collective.id}`);
+                        navigate(`/g/${collective.sort_name}`);
                       }}
                       className="bg-white border border-gray-200 rounded-lg p-3 md:p-4 cursor-pointer hover:shadow-md transition-shadow"
                     >
@@ -1048,7 +1046,7 @@ export default function ProfilePage() {
       <SharePost
         isOpen={showShareModal}
         onClose={() => setShowShareModal(false)}
-        url={`${window.location.origin}/user-profile/${userId}`}
+        url={`${window.location.origin}/u/${userProfile?.username || userId}`}
         title={`Check out ${userProfile?.first_name} ${userProfile?.last_name}'s profile on CRWD`}
         description={`See the causes and collectives supported by ${userProfile?.first_name} ${userProfile?.last_name} on CRWD.`}
       />

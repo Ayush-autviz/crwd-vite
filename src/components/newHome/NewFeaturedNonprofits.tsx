@@ -68,7 +68,7 @@ export default function NewFeaturedNonprofits({
 
             return (
               <Link
-                to={`/cause/${nonprofit.sort_name}`}
+                to={`/c/${nonprofit.sort_name}`}
                 key={nonprofit.id}
                 className="block"
               >

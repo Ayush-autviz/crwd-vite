@@ -389,7 +389,7 @@ export default function CommunityPostCard({ post, onCommentPress, showSimplified
                 </div>
                 {!showSimplifiedHeader && post.collective && (
                   <Link
-                    to={post.collective.id ? `/groupcrwd/${post.collective.sort_name}` : '#'}
+                    to={post.collective.id ? `/g/${post.collective.sort_name}` : '#'}
                     onClick={(e) => e.stopPropagation()}
                     className="text-[11px] xs:text-sm md:text-base text-gray-500 hover:text-gray-700 flex items-center gap-1"
                   >

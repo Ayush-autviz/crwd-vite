@@ -71,6 +71,12 @@ export const getProfile = async () => {
     return response.data;
 };
 
+export const getUserByUsername = async (username: string) => {
+    const encodedUsername = encodeURIComponent(username);
+    const response = await axiosClient.get(`/auth/users/by-username/${encodedUsername}/`);
+    return response.data;
+};
+
 export const updateProfile = async (data: any) => {
     const response = await axiosClient.patch('/auth/me/update/', data);
     return response.data;

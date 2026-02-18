@@ -148,7 +148,7 @@ export default function NewSavedPage() {
                   return (
                     <Card
                       key={cause.id}
-                      onClick={() => navigate(`/cause/${cause.sort_name}`)}
+                      onClick={() => navigate(`/c/${cause.sort_name}`)}
                       className="py-0 cursor-pointer hover:shadow-md transition-shadow border border-gray-200"
                     >
                       <CardContent className="px-3 py-2 md:px-4 md:py-3">
@@ -214,7 +214,7 @@ export default function NewSavedPage() {
                         return (
                           <Card
                             key={cause.id}
-                            onClick={() => navigate(`/cause/${cause.sort_name}`)}
+                            onClick={() => navigate(`/c/${cause.sort_name}`)}
                             className="py-0 cursor-pointer hover:shadow-md transition-shadow border border-gray-200"
                           >
                             <CardContent className="px-3 py-2 md:px-4 md:py-3">
@@ -282,7 +282,7 @@ export default function NewSavedPage() {
                 return (
                   <Card
                     key={collective.id}
-                    onClick={() => navigate(`/groupcrwd/${collective.sort_name}`)}
+                    onClick={() => navigate(`/g/${collective.sort_name}`)}
                     className="py-3 cursor-pointer hover:shadow-md transition-shadow border border-gray-200"
                   >
                     <CardContent className="px-3 py-0 md:px-4 md:py-3">
@@ -396,7 +396,7 @@ export default function NewSavedPage() {
                       return (
                         <Card
                           key={collective.id}
-                          onClick={() => navigate(`/groupcrwd/${collective.sort_name}`)}
+                          onClick={() => navigate(`/g/${collective.sort_name}`)}
                           className="py-3 cursor-pointer hover:shadow-md transition-shadow border border-gray-200"
                         >
                           <CardContent className="px-3 py-0 md:px-4 md:py-3">

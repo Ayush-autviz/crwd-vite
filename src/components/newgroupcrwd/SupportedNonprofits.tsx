@@ -91,7 +91,7 @@ export default function SupportedNonprofits({
             return (
               <div
                 key={nonprofit.id}
-                onClick={() => causeId && navigate(`/cause/${sort_name}`)}
+                onClick={() => causeId && navigate(`/c/${sort_name}`)}
                 className="block cursor-pointer"
               >
                 <div className="flex items-start gap-2.5 md:gap-3 p-3 md:p-4 rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors bg-white min-w-[240px] md:min-w-[280px] max-w-[280px] md:max-w-[320px] h-full">

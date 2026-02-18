@@ -81,13 +81,13 @@ export default function DiscoverMoreCollectives({ collectiveId }: DiscoverMoreCo
 
           return (
             <Link
-              to={`/groupcrwd/${collective.id}`}
+              to={`/g/${collective.sort_name}`}
               key={collective.id || index}
               className="block"
             >
               <div className="flex flex-col  gap-1 md:gap-2 p-3 md:p-4 rounded-lg border border-gray-200 hover:bg-gray-50 cursor-pointer transition-colors">
                 {/* Icon */}
-                <div
+                {/* <div
                   className="w-12 h-12 xs:w-14 xs:h-14 md:w-16 md:h-16 rounded-full flex items-center justify-center flex-shrink-0"
                   style={{ backgroundColor: hasLogo ? undefined : iconColor }}
                 >
@@ -102,7 +102,17 @@ export default function DiscoverMoreCollectives({ collectiveId }: DiscoverMoreCo
                       {iconLetter}
                     </span>
                   )}
-                </div>
+                </div> */}
+                <Avatar className="w-12 h-12 md:w-14 md:h-14 flex-shrink-0 rounded-lg">
+                  <AvatarImage src={collective.logo} />
+                  <AvatarFallback
+                    style={{ backgroundColor: iconColor }}
+                    className="rounded-lg text-white font-semibold text-xl xs:text-2xl md:text-3xl"
+                  >
+                    {iconLetter}
+                  </AvatarFallback>
+                </Avatar>
+
 
                 {/* Content */}
                 <div className="flex-1 min-w-0">
@@ -131,7 +141,7 @@ export default function DiscoverMoreCollectives({ collectiveId }: DiscoverMoreCo
                           .map((n: string) => n.charAt(0))
                           .join('')
                           .toUpperCase()
-                          .slice(0, 2)}
+                          .slice(0, 1)}
                       </AvatarFallback>
                     </Avatar>
                     <p className="text-xs xs:text-sm md:text-base text-gray-600">

@@ -73,7 +73,7 @@ export default function NewSuggestedCollectives({
 
             return (
               <Link
-                to={`/groupcrwd/${collective.sort_name}`}
+                to={`/g/${collective.sort_name}`}
                 key={collective.id}
                 className="block"
               >

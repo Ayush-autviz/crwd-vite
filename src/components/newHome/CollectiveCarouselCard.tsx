@@ -76,7 +76,7 @@ export default function CollectiveCarouselCard({
     if (isFounder) {
       navigate(`/edit-collective/${currentCollective.id}`);
     } else {
-      navigate(`/groupcrwd/${currentCollective.sort_name}`);
+      navigate(`/g/${currentCollective.sort_name}`);
     }
   };
 
@@ -110,7 +110,7 @@ export default function CollectiveCarouselCard({
           <div className="flex flex-col items-start gap-2.5 md:gap-4">
             {/* Icon and Title/Badge Row */}
             <div
-              // onClick={() => navigate(`/groupcrwd/${currentCollective.sort_name}`)}
+              // onClick={() => navigate(`/g/${currentCollective.sort_name}`)}
               className="flex flex-row items-center gap-2.5 md:gap-4 w-full"
             >
               {/* Circular Icon */}
@@ -154,7 +154,7 @@ export default function CollectiveCarouselCard({
             {/* Content */}
             <div className="w-full text-left">
               <p className="text-xs xs:text-sm md:text-base font-medium text-gray-700 mb-2 md:mb-4 leading-relaxed text-left">
-                <span onClick={() => navigate(`/groupcrwd/${currentCollective.sort_name}`)} className="cursor-pointer text-gray-800 font-bold">{currentCollective.name} </span>
+                <span onClick={() => navigate(`/g/${currentCollective.sort_name}`)} className="cursor-pointer text-gray-800 font-bold">{currentCollective.name} </span>
                 has <span className="font-bold text-gray-800">{currentCollective.memberCount} {currentCollective.memberCount === 1 ? 'member' : 'members'}</span> donating{" "}
                 to <span className="font-bold text-gray-800">{currentCollective.causeCount} {currentCollective.causeCount === 1 ? 'cause' : 'causes'}</span>.
               </p>
@@ -183,7 +183,7 @@ export default function CollectiveCarouselCard({
 
       {/* Share Modal */}
       <SharePost
-        url={window.location.origin + `/groupcrwd/${currentCollective.id}`}
+        url={window.location.origin + `/g/${currentCollective.sort_name}`}
         title={`Join ${currentCollective.name}`}
         description={`${currentCollective.memberCount} ${currentCollective.memberCount === 1 ? 'member' : 'members'} ${currentCollective.memberCount === 1 ? 'is' : 'are'} currently donating $${currentCollective.yearlyAmount.toLocaleString()} per year to ${currentCollective.causeCount} ${currentCollective.causeCount === 1 ? 'cause' : 'causes'}.`}
         isOpen={showShareModal}

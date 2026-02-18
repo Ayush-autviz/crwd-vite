@@ -548,7 +548,7 @@ export default function NewCreateCollectivePage() {
           preselectedCauses: preselectedCauseIds,
           preselectedCausesData: preselectedCauses,
           preselectedCollectiveId: parseInt(collectiveId),
-          returnTo: `/groupcrwd/${createdCollective.id}`,
+          returnTo: `/g/${createdCollective.sort_name}`,
         },
       });
       return;
@@ -887,7 +887,7 @@ export default function NewCreateCollectivePage() {
                 )}
 
                 <Button
-                  onClick={() => navigate(`/groupcrwd/${createdCollective.sort_name}`)}
+                  onClick={() => navigate(`/g/${createdCollective.sort_name}`)}
                   variant="outline"
                   className="w-full border border-gray-300 text-gray-900 hover:bg-gray-50 font-semibold rounded-lg py-3 md:py-4 text-sm md:text-base flex items-center justify-center gap-2"
                 >
@@ -920,7 +920,7 @@ export default function NewCreateCollectivePage() {
         )}
 
         <SharePost
-          url={window.location.origin + `/groupcrwd/${createdCollective.id}`}
+          url={window.location.origin + `/g/${createdCollective.sort_name}`}
           title={`Join my new CRWD: ${name}`}
           description={description}
           isOpen={showShareModal}

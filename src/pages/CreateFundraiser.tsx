@@ -477,7 +477,7 @@ export default function CreateFundraiser() {
                 <Button
                   onClick={() => {
                     setShowSuccessModal(false);
-                    navigate(`/groupcrwd/${collectiveId}`);
+                    navigate(`/g/${collectiveData?.sort_name}`);
                   }}
                   variant="outline"
                   className="w-full border border-gray-300 text-gray-900 hover:bg-gray-50 font-semibold rounded-lg py-3 md:py-4 text-sm md:text-base"

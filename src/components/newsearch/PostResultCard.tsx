@@ -39,6 +39,7 @@ interface PostResultCardProps {
       id: number;
       name: string;
       description?: string;
+      sort_name?: string;
     };
     fundraiser?: {
       id: number;
@@ -135,16 +136,16 @@ export default function PostResultCard({ post }: PostResultCardProps) {
                 <>
                   <span className="text-gray-400">•</span>
                   <Link
-                    to={`/groupcrwd/${post.collective.id}`}
+                    to={`/g/${post.collective.sort_name}`}
                     onClick={(e) => e.stopPropagation()}
-                    className="text-xs xs:text-sm md:text-base text-[#1600ff] font-medium hover:underline transition-colors cursor-pointer"
+                    className="text-xs xs:text-sm md:text-base text-gray-500 font-medium hover:underline transition-colors cursor-pointer"
                   >
                     {post.collective.name}
                   </Link>
                 </>
               )}
             </div>
-            <p className="text-[10px] xs:text-xs md:text-sm text-gray-500">{timeAgo}</p>
+            {/* <p className="text-[10px] xs:text-xs md:text-sm text-gray-500">{timeAgo}</p> */}
           </div>
         </div>
 

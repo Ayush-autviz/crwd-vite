@@ -69,8 +69,8 @@ export default function NewGroupCrwdPage() {
   // Fetch collective causes (nonprofits) - use resolved collective id
   const { data: causesData, isLoading: isLoadingCauses } = useQuery({
     queryKey: ['collective-causes', collectiveId],
-    queryFn: () => getCollectiveCauses(collectiveId || ''),
-    enabled: !!collectiveId,
+    queryFn: () => getCollectiveCauses(crwdData?.id || ''),
+    enabled: !!crwdData?.id,
   });
 
   // Fetch donation box to check for existing causes and capacity
@@ -83,8 +83,8 @@ export default function NewGroupCrwdPage() {
   // Fetch collective stats - use resolved collective id
   const { data: statsData } = useQuery({
     queryKey: ['collective-stats', collectiveId],
-    queryFn: () => getCollectiveStats(collectiveId || ''),
-    enabled: !!collectiveId && !!token?.access_token,
+    queryFn: () => getCollectiveStats(crwdData?.id || ''),
+    enabled: !!crwdData?.id && !!token?.access_token,
   });
 
   // Fetch posts - use resolved collective id
@@ -93,7 +93,7 @@ export default function NewGroupCrwdPage() {
     isLoading: isLoadingPosts,
   } = useInfiniteQuery({
     queryKey: ['posts', collectiveId],
-    queryFn: ({ pageParam = 1 }) => getPosts('', collectiveId, pageParam),
+    queryFn: ({ pageParam = 1 }) => getPosts('', crwdData?.id || '', pageParam),
     getNextPageParam: (lastPage) => {
       if (lastPage.next) {
         const url = new URL(lastPage.next);
@@ -103,7 +103,7 @@ export default function NewGroupCrwdPage() {
       return undefined;
     },
     initialPageParam: 1,
-    enabled: !!collectiveId,
+    enabled: !!crwdData?.id,
   });
 
   // Flatten posts
@@ -212,7 +212,7 @@ export default function NewGroupCrwdPage() {
   const handleJoinCollective = () => {
     if (!currentUser || !token?.access_token) {
       // If not logged in, navigate to onboarding with redirectTo parameter
-      navigate(`/onboarding?redirectTo=/groupcrwd/${crwdId}`);
+      navigate(`/onboarding?redirectTo=/g/${crwdData?.sort_name}`);
       return;
     }
 
@@ -267,7 +267,7 @@ export default function NewGroupCrwdPage() {
           preselectedCausesData: preselectedCauses,
           preselectedCollectiveId: parseInt(collectiveId),
           collectiveName: crwdData.name, // Pass collective name for header display
-          returnTo: `/groupcrwd/${crwdId}`, // Return to collective after setup
+          returnTo: `/g/${crwdData?.sort_name}`, // Return to collective after setup
         },
       });
       return;
@@ -313,7 +313,7 @@ export default function NewGroupCrwdPage() {
   const handleOneTimeDonation = () => {
     if (!currentUser || !token?.access_token) {
       // If not logged in, navigate to onboarding with redirectTo parameter
-      navigate(`/onboarding?redirectTo=/groupcrwd/${crwdId}`);
+      navigate(`/onboarding?redirectTo=/g/${crwdData?.sort_name}`);
       return;
     }
 
@@ -372,7 +372,7 @@ export default function NewGroupCrwdPage() {
         onBack={handleBack}
         onDonate={() => {
           if (!currentUser || !token?.access_token) {
-            navigate(`/onboarding?redirectTo=/groupcrwd/${crwdId}`);
+            navigate(`/onboarding?redirectTo=/g/${crwdData?.sort_name}`);
             return;
           }
           setShowJoinModal(true);
@@ -399,7 +399,7 @@ export default function NewGroupCrwdPage() {
           onStatClick={(tab) => {
             if (!currentUser || !token?.access_token) {
               // If not logged in, navigate to onboarding with redirectTo parameter
-              navigate(`/onboarding?redirectTo=/groupcrwd/${crwdId}`);
+              navigate(`/onboarding?redirectTo=/g/${crwdData?.sort_name}`);
               return;
             }
             setStatisticsTab(tab);
@@ -493,7 +493,7 @@ export default function NewGroupCrwdPage() {
           isLoading={isLoadingCauses}
           onSeeAllClick={() => {
             if (!currentUser || !token?.access_token) {
-              navigate(`/onboarding?redirectTo=/groupcrwd/${crwdId}`);
+              navigate(`/onboarding?redirectTo=/g/${crwdData?.sort_name}`);
               return;
             }
             setStatisticsTab('Nonprofits');

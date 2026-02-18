@@ -10,6 +10,8 @@ import { useNavigate } from "react-router-dom";
 interface Collective {
   id: string | number;
   name: string;
+  color?: string;
+  logo?: string;
   iconColor?: string;
   founder: {
     name: string;
@@ -18,6 +20,7 @@ interface Collective {
   };
   nonprofit_count: number;
   description: string;
+  sort_name: string;
 }
 
 interface PopularCollectivesProps {
@@ -73,6 +76,7 @@ export default function PopularCollectives({
           collective.cause_count ||
           0,
         description: collective.description || "No description available",
+        sort_name: collective.sort_name || "",
       };
     }) || [];
 
@@ -179,16 +183,16 @@ export default function PopularCollectives({
                   </p>
 
                   {/* View Collective Button */}
-                  {/* <Link to={`/groupcrwd/${collective.id}`}> */}
-                  <a href={`/groupcrwd/${collective.id}`}>
+                  <Link to={`/g/${collective.sort_name}`}>
+                  {/* <a href={`/groupcrwd/${collective.id}`}> */}
                     <Button
                       variant="outline"
                       className="w-full border-[#a854f7] text-[#a854f7] hover:bg-[#a854f7] hover:text-white text-sm xs:text-base md:text-sm py-2 md:py-2"
                     >
                       View Collective
                     </Button>
-                  </a>
-                  {/* </Link> */}
+                  {/* </a> */}
+                  </Link>
                 </CardContent>
               </Card>
             );

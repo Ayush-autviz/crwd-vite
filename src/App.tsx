@@ -237,11 +237,11 @@ function App() {
                     {/* <Route path="/create-cause" element={<CreateCause />} /> */}
                     {/* <Route path="/feed-hungry" element={<FeedHungry />} /> */}
                     {/* <Route path="/cause/:causeId" element={<Cause />} /> */}
-                    <Route path="/cause/:causeId" element={<NewCause />} />
+                    <Route path="/c/:causeId" element={<NewCause />} />
                     {/* <Route path="/cause-detail" element={<CauseDetail />} /> */}
                     {/* <Route path="/cause/:id" element={<CauseById />} /> */}
                     {/* <Route path="/groupcrwd/:crwdId" element={<GroupCrwd />} /> */}
-                    <Route path="/groupcrwd/:crwdId" element={<NewGroupCrwd />} />
+                    <Route path="/g/:crwdId" element={<NewGroupCrwd />} />
                     <Route path="/edit-collective/:crwdId" element={<EditCollective />} />
                     <Route path="/create-fundraiser/:collectiveId" element={<CreateFundraiser />} />
                     <Route path="/edit-fundraiser/:id" element={<EditFundraiser />} />

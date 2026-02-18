@@ -39,7 +39,7 @@ export default function UserResultCard({ user }: UserResultCardProps) {
 
   return (
     <Card
-      onClick={() => navigate(`/user-profile/${user.id}`)}
+      onClick={() => navigate(`/user-profile/${user.username}`)}
       className="cursor-pointer py-0 hover:shadow-md transition-shadow border border-gray-200 bg-white rounded-lg"
     >
       <CardContent className="p-3 md:p-6">
