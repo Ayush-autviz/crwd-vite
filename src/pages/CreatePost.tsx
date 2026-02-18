@@ -427,12 +427,11 @@ export default function CreatePostPage() {
         {/* Image Preview */}
         {selectedImage && imagePreview && (
           <div className="mb-4">
-            <div className="relative rounded-lg overflow-hidden border border-gray-200 bg-gray-50 mx-auto w-full aspect-[2/1]" style={{ maxWidth: '600px' }}>
+            <div className="relative rounded-lg overflow-hidden  mx-auto w-full aspect-[2/1]" style={{ maxWidth: '600px' }}>
               <img
                 src={imagePreview}
                 alt="Selected"
-                className="w-full h-full object-cover"
-                style={{ objectPosition: 'center' }}
+                className="w-full h-full object-contain"
               />
               <button
                 onClick={() => {
