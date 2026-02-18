@@ -243,7 +243,7 @@ export default function SurpriseMePage() {
               return (
                 <Card
                   key={cause.id}
-                  onClick={() => navigate(`/cause/${cause.id}`)}
+                  onClick={() => navigate(`/c/${cause.sort_name}`)}
                   className="cursor-pointer hover:shadow-md transition-shadow border border-gray-200"
                 >
                   <CardContent className="px-3 md:px-4 ">

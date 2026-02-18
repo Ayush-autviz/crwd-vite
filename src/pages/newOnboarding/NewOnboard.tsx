@@ -10,7 +10,7 @@ export default function NewOnboard() {
   const [searchParams] = useSearchParams();
   const redirectTo = searchParams.get('redirectTo') || '/';
   const isFromCreateCollective = redirectTo === '/create-crwd';
-  const isFromCollective = redirectTo.includes('/groupcrwd/');
+  const isFromCollective = redirectTo.includes('/g/');
 
   const googleLoginQuery = useQuery({
     queryKey: ["googleLogin"],

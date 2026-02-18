@@ -469,7 +469,7 @@ export default function ProfilePage() {
                         return (
                           <Link
                             key={cause.id || i}
-                            to={`/cause/${cause.id}`}
+                            to={`/c/${cause.sort_name}`}
                             className="w-1/3 flex-none px-1 sm:px-1.5 md:px-2 mb-2 md:mb-3"
                           >
                             <div className="bg-white border border-gray-200 rounded-lg p-1.5 sm:p-2 md:p-3 flex flex-col items-center justify-between h-[90px] sm:h-[100px] md:h-[120px]">
@@ -685,7 +685,7 @@ export default function ProfilePage() {
                       return (
                         <Link
                           key={cause.id || index}
-                          to={`/cause/${cause.id}`}
+                          to={`/c/${cause.sort_name}`}
                           onClick={() => setShowStatsSheet(false)}
                           className="flex items-center gap-3 py-4 border-b border-gray-100 hover:bg-gray-50 transition-colors"
                         >

@@ -542,7 +542,7 @@ export default function ProfilePage() {
                         return (
                           <Link
                             key={cause.id || i}
-                            to={`/cause/${cause.id}`}
+                            to={`/c/${cause.sort_name}`}
                             // className="w-1/2 sm:w-1/3 lg:w-1/4 px-1 sm:px-1.5 md:px-2 mb-2 md:mb-3"
                             className="w-1/3 flex-none px-1 sm:px-1.5 md:px-2 mb-2 md:mb-3"
                           >
@@ -738,7 +738,7 @@ export default function ProfilePage() {
                       return (
                         <Link
                           key={cause.id || index}
-                          to={`/cause/${cause.id}`}
+                          to={`/c/${cause.sort_name}`}
                           onClick={() => setShowStatsSheet(false)}
                           className="flex items-center gap-2.5 md:gap-3 py-3 md:py-4 border-b border-gray-100 hover:bg-gray-50 transition-colors"
                         >

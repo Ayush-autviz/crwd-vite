@@ -55,7 +55,7 @@ export default function CauseActionButtons({
         ) : (
           <>
             <Plus className="w-4 h-4 md:w-5 md:h-5 mr-1.5 md:mr-2" />
-            Add to Donation Box
+            Donate
           </>
         )}
       </Button>

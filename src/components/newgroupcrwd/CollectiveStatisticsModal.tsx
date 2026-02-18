@@ -79,7 +79,7 @@ export default function CollectiveStatisticsModal({
   };
 
   const handleViewNonprofit = (causeId: number) => {
-    navigate(`/cause/${causeId}`);
+    navigate(`/c/${causeId}`);
     handleClose();
   };
 
@@ -180,7 +180,7 @@ export default function CollectiveStatisticsModal({
                     return (
                       <div
                         key={nonprofit.id || cause.id}
-                        onClick={() => handleViewNonprofit(cause.id || nonprofit.id)}
+                        onClick={() => handleViewNonprofit(cause?.sort_name || nonprofit?.sort_name)}
                         className="flex items-center gap-3 md:gap-3 lg:gap-4 py-3 md:py-3 lg:py-4 border-b border-gray-100 last:border-b-0 cursor-pointer hover:bg-gray-50 transition-colors"
                       >
                         <Avatar className="w-10 h-10 md:w-12 md:h-12 rounded-lg flex-shrink-0">
@@ -221,7 +221,7 @@ export default function CollectiveStatisticsModal({
                       const cause = nonprofit.cause || nonprofit;
                       const name = cause.name || nonprofit.name || 'Unknown Nonprofit';
                       const image = cause.image || nonprofit.image || '';
-                      const causeId = cause.id || nonprofit.id;
+                      const causeId = cause?.sort_name || nonprofit?.sort_name;
 
                       // Generate vibrant avatar colors based on nonprofit ID for consistent colors
                       const avatarColors = [
