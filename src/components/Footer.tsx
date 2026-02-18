@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { ChevronDown } from "lucide-react";
 
 const Footer = () => {
@@ -12,6 +12,7 @@ const Footer = () => {
     resources: false,
     support: false,
   });
+  const navigate = useNavigate();
 
   const toggleSection = (section: "platform" | "resources" | "support") => {
     setOpenSections((prev) => ({
@@ -26,6 +27,7 @@ const Footer = () => {
         {/* Logo at Top */}
         <div className="mb-4 md:mb-6">
           <div 
+            onClick={() => navigate('/')}
             className="text-xl md:text-2xl lg:text-3xl font-bold cursor-pointer">
             crwd
           </div>
