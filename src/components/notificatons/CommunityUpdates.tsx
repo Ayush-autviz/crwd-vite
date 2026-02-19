@@ -18,12 +18,12 @@ interface CommunityUpdatesProps {
 // Helper function to format time ago
 const formatTimeAgo = (dateString: string): string => {
   if (!dateString) return '';
-  
+
   try {
     const date = new Date(dateString);
     const now = new Date();
     const diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000);
-    
+
     if (diffInSeconds < 60) {
       return `${diffInSeconds}s`;
     } else if (diffInSeconds < 3600) {
@@ -41,9 +41,9 @@ const formatTimeAgo = (dateString: string): string => {
   }
 };
 
-const CommunityUpdates: React.FC<CommunityUpdatesProps> = ({ 
-  notifications = [], 
-  isLoading = false 
+const CommunityUpdates: React.FC<CommunityUpdatesProps> = ({
+  notifications = [],
+  isLoading = false
 }) => {
   const [open, setOpen] = useState(false);
   const [showToast, setShowToast] = useState(false);
@@ -82,7 +82,13 @@ const CommunityUpdates: React.FC<CommunityUpdatesProps> = ({
         if (usernameMatch) {
           username = usernameMatch[1];
         } else {
-          username = notification.user?.username || notification.data?.creator_id || notification.data?.new_member_id || '';
+          // Priority order for username/identifier fields
+          username = notification.data?.new_member_username ||
+            notification.data?.follower_username ||
+            (notification.data?.user_username && isNaN(Number(notification.data.user_username)) ? notification.data.user_username : '') ||
+            notification.user?.username ||
+            notification.data?.user_username ||
+            '';
         }
 
         // Extract collective name from body - patterns like "posted in Heart for you" or "joined n jnum"
@@ -103,12 +109,13 @@ const CommunityUpdates: React.FC<CommunityUpdatesProps> = ({
         }
 
         // Extract user ID from notification data based on type
-        const userId = 
-          notification.data?.new_member_id || 
-          notification.data?.creator_id || 
+        const userId =
+          notification.data?.user_id ||
+          notification.data?.new_member_id ||
+          notification.data?.creator_id ||
           notification.data?.donor_id ||
           notification.data?.liker_id ||
-          notification.data?.user_id ||
+          (notification.data?.user_username && !isNaN(Number(notification.data.user_username)) ? notification.data.user_username : null) ||
           null;
 
         // Determine if it's a join notification
@@ -118,7 +125,7 @@ const CommunityUpdates: React.FC<CommunityUpdatesProps> = ({
 
         // Check if this is the current user's own profile
         const isCurrentUser = currentUser?.id && (
-          (userId && currentUser.id.toString() === userId.toString()) || 
+          (userId && currentUser.id.toString() === userId.toString()) ||
           (username && currentUser.username === username)
         );
 
@@ -279,9 +286,9 @@ const CommunityUpdates: React.FC<CommunityUpdatesProps> = ({
                             <span>{displayText}</span>
                             {post.groupName && (
                               // <Link to={post.collectiveId ? `/groupcrwd/${post.collectiveId}` : `/groupcrwd`}>
-                                <span className="">
-                                  {post.groupName}
-                                </span>
+                              <span className="">
+                                {post.groupName}
+                              </span>
                               // </Link>
                             )}
                           </div>

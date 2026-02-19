@@ -76,18 +76,13 @@ export default function NewHome() {
         return Array.from(new Set(
             notifications
                 .map((notification: any) => {
-                    const usernameMatch = notification.body?.match(/@(\w+)/);
-                    if (usernameMatch) {
-                        return notification.data?.donor_id ||
-                            notification.data?.follower_id ||
-                            notification.data?.creator_id ||
-                            notification.data?.new_member_id ||
-                            null;
-                    }
-                    return notification.data?.donor_id ||
-                        notification.data?.follower_id ||
-                        notification.data?.creator_id ||
-                        notification.data?.new_member_id ||
+                    const data = notification.data || {};
+                    return data.donor_id ||
+                        data.follower_id ||
+                        data.creator_id ||
+                        data.new_member_id ||
+                        data.user_id ||
+                        (data.user_username && !isNaN(Number(data.user_username)) ? data.user_username : null) ||
                         null;
                 })
                 .filter((id: any) => id !== null)
@@ -299,11 +294,11 @@ export default function NewHome() {
                     if (usernameMatch) {
                         username = usernameMatch[1];
                     } else {
-                        // Fallback to data fields
-                        username = notification.data?.follower_username ||
-                            notification.data?.donor_id ||
-                            notification.data?.creator_id ||
-                            notification.data?.new_member_id ||
+                        // Fallback to data fields - prioritize actual username fields
+                        username = notification.data?.new_member_username ||
+                            notification.data?.follower_username ||
+                            (notification.data?.user_username && isNaN(Number(notification.data.user_username)) ? notification.data.user_username : '') ||
+                            notification.data?.user_username ||
                             'unknown';
                     }
 
@@ -337,10 +332,12 @@ export default function NewHome() {
                     }
 
                     // Extract user ID from notification data
-                    const userId = notification.data?.donor_id ||
+                    const userId = notification.data?.user_id ||
+                        notification.data?.donor_id ||
                         notification.data?.follower_id ||
                         notification.data?.creator_id ||
                         notification.data?.new_member_id ||
+                        (notification.data?.user_username && !isNaN(Number(notification.data.user_username)) ? notification.data.user_username : null) ||
                         username;
 
                     // Get user profile from the fetched profiles map
@@ -410,6 +407,7 @@ export default function NewHome() {
                             data: {
                                 profile_picture: notification.data?.user_profile_picture,
                                 color: notification.data?.user_color,
+                                collective_sort_name: notification.data?.collective_sort_name || notification.data?.collective?.sort_name,
                             }
                         }
                     };

@@ -649,15 +649,17 @@ const RegularNotifications: React.FC<RegularNotificationsProps> = ({
       new Set(
         personalNotifications
           .map((notification: any) => {
+            const data = notification.data || {};
             const userId =
-              notification.data?.liker_id ||
-              notification.data?.commenter_id ||
-              notification.data?.mentioner_id ||
-              notification.data?.follower_id ||
-              notification.data?.donor_id ||
-              notification.data?.new_member_id ||
+              data.liker_id ||
+              data.commenter_id ||
+              data.mentioner_id ||
+              data.follower_id ||
+              data.donor_id ||
+              data.new_member_id ||
               notification.user?.id ||
-              notification.data?.user_id;
+              data.user_id ||
+              (data.user_username && !isNaN(Number(data.user_username)) ? data.user_username : null);
             return userId;
           })
           .filter((id: any) => id !== null && id !== undefined)
@@ -752,6 +754,7 @@ const RegularNotifications: React.FC<RegularNotificationsProps> = ({
       // Extract user info for avatar - get the user who triggered the notification
       // For likes, comments, mentions, etc., check liker_id, commenter_id, mentioner_id, etc.
       const userId =
+        notification.data?.user_id ||
         notification.data?.liker_id ||
         notification.data?.commenter_id ||
         notification.data?.mentioner_id ||
@@ -759,7 +762,7 @@ const RegularNotifications: React.FC<RegularNotificationsProps> = ({
         notification.data?.donor_id ||
         notification.data?.new_member_id ||
         notification.user?.id ||
-        notification.data?.user_id;
+        (notification.data?.user_username && !isNaN(Number(notification.data.user_username)) ? notification.data.user_username : null);
 
       // Extract username from body if it contains @username pattern (e.g., "@jake_long liked your post")
       // Also check data.follower_username for follower notifications
@@ -813,10 +816,12 @@ const RegularNotifications: React.FC<RegularNotificationsProps> = ({
         profileUser?.username ||
         notification.user?.username ||
         notification.data?.username ||
+        notification.data?.user_username ||
         notification.data?.follower_username || '';
 
       const postId = notification.data?.post_id || notification.data?.post?.id || notification.post_id;
       const collectiveId = notification.data?.collective_id || notification.data?.collective?.id;
+      const collectiveSortName = notification.data?.collective_sort_name || '';
       const nonprofitId = notification.data?.nonprofit_id;
 
       return {
@@ -830,6 +835,7 @@ const RegularNotifications: React.FC<RegularNotificationsProps> = ({
         time: formatTimeAgo(notification.created_at || notification.updated_at),
         avatarUrl: notification.data?.user_profile_picture,
         collectiveId: collectiveId,
+        collectiveSortName: collectiveSortName,
         nonprofitId: nonprofitId,
         postId: postId,
         userId: userId,
@@ -887,7 +893,7 @@ const RegularNotifications: React.FC<RegularNotificationsProps> = ({
 
               return notification.userId ? (
                 <Link
-                  to={`/user-profile/${notification.userId}`}
+                  to={`/u/${notification.username || notification.userId}`}
                   className="flex-shrink-0"
                   onClick={(e) => e.stopPropagation()}
                 >
@@ -945,7 +951,7 @@ const RegularNotifications: React.FC<RegularNotificationsProps> = ({
                           parts.push(
                             <Link
                               key="donor"
-                              to={`/user-profile/${notification.userId}`}
+                              to={`/u/${notification.username || notification.userId}`}
                               className="font-semibold text-gray-700 hover:underline"
                               onClick={(e) => e.stopPropagation()}
                             >
@@ -962,7 +968,7 @@ const RegularNotifications: React.FC<RegularNotificationsProps> = ({
                           parts.push(
                             <Link
                               key="donor"
-                              to={`/user-profile/${notification.userId}`}
+                              to={`/u/${notification.username || notification.userId}`}
                               className="font-semibold text-gray-700 hover:underline"
                               onClick={(e) => e.stopPropagation()}
                             >
@@ -984,7 +990,7 @@ const RegularNotifications: React.FC<RegularNotificationsProps> = ({
                           parts.push(
                             <Link
                               key="collective"
-                              to={`/groupcrwd/${notification.collectiveId}`}
+                              to={`/g/${notification.collectiveSortName || notification.collectiveId}`}
                               className="font-semibold text-gray-700 hover:underline"
                               onClick={(e) => e.stopPropagation()}
                             >
@@ -995,7 +1001,7 @@ const RegularNotifications: React.FC<RegularNotificationsProps> = ({
                           parts.push(
                             <Link
                               key="nonprofit"
-                              to={`/cause/${notification.nonprofitId}`}
+                              to={`/c/${notification.nonprofitId}`}
                               className="font-semibold text-gray-700 hover:underline"
                               onClick={(e) => e.stopPropagation()}
                             >
@@ -1019,7 +1025,7 @@ const RegularNotifications: React.FC<RegularNotificationsProps> = ({
                         Your collective{' '}
                         {notification.collectiveId && notification.collectiveName ? (
                           <Link
-                            to={`/groupcrwd/${notification.collectiveId}`}
+                            to={`/g/${notification.collectiveSortName || notification.collectiveId}`}
                             className="font-semibold text-gray-700 hover:underline"
                             onClick={(e) => e.stopPropagation()}
                           >
@@ -1054,7 +1060,7 @@ const RegularNotifications: React.FC<RegularNotificationsProps> = ({
                         parts.push(
                           <Link
                             key={`member-${match.index}`}
-                            to={`/user-profile/${notification.userId}`}
+                            to={`/u/${notification.username || notification.userId}`}
                             className="font-semibold text-gray-700 hover:underline"
                             onClick={(e) => e.stopPropagation()}
                           >
@@ -1080,7 +1086,7 @@ const RegularNotifications: React.FC<RegularNotificationsProps> = ({
                           parts.push(
                             <Link
                               key={`collective-${match.index}`}
-                              to={`/groupcrwd/${notification.collectiveId}`}
+                              to={`/g/${notification.collectiveSortName || notification.collectiveId}`}
                               className="font-semibold text-gray-700 hover:underline"
                               onClick={(e) => e.stopPropagation()}
                             >
@@ -1130,7 +1136,7 @@ const RegularNotifications: React.FC<RegularNotificationsProps> = ({
                         parts.push(
                           <Link
                             key="follower-name"
-                            to={`/user-profile/${notification.userId}`}
+                            to={`/u/${notification.username || notification.userId}`}
                             className="font-semibold text-gray-700 hover:underline"
                             onClick={(e) => e.stopPropagation()}
                           >
@@ -1224,7 +1230,7 @@ const RegularNotifications: React.FC<RegularNotificationsProps> = ({
                           parts.push(
                             <Link
                               key={`user-${matchItem.index}`}
-                              to={`/user-profile/${matchItem.userId}`}
+                              to={`/u/${notification.username || matchItem.userId}`}
                               className="font-semibold text-gray-700 hover:underline"
                               onClick={(e) => e.stopPropagation()}
                             >
@@ -1239,7 +1245,7 @@ const RegularNotifications: React.FC<RegularNotificationsProps> = ({
                           parts.push(
                             <Link
                               key={`collective-${matchItem.index}`}
-                              to={`/groupcrwd/${matchItem.collectiveId}`}
+                              to={`/g/${notification.collectiveSortName || matchItem.collectiveId}`}
                               className="font-semibold text-gray-700 hover:underline"
                               onClick={(e) => e.stopPropagation()}
                             >

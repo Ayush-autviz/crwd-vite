@@ -400,15 +400,15 @@ export default function CommunityPostCard({ post, onCommentPress, showSimplified
                 {post.fundraiser && !isHomeFeed && (
                   <p className="text-[10px] xs:text-xs md:text-sm text-gray-500 mb-0.5">Started a fundraiser</p>
                 )}
-                {showSimplifiedHeader && post.timestamp && !post.fundraiser?.is_active && (
+                {/* {showSimplifiedHeader && post.timestamp && !post.fundraiser?.is_active && (
                   <div className="text-[10px] xs:text-xs md:text-sm text-gray-500">
                     {formatDistanceToNow(new Date(post.timestamp), { addSuffix: true })}
                   </div>
-                )}
+                )} */}
               </div>
 
               {/* Follow Button - Only show for not current user & in home feed */}
-              {isHomeFeed && post.user.id !== currentUser?.id && (
+              {isHomeFeed && !isFollowing && post.user.id !== currentUser?.id && (
                 <button
                   onClick={(e) => {
                     e.preventDefault();

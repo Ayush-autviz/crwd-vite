@@ -22,6 +22,7 @@ interface CommunityUpdate {
   collective?: {
     name: string;
     id?: string | number;
+    sort_name?: string;
   };
   content: string;
   timestamp?: string;
@@ -33,6 +34,7 @@ interface CommunityUpdate {
     profile_picture?: string;
     color?: string;
     collective_id?: string | number;
+    collective_sort_name?: string;
   };
 }
 
@@ -167,7 +169,10 @@ export function NotificationSummary({ update }: { update: CommunityUpdate }) {
   });
 
   const handleJoinClick = () => {
-    if (update.collective?.id) {
+    const sortName = update.collective?.sort_name || update.data?.collective_sort_name;
+    if (sortName) {
+      navigate(`/g/${sortName}`);
+    } else if (update.collective?.id) {
       navigate(`/groupcrwd/${update.collective.id}`);
     } else if (update.collective?.name) {
       navigate(`/search?q=${encodeURIComponent(update.collective.name)}&type=collective`);
@@ -274,7 +279,11 @@ export function NotificationSummary({ update }: { update: CommunityUpdate }) {
               <Link to={`/u/${update.user.username}`} className="hover:underline">
                 {userName}
               </Link> <span className="font-medium">joined</span> {
-                collectiveId ? (
+                (update.collective?.sort_name || update.data?.collective_sort_name) ? (
+                  <Link to={`/g/${update.collective?.sort_name || update.data?.collective_sort_name}`} className="hover:underline">
+                    {cleanActionText}
+                  </Link>
+                ) : collectiveId ? (
                   <Link to={`/groupcrwd/${collectiveId}`} className="hover:underline">
                     {cleanActionText}
                   </Link>
