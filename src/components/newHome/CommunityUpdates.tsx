@@ -134,7 +134,7 @@ export function NotificationSummary({ update }: { update: CommunityUpdate }) {
   const { data: userProfile, isLoading: isLoadingProfile } = useQuery({
     queryKey: ['userProfile', update.user.id],
     queryFn: () => getUserProfileById(update.user.id?.toString() || ''),
-    enabled: !!update.user.id && !!token?.access_token && isDonationNotification && currentUser?.id !== update.user.id,
+    enabled: !!update.user.id && !!token?.access_token && isDonationNotification && String(currentUser?.id) !== String(update.user.id),
   });
 
   // Check if user is being followed
@@ -175,7 +175,7 @@ export function NotificationSummary({ update }: { update: CommunityUpdate }) {
   };
 
   const handleFollowClick = () => {
-    if (update.user.id && currentUser?.id !== update.user.id) {
+    if (update.user.id && String(currentUser?.id) !== String(update.user.id)) {
       if (isFollowing) {
         unfollowMutation.mutate(update.user.id.toString());
       } else {
@@ -332,7 +332,7 @@ export function NotificationSummary({ update }: { update: CommunityUpdate }) {
         </div>
 
         {/* Action Button - Follow for donation notifications */}
-        {isDonationNotification && update.user.id && currentUser?.id !== update.user.id && (
+        {isDonationNotification && update.user.id && String(currentUser?.id) !== String(update.user.id) && !isFollowing && (
           <button
             onClick={handleFollowClick}
             disabled={followMutation.isPending || unfollowMutation.isPending || isLoadingProfile}

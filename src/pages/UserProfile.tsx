@@ -272,6 +272,7 @@ export default function ProfilePage() {
       ? {
         name: post.collective.name,
         id: post.collective.id,
+        sort_name: post.collective.sort_name,
       }
       : undefined,
     content: post.content || '',

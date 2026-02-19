@@ -21,7 +21,7 @@ export const DiscardSheet: React.FC<DiscardSheetProps> = ({
 }) => {
     return (
         <Sheet open={isOpen} onOpenChange={(open) => !open && onClose()}>
-            <SheetContent side="bottom" className="rounded-t-[20px] p-6 sm:max-w-md mx-auto">
+            <SheetContent side="bottom" className="rounded-t-[20px] p-6  mx-auto">
                 <SheetHeader className="text-center p-0">
                     <SheetTitle className="text-xl font-bold text-gray-900">
                         Discard changes?
