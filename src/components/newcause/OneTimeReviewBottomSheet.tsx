@@ -118,6 +118,9 @@ export default function OneTimeReviewBottomSheet({
         return name.charAt(0).toUpperCase();
     };
 
+    const isEmailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    const isFormValid = name.trim() !== "" && isEmailValid;
+
     return (
         <>
             {/* Logo Animation Overlay */}
@@ -286,20 +289,20 @@ export default function OneTimeReviewBottomSheet({
                     <div className="px-4 md:px-6 py-3 md:py-4 border-t border-gray-200 bg-white">
                         <button
                             onClick={() => {
-                                if (!name || !email) return;
+                                if (!isFormValid) return;
                                 anonymousDonationMutation.mutate({
-                                    name,
-                                    email,
+                                    name: name.trim(),
+                                    email: email.trim(),
                                     amount: donationAmount.toString(),
                                     causes: selectedCauses.map(cause => ({
                                         cause_id: typeof cause.id === 'string' ? parseInt(cause.id) : cause.id
                                     }))
                                 });
                             }}
-                            disabled={anonymousDonationMutation.isPending || !name || !email}
+                            disabled={anonymousDonationMutation.isPending || !isFormValid}
                             className={cn(
                                 "w-full bg-black hover:bg-black/80 text-white font-semibold py-3 md:py-4 rounded-full transition-colors text-sm md:text-base flex items-center justify-center gap-2 shadow-lg shadow-blue-100",
-                                (anonymousDonationMutation.isPending || !name || !email) && "opacity-60"
+                                (anonymousDonationMutation.isPending || !isFormValid) && "opacity-60"
                             )}
                         >
                             {anonymousDonationMutation.isPending ? (

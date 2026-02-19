@@ -27,6 +27,7 @@ import { Toast } from '@/components/ui/toast';
 import { useAuthStore } from '@/stores/store';
 import Footer from '@/components/Footer';
 import { toast } from 'sonner';
+import LoggedOutHeader from '@/components/LoggedOutHeader';
 
 export default function NewGroupCrwdPage() {
   const { crwdId } = useParams<{ crwdId: string }>();
@@ -360,24 +361,27 @@ export default function NewGroupCrwdPage() {
 
   return (
     <div className="min-h-screen bg-white">
-      <CollectiveHeader
-        title={crwdData.name || 'Collective'}
-        collectiveId={collectiveId}
-        isFavorite={crwdData.is_favorite}
-        isAdmin={isAdmin}
-        isJoined={crwdData.is_joined}
-        onLeave={handleJoinCollective}
-        onShare={handleShare}
-        onManageCollective={handleManageCollective}
-        onBack={handleBack}
-        onDonate={() => {
-          if (!currentUser || !token?.access_token) {
-            navigate(`/onboarding?redirectTo=/g/${crwdData?.sort_name}`);
-            return;
-          }
-          setShowJoinModal(true);
-        }}
-      />
+      {currentUser?.id ?
+        <CollectiveHeader
+          title={crwdData.name || 'Collective'}
+          collectiveId={collectiveId}
+          isFavorite={crwdData.is_favorite}
+          isAdmin={isAdmin}
+          isJoined={crwdData.is_joined}
+          onLeave={handleJoinCollective}
+          onShare={handleShare}
+          onManageCollective={handleManageCollective}
+          onBack={handleBack}
+          onDonate={() => {
+            if (!currentUser || !token?.access_token) {
+              navigate(`/onboarding?redirectTo=/g/${crwdData?.sort_name}`);
+              return;
+            }
+            setShowJoinModal(true);
+          }}
+        /> :
+        <LoggedOutHeader />
+      }
 
       <div className='lg:max-w-[60%] lg:mx-auto'>
 

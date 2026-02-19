@@ -73,7 +73,7 @@ export const getProfile = async () => {
 
 export const getUserByUsername = async (username: string) => {
     const encodedUsername = encodeURIComponent(username);
-    const response = await axiosClient.get(`/auth/users/by-username/${encodedUsername}/`);
+    const response = await axiosClient.get(`/social/users/by-username/${encodedUsername}/`);
     return response.data;
 };
 

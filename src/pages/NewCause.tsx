@@ -27,6 +27,7 @@ import { useAuthStore } from '@/stores/store';
 import { Toast } from '@/components/ui/toast';
 import Footer from '@/components/Footer';
 import AddToDonationBoxBottomSheet from '@/components/newcause/AddToDonationBoxBottomSheet';
+import LoggedOutHeader from '@/components/LoggedOutHeader';
 
 export default function NewCausePage() {
   const { causeId } = useParams<{ causeId: string }>();
@@ -257,13 +258,17 @@ export default function NewCausePage() {
 
   return (
     <div className="min-h-screen bg-white">
-      <CauseHeader
-        title={causeData.name || 'Nonprofit'}
-        causeId={(causeData?.id ?? causeId)?.toString() ?? ''}
-        isFavorite={causeData.is_favorite}
-        onShare={handleShare}
-        onOneTimeDonation={handleDonate}
-      />
+      {currentUser?.id ? (
+        <CauseHeader
+          title={causeData.name || 'Nonprofit'}
+          causeId={(causeData?.id ?? causeId)?.toString() ?? ''}
+          isFavorite={causeData.is_favorite}
+          onShare={handleShare}
+          onOneTimeDonation={handleDonate}
+        />
+      ) : (
+        <LoggedOutHeader />
+      )}
 
       <div className='lg:max-w-[60%] lg:mx-auto'>
 

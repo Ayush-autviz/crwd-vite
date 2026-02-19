@@ -38,6 +38,7 @@ import {
 } from "@/components/ui/sheet";
 import { SharePost } from "@/components/ui/SharePost";
 import { truncateAtFirstPeriod } from "@/lib/utils";
+import LoggedOutHeader from "@/components/LoggedOutHeader";
 
 // Avatar colors for consistent fallback styling
 const avatarColors = [
@@ -350,37 +351,38 @@ export default function ProfilePage() {
   return (
     <div className="min-h-screen bg-white">
       {/* Custom Header with back arrow, name, and menu dots */}
-      <div className="sticky top-0 z-10 w-full flex items-center justify-between h-16 px-3 border-b bg-white">
-        <div className="flex items-center gap-3">
-          <button
-            onClick={() => navigate(-1)}
-            className="p-2 hover:bg-gray-100 rounded-full transition-colors"
-            aria-label="Go back"
-          >
-            <ArrowLeft className="w-5 h-5 text-gray-700" />
-          </button>
-          <h1 className="font-bold text-xl text-gray-900">
-            {fullName || userProfile?.username || 'Profile'}
-          </h1>
-        </div>
-        <div className="relative" ref={menuRef}>
-          <button
-            onClick={() => setShowMenu(!showMenu)}
-            className="p-2 cursor-pointer rounded-full transition-colors"
-          >
-            <Ellipsis className="w-6 h-6" strokeWidth={3} />
-          </button>
+      {currentUser?.id ?
+        <div className="sticky top-0 z-10 w-full flex items-center justify-between h-16 px-3 border-b bg-white">
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => navigate(-1)}
+              className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+              aria-label="Go back"
+            >
+              <ArrowLeft className="w-5 h-5 text-gray-700" />
+            </button>
+            <h1 className="font-bold text-xl text-gray-900">
+              {fullName || userProfile?.username || 'Profile'}
+            </h1>
+          </div>
+          <div className="relative" ref={menuRef}>
+            <button
+              onClick={() => setShowMenu(!showMenu)}
+              className="p-2 cursor-pointer rounded-full transition-colors"
+            >
+              <Ellipsis className="w-6 h-6" strokeWidth={3} />
+            </button>
 
-          {showMenu && (
-            <div className="absolute right-0 top-10 bg-white border border-gray-200 rounded-md shadow-lg z-20 w-36">
-              <button
-                onClick={handleShareProfile}
-                className="flex items-center gap-2 w-full px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
-              >
-                <Share className="h-4 w-4" />
-                Share Profile
-              </button>
-              {/* <button
+            {showMenu && (
+              <div className="absolute right-0 top-10 bg-white border border-gray-200 rounded-md shadow-lg z-20 w-36">
+                <button
+                  onClick={handleShareProfile}
+                  className="flex items-center gap-2 w-full px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+                >
+                  <Share className="h-4 w-4" />
+                  Share Profile
+                </button>
+                {/* <button
                 onClick={() => {
                   setShowMenu(false);
                   // Handle report profile
@@ -391,10 +393,12 @@ export default function ProfilePage() {
                 <Flag className="h-4 w-4" />
                 Report Profile
               </button> */}
-            </div>
-          )}
-        </div>
-      </div>
+              </div>
+            )}
+          </div>
+        </div> :
+        <LoggedOutHeader />
+      }
 
       <div className="lg:max-w-[60%] lg:mx-auto">
         <div className="md:grid md:grid-cols-12 md:gap-6 md:px-6 md:pt-2 md:pb-6">

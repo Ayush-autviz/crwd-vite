@@ -68,18 +68,6 @@ const getConsistentColor = (id: number | string, colors: string[]) => {
   return colors[hash % colors.length];
 };
 
-// Format date to relative time
-const formatTimeAgo = (dateString: string): string => {
-  const date = new Date(dateString);
-  const now = new Date();
-  const diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000);
-
-  if (diffInSeconds < 60) return 'just now';
-  if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)}m ago`;
-  if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)}h ago`;
-  if (diffInSeconds < 604800) return `${Math.floor(diffInSeconds / 86400)}d ago`;
-  return date.toLocaleDateString();
-};
 
 
 export default function PostResultCard({ post }: PostResultCardProps) {
@@ -100,7 +88,7 @@ export default function PostResultCard({ post }: PostResultCardProps) {
       : user?.first_name || user?.username || 'Unknown User');
 
   // Format timestamp
-  const timeAgo = formatTimeAgo(post.created_at);
+  // const timeAgo = formatTimeAgo(post.created_at);
 
   return (
     <Card
@@ -158,17 +146,16 @@ export default function PostResultCard({ post }: PostResultCardProps) {
 
         {/* Show fundraiser image like normal post image */}
         {post.fundraiser?.image ? (
-          <a
-            href={`/fundraiser/${post.fundraiser.id}`}
-            onClick={(e) => e.stopPropagation()}
-            className="block w-full rounded-lg overflow-hidden mb-2.5 md:mb-3 border border-gray-200 cursor-pointer hover:opacity-90 transition-opacity bg-gray-50"
+          <div
+            className="w-full rounded-lg overflow-hidden mb-2.5 md:mb-3 border border-gray-200 cursor-pointer hover:opacity-90 transition-opacity bg-gray-50 relative mx-auto aspect-[2/1]"
+            style={{ maxWidth: '600px' }}
           >
             <img
               src={post.fundraiser.image}
               alt="Fundraiser"
-              className="w-full aspect-[2/1] object-contain bg-gray-50 mb-2"
+              className="w-full h-full object-cover"
             />
-          </a>
+          </div>
         ) : null}
 
         {/* Fundraiser UI - show if fundraiser exists, otherwise show preview/media */}
@@ -299,19 +286,16 @@ export default function PostResultCard({ post }: PostResultCardProps) {
 
             if (isImage) {
               return (
-                <a
-                  href={post.media}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  onClick={(e) => e.stopPropagation()}
-                  className="block w-full rounded-lg overflow-hidden mb-2.5 md:mb-3 border border-gray-200 cursor-pointer hover:opacity-90 transition-opacity"
+                <div
+                  className="w-full rounded-lg overflow-hidden mb-2.5 md:mb-3 cursor-pointer hover:opacity-90 transition-opacity relative mx-auto aspect-[2/1]"
+                  style={{ maxWidth: '600px' }}
                 >
                   <img
                     src={post.media}
                     alt="Post"
-                    className="w-full aspect-[2/1] object-cover"
+                    className="w-full h-full object-contain"
                   />
-                </a>
+                </div>
               );
             } else {
               // It's a link URL, show as preview-style card (even without preview_details)

@@ -92,8 +92,8 @@ export default function NewNonProfitInterests() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-100 via-purple-50 to-pink-50 flex flex-col items-center justify-center px-3 sm:px-4 py-6 sm:py-8">
-      <div className="w-full max-w-2xl bg-white rounded-xl p-4 sm:p-6 md:p-8 shadow-lg">
+    <div className="min-h-screen flex flex-col items-center justify-center px-3 sm:px-4 py-6 sm:py-8">
+      <div className="w-full max-w-2xl bg-white rounded-xl p-4 sm:p-6 md:p-8 ">
         {/* Progress Indicator - Step 3 */}
         <div className="flex items-center justify-center space-x-1.5 sm:space-x-2 mb-6 sm:mb-8">
           <div className="h-1 w-8 sm:w-10 md:w-12 bg-gray-300 rounded-full"></div>

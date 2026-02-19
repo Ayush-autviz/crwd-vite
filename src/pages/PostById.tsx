@@ -12,6 +12,7 @@ import { Comment, CommentData } from "@/components/post/Comment";
 import { useAuthStore } from "@/stores/store";
 import { DiscardSheet } from "@/components/ui/DiscardSheet";
 import { useUnsavedChanges } from "@/hooks/use-unsaved-changes";
+import LoggedOutHeader from "@/components/LoggedOutHeader";
 
 export default function PostById() {
   const { id } = useParams();
@@ -25,7 +26,7 @@ export default function PostById() {
   const [replyingTo, setReplyingTo] = useState<CommentData | null>(null);
   const inputRef = React.useRef<HTMLInputElement>(null);
   const navigate = useNavigate();
-  const { token } = useAuthStore();
+  const { token, user: currentUser } = useAuthStore();
 
   // Redirect to login if no token
   // useEffect(() => {
@@ -297,7 +298,10 @@ export default function PostById() {
   if (isLoading) {
     return (
       <div className="bg-white min-h-screen flex flex-col relative pb-16 md:pb-0">
-        <ProfileNavbar title={getUserDisplayName()} />
+        {currentUser?.id ?
+          <ProfileNavbar title={getUserDisplayName()} />
+          : <LoggedOutHeader />
+        }
         <div className="flex-1 flex items-center justify-center">
           <div className="text-center py-8 md:py-10 px-4">
             <Loader2 className="w-6 h-6 md:w-8 md:h-8 animate-spin mx-auto mb-3 md:mb-4" />
@@ -317,7 +321,10 @@ export default function PostById() {
   if (error || !post) {
     return (
       <div className="bg-white min-h-screen flex flex-col relative pb-16 md:pb-0">
-        <ProfileNavbar title={getUserDisplayName()} />
+        {currentUser?.id ?
+          <ProfileNavbar title={getUserDisplayName()} />
+          : <LoggedOutHeader />
+        }
         <div className="flex-1 flex items-center justify-center">
           <div className="text-center py-8 md:py-10 px-4">
             <h2 className="text-lg md:text-xl font-semibold text-gray-900 mb-1.5 md:mb-2">
@@ -340,7 +347,10 @@ export default function PostById() {
 
   return (
     <div className="bg-white min-h-screen flex flex-col relative pb-16">
-      <ProfileNavbar title={post.org} />
+      {currentUser?.id ?
+        <ProfileNavbar title={post.org} />
+        : <LoggedOutHeader />
+      }
       <main className="flex-1">
         <ProfileActivityCard
           post={post}

@@ -12,6 +12,7 @@ import OneTimeReviewBottomSheet from '@/components/newcause/OneTimeReviewBottomS
 import AmountBottomSheet from '@/components/donation/AmountBottomSheet';
 import { useAuthStore } from "@/stores/store";
 import { toast } from 'sonner';
+import { useNavigate } from 'react-router-dom';
 
 interface OneTimeDonationProps {
   setCheckout: (value: boolean) => void;
@@ -63,6 +64,7 @@ export default function OneTimeDonation({
   const [showAmountSheet, setShowAmountSheet] = useState(false);
   const [showGuestReviewSheet, setShowGuestReviewSheet] = useState(false);
   const { user: currentUser } = useAuthStore();
+  const navigate = useNavigate();
 
   // Avatar colors for consistent coloring
   const avatarColors = [
@@ -519,7 +521,7 @@ export default function OneTimeDonation({
       </div>
 
       {/* Checkout button - Fixed at bottom */}
-      <div className="fixed bottom-0 left-0 right-0 p-4 md:p-6 bg-white border-t border-gray-200 z-10">
+      <div className="fixed bottom-0 left-0 right-0 p-4 md:p-4 bg-white border-t border-gray-200 z-10">
         <Button
           onClick={handleCheckout}
           disabled={selectedItems.length === 0}
@@ -527,6 +529,9 @@ export default function OneTimeDonation({
         >
           Continue to Review
         </Button>
+        <button onClick={() => navigate(-1)} className="text-xs md:text-sm text-[#64748b] text-center leading-relaxed w-full mt-2 ">
+          Skip for now
+        </button>
       </div>
 
       {/* Request Nonprofit Modal */}

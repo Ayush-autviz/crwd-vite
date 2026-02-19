@@ -382,8 +382,8 @@ export default function NewCompleteOnboard() {
   // Initial view - Two cards
   if (view === 'initial') {
     return (
-      <div className="h-screen bg-gradient-to-br from-blue-100 via-purple-50 to-pink-50 flex flex-col items-center justify-center px-4 py-8 overflow-hidden">
-        <div className="w-full max-w-2xl bg-white rounded-xl shadow-lg max-h-full flex flex-col overflow-hidden">
+      <div className="h-screen flex flex-col items-center justify-center px-4 py-8 overflow-hidden">
+        <div className="w-full max-w-2xl bg-white rounded-xl max-h-full flex flex-col overflow-hidden">
           <div className="p-4 md:p-6 pb-0 flex-shrink-0">
             {/* Progress Indicator - Step 4 */}
             <div className="flex items-center justify-center space-x-1.5 sm:space-x-2 mb-4">
@@ -536,8 +536,8 @@ export default function NewCompleteOnboard() {
   // Surprise Me view
   if (view === 'surprise') {
     return (
-      <div className="h-screen bg-gradient-to-br from-blue-100 via-purple-50 to-pink-50 flex flex-col items-center justify-center px-4 py-8 overflow-hidden">
-        <div className="w-full max-w-2xl bg-white rounded-xl shadow-lg max-h-full flex flex-col overflow-hidden">
+      <div className="h-screen flex flex-col items-center justify-center px-4 py-8 overflow-hidden">
+        <div className="w-full max-w-2xl bg-white rounded-xl max-h-full flex flex-col overflow-hidden">
           <div className="p-6 md:p-8 pb-0 flex-shrink-0">
             {/* Progress Indicator - Step 4 */}
             <div className="flex items-center justify-center space-x-1.5 sm:space-x-2 mb-4">
@@ -718,8 +718,8 @@ export default function NewCompleteOnboard() {
     const displayCollectives = collectivesData?.results || collectivesData || [];
 
     return (
-      <div className="h-screen bg-gradient-to-br from-blue-100 via-purple-50 to-pink-50 flex flex-col items-center justify-center px-4 py-8 overflow-hidden">
-        <div className="w-full max-w-2xl bg-white rounded-xl shadow-lg max-h-full flex flex-col overflow-hidden">
+      <div className="h-screen flex flex-col items-center justify-center px-4 py-8 overflow-hidden">
+        <div className="w-full max-w-2xl bg-white rounded-xl max-h-full flex flex-col overflow-hidden">
           {/* Header Section - Fixed */}
           <div className="p-6 md:p-8 pb-0 flex-shrink-0">
             {/* Progress Indicator - Step 4 */}
@@ -994,8 +994,8 @@ export default function NewCompleteOnboard() {
 
   // Browse & Search view
   return (
-    <div className="h-screen bg-gradient-to-br from-blue-100 via-purple-50 to-pink-50 flex flex-col items-center justify-center px-4 py-8 overflow-hidden">
-      <div className="w-full max-w-2xl bg-white rounded-xl shadow-lg max-h-full flex flex-col overflow-hidden">
+    <div className="h-screen flex flex-col items-center justify-center px-4 py-8 overflow-hidden">
+      <div className="w-full max-w-2xl bg-white rounded-xl max-h-full flex flex-col overflow-hidden">
         <div className="p-6 md:p-8 pb-0 flex-shrink-0">
           {/* Progress Indicator - Step 4 */}
           <div className="flex items-center justify-center space-x-1.5 sm:space-x-2 mb-4">
