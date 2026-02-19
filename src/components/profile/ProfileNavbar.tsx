@@ -179,7 +179,7 @@ export default function ProfileNavbar({
                 >
                   <Bell size={20} className="text-gray-900" />
                   {unreadCount?.data > 0 && (
-                    <div className="absolute -top-0.5 -right-1.5  rounded-lg min-w-[16px] h-4 flex items-center justify-center px-1">
+                    <div className="absolute -top-0.5 -right-1.5 bg-red-600 rounded-lg min-w-[16px] h-4 flex items-center justify-center px-1">
                       <span className="text-white text-[10px] font-bold">{unreadCount?.data}</span>
                     </div>
                   )}
@@ -343,7 +343,7 @@ export default function ProfileNavbar({
                 >
                   <Bell size={20} className="text-gray-900" />
                   {unreadCount?.data > 0 && (
-                    <div className="absolute -top-0.5 -right-1.5 rounded-lg min-w-[16px] h-4 flex items-center justify-center px-1">
+                    <div className="absolute -top-0.5 -right-1.5 bg-red-600 rounded-lg min-w-[16px] h-4 flex items-center justify-center px-1">
                       <span className="text-white text-[10px] font-bold">{unreadCount?.data}</span>
                     </div>
                   )}
