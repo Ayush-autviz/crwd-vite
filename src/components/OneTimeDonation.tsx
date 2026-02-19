@@ -8,7 +8,9 @@ import { useMutation } from '@tanstack/react-query';
 import { createOneTimeDonation, createFundraiserDonation } from '@/services/api/donation';
 import RequestNonprofitModal from '@/components/newsearch/RequestNonprofitModal';
 import OneTimeDonationReviewBottomSheet from '@/components/donation/OneTimeDonationReviewBottomSheet';
+import OneTimeReviewBottomSheet from '@/components/newcause/OneTimeReviewBottomSheet';
 import AmountBottomSheet from '@/components/donation/AmountBottomSheet';
+import { useAuthStore } from "@/stores/store";
 import { toast } from 'sonner';
 
 interface OneTimeDonationProps {
@@ -59,6 +61,8 @@ export default function OneTimeDonation({
   const [preselectedCausesProcessed, setPreselectedCausesProcessed] = useState(false);
   const [showRequestModal, setShowRequestModal] = useState(false);
   const [showAmountSheet, setShowAmountSheet] = useState(false);
+  const [showGuestReviewSheet, setShowGuestReviewSheet] = useState(false);
+  const { user: currentUser } = useAuthStore();
 
   // Avatar colors for consistent coloring
   const avatarColors = [
@@ -227,7 +231,7 @@ export default function OneTimeDonation({
       crwdFee = finalAmount * 0.10;
       net = finalAmount - crwdFee;
     }
-    
+
     // Round to 2 decimal places
     net = Math.round(net * 100) / 100;
 
@@ -312,8 +316,11 @@ export default function OneTimeDonation({
   const [showReviewBottomSheet, setShowReviewBottomSheet] = useState(false);
 
   const handleCheckout = () => {
-    // Show the review bottom sheet instead of directly calling the API
-    setShowReviewBottomSheet(true);
+    if (!currentUser?.id) {
+      setShowGuestReviewSheet(true);
+    } else {
+      setShowReviewBottomSheet(true);
+    }
   };
 
   // Calculate fees and capacity using the provided formula
@@ -545,6 +552,19 @@ export default function OneTimeDonation({
         onComplete={() => {
           setShowReviewBottomSheet(false);
         }}
+      />
+
+      <OneTimeReviewBottomSheet
+        isOpen={showGuestReviewSheet}
+        onClose={() => setShowGuestReviewSheet(false)}
+        donationAmount={donationAmount}
+        selectedCauses={selectedItems
+          .filter(item => item.type === 'cause')
+          .map(item => ({
+            id: item.id,
+            name: item.data?.name || 'Unknown Cause',
+            image: item.data?.image || item.data?.logo,
+          }))}
       />
 
       <AmountBottomSheet

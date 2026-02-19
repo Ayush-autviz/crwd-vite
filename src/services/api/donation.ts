@@ -82,6 +82,11 @@ export const createOneTimeDonationMobile = async (data: any) => {
     return response.data;
 };
 
+export const createAnonymousOneTimeDonation = async (data: any) => {
+    const response = await axiosClient.post('/donations/one-time/anonymous/', data);
+    return response.data;
+};
+
 export const getDonationSuccess = async () => {
     const response = await axiosClient.get('/donations/success/');
     return response.data;

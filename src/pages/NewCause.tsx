@@ -127,14 +127,18 @@ export default function NewCausePage() {
   }
 
   const handleAddToDonationBox = () => {
-    if (!currentUser?.id) {
-      navigate('/onboarding');
-      return;
-    }
+    // if (!currentUser?.id) {
+    //   navigate('/onboarding');
+    //   return;
+    // }
     setShowAddToBoxModal(true);
   };
 
   const handleConfirmAddToBox = async () => {
+    if (!currentUser?.id) {
+      navigate('/onboarding');
+      return;
+    }
     // Check if donation box exists first
     try {
       const donationBox = await getDonationBox();
@@ -231,10 +235,10 @@ export default function NewCausePage() {
   };
 
   const handleDonate = () => {
-    if (!currentUser?.id) {
-      navigate('/onboarding');
-      return;
-    }
+    // if (!currentUser?.id) {
+    //   navigate('/onboarding');
+    //   return;
+    // }
     // Navigate to one-time donation flow
     navigate('/one-time-donation', {
       state: {
@@ -294,9 +298,8 @@ export default function NewCausePage() {
         <AddToDonationBoxBottomSheet
           isOpen={showAddToBoxModal}
           onClose={() => setShowAddToBoxModal(false)}
-          causeData={causeData}
-          donationBoxCount={donationBoxData?.box_causes?.length || 0}
           onConfirm={handleConfirmAddToBox}
+          onOneTimeDonation={handleDonate}
           isPending={addToDonationBoxMutation.isPending}
         />
       )}

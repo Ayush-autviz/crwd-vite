@@ -337,8 +337,8 @@ export default function OneTimeDonationReviewBottomSheet({
               onClick={handleCompleteDonation}
               disabled={isProcessing || showLogoAnimation}
               className={cn(
-                "w-full bg-[#1600ff] hover:bg-[#1400cc] text-white font-semibold py-3 md:py-4 rounded-full transition-colors text-sm md:text-base flex items-center justify-center gap-2",
-                (isProcessing || showLogoAnimation) && 'opacity-50 cursor-not-allowed'
+                "w-full bg-black hover:bg-black/80 text-white font-semibold py-3 md:py-4 rounded-full transition-colors text-sm md:text-base flex items-center justify-center gap-2 shadow-lg shadow-blue-100",
+                (isProcessing || showLogoAnimation) && 'opacity-60'
               )}
             >
               {isProcessing ? (
@@ -347,9 +347,20 @@ export default function OneTimeDonationReviewBottomSheet({
                   <span>Processing...</span>
                 </>
               ) : (
-                'Complete Donation'
+                'Complete One-Time Gift'
               )}
             </button>
+            <div className="mt-4 flex flex-col items-center gap-4">
+              <button
+                onClick={onClose}
+                className="text-[#64748b] font-semibold text-sm md:text-base hover:text-gray-900 transition-colors"
+              >
+                Go Back
+              </button>
+              <p className="text-xs md:text-sm text-[#64748b] text-center leading-relaxed ">
+                Donations are distributed as grants through the CRWD Foundation, a 501(c)(3) (EIN: 41-2423690). Tax-deductible receipts sent via email.
+              </p>
+            </div>
           </div>
         </div>
       </div>
