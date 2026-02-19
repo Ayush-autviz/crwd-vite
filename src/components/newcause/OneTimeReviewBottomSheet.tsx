@@ -225,7 +225,7 @@ export default function OneTimeReviewBottomSheet({
                                         value={name}
                                         onChange={(e) => setName(e.target.value)}
                                         placeholder="Jane Doe"
-                                        className="h-12 md:h-14 bg-gray-50 border-0 rounded-xl md:rounded-2xl px-4 md:px-5 text-sm md:text-base focus-visible:ring-0 focus-visible:ring-offset-0 placeholder:text-gray-400 font-medium"
+                                        className="h-12 md:h-14 bg-gray-50 border-0 rounded-xl md:rounded-2xl px-4 md:px-5 text-sm md:text-base focus-visible:ring-0 focus-visible:ring-offset-0 placeholder:text-gray-400 "
                                     />
                                 </div>
 
@@ -240,7 +240,7 @@ export default function OneTimeReviewBottomSheet({
                                             value={email}
                                             onChange={(e) => setEmail(e.target.value)}
                                             placeholder="name@example.com"
-                                            className="h-12 md:h-14 bg-gray-50 border-0 rounded-xl md:rounded-2xl px-4 md:px-5 text-sm md:text-base focus-visible:ring-0 focus-visible:ring-offset-0 placeholder:text-gray-400 font-medium"
+                                            className="h-12 md:h-14 bg-gray-50 border-0 rounded-xl md:rounded-2xl px-4 md:px-5 text-sm md:text-base focus-visible:ring-0 focus-visible:ring-offset-0 placeholder:text-gray-400 "
                                         />
                                         <p className="text-[11px] md:text-xs text-gray-500 font-medium ml-1">
                                             We'll send your tax receipt here.
