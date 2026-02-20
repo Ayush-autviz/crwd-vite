@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { categories } from '@/constants/categories';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Loader2 } from 'lucide-react';
@@ -40,6 +40,17 @@ export default function NewCausePage() {
   const [toastMessage, setToastMessage] = useState('');
 
   // Fetch cause data by name/slug
+  const location = useLocation();
+
+  const handleBack = () => {
+    const from = location.state?.from;
+    if (from === 'onboarding' || from === 'Login' || from === 'ClaimProfile') {
+      navigate('/');
+    } else {
+      navigate(-1);
+    }
+  };
+
   const { data: causeData, isLoading: isLoadingCause, error: causeError } = useQuery({
     queryKey: ['cause', causeId],
     queryFn: () => getCauseByName(causeId || ''),
@@ -265,6 +276,7 @@ export default function NewCausePage() {
           isFavorite={causeData.is_favorite}
           onShare={handleShare}
           onOneTimeDonation={handleDonate}
+          onBack={handleBack}
         />
       ) : (
         <LoggedOutHeader />

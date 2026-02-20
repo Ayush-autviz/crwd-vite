@@ -1,6 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
-import { useSearchParams, useNavigate } from "react-router-dom";
+import { useSearchParams, useNavigate, useLocation } from "react-router-dom";
 import ProfileNavbar from "@/components/profile/ProfileNavbar";
 import MembersList from "@/components/members/MembersList";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
@@ -28,6 +28,17 @@ export default function ProfileStatistics() {
   const tab = searchParams.get("tab") || "causes";
   const [activeTab, setActiveTab] = useState(tab);
   const { user } = useAuthStore();
+
+  const location = useLocation();
+
+  const handleBack = () => {
+    const from = location.state?.from;
+    if (from === 'onboarding' || from === 'Login' || from === 'ClaimProfile') {
+      navigate('/');
+    } else {
+      navigate(-1);
+    }
+  };
 
   useEffect(() => {
     if (!user?.id) {
@@ -160,7 +171,7 @@ export default function ProfileStatistics() {
 
   return (
     <main className="pb-16 md:pb-0">
-      <ProfileNavbar title="Statistics" />
+      <ProfileNavbar title="Statistics" onBackClick={handleBack} />
       <div className=" mx-auto py-3 md:py-6 px-2  md:px-6">
         {/* Tab Nav */}
         <div className="flex justify-around border-b   mb-6 items-center">

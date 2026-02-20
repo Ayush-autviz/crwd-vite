@@ -1,6 +1,6 @@
 import React, { useState, useRef } from "react";
 import { Check, Camera, X, Loader2, Eye, EyeOff } from "lucide-react";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate, Link, useSearchParams, useLocation } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -37,6 +37,9 @@ export default function ClaimProfile() {
   });
   const fileInputRef = useRef<HTMLInputElement>(null);
   const navigate = useNavigate();
+  const location = useLocation();
+  const [searchParams] = useSearchParams();
+  const redirectTo = searchParams.get('redirectTo') || '/';
   const { setUser, setToken } = useAuthStore();
 
   const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -198,16 +201,15 @@ export default function ClaimProfile() {
       setToastMessage("Email verified successfully!");
       setShowToast(true);
       console.log('email verified', response);
-      
+
       // Automatically login after successful email verification
       try {
-        const loginResponse = await loginMutation.mutateAsync({
+        await loginMutation.mutateAsync({
           email: formData.email.trim(),
           password: formData.password,
         });
-        
-        // Login mutation will handle navigation
-        console.log('Auto-login successful:', loginResponse);
+
+        // Navigation is handled by loginMutation's onSuccess
       } catch (loginError: any) {
         console.error('Auto-login error:', loginError);
         // If auto-login fails, navigate to login page
@@ -228,7 +230,7 @@ export default function ClaimProfile() {
     mutationFn: login,
     onSuccess: (response) => {
       console.log('Login successful:', response);
-      
+
       // Store user data and token in the store
       if (response.user) {
         setUser(response.user);
@@ -236,16 +238,19 @@ export default function ClaimProfile() {
       if (response.access_token) {
         setToken({ access_token: response.access_token, refresh_token: response.refresh_token });
       }
-      
+
       // If last_login_at is null, navigate to nonprofit interests page (new user)
       if (response.user && !response.user.last_login_at) {
-        navigate("/non-profit-interests", { 
-          state: { fromAuth: true },
-          replace: true 
+        navigate(`/non-profit-interests?redirectTo=${encodeURIComponent(redirectTo)}`, {
+          state: { from: 'ClaimProfile' },
+          replace: true
         });
       } else {
-        // Navigate to home page for existing users
-        navigate("/", { replace: true });
+        // Navigate to redirectTo if available, otherwise home page for existing users
+        navigate(redirectTo, {
+          replace: true,
+          state: { from: 'ClaimProfile' }
+        });
       }
     },
     onError: (error: any) => {
@@ -372,8 +377,8 @@ export default function ClaimProfile() {
                       clearError('firstName');
                     }}
                     className={`w-full h-10 border rounded-lg px-3 bg-white text-gray-900 text-sm focus:outline-none focus:ring-1 transition-colors ${errors.firstName
-                        ? 'border-red-500 focus:border-red-500 focus:ring-red-500'
-                        : 'border-gray-300 focus:border-gray-400 focus:ring-gray-400'
+                      ? 'border-red-500 focus:border-red-500 focus:ring-red-500'
+                      : 'border-gray-300 focus:border-gray-400 focus:ring-gray-400'
                       }`}
                   />
 
@@ -392,8 +397,8 @@ export default function ClaimProfile() {
                       clearError('lastName');
                     }}
                     className={`w-full h-10 border rounded-lg px-3 bg-white text-gray-900 text-sm focus:outline-none focus:ring-1 transition-colors ${errors.lastName
-                        ? 'border-red-500 focus:border-red-500 focus:ring-red-500'
-                        : 'border-gray-300 focus:border-gray-400 focus:ring-gray-400'
+                      ? 'border-red-500 focus:border-red-500 focus:ring-red-500'
+                      : 'border-gray-300 focus:border-gray-400 focus:ring-gray-400'
                       }`}
                   />
 
@@ -412,8 +417,8 @@ export default function ClaimProfile() {
                       clearError('email');
                     }}
                     className={`w-full h-10 border rounded-lg px-3 bg-white text-gray-900 text-sm focus:outline-none focus:ring-1 transition-colors ${errors.email
-                        ? 'border-red-500 focus:border-red-500 focus:ring-red-500'
-                        : 'border-gray-300 focus:border-gray-400 focus:ring-gray-400'
+                      ? 'border-red-500 focus:border-red-500 focus:ring-red-500'
+                      : 'border-gray-300 focus:border-gray-400 focus:ring-gray-400'
                       }`}
                   />
 
@@ -503,10 +508,10 @@ export default function ClaimProfile() {
               <div className="flex items-center gap-3 p-4">
                 <button
                   className={`w-5 h-5 border-2 rounded-full transition-all flex-shrink-0 mt-0.5 ${formData.termsAccepted
-                      ? "border-gray-900 bg-gray-900"
-                      : errors.terms
-                        ? "border-red-500 bg-white"
-                        : "border-gray-300 bg-white hover:border-gray-400"
+                    ? "border-gray-900 bg-gray-900"
+                    : errors.terms
+                      ? "border-red-500 bg-white"
+                      : "border-gray-300 bg-white hover:border-gray-400"
                     }`}
                   onClick={() => {
                     setFormData(prev => ({ ...prev, termsAccepted: !prev.termsAccepted }));
@@ -537,8 +542,8 @@ export default function ClaimProfile() {
               {/* Continue Button */}
               <button
                 className={`w-full h-10 font-medium text-white rounded-lg transition-colors flex items-center justify-center ${emailRegistrationMutation.isPending
-                    ? 'bg-gray-600 cursor-not-allowed'
-                    : 'bg-gray-900 hover:bg-gray-800'
+                  ? 'bg-gray-600 cursor-not-allowed'
+                  : 'bg-gray-900 hover:bg-gray-800'
                   }`}
                 onClick={handleContinue}
                 disabled={emailRegistrationMutation.isPending}
@@ -612,8 +617,8 @@ export default function ClaimProfile() {
                 <div className="space-y-3">
                   <button
                     className={`w-full h-10 font-medium text-white rounded-lg transition-colors flex items-center justify-center ${emailVerificationMutation.isPending
-                        ? 'bg-gray-600 cursor-not-allowed'
-                        : 'bg-gray-900 hover:bg-gray-800'
+                      ? 'bg-gray-600 cursor-not-allowed'
+                      : 'bg-gray-900 hover:bg-gray-800'
                       }`}
                     onClick={handleEmailVerification}
                     disabled={otp.length !== 6 || emailVerificationMutation.isPending}

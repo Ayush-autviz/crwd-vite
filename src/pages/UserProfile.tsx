@@ -53,7 +53,8 @@ const getConsistentColor = (id: number | string, colors: string[]) => {
 };
 
 export default function ProfilePage() {
-  const { imageUrl } = useLocation().state || { imageUrl: "" };
+  const location = useLocation();
+  const { imageUrl } = location.state || { imageUrl: "" };
   const { userId } = useParams();
   const [showMenu, setShowMenu] = useState(false);
   const [showToast, setShowToast] = useState(false);
@@ -353,6 +354,15 @@ export default function ProfilePage() {
   // Get user full name
   const fullName = userProfile ? `${userProfile.first_name || ''} ${userProfile.last_name || ''}`.trim() : '';
 
+  const handleBack = () => {
+    const from = location.state?.from;
+    if (from === 'onboarding' || from === 'Login' || from === 'ClaimProfile') {
+      navigate('/');
+    } else {
+      navigate(-1);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-white">
       {/* Custom Header with back arrow, name, and menu dots */}
@@ -360,7 +370,7 @@ export default function ProfilePage() {
         <div className="sticky top-0 z-10 w-full flex items-center justify-between h-16 px-3 border-b bg-white">
           <div className="flex items-center gap-3">
             <button
-              onClick={() => navigate(-1)}
+              onClick={handleBack}
               className="p-2 hover:bg-gray-100 rounded-full transition-colors"
               aria-label="Go back"
             >

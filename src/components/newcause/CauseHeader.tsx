@@ -12,6 +12,7 @@ interface CauseHeaderProps {
   isFavorite?: boolean;
   onShare?: () => void;
   onOneTimeDonation?: () => void;
+  onBack?: () => void;
 }
 
 export default function CauseHeader({
@@ -20,6 +21,7 @@ export default function CauseHeader({
   isFavorite: initialIsFavorite = false,
   onShare,
   onOneTimeDonation,
+  onBack,
 }: CauseHeaderProps) {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
@@ -137,7 +139,7 @@ export default function CauseHeader({
     <div className="sticky top-0 z-10 w-full flex items-center justify-between p-3 md:p-4 border-b bg-white">
       <div className="flex items-center  min-w-0">
         <button
-          onClick={() => navigate(-1)}
+          onClick={onBack ? onBack : () => navigate(-1)}
           className="p-1.5 md:p-2 hover:bg-gray-100 rounded-full transition-colors flex-shrink-0"
           aria-label="Go back"
         >

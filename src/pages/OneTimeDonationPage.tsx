@@ -1,11 +1,11 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useNavigate, useLocation, useSearchParams } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
 import { useAuthStore } from "@/stores/store";
+import { Link } from "react-router-dom"; // Link is used in commented out code, keeping for now or removing if not needed.
+// Removing Link if definitely not used:
 import OneTimeDonation from "@/components/OneTimeDonation";
-import { Button } from "@/components/ui/button";
-import { Link } from "react-router-dom";
 
 export default function OneTimeDonationPage() {
   const navigate = useNavigate();
@@ -25,7 +25,7 @@ export default function OneTimeDonationPage() {
   const fundraiserTitle = location.state?.fundraiserTitle;
 
   const [selectedOrganizations, setSelectedOrganizations] = useState<string[]>([]);
-  const [checkout, setCheckout] = useState(false);
+  const [_, setCheckout] = useState(false);
 
   // If not logged in, show sign-in prompt
   // if (!currentUser?.id) {
@@ -74,12 +74,21 @@ export default function OneTimeDonationPage() {
   //   );
   // }
 
+  const handleBack = () => {
+    const from = location.state?.from;
+    if (from === 'onboarding' || from === 'Login' || from === 'ClaimProfile') {
+      navigate('/');
+    } else {
+      navigate(-1);
+    }
+  };
+
   return (
     <div className="w-full h-full bg-white flex flex-col">
       {/* Header */}
       <div className="sticky top-0 bg-white z-10 w-full flex items-center gap-3 md:gap-4 p-3 md:p-4 border-b ">
         <button
-          onClick={() => navigate(-1)}
+          onClick={handleBack}
           className="p-1.5 md:p-2 hover:bg-gray-100 rounded-full transition-colors"
           aria-label="Go back"
         >

@@ -158,6 +158,11 @@ export default function FundraiserDetail() {
   const collective = fundraiserData.collective;
 
   const handleBack = () => {
+    const from = location.state?.from;
+    if (from === 'onboarding' || from === 'Login' || from === 'ClaimProfile') {
+      navigate('/');
+      return;
+    }
     const fromCreate = location.state?.fromCreate;
     if (fromCreate && fundraiserData?.collective?.sort_name) {
       navigate(`/g/${fundraiserData.collective.sort_name}`, { state: { fromCreate: true } });

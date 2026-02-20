@@ -40,7 +40,7 @@ export default function NewGroupCrwdPage() {
     const fromScreen = (location.state as any)?.from;
     const fromCreate = (location.state as any)?.fromCreate;
     console.log(fromScreen);
-    const specialFlows = ['NewNonprofitInterests', 'NewCompleteDonation', 'Login'];
+    const specialFlows = ['NewNonprofitInterests', 'NewCompleteDonation', 'Login', 'onboarding', 'ClaimProfile'];
 
     if ((fromScreen && specialFlows.includes(fromScreen)) || fromCreate) {
       navigate('/');

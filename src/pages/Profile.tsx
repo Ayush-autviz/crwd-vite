@@ -19,7 +19,7 @@ import {
   DoorOpenIcon,
   Share2Icon,
 } from "lucide-react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { Toast } from "../components/ui/toast";
 import { useQuery, useMutation, useInfiniteQuery } from "@tanstack/react-query";
 // import { getProfile } from "@/services/api/auth";
@@ -84,7 +84,17 @@ export default function ProfilePage() {
   const [showFounderSheet, setShowFounderSheet] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
   const { user: currentUser, logout: logoutStore } = useAuthStore();
+  const location = useLocation();
   const navigate = useNavigate();
+
+  const handleBack = () => {
+    const from = location.state?.from;
+    if (from === 'onboarding' || from === 'Login' || from === 'ClaimProfile') {
+      navigate('/');
+    } else {
+      navigate(-1);
+    }
+  };
 
   // Logout mutation
   const logoutMutation = useMutation({
@@ -411,7 +421,7 @@ export default function ProfilePage() {
         {/* Left Section */}
         <div className="flex items-center gap-3">
           <button
-            onClick={() => navigate(-1)}
+            onClick={handleBack}
             className="flex items-center justify-center h-6 w-6 sm:h-8 sm:w-8 rounded-full bg-gray-100 text-gray-700 hover:bg-gray-200 transition-colors mr-2 cursor-pointer md:hidden"
             aria-label="Go back"
           >
