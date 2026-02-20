@@ -129,8 +129,8 @@ export default function NewSettings() {
       }
       queryClient.invalidateQueries({ queryKey: ['userProfile', currentUser?.id] })
       queryClient.invalidateQueries({ queryKey: ['profile'] })
-      setShowToast(true)
-      setToastMessage('Profile updated successfully!')
+      // setShowToast(true)
+      // setToastMessage('Profile updated successfully!')
       setIsEditMode(false)
       setOriginalData(formData)
       setSelectedImageFile(null)

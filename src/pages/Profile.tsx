@@ -805,9 +805,13 @@ export default function ProfilePage() {
                       return (
                         <div
                           key={collective.id || index}
-                          className="flex items-center justify-between py-2.5 md:py-3 border-b border-gray-100"
+                          className="flex items-center justify-between py-2.5 md:py-3 border-b border-gray-100 px-2 rounded-lg hover:bg-gray-50 transition-colors"
                         >
-                          <div onClick={() => navigate(`/g/${collective.sort_name}`)} className="flex items-center gap-2.5 md:gap-3 flex-1 min-w-0">
+                          <Link
+                            to={`/g/${collective.sort_name}`}
+                            onClick={() => setShowStatsSheet(false)}
+                            className="flex items-center gap-2.5 md:gap-3 flex-1 min-w-0"
+                          >
                             <Avatar className="w-9 h-9 md:w-10 md:h-10 flex-shrink-0 rounded-lg">
                               <AvatarImage src={imageUrl} alt={collective.name} />
                               <AvatarFallback
@@ -825,16 +829,7 @@ export default function ProfilePage() {
                                 {collective.member_count || 0} members
                               </p>
                             </div>
-                          </div>
-                          {/* <Button
-                            onClick={() => {
-                              setShowStatsSheet(false);
-                              navigate(`/groupcrwd/${collective.id}`);
-                            }}
-                            className="bg-blue-600 hover:bg-blue-700 text-white text-[10px] md:text-xs px-3 md:px-4 py-1.5 md:py-2 rounded-lg"
-                          >
-                            View Details
-                          </Button> */}
+                          </Link>
                         </div>
                       );
                     })}

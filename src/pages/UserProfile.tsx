@@ -764,9 +764,11 @@ export default function ProfilePage() {
                       const imageUrl = hasLogo ? collective.logo : (collective.image || collective.avatar || undefined);
 
                       return (
-                        <div
+                        <Link
                           key={collective.id || index}
-                          className="flex items-center justify-between py-3 border-b border-gray-100"
+                          to={`/g/${collective.sort_name}`}
+                          onClick={() => setShowStatsSheet(false)}
+                          className="flex items-center justify-between py-3 border-b border-gray-100 hover:bg-gray-50 transition-colors px-2 rounded-lg"
                         >
                           <div className="flex items-center gap-3 flex-1 min-w-0">
                             <Avatar className="w-10 h-10 flex-shrink-0 rounded-lg">
@@ -779,7 +781,6 @@ export default function ProfilePage() {
                               </AvatarFallback>
                             </Avatar>
                             <div className="flex-1 min-w-0">
-
                               <p className="text-sm md:text-base font-semibold text-gray-900 mb-1">
                                 {collective.name || 'Unknown Collective'}
                               </p>
@@ -788,16 +789,7 @@ export default function ProfilePage() {
                               </p>
                             </div>
                           </div>
-                          {/* <Button
-                            onClick={() => {
-                              setShowStatsSheet(false);
-                              navigate(`/groupcrwd/${collective.id}`);
-                            }}
-                            className="bg-blue-600 hover:bg-blue-700 text-white text-xs px-4 py-2 rounded-lg"
-                          >
-                            View Details
-                          </Button> */}
-                        </div>
+                        </Link>
                       );
                     })}
                   </div>
@@ -824,9 +816,13 @@ export default function ProfilePage() {
                       return (
                         <div
                           key={userData.id || index}
-                          className="flex items-center justify-between py-3 border-b border-gray-100"
+                          className="flex items-center justify-between py-3 border-b border-gray-100 px-2 rounded-lg hover:bg-gray-50 transition-colors"
                         >
-                          <div className="flex items-center gap-3 flex-1 min-w-0">
+                          <Link
+                            to={`/u/${userData.username}`}
+                            onClick={() => setShowStatsSheet(false)}
+                            className="flex items-center gap-3 flex-1 min-w-0 cursor-pointer"
+                          >
                             <Avatar className="w-10 h-10 flex-shrink-0">
                               <AvatarImage src={userData.profile_picture || userData.avatar} />
                               <AvatarFallback
@@ -846,10 +842,13 @@ export default function ProfilePage() {
                               </p>
                               <p className="text-xs md:text-sm text-gray-500 line-clamp-1">{userData.bio || userData.location}</p>
                             </div>
-                          </div>
+                          </Link>
                           {userData.id !== currentUser?.id && (
                             <Button
-                              onClick={() => handleFollowToggle(userData.id.toString(), isCurrentlyFollowing)}
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleFollowToggle(userData.id.toString(), isCurrentlyFollowing);
+                              }}
                               disabled={followUserMutation.isPending || unfollowUserMutation.isPending}
                               className={`text-xs px-4 py-2 rounded-full ${isCurrentlyFollowing
                                 ? 'bg-gray-100 text-gray-600 hover:bg-gray-200'
@@ -886,9 +885,13 @@ export default function ProfilePage() {
                       return (
                         <div
                           key={userData.id || index}
-                          className="flex items-center justify-between py-3 border-b border-gray-100"
+                          className="flex items-center justify-between py-3 border-b border-gray-100 px-2 rounded-lg hover:bg-gray-50 transition-colors"
                         >
-                          <div className="flex items-center gap-3 flex-1 min-w-0">
+                          <Link
+                            to={`/u/${userData.username}`}
+                            onClick={() => setShowStatsSheet(false)}
+                            className="flex items-center gap-3 flex-1 min-w-0 cursor-pointer"
+                          >
                             <Avatar className="w-10 h-10 flex-shrink-0">
                               <AvatarImage src={userData.profile_picture || userData.avatar} />
                               <AvatarFallback
@@ -908,10 +911,13 @@ export default function ProfilePage() {
                               </p>
                               <p className="text-xs md:text-sm text-gray-500 line-clamp-1">{userData.bio || userData.location}</p>
                             </div>
-                          </div>
+                          </Link>
                           {userData.id !== currentUser?.id && (
                             <Button
-                              onClick={() => handleFollowToggle(userData.id.toString(), isCurrentlyFollowing)}
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleFollowToggle(userData.id.toString(), isCurrentlyFollowing);
+                              }}
                               disabled={followUserMutation.isPending || unfollowUserMutation.isPending}
                               className="bg-gray-100 text-gray-600 hover:bg-gray-200 text-xs px-4 py-2 rounded-full"
                             >

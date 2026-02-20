@@ -71,6 +71,8 @@ export default function ProfileNavbar({
     queryKey: ['unreadCount'],
     queryFn: getUnreadCount,
     enabled: !!token?.access_token,
+    staleTime: 0,
+    gcTime: 0,
   });
 
   const handleLogout = () => {

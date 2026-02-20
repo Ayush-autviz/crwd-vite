@@ -21,6 +21,8 @@ export default function NotificationTabs() {
     queryKey: ['notifications'],
     queryFn: getNotifications,
     enabled: !!currentUser?.id,
+    staleTime: 0,
+    gcTime: 0,
   });
 
   const markAllNotificationsAsReadMutation = useMutation({
@@ -56,10 +58,10 @@ export default function NotificationTabs() {
   ) || false;
 
   useEffect(() => {
-    if (currentUser?.id && notificationsData?.results?.length > 0) {
+    if (currentUser?.id && !markAllNotificationsAsReadMutation.isPending) {
       markAllNotificationsAsReadMutation.mutate();
     }
-  }, [location.pathname]); 
+  }, [currentUser?.id]);
 
   return (
     <div className="w-full">
@@ -91,13 +93,13 @@ export default function NotificationTabs() {
       {/* Tab Content */}
       <div className="w-full">
         {activeTab === "notifications" && (
-          <RegularNotifications 
+          <RegularNotifications
             notifications={personalNotifications}
             isLoading={isLoadingNotifications}
           />
         )}
         {activeTab === "community" && (
-          <CommunityUpdates 
+          <CommunityUpdates
             notifications={communityNotifications}
             isLoading={isLoadingNotifications}
           />

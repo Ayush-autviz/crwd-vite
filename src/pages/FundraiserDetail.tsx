@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate, useParams, Link } from 'react-router-dom';
+import { useNavigate, useParams, Link, useLocation } from 'react-router-dom';
 import { ArrowLeft, Share2, MoreHorizontal, Users, TrendingUp, Pencil, Flag } from 'lucide-react';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { getFundraiserById, patchFundraiser } from '@/services/api/crwd';
@@ -42,6 +42,7 @@ const getInitials = (name: string) => {
 export default function FundraiserDetail() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const location = useLocation();
   const [donationAmount, setDonationAmount] = useState('25');
   const [showDropdown, setShowDropdown] = useState(false);
   const [showShareModal, setShowShareModal] = useState(false);
@@ -156,6 +157,15 @@ export default function FundraiserDetail() {
 
   const collective = fundraiserData.collective;
 
+  const handleBack = () => {
+    const fromCreate = location.state?.fromCreate;
+    if (fromCreate && fundraiserData?.collective?.sort_name) {
+      navigate(`/g/${fundraiserData.collective.sort_name}`, { state: { fromCreate: true } });
+    } else {
+      navigate(-1);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-white">
       {/* Header with Banner Background */}
@@ -186,7 +196,7 @@ export default function FundraiserDetail() {
         <div className={`relative z-10 px-4 py-3 md:px-6 md:py-4`}>
           <div className="flex items-center justify-between mb-4">
             <button
-              onClick={() => navigate(-1)}
+              onClick={handleBack}
               className="p-1.5 bg-white hover:bg-gray-100 rounded-full transition-colors shadow-sm"
               aria-label="Go back"
             >

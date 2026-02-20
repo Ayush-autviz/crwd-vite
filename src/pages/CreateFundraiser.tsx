@@ -373,7 +373,7 @@ export default function CreateFundraiser() {
                 <Button
                   onClick={() => {
                     if (createdFundraiser?.id) {
-                      navigate(`/fundraiser/${createdFundraiser.id}`);
+                      navigate(`/fundraiser/${createdFundraiser.id}`, { state: { fromCreate: true } });
                     }
                   }}
                   className="w-full bg-[#1600ff] hover:bg-[#1400cc] text-white font-semibold rounded-lg py-3 md:py-4 text-sm md:text-base flex items-center justify-center gap-2"
@@ -386,7 +386,7 @@ export default function CreateFundraiser() {
                 <Button
                   onClick={() => {
                     setShowSuccessModal(false);
-                    navigate(`/g/${collectiveData?.sort_name}`);
+                    navigate(`/g/${collectiveData?.sort_name}`, { state: { fromCreate: true } });
                   }}
                   variant="outline"
                   className="w-full border border-gray-300 text-gray-900 hover:bg-gray-50 font-semibold rounded-lg py-3 md:py-4 text-sm md:text-base"

@@ -110,7 +110,7 @@ export default function CollectiveProfile({
       </div>
       {description && (
         <p className="text-foreground text-base xs:text-lg md:text-xl leading-relaxed mt-4 md:mt-5">
-          {truncateAtFirstPeriod(description || '')}
+          {description || ''}
         </p>
       )}
     </div>

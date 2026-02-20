@@ -38,10 +38,11 @@ export default function NewGroupCrwdPage() {
 
   const handleBack = () => {
     const fromScreen = (location.state as any)?.from;
+    const fromCreate = (location.state as any)?.fromCreate;
     console.log(fromScreen);
     const specialFlows = ['NewNonprofitInterests', 'NewCompleteDonation', 'Login'];
 
-    if (fromScreen && specialFlows.includes(fromScreen)) {
+    if ((fromScreen && specialFlows.includes(fromScreen)) || fromCreate) {
       navigate('/');
     } else {
       navigate(-1);
