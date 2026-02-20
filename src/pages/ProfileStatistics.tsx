@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import ProfileNavbar from "@/components/profile/ProfileNavbar";
 import MembersList from "@/components/members/MembersList";
@@ -28,6 +28,12 @@ export default function ProfileStatistics() {
   const tab = searchParams.get("tab") || "causes";
   const [activeTab, setActiveTab] = useState(tab);
   const { user } = useAuthStore();
+
+  useEffect(() => {
+    if (!user?.id) {
+      navigate(`/onboarding?redirectTo=${encodeURIComponent(window.location.pathname + window.location.search)}`);
+    }
+  }, [user, navigate]);
 
   // Navigation handlers
   const handleCauseClick = (causeId: number) => {
@@ -113,8 +119,8 @@ export default function ProfileStatistics() {
         is_following: isFollowing,
       },
       id: item.id,
-      name: userData.first_name && userData.last_name 
-        ? `${userData.first_name} ${userData.last_name}` 
+      name: userData.first_name && userData.last_name
+        ? `${userData.first_name} ${userData.last_name}`
         : userData.first_name || userData.full_name || userData.name || 'Unknown User',
       username: userData.username || 'unknown',
       avatar: userData.profile_picture || userData.avatar || '',
@@ -137,8 +143,8 @@ export default function ProfileStatistics() {
         is_following: isFollowing,
       },
       id: item.id,
-      name: userData.first_name && userData.last_name 
-        ? `${userData.first_name} ${userData.last_name}` 
+      name: userData.first_name && userData.last_name
+        ? `${userData.first_name} ${userData.last_name}`
         : userData.first_name || userData.full_name || userData.name || 'Unknown User',
       username: userData.username || 'unknown',
       avatar: userData.profile_picture || userData.avatar || '',
@@ -162,11 +168,10 @@ export default function ProfileStatistics() {
             <Button
               key={tab.value}
               variant="ghost"
-              className={`flex-1 py-6 px-1 text-center rounded-none border-b cursor-pointer hover:text-blue-500 hover:bg-blue-50 ${
-                activeTab === tab.value
-                  ? "border-primary text-primary"
-                  : "border-transparent text-muted-foreground "
-              }`}
+              className={`flex-1 py-6 px-1 text-center rounded-none border-b cursor-pointer hover:text-blue-500 hover:bg-blue-50 ${activeTab === tab.value
+                ? "border-primary text-primary"
+                : "border-transparent text-muted-foreground "
+                }`}
               onClick={() => setActiveTab(tab.value)}
             >
               <span>{tab.label}</span>
@@ -205,7 +210,7 @@ export default function ProfileStatistics() {
                     </div>
                   </div>
                   <div className="flex flex-col items-center gap-2">
-                    <Button 
+                    <Button
                       className="text-white text-xs py-2 px-3 rounded-lg transition-colors"
                       onClick={() => handleCauseClick(cause.id)}
                     >
@@ -242,51 +247,51 @@ export default function ProfileStatistics() {
           )
         )}
         {activeTab === "crwds" && (
-         <div className="">
-         {collectivesLoading ? (
-           <div className="flex items-center justify-center py-8">
-             <Loader2 className="w-6 h-6 animate-spin mr-2" />
-             <span>Loading collectives...</span>
-           </div>
-         ) : filteredCrwds.length > 0 ? (
-           filteredCrwds.map((crwd: any, index: number) => (
-             <div key={crwd.id || index} className="flex items-center justify-between p-2 rounded-lg hover:bg-muted/50 cursor-pointer transition-colors">
-               <div className="flex items-center gap-3 flex-1 min-w-0 mr-4">
-                 <Avatar className="w-10 h-10">
-                   <AvatarImage src={crwd.avatar} />
-                   <AvatarFallback>
-                     {crwd.name.charAt(0).toUpperCase()}
-                   </AvatarFallback>
-                 </Avatar>
-                 <div className="min-w-0 flex-1">
-                   <div className="bg-green-100 px-3 py-1 rounded-sm w-fit">
-                     <p className="text-green-600 text-xs font-semibold">
-                       Collective
-                     </p>
-                   </div>
-                   <h3 className="font-medium text-sm mb-1">{crwd.name}</h3>
-                   <p className="text-xs text-muted-foreground leading-relaxed line-clamp-2 max-w-[90%]">
-                     {crwd.description}
-                   </p>
+          <div className="">
+            {collectivesLoading ? (
+              <div className="flex items-center justify-center py-8">
+                <Loader2 className="w-6 h-6 animate-spin mr-2" />
+                <span>Loading collectives...</span>
+              </div>
+            ) : filteredCrwds.length > 0 ? (
+              filteredCrwds.map((crwd: any, index: number) => (
+                <div key={crwd.id || index} className="flex items-center justify-between p-2 rounded-lg hover:bg-muted/50 cursor-pointer transition-colors">
+                  <div className="flex items-center gap-3 flex-1 min-w-0 mr-4">
+                    <Avatar className="w-10 h-10">
+                      <AvatarImage src={crwd.avatar} />
+                      <AvatarFallback>
+                        {crwd.name.charAt(0).toUpperCase()}
+                      </AvatarFallback>
+                    </Avatar>
+                    <div className="min-w-0 flex-1">
+                      <div className="bg-green-100 px-3 py-1 rounded-sm w-fit">
+                        <p className="text-green-600 text-xs font-semibold">
+                          Collective
+                        </p>
+                      </div>
+                      <h3 className="font-medium text-sm mb-1">{crwd.name}</h3>
+                      <p className="text-xs text-muted-foreground leading-relaxed line-clamp-2 max-w-[90%]">
+                        {crwd.description}
+                      </p>
 
-                 </div>
-               </div>
-               <div className="flex flex-col items-center gap-2">
-                 <Button 
-                   className="text-white text-xs py-2 px-3 rounded-lg transition-colors"
-                   onClick={() => handleCollectiveClick(crwd.id)}
-                 >
-                   View Details
-                 </Button>
-               </div>
-             </div>
-           ))
-         ) : (
-           <div className="flex items-center justify-center py-8">
-             <span className="text-muted-foreground">No collectives found</span>
-           </div>
-         )}
-       </div>
+                    </div>
+                  </div>
+                  <div className="flex flex-col items-center gap-2">
+                    <Button
+                      className="text-white text-xs py-2 px-3 rounded-lg transition-colors"
+                      onClick={() => handleCollectiveClick(crwd.id)}
+                    >
+                      View Details
+                    </Button>
+                  </div>
+                </div>
+              ))
+            ) : (
+              <div className="flex items-center justify-center py-8">
+                <span className="text-muted-foreground">No collectives found</span>
+              </div>
+            )}
+          </div>
         )}
       </div>
     </main>

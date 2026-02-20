@@ -139,7 +139,7 @@ export default function ProfilePage() {
 
   const handleFollowClick = () => {
     if (!currentUser?.id) {
-      navigate('/onboarding');
+      navigate(`/onboarding?redirectTo=${encodeURIComponent(window.location.pathname)}`);
       return;
     }
     if (isFollowing) {
@@ -243,6 +243,10 @@ export default function ProfilePage() {
   };
 
   const handleStatPress = (tab: 'causes' | 'following' | 'followers' | 'crwds') => {
+    if (!currentUser?.id) {
+      navigate(`/onboarding?redirectTo=${encodeURIComponent(window.location.pathname)}`);
+      return;
+    }
     setActiveStatsTab(tab);
     setShowStatsSheet(true);
   };

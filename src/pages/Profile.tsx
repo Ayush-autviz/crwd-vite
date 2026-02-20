@@ -308,7 +308,7 @@ export default function ProfilePage() {
             size="lg"
             className="bg-blue-600 hover:bg-blue-700 text-white px-6 md:px-8 py-2.5 md:py-3 rounded-lg font-medium transition-colors duration-200 shadow-lg hover:shadow-xl text-sm md:text-base"
           >
-            <Link to="/login" className="flex items-center gap-1.5 md:gap-2">
+            <Link to={`/login?redirectTo=${encodeURIComponent(window.location.pathname)}`} className="flex items-center gap-1.5 md:gap-2">
               <svg className="w-4 h-4 md:w-5 md:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
               </svg>
@@ -470,7 +470,7 @@ export default function ProfilePage() {
           <div className="md:col-span-12">
             <div className="flex flex-col space-y-3 md:space-y-4 px-3 md:px-4 lg:px-0">
               <ProfileHeader
-                avatarUrl={profileData?.profile_picture || '/placeholder.svg'}
+                avatarUrl={profileData?.profile_picture}
                 name={fullName}
                 location={profileData?.location || ''}
                 link={profileData?.username || ''}

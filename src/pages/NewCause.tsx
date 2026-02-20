@@ -137,7 +137,7 @@ export default function NewCausePage() {
 
   const handleConfirmAddToBox = async () => {
     if (!currentUser?.id) {
-      navigate('/onboarding');
+      navigate(`/onboarding?redirectTo=${encodeURIComponent(window.location.pathname)}`);
       return;
     }
     // Check if donation box exists first
