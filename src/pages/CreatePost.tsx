@@ -387,7 +387,7 @@ export default function CreatePostPage() {
                 <div className="flex flex-col md:flex-row bg-white">
                   {/* Preview Image */}
                   {previewData.image && (
-                    <div className="w-full md:w-48 aspect-[2/1] md:aspect-auto flex-shrink-0">
+                    <div className="w-full md:w-48  aspect-[2/1] md:aspect-auto flex-shrink-0">
                       <img
                         src={previewData.image}
                         alt={previewData.title || 'Link preview'}
@@ -427,11 +427,11 @@ export default function CreatePostPage() {
         {/* Image Preview */}
         {selectedImage && imagePreview && (
           <div className="mb-4">
-            <div className="relative rounded-lg overflow-hidden  mx-auto w-full aspect-[2/1]" style={{ maxWidth: '600px' }}>
+            <div className="relative rounded-lg overflow-hidden w-full " style={{ maxWidth: '600px' }}>
               <img
                 src={imagePreview}
                 alt="Selected"
-                className="w-full h-full object-contain"
+                className="w-full h-full  object-contain"
               />
               <button
                 onClick={() => {

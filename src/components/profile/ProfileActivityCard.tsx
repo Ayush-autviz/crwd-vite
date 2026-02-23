@@ -454,13 +454,13 @@ export default function ProfileActivityCard({
                         target="_blank"
                         rel="noopener noreferrer"
                         onClick={(e) => e.stopPropagation()}
-                        className="block w-full rounded-lg overflow-hidden mb-3 md:mb-3 cursor-pointer hover:opacity-90 transition-opacity relative mx-auto aspect-[2/1]"
-                        style={{ maxWidth: '600px' }}
+                        className="block w-full rounded-lg overflow-hidden mb-3 md:mb-3 cursor-pointer hover:opacity-90 transition-opacity relative "
+                        style={{ maxWidth: '600px', maxHeight: '300px' }}
                       >
                         <img
                           src={post.imageUrl}
                           alt="Post"
-                          className="w-full h-full object-contain"
+                          className="max-w-[600px] max-h-[300px] rounded-lg object-contain"
                         />
                       </a>
                     ) : null}

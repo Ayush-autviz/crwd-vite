@@ -147,13 +147,13 @@ export default function PostResultCard({ post }: PostResultCardProps) {
         {/* Show fundraiser image like normal post image */}
         {post.fundraiser?.image ? (
           <div
-            className="w-full rounded-lg overflow-hidden mb-2.5 md:mb-3 border border-gray-200 cursor-pointer hover:opacity-90 transition-opacity bg-gray-50 relative mx-auto aspect-[2/1]"
-            style={{ maxWidth: '600px' }}
+            className="w-full rounded-lg overflow-hidden mb-2.5 md:mb-3 border  cursor-pointer hover:opacity-90 transition-opacity  relative "
+            style={{ maxWidth: '600px', maxHeight: '300px' }}
           >
             <img
               src={post.fundraiser.image}
               alt="Fundraiser"
-              className="w-full h-full object-cover"
+              className="max-w-[600px] max-h-[300px] object-contain"
             />
           </div>
         ) : null}
@@ -167,10 +167,10 @@ export default function PostResultCard({ post }: PostResultCardProps) {
           >
             {/* Fundraiser Cover Image/Color - Only show if no image (show color/default) */}
             {!post.fundraiser.image && (
-              <div className="w-full rounded-t-lg overflow-hidden aspect-[2/1]">
+              <div className="w-full rounded-t-lg overflow-hidden">
                 {post.fundraiser.color ? (
                   <div
-                    className="w-full h-full flex items-center justify-center"
+                    className="w-full h-[200px] flex items-center justify-center"
                     style={{ backgroundColor: post.fundraiser.color }}
                   >
                     <span className="text-white text-sm xs:text-base md:text-lg font-bold">
@@ -287,13 +287,13 @@ export default function PostResultCard({ post }: PostResultCardProps) {
             if (isImage) {
               return (
                 <div
-                  className="w-full rounded-lg overflow-hidden mb-2.5 md:mb-3 cursor-pointer hover:opacity-90 transition-opacity relative mx-auto aspect-[2/1]"
-                  style={{ maxWidth: '600px' }}
+                  className="w-full rounded-lg overflow-hidden mb-2.5 md:mb-3 cursor-pointer hover:opacity-90 transition-opacity relative "
+                  style={{ maxWidth: '600px', maxHeight: '300px' }}
                 >
                   <img
                     src={post.media}
                     alt="Post"
-                    className="w-full h-full object-contain"
+                    className="max-w-[600px] max-h-[300px] object-contain rounded-lg"
                   />
                 </div>
               );

@@ -476,8 +476,8 @@ export default function CommunityPostCard({ post, onCommentPress, showSimplified
               {/* Show fundraiser image like normal post image */}
               {post.fundraiser?.image ? (
                 <div
-                  className="w-full rounded-lg overflow-hidden mb-2 md:mb-3 border border-gray-200 cursor-pointer hover:opacity-90 transition-opacity bg-gray-50 relative mx-auto aspect-[2/1]"
-                  style={{ maxWidth: '600px' }}
+                  className="w-full rounded-lg overflow-hidden mb-2 md:mb-3 cursor-pointer hover:opacity-90 transition-opacity relative "
+                  style={{ maxWidth: '600px', maxHeight: '300px' }}
                   onClick={(e) => {
                     e.preventDefault();
                     e.stopPropagation();
@@ -487,7 +487,7 @@ export default function CommunityPostCard({ post, onCommentPress, showSimplified
                   <img
                     src={post.fundraiser.image}
                     alt="Fundraiser"
-                    className="w-full h-full object-cover"
+                    className="max-w-[600px] max-h-[300px] object-contain rounded-lg"
                     style={{ objectPosition: 'center' }}
                   />
                 </div>
@@ -495,7 +495,7 @@ export default function CommunityPostCard({ post, onCommentPress, showSimplified
 
               {/* Fundraiser Cover Image/Color - Only show if no image (show color/default) */}
               {!post.fundraiser.image && (
-                <div className="w-full rounded-t-lg overflow-hidden" style={{ height: '180px' }}>
+                <div className="w-full rounded-t-lg overflow-hidden" style={{ height: '200px' }}>
                   {post.fundraiser.color ? (
                     <div
                       className="w-full h-full flex items-center justify-center"
@@ -615,8 +615,8 @@ export default function CommunityPostCard({ post, onCommentPress, showSimplified
                 // </a>
               ) : post.imageUrl ? (
                 <div
-                  className="w-full rounded-lg overflow-hidden mb-2 md:mb-3  cursor-pointer hover:opacity-90 transition-opacity relative mx-auto aspect-[2/1]"
-                  style={{ maxWidth: '600px' }}
+                  className=" rounded-lg overflow-hidden mb-2 md:mb-3  cursor-pointer hover:opacity-90 transition-opacity relative"
+                  style={{ maxWidth: '600px', maxHeight: '300px' }}
                   onClick={(e) => {
                     e.preventDefault();
                     e.stopPropagation();
@@ -627,7 +627,7 @@ export default function CommunityPostCard({ post, onCommentPress, showSimplified
                   <img
                     src={post.imageUrl}
                     alt="Post"
-                    className="w-full h-full object-contain"
+                    className="max-w-[600px] max-h-[300px] object-contain rounded-lg"
                   />
                 </div>
               ) : null}
