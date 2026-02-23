@@ -657,7 +657,6 @@ export default function NewCreateCollectivePage() {
             Start conversations and share why you support the nonprofits you
             care about.
           </p>
-          <p>No money touches your hands.</p>
         </div>
         <div className="w-fit ">
           <Button

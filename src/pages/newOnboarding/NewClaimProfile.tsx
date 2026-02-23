@@ -357,9 +357,9 @@ export default function NewClaimProfile() {
   };
 
   return (
-    <div className="h-screen w-full flex items-center justify-center overflow-hidden">
+    <div className="h-screen px-4 w-full flex items-center justify-center overflow-hidden">
 
-      <div className="w-full max-w-md bg-white rounded-3xl flex flex-col max-h-full overflow-y-auto scrollbar-hide">
+      <div className="w-full  max-w-md bg-white rounded-3xl flex flex-col max-h-full overflow-y-auto scrollbar-hide">
         {/* Progress Indicator - Step 2 */}
         <div className="flex items-center justify-center space-x-1.5 sm:space-x-2 mb-6 sm:mb-8">
           <div className="h-1 w-8 sm:w-10 md:w-12 bg-gray-300 rounded-full"></div>
@@ -373,7 +373,7 @@ export default function NewClaimProfile() {
           <h1 className="text-2xl font-extrabold text-gray-900 mb-1">
             Finish your profile
           </h1>
-          <p className="text-sm text-gray-500">
+          <p className="text-base text-gray-500">
             So others can connect with you on CRWD
           </p>
         </div>
@@ -398,7 +398,7 @@ export default function NewClaimProfile() {
               </div>
             )}
           </button>
-          <p className="text-sm text-gray-900 mt-3">Add a Photo</p>
+          <p className="text-base text-gray-900 mt-3">Add a Photo</p>
         </div>
 
         {/* Form Fields */}
@@ -419,7 +419,7 @@ export default function NewClaimProfile() {
                   clearError("firstName");
                 }}
                 className={cn(
-                  "w-full h-10 border rounded-lg px-3 bg-gray-50/50 text-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-400 transition-all placeholder:text-gray-400",
+                  "w-full h-10 border rounded-lg px-3 bg-gray-50/50 text-gray-900 text-base focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-400 transition-all placeholder:text-gray-400",
                   errors.firstName
                     ? "border-red-300 bg-red-50/50"
                     : "border-gray-200"
@@ -441,7 +441,7 @@ export default function NewClaimProfile() {
                   clearError("lastName");
                 }}
                 className={cn(
-                  "w-full h-10 border rounded-xl px-3 bg-gray-50/50 text-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-400 transition-all placeholder:text-gray-400",
+                  "w-full h-10 border rounded-xl px-3 bg-gray-50/50 text-gray-900 text-base focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-400 transition-all placeholder:text-gray-400",
                   errors.lastName
                     ? "border-red-300 bg-red-50/50"
                     : "border-gray-200"
@@ -465,7 +465,7 @@ export default function NewClaimProfile() {
                 clearError("email");
               }}
               className={cn(
-                "w-full h-10 border rounded-lg px-3 bg-gray-50/50 text-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-400 transition-all placeholder:text-gray-400",
+                "w-full h-10 border rounded-lg px-3 bg-gray-50/50 text-gray-900 text-base focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-400 transition-all placeholder:text-gray-400",
                 errors.email
                   ? "border-red-300 bg-red-50/50"
                   : "border-gray-200"
@@ -626,7 +626,7 @@ export default function NewClaimProfile() {
             />
             <Check className="pointer-events-none absolute left-1/2 top-1/2 h-3.5 w-3.5 -translate-x-1/2 -translate-y-1/2 text-white opacity-0 transition-opacity peer-checked:opacity-100" />
           </div>
-          <label htmlFor="terms" className="text-xs text-gray-600 flex-1 leading-5">
+          <label htmlFor="terms" className="text-sm text-gray-600 flex-1 leading-5">
             By checking this box, you acknowledge and agree to CRWD's{" "}
             <a href="/terms" className="text-blue-600 font-semibold hover:underline">
               Terms of Use
@@ -667,7 +667,7 @@ export default function NewClaimProfile() {
 
         {/* Sign In Link */}
         <div className="text-center shrink-0 mt-auto">
-          <p className="text-sm text-gray-500">
+          <p className="text-base text-gray-500">
             Already have an account?{" "}
             <Link
               to={`/login${redirectTo ? `?redirectTo=${encodeURIComponent(redirectTo)}` : ''}`}
@@ -698,7 +698,7 @@ export default function NewClaimProfile() {
               <h2 className="text-2xl font-bold text-gray-900">
                 Verify Your Email
               </h2>
-              <p className="text-gray-600 text-sm">
+              <p className="text-gray-600 text-base">
                 We've sent a verification code to{" "}
                 <span className="font-medium">{formData.email}</span>
               </p>
@@ -706,7 +706,7 @@ export default function NewClaimProfile() {
 
             {/* OTP Input */}
             <div className="space-y-2">
-              <label className="text-sm font-medium text-gray-900">
+              <label className="text-base font-medium text-gray-900">
                 Enter Verification Code <span className="text-red-500">*</span>
               </label>
               <input
@@ -759,7 +759,7 @@ export default function NewClaimProfile() {
 
             {/* Close Modal */}
             <button
-              className="w-full text-gray-500 hover:text-gray-700 text-sm"
+              className="w-full text-gray-500 hover:text-gray-700 text-base"
               onClick={() => setShowOTPModal(false)}
             >
               Back to Registration
