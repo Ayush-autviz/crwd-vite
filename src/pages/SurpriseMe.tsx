@@ -180,9 +180,9 @@ export default function SurpriseMePage() {
   const getInitials = (name: string) => {
     const words = name.split(' ');
     if (words.length >= 2) {
-      return (words[0].charAt(0) + words[1].charAt(0)).toUpperCase();
+      return (words[0].charAt(0))
     }
-    return name.substring(0, 2).toUpperCase();
+    return name.substring(0, 1).toUpperCase();
   };
 
   if (isLoading) {

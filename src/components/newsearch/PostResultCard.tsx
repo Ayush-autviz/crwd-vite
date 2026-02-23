@@ -147,13 +147,13 @@ export default function PostResultCard({ post }: PostResultCardProps) {
         {/* Show fundraiser image like normal post image */}
         {post.fundraiser?.image ? (
           <div
-            className="w-full rounded-lg overflow-hidden mb-2.5 md:mb-3 border  cursor-pointer hover:opacity-90 transition-opacity  relative "
+            className="w-full rounded-lg overflow-hidden mb-2.5 md:mb-3  cursor-pointer hover:opacity-90 transition-opacity  relative "
             style={{ maxWidth: '600px', maxHeight: '300px' }}
           >
             <img
               src={post.fundraiser.image}
               alt="Fundraiser"
-              className="max-w-[600px] max-h-[300px] object-contain"
+              className="max-w-[600px] max-h-[300px] object-contain rounded-lg"
             />
           </div>
         ) : null}
