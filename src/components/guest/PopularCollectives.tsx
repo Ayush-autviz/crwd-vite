@@ -118,7 +118,7 @@ export default function PopularCollectives({
 
         {/* Grid Layout: 3 cards top row, 1 card bottom left */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-6 mb-4 md:mb-8">
-          {displayCollectives.slice(0, 4).map((collective) => {
+          {displayCollectives.slice(0, 3).map((collective) => {
             // Priority: 1. If color is available, show color with letter, 2. If no color, show image, 3. Fallback to generated color with letter
             const hasColor = collective.color;
             const hasLogo = collective.logo && (collective.logo.startsWith("http") || collective.logo.startsWith("/") || collective.logo.startsWith("data:"));
@@ -184,14 +184,14 @@ export default function PopularCollectives({
 
                   {/* View Collective Button */}
                   <Link to={`/g/${collective.sort_name}`}>
-                  {/* <a href={`/groupcrwd/${collective.id}`}> */}
+                    {/* <a href={`/groupcrwd/${collective.id}`}> */}
                     <Button
                       variant="outline"
                       className="w-full border-[#a854f7] text-[#a854f7] hover:bg-[#a854f7] hover:text-white text-sm xs:text-base md:text-sm py-2 md:py-2"
                     >
                       View Collective
                     </Button>
-                  {/* </a> */}
+                    {/* </a> */}
                   </Link>
                 </CardContent>
               </Card>
@@ -214,15 +214,15 @@ export default function PopularCollectives({
           </Button>
 
           {/* <a href={seeAllLink} className="w-full sm:w-auto"> */}
-            <Button
-              variant="outline"
-              size="lg"
-              onClick={() => navigate("/circles")}
-              // className="w-full sm:w-auto border-[#a854f7] rounded-full text-[#a854f7] hover:bg-[#a854f7] hover:text-white px-6 md:px-8 py-2 md:py-3 text-sm xs:text-base md:text-lg font-medium"
-              className="h-10 md:h-14 px-8 md:px-10 py-1 md:py-4 rounded-full border-[#a854f7] text-[#a854f7] hover:bg-[#a854f7] hover:text-white font-bold text-lg md:text-lg"
-            >
-              See All Collectives
-            </Button>
+          <Button
+            variant="outline"
+            size="lg"
+            onClick={() => navigate("/circles")}
+            // className="w-full sm:w-auto border-[#a854f7] rounded-full text-[#a854f7] hover:bg-[#a854f7] hover:text-white px-6 md:px-8 py-2 md:py-3 text-sm xs:text-base md:text-lg font-medium"
+            className="h-10 md:h-14 px-8 md:px-10 py-1 md:py-4 rounded-full border-[#a854f7] text-[#a854f7] hover:bg-[#a854f7] hover:text-white font-bold text-lg md:text-lg"
+          >
+            See All Collectives
+          </Button>
           {/* </a> */}
         </div>
       </div>

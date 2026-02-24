@@ -18,6 +18,7 @@ import { CrwdAnimation } from '@/assets/newLogo';
 import JoinCollectiveBottomSheet from '@/components/newgroupcrwd/JoinCollectiveBottomSheet';
 import { truncateAtFirstPeriod } from '@/lib/utils';
 import { DiscardSheet } from '@/components/ui/DiscardSheet';
+import { useUnsavedChanges } from '@/hooks/use-unsaved-changes';
 
 const getCategoryById = (categoryId: string | undefined) => {
   return categories.find(cat => cat.id === categoryId) || null;
@@ -146,35 +147,7 @@ export default function NewCreateCollectivePage() {
     }
   };
 
-  useEffect(() => {
-    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
-      if (hasUnsavedChanges && step !== 3 && !isConfirmedDiscard) {
-        e.preventDefault();
-        e.returnValue = '';
-      }
-    };
-
-    const handlePopState = () => {
-      if (hasUnsavedChanges && step !== 3 && !isConfirmedDiscard) {
-        // Push state back to stay on page
-        window.history.pushState(null, '', window.location.pathname);
-        setShowDiscardSheet(true);
-      }
-    };
-
-    window.addEventListener('beforeunload', handleBeforeUnload);
-    window.addEventListener('popstate', handlePopState);
-
-    // Push an initial state so we have something to pop
-    if (hasUnsavedChanges && step !== 3 && !isConfirmedDiscard) {
-      window.history.pushState(null, '', window.location.pathname);
-    }
-
-    return () => {
-      window.removeEventListener('beforeunload', handleBeforeUnload);
-      window.removeEventListener('popstate', handlePopState);
-    };
-  }, [hasUnsavedChanges, step, isConfirmedDiscard]);
+  useUnsavedChanges(hasUnsavedChanges && step !== 3 && !isConfirmedDiscard, setShowDiscardSheet, false);
 
   // Logo customization state - separate states for letter and upload
   const [logoType, setLogoType] = useState<'letter' | 'upload'>('letter');
@@ -995,7 +968,7 @@ export default function NewCreateCollectivePage() {
               onFocus={() => setIsNameFocused(true)}
               onBlur={() => setIsNameFocused(false)}
               placeholder={isNameFocused ? "" : '"Atlanta Climate Action"'}
-              className={`w-full bg-gray-50 rounded-2xl text-sm md:text-base ${name.length > 0 ? '' : 'italic'}`}
+              className={`w-full bg-gray-50 rounded-2xl text-base ${name.length > 0 ? '' : 'italic'}`}
             />
           </div>
 
@@ -1019,7 +992,7 @@ export default function NewCreateCollectivePage() {
               onFocus={() => setIsDescriptionFocused(true)}
               onBlur={() => setIsDescriptionFocused(false)}
               placeholder={isDescriptionFocused ? "" : `"We're classmates giving back to Atlanta."\n"Our office team supporting local families."\n"A community of friends passionate about clean water."`}
-              className={`w-full min-h-[100px] bg-gray-50 rounded-2xl text-xs xs:text-sm md:text-base ${description.length > 0 ? '' : 'italic'}`}
+              className={`w-full min-h-[100px] bg-gray-50 rounded-2xl text-base ${description.length > 0 ? '' : 'italic'}`}
             />
           </div>
 
@@ -1237,7 +1210,7 @@ export default function NewCreateCollectivePage() {
                   onFocus={() => setIsSearchFocused(true)}
                   onBlur={() => setIsSearchFocused(false)}
                   onKeyPress={handleSearchKeyPress}
-                  className="pl-9 md:pl-10 bg-gray-100 rounded-lg text-sm md:text-base py-5 sm:py-6"
+                  className="pl-9 md:pl-10 bg-gray-100 rounded-lg text-base py-5 sm:py-6"
                 />
               </div>
 

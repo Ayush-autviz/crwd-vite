@@ -365,8 +365,16 @@ export default function NewCompleteOnboard() {
     });
   };
 
-  const getCategoryInfo = (categoryId: string) => {
-    return categories.find((cat) => cat.id === categoryId) || categories[0];
+  const getCategoryById = (categoryId: string | undefined) => {
+    return categories.find(cat => cat.id === categoryId) || null;
+  };
+
+  const getCategoryIds = (categoryId: string | undefined): string[] => {
+    if (!categoryId) return [];
+    if (categoryId.length > 1) {
+      return categoryId.split('');
+    }
+    return [categoryId];
   };
 
   // Get surprise causes
@@ -605,7 +613,6 @@ export default function NewCompleteOnboard() {
                       const isSelected = selectedCauses.includes(cause.id);
                       const avatarBgColor = getConsistentColor(cause.id, avatarColors);
                       const initials = getInitials(cause.name);
-                      const categoryInfo = getCategoryInfo(cause.category);
 
                       return (
                         <Card
@@ -629,11 +636,19 @@ export default function NewCompleteOnboard() {
                                 <h3 className="font-bold text-xs sm:text-sm text-gray-900 mb-1 line-clamp-2 sm:line-clamp-3">
                                   {cause.name}
                                 </h3>
-                                <div
-                                  className="px-2 py-0.5 rounded-full text-[10px] sm:text-xs font-medium text-white inline-block"
-                                  style={{ backgroundColor: categoryInfo.background }}
-                                >
-                                  {categoryInfo.name}
+                                <div className="flex flex-wrap gap-1">
+                                  {getCategoryIds(cause.category).map((catId, idx) => {
+                                    const catInfo = getCategoryById(catId) || categories[0];
+                                    return (
+                                      <div
+                                        key={idx}
+                                        className="px-2 py-0.5 rounded-full text-[10px] sm:text-xs font-medium text-white inline-block"
+                                        style={{ backgroundColor: catInfo.background }}
+                                      >
+                                        {catInfo.name}
+                                      </div>
+                                    );
+                                  })}
                                 </div>
                               </div>
                               {isSelected && (
@@ -1080,7 +1095,6 @@ export default function NewCompleteOnboard() {
                   const isSelected = selectedCauses.includes(cause.id);
                   const avatarBgColor = getConsistentColor(cause.id, avatarColors);
                   const initials = getInitials(cause.name);
-                  const categoryInfo = getCategoryInfo(cause.category);
 
                   return (
                     <div
@@ -1105,11 +1119,19 @@ export default function NewCompleteOnboard() {
                             <h3 className="font-bold text-gray-900 mb-1">
                               {cause.name}
                             </h3>
-                            <div
-                              className="px-2 py-0.5 rounded-full text-[10px] font-bold text-white uppercase tracking-wide inline-block"
-                              style={{ backgroundColor: categoryInfo.background }}
-                            >
-                              {categoryInfo.name}
+                            <div className="flex flex-wrap gap-1">
+                              {getCategoryIds(cause.category).map((catId, idx) => {
+                                const catInfo = getCategoryById(catId) || categories[0];
+                                return (
+                                  <div
+                                    key={idx}
+                                    className="px-2 py-0.5 rounded-full text-[10px] font-bold text-white uppercase tracking-wide inline-block"
+                                    style={{ backgroundColor: catInfo.background }}
+                                  >
+                                    {catInfo.name}
+                                  </div>
+                                );
+                              })}
                             </div>
                           </div>
                         </div>

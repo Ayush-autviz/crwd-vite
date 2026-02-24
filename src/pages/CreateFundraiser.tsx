@@ -210,6 +210,12 @@ export default function CreateFundraiser() {
         setShowToast(true);
         return;
       }
+      // Validate fundraising goal minimum
+      if (parseFloat(fundraisingGoal) < 100) {
+        setToastMessage('Fundraising goal must be at least $100.');
+        setShowToast(true);
+        return;
+      }
       if (coverType === 'image' && !uploadedCoverImage) {
         setToastMessage('Please upload an image for the campaign cover');
         setShowToast(true);

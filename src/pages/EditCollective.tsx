@@ -11,9 +11,6 @@ import { getCausesBySearch } from '@/services/api/crwd';
 import { useAuthStore } from '@/stores/store';
 import { categories } from '@/constants/categories';
 import { toast } from 'sonner';
-import { useUnsavedChanges } from '@/hooks/use-unsaved-changes';
-import { DiscardSheet } from '@/components/ui/DiscardSheet';
-import { useMemo } from 'react';
 
 // Helper function to get category by ID
 const getCategoryById = (categoryId: string | undefined) => {
@@ -54,16 +51,6 @@ export default function EditCollectivePage() {
   const [uploadedLogoPreview, setUploadedLogoPreview] = useState<string | null>(null); // State for uploaded image preview
   const [showLogoCustomization, setShowLogoCustomization] = useState(false);
 
-  // Navigation guard state
-  const [showDiscardSheet, setShowDiscardSheet] = useState(false);
-  const [isConfirmedDiscard, setIsConfirmedDiscard] = useState(false);
-
-  // Store default values from API
-  const [defaultColor, setDefaultColor] = useState<string>('');
-  const [defaultLogo, setDefaultLogo] = useState<string | null>(null);
-  const [initialName, setInitialName] = useState<string>('');
-  const [initialDescription, setInitialDescription] = useState<string>('');
-  const [initialCauseIds, setInitialCauseIds] = useState<number[]>([]);
 
   // Causes management state
   const [searchQuery, setSearchQuery] = useState('');
@@ -119,14 +106,6 @@ export default function EditCollectivePage() {
       setName(apiName);
       setDescription(apiDescription);
 
-      // Store initial values
-      setInitialName(apiName);
-      setInitialDescription(apiDescription);
-
-      // Store default values from API
-      setDefaultColor(crwdData.color || '');
-      setDefaultLogo(crwdData.logo || null);
-
       // Determine logo type - prioritize logo (image) over color
       if (crwdData.logo) {
         // Has logo image
@@ -155,8 +134,6 @@ export default function EditCollectivePage() {
         return item.cause || item;
       });
       setSelectedCauses(mappedCauses);
-      const initialIds = mappedCauses.map((cause: any) => cause.id);
-      setInitialCauseIds(initialIds);
     }
   }, [collectiveCausesData]);
 
@@ -169,52 +146,13 @@ export default function EditCollectivePage() {
       await queryClient.invalidateQueries({ queryKey: ['collective-causes', crwdId] });
       await queryClient.refetchQueries({ queryKey: ['crwd', crwdId] });
       await queryClient.refetchQueries({ queryKey: ['collective-causes', crwdId] });
-      navigate(`/groupcrwd/${crwdId}`);
+      navigate(`/g/${crwdData.sort_name}`);
     },
     onError: (error: any) => {
       console.error('Update collective error:', error);
     },
   });
 
-  const hasUnsavedChanges = useMemo(() => {
-    // Prepare cause_ids array
-    const causeIds = selectedCauses.map(cause => cause.id);
-
-    // Check what has changed
-    const nameChanged = name.trim() !== initialName;
-    const descriptionChanged = description.trim() !== initialDescription;
-    const causeIdsChanged = JSON.stringify(causeIds.sort()) !== JSON.stringify(initialCauseIds.sort());
-
-    // Logo check
-    const hasNewLogo = logoType === 'upload' && uploadedLogo !== null;
-    const colorChanged = logoType === 'letter' && letterLogoColor !== defaultColor;
-
-    // If switched to default mode and default was different
-    // This is tricky without knowing exactly if logoType changed from initial. 
-    // Simplified: if logoType is 'upload' but no new file, and we had a string URL logo initially, we assume no change unless we track "logo removed".
-    // But here we only have "upload" or "letter".
-
-    // Let's rely on what handleSave checks, essentially.
-
-    // Check if we switched logo type effectively
-    // Initial state:
-    // If crwdData.logo existed -> initial is 'upload'
-    // Else -> initial is 'letter' (or 'color' as per code)
-    const initialLogoType = defaultLogo ? 'upload' : 'letter';
-    const logoTypeChanged = logoType !== initialLogoType;
-
-    return nameChanged || descriptionChanged || causeIdsChanged || hasNewLogo || colorChanged || logoTypeChanged;
-  }, [name, description, selectedCauses, logoType, uploadedLogo, letterLogoColor, initialName, initialDescription, initialCauseIds, defaultColor, defaultLogo]);
-
-  useUnsavedChanges(hasUnsavedChanges, setShowDiscardSheet, isConfirmedDiscard);
-
-  const handleDiscard = () => {
-    setIsConfirmedDiscard(true);
-    setShowDiscardSheet(false);
-    setTimeout(() => {
-      navigate(-1);
-    }, 0);
-  };
 
   const handleSave = () => {
     if (!name.trim()) {
@@ -224,31 +162,18 @@ export default function EditCollectivePage() {
     // Prepare cause_ids array
     const causeIds = selectedCauses.map(cause => cause.id);
 
-    // Check what has changed
-    const nameChanged = name.trim() !== initialName;
-    const descriptionChanged = description.trim() !== initialDescription;
-    const causeIdsChanged = JSON.stringify(causeIds.sort()) !== JSON.stringify(initialCauseIds.sort());
-    const hasNewLogo = logoType === 'upload' && uploadedLogo !== null;
-    const colorChanged = logoType === 'letter' && letterLogoColor !== defaultColor;
-
     // Use FormData if there's a file upload, otherwise use JSON
-    if (hasNewLogo) {
+    if (logoType === 'upload' && uploadedLogo !== null) {
       // New file uploaded - use FormData
       const formData = new FormData();
+      formData.append('name', name.trim());
+      formData.append('description', description.trim());
 
-      // Only add changed fields
-      if (nameChanged) {
-        formData.append('name', name.trim());
-      }
-      if (descriptionChanged) {
-        formData.append('description', description.trim());
-      }
-      if (causeIdsChanged) {
-        // Append each cause_id separately (backend should handle this as an array)
-        causeIds.forEach(causeId => {
-          formData.append('cause_ids', causeId.toString());
-        });
-      }
+      // Append each cause_id separately (backend should handle this as an array)
+      causeIds.forEach(causeId => {
+        formData.append('cause_ids', causeId.toString());
+      });
+
       formData.append('logo_file', uploadedLogo);
       // When logo is being displayed, send empty color string to clear the color
       formData.append('color', '');
@@ -256,24 +181,17 @@ export default function EditCollectivePage() {
       updateMutation.mutate(formData);
     } else {
       // Use JSON - no file upload
-      const updateData: any = {};
-
-      // Only add changed fields
-      if (nameChanged) {
-        updateData.name = name.trim();
-      }
-      if (descriptionChanged) {
-        updateData.description = description.trim();
-      }
-      if (causeIdsChanged) {
-        updateData.cause_ids = causeIds;
-      }
+      const updateData: any = {
+        name: name.trim(),
+        description: description.trim(),
+        cause_ids: causeIds,
+      };
 
       // If logo is being displayed (logoType === 'upload'), send empty color to clear it
-      // Otherwise, send color if it changed
+      // Otherwise, send current color
       if (logoType === 'upload') {
         updateData.color = '';
-      } else if (colorChanged) {
+      } else {
         updateData.color = letterLogoColor;
       }
 
@@ -761,13 +679,7 @@ export default function EditCollectivePage() {
       {/* Footer Buttons */}
       <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 p-3 md:p-4 flex items-center justify-between gap-3 md:gap-4 z-10">
         <Button
-          onClick={() => {
-            if (hasUnsavedChanges) {
-              setShowDiscardSheet(true);
-            } else {
-              navigate(-1);
-            }
-          }}
+          onClick={() => navigate(-1)}
           variant="outline"
           className="border-gray-300 rounded-full font-semibold text-xs md:text-sm text-foreground w-[48%] py-2 md:py-3"
         >
@@ -794,11 +706,6 @@ export default function EditCollectivePage() {
           )}
         </Button>
       </div>
-      <DiscardSheet
-        isOpen={showDiscardSheet}
-        onClose={() => setShowDiscardSheet(false)}
-        onDiscard={handleDiscard}
-      />
     </div>
   );
 }
