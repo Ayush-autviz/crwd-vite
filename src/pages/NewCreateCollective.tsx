@@ -733,26 +733,28 @@ export default function NewCreateCollectivePage() {
                           </AvatarFallback>
                         </Avatar>
                         <div className="flex-1 min-w-0">
-                          <h4 className="font-bold text-sm xs:text-base md:text-lg text-foreground mb-1">{causeData.name}</h4>
-                          <p className="text-xs xs:text-sm md:text-base text-gray-600 line-clamp-2 mb-2">
+                          <div className="flex flex-col items-start flex-wrap">
+                            <h4 className="font-bold text-sm xs:text-base md:text-lg text-foreground truncate">{causeData.name}</h4>
+                            <div className="flex items-center gap-2 flex-wrap">
+                              {categoryNames.map((name, index) => {
+                                const singleCategoryId = categoryIds[index];
+                                const bgColor = getCategoryColor(singleCategoryId);
+                                const textColor = getCategoryTextColor(singleCategoryId);
+                                return (
+                                  <span
+                                    key={index}
+                                    className="inline-flex items-center rounded-full px-1.5 md:px-2 py-0.5 text-[10px] md:text-xs font-medium flex-shrink-0"
+                                    style={{ backgroundColor: bgColor, color: textColor }}
+                                  >
+                                    {name}
+                                  </span>
+                                );
+                              })}
+                            </div>
+                          </div>
+                          <p className="text-xs xs:text-sm md:text-base text-gray-600 line-clamp-2">
                             {truncateAtFirstPeriod(causeData.mission || causeData.description)}
                           </p>
-                          <div className="flex flex-wrap gap-1.5 md:gap-2">
-                            {categoryNames.map((name, index) => {
-                              const singleCategoryId = categoryIds[index];
-                              const bgColor = getCategoryColor(singleCategoryId);
-                              const textColor = getCategoryTextColor(singleCategoryId);
-                              return (
-                                <span
-                                  key={index}
-                                  className="inline-flex items-center rounded-full px-2 py-0.5 text-[10px] md:text-xs font-medium"
-                                  style={{ backgroundColor: bgColor, color: textColor }}
-                                >
-                                  {name}
-                                </span>
-                              );
-                            })}
-                          </div>
                         </div>
                       </div>
                     </div>
@@ -1245,8 +1247,8 @@ export default function NewCreateCollectivePage() {
                         favoriteCauses.map((item: any) => {
                           const cause = item.cause || item;
                           const categoryId = cause.category || cause.cause_category;
-                          const categoryName = getCategoryNames(categoryId);
-                          const categoryColor = getCategoryColor(categoryId);
+                          const categoryNames = getCategoryNames(categoryId);
+                          const categoryIds = getCategoryIds(categoryId);
                           const isSelected = isCauseSelected(cause.id);
                           const avatarBgColor = getConsistentColor(cause.id, avatarColors);
                           const initials = getInitials(cause.name || 'N');
@@ -1267,14 +1269,24 @@ export default function NewCreateCollectivePage() {
                                 </AvatarFallback>
                               </Avatar>
                               <div className="flex-1 min-w-0">
-                                <div className="flex items-center gap-2 mb-1 flex-wrap">
+                                <div className="flex flex-col items-start flex-wrap">
                                   <h4 className="font-bold text-sm xs:text-base md:text-lg text-foreground truncate">{cause.name}</h4>
-                                  <span
-                                    className="inline-flex items-center rounded-full px-1.5 md:px-2 py-0.5 text-[10px] md:text-xs font-medium flex-shrink-0"
-                                    style={{ backgroundColor: categoryColor, color: getCategoryTextColor(cause.category || cause.cause_category) }}
-                                  >
-                                    {categoryName}
-                                  </span>
+                                  <div className="flex items-center gap-2 flex-wrap">
+                                    {categoryNames.map((name, index) => {
+                                      const singleCategoryId = categoryIds[index];
+                                      const bgColor = getCategoryColor(singleCategoryId);
+                                      const textColor = getCategoryTextColor(singleCategoryId);
+                                      return (
+                                        <span
+                                          key={index}
+                                          className="inline-flex items-center rounded-full px-1.5 md:px-2 py-0.5 text-[10px] md:text-xs font-medium flex-shrink-0"
+                                          style={{ backgroundColor: bgColor, color: textColor }}
+                                        >
+                                          {name}
+                                        </span>
+                                      );
+                                    })}
+                                  </div>
                                 </div>
                                 <p className="text-xs xs:text-sm md:text-base text-muted-foreground line-clamp-2">
                                   {truncateAtFirstPeriod(cause.mission || cause.description)}
