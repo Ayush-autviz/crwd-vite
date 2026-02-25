@@ -269,7 +269,7 @@ export default function ProfileActivityCard({
         <CardContent className="px-4 md:px-4">
           <div className="flex gap-3 md:gap-3">
             {/* <Link to={isOwnPost ? `/profile` : `/user-profile/${post.userId}`}> */}
-            <a href={isOwnPost ? `/profile` : `/u/${post.sort_name}`}>
+            <a href={isOwnPost ? `/profile` : `/u/${post.username}`}>
               {/* Increased mobile avatar size: h-10 w-10 (was 9) */}
               <Avatar className="h-10 w-10 md:h-10 md:w-10 flex-shrink-0">
                 <AvatarImage

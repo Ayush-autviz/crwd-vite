@@ -68,7 +68,6 @@ export default function PostById() {
   const post: PostDetail | undefined = postData ? {
     id: postData.id,
     userId: postData.user?.id?.toString() || '',
-    sort_name: postData.user?.sort_name || '',
     avatarUrl: postData.user?.profile_picture || '/placeholder.svg',
     username: postData.user?.full_name || postData.user?.full_name || 'Unknown User',
     color: postData.user?.color,

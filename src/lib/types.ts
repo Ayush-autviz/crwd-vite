@@ -19,7 +19,6 @@ export interface PreviewDetails {
 export interface PostDetail {
   id: number;
   userId: string;
-  sort_name: string;
   avatarUrl: string;
   username: string;
   color?: string;
