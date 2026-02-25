@@ -501,7 +501,7 @@ export default function CommunityPostCard({ post, onCommentPress, showSimplified
                       className="w-full h-full flex items-center justify-center"
                       style={{ backgroundColor: post.fundraiser.color }}
                     >
-                      <span className="text-white text-sm xs:text-base md:text-lg font-bold">
+                      <span className="text-white text-sm xs:text-base md:text-lg font-bold text-center">
                         {post.fundraiser.name}
                       </span>
                     </div>
@@ -510,7 +510,7 @@ export default function CommunityPostCard({ post, onCommentPress, showSimplified
                       className="w-full h-full flex items-center justify-center"
                       style={{ backgroundColor: '#1600ff' }}
                     >
-                      <span className="text-white text-lg xs:text-xl md:text-2xl font-bold">
+                      <span className="text-white text-lg xs:text-xl md:text-2xl font-bold text-center">
                         {post.fundraiser.name}
                       </span>
                     </div>
