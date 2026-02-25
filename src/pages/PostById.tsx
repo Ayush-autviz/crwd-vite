@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, useLocation } from "react-router-dom";
 import ProfileActivityCard from "@/components/profile/ProfileActivityCard";
 import { Loader2, Image as ImageIcon, Link as LinkIcon, X } from "lucide-react";
 import ProfileNavbar from "@/components/profile/ProfileNavbar";
@@ -26,6 +26,7 @@ export default function PostById() {
   const [replyingTo, setReplyingTo] = useState<CommentData | null>(null);
   const inputRef = React.useRef<HTMLInputElement>(null);
   const navigate = useNavigate();
+  const location = useLocation();
   const { token, user: currentUser } = useAuthStore();
 
   // Redirect to login if no token
@@ -67,6 +68,7 @@ export default function PostById() {
   const post: PostDetail | undefined = postData ? {
     id: postData.id,
     userId: postData.user?.id?.toString() || '',
+    sort_name: postData.user?.sort_name || '',
     avatarUrl: postData.user?.profile_picture || '/placeholder.svg',
     username: postData.user?.full_name || postData.user?.full_name || 'Unknown User',
     color: postData.user?.color,
@@ -281,11 +283,19 @@ export default function PostById() {
   // Navigation guard
   useUnsavedChanges(!!inputValue.trim(), setShowDiscardSheet, isConfirmedLeave);
 
+  const handleBack = () => {
+    if (location.key === 'default') {
+      navigate('/');
+    } else {
+      navigate(-1);
+    }
+  };
+
   const handleConfirmLeave = () => {
     setIsConfirmedLeave(true);
     setShowDiscardSheet(false);
     setTimeout(() => {
-      navigate("/");
+      handleBack();
     }, 0);
   };
 
@@ -299,7 +309,7 @@ export default function PostById() {
     return (
       <div className="bg-white min-h-screen flex flex-col relative pb-16 md:pb-0">
         {currentUser?.id ?
-          <ProfileNavbar title={getUserDisplayName()} />
+          <ProfileNavbar title={getUserDisplayName()} onBackClick={handleBack} />
           : <LoggedOutHeader />
         }
         <div className="flex-1 flex items-center justify-center">
@@ -322,7 +332,7 @@ export default function PostById() {
     return (
       <div className="bg-white min-h-screen flex flex-col relative pb-16 md:pb-0">
         {currentUser?.id ?
-          <ProfileNavbar title={getUserDisplayName()} />
+          <ProfileNavbar title={getUserDisplayName()} onBackClick={handleBack} />
           : <LoggedOutHeader />
         }
         <div className="flex-1 flex items-center justify-center">
@@ -334,7 +344,7 @@ export default function PostById() {
               The post you're looking for doesn't exist or has been removed.
             </p>
             <button
-              onClick={() => navigate('/')}
+              onClick={handleBack}
               className="mt-3 md:mt-4 px-4 md:px-5 py-2 md:py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm md:text-base"
             >
               Go Back Home
@@ -348,7 +358,7 @@ export default function PostById() {
   return (
     <div className="bg-white min-h-screen flex flex-col relative pb-16">
       {currentUser?.id ?
-        <ProfileNavbar title={post.org} />
+        <ProfileNavbar title={post.org} onBackClick={handleBack} />
         : <LoggedOutHeader />
       }
       <main className="flex-1">

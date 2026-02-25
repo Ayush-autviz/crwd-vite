@@ -487,7 +487,7 @@ export default function CommunityPostCard({ post, onCommentPress, showSimplified
                   <img
                     src={post.fundraiser.image}
                     alt="Fundraiser"
-                    className="max-w-[600px] max-h-[300px] object-contain rounded-lg"
+                    className=" max-h-[300px] object-contain rounded-lg"
                     style={{ objectPosition: 'center' }}
                   />
                 </div>
@@ -627,7 +627,7 @@ export default function CommunityPostCard({ post, onCommentPress, showSimplified
                   <img
                     src={post.imageUrl}
                     alt="Post"
-                    className="max-w-[600px] max-h-[300px] object-contain rounded-lg"
+                    className=" max-h-[300px] object-contain rounded-lg"
                   />
                 </div>
               ) : null}

@@ -44,7 +44,7 @@ export default function NewCausePage() {
 
   const handleBack = () => {
     const from = location.state?.from;
-    if (from === 'onboarding' || from === 'Login' || from === 'ClaimProfile') {
+    if (from === 'onboarding' || from === 'Login' || from === 'ClaimProfile' || location.key === 'default') {
       navigate('/');
     } else {
       navigate(-1);

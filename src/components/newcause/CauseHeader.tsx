@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { ArrowLeft, Star, MoreHorizontal, Share2, Link2, Flag, CreditCard } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { favoriteCause, unfavoriteCause } from '@/services/api/social';
 import { useAuthStore } from '@/stores/store';
@@ -24,6 +24,7 @@ export default function CauseHeader({
   onBack,
 }: CauseHeaderProps) {
   const navigate = useNavigate();
+  const location = useLocation();
   const queryClient = useQueryClient();
   const { user: currentUser } = useAuthStore();
   const [isFavorite, setIsFavorite] = useState(initialIsFavorite);
@@ -139,7 +140,7 @@ export default function CauseHeader({
     <div className="sticky top-0 z-10 w-full flex items-center justify-between p-3 md:p-4 border-b bg-white">
       <div className="flex items-center  min-w-0">
         <button
-          onClick={onBack ? onBack : () => navigate(-1)}
+          onClick={onBack ? onBack : () => (location.key === 'default' ? navigate('/') : navigate(-1))}
           className="p-1.5 md:p-2 hover:bg-gray-100 rounded-full transition-colors flex-shrink-0"
           aria-label="Go back"
         >

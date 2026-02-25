@@ -10,7 +10,6 @@ import { Button } from "@/components/ui/button";
 import {
   Ellipsis,
   Share,
-  Flag,
   Loader2,
   ArrowLeft,
   Users,
@@ -356,7 +355,7 @@ export default function ProfilePage() {
 
   const handleBack = () => {
     const from = location.state?.from;
-    if (from === 'onboarding' || from === 'Login' || from === 'ClaimProfile') {
+    if (from === 'onboarding' || from === 'Login' || from === 'ClaimProfile' || location.key === 'default') {
       navigate('/');
     } else {
       navigate(-1);

@@ -42,7 +42,7 @@ export default function NewGroupCrwdPage() {
     console.log(fromScreen);
     const specialFlows = ['NewNonprofitInterests', 'NewCompleteDonation', 'Login', 'onboarding', 'ClaimProfile'];
 
-    if ((fromScreen && specialFlows.includes(fromScreen)) || fromCreate) {
+    if ((fromScreen && specialFlows.includes(fromScreen)) || fromCreate || location.key === 'default') {
       navigate('/');
     } else {
       navigate(-1);

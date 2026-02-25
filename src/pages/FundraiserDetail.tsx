@@ -12,6 +12,7 @@ import { formatDistanceToNow } from 'date-fns';
 import dayjs from 'dayjs';
 import { SharePost } from "@/components/ui/SharePost";
 import { queryClient } from '@/lib/react-query/client';
+import { Toast } from '@/components/ui/toast';
 
 // Avatar colors for consistent fallback styling
 const avatarColors = [
@@ -159,7 +160,7 @@ export default function FundraiserDetail() {
 
   const handleBack = () => {
     const from = location.state?.from;
-    if (from === 'onboarding' || from === 'Login' || from === 'ClaimProfile') {
+    if (from === 'onboarding' || from === 'Login' || from === 'ClaimProfile' || location.key === 'default') {
       navigate('/');
       return;
     }
@@ -500,6 +501,13 @@ export default function FundraiserDetail() {
           description={fundraiserData.description || `Check out this fundraiser: ${fundraiserData.name}`}
         />
       )}
+
+      {/* Custom Toast */}
+      <Toast
+        message={toastMessage}
+        show={showToast}
+        onHide={() => setShowToast(false)}
+      />
     </div>
   );
 }

@@ -1158,22 +1158,24 @@ export default function NewCreateCollectivePage() {
                             </AvatarFallback>
                           </Avatar>
                           <div className="flex-1 min-w-0">
-                            <div className="flex items-center gap-2 mb-1 flex-wrap">
+                            <div className="flex flex-col items-start flex-wrap">
                               <h4 className="font-bold text-sm xs:text-base md:text-lg text-foreground truncate">{causeData.name}</h4>
-                              {categoryNames.map((name, index) => {
-                                const singleCategoryId = categoryIds[index];
-                                const bgColor = getCategoryColor(singleCategoryId);
-                                const textColor = getCategoryTextColor(singleCategoryId);
-                                return (
-                                  <span
-                                    key={index}
-                                    className="inline-flex items-center rounded-full px-1.5 md:px-2 py-0.5 text-[10px] md:text-xs font-medium flex-shrink-0"
-                                    style={{ backgroundColor: bgColor, color: textColor }}
-                                  >
-                                    {name}
-                                  </span>
-                                );
-                              })}
+                              <div className="flex items-center gap-2 flex-wrap">
+                                {categoryNames.map((name, index) => {
+                                  const singleCategoryId = categoryIds[index];
+                                  const bgColor = getCategoryColor(singleCategoryId);
+                                  const textColor = getCategoryTextColor(singleCategoryId);
+                                  return (
+                                    <span
+                                      key={index}
+                                      className="inline-flex items-center rounded-full px-1.5 md:px-2 py-0.5 text-[10px] md:text-xs font-medium flex-shrink-0"
+                                      style={{ backgroundColor: bgColor, color: textColor }}
+                                    >
+                                      {name}
+                                    </span>
+                                  );
+                                })}
+                              </div>
                             </div>
                             <p className="text-xs xs:text-sm md:text-base text-gray-600 line-clamp-2 mb-2">
                               {truncateAtFirstPeriod(causeData.mission || causeData.description)}
@@ -1406,22 +1408,24 @@ export default function NewCreateCollectivePage() {
                               </AvatarFallback>
                             </Avatar>
                             <div className="flex-1 min-w-0">
-                              <div className="flex items-center gap-2 mb-1 flex-wrap">
+                              <div className="flex flex-col items-start flex-wrap">
                                 <h4 className="font-bold text-sm xs:text-base md:text-lg text-foreground truncate">{cause.name}</h4>
-                                {categoryNames.map((name, index) => {
-                                  const singleCategoryId = categoryIds[index];
-                                  const bgColor = getCategoryColor(singleCategoryId);
-                                  const textColor = getCategoryTextColor(singleCategoryId);
-                                  return (
-                                    <span
-                                      key={index}
-                                      className="inline-flex items-center rounded-full px-1.5 md:px-2 py-0.5 text-[10px] md:text-xs font-medium flex-shrink-0"
-                                      style={{ backgroundColor: bgColor, color: textColor }}
-                                    >
-                                      {name}
-                                    </span>
-                                  );
-                                })}
+                                <div className="flex items-center gap-2 flex-wrap">
+                                  {categoryNames.map((name, index) => {
+                                    const singleCategoryId = categoryIds[index];
+                                    const bgColor = getCategoryColor(singleCategoryId);
+                                    const textColor = getCategoryTextColor(singleCategoryId);
+                                    return (
+                                      <span
+                                        key={index}
+                                        className="inline-flex items-center rounded-full px-1.5 md:px-2 py-0.5 text-[10px] md:text-xs font-medium flex-shrink-0"
+                                        style={{ backgroundColor: bgColor, color: textColor }}
+                                      >
+                                        {name}
+                                      </span>
+                                    );
+                                  })}
+                                </div>
                               </div>
                               <p className="text-xs xs:text-sm md:text-base text-muted-foreground line-clamp-2">
                                 {truncateAtFirstPeriod(cause.mission || cause.description)}
