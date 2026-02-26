@@ -49,7 +49,7 @@ const ProfileStats: React.FC<ProfileStatsProps> = ({
         ) : (
           <>
             <span className="text-base sm:text-lg font-semibold text-gray-700 text-center">{causes ?? 0}</span>
-            <span className="text-sm sm:text-base text-gray-600 text-center">causes</span>
+            <span className="text-sm sm:text-base text-gray-600 text-center">cause{causes !== 1 ? 's' : ''}</span>
           </>
         )}
       </button>
@@ -63,7 +63,7 @@ const ProfileStats: React.FC<ProfileStatsProps> = ({
         ) : (
           <>
             <span className="text-base sm:text-lg font-semibold text-gray-700 text-center">{crwds ?? 0}</span>
-            <span className="text-sm sm:text-base text-gray-600 text-center">collectives</span>
+            <span className="text-sm sm:text-base text-gray-600 text-center">collective{crwds !== 1 ? 's' : ''}</span>
           </>
         )}
       </button>
@@ -77,7 +77,7 @@ const ProfileStats: React.FC<ProfileStatsProps> = ({
         ) : (
           <>
             <span className="text-base sm:text-lg font-semibold text-gray-700 text-center">{followers ?? 0}</span>
-            <span className="text-sm sm:text-base text-gray-600 text-center">followers</span>
+            <span className="text-sm sm:text-base text-gray-600 text-center">follower{followers !== 1 ? 's' : ''}</span>
           </>
         )}
       </button>
@@ -91,7 +91,7 @@ const ProfileStats: React.FC<ProfileStatsProps> = ({
         ) : (
           <>
             <span className="text-base sm:text-lg font-semibold text-gray-700 text-center">{following ?? 0}</span>
-            <span className="text-sm sm:text-base text-gray-600 text-center">following</span>
+            <span className="text-sm sm:text-base text-gray-600 text-center">follower{following !== 1 ? 's' : ''}</span>
           </>
         )}
       </button>

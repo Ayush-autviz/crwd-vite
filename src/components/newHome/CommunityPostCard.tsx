@@ -14,15 +14,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import { formatDistanceToNow } from 'date-fns';
 import { useAuthStore } from "@/stores/store";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
+import { DeletePostBottomSheet } from "@/components/post/DeletePostBottomSheet";
 
 interface CommunityPostCardProps {
   post: {
@@ -730,38 +722,12 @@ export default function CommunityPostCard({ post, onCommentPress, showSimplified
         message={toastMessage}
       />
       {/* Delete Confirmation Dialog */}
-      <Dialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
-        <DialogContent className="sm:max-w-[425px] bg-white border-0 shadow-lg rounded-xl" onClick={(e) => e.stopPropagation()}>
-          <DialogHeader>
-            <DialogTitle className="text-xl font-bold text-gray-900">Delete Post?</DialogTitle>
-            <DialogDescription className="text-gray-500 mt-2">
-              This action cannot be undone. Are you sure you want to delete this post from the community?
-            </DialogDescription>
-          </DialogHeader>
-          <DialogFooter className="mt-4 gap-2 sm:gap-0">
-            <Button
-              variant="outline"
-              onClick={(e) => {
-                e.stopPropagation();
-                setShowDeleteDialog(false);
-              }}
-              className="border-gray-200 text-gray-700 hover:bg-gray-50 hover:text-gray-900 rounded-lg"
-            >
-              Cancel
-            </Button>
-            <Button
-              onClick={(e) => {
-                e.stopPropagation();
-                handleDeleteClick();
-              }}
-              disabled={deletePostMutation.isPending}
-              className="bg-red-600 hover:bg-red-700 text-white border-0 rounded-lg ml-0 sm:ml-2"
-            >
-              {deletePostMutation.isPending ? "Deleting..." : "Delete"}
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      <DeletePostBottomSheet
+        isOpen={showDeleteDialog}
+        onClose={() => setShowDeleteDialog(false)}
+        onDelete={handleDeleteClick}
+        isDeleting={deletePostMutation.isPending}
+      />
     </Card>
   );
 }

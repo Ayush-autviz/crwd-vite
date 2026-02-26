@@ -69,7 +69,7 @@ export default function PostById() {
     id: postData.id,
     userId: postData.user?.id?.toString() || '',
     avatarUrl: postData.user?.profile_picture || '/placeholder.svg',
-    username: postData.user?.full_name || postData.user?.full_name || 'Unknown User',
+    username: postData.user?.username,
     color: postData.user?.color,
     time: postData.created_at ? formatDistanceToNow(new Date(postData.created_at), { addSuffix: true }) : '',
     org: postData.collective?.name || 'Unknown Collective',
@@ -108,7 +108,7 @@ export default function PostById() {
 
     return commentsData.results.map((comment: any) => ({
       id: comment.id,
-      username: comment.user?.full_name || comment.user?.full_name || 'Unknown User',
+      username: comment.user?.username || 'Unknown User',
       firstName: comment.user?.first_name,
       lastName: comment.user?.last_name,
       avatarUrl: comment.user?.profile_picture || '/placeholder.svg',
@@ -218,7 +218,7 @@ export default function PostById() {
       const repliesData = await getCommentReplies(commentId.toString());
       const transformedReplies: CommentData[] = repliesData?.replies?.map((reply: any) => ({
         id: reply.id,
-        username: reply.user?.full_name || reply.user?.full_name || 'Unknown User',
+        username: reply.user?.username || reply.user?.full_name || 'Unknown User',
         firstName: reply.user?.first_name,
         lastName: reply.user?.last_name,
         avatarUrl: reply.user?.profile_picture || '/placeholder.svg',
