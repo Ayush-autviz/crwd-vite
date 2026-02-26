@@ -1,10 +1,15 @@
 import { useNavigate, Link } from 'react-router-dom';
 import { Card, CardContent } from '@/components/ui/card';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
-import { Heart, MessageCircle, Share2 } from 'lucide-react';
+import { Heart, MessageCircle, Share2, MoreHorizontal, Trash2 } from 'lucide-react';
 import dayjs from 'dayjs';
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { SharePost } from '@/components/ui/SharePost';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { deletePost } from '@/services/api/social';
+import { useAuthStore } from '@/stores/store';
+import { DeletePostBottomSheet } from '@/components/post/DeletePostBottomSheet';
+import { Toast } from '@/components/ui/toast';
 
 interface PreviewDetails {
   title?: string | null;
@@ -72,7 +77,53 @@ const getConsistentColor = (id: number | string, colors: string[]) => {
 
 export default function PostResultCard({ post }: PostResultCardProps) {
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const [showShareModal, setShowShareModal] = useState(false);
+  const [showPostMenu, setShowPostMenu] = useState(false);
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [showToast, setShowToast] = useState(false);
+  const [toastMessage, setToastMessage] = useState("");
+  const postMenuRef = useRef<HTMLDivElement>(null);
+  const currentUser = useAuthStore((state) => state.user);
+
+  const deletePostMutation = useMutation({
+    mutationFn: () => deletePost(post.id.toString()),
+    onSuccess: () => {
+      setToastMessage("Post deleted successfully");
+      setShowToast(true);
+      queryClient.invalidateQueries({ queryKey: ['posts'] });
+      queryClient.invalidateQueries({ queryKey: ['search'] });
+      setShowPostMenu(false);
+    },
+    onError: (error) => {
+      console.error('Error deleting post:', error);
+      setToastMessage("Failed to delete post");
+      setShowToast(true);
+    },
+  });
+
+  const handleDeleteClick = () => {
+    deletePostMutation.mutate();
+    setShowDeleteDialog(false);
+  };
+
+  // Handle outside click to close menu
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (postMenuRef.current && !postMenuRef.current.contains(event.target as Node)) {
+        setShowPostMenu(false);
+      }
+    };
+
+    if (showPostMenu) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [showPostMenu]);
+
   const user = post.user;
   const avatarBgColor = user ? user.color || getConsistentColor(user.id, avatarColors) : '#6B7280';
 
@@ -87,54 +138,87 @@ export default function PostResultCard({ post }: PostResultCardProps) {
       ? `${user.first_name} ${user.last_name}`
       : user?.first_name || user?.username || 'Unknown User');
 
-  // Format timestamp
-  // const timeAgo = formatTimeAgo(post.created_at);
-
   return (
     <Card
       onClick={() => navigate(post.fundraiser ? `/fundraiser/${post.fundraiser.id}` : `/post/${post.id}`)}
-      className="cursor-pointer hover:shadow-md transition-shadow border border-gray-200 bg-white rounded-lg py-3"
+      className="cursor-pointer hover:shadow-md transition-shadow border border-gray-200 bg-white rounded-lg py-3 relative"
     >
       <CardContent className="px-3 md:px-6">
         {/* User Header */}
-        <div className="flex items-start gap-2.5 md:gap-3 mb-2.5 md:mb-3">
-          {user && (
-            <Avatar className="w-8 h-8 md:w-11 md:h-11 rounded-full flex-shrink-0">
-              <AvatarImage src={user.profile_picture} alt={fullName} />
-              <AvatarFallback
-                style={{ backgroundColor: avatarBgColor }}
-                className="text-white font-bold text-xs md:text-sm"
-              >
-                {initials}
-              </AvatarFallback>
-            </Avatar>
-          )}
-          <div className="flex-1 min-w-0">
-            <div className="flex items-center gap-1.5 md:gap-2 flex-wrap">
-              {user && (
-                <Link
-                  to={`/u/${user.username}`}
-                  onClick={(e) => e.stopPropagation()}
-                  className="font-bold text-xs xs:text-sm md:text-base text-gray-900 hover:text-blue-600 transition-colors cursor-pointer"
+        <div className="flex items-start justify-between mb-2.5 md:mb-3">
+          <div className="flex items-start gap-2.5 md:gap-3 flex-1 min-w-0">
+            {user && (
+              <Avatar className="w-8 h-8 md:w-11 md:h-11 rounded-full flex-shrink-0">
+                <AvatarImage src={user.profile_picture} alt={fullName} />
+                <AvatarFallback
+                  style={{ backgroundColor: avatarBgColor }}
+                  className="text-white font-bold text-xs md:text-sm"
                 >
-                  {fullName}
-                </Link>
-              )}
-              {post.collective && (
-                <>
-                  <span className="text-gray-400">•</span>
+                  {initials}
+                </AvatarFallback>
+              </Avatar>
+            )}
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center gap-1.5 md:gap-2 flex-wrap">
+                {user && (
                   <Link
-                    to={`/g/${post.collective.sort_name}`}
+                    to={`/u/${user.username}`}
                     onClick={(e) => e.stopPropagation()}
-                    className="text-xs xs:text-sm md:text-base text-gray-500 font-medium hover:underline transition-colors cursor-pointer"
+                    className="font-bold text-xs xs:text-sm md:text-base text-gray-900 hover:text-blue-600 transition-colors cursor-pointer"
                   >
-                    {post.collective.name}
+                    {fullName}
                   </Link>
-                </>
+                )}
+                {post.collective && (
+                  <>
+                    <span className="text-gray-400">•</span>
+                    <Link
+                      to={`/g/${post.collective.sort_name}`}
+                      onClick={(e) => e.stopPropagation()}
+                      className="text-xs xs:text-sm md:text-base text-gray-500 font-medium hover:underline transition-colors cursor-pointer"
+                    >
+                      {post.collective.name}
+                    </Link>
+                  </>
+                )}
+              </div>
+            </div>
+          </div>
+
+          {/* Ellipsis Menu for User's Own Posts */}
+          {user?.id === currentUser?.id && !post.fundraiser?.is_active && (
+            <div className="relative ml-2" ref={postMenuRef}>
+              <button
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  setShowPostMenu(!showPostMenu);
+                }}
+                className="p-1 hover:bg-gray-100 rounded-full transition-colors flex-shrink-0"
+              >
+                <MoreHorizontal className="w-4 h-4 md:w-5 md:h-5 text-gray-500" />
+              </button>
+
+              {/* Dropdown Menu */}
+              {showPostMenu && (
+                <div className="absolute right-0 top-8 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-50 min-w-[140px]">
+                  <button
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      setShowPostMenu(false);
+                      setShowDeleteDialog(true);
+                    }}
+                    disabled={deletePostMutation.isPending}
+                    className="w-full flex items-center gap-2 px-3 py-2 text-xs md:text-sm text-red-600 hover:bg-gray-50 transition-colors"
+                  >
+                    <Trash2 className="w-4 h-4 text-red-600" />
+                    <span>Delete Post</span>
+                  </button>
+                </div>
               )}
             </div>
-            {/* <p className="text-[10px] xs:text-xs md:text-sm text-gray-500">{timeAgo}</p> */}
-          </div>
+          )}
         </div>
 
         {/* Post Content */}
@@ -147,13 +231,13 @@ export default function PostResultCard({ post }: PostResultCardProps) {
         {/* Show fundraiser image like normal post image */}
         {post.fundraiser?.image ? (
           <div
-            className="w-full rounded-lg overflow-hidden mb-2.5 md:mb-3  cursor-pointer hover:opacity-90 transition-opacity  relative "
+            className="w-full rounded-lg overflow-hidden mb-2.5 md:mb-3 cursor-pointer hover:opacity-90 transition-opacity relative"
             style={{ maxWidth: '600px', maxHeight: '300px' }}
           >
             <img
               src={post.fundraiser.image}
               alt="Fundraiser"
-              className=" max-h-[300px] object-contain rounded-lg"
+              className="max-h-[300px] object-contain rounded-lg"
             />
           </div>
         ) : null}
@@ -165,7 +249,7 @@ export default function PostResultCard({ post }: PostResultCardProps) {
             onClick={(e) => e.stopPropagation()}
             className="block mb-2.5 md:mb-3 rounded-lg overflow-hidden border border-gray-200 bg-white"
           >
-            {/* Fundraiser Cover Image/Color - Only show if no image (show color/default) */}
+            {/* Fundraiser Cover Image/Color - Only show if no image */}
             {!post.fundraiser.image && (
               <div className="w-full rounded-t-lg overflow-hidden">
                 {post.fundraiser.color ? (
@@ -280,25 +364,23 @@ export default function PostResultCard({ post }: PostResultCardProps) {
           </a>
         ) : post.media ? (
           (() => {
-            // Check if media is likely an image URL
             const isImage = /\.(jpg|jpeg|png|gif|webp|svg|bmp)(\?|$)/i.test(post.media) ||
               /unsplash\.com|s3\.amazonaws\.com|crwd-bucket|imgur\.com/i.test(post.media);
 
             if (isImage) {
               return (
                 <div
-                  className="w-full rounded-lg overflow-hidden mb-2.5 md:mb-3 cursor-pointer hover:opacity-90 transition-opacity relative "
+                  className="w-full rounded-lg overflow-hidden mb-2.5 md:mb-3 cursor-pointer hover:opacity-90 transition-opacity relative"
                   style={{ maxWidth: '600px', maxHeight: '300px' }}
                 >
                   <img
                     src={post.media}
                     alt="Post"
-                    className=" max-h-[300px] object-contain rounded-lg"
+                    className="max-h-[300px] object-contain rounded-lg"
                   />
                 </div>
               );
             } else {
-              // It's a link URL, show as preview-style card (even without preview_details)
               try {
                 const url = new URL(post.media);
                 const domain = url.hostname.replace('www.', '');
@@ -313,7 +395,6 @@ export default function PostResultCard({ post }: PostResultCardProps) {
                     className="block w-full rounded-lg overflow-hidden mb-2.5 md:mb-3 border border-gray-200 bg-white hover:opacity-90 transition-opacity cursor-pointer"
                   >
                     <div className="flex flex-col md:flex-row bg-white">
-                      {/* Preview Content - styled like preview card */}
                       <div className="flex-1 p-2.5 md:p-4">
                         <div className="text-[9px] xs:text-[10px] md:text-xs text-gray-500 uppercase tracking-wide mb-0.5 md:mb-1">
                           {siteName}
@@ -326,7 +407,6 @@ export default function PostResultCard({ post }: PostResultCardProps) {
                   </a>
                 );
               } catch {
-                // Invalid URL, don't show anything
                 return null;
               }
             }
@@ -375,8 +455,21 @@ export default function PostResultCard({ post }: PostResultCardProps) {
           : post.content
         }
       />
+
+      {/* Toast */}
+      <Toast
+        show={showToast}
+        onHide={() => setShowToast(false)}
+        message={toastMessage}
+      />
+
+      {/* Delete Confirmation Dialog */}
+      <DeletePostBottomSheet
+        isOpen={showDeleteDialog}
+        onClose={() => setShowDeleteDialog(false)}
+        onDelete={handleDeleteClick}
+        isDeleting={deletePostMutation.isPending}
+      />
     </Card>
   );
 }
-
-

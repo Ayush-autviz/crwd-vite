@@ -418,7 +418,7 @@ export default function CommunityPostCard({ post, onCommentPress, showSimplified
               )}
 
               {/* Ellipsis Menu for User's Own Posts */}
-              {post.user.id === currentUser?.id && (
+              {post.user.id === currentUser?.id && !post.fundraiser?.is_active && (
                 <div className="relative ml-2" ref={postMenuRef}>
                   <button
                     onClick={(e) => {
