@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { updateDonationBox } from "@/services/api/donation";
-import { toast } from "sonner";
+import { Toast } from "@/components/ui/toast";
 import Slider from "rc-slider";
 import "rc-slider/assets/index.css";
 
@@ -54,6 +54,7 @@ export default function EditDonationSplitBottomSheet({
   const [isAnimating, setIsAnimating] = useState(false);
   const [percentages, setPercentages] = useState<Record<number, number>>({});
   const [inputValues, setInputValues] = useState<Record<number, string>>({});
+  const [toastState, setToastState] = useState({ show: false, message: "" });
 
   // Track focused input to prevent overwrite while typing
   const [focusedInput, setFocusedInput] = useState<number | null>(null);
@@ -269,6 +270,11 @@ export default function EditDonationSplitBottomSheet({
     }
   };
 
+  const showCustomToast = (message: string) => {
+    setToastState({ show: true, message });
+    setTimeout(() => setToastState({ show: false, message: "" }), 2000);
+  };
+
   const handleReset = () => {
     const minPercentage = calculateMinPercentage();
     const equalPercentage = 100 / causes.length;
@@ -298,12 +304,14 @@ export default function EditDonationSplitBottomSheet({
     mutationFn: (data: any) => updateDonationBox(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['donationBox'] });
-      toast.success('Donation split updated successfully');
-      onClose();
+      showCustomToast('Donation split updated successfully');
+      setTimeout(() => {
+        onClose();
+      }, 1000);
     },
     onError: (error: any) => {
       console.error('Update donation box error:', error);
-      toast.error(error?.response?.data?.message || 'Failed to update donation split');
+      showCustomToast(error?.response?.data?.message || 'Failed to update donation split');
     },
   });
 
@@ -317,7 +325,7 @@ export default function EditDonationSplitBottomSheet({
     });
 
     if (!hasChanges) {
-      toast.info('No changes to save');
+      showCustomToast('No changes to save');
       return;
     }
 
@@ -550,6 +558,12 @@ export default function EditDonationSplitBottomSheet({
           </div>
         </div>
       </div>
+      <Toast
+        show={toastState.show}
+        message={toastState.message}
+        onHide={() => setToastState({ show: false, message: "" })}
+        className="top-10 z-[100]"
+      />
     </>
   );
 }

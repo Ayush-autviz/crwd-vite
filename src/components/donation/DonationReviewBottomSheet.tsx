@@ -12,6 +12,8 @@ interface DonationReviewBottomSheetProps {
   donationAmount: number;
   selectedCauses: any[];
   onComplete: () => void;
+  showEditButton?: boolean;
+  onEditCauses?: () => void;
 }
 
 export default function DonationReviewBottomSheet({
@@ -20,6 +22,8 @@ export default function DonationReviewBottomSheet({
   donationAmount,
   selectedCauses,
   onComplete,
+  showEditButton = false,
+  onEditCauses,
 }: DonationReviewBottomSheetProps) {
   const [isVisible, setIsVisible] = useState(false);
   const [isAnimating, setIsAnimating] = useState(false);
@@ -216,7 +220,17 @@ export default function DonationReviewBottomSheet({
 
             {/* Selected Causes */}
             <div className="mb-4 md:mb-6">
-              <h3 className="text-base md:text-lg font-bold text-gray-900 mb-3 md:mb-4">Your Selected Causes ({totalCauses})</h3>
+              <div className="flex items-center justify-between mb-3 md:mb-4">
+                <h3 className="text-base md:text-lg font-bold text-gray-900">Your Selected Causes ({totalCauses})</h3>
+                {showEditButton && onEditCauses && (
+                  <button
+                    onClick={onEditCauses}
+                    className="text-sm sm:text-base font-semibold text-blue-600 bg-blue-50 px-2.5 py-1 rounded-full hover:bg-blue-100 transition-colors"
+                  >
+                    Edit
+                  </button>
+                )}
+              </div>
               <div className="space-y-2 md:space-y-3">
                 {selectedCauses.map((cause: any) => {
                   const avatarBgColor = getConsistentColor(cause.id, avatarColors);

@@ -16,6 +16,7 @@ import { useAuthStore } from "@/stores/store";
 import ProfileNavbar from "./profile/ProfileNavbar";
 import RequestNonprofitModal from "./newsearch/RequestNonprofitModal";
 import DonationReviewBottomSheet from "./donation/DonationReviewBottomSheet";
+import EditDonationSplitBottomSheet from "./donation/EditDonationSplitBottomSheet";
 import AmountBottomSheet from "./donation/AmountBottomSheet";
 import { toast } from "sonner";
 
@@ -70,6 +71,7 @@ const DonationBox = ({ tab = "setup", preselectedItem, activeTab, fromPaymentRes
   const [showRequestModal, setShowRequestModal] = useState(false);
   const [showReviewBottomSheet, setShowReviewBottomSheet] = useState(false);
   const [showAmountBottomSheet, setShowAmountBottomSheet] = useState(false);
+  const [showEditSplitSheet, setShowEditSplitSheet] = useState(false);
   const [justCreatedBox, setJustCreatedBox] = useState(false);
   const [preselectedCausesProcessed, setPreselectedCausesProcessed] = useState(false);
 
@@ -244,6 +246,13 @@ const DonationBox = ({ tab = "setup", preselectedItem, activeTab, fromPaymentRes
       // Donation box already setup - just open review bottom sheet
       setShowReviewBottomSheet(true);
     }
+  };
+
+  const handleEditCauses = () => {
+    setShowReviewBottomSheet(false);
+    setTimeout(() => {
+      setShowEditSplitSheet(true);
+    }, 100);
   };
 
   // Note: activateDonationBox is handled in DonationBox3 component (step 2)
@@ -733,7 +742,7 @@ const DonationBox = ({ tab = "setup", preselectedItem, activeTab, fromPaymentRes
                           >
                             <Minus size={18} className="md:w-5 md:h-5 text-white font-bold" strokeWidth={3} />
                           </button>
-                          <div 
+                          <div
                             className="text-center cursor-pointer hover:opacity-80 transition-opacity"
                             onClick={() => setShowAmountBottomSheet(true)}
                           >
@@ -1414,6 +1423,23 @@ const DonationBox = ({ tab = "setup", preselectedItem, activeTab, fromPaymentRes
           setJustCreatedBox(false); // Reset flag
           setCheckout(true);
         }}
+        showEditButton={step === 2}
+        onEditCauses={handleEditCauses}
+      />
+
+      {/* Edit Donation Split Bottom Sheet */}
+      <EditDonationSplitBottomSheet
+        isOpen={showEditSplitSheet}
+        onClose={() => {
+          setShowEditSplitSheet(false);
+          // Reopen review sheet after editing
+          setTimeout(() => {
+            setShowReviewBottomSheet(true);
+          }, 100);
+        }}
+        causes={(donationBox?.box_causes || []).map((bc: any) => bc.cause).filter((c: any) => c != null)}
+        monthlyAmount={parseFloat(donationBox?.monthly_amount || donationAmount.toString())}
+        boxCauses={donationBox?.box_causes || []}
       />
 
       {/* Amount Bottom Sheet */}

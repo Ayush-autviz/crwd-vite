@@ -71,8 +71,8 @@ export default function NewCompleteOnboard() {
 
   // Fetch causes for browse/search
   const { data: browseData, isLoading: isLoadingBrowse } = useQuery({
-    queryKey: ['browse-causes', searchQuery, searchTrigger],
-    queryFn: () => getCausesBySearch(searchQuery || '', '', 1),
+    queryKey: ['browse-causes', searchQuery, searchTrigger, selectedCategoryIds],
+    queryFn: () => getCausesBySearch(searchQuery || '', selectedCategoryIds.join(','), 1),
     enabled: view === 'browse',
     refetchOnMount: true,
   });
@@ -202,8 +202,8 @@ export default function NewCompleteOnboard() {
     setIsBrowseLoading(true);
     try {
       await queryClient.fetchQuery({
-        queryKey: ['browse-causes', searchQuery, searchTrigger],
-        queryFn: () => getCausesBySearch(searchQuery || '', '', 1),
+        queryKey: ['browse-causes', searchQuery, searchTrigger, selectedCategoryIds],
+        queryFn: () => getCausesBySearch(searchQuery || '', selectedCategoryIds.join(','), 1),
       });
       setView('browse');
     } catch (error) {
@@ -861,7 +861,7 @@ export default function NewCompleteOnboard() {
                             onClick={(e) => toggleCollectiveExpansion(collectiveId, e)}
                             className="text-blue-600 font-bold text-sm text-left flex items-center hover:underline"
                           >
-                            Supporting {collective.causes?.length || collective.cause_count || 0} nonprofits
+                            Supporting {collective.causes?.length || collective.cause_count || 0} nonprofit{collective.causes?.length || collective.cause_count !== 1 ? 's' : ''}
                             <ChevronDown className={`w-4 h-4 ml-1 transition-transform ${isExpanded ? 'rotate-180' : ''}`} />
                           </button>
                         </div>
