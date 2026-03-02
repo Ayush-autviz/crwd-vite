@@ -356,11 +356,11 @@ export function NotificationSummary({ update }: { update: CommunityUpdate }) {
       </div>
 
       {/* Content Box */}
-      <div className="rounded-lg p-1.5 md:p-3 mb-2 md:mb-3 flex items-center gap-2 md:gap-3 bg-gray-50">
+      <div className="rounded-lg p-1.5 md:p-3 mb-2 md:mb-3 flex items-center gap-2 md:gap-3 bg-green-50">
         {/* Icon */}
-        <div className="h-6 w-6 md:h-8 md:w-8 rounded-full flex items-center justify-center flex-shrink-0 bg-[#13b981]">
+        {/* <div className="h-6 w-6 md:h-8 md:w-8 rounded-full flex items-center justify-center flex-shrink-0 bg-[#13b981]">
           <HandHeart className="h-4 w-4 md:h-5 md:w-5 text-white" />
-        </div>
+        </div> */}
         {/* Action Text */}
         <p className={`text-[10px] xs:text-sm md:text-sm text-gray-900 flex-1 ${isDonationNotification ? '' : 'font-semibold'}`}>
           {(() => {
