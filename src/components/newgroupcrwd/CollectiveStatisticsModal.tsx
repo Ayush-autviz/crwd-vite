@@ -385,9 +385,9 @@ export default function CollectiveStatisticsModal({
                       <h3 className="text-sm md:text-base lg:text-base font-semibold text-gray-700 mb-1 md:mb-2">
                         Collective Donations
                       </h3>
-                      <p className="text-xl md:text-2xl lg:text-3xl font-bold text-blue-600 mb-1">
+                      {/* <p className="text-xl md:text-2xl lg:text-3xl font-bold text-blue-600 mb-1">
                         ${donationHistoryData?.total_donated_to_collective?.toFixed(2) || '0.00'}
-                      </p>
+                      </p> */}
                       <p className="text-xs md:text-sm lg:text-sm text-gray-600">
                         {donations.filter((d: any) => d.amount_attributed_to_collective > 0).length} donation{donations.filter((d: any) => d.amount_attributed_to_collective > 0).length !== 1 ? 's' : ''} credited to this collective
                       </p>
@@ -513,11 +513,11 @@ export default function CollectiveStatisticsModal({
                               <h4 className="font-bold text-sm md:text-base lg:text-base text-gray-900">
                                 {fullName}
                               </h4>
-                              {isCollectiveDonation && (
+                              {/* {isCollectiveDonation && (
                                 <span className="bg-blue-100 text-blue-500 text-sm md:text-base font-semibold px-1.5 md:px-2 py-0.5 rounded-full">
                                   {type === 'one_time' ? 'One Time' : 'Collective'}
                                 </span>
-                              )}
+                              )} */}
                             </div>
                             <div className="flex items-center gap-1.5 md:gap-2 flex-wrap mt-0.5 md:mt-1">
                               {/* <p className="text-[10px] md:text-xs lg:text-sm text-gray-600">

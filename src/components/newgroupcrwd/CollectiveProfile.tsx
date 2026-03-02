@@ -1,3 +1,4 @@
+import { useState, useRef, useEffect } from 'react';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { truncateAtFirstPeriod } from '@/lib/utils';
 import { useNavigate } from 'react-router-dom';
@@ -29,6 +30,18 @@ export default function CollectiveProfile({
   isJoined = false,
 }: CollectiveProfileProps) {
   const navigate = useNavigate();
+  const [isExpanded, setIsExpanded] = useState(false);
+  const [canExpand, setCanExpand] = useState(false);
+  const descriptionRef = useRef<HTMLParagraphElement>(null);
+
+  useEffect(() => {
+    if (descriptionRef.current) {
+      // Check if text overflows 3 lines
+      if (descriptionRef.current.scrollHeight > descriptionRef.current.clientHeight) {
+        setCanExpand(true);
+      }
+    }
+  }, [description]);
 
   const founderName = founder
     ? `${founder.first_name || ''} ${founder.last_name || ''}`.trim() || founder.username
@@ -109,9 +122,22 @@ export default function CollectiveProfile({
         </div>
       </div>
       {description && (
-        <p className="text-foreground text-base xs:text-lg md:text-xl leading-relaxed mt-4 md:mt-5">
-          {description || ''}
-        </p>
+        <div className="mt-4 md:mt-5">
+          <p
+            ref={descriptionRef}
+            className={`text-foreground text-base xs:text-lg md:text-xl leading-relaxed ${!isExpanded ? 'line-clamp-3' : ''}`}
+          >
+            {description || ''}
+          </p>
+          {canExpand && (
+            <button
+              onClick={() => setIsExpanded(!isExpanded)}
+              className="text-[#1600ff] hover:underline font-medium text-sm xs:text-base mt-2"
+            >
+              {isExpanded ? 'Read Less' : 'Read More'}
+            </button>
+          )}
+        </div>
       )}
     </div>
   );

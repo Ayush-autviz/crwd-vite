@@ -668,8 +668,8 @@ export const DonationBox3 = ({
                     </div>
 
                     {/* Donation Info & Action */}
-                    <div className="flex items-center gap-3 md:gap-4 ml-2 md:ml-4">
-                      <div className="text-right">
+                    <div className="flex items-center gap-3 md:gap-4 ">
+                      {/* <div className="text-right">
                         <p className="font-bold text-sm md:text-base text-gray-900">
                           {(() => {
                             const customPercentage = getCausePercentage(cause.id);
@@ -681,13 +681,13 @@ export const DonationBox3 = ({
                           })()}
                         </p>
                         <p className="text-xs md:text-sm text-gray-600">${getAmountPerItem(cause.id).toFixed(2)}/mo</p>
-                      </div>
+                      </div> */}
                       <button
                         onClick={() => {
                           setItemToDelete({ id: cause.id.toString(), name: cause.name, type: 'cause' });
                           setShowDeleteModal(true);
                         }}
-                        className=" hover:bg-red-50 rounded-lg transition-colors flex-shrink-0"
+                        className="hover:bg-red-50 rounded-lg transition-colors flex-shrink-0"
                         aria-label="Remove cause"
                       >
                         <Trash2 className="w-4 h-4 md:w-5 md:h-5 text-red-500" />

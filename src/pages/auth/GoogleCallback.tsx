@@ -103,10 +103,10 @@ export default function GoogleCallback() {
           <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto">
             <div className="w-8 h-8 border-2 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
           </div>
-          <h2 className="text-xl font-semibold text-gray-900">Completing Authentication</h2>
+          {/* <h2 className="text-xl font-semibold text-gray-900">Completing Authentication</h2>
           <p className="text-gray-600">
             Please wait while we complete your Google authentication...
-          </p>
+          </p> */}
           {googleCallbackQuery.isFetching && (
             <p className="text-sm text-gray-500">Processing authorization code...</p>
           )}

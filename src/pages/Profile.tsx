@@ -513,7 +513,7 @@ export default function ProfilePage() {
                   className="px-3 md:px-4 py-2 md:py-2.5 border border-gray-300 rounded-lg min-w-[100px] md:min-w-[120px]"
                 >
                   <div className="flex items-center gap-1">
-                    <Share2 className="w-3.5 h-3.5 md:w-4 md:h-4 text-gray-700" />
+                    {/* <Share2 className="w-3.5 h-3.5 md:w-4 md:h-4 text-gray-700" /> */}
                     <span className="text-sm md:text-base font-semibold text-gray-700">Share Profile</span>
                   </div>
                 </Button>

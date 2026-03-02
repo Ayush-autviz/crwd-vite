@@ -124,9 +124,10 @@ export default function NewSettings() {
   const updateProfileMutation = useMutation({
     mutationFn: updateProfile,
     onSuccess: (response) => {
-      if (response?.user?.profile_picture && currentUser) {
-        setUser({ ...currentUser, profile_picture: response.user.profile_picture })
-      }
+      // if (response?.user?.profile_picture && currentUser) {
+      //   setUser({ ...currentUser, profile_picture: response.user.profile_picture })
+      // }
+      setUser(response.user)
       queryClient.invalidateQueries({ queryKey: ['userProfile', currentUser?.id] })
       queryClient.invalidateQueries({ queryKey: ['profile'] })
       // setShowToast(true)

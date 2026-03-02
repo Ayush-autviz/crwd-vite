@@ -54,13 +54,13 @@ export default function CauseProfile({ causeData }: CauseProfileProps) {
           </h1>
           <p className="text-xs md:text-sm text-muted-foreground">
             {causeData?.collective_count > 0 && (
-              <span>in {causeData.collective_count} Collectives</span>
+              <span>in {causeData.collective_count} Collective{causeData.collective_count !== 1 ? 's' : ''}</span>
             )}
             {causeData?.collective_count > 0 && causeData?.donation_count > 0 && (
               <span> • </span>
             )}
             {causeData?.donation_count > 0 && (
-              <span>in {causeData.donation_count} donations</span>
+              <span>in {causeData.donation_count} donation{causeData.donation_count !== 1 ? 's' : ''}</span>
             )}
           </p>
         </div>

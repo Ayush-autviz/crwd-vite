@@ -81,7 +81,7 @@ export default function CollectiveCarouselCard({
   };
 
   return (
-    <div className="w-full py-2 md:max-w-2xl md:mx-auto">
+    <div onClick={() => navigate(`/g/${currentCollective.sort_name}`)} className="w-full py-2 md:max-w-2xl md:mx-auto">
       <Card className=" py-2 md:py-4 shadow-none border border-gray-200 bg-white relative">
         <CardContent className="px-3 md:px-6 py-0 md:py-0">
           {/* Carousel Navigation */}
@@ -155,8 +155,7 @@ export default function CollectiveCarouselCard({
             <div className="w-full text-left">
               <p className="text-xs xs:text-sm md:text-base font-medium text-gray-700 mb-2 md:mb-4 leading-relaxed text-left">
                 <span onClick={() => navigate(`/g/${currentCollective.sort_name}`)} className="cursor-pointer text-gray-800 font-bold">{currentCollective.name} </span>
-                has <span className="font-bold text-gray-800">{currentCollective.memberCount} {currentCollective.memberCount === 1 ? 'member' : 'members'}</span> donating{" "}
-                to <span className="font-bold text-gray-800">{currentCollective.causeCount} {currentCollective.causeCount === 1 ? 'cause' : 'causes'}</span>.
+                has <span className="font-bold text-gray-800">{currentCollective.memberCount} {currentCollective.memberCount === 1 ? 'member' : 'members'}</span> and <span className="font-bold text-gray-800">{currentCollective.causeCount} {currentCollective.causeCount === 1 ? 'cause' : 'causes'}</span>.
               </p>
 
               {/* Action Buttons */}

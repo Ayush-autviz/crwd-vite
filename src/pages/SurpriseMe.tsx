@@ -208,7 +208,7 @@ export default function SurpriseMePage() {
           onClick={handleSurpriseAgain}
           className="flex items-center gap-1 md:gap-1.5 text-purple-600 hover:text-purple-700 font-medium text-xs md:text-sm"
         >
-          <Sparkles className="w-3.5 h-3.5 md:w-4 md:h-4" />
+          {/* <Sparkles className="w-3.5 h-3.5 md:w-4 md:h-4" /> */}
           Surprise Me Again
         </button>
       </div>
@@ -217,12 +217,12 @@ export default function SurpriseMePage() {
       <div className="md:max-w-[60%] mx-auto">
         <div className="px-3 md:px-4 py-4 md:py-6">
           {/* Sparkle Icons */}
-          <div className="flex justify-center mb-3 md:mb-4">
+          {/* <div className="flex justify-center mb-3 md:mb-4">
             <div className="flex gap-1.5 md:gap-2">
               <Sparkles className="w-5 h-5 md:w-6 md:h-6 text-yellow-500" />
               <Sparkles className="w-5 h-5 md:w-6 md:h-6 text-yellow-500" />
             </div>
-          </div>
+          </div> */}
 
           {/* Title */}
           <h1 className="text-2xl md:text-3xl font-bold text-foreground text-center mb-1.5 md:mb-2">
@@ -302,7 +302,7 @@ export default function SurpriseMePage() {
               onClick={handleSurpriseAgain}
               className="flex items-center gap-1 md:gap-1.5 text-purple-600 hover:text-purple-700 font-medium mx-auto text-xs md:text-sm"
             >
-              <Sparkles className="w-3.5 h-3.5 md:w-4 md:h-4 text-yellow-500" />
+              {/* <Sparkles className="w-3.5 h-3.5 md:w-4 md:h-4 text-yellow-500" /> */}
               Surprise Me Again
             </button>
           </div>

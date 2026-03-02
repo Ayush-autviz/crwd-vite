@@ -378,7 +378,9 @@ export function NotificationSummary({ update }: { update: CommunityUpdate }) {
                       </Link>
                     ) : (
                       <span className="font-bold">{match[1]}</span>
-                    )} {match[2]} <span className="font-bold">{match[3]}</span> {match[4]} {match[5]}
+                    )} {match[2]} {' '}
+                    {/* <span className="font-bold">{match[3]}</span> */}
+                    {match[4]} {match[5]}
                   </>
                 );
               }

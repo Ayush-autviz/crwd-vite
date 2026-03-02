@@ -666,7 +666,7 @@ export default function NewCompleteOnboard() {
                       onClick={handlePickDifferent}
                       className="flex items-center gap-1.5 text-purple-600 hover:text-purple-700 font-medium mx-auto text-sm sm:text-base"
                     >
-                      <Sparkles className="w-4 h-4" />
+                      {/* <Sparkles className="w-4 h-4" /> */}
                       Pick Different Nonprofits
                     </button>
                   </div>

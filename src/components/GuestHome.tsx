@@ -164,7 +164,7 @@ export default function GuestHome() {
                     </Button>
 
                 </div>
-                <div className="flex flex-col sm:flex-row justify-center items-center gap-2  mb-3 md:mb-6">
+                {/* <div className="flex flex-col sm:flex-row justify-center items-center gap-2  mb-3 md:mb-6">
                     <div className="flex items-center justify-center gap-1.5 md:gap-2">
                         <div className="w-4 h-4 md:w-6 md:h-6 rounded-full flex items-center justify-center flex-shrink-0">
                             <Check className="w-3.5 h-3.5 md:w-4 md:h-4 text-blue-600" />
@@ -181,7 +181,7 @@ export default function GuestHome() {
                             Start with any amount
                         </p>
                     </div>
-                </div>
+                </div> */}
             </div>
 
             {/* See the Magic in Action Section */}

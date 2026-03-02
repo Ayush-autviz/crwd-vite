@@ -53,7 +53,7 @@ const ProfileStats: React.FC<ProfileStatsProps> = ({
           </>
         )}
       </button>
-      <div className="w-1 h-1 bg-gray-400 mx-1 sm:mx-2 rounded-full" />
+      {/* <div className="w-1 h-1 bg-gray-400 mx-1 sm:mx-2 rounded-full" /> */}
       <button
         className="flex-1 flex flex-col sm:flex-row items-center justify-center cursor-pointer gap-0 sm:gap-1"
         onClick={() => handleStatsPress("crwds")}
@@ -67,7 +67,7 @@ const ProfileStats: React.FC<ProfileStatsProps> = ({
           </>
         )}
       </button>
-      <div className="w-1 h-1 bg-gray-400 mx-1 sm:mx-2 rounded-full" />
+      {/* <div className="w-1 h-1 bg-gray-400 mx-1 sm:mx-2 rounded-full" /> */}
       <button
         className="flex-1 flex flex-col sm:flex-row items-center justify-center cursor-pointer gap-0 sm:gap-1"
         onClick={() => handleStatsPress("followers")}
@@ -81,7 +81,7 @@ const ProfileStats: React.FC<ProfileStatsProps> = ({
           </>
         )}
       </button>
-      <div className="w-1 h-1 bg-gray-400 mx-1 sm:mx-2 rounded-full" />
+      {/* <div className="w-1 h-1 bg-gray-400 mx-1 sm:mx-2 rounded-full" /> */}
       <button
         className="flex-1 flex flex-col sm:flex-row items-center justify-center cursor-pointer gap-0 sm:gap-1"
         onClick={() => handleStatsPress("following")}
@@ -91,7 +91,7 @@ const ProfileStats: React.FC<ProfileStatsProps> = ({
         ) : (
           <>
             <span className="text-base sm:text-lg font-semibold text-gray-700 text-center">{following ?? 0}</span>
-            <span className="text-sm sm:text-base text-gray-600 text-center">following{following !== 1 ? 's' : ''}</span>
+            <span className="text-sm sm:text-base text-gray-600 text-center">following</span>
           </>
         )}
       </button>

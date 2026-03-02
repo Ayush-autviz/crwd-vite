@@ -572,33 +572,33 @@ export default function CommunityPostCard({ post, onCommentPress, showSimplified
                 <div className="flex flex-col md:flex-row bg-white">
                   {/* Preview Image */}
                   {post.previewDetails.image && (
-                    <div className="w-full md:w-48 h-[150px] md:h-auto flex-shrink-0">
+                    <div className="w-full md:w-48 md:h-auto flex-shrink-0">
                       <img
                         src={post.previewDetails.image}
                         alt={post.previewDetails.title || 'Link preview'}
-                        className="w-full h-full object-cover"
+                        className="max-h-[300px] rounded-lg object-contain"
                       />
                     </div>
                   )}
                   {/* Preview Content */}
                   <div className="flex-1 p-2 md:p-3">
                     {post.previewDetails.site_name && (
-                      <div className="text-[8px] md:text-[10px] text-gray-500 uppercase tracking-wide mb-0.5 md:mb-1">
+                      <div className="text-[10px] md:text-[12px] text-gray-500 uppercase tracking-wide mb-0.5 md:mb-1">
                         {post.previewDetails.site_name}
                       </div>
                     )}
                     {post.previewDetails.title && (
-                      <h3 className="text-[10px] md:text-sm font-semibold text-gray-900 mb-0.5 md:mb-1 line-clamp-2">
+                      <h3 className="text-sm md:text-base font-semibold text-gray-900 mb-0.5 md:mb-1 line-clamp-2">
                         {post.previewDetails.title}
                       </h3>
                     )}
                     {post.previewDetails.description && (
-                      <p className="text-[9px] md:text-xs text-gray-500 mb-0.5 md:mb-1 line-clamp-2">
+                      <p className="text-xs md:text-sm text-gray-500 mb-0.5 md:mb-1 line-clamp-2">
                         {post.previewDetails.description}
                       </p>
                     )}
                     {post.previewDetails.domain && (
-                      <div className="text-[9px] md:text-[11px] text-gray-500 truncate">
+                      <div className="text-xs md:text-sm text-gray-500 truncate">
                         {post.previewDetails.domain}
                       </div>
                     )}
