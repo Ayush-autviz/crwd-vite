@@ -8,6 +8,7 @@ interface AddToDonationBoxBottomSheetProps {
   onConfirm: () => void;
   onOneTimeDonation: () => void;
   isPending?: boolean;
+  hasDonationBox?: boolean;
 }
 
 export default function AddToDonationBoxBottomSheet({
@@ -16,6 +17,7 @@ export default function AddToDonationBoxBottomSheet({
   onConfirm,
   onOneTimeDonation,
   isPending = false,
+  hasDonationBox = false,
 }: AddToDonationBoxBottomSheetProps) {
   const [isVisible, setIsVisible] = useState(false);
   const [isAnimating, setIsAnimating] = useState(false);
@@ -94,7 +96,9 @@ export default function AddToDonationBoxBottomSheet({
                   )}
                 </div>
                 <div className="text-left">
-                  <h3 className="text-[18px] font-bold leading-tight mb-0.5">Create a Donation Box</h3>
+                  <h3 className="text-[18px] font-bold leading-tight mb-0.5">
+                    {hasDonationBox ? 'Add to Donation Box' : 'Create a Donation Box'}
+                  </h3>
                   <p className="text-[14px] text-white/80 font-medium">Support multiple causes monthly</p>
                 </div>
               </div>

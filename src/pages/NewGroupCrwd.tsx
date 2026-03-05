@@ -62,8 +62,9 @@ export default function NewGroupCrwdPage() {
     queryKey: ['crwd', crwdId],
     queryFn: () => getCollectiveByName(crwdId || ''),
     enabled: !!crwdId,
-    refetchOnMount: true,
+    refetchOnMount: 'always',
     staleTime: 0,
+    gcTime: 0,
   });
 
   const collectiveId = crwdData?.id?.toString() ?? crwdId;
@@ -73,6 +74,9 @@ export default function NewGroupCrwdPage() {
     queryKey: ['collective-causes', collectiveId],
     queryFn: () => getCollectiveCauses(crwdData?.id || ''),
     enabled: !!crwdData?.id,
+    refetchOnMount: 'always',
+    staleTime: 0,
+    gcTime: 0,
   });
 
   // Fetch donation box to check for existing causes and capacity
@@ -80,6 +84,9 @@ export default function NewGroupCrwdPage() {
     queryKey: ['donationBox'],
     queryFn: getDonationBox,
     enabled: !!currentUser?.id && !!token?.access_token, // Fetch when user is logged in
+    refetchOnMount: 'always',
+    staleTime: 0,
+    gcTime: 0,
   });
 
   // Fetch collective stats - use resolved collective id
@@ -87,6 +94,9 @@ export default function NewGroupCrwdPage() {
     queryKey: ['collective-stats', collectiveId],
     queryFn: () => getCollectiveStats(crwdData?.id || ''),
     enabled: !!crwdData?.id && !!token?.access_token,
+    refetchOnMount: 'always',
+    staleTime: 0,
+    gcTime: 0,
   });
 
   // Fetch posts - use resolved collective id
@@ -106,6 +116,9 @@ export default function NewGroupCrwdPage() {
     },
     initialPageParam: 1,
     enabled: !!crwdData?.id,
+    refetchOnMount: 'always',
+    staleTime: 0,
+    gcTime: 0,
   });
 
   // Flatten posts

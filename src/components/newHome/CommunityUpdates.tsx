@@ -369,7 +369,7 @@ export function NotificationSummary({ update }: { update: CommunityUpdate }) {
               if (match) {
                 return (
                   <>
-                    {update.user.id ? (
+                    {/* {update.user.id ? (
                       <Link
                         to={`/u/${update.user.username}`}
                         className="font-bold hover:underline text-gray-900"
@@ -378,7 +378,8 @@ export function NotificationSummary({ update }: { update: CommunityUpdate }) {
                       </Link>
                     ) : (
                       <span className="font-bold">{match[1]}</span>
-                    )} {match[2]} {' '}
+                    )} */}
+                    {match[2].charAt(0).toUpperCase() + match[2].slice(1)} {' '}
                     {/* <span className="font-bold">{match[3]}</span> */}
                     {match[4]} {match[5]}
                   </>

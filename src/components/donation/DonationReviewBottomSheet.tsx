@@ -203,10 +203,10 @@ export default function DonationReviewBottomSheet({
                 </button>
                 <span className="text-sm md:text-base font-semibold text-gray-900">${platformFee.toFixed(2)}</span>
               </div>
-              <div className="flex justify-between items-center">
+              {/* <div className="flex justify-between items-center">
                 <span className="text-xs md:text-sm text-gray-600">Per cause:</span>
                 <span className="text-sm md:text-base font-semibold text-gray-900">${perCause.toFixed(2)}</span>
-              </div>
+              </div> */}
               <div className="pt-2 border-t border-gray-200 flex justify-between items-center">
                 <span className="text-sm md:text-base font-semibold text-gray-900">Total:</span>
                 <span className="text-lg md:text-xl font-bold text-[#1600ff]">${donationAmount.toFixed(2)}</span>
@@ -227,7 +227,7 @@ export default function DonationReviewBottomSheet({
                     onClick={onEditCauses}
                     className="text-sm sm:text-base font-semibold text-blue-600 bg-blue-50 px-2.5 py-1 rounded-full hover:bg-blue-100 transition-colors"
                   >
-                    Edit
+                    Adjust
                   </button>
                 )}
               </div>
@@ -251,9 +251,13 @@ export default function DonationReviewBottomSheet({
                           {cause.name}
                         </h4>
                       </div>
-                      <div className="text-xs md:text-sm font-semibold text-gray-900">
-                        ${perCause.toFixed(2)}
-                      </div>
+                      {showEditButton && (
+                        <div className="text-xs md:text-sm font-semibold text-gray-900">
+                          {cause.percentage != null
+                            ? `${Number(cause.percentage).toFixed(0)}%`
+                            : `${(100 / (selectedCauses.length || 1)).toFixed(0)}%`}
+                        </div>
+                      )}
                     </div>
                   );
                 })}

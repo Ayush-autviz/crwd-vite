@@ -1,4 +1,4 @@
-import { useQuery, useQueries, useQueryClient, useIsFetching } from "@tanstack/react-query";
+import { useQuery, useQueries, useQueryClient, useInfiniteQuery } from "@tanstack/react-query";
 import { useMemo, useState, useEffect } from "react";
 import CommentsBottomSheet from "@/components/post/CommentsBottomSheet";
 import NewSuggestedCollectives from "@/components/newHome/NewSuggestedCollectives";
@@ -18,13 +18,13 @@ import { getUserProfileById, getCommunityUpdatesPosts } from "@/services/api/soc
 import { useAuthStore } from "@/stores/store";
 import GuestHome from "@/components/GuestHome";
 import Footer from "@/components/Footer";
-import { X } from "lucide-react";
+import { X, Loader2 } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 
 export default function NewHome() {
     const { user, token } = useAuthStore();
     const queryClient = useQueryClient();
-    const isFetching = useIsFetching();
     const [showAppBanner, setShowAppBanner] = useState(true);
     const [showCommentsSheet, setShowCommentsSheet] = useState(false);
     const [selectedPost, setSelectedPost] = useState<any>(null);
@@ -58,11 +58,29 @@ export default function NewHome() {
     });
 
     // Fetch community updates (posts and notifications mixed)
-    const { data: communityUpdatesPostsData, isLoading: communityUpdatesLoading } = useQuery({
+    const {
+        data: communityUpdatesPostsData,
+        isLoading: communityUpdatesLoading,
+        fetchNextPage,
+        hasNextPage,
+        isFetchingNextPage
+    } = useInfiniteQuery({
         queryKey: ["communityUpdatesPosts"],
-        queryFn: getCommunityUpdatesPosts,
+        queryFn: ({ pageParam = 1 }) => getCommunityUpdatesPosts(pageParam),
+        getNextPageParam: (lastPage) => {
+            if (lastPage.next) {
+                const match = lastPage.next.match(/page=(\d+)/);
+                return match ? parseInt(match[1]) : undefined;
+            }
+            return undefined;
+        },
+        initialPageParam: 1,
         enabled: !!token?.access_token,
     });
+
+    const allCommunityUpdates = useMemo(() => {
+        return communityUpdatesPostsData?.pages.flatMap(page => page.results) || [];
+    }, [communityUpdatesPostsData]);
 
     useEffect(() => {
         if (communityUpdatesPostsData) {
@@ -72,7 +90,7 @@ export default function NewHome() {
 
     // Extract unique user IDs from notifications in the feed
     const uniqueUserIds = useMemo(() => {
-        const notifications = communityUpdatesPostsData?.results?.filter((n: any) => n.item_type === "notification") || [];
+        const notifications = allCommunityUpdates?.filter((n: any) => n.item_type === "notification") || [];
         return Array.from(new Set(
             notifications
                 .map((notification: any) => {
@@ -187,8 +205,7 @@ export default function NewHome() {
         ? {
             monthlyAmount: donationBoxData.monthly_amount || donationBoxData.amount || 10,
             causeCount:
-                (donationBoxData.manual_causes?.length || 0) +
-                (donationBoxData.attributing_collectives?.length || 0),
+                (donationBoxData.box_causes?.length || 0)
         }
         : null;
 
@@ -228,7 +245,7 @@ export default function NewHome() {
 
     // Transform feed data (posts and notifications)
     const transformedFeedItems = useMemo(() => {
-        return communityUpdatesPostsData?.results
+        return allCommunityUpdates
             ?.map((item: any) => {
                 if (item.item_type === 'post') {
                     // Start of post transformation
@@ -642,13 +659,36 @@ export default function NewHome() {
                             <div className="space-y-2.5 md:space-y-4">
                                 {feedPart3.map(renderFeedItem)}
                             </div>
+
+                            {/* Load More Button */}
+                            {hasNextPage && (
+                                <div className="mt-8 flex justify-center">
+                                    <Button
+                                        variant="outline"
+                                        onClick={() => fetchNextPage()}
+                                        disabled={isFetchingNextPage}
+                                        className="min-w-[120px]"
+                                    >
+                                        {isFetchingNextPage ? (
+                                            <>
+                                                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                                Loading...
+                                            </>
+                                        ) : (
+                                            'Load More'
+                                        )}
+                                    </Button>
+                                </div>
+                            )}
                         </div>
                     )}
 
                 </div>
             </div>
 
-            <ExploreCards />
+            {!hasNextPage && (
+                <ExploreCards />
+            )}
 
             <Footer />
 

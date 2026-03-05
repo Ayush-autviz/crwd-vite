@@ -1415,6 +1415,7 @@ const DonationBox = ({ tab = "setup", preselectedItem, activeTab, fromPaymentRes
                 name: cause.name,
                 description: cause.description || cause.mission,
                 image: cause.image,
+                percentage: boxCause.percentage,
               };
             }).filter((cause: any) => cause.id != null)
         }

@@ -4,14 +4,6 @@ import { categories } from '@/constants/categories';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog';
 import { getCauseByName } from '@/services/api/crwd';
 import { addCausesToBox } from '@/services/api/donation';
 import { getDonationBox } from '@/services/api/donation';
@@ -318,6 +310,7 @@ export default function NewCausePage() {
           onConfirm={handleConfirmAddToBox}
           onOneTimeDonation={handleDonate}
           isPending={addToDonationBoxMutation.isPending}
+          hasDonationBox={!!donationBoxData?.id || !!donationBoxData?.box_id}
         />
       )}
 

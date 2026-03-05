@@ -259,14 +259,15 @@ export const getLinkPreview = async (url: string) => {
 };
 
 // Community Updates Posts API endpoints
-export const getCommunityUpdatesPosts = async () => {
-    const response = await axiosClient.get('/social/community-updates-posts/');
+export const getCommunityUpdatesPosts = async (page?: number) => {
+    const pageParam = page ? `?page=${page}` : '';
+    const response = await axiosClient.get(`/social/community-updates-posts/${pageParam}`);
     return response.data;
 };
 
 export const getCollectivesByCauseCategory = async (categories?: string | string[]) => {
-    const categoryParam = categories 
-        ? `?category=${Array.isArray(categories) ? categories.join(',') : categories}` 
+    const categoryParam = categories
+        ? `?category=${Array.isArray(categories) ? categories.join(',') : categories}`
         : '';
     const response = await axiosClient.get(`/social/collectives/by-cause-category/${categoryParam}`);
     return response.data;
