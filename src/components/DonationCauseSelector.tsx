@@ -6,6 +6,7 @@ import { Input } from './ui/input';
 import { Avatar, AvatarImage, AvatarFallback } from './ui/avatar';
 import { useQuery } from '@tanstack/react-query';
 import { getCausesBySearch } from '@/services/api/crwd';
+import { useNavigate } from 'react-router-dom';
 
 interface Cause {
   id: number;
@@ -14,6 +15,7 @@ interface Cause {
   image?: string;
   category?: string;
   state?: string;
+  sort_name?: string;
   city?: string;
 }
 
@@ -61,6 +63,7 @@ export default function DonationCauseSelector({
   const [selectedType] = useState<'cause' | 'collective'>('cause'); // Always causes for one-time donation
   const [showSearchResults, setShowSearchResults] = useState(false);
   const [preselectedItemAdded, setPreselectedItemAdded] = useState(false);
+  const navigate = useNavigate();
 
   // Handle preselected item from navigation (only causes for one-time donation)
   useEffect(() => {
@@ -98,7 +101,7 @@ export default function DonationCauseSelector({
   const causes = showSearchResults ? (causesData?.results || []) : (defaultCausesData?.results || []);
 
   // Filter out already selected items (only causes)
-  const filteredCauses = causes.filter((cause: Cause) => 
+  const filteredCauses = causes.filter((cause: Cause) =>
     !selectedItems.some(item => item.id === cause.id.toString() && item.type === 'cause')
   ).slice(0, 20); // Show up to 20 causes
 
@@ -156,12 +159,12 @@ export default function DonationCauseSelector({
           </Button> */}
         </div>
         {/* {onRequestNonprofit ? ( */}
-          <button
-            onClick={onRequestNonprofit}
-            className="text-[#1600ff] text-sm md:text-base underline flex justify-center w-full"
-          >
-            Can't find your nonprofit? Request it here
-          </button>
+        <button
+          onClick={onRequestNonprofit}
+          className="text-[#1600ff] text-sm md:text-base underline flex justify-center w-full"
+        >
+          Can't find your nonprofit? Request it here
+        </button>
         {/* ) : (
           <Link to="/request-nonprofit" className="text-[#1600ff] text-sm md:text-base underline">
             Can't find your nonprofit? Request it here
@@ -202,7 +205,8 @@ export default function DonationCauseSelector({
                 <div
                   key={cause.id}
                   className="flex items-center gap-3 md:gap-4 p-3 md:p-4 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer transition-colors"
-                  onClick={() => handleItemSelect(cause)}
+                  // onClick={() => handleItemSelect(cause)}
+                  onClick={() => navigate(`/c/${cause.sort_name}`)}
                 >
                   <Avatar className="w-10 h-10 md:w-12 md:h-12 rounded-lg flex-shrink-0 border border-gray-200">
                     <AvatarImage src={cause.image} />
@@ -219,7 +223,7 @@ export default function DonationCauseSelector({
                       {cause.description || 'Supporting this nonprofit\'s mission'}
                     </p>
                   </div>
-                  <button className="w-8 h-8 md:w-10 md:h-10 rounded-lg bg-pink-100 hover:bg-pink-200 flex items-center justify-center transition-colors flex-shrink-0">
+                  <button onClick={() => handleItemSelect(cause)} className="w-8 h-8 md:w-10 md:h-10 rounded-lg bg-pink-100 hover:bg-pink-200 flex items-center justify-center transition-colors flex-shrink-0">
                     <Plus size={16} className="text-pink-600" strokeWidth={3} />
                   </button>
                 </div>
@@ -261,7 +265,8 @@ export default function DonationCauseSelector({
                 <div
                   key={cause.id}
                   className="flex items-center gap-3 md:gap-4 p-3 md:p-4 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer transition-colors"
-                  onClick={() => handleItemSelect(cause)}
+                  // onClick={() => handleItemSelect(cause)}`
+                  onClick={() => navigate(`/c/${cause.sort_name}`)}
                 >
                   <Avatar className="w-10 h-10 md:w-12 md:h-12 rounded-lg flex-shrink-0 border border-gray-200">
                     <AvatarImage src={cause.image} />
@@ -278,7 +283,7 @@ export default function DonationCauseSelector({
                       {cause.description || 'Supporting this nonprofit\'s mission'}
                     </p>
                   </div>
-                  <button className="w-8 h-8 md:w-10 md:h-10 rounded-lg bg-pink-100 hover:bg-pink-200 flex items-center justify-center transition-colors flex-shrink-0">
+                  <button onClick={() => handleItemSelect(cause)} className="w-8 h-8 md:w-10 md:h-10 rounded-lg bg-pink-100 hover:bg-pink-200 flex items-center justify-center transition-colors flex-shrink-0">
                     <Plus size={16} className="text-pink-600" strokeWidth={3} />
                   </button>
                 </div>
@@ -292,8 +297,8 @@ export default function DonationCauseSelector({
         )}
       </div>
 
-        {/* Discover More Link */}
-        {/* <div className="text-sm text-blue-600 rounded-lg">
+      {/* Discover More Link */}
+      {/* <div className="text-sm text-blue-600 rounded-lg">
           <p className="font-medium text-blue-600">You can add up to 10 more organizations to this donation</p>
           <Link to="/search" className="flex items-center mt-1 text-sm text-blue-600">
             <span>Discover More</span>

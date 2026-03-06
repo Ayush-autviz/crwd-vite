@@ -8,6 +8,7 @@ import {
   ChevronDown,
   ChevronUp,
 } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -32,6 +33,7 @@ type Organization = {
   imageUrl: string;
   color?: string;
   shortDesc?: string;
+  sort_name?: string;
   description?: string;
   via?: string;
   type?: 'cause' | 'collective';
@@ -57,6 +59,7 @@ const ManageDonationBox: React.FC<ManageDonationBoxProps> = ({
   nextChargeDate,
 }) => {
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
   const { user: currentUser } = useAuthStore();
   const [activeTab, setActiveTab] = useState<"nonprofits" | "collectives">("nonprofits");
   const [editableAmount, setEditableAmount] = React.useState(Math.round(amount));
@@ -661,6 +664,8 @@ const ManageDonationBox: React.FC<ManageDonationBoxProps> = ({
 
     // Get newly selected causes from stored data
     const newlySelectedCauses = selectedCausesData;
+    console.log('existingList', existingList);
+    console.log('newlySelectedCauses', newlySelectedCauses);
 
     return [...existingList.map(c => ({
       id: c.id,
@@ -668,6 +673,7 @@ const ManageDonationBox: React.FC<ManageDonationBoxProps> = ({
       imageUrl: c.imageUrl,
       description: c.description,
       isExisting: true,
+      sort_name: c.sort_name,
       isNewlySelected: false,
     })), ...newlySelectedCauses.map((cause: any) => ({
       id: `cause-${cause.id}`,
@@ -677,6 +683,7 @@ const ManageDonationBox: React.FC<ManageDonationBoxProps> = ({
       isExisting: false,
       isNewlySelected: true,
       causeId: cause.id,
+      sort_name: cause.sort_name,
     }))];
   };
 
@@ -686,6 +693,9 @@ const ManageDonationBox: React.FC<ManageDonationBoxProps> = ({
     const newlySelectedFromList = joinedCollectivesData?.data?.map((item: any) => item.collective).filter((collective: any) =>
       selectedCollectives.includes(collective.id)
     ) || [];
+
+    console.log('existingList', existingList);
+    console.log('newlySelectedFromList', newlySelectedFromList);
     return [...existingList.map(c => ({
       id: c.id,
       name: c.name,
@@ -914,6 +924,7 @@ const ManageDonationBox: React.FC<ManageDonationBoxProps> = ({
                         return (
                           <div
                             key={org.id}
+                            onClick={() => navigate(`/c/${org.sort_name}`)}
                             className="bg-white rounded-xl px-3 md:px-4 py-3 md:py-4 shadow-sm border border-gray-200"
                           >
                             <div className="flex gap-3 md:gap-4 items-center">
@@ -1022,7 +1033,7 @@ const ManageDonationBox: React.FC<ManageDonationBoxProps> = ({
                           <div
                             key={cause.id}
                             className="flex items-center gap-3 md:gap-4 bg-white rounded-xl px-3 md:px-4 py-3 md:py-4 shadow-sm border border-gray-200 hover:bg-gray-50 transition-colors cursor-pointer"
-                            onClick={() => handleToggleCause(cause.id)}
+                            onClick={() => navigate(`/c/${cause.sort_name}`)}
                           >
                             <Avatar className="w-10 h-10 md:w-12 md:h-12 rounded-lg flex-shrink-0 border border-gray-200">
                               <AvatarImage src={cause.image} />
@@ -1081,7 +1092,8 @@ const ManageDonationBox: React.FC<ManageDonationBoxProps> = ({
                         return (
                           <div
                             key={cause.id}
-                            className="flex items-center gap-3 md:gap-4 bg-white rounded-xl px-3 md:px-4 py-3 md:py-4 shadow-sm border border-gray-200 hover:bg-gray-50 transition-colors"
+                            className="flex items-center gap-3 md:gap-4 bg-white rounded-xl px-3 md:px-4 py-3 md:py-4 shadow-sm border border-gray-200 hover:bg-gray-50 transition-colors cursor-pointer"
+                            onClick={() => navigate(`/c/${cause.sort_name}`)}
                           >
                             <Avatar className="w-10 h-10 md:w-12 md:h-12 rounded-lg flex-shrink-0 border border-gray-200">
                               <AvatarImage src={cause.image || cause.logo || cause.imageUrl} />

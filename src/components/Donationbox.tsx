@@ -857,7 +857,11 @@ const DonationBox = ({ tab = "setup", preselectedItem, activeTab, fromPaymentRes
                             const avatarBgColor = getConsistentColor(cause.id, avatarColors);
                             const initials = getInitials(cause.name);
                             return (
-                              <div key={cause.id} className="flex items-center p-2.5 md:p-3 border border-gray-200 rounded-lg">
+                              <div
+                                key={cause.id}
+                                className="flex items-center p-2.5 md:p-3 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors cursor-pointer"
+                                onClick={() => navigate(`/c/${cause.sort_name}`)}
+                              >
                                 <Avatar className="w-10 h-10 md:w-12 md:h-12 rounded-lg flex-shrink-0 border border-gray-200 mr-2.5 md:mr-3">
                                   <AvatarImage src={cause.image || cause.logo} />
                                   <AvatarFallback
@@ -941,7 +945,8 @@ const DonationBox = ({ tab = "setup", preselectedItem, activeTab, fromPaymentRes
                               return (
                                 <div
                                   key={cause.id}
-                                  className="flex items-center p-2.5 md:p-3 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
+                                  className="flex items-center p-2.5 md:p-3 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors cursor-pointer"
+                                  onClick={() => navigate(`/c/${cause.sort_name}`)}
                                 >
                                   <Avatar className="w-10 h-10 md:w-12 md:h-12 rounded-lg flex-shrink-0 border border-gray-200 mr-2.5 md:mr-3">
                                     <AvatarImage src={cause.image || cause.logo} />

@@ -47,7 +47,7 @@ export default function ManageDonationBoxPage() {
   if (!donationBox || !donationBox.id) {
     return (
       <div className="w-full h-full bg-white flex flex-col">
-        <ProfileNavbar title="Manage Donation Box" showBackButton={true}/>
+        <ProfileNavbar title="Manage Donation Box" showBackButton={true} />
         <div className="flex items-center justify-center min-h-screen">
           <div className="text-center">
             <p className="text-gray-600 mb-4">No donation box found.</p>
@@ -78,6 +78,7 @@ export default function ManageDonationBoxPage() {
       id: `cause-${cause.id}`,
       name: cause.name,
       imageUrl: cause.image || cause.logo || '',
+      sort_name: cause.sort_name,
       color: '#4F46E5',
       description: cause.mission || cause.description || '',
       type: 'cause' as const,
@@ -90,6 +91,7 @@ export default function ManageDonationBoxPage() {
         name: cause.name,
         imageUrl: cause.logo || '',
         color: '#4F46E5',
+        sort_name: cause.sort_name,
         description: cause.mission || cause.description || '',
         type: 'cause' as const,
       })),
@@ -108,7 +110,7 @@ export default function ManageDonationBoxPage() {
 
   return (
     <div className="w-full h-full bg-white flex flex-col">
-      <ProfileNavbar title="Manage Donation Box" showBackButton={true} showDesktopBackButton={true}/>
+      <ProfileNavbar title="Manage Donation Box" showBackButton={true} showDesktopBackButton={true} />
       <ManageDonationBox
         amount={amount}
         causes={causesAsObjects}

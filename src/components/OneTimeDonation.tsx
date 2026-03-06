@@ -470,7 +470,11 @@ export default function OneTimeDonation({
                   const avatarBgColor = getConsistentColor(causeId, avatarColors);
                   const initials = getInitials(cause.name || '');
                   return (
-                    <div key={item.id} className="flex items-center p-2.5 md:p-3 border border-gray-200 rounded-lg">
+                    <div
+                      key={item.id}
+                      className="flex items-center p-2.5 md:p-3 border border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors"
+                      onClick={() => navigate(`/c/${cause.sort_name || cause.id}`)}
+                    >
                       <Avatar className="w-10 h-10 md:w-12 md:h-12 rounded-lg flex-shrink-0 border border-gray-200 mr-2.5 md:mr-3">
                         <AvatarImage src={cause.image || cause.logo} />
                         <AvatarFallback
