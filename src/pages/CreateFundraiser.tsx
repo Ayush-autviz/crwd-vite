@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import { ArrowLeft, Info, Palette, Image as ImageIcon, Camera, X, Check, Search, Building2, Eye, Share2, Sparkles } from 'lucide-react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { getCollectiveById, getCausesBySearch, createFundraiser } from '@/services/api/crwd';
@@ -56,6 +56,7 @@ export default function CreateFundraiser() {
   const { collectiveId } = useParams<{ collectiveId: string }>();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+  const location = useLocation();
   const [step, setStep] = useState<1 | 2 | 3>(1);
 
   // Step 1 state
@@ -116,12 +117,33 @@ export default function CreateFundraiser() {
   useUnsavedChanges(hasUnsavedChanges, setShowDiscardSheet, isConfirmedDiscard);
 
   const handleBackConfirmation = () => {
-    if (hasUnsavedChanges && !showSuccessModal && !isConfirmedDiscard) {
-      setShowDiscardSheet(true);
+    if (step > 1) {
+      handleBack();
     } else {
-      // Use navigate(-1) directly as handleBack might not be defined or I should define it
-      navigate(-1);
+      if (hasUnsavedChanges && !showSuccessModal && !isConfirmedDiscard) {
+        setShowDiscardSheet(true);
+      } else {
+        if (location.key === 'default') {
+          navigate('/');
+        } else {
+          navigate(-1);
+        }
+      }
     }
+  };
+
+  const handleDiscard = () => {
+    setIsConfirmedDiscard(true);
+    setShowDiscardSheet(false);
+    setTimeout(() => {
+      if (location.key === 'default') {
+        navigate('/');
+      } else {
+        // Use -2 to go back to the page before the flow, 
+        // since useUnsavedChanges pushes a dummy state.
+        navigate(-2);
+      }
+    }, 0);
   };
 
   // Fetch collective data
@@ -1010,13 +1032,7 @@ export default function CreateFundraiser() {
       <DiscardSheet
         isOpen={showDiscardSheet}
         onClose={() => setShowDiscardSheet(false)}
-        onDiscard={() => {
-          setIsConfirmedDiscard(true);
-          setShowDiscardSheet(false);
-          setTimeout(() => {
-            handleBack();
-          }, 0);
-        }}
+        onDiscard={handleDiscard}
       />
     </div>
   );

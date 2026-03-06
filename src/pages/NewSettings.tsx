@@ -35,6 +35,7 @@ import { Toast } from "@/components/ui/toast"
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar"
 import RequestNonprofitModal from '@/components/newsearch/RequestNonprofitModal';
 import { PaymentMethodsSheet } from '@/components/profile/PaymentMethodsSheet';
+import { DiscardSheet } from '@/components/ui/DiscardSheet';
 
 
 export default function NewSettings() {
@@ -1014,32 +1015,11 @@ export default function NewSettings() {
         isOpen={showPaymentMethods}
         onClose={() => setShowPaymentMethods(false)}
       />
-      {/* Exit Confirmation Sheet */}
-      <Sheet open={showExitConfirmation} onOpenChange={setShowExitConfirmation}>
-        <SheetContent side="bottom" className="py-8 md:py-10 border-none shadow-2xl rounded-t-[32px]">
-          <SheetHeader className="flex flex-col items-center text-center">
-            <SheetTitle className="text-2xl font-bold text-gray-900 mb-2">Unsaved Changes</SheetTitle>
-            <SheetDescription className="text-gray-500 text-[15px] leading-relaxed text-center">
-              You are currently in edit mode. If you leave now, any changes you've made will be lost. Are you sure you want to go back?
-            </SheetDescription>
-          </SheetHeader>
-          <div className="flex flex-col gap-3 mt-2 max-w-[500px] mx-auto w-full px-4">
-            <Button
-              variant="outline"
-              onClick={() => setShowExitConfirmation(false)}
-              className="w-full rounded-2xl py-6 border-gray-200 text-gray-800 font-bold text-lg hover:bg-gray-50 transition-colors"
-            >
-              Stay and Edit
-            </Button>
-            <Button
-              onClick={confirmExit}
-              className="w-full rounded-2xl py-6 bg-red-600 hover:bg-red-700 text-white font-bold text-lg shadow-sm transition-colors"
-            >
-              Discard Changes
-            </Button>
-          </div>
-        </SheetContent>
-      </Sheet>
+      <DiscardSheet
+        isOpen={showExitConfirmation}
+        onDiscard={confirmExit}
+        onClose={() => setShowExitConfirmation(false)}
+      />
     </div>
   )
 }

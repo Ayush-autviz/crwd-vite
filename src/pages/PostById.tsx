@@ -294,7 +294,11 @@ export default function PostById() {
     setIsConfirmedLeave(true);
     setShowDiscardSheet(false);
     setTimeout(() => {
-      handleBack();
+      if (location.key === 'default') {
+        navigate('/');
+      } else {
+        navigate(-2);
+      }
     }, 0);
   };
 

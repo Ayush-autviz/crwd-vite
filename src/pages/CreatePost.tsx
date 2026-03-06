@@ -9,6 +9,9 @@ import { Toast } from "@/components/ui/toast";
 import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
 import { createPost, getLinkPreview } from "@/services/api/social";
 import { useAuthStore } from "@/stores/store";
+import { DiscardSheet } from "@/components/ui/DiscardSheet";
+import { useUnsavedChanges } from "@/hooks/use-unsaved-changes";
+import { useMemo } from "react";
 
 
 export default function CreatePostPage() {
@@ -23,6 +26,8 @@ export default function CreatePostPage() {
 
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
+  const [showDiscardSheet, setShowDiscardSheet] = useState(false);
+  const [isConfirmedDiscard, setIsConfirmedDiscard] = useState(false);
 
   const [form, setForm] = useState({
 
@@ -71,6 +76,40 @@ export default function CreatePostPage() {
     }
   }, [previewData, form.url, urlError]);
 
+  const hasUnsavedChanges = useMemo(() => {
+    return form.content.trim() !== "" || form.url.trim() !== "" || selectedImage !== null;
+  }, [form.content, form.url, selectedImage]);
+
+  // Use navigation guard hook
+  useUnsavedChanges(hasUnsavedChanges, setShowDiscardSheet, isConfirmedDiscard);
+
+  const handleBackConfirmation = () => {
+    if (hasUnsavedChanges && !isConfirmedDiscard) {
+      setShowDiscardSheet(true);
+    } else {
+      if (location.key === 'default') {
+        navigate('/');
+      } else {
+        navigate(-1);
+      }
+    }
+  };
+
+  const handleDiscard = () => {
+    setIsConfirmedDiscard(true);
+    setShowDiscardSheet(false);
+
+    setTimeout(() => {
+      if (location.key === 'default') {
+        navigate('/');
+      } else {
+        // Use -2 to go back to the page before the flow, 
+        // since useUnsavedChanges pushes a dummy state.
+        navigate(-2);
+      }
+    }, 0);
+  };
+
   // Create post mutation
   const createPostMutation = useMutation({
     mutationFn: createPost,
@@ -89,7 +128,19 @@ export default function CreatePostPage() {
 
       // Navigate back to the collective page or home
       setTimeout(() => {
-        navigate(-1); // Go back to previous page
+        setIsConfirmedDiscard(true); // Don't trigger guard sheet
+
+        if (location.key === 'default') {
+          navigate('/');
+        } else {
+          // If we had text, use -2 to skip the dummy state.
+          // If not, -1 would suffice, but -2 is safer for skip.
+          if (hasUnsavedChanges) {
+            navigate(-2);
+          } else {
+            navigate(-1);
+          }
+        }
       }, 1500);
     },
     onError: (error: any) => {
@@ -198,7 +249,7 @@ export default function CreatePostPage() {
         <div className="sticky top-0 bg-white border-b border-gray-200 z-10">
           <div className="flex items-center gap-3 px-4 py-3">
             <button
-              onClick={() => navigate(-1)}
+              onClick={handleBackConfirmation}
               className="p-2 hover:bg-gray-100 rounded-full transition-colors"
             >
               <ArrowLeft className="w-5 h-5 text-gray-700" />
@@ -230,7 +281,7 @@ export default function CreatePostPage() {
         <div className="sticky top-0 bg-white border-b border-gray-200 z-10">
           <div className="flex items-center gap-3 px-4 py-3">
             <button
-              onClick={() => navigate(-1)}
+              onClick={handleBackConfirmation}
               className="p-2 hover:bg-gray-100 rounded-full transition-colors"
             >
               <ArrowLeft className="w-5 h-5 text-gray-700" />
@@ -246,7 +297,7 @@ export default function CreatePostPage() {
             <div className="text-sm text-gray-500 mb-4">
               Please select a collective to create a post.
             </div>
-            <Button onClick={() => navigate(-1)}>
+            <Button onClick={handleBackConfirmation}>
               Go Back
             </Button>
           </div>
@@ -266,7 +317,7 @@ export default function CreatePostPage() {
         <div className="flex items-center justify-between px-4 py-3">
           <div className="flex items-center gap-3">
             <button
-              onClick={() => navigate(-1)}
+              onClick={handleBackConfirmation}
               className="p-2 hover:bg-gray-100 rounded-full transition-colors"
             >
               <ArrowLeft className="w-5 h-5 text-gray-700" />
@@ -489,6 +540,12 @@ export default function CreatePostPage() {
         show={showToast}
         onHide={() => setShowToast(false)}
         duration={2000}
+      />
+
+      <DiscardSheet
+        isOpen={showDiscardSheet}
+        onClose={() => setShowDiscardSheet(false)}
+        onDiscard={handleDiscard}
       />
     </div>
   );

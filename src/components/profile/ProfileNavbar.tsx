@@ -221,7 +221,7 @@ export default function ProfileNavbar({
                         <div className="flex items-center gap-2 sm:gap-3">
                           <Avatar className="h-10 w-10 sm:h-12 sm:w-12">
                             <AvatarImage src={user?.profile_picture} />
-                            <AvatarFallback className="bg-[#1600ff] text-white">
+                            <AvatarFallback className="text-white" style={{ backgroundColor: user?.color }}>
                               {getUserInitials()}
                             </AvatarFallback>
                           </Avatar>

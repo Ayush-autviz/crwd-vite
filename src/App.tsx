@@ -7,6 +7,8 @@ import {
 } from "react-router-dom";
 import { Toaster } from "sonner";
 import { useEffect } from "react";
+import posthog from 'posthog-js';
+import { PostHogProvider } from '@posthog/react';
 import Layout from "./components/Layout";
 import { FavoritesProvider } from "./contexts/FavoritesContext";
 import { useAuthStore } from "./stores/store";
@@ -84,6 +86,13 @@ import EditFundraiser from "./pages/EditFundraiser";
 import FundraiserDetail from "./pages/FundraiserDetail";
 import AppleCallback from "./pages/auth/AppleCallback";
 
+// Initialize PostHog
+posthog.init('phc_H8FvO89VZLDakgosw6EbwV9LPl7u2Mvjz9Iu7rPDpQF', {
+  api_host: 'https://us.i.posthog.com',
+  person_profiles: 'identified_only',
+  capture_pageview: false, // We'll capture manually on route change
+});
+
 // ScrollToTop component that works for all pages
 function ScrollToTop() {
   const location = useLocation();
@@ -133,143 +142,170 @@ function AuthRouteHandler() {
 }
 
 function App() {
-  const { token } = useAuthStore();
+  const { user, token } = useAuthStore();
+
+  // Identify user in PostHog when they log in
+  useEffect(() => {
+    if (user && user.id) {
+      posthog.identify(user.id.toString(), {
+        email: user.email,
+        username: user.username,
+        full_name: user.full_name,
+      });
+    } else {
+      posthog.reset();
+    }
+  }, [user]);
 
   return (
-    <Router>
-      <ScrollToTop />
-      <FavoritesProvider>
-        <div className="bg-background min-h-screen">
-          {/* <AuthRouteHandler /> */}
-          <Routes>
-            {/* Public routes - accessible without authentication */}
-            <Route path="/terms" element={<SettingsTerms />} />
-            <Route path="/privacy" element={<SettingsPrivacy />} />
+    <PostHogProvider client={posthog}>
+      <Router>
+        <ScrollToTop />
+        <PostHogPageviewTracker />
+        <FavoritesProvider>
+          <div className="bg-background min-h-screen">
+            {/* <AuthRouteHandler /> */}
+            <Routes>
+              {/* Public routes - accessible without authentication */}
+              <Route path="/terms" element={<SettingsTerms />} />
+              <Route path="/privacy" element={<SettingsPrivacy />} />
 
-            {/* Auth routes - only render if no token */}
-            {!token?.access_token && (
-              <>
-                <Route path="/" element={<NewHome />} />
-                <Route path="/login" element={<Login />} />
-                {/* <Route path="/signup" element={<Signup />} /> */}
-                <Route path="/forgot-password" element={<ForgotPassword />} />
-                <Route path="/interests" element={<Interests />} />
-                <Route path="/verify" element={<Verify />} />
-                <Route path="/auth/google/callback" element={<GoogleCallback />} />
-                <Route path="/auth/apple/callback" element={<AppleCallback />} />
-                {/* <Route path="/onboarding" element={<OnBoard />} />s */}
-                <Route path="/onboarding" element={<NewOnboard />} />
-                {/* <Route path="/complete-onboard" element={<CompleteOnboard />} /> */}
-                {/* <Route path="/claim-profile" element={<ClaimProfile />} /> */}
-                <Route path="/claim-profile" element={<NewClaimProfile />} />
-                {/* <Route
+              {/* Auth routes - only render if no token */}
+              {!token?.access_token && (
+                <>
+                  <Route path="/" element={<NewHome />} />
+                  <Route path="/login" element={<Login />} />
+                  {/* <Route path="/signup" element={<Signup />} /> */}
+                  <Route path="/forgot-password" element={<ForgotPassword />} />
+                  <Route path="/interests" element={<Interests />} />
+                  <Route path="/verify" element={<Verify />} />
+                  <Route path="/auth/google/callback" element={<GoogleCallback />} />
+                  <Route path="/auth/apple/callback" element={<AppleCallback />} />
+                  {/* <Route path="/onboarding" element={<OnBoard />} />s */}
+                  <Route path="/onboarding" element={<NewOnboard />} />
+                  {/* <Route path="/complete-onboard" element={<CompleteOnboard />} /> */}
+                  {/* <Route path="/claim-profile" element={<ClaimProfile />} /> */}
+                  <Route path="/claim-profile" element={<NewClaimProfile />} />
+                  {/* <Route
                   path="/non-profit-interests"
                   element={<NonProfitInterests />}
                 /> */}
-              </>
-            )}
+                </>
+              )}
 
-            {/* Main routes with layout */}
-            <Route
-              path="/*"
-              element={
-                <Layout>
-                  <Routes>
-                    {/* <Route path="/" element={<Home />} /> */}
-                    <Route path="/" element={<NewHome />} />
-                    <Route path="/waitlist" element={<Waitlist />} />
-                    {/* <Route path="/search" element={<Search />} /> */}
-                    <Route path="/search" element={<NewSearch />} />
-                    <Route path="/search-results" element={<SearchResults />} />
-                    <Route path="/surprise-me" element={<SurpriseMe />} />
-                    <Route path="/search2" element={<Search2 />} />
-                    <Route path="/donation" element={<Donation />} />
-                    <Route path="/donation/manage" element={<ManageDonationBox />} />
-                    <Route path="/one-time-donation" element={<OneTimeDonationPage />} />
-                    <Route path="/notifications" element={<Notifications />} />
-                    {/* <Route
+              {/* Main routes with layout */}
+              <Route
+                path="/*"
+                element={
+                  <Layout>
+                    <Routes>
+                      {/* <Route path="/" element={<Home />} /> */}
+                      <Route path="/" element={<NewHome />} />
+                      <Route path="/waitlist" element={<Waitlist />} />
+                      {/* <Route path="/search" element={<Search />} /> */}
+                      <Route path="/search" element={<NewSearch />} />
+                      <Route path="/search-results" element={<SearchResults />} />
+                      <Route path="/surprise-me" element={<SurpriseMe />} />
+                      <Route path="/search2" element={<Search2 />} />
+                      <Route path="/donation" element={<Donation />} />
+                      <Route path="/donation/manage" element={<ManageDonationBox />} />
+                      <Route path="/one-time-donation" element={<OneTimeDonationPage />} />
+                      <Route path="/notifications" element={<Notifications />} />
+                      {/* <Route
                   path="/non-profit-interests"
                   element={<NonProfitInterests />}
                 /> */}
-                    <Route path="/non-profit-interests" element={<NewNonProfitInterests />} />
-                    <Route path="/profile" element={<Profile />} />
-                    {/* <Route path="/profile/:id" element={<ProfileById />} /> */}
-                    <Route path="/profile/edit" element={<ProfileById />} />
-                    <Route
-                      path="/profile/statistics"
-                      element={<ProfileStatistics />}
-                    />
-                    <Route path="/settings" element={<NewSettings />} />
-                    <Route path="/settings/email" element={<SettingsEmail />} />
-                    <Route
-                      path="/settings/password"
-                      element={<SettingsPassword />}
-                    />
-                    <Route
-                      path="/settings/payments"
-                      element={<SettingsPayments />}
-                    />
-                    <Route path="/settings/help" element={<SettingsHelp />} />
-                    <Route path="/settings/terms" element={<SettingsTerms />} />
-                    <Route
-                      path="/settings/privacy"
-                      element={<SettingsPrivacy />}
-                    />
-                    <Route path="/settings/about" element={<SettingsAbout />} />
-                    <Route
-                      path="/settings/report"
-                      element={<SettingsReport />}
-                    />
-                    {/* <Route
+                      <Route path="/non-profit-interests" element={<NewNonProfitInterests />} />
+                      <Route path="/profile" element={<Profile />} />
+                      {/* <Route path="/profile/:id" element={<ProfileById />} /> */}
+                      <Route path="/profile/edit" element={<ProfileById />} />
+                      <Route
+                        path="/profile/statistics"
+                        element={<ProfileStatistics />}
+                      />
+                      <Route path="/settings" element={<NewSettings />} />
+                      <Route path="/settings/email" element={<SettingsEmail />} />
+                      <Route
+                        path="/settings/password"
+                        element={<SettingsPassword />}
+                      />
+                      <Route
+                        path="/settings/payments"
+                        element={<SettingsPayments />}
+                      />
+                      <Route path="/settings/help" element={<SettingsHelp />} />
+                      <Route path="/settings/terms" element={<SettingsTerms />} />
+                      <Route
+                        path="/settings/privacy"
+                        element={<SettingsPrivacy />}
+                      />
+                      <Route path="/settings/about" element={<SettingsAbout />} />
+                      <Route
+                        path="/settings/report"
+                        element={<SettingsReport />}
+                      />
+                      {/* <Route
                       path="/transaction-history"
                       element={<TransactionHistory />}
                     /> */}
-                    <Route
-                      path="/transaction-history"
-                      element={<TaxReceipts />}
-                    />
-                    <Route path="/payment/result" element={<PaymentResult />} />
-                    <Route path="/saved" element={<NewSaved />} />
-                    {/* <Route path="/your-crwds" element={<YourCrwds />} /> */}
-                    {/* <Route path="/your-crwds/:id" element={<ManageCrwd />} /> */}
-                    <Route path="/create-crwd" element={<NewCreateCollective />} />
-                    <Route path="/create-post" element={<CreatePost />} />
-                    {/* <Route path="/create-cause" element={<CreateCause />} /> */}
-                    {/* <Route path="/feed-hungry" element={<FeedHungry />} /> */}
-                    {/* <Route path="/cause/:causeId" element={<Cause />} /> */}
-                    <Route path="/c/:causeId" element={<NewCause />} />
-                    {/* <Route path="/cause-detail" element={<CauseDetail />} /> */}
-                    {/* <Route path="/cause/:id" element={<CauseById />} /> */}
-                    {/* <Route path="/groupcrwd/:crwdId" element={<GroupCrwd />} /> */}
-                    <Route path="/g/:crwdId" element={<NewGroupCrwd />} />
-                    <Route path="/edit-collective/:crwdId" element={<EditCollective />} />
-                    <Route path="/create-fundraiser/:collectiveId" element={<CreateFundraiser />} />
-                    <Route path="/edit-fundraiser/:id" element={<EditFundraiser />} />
-                    <Route path="/fundraiser/:id" element={<FundraiserDetail />} />
-                    {/* <Route path="/groupcrwd/:id" element={<GroupCrwdById />} /> */}
-                    <Route path="/members" element={<Members />} />
-                    <Route path="/posts" element={<Posts />} />
-                    <Route path="/post/:id" element={<PostById />} />
-                    {/* <Route path="/menu" element={<Menu />} /> */}
-                    {/* <Route path="/mobile-menu" element={<MobileMenu />} /> */}
-                    <Route path="/donation-test" element={<DonationTest />} />
-                    <Route path="/u/:userId" element={<UserProfile />} />
-                    <Route path="/circles" element={<Circles />} />
-                    <Route path="/articles" element={<Articles />} />
-                    <Route path="/article/:slug" element={<ArticleDetail />} />
-                    {/* <Route path="/complete-onboard" element={<CompleteOnboard />} /> */}
-                    <Route path="/complete-onboard" element={<NewCompleteOnboard />} />
+                      <Route
+                        path="/transaction-history"
+                        element={<TaxReceipts />}
+                      />
+                      <Route path="/payment/result" element={<PaymentResult />} />
+                      <Route path="/saved" element={<NewSaved />} />
+                      {/* <Route path="/your-crwds" element={<YourCrwds />} /> */}
+                      {/* <Route path="/your-crwds/:id" element={<ManageCrwd />} /> */}
+                      <Route path="/create-crwd" element={<NewCreateCollective />} />
+                      <Route path="/create-post" element={<CreatePost />} />
+                      {/* <Route path="/create-cause" element={<CreateCause />} /> */}
+                      {/* <Route path="/feed-hungry" element={<FeedHungry />} /> */}
+                      {/* <Route path="/cause/:causeId" element={<Cause />} /> */}
+                      <Route path="/c/:causeId" element={<NewCause />} />
+                      {/* <Route path="/cause-detail" element={<CauseDetail />} /> */}
+                      {/* <Route path="/cause/:id" element={<CauseById />} /> */}
+                      {/* <Route path="/groupcrwd/:crwdId" element={<GroupCrwd />} /> */}
+                      <Route path="/g/:crwdId" element={<NewGroupCrwd />} />
+                      <Route path="/edit-collective/:crwdId" element={<EditCollective />} />
+                      <Route path="/create-fundraiser/:collectiveId" element={<CreateFundraiser />} />
+                      <Route path="/edit-fundraiser/:id" element={<EditFundraiser />} />
+                      <Route path="/fundraiser/:id" element={<FundraiserDetail />} />
+                      {/* <Route path="/groupcrwd/:id" element={<GroupCrwdById />} /> */}
+                      <Route path="/members" element={<Members />} />
+                      <Route path="/posts" element={<Posts />} />
+                      <Route path="/post/:id" element={<PostById />} />
+                      {/* <Route path="/menu" element={<Menu />} /> */}
+                      {/* <Route path="/mobile-menu" element={<MobileMenu />} /> */}
+                      <Route path="/donation-test" element={<DonationTest />} />
+                      <Route path="/u/:userId" element={<UserProfile />} />
+                      <Route path="/circles" element={<Circles />} />
+                      <Route path="/articles" element={<Articles />} />
+                      <Route path="/article/:slug" element={<ArticleDetail />} />
+                      {/* <Route path="/complete-onboard" element={<CompleteOnboard />} /> */}
+                      <Route path="/complete-onboard" element={<NewCompleteOnboard />} />
 
-                  </Routes>
-                </Layout>
-              }
-            />
-          </Routes>
-          <Toaster richColors position="top-center" />
-        </div>
-      </FavoritesProvider>
-    </Router>
+                    </Routes>
+                  </Layout>
+                }
+              />
+            </Routes>
+            <Toaster richColors position="top-center" />
+          </div>
+        </FavoritesProvider>
+      </Router>
+    </PostHogProvider>
   );
+}
+
+// Track page views on route changes
+function PostHogPageviewTracker() {
+  const location = useLocation();
+
+  useEffect(() => {
+    posthog.capture('$pageview');
+  }, [location.pathname]);
+
+  return null;
 }
 
 export default App;

@@ -110,9 +110,10 @@ export default function NewCreateCollectivePage() {
   const handleBack = () => {
     // Check if we came from specific flows
     const fromScreen = (location.state as any)?.from;
-    const specialFlows = ['NewNonprofitInterests', 'NewCompleteDonation', 'Login'];
+    const fromCreate = (location.state as any)?.fromCreate;
+    const specialFlows = ['NewNonprofitInterests', 'NewCompleteDonation', 'Login', 'onboarding', 'ClaimProfile'];
 
-    if (fromScreen && specialFlows.includes(fromScreen)) {
+    if ((fromScreen && specialFlows.includes(fromScreen)) || fromCreate || location.key === 'default') {
       navigate('/');
     } else {
       // Default behavior
@@ -139,6 +140,25 @@ export default function NewCreateCollectivePage() {
     return name.trim() !== '' || description.trim() !== '' || selectedCauses.length > 0;
   }, [name, description, selectedCauses]);
 
+  const handleDiscard = () => {
+    setIsConfirmedDiscard(true);
+    setShowDiscardSheet(false);
+
+    setTimeout(() => {
+      const fromScreen = (location.state as any)?.from;
+      const fromCreate = (location.state as any)?.fromCreate;
+      const specialFlows = ['NewNonprofitInterests', 'NewCompleteDonation', 'Login', 'onboarding', 'ClaimProfile'];
+
+      if ((fromScreen && specialFlows.includes(fromScreen)) || fromCreate || location.key === 'default') {
+        navigate('/');
+      } else {
+        // Use -2 to go back to the page before the flow, 
+        // since useUnsavedChanges pushes a dummy state.
+        navigate(-2);
+      }
+    }, 0);
+  };
+
   const handleBackConfirmation = () => {
     if (hasUnsavedChanges && step !== 3 && !isConfirmedDiscard) {
       setShowDiscardSheet(true);
@@ -147,7 +167,7 @@ export default function NewCreateCollectivePage() {
     }
   };
 
-  useUnsavedChanges(hasUnsavedChanges && step !== 3 && !isConfirmedDiscard, setShowDiscardSheet, false);
+  useUnsavedChanges(hasUnsavedChanges && step !== 3 && !isConfirmedDiscard, setShowDiscardSheet, isConfirmedDiscard);
 
   // Logo customization state - separate states for letter and upload
   const [logoType, setLogoType] = useState<'letter' | 'upload'>('letter');
@@ -1508,14 +1528,7 @@ export default function NewCreateCollectivePage() {
       <DiscardSheet
         isOpen={showDiscardSheet}
         onClose={() => setShowDiscardSheet(false)}
-        onDiscard={() => {
-          setIsConfirmedDiscard(true);
-          setShowDiscardSheet(false);
-          // Small timeout to let state update
-          setTimeout(() => {
-            handleBack();
-          }, 0);
-        }}
+        onDiscard={handleDiscard}
       />
     </>
   );
