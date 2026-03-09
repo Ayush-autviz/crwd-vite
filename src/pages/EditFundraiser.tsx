@@ -2,7 +2,7 @@ import { useState, useEffect, useMemo } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { ArrowLeft, Info, Palette, Image as ImageIcon, Camera, X, Search, Trash2, Plus, Calendar } from 'lucide-react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { getFundraiserById, getCollectiveById, getCausesBySearch, patchFundraiser } from '@/services/api/crwd';
+import { getFundraiserById, getCollectiveById, getCausesBySearch, patchFundraiser, getCategories } from '@/services/api/crwd';
 import { Toast } from '@/components/ui/toast';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -18,7 +18,6 @@ import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { Loader2 } from 'lucide-react';
 import type { Dayjs } from 'dayjs';
 import dayjs from 'dayjs';
-import { categories } from '@/constants/categories';
 import { DiscardSheet } from '@/components/ui/DiscardSheet';
 import { useUnsavedChanges } from '@/hooks/use-unsaved-changes';
 
@@ -49,10 +48,7 @@ const getInitials = (name: string) => {
 };
 
 // Filter categories for the fundraiser page
-const filterCategories = [
-  { id: '', name: 'All' },
-  ...categories.filter(cat => cat.id !== '').map(cat => ({ id: cat.id, name: cat.name })),
-];
+// Now dynamically fetched from API
 
 export default function EditFundraiser() {
   const { id } = useParams<{ id: string }>();
@@ -112,6 +108,30 @@ export default function EditFundraiser() {
     queryFn: () => getCollectiveById(fundraiserData?.collective?.toString() || ''),
     enabled: !!fundraiserData?.collective && typeof fundraiserData.collective === 'number',
   });
+
+  // Fetch categories
+  const { data: categoriesData } = useQuery({
+    queryKey: ['categories'],
+    queryFn: getCategories,
+  });
+
+  const categoriesList = useMemo(() => {
+    if (!categoriesData?.data) return [{ id: '', name: 'All' }];
+    // Ensure "All" is at the start if not returned by API or handle ID consistency
+    const results = categoriesData.data.map((cat: any) => ({
+      id: cat.id.toString(),
+      name: cat.name,
+      background_color: cat.background_color || cat.background,
+      text_color: cat.text_color || cat.text
+    }));
+
+    // Check if "All" is already there
+    if (results.some((cat: any) => cat.name.toLowerCase() === 'all')) {
+      return results;
+    }
+
+    return [{ id: '', name: 'All' }, ...results];
+  }, [categoriesData]);
 
   // Fetch causes/nonprofits for adding more
   const { data: causesData, isLoading: isLoadingCauses } = useQuery({
@@ -725,6 +745,9 @@ export default function EditFundraiser() {
                 {selectedNonprofitsData.map((cause: any) => {
                   const avatarBgColor = getConsistentColor(cause.id, cause.name);
                   const initials = getInitials(cause.name || 'Nonprofit');
+                  const category = categoriesList.find((cat: any) => cat.id === cause.category?.toString() || cat.id === cause.cause_category?.toString());
+                  const categoryName = cause?.categories?.[0]?.name || cause?.categories?.name || (typeof cause?.categories === 'string' ? cause?.categories : null) || category?.name || 'General';
+
                   return (
                     <div
                       key={cause.id}
@@ -740,9 +763,14 @@ export default function EditFundraiser() {
                         </AvatarFallback>
                       </Avatar>
                       <div className="flex-1 min-w-0">
-                        <h4 className="font-bold text-sm md:text-base text-gray-900 truncate">
-                          {cause.name}
-                        </h4>
+                        <div className="flex items-center gap-2 mb-0.5">
+                          <h4 className="font-bold text-sm md:text-base text-gray-900 truncate">
+                            {cause.name}
+                          </h4>
+                          <span className="text-[10px] md:text-xs text-gray-400 font-medium px-1.5 py-0.5 bg-blue-100/50 border border-blue-100 rounded-full">
+                            {categoryName}
+                          </span>
+                        </div>
                       </div>
                       <div className="flex items-center gap-2">
                         <span className="px-2 py-1 bg-blue-100 text-blue-800  text-xs font-medium rounded-full">
@@ -782,7 +810,7 @@ export default function EditFundraiser() {
 
             {/* Filter Buttons */}
             <div className="flex gap-2 mb-4 overflow-x-auto pb-2 scrollbar-hide">
-              {filterCategories.map((category) => {
+              {categoriesList.map((category: any) => {
                 const isSelected = selectedCategory === category.id;
                 return (
                   <button
@@ -809,6 +837,9 @@ export default function EditFundraiser() {
                 {availableNonprofits.map((nonprofit: any) => {
                   const avatarBgColor = getConsistentColor(nonprofit.id, nonprofit.name);
                   const initials = getInitials(nonprofit.name);
+                  const category = categoriesList.find((cat: any) => cat.id === nonprofit.category?.toString() || cat.id === nonprofit.cause_category?.toString());
+                  const categoryName = nonprofit?.categories?.[0]?.name || nonprofit?.categories?.name || (typeof nonprofit?.categories === 'string' ? nonprofit?.categories : null) || category?.name || 'General';
+
                   return (
                     <div
                       key={nonprofit.id}
@@ -825,9 +856,14 @@ export default function EditFundraiser() {
                         </AvatarFallback>
                       </Avatar>
                       <div className="flex-1 min-w-0">
-                        <h4 className="font-bold text-sm md:text-base text-gray-900 truncate">
-                          {nonprofit.name}
-                        </h4>
+                        <div className="flex items-center gap-2 mb-0.5">
+                          <h4 className="font-bold text-sm md:text-base text-gray-900 truncate">
+                            {nonprofit.name}
+                          </h4>
+                          <span className="text-[10px] md:text-xs text-gray-400 font-medium px-1.5 py-0.5 bg-gray-50 border border-gray-100 rounded-full">
+                            {categoryName}
+                          </span>
+                        </div>
                         <p className="text-xs md:text-sm text-gray-600 line-clamp-1">
                           {nonprofit.mission || nonprofit.description || 'Nonprofit organization'}
                         </p>

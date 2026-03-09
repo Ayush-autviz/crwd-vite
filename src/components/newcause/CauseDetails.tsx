@@ -7,8 +7,8 @@ interface CauseDetailsProps {
 }
 
 export default function CauseDetails({ causeData }: CauseDetailsProps) {
-  // Get all matching categories from the category string (e.g., "MP" -> "M", "P")
-  const displayedCategories = categories.filter(
+  // Get all matching categories
+  const displayedCategories = causeData?.categories || categories.filter(
     (cat) => cat.id && typeof causeData?.category === 'string' && causeData.category.includes(cat.id)
   );
   const mainCategory = displayedCategories[0];
@@ -74,7 +74,7 @@ export default function CauseDetails({ causeData }: CauseDetailsProps) {
         <div className="mb-3 md:mb-4">
           <h3 className="text-xs xs:text-sm md:text-base font-bold text-gray-900 mb-0.5 md:mb-1">MAIN FOCUS</h3>
           <div className="flex flex-wrap gap-x-1.5">
-            {displayedCategories.map((cat, index) => (
+            {displayedCategories.map((cat: any, index: number) => (
               <span key={cat.id}>
                 <Link to={`/search-results?categoryId=${cat.id}&categoryName=${encodeURIComponent(cat.name)}&q=${encodeURIComponent(cat.name)}`}
                   className="text-xs xs:text-sm md:text-base font-medium hover:underline"

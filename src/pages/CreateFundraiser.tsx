@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import { ArrowLeft, Info, Palette, Image as ImageIcon, Camera, X, Check, Search, Building2, Eye, Share2, Sparkles } from 'lucide-react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { getCollectiveById, getCausesBySearch, createFundraiser } from '@/services/api/crwd';
+import { getCollectiveById, getCausesBySearch, createFundraiser, getCategories } from '@/services/api/crwd';
 import { Toast } from '@/components/ui/toast';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -13,7 +13,6 @@ import { DatePicker } from 'antd';
 import type { Dayjs } from 'dayjs';
 import dayjs from 'dayjs';
 import { useMemo } from 'react';
-import { categories } from '@/constants/categories';
 import { SharePost } from '@/components/ui/SharePost';
 import Confetti from 'react-confetti';
 import { CrwdAnimation } from '@/assets/newLogo';
@@ -47,10 +46,7 @@ const getInitials = (name: string) => {
 };
 
 // Filter categories for the fundraiser page - use all categories except "All"
-const filterCategories = [
-  { id: '', name: 'All' },
-  ...categories.filter(cat => cat.id !== '').map(cat => ({ id: cat.id, name: cat.name })),
-];
+// Now dynamically fetched from API
 
 export default function CreateFundraiser() {
   const { collectiveId } = useParams<{ collectiveId: string }>();
@@ -152,6 +148,30 @@ export default function CreateFundraiser() {
     queryFn: () => getCollectiveById(collectiveId || ''),
     enabled: !!collectiveId,
   });
+
+  // Fetch categories
+  const { data: categoriesData } = useQuery({
+    queryKey: ['categories'],
+    queryFn: getCategories,
+  });
+
+  const categoriesList = useMemo(() => {
+    if (!categoriesData?.data) return [{ id: '', name: 'All' }];
+    // Ensure "All" is at the start if not returned by API or handle ID consistency
+    const results = categoriesData.data.map((cat: any) => ({
+      id: cat.id.toString(),
+      name: cat.name,
+      background_color: cat.background_color,
+      text_color: cat.text_color
+    }));
+
+    // Check if "All" is already there
+    if (results.some((cat: any) => cat.name.toLowerCase() === 'all')) {
+      return results;
+    }
+
+    return [{ id: '', name: 'All' }, ...results];
+  }, [categoriesData]);
 
   // Fetch causes/nonprofits for step 2
   const { data: causesData, isLoading: isLoadingCauses } = useQuery({
@@ -768,7 +788,7 @@ export default function CreateFundraiser() {
 
             {/* Filter Buttons */}
             <div className="flex gap-2 mb-4 md:mb-6 overflow-x-auto pb-2 scrollbar-hide">
-              {filterCategories.map((category) => {
+              {categoriesList.map((category: any) => {
                 const isSelected = selectedCategory === category.id;
                 return (
                   <button
@@ -807,8 +827,8 @@ export default function CreateFundraiser() {
                   const isSelected = selectedNonprofits.includes(nonprofit.id);
                   const avatarBgColor = getConsistentColor(nonprofit.id, nonprofit.name);
                   const initials = getInitials(nonprofit.name || 'N');
-                  const category = categories.find(cat => cat.id === nonprofit.category || cat.id === nonprofit.cause_category);
-                  const categoryName = category?.name || 'General';
+                  const category = categoriesList.find((cat: any) => cat.id === nonprofit.category?.toString() || cat.id === nonprofit.cause_category?.toString());
+                  const categoryName = nonprofit?.categories?.[0]?.name || nonprofit?.categories?.name || (typeof nonprofit?.categories === 'string' ? nonprofit?.categories : null) || category?.name || 'General';
 
                   return (
                     <div
@@ -924,8 +944,8 @@ export default function CreateFundraiser() {
                     {selectedNonprofitsData.map((nonprofit: any) => {
                       const avatarBgColor = getConsistentColor(nonprofit.id, nonprofit.name);
                       const initials = getInitials(nonprofit.name || 'N');
-                      const category = categories.find(cat => cat.id === nonprofit.category || cat.id === nonprofit.cause_category);
-                      const categoryName = category?.name || 'General';
+                      const category = categoriesList.find((cat: any) => cat.id === nonprofit.category?.toString() || cat.id === nonprofit.cause_category?.toString());
+                      const categoryName = nonprofit?.categories?.[0]?.name || nonprofit?.categories?.name || (typeof nonprofit?.categories === 'string' ? nonprofit?.categories : null) || category?.name || 'General';
 
                       return (
                         <div key={nonprofit.id} className="bg-white rounded-lg border border-gray-200 p-3 md:p-4 flex items-center gap-3 md:gap-4">

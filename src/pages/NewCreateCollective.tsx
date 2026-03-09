@@ -19,6 +19,7 @@ import JoinCollectiveBottomSheet from '@/components/newgroupcrwd/JoinCollectiveB
 import { truncateAtFirstPeriod } from '@/lib/utils';
 import { DiscardSheet } from '@/components/ui/DiscardSheet';
 import { useUnsavedChanges } from '@/hooks/use-unsaved-changes';
+import CategoryBadges from '@/components/newcause/CategoryBadges';
 
 const getCategoryById = (categoryId: string | undefined) => {
   return categories.find(cat => cat.id === categoryId) || null;
@@ -755,7 +756,7 @@ export default function NewCreateCollectivePage() {
                         <div className="flex-1 min-w-0">
                           <div className="flex flex-col items-start flex-wrap">
                             <h4 className="font-bold text-sm xs:text-base md:text-lg text-foreground truncate">{causeData.name}</h4>
-                            <div className="flex items-center gap-2 flex-wrap">
+                            {/* <div className="flex items-center gap-2 flex-wrap">
                               {categoryNames.map((name, index) => {
                                 const singleCategoryId = categoryIds[index];
                                 const bgColor = getCategoryColor(singleCategoryId);
@@ -770,7 +771,10 @@ export default function NewCreateCollectivePage() {
                                   </span>
                                 );
                               })}
-                            </div>
+                            </div> */}
+                            <CategoryBadges
+                              categories={causeData.categories}
+                            />
                           </div>
                           <p className="text-xs xs:text-sm md:text-base text-gray-600 line-clamp-2">
                             {truncateAtFirstPeriod(causeData.mission || causeData.description)}
@@ -1182,7 +1186,7 @@ export default function NewCreateCollectivePage() {
                           <div className="flex-1 min-w-0">
                             <div className="flex flex-col items-start flex-wrap">
                               <h4 className="font-bold text-sm xs:text-base md:text-lg text-foreground truncate">{causeData.name}</h4>
-                              <div className="flex items-center gap-2 flex-wrap">
+                              {/* <div className="flex items-center gap-2 flex-wrap">
                                 {categoryNames.map((name, index) => {
                                   const singleCategoryId = categoryIds[index];
                                   const bgColor = getCategoryColor(singleCategoryId);
@@ -1197,7 +1201,10 @@ export default function NewCreateCollectivePage() {
                                     </span>
                                   );
                                 })}
-                              </div>
+                              </div> */}
+                              <CategoryBadges
+                                categories={causeData.categories}
+                              />
                             </div>
                             <p className="text-xs xs:text-sm md:text-base text-gray-600 line-clamp-2 mb-2">
                               {truncateAtFirstPeriod(causeData.mission || causeData.description)}
@@ -1291,7 +1298,7 @@ export default function NewCreateCollectivePage() {
                               <div className="flex-1 min-w-0">
                                 <div className="flex flex-col items-start flex-wrap">
                                   <h4 className="font-bold text-sm xs:text-base md:text-lg text-foreground truncate">{cause.name}</h4>
-                                  <div className="flex items-center gap-2 flex-wrap">
+                                  {/* <div className="flex items-center gap-2 flex-wrap">
                                     {categoryNames.map((name, index) => {
                                       const singleCategoryId = categoryIds[index];
                                       const bgColor = getCategoryColor(singleCategoryId);
@@ -1306,7 +1313,10 @@ export default function NewCreateCollectivePage() {
                                         </span>
                                       );
                                     })}
-                                  </div>
+                                  </div> */}
+                                  <CategoryBadges
+                                    categories={cause.categories}
+                                  />
                                 </div>
                                 <p className="text-xs xs:text-sm md:text-base text-muted-foreground line-clamp-2">
                                   {truncateAtFirstPeriod(cause.mission || cause.description)}
@@ -1442,7 +1452,7 @@ export default function NewCreateCollectivePage() {
                             <div className="flex-1 min-w-0">
                               <div className="flex flex-col items-start flex-wrap">
                                 <h4 className="font-bold text-sm xs:text-base md:text-lg text-foreground truncate">{cause.name}</h4>
-                                <div className="flex items-center gap-2 flex-wrap">
+                                {/* <div className="flex items-center gap-2 flex-wrap">
                                   {categoryNames.map((name, index) => {
                                     const singleCategoryId = categoryIds[index];
                                     const bgColor = getCategoryColor(singleCategoryId);
@@ -1457,7 +1467,10 @@ export default function NewCreateCollectivePage() {
                                       </span>
                                     );
                                   })}
-                                </div>
+                                </div> */}
+                                <CategoryBadges
+                                  categories={cause.categories}
+                                />
                               </div>
                               <p className="text-xs xs:text-sm md:text-base text-muted-foreground line-clamp-2">
                                 {truncateAtFirstPeriod(cause.mission || cause.description)}

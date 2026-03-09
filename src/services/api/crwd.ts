@@ -7,7 +7,7 @@ export const getCauses = async () => {
 };
 
 // Causes API endpoints
-export const getCausesBySearch = async (search?: string, category?: string,page?: number) => {
+export const getCausesBySearch = async (search?: string, category?: string, page?: number) => {
     const response = await axiosClient.get(`/crwd/causes/?search=${search}&category=${category}&page=${page}`);
     return response.data;
 };
@@ -197,7 +197,7 @@ export const getSurpriseMe = async (categories?: string[] | string) => {
             categoriesParam = categories;
         }
     }
-    const url = categoriesParam 
+    const url = categoriesParam
         ? `/crwd/causes/surprise-me/?categories=${categoriesParam}`
         : '/crwd/causes/surprise-me/';
     const response = await axiosClient.get(url);
@@ -227,5 +227,11 @@ export const patchFundraiser = async (id: string, data: any) => {
 // put fundraiser API endpoint
 export const putFundraiser = async (id: string, data: any) => {
     const response = await axiosClient.put(`/crwd/fundraisers/${id}/`, data);
+    return response.data;
+};
+
+// Categories API endpoint
+export const getCategories = async () => {
+    const response = await axiosClient.get('/crwd/categories/');
     return response.data;
 };

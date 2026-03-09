@@ -1,10 +1,10 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { Heart, ArrowRight, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { categories } from "@/constants/categories";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { postCauseInterests } from "@/services/api/social";
+import { getCategories } from "@/services/api/crwd";
 import { toast } from "sonner";
 
 export default function NewNonProfitInterests() {
@@ -35,13 +35,28 @@ export default function NewNonProfitInterests() {
     "Women's Health",
   ];
 
-  const mainCategories = categories
-    .filter((cat) =>
-      cat.id !== "" &&
-      cat.name !== "All" &&
-      allowedCategoryNames.includes(cat.name)
-    )
-    .sort((a, b) => a.name.localeCompare(b.name));
+  // Fetch categories from API
+  const { data: categoriesData, isLoading: isLoadingCategories } = useQuery({
+    queryKey: ['categories'],
+    queryFn: getCategories,
+  });
+
+  const mainCategories = useMemo(() => {
+    if (!categoriesData?.data) return [];
+
+    return categoriesData.data
+      .filter((cat: any) =>
+        cat.name !== "All" &&
+        allowedCategoryNames.includes(cat.name)
+      )
+      .map((cat: any) => ({
+        id: cat.id.toString(),
+        name: cat.name,
+        background: cat.background_color || cat.background,
+        text: cat.text_color || cat.text
+      }))
+      .sort((a: any, b: any) => a.name.localeCompare(b.name));
+  }, [categoriesData]);
 
   const handleCategoryToggle = (categoryId: string) => {
     setSelectedCategories((prev) => {
@@ -91,6 +106,9 @@ export default function NewNonProfitInterests() {
     }
   };
 
+  console.log(categoriesData);
+
+
   return (
     <div className="min-h-screen flex flex-col items-center justify-center px-3 sm:px-4 py-6 sm:py-8">
       <div className="w-full max-w-2xl bg-white rounded-xl p-4 sm:p-6 md:p-8 ">
@@ -120,31 +138,37 @@ export default function NewNonProfitInterests() {
         </p>
 
         {/* Category Tags - Organic Layout */}
-        <div className="flex flex-wrap justify-center gap-2 sm:gap-3 mb-6 sm:mb-8">
-          {mainCategories.map((category) => {
-            const isSelected = selectedCategories.includes(category.id);
-            return (
-              <button
-                key={category.id}
-                onClick={() => handleCategoryToggle(category.id)}
-                className={`
-                  relative px-4 sm:px-5 md:px-6 py-2 sm:py-2.5 md:py-3 rounded-full text-sm sm:text-base font-medium transition-all duration-200
-                  flex items-center justify-center whitespace-nowrap
-                  ${isSelected
-                    ? "text-white shadow-md transform scale-105"
-                    : "hover:shadow-sm hover:scale-102"
-                  }
-                `}
-                style={{
-                  backgroundColor: category.background,
-                  color: category.text,
-                  opacity: isSelected ? 1 : 0.3,
-                }}
-              >
-                <span>{category.name}</span>
-              </button>
-            );
-          })}
+        <div className="flex flex-wrap justify-center gap-2 sm:gap-3 mb-6 sm:mb-8 min-h-[100px]">
+          {isLoadingCategories ? (
+            <div className="flex items-center justify-center py-12">
+              <Loader2 className="w-6 h-6 animate-spin text-gray-400" />
+            </div>
+          ) : (
+            mainCategories.map((category: { id: string, name: string, background: string, text: string }) => {
+              const isSelected = selectedCategories.includes(category.id);
+              return (
+                <button
+                  key={category.id}
+                  onClick={() => handleCategoryToggle(category.id)}
+                  className={`
+                    relative px-4 sm:px-5 md:px-6 py-2 sm:py-2.5 md:py-3 rounded-full text-sm sm:text-base font-medium transition-all duration-200
+                    flex items-center justify-center whitespace-nowrap
+                    ${isSelected
+                      ? "text-white shadow-md transform scale-105"
+                      : "hover:shadow-sm hover:scale-102"
+                    }
+                  `}
+                  style={{
+                    backgroundColor: category.background,
+                    color: category.text,
+                    opacity: isSelected ? 1 : 0.3,
+                  }}
+                >
+                  <span>{category.name}</span>
+                </button>
+              );
+            })
+          )}
         </div>
 
         {/* Selected Count */}

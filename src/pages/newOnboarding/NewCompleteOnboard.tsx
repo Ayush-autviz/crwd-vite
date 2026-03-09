@@ -13,6 +13,7 @@ import { createDonationBox } from "@/services/api/donation";
 import { toast } from "sonner";
 import { categories } from "@/constants/categories";
 import { truncateAtFirstPeriod } from "@/lib/utils";
+import CategoryBadges from "@/components/newcause/CategoryBadges";
 
 type ViewType = 'initial' | 'surprise' | 'browse' | 'collective' | 'success';
 
@@ -636,7 +637,7 @@ export default function NewCompleteOnboard() {
                                 <h3 className="font-bold text-xs sm:text-sm text-gray-900 mb-1 line-clamp-2 sm:line-clamp-3">
                                   {cause.name}
                                 </h3>
-                                <div className="flex flex-wrap gap-1">
+                                {/* <div className="flex flex-wrap gap-1">
                                   {getCategoryIds(cause.category).map((catId, idx) => {
                                     const catInfo = getCategoryById(catId) || categories[0];
                                     return (
@@ -649,7 +650,10 @@ export default function NewCompleteOnboard() {
                                       </div>
                                     );
                                   })}
-                                </div>
+                                </div> */}
+                                <CategoryBadges
+                                  categories={cause.categories}
+                                />
                               </div>
                               {isSelected && (
                                 <Check className="w-4 h-4 sm:w-5 sm:h-5 text-blue-500 flex-shrink-0" />
@@ -1119,7 +1123,7 @@ export default function NewCompleteOnboard() {
                             <h3 className="font-bold text-gray-900 mb-1">
                               {cause.name}
                             </h3>
-                            <div className="flex flex-wrap gap-1">
+                            {/* <div className="flex flex-wrap gap-1">
                               {getCategoryIds(cause.category).map((catId, idx) => {
                                 const catInfo = getCategoryById(catId) || categories[0];
                                 return (
@@ -1132,7 +1136,10 @@ export default function NewCompleteOnboard() {
                                   </div>
                                 );
                               })}
-                            </div>
+                            </div> */}
+                            <CategoryBadges
+                              categories={cause.categories}
+                            />
                           </div>
                         </div>
 

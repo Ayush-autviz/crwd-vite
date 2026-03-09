@@ -1,8 +1,8 @@
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
-import { Badge } from '@/components/ui/badge';
 import { categories } from '@/constants/categories';
 import { truncateAtFirstPeriod } from '@/lib/utils';
 import { useNavigate } from 'react-router-dom';
+import CategoryBadges from './CategoryBadges';
 
 interface CauseProfileProps {
   causeData: any;
@@ -15,7 +15,7 @@ export default function CauseProfile({ causeData }: CauseProfileProps) {
     (cat) => cat.id && typeof causeData?.category === 'string' && causeData.category.includes(cat.id)
   );
 
-  const handleCategoryClick = (cat: typeof categories[0]) => {
+  const handleCategoryClick = (cat: { id: string | number; name: string }) => {
     navigate(`/search-results?categoryId=${cat.id}&categoryName=${encodeURIComponent(cat.name)}&q=${encodeURIComponent(cat.name)}`);
   };
 
@@ -73,23 +73,10 @@ export default function CauseProfile({ causeData }: CauseProfileProps) {
         </p>
 
         {/* Category Tags */}
-        {displayedCategories.length > 0 && (
-          <div className="flex flex-wrap gap-2">
-            {displayedCategories.map((cat) => (
-              <Badge
-                key={cat.id}
-                variant="secondary"
-                onClick={() => handleCategoryClick(cat)}
-                className="rounded-full px-2.5 md:px-3 py-0.5 md:py-1 text-xs md:text-sm font-medium text-white cursor-pointer hover:opacity-90 transition-opacity"
-                style={{
-                  backgroundColor: cat.background,
-                }}
-              >
-                {cat.name}
-              </Badge>
-            ))}
-          </div>
-        )}
+        <CategoryBadges
+          categories={causeData.categories}
+          onCategoryClick={handleCategoryClick}
+        />
       </div>
     </div>
   );
