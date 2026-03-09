@@ -675,7 +675,7 @@ export default function NewHome() {
                                                 Loading...
                                             </>
                                         ) : (
-                                            'Load More'
+                                            'Show More Posts'
                                         )}
                                     </Button>
                                 </div>

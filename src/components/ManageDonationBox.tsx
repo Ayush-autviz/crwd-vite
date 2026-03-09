@@ -10,14 +10,6 @@ import {
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { getCausesBySearch, getJoinCollective, getCollectiveById } from "@/services/api/crwd";
 import { updateDonationBox, cancelDonationBox, getDonationHistory, getDonationBox } from "@/services/api/donation";
@@ -73,13 +65,45 @@ const ManageDonationBox: React.FC<ManageDonationBoxProps> = ({
   const [selectedCollectives, setSelectedCollectives] = useState<number[]>([]);
   const [selectedCausesData, setSelectedCausesData] = useState<any[]>([]); // Store full data for selected causes
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [isDeleteModalVisible, setIsDeleteModalVisible] = useState(false);
+  const [isDeleteModalAnimating, setIsDeleteModalAnimating] = useState(false);
   const [itemToDelete, setItemToDelete] = useState<{ id: number; name: string; type: 'cause' | 'collective'; isNewlySelected: boolean } | null>(null);
   const [showCancelModal, setShowCancelModal] = useState(false);
+  const [isCancelModalVisible, setIsCancelModalVisible] = useState(false);
+  const [isCancelModalAnimating, setIsCancelModalAnimating] = useState(false);
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
   const [expandedCollectives, setExpandedCollectives] = useState<Set<number>>(new Set());
   const [collectiveDetails, setCollectiveDetails] = useState<Record<number, any>>({});
   const [loadingCollectives, setLoadingCollectives] = useState<Set<number>>(new Set());
+
+  // Handle delete modal animation
+  React.useEffect(() => {
+    let timer: NodeJS.Timeout;
+    if (showDeleteModal) {
+      setIsDeleteModalVisible(true);
+      setIsDeleteModalAnimating(false);
+      timer = setTimeout(() => setIsDeleteModalAnimating(true), 20);
+    } else if (isDeleteModalVisible) {
+      setIsDeleteModalAnimating(false);
+      timer = setTimeout(() => setIsDeleteModalVisible(false), 300);
+    }
+    return () => clearTimeout(timer);
+  }, [showDeleteModal, isDeleteModalVisible]);
+
+  // Handle cancel modal animation
+  React.useEffect(() => {
+    let timer: NodeJS.Timeout;
+    if (showCancelModal) {
+      setIsCancelModalVisible(true);
+      setIsCancelModalAnimating(false);
+      timer = setTimeout(() => setIsCancelModalAnimating(true), 20);
+    } else if (isCancelModalVisible) {
+      setIsCancelModalAnimating(false);
+      timer = setTimeout(() => setIsCancelModalVisible(false), 300);
+    }
+    return () => clearTimeout(timer);
+  }, [showCancelModal, isCancelModalVisible]);
 
   // Separate existing causes/collectives from new selections
   const existingCauses = causes.filter(c => c.type === 'cause' || !c.type);
@@ -965,7 +989,10 @@ const ManageDonationBox: React.FC<ManageDonationBoxProps> = ({
                                 </div> */}
                                 <button
                                   className="text-red-500 hover:text-red-600 transition-colors flex-shrink-0"
-                                  onClick={() => handleDeselectCause(causeId, org.isNewlySelected, org.name)}
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleDeselectCause(causeId, org.isNewlySelected, org.name)
+                                  }}
                                   aria-label="Remove cause"
                                 >
                                   <Trash2 size={16} className="md:w-[18px] md:h-[18px]" />
@@ -1509,62 +1536,120 @@ const ManageDonationBox: React.FC<ManageDonationBoxProps> = ({
           </div>
         )}
 
-        {/* Delete Confirmation Modal */}
-        <Dialog open={showDeleteModal} onOpenChange={setShowDeleteModal}>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Confirm Removal</DialogTitle>
-              <DialogDescription>
-                Are you sure you want to remove {itemToDelete?.name} from your donation box? This action cannot be undone.
-              </DialogDescription>
-            </DialogHeader>
-            <DialogFooter>
-              <Button
-                variant="outline"
-                onClick={() => {
-                  setShowDeleteModal(false);
-                  setItemToDelete(null);
-                }}
-              >
-                Cancel
-              </Button>
-              <Button
-                variant="destructive"
-                onClick={handleConfirmDelete}
-              >
-                Remove
-              </Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
+        {/* Delete Confirmation Bottom Sheet */}
+        {isDeleteModalVisible && (
+          <div
+            className={`fixed inset-0 z-[100] transition-opacity duration-300 ${isDeleteModalAnimating ? 'opacity-100' : 'opacity-0'
+              }`}
+            onClick={() => {
+              setShowDeleteModal(false);
+              setItemToDelete(null);
+            }}
+          >
+            {/* Backdrop */}
+            <div className="absolute inset-0 bg-black/50" />
 
-        {/* Cancel Subscription Confirmation Modal */}
-        <Dialog open={showCancelModal} onOpenChange={setShowCancelModal}>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Deactivate Subscription</DialogTitle>
-              <DialogDescription>
-                Are you sure you want to deactivate your donation box subscription? This will cancel all future monthly donations. You can reactivate it at any time.
-              </DialogDescription>
-            </DialogHeader>
-            <DialogFooter>
-              <Button
-                variant="outline"
-                onClick={() => setShowCancelModal(false)}
-                disabled={cancelDonationBoxMutation.isPending}
-              >
-                Cancel
-              </Button>
-              <Button
-                variant="destructive"
-                onClick={() => cancelDonationBoxMutation.mutate()}
-                disabled={cancelDonationBoxMutation.isPending}
-              >
-                {cancelDonationBoxMutation.isPending ? 'Deactivating...' : 'Deactivate Subscription'}
-              </Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
+            {/* Bottom Sheet */}
+            <div
+              className={`absolute bottom-0 left-0 right-0 bg-white rounded-t-2xl md:rounded-t-3xl shadow-2xl max-h-[90vh] md:max-h-[85vh] overflow-hidden flex flex-col transition-transform duration-300 ${isDeleteModalAnimating ? 'translate-y-0' : 'translate-y-full'
+                }`}
+              onClick={(e) => e.stopPropagation()}
+            >
+              {/* Handle Bar */}
+              <div className="flex justify-center pt-2 md:pt-3 pb-1.5 md:pb-2">
+                <div className="w-10 md:w-12 h-1 md:h-1.5 bg-gray-300 rounded-full" />
+              </div>
+
+              {/* Content */}
+              <div className="flex-1 overflow-y-auto px-4 md:px-6 py-4 md:py-6">
+                <h2 className="text-xl md:text-2xl font-bold text-gray-900 mb-2 md:mb-3">
+                  Confirm Removal
+                </h2>
+                <p className="text-sm md:text-base text-gray-600 mb-4">
+                  Are you sure you want to remove <span className="font-semibold">{itemToDelete?.name}</span> from your donation box? This action cannot be undone.
+                </p>
+              </div>
+
+              {/* Footer Buttons */}
+              <div className="px-4 md:px-6 py-3 md:py-4 border-t border-gray-200 bg-white flex flex-col sm:flex-row gap-2 sm:gap-3">
+                <button
+                  onClick={() => {
+                    setShowDeleteModal(false);
+                    setItemToDelete(null);
+                  }}
+                  className="w-full sm:flex-1 bg-gray-200 hover:bg-gray-200 text-gray-700 font-bold py-4 rounded-xl transition-colors text-sm md:text-base"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleConfirmDelete}
+                  className="w-full sm:flex-1 bg-red-500 hover:bg-red-600 text-white font-bold py-4 rounded-xl transition-colors text-sm md:text-base flex items-center justify-center gap-2"
+                >
+                  Remove
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Cancel Subscription Bottom Sheet */}
+        {isCancelModalVisible && (
+          <div
+            className={`fixed inset-0 z-[100] transition-opacity duration-300 ${isCancelModalAnimating ? 'opacity-100' : 'opacity-0'
+              }`}
+            onClick={() => setShowCancelModal(false)}
+          >
+            {/* Backdrop */}
+            <div className="absolute inset-0 bg-black/50" />
+
+            {/* Bottom Sheet */}
+            <div
+              className={`absolute bottom-0 left-0 right-0 bg-white rounded-t-2xl md:rounded-t-3xl shadow-2xl max-h-[90vh] md:max-h-[85vh] overflow-hidden flex flex-col transition-transform duration-300 ${isCancelModalAnimating ? 'translate-y-0' : 'translate-y-full'
+                }`}
+              onClick={(e) => e.stopPropagation()}
+            >
+              {/* Handle Bar */}
+              <div className="flex justify-center pt-2 md:pt-3 pb-1.5 md:pb-2">
+                <div className="w-10 md:w-12 h-1 md:h-1.5 bg-gray-300 rounded-full" />
+              </div>
+
+              {/* Content */}
+              <div className="flex-1 overflow-y-auto px-4 md:px-6 py-4 md:py-6">
+                <h2 className="text-xl md:text-2xl font-bold text-gray-900 mb-2 md:mb-3">
+                  Deactivate Subscription
+                </h2>
+                <p className="text-sm md:text-base text-gray-600 mb-4">
+                  Are you sure you want to deactivate your donation box subscription? This will cancel all future monthly donations. You can reactivate it at any time.
+                </p>
+              </div>
+
+              {/* Footer Buttons */}
+              <div className="px-4 md:px-6 py-3 md:py-4 border-t border-gray-200 bg-white flex flex-col sm:flex-row gap-2 sm:gap-3">
+                <button
+                  onClick={() => setShowCancelModal(false)}
+                  disabled={cancelDonationBoxMutation.isPending}
+                  className="w-full sm:flex-1 bg-gray-200 hover:bg-gray-200 text-gray-700 font-bold py-4 rounded-xl transition-colors text-sm md:text-base"
+                >
+                  Keep Subscription
+                </button>
+                <button
+                  onClick={() => cancelDonationBoxMutation.mutate()}
+                  disabled={cancelDonationBoxMutation.isPending}
+                  className="w-full sm:flex-1 bg-red-500 hover:bg-red-600 text-white font-bold py-4 rounded-xl transition-colors text-sm md:text-base flex items-center justify-center gap-2"
+                >
+                  {cancelDonationBoxMutation.isPending ? (
+                    <>
+                      <div className="w-4 h-4 md:w-5 md:h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                      <span>Deactivating...</span>
+                    </>
+                  ) : (
+                    'Deactivate Subscription'
+                  )}
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* <div className="h-24 md:hidden"></div> */}
       </div>

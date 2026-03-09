@@ -223,7 +223,10 @@ export default function DonationCauseSelector({
                       {cause.description || 'Supporting this nonprofit\'s mission'}
                     </p>
                   </div>
-                  <button onClick={() => handleItemSelect(cause)} className="w-8 h-8 md:w-10 md:h-10 rounded-lg bg-pink-100 hover:bg-pink-200 flex items-center justify-center transition-colors flex-shrink-0">
+                  <button onClick={(e) => {
+                    e.stopPropagation();
+                    handleItemSelect(cause)
+                  }} className="w-8 h-8 md:w-10 md:h-10 rounded-full bg-pink-100 hover:bg-pink-200 flex items-center justify-center transition-colors flex-shrink-0">
                     <Plus size={16} className="text-pink-600" strokeWidth={3} />
                   </button>
                 </div>
@@ -283,7 +286,10 @@ export default function DonationCauseSelector({
                       {cause.description || 'Supporting this nonprofit\'s mission'}
                     </p>
                   </div>
-                  <button onClick={() => handleItemSelect(cause)} className="w-8 h-8 md:w-10 md:h-10 rounded-lg bg-pink-100 hover:bg-pink-200 flex items-center justify-center transition-colors flex-shrink-0">
+                  <button onClick={(e) => {
+                    e.stopPropagation();
+                    handleItemSelect(cause)
+                  }} className="w-8 h-8 md:w-10 md:h-10 rounded-full bg-pink-100 hover:bg-pink-200 flex items-center justify-center transition-colors flex-shrink-0">
                     <Plus size={16} className="text-pink-600" strokeWidth={3} />
                   </button>
                 </div>

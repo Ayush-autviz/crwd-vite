@@ -684,7 +684,8 @@ export const DonationBox3 = ({
                         <p className="text-xs md:text-sm text-gray-600">${getAmountPerItem(cause.id).toFixed(2)}/mo</p>
                       </div> */}
                       <button
-                        onClick={() => {
+                        onClick={(e) => {
+                          e.stopPropagation();
                           setItemToDelete({ id: cause.id.toString(), name: cause.name, type: 'cause' });
                           setShowDeleteModal(true);
                         }}

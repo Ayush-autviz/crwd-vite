@@ -1,16 +1,15 @@
 import { useState } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { useQuery, useInfiniteQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { Loader2, Check, Share2 } from 'lucide-react';
+import { Loader2, Check, Heart } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog';
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+} from '@/components/ui/sheet';
 import { getCollectiveByName, getCollectiveCauses, getCollectiveStats, joinCollective, leaveCollective } from '@/services/api/crwd';
 import { getPosts } from '@/services/api/social';
 import { getDonationBox, addCausesToBox } from '@/services/api/donation';
@@ -440,13 +439,19 @@ export default function NewGroupCrwdPage() {
                 <Check className="w-3 h-3 md:w-3.5 md:h-3.5 lg:w-4 lg:h-4 mr-1 md:mr-1.5 lg:mr-2 inline" />
                 Joined
               </Button>
-              {/* Share Button */}
+              {/* Donate Button */}
               <Button
-                onClick={handleShare}
+                onClick={() => {
+                  if (!currentUser || !token?.access_token) {
+                    navigate(`/onboarding?redirectTo=/g/${crwdData?.sort_name}`);
+                    return;
+                  }
+                  setShowJoinModal(true);
+                }}
                 className="flex-1 font-semibold py-2 md:py-4 lg:py-5 rounded-lg text-xs xs:text-sm lg:text-base bg-[#1600ff] hover:bg-[#1400cc] text-white shadow-sm"
               >
-                <Share2 className="w-3 h-3 md:w-3.5 md:h-3.5 lg:w-4 lg:h-4 mr-1 md:mr-1.5 lg:mr-2 inline" />
-                Share
+                {/* <Heart className="w-3 h-3 md:w-3.5 md:h-3.5 lg:w-4 lg:h-4 mr-1 md:mr-1.5 lg:mr-2 inline fill-white" /> */}
+                Donate
               </Button>
             </>
           ) : crwdData.is_joined ? (
@@ -470,13 +475,19 @@ export default function NewGroupCrwdPage() {
                   </>
                 )}
               </Button>
-              {/* Share Button */}
+              {/* Donate Button */}
               <Button
-                onClick={handleShare}
+                onClick={() => {
+                  if (!currentUser || !token?.access_token) {
+                    navigate(`/onboarding?redirectTo=/g/${crwdData?.sort_name}`);
+                    return;
+                  }
+                  setShowJoinModal(true);
+                }}
                 className="flex-1 font-semibold py-2 md:py-4 lg:py-5 rounded-lg text-xs xs:text-sm lg:text-base bg-[#1600ff] hover:bg-[#1400cc] text-white shadow-sm"
               >
-                <Share2 className="w-3 h-3 md:w-3.5 md:h-3.5 lg:w-4 lg:h-4 mr-1 md:mr-1.5 lg:mr-2 inline" />
-                Share
+                {/* <Heart className="w-3 h-3 md:w-3.5 md:h-3.5 lg:w-4 lg:h-4 mr-1 md:mr-1.5 lg:mr-2 inline fill-white" /> */}
+                Donate
               </Button>
             </>
           ) : (
@@ -484,7 +495,8 @@ export default function NewGroupCrwdPage() {
               <Button
                 onClick={handleJoinCollective}
                 disabled={joinCollectiveMutation.isPending}
-                className="flex-1 font-semibold py-2 md:py-4 lg:py-5 rounded-lg text-xs xs:text-sm lg:text-base bg-[#1600ff] hover:bg-[#1400cc] text-white"
+                variant="outline"
+                className="flex-1 font-semibold py-2 md:py-4 lg:py-5 rounded-lg text-xs xs:text-sm lg:text-base border-[#1600ff] text-[#1600ff] hover:bg-[#EEF2FF]"
               >
                 {joinCollectiveMutation.isPending ? (
                   <>
@@ -497,8 +509,7 @@ export default function NewGroupCrwdPage() {
               </Button>
               <Button
                 onClick={handleOneTimeDonation}
-                variant="outline"
-                className="flex-1 border-[#1600ff] text-[#1600ff] hover:bg-[#1600ff] hover:text-white font-semibold py-2 md:py-4 lg:py-5 rounded-lg text-xs xs:text-sm lg:text-base"
+                className="flex-1 font-semibold py-2 md:py-4 lg:py-5 rounded-lg text-xs xs:text-sm lg:text-base bg-[#1600ff] hover:bg-[#1400cc] text-white shadow-sm"
               >
                 One-Time Donation
               </Button>
@@ -626,25 +637,21 @@ export default function NewGroupCrwdPage() {
         founderName={founderName}
       />
 
-      {/* Unjoin Confirmation Dialog */}
-      <Dialog open={showConfirmDialog} onOpenChange={setShowConfirmDialog}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Leave Collective</DialogTitle>
-            <DialogDescription>
+      {/* Leave Collective Bottom Sheet */}
+      <Sheet open={showConfirmDialog} onOpenChange={setShowConfirmDialog}>
+        <SheetContent side="bottom" className="rounded-t-[20px] p-6 mx-auto">
+          <SheetHeader className="text-center p-0">
+            <SheetTitle className="text-xl font-bold text-gray-900">
+              Leave Collective
+            </SheetTitle>
+            <SheetDescription className="text-gray-500 mt-2">
               Are you sure you want to leave this collective? You can always join back later.
-            </DialogDescription>
-          </DialogHeader>
-          <DialogFooter className="flex gap-2 justify-end">
-            <Button
-              variant="outline"
-              onClick={() => setShowConfirmDialog(false)}
-              disabled={leaveCollectiveMutation.isPending}
-            >
-              Cancel
-            </Button>
+            </SheetDescription>
+          </SheetHeader>
+          <div className="flex flex-col gap-3 mt-6 ">
             <Button
               variant="destructive"
+              className="w-full py-6 rounded-xl font-bold text-base"
               onClick={handleConfirmUnjoin}
               disabled={leaveCollectiveMutation.isPending}
             >
@@ -657,9 +664,17 @@ export default function NewGroupCrwdPage() {
                 'Leave Collective'
               )}
             </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+            <Button
+              variant="secondary"
+              className="w-full py-6 rounded-xl font-semibold text-base bg-gray-100 border-none hover:bg-gray-200"
+              onClick={() => setShowConfirmDialog(false)}
+              disabled={leaveCollectiveMutation.isPending}
+            >
+              Cancel
+            </Button>
+          </div>
+        </SheetContent>
+      </Sheet>
 
       {/* Custom Toast */}
       <Toast

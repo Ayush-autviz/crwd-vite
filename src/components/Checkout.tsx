@@ -785,7 +785,10 @@ export const Checkout = ({
                           </p>
                         </div>
                         <button
-                          onClick={() => handleRemoveCause(cause)}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleRemoveCause(cause)
+                          }}
                           className="p-1.5 md:p-2 hover:bg-red-50 rounded-lg transition-colors flex-shrink-0"
                           aria-label="Remove cause"
                         >
