@@ -13,6 +13,7 @@ import {
   Eye,
   EyeOff,
   User,
+  Check,
 } from "lucide-react"
 import { useAuthStore } from '@/stores/store'
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
@@ -51,6 +52,7 @@ export default function NewSettings() {
   const [showRequestModal, setShowRequestModal] = useState(false);
   const [showPaymentMethods, setShowPaymentMethods] = useState(false);
   const [showExitConfirmation, setShowExitConfirmation] = useState(false);
+  const [focusedField, setFocusedField] = useState<string | null>(null);
 
   useEffect(() => {
     const handleResize = () => {
@@ -328,9 +330,7 @@ export default function NewSettings() {
   const validatePassword = (password: string) => {
     if (password.length < 8) return "Password must be at least 8 characters long"
     if (!/[A-Z]/.test(password)) return "Password must contain at least one uppercase letter"
-    if (!/[a-z]/.test(password)) return "Password must contain at least one lowercase letter"
     if (!/[0-9]/.test(password)) return "Password must contain at least one number"
-    if (!/[!@#$%^&*]/.test(password)) return "Password must contain at least one special character (!@#$%^&*)"
     return ""
   }
 
@@ -506,8 +506,10 @@ export default function NewSettings() {
                 <Input
                   value={formData.first_name}
                   onChange={(e) => setFormData(prev => ({ ...prev, first_name: e.target.value }))}
+                  onFocus={() => setFocusedField('first_name')}
+                  onBlur={() => setFocusedField(null)}
                   disabled={!isEditMode}
-                  placeholder="First Name"
+                  placeholder={focusedField === 'first_name' ? '' : "First Name"}
                   className={`bg-gray-100 border-0 text-sm xs:text-base md:text-lg ${isEditMode ? 'text-black' : ''}`}
                 />
               </div>
@@ -518,8 +520,10 @@ export default function NewSettings() {
                 <Input
                   value={formData.last_name}
                   onChange={(e) => setFormData(prev => ({ ...prev, last_name: e.target.value }))}
+                  onFocus={() => setFocusedField('last_name')}
+                  onBlur={() => setFocusedField(null)}
                   disabled={!isEditMode}
-                  placeholder="Last Name"
+                  placeholder={focusedField === 'last_name' ? '' : "Last Name"}
                   className={`bg-gray-100 border-0 text-sm xs:text-base md:text-lg ${isEditMode ? 'text-black' : ''}`}
                 />
               </div>
@@ -554,8 +558,10 @@ export default function NewSettings() {
                   <Input
                     value={formData.location}
                     onChange={(e) => setFormData(prev => ({ ...prev, location: e.target.value }))}
+                    onFocus={() => setFocusedField('location')}
+                    onBlur={() => setFocusedField(null)}
                     disabled={!isEditMode}
-                    placeholder="Location"
+                    placeholder={focusedField === 'location' ? '' : "Location"}
                     className={`bg-gray-100 border-0 text-sm xs:text-base md:text-lg ${isEditMode ? 'text-black' : ''}`}
                   />
                 </div>
@@ -571,8 +577,10 @@ export default function NewSettings() {
                       setFormData(prev => ({ ...prev, bio: e.target.value }))
                     }
                   }}
+                  onFocus={() => setFocusedField('bio')}
+                  onBlur={() => setFocusedField(null)}
                   disabled={!isEditMode}
-                  placeholder="Passionate about making a difference through strategic giving."
+                  placeholder={focusedField === 'bio' ? '' : "Say something about yourself."}
                   className={`bg-gray-100 border-0 min-h-[80px] md:min-h-[100px] text-sm xs:text-base md:text-lg ${isEditMode ? 'text-black' : ''}`}
                   rows={4}
                 />
@@ -811,7 +819,7 @@ export default function NewSettings() {
 
       {/* Change Password Bottom Sheet */}
       <Sheet open={showPasswordDialog} onOpenChange={setShowPasswordDialog}>
-        <SheetContent side="bottom" className="h-[75vh] max-h-[75vh] p-0 flex flex-col">
+        <SheetContent side="bottom" className="h-auto max-h-[90vh] p-0 flex flex-col pb-6">
           {/* Drag Handle */}
           <div className="flex justify-center pt-3 pb-2">
             <div className="w-12 h-1.5 bg-gray-300 rounded-full" />
@@ -833,6 +841,9 @@ export default function NewSettings() {
                     type={showPasswords.current ? "text" : "password"}
                     value={passwordForm.currentPassword}
                     onChange={(e) => setPasswordForm({ ...passwordForm, currentPassword: e.target.value })}
+                    onFocus={() => setFocusedField('currentPassword')}
+                    onBlur={() => setFocusedField(null)}
+                    placeholder={focusedField === 'currentPassword' ? '' : 'Current Password'}
                     className={`text-sm xs:text-base md:text-lg ${passwordErrors.currentPassword ? "border-red-500" : ""}`}
                   />
                   <button
@@ -854,6 +865,9 @@ export default function NewSettings() {
                     type={showPasswords.new ? "text" : "password"}
                     value={passwordForm.newPassword}
                     onChange={(e) => setPasswordForm({ ...passwordForm, newPassword: e.target.value })}
+                    onFocus={() => setFocusedField('newPassword')}
+                    onBlur={() => setFocusedField(null)}
+                    placeholder={focusedField === 'newPassword' ? '' : 'New Password'}
                     className={`text-sm xs:text-base md:text-lg ${passwordErrors.newPassword ? "border-red-500" : ""}`}
                   />
                   <button
@@ -875,6 +889,9 @@ export default function NewSettings() {
                     type={showPasswords.confirm ? "text" : "password"}
                     value={passwordForm.confirmPassword}
                     onChange={(e) => setPasswordForm({ ...passwordForm, confirmPassword: e.target.value })}
+                    onFocus={() => setFocusedField('confirmPassword')}
+                    onBlur={() => setFocusedField(null)}
+                    placeholder={focusedField === 'confirmPassword' ? '' : 'Confirm New Password'}
                     className={`text-sm xs:text-base md:text-lg ${passwordErrors.confirmPassword ? "border-red-500" : ""}`}
                   />
                   <button
@@ -888,6 +905,25 @@ export default function NewSettings() {
                 {passwordErrors.confirmPassword && (
                   <p className="text-xs xs:text-sm md:text-base text-red-500 mt-1">{passwordErrors.confirmPassword}</p>
                 )}
+              </div>
+
+              {/* Password Requirements */}
+              <div className="mt-4 md:mt-6 mb-2 md:mb-4">
+                <p className="text-sm md:text-base font-semibold text-gray-900 mb-2 md:mb-3">Password Requirements:</p>
+                <div className="space-y-1.5 md:space-y-2">
+                  <div className="flex items-center gap-2">
+                    <Check className="h-4 w-4 md:h-5 md:w-5 text-blue-600" />
+                    <p className="text-xs xs:text-sm md:text-base text-gray-700">At least 8 characters</p>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Check className="h-4 w-4 md:h-5 md:w-5 text-blue-600" />
+                    <p className="text-xs xs:text-sm md:text-base text-gray-700">One uppercase letter</p>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Check className="h-4 w-4 md:h-5 md:w-5 text-blue-600" />
+                    <p className="text-xs xs:text-sm md:text-base text-gray-700">One number</p>
+                  </div>
+                </div>
               </div>
               <div className="flex gap-2 pt-3 md:pt-4 pb-4 md:pb-6">
                 <Button type="button" variant="outline" onClick={() => setShowPasswordDialog(false)} className="flex-1 text-sm xs:text-base md:text-lg py-2 md:py-2.5">
@@ -904,7 +940,7 @@ export default function NewSettings() {
 
       {/* Change Email Bottom Sheet */}
       <Sheet open={showEmailDialog} onOpenChange={setShowEmailDialog}>
-        <SheetContent side="bottom" className="h-[75vh] max-h-[75vh] p-0 flex flex-col">
+        <SheetContent side="bottom" className="h-auto max-h-[90vh] p-0 flex flex-col pb-6">
           {/* Drag Handle */}
           <div className="flex justify-center pt-3 pb-2">
             <div className="w-12 h-1.5 bg-gray-300 rounded-full" />
@@ -925,6 +961,9 @@ export default function NewSettings() {
                   type="email"
                   value={emailForm.newEmail}
                   onChange={(e) => setEmailForm({ ...emailForm, newEmail: e.target.value })}
+                  onFocus={() => setFocusedField('newEmail')}
+                  onBlur={() => setFocusedField(null)}
+                  placeholder={focusedField === 'newEmail' ? '' : 'New Email'}
                   className={`text-sm xs:text-base md:text-lg ${emailErrors.newEmail ? "border-red-500" : ""}`}
                 />
                 {emailErrors.newEmail && (
@@ -937,6 +976,9 @@ export default function NewSettings() {
                   type="email"
                   value={emailForm.confirmEmail}
                   onChange={(e) => setEmailForm({ ...emailForm, confirmEmail: e.target.value })}
+                  onFocus={() => setFocusedField('confirmEmail')}
+                  onBlur={() => setFocusedField(null)}
+                  placeholder={focusedField === 'confirmEmail' ? '' : 'Confirm New Email'}
                   className={`text-sm xs:text-base md:text-lg ${emailErrors.confirmEmail ? "border-red-500" : ""}`}
                 />
                 {emailErrors.confirmEmail && (
@@ -958,7 +1000,7 @@ export default function NewSettings() {
 
       {/* OTP Verification Bottom Sheet */}
       <Sheet open={showOTPDialog} onOpenChange={setShowOTPDialog}>
-        <SheetContent side="bottom" className="h-[50vh] max-h-[50vh] p-0 flex flex-col">
+        <SheetContent side="bottom" className="h-auto max-h-[90vh] p-0 flex flex-col pb-6">
           {/* Drag Handle */}
           <div className="flex justify-center pt-3 pb-2">
             <div className="w-12 h-1.5 bg-gray-300 rounded-full" />
@@ -979,7 +1021,9 @@ export default function NewSettings() {
                   type="text"
                   value={otp}
                   onChange={(e) => setOtp(e.target.value)}
-                  placeholder="Enter 6-digit code"
+                  onFocus={() => setFocusedField('otp')}
+                  onBlur={() => setFocusedField(null)}
+                  placeholder={focusedField === 'otp' ? '' : "Enter 6-digit code"}
                   maxLength={6}
                   className="text-sm xs:text-base md:text-lg"
                 />
