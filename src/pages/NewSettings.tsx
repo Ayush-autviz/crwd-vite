@@ -819,14 +819,14 @@ export default function NewSettings() {
 
       {/* Change Password Bottom Sheet */}
       <Sheet open={showPasswordDialog} onOpenChange={setShowPasswordDialog}>
-        <SheetContent side="bottom" className="h-[80dvh] md:h-auto max-h-[90dvh] p-0 flex flex-col overflow-y-auto bg-white rounded-t-3xl shadow-2xl">
+        <SheetContent side="bottom" className="h-auto max-h-[90vh] p-0 flex flex-col overflow-y-auto bg-white rounded-t-3xl shadow-2xl">
           {/* Drag Handle - Fixed at top */}
           <div className="sticky top-0 bg-white z-30 flex justify-center pt-3 pb-2">
             <div className="w-12 h-1.5 bg-gray-300 rounded-full" />
           </div>
 
           <div className="px-3 md:px-4 pb-20 md:pb-6">
-            <SheetHeader className="bg-white">
+            <SheetHeader className="bg-white sticky top-0 z-20 pt-4 pb-2 border-b border-gray-100 mb-4">
               <SheetTitle className="text-lg xs:text-xl md:text-2xl font-bold text-gray-900">Change Password</SheetTitle>
               <SheetDescription className="text-xs xs:text-sm md:text-base text-gray-500">
                 Update your password. Make sure it's strong and secure.
@@ -940,14 +940,14 @@ export default function NewSettings() {
 
       {/* Change Email Bottom Sheet */}
       <Sheet open={showEmailDialog} onOpenChange={setShowEmailDialog}>
-        <SheetContent side="bottom" className="h-[80dvh] md:h-auto max-h-[90dvh] p-0 flex flex-col overflow-y-auto bg-white rounded-t-3xl shadow-2xl">
+        <SheetContent side="bottom" className="h-auto max-h-[90vh] p-0 flex flex-col overflow-y-auto bg-white rounded-t-3xl shadow-2xl">
           {/* Drag Handle - Fixed at top */}
           <div className="sticky top-0 bg-white z-30 flex justify-center pt-3 pb-2">
             <div className="w-12 h-1.5 bg-gray-300 rounded-full" />
           </div>
 
           <div className="px-3 md:px-4 pb-20 md:pb-6">
-            <SheetHeader className="bg-white">
+            <SheetHeader className="bg-white sticky top-0 z-20 pt-4 pb-2 border-b border-gray-100 mb-4">
               <SheetTitle className="text-lg xs:text-xl md:text-2xl font-bold text-gray-900">Change Email</SheetTitle>
               <SheetDescription className="text-xs xs:text-sm md:text-base text-gray-500">
                 Update your email address. You'll need to verify your new email address after the change.
@@ -1000,14 +1000,14 @@ export default function NewSettings() {
 
       {/* OTP Verification Bottom Sheet */}
       <Sheet open={showOTPDialog} onOpenChange={setShowOTPDialog}>
-        <SheetContent side="bottom" className="h-[80dvh] md:h-auto max-h-[90dvh] p-0 flex flex-col overflow-y-auto bg-white rounded-t-3xl shadow-2xl">
+        <SheetContent side="bottom" className="h-auto max-h-[90vh] p-0 flex flex-col overflow-y-auto bg-white rounded-t-3xl shadow-2xl">
           {/* Drag Handle - Fixed at top */}
           <div className="sticky top-0 bg-white z-30 flex justify-center pt-3 pb-2">
             <div className="w-12 h-1.5 bg-gray-300 rounded-full" />
           </div>
 
           <div className="px-3 md:px-4 pb-20 md:pb-6">
-            <SheetHeader className="bg-white">
+            <SheetHeader className="bg-white sticky top-0 z-20 pt-4 pb-2 border-b border-gray-100 mb-4">
               <SheetTitle className="text-lg xs:text-xl md:text-2xl font-bold text-gray-900">Verify Email</SheetTitle>
               <SheetDescription className="text-xs xs:text-sm md:text-base text-gray-500">
                 Enter the verification code sent to your new email address.
