@@ -14,6 +14,7 @@ import {
   EyeOff,
   User,
   Check,
+  X,
 } from "lucide-react"
 import { useAuthStore } from '@/stores/store'
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
@@ -63,6 +64,52 @@ export default function NewSettings() {
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, [showExitConfirmation]);
+
+  // Body scroll lock and click outside handling for custom modals
+  const passwordModalRef = useRef<HTMLDivElement>(null);
+  const emailModalRef = useRef<HTMLDivElement>(null);
+  const otpModalRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const isAnyModalOpen = showPasswordDialog || showEmailDialog || showOTPDialog;
+    if (isAnyModalOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+
+    const handleClickOutside = (event: MouseEvent) => {
+      if (showPasswordDialog && passwordModalRef.current && !passwordModalRef.current.contains(event.target as Node)) {
+        setShowPasswordDialog(false);
+      }
+      if (showEmailDialog && emailModalRef.current && !emailModalRef.current.contains(event.target as Node)) {
+        setShowEmailDialog(false);
+      }
+      if (showOTPDialog && otpModalRef.current && !otpModalRef.current.contains(event.target as Node)) {
+        setShowOTPDialog(false);
+      }
+    };
+
+    if (isAnyModalOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [showPasswordDialog, showEmailDialog, showOTPDialog]);
+
+  // Handle escape key
+  useEffect(() => {
+    const handleEscape = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        setShowPasswordDialog(false);
+        setShowEmailDialog(false);
+        setShowOTPDialog(false);
+      }
+    };
+    document.addEventListener('keydown', handleEscape);
+    return () => document.removeEventListener('keydown', handleEscape);
+  }, []);
 
   const [formData, setFormData] = useState({
     first_name: '',
@@ -817,229 +864,261 @@ export default function NewSettings() {
         </div>
       </div>
 
-      {/* Change Password Bottom Sheet */}
-      <Sheet open={showPasswordDialog} onOpenChange={setShowPasswordDialog}>
-        <SheetContent side="bottom" className="h-auto max-h-[90vh] p-0 flex flex-col overflow-y-auto bg-white rounded-t-3xl shadow-2xl">
-          {/* Drag Handle - Fixed at top */}
-          <div className="sticky top-0 bg-white z-30 flex justify-center pt-3 pb-2">
-            <div className="w-12 h-1.5 bg-gray-300 rounded-full" />
-          </div>
-
-          <div className="px-3 md:px-4 pb-20 md:pb-6">
-            <SheetHeader className="bg-white sticky top-0 z-20 pt-4 pb-2 border-b border-gray-100 mb-4">
-              <SheetTitle className="text-lg xs:text-xl md:text-2xl font-bold text-gray-900">Change Password</SheetTitle>
-              <SheetDescription className="text-xs xs:text-sm md:text-base text-gray-500">
-                Update your password. Make sure it's strong and secure.
-              </SheetDescription>
-            </SheetHeader>
-
-            <form onSubmit={handlePasswordSubmit} className="mt-4 md:mt-6 space-y-3 md:space-y-4">
+      {/* Change Password Modal */}
+      {showPasswordDialog && (
+        <>
+          <div className="fixed inset-0 bg-black/50 z-50 transition-opacity" onClick={() => setShowPasswordDialog(false)} />
+          <div
+            ref={passwordModalRef}
+            className="fixed bottom-0 left-0 right-0 bg-white rounded-t-3xl shadow-2xl z-50 max-h-[90vh] overflow-y-auto"
+            style={{ animation: 'slideUp 0.3s ease-out' }}
+          >
+            {/* Header */}
+            <div className="sticky top-0 bg-white px-4 md:px-6 py-3 md:py-4 flex items-center justify-between z-20 border-b border-gray-100">
               <div>
-                <Label className="text-xs xs:text-sm md:text-base">Current Password</Label>
-                <div className="relative">
-                  <Input
-                    type={showPasswords.current ? "text" : "password"}
-                    value={passwordForm.currentPassword}
-                    onChange={(e) => setPasswordForm({ ...passwordForm, currentPassword: e.target.value })}
-                    onFocus={() => setFocusedField('currentPassword')}
-                    onBlur={() => setFocusedField(null)}
-                    placeholder={focusedField === 'currentPassword' ? '' : 'Current Password'}
-                    className={`text-sm xs:text-base md:text-lg ${passwordErrors.currentPassword ? "border-red-500" : ""}`}
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowPasswords({ ...showPasswords, current: !showPasswords.current })}
-                    className="absolute right-2 top-1/2 -translate-y-1/2"
-                  >
-                    {showPasswords.current ? <EyeOff className="h-4 w-4 md:h-5 md:w-5" /> : <Eye className="h-4 w-4 md:h-5 md:w-5" />}
-                  </button>
-                </div>
-                {passwordErrors.currentPassword && (
-                  <p className="text-xs xs:text-sm md:text-base text-red-500 mt-1">{passwordErrors.currentPassword}</p>
-                )}
+                <h2 className="text-lg xs:text-xl md:text-2xl font-bold text-gray-900">Change Password</h2>
+                <p className="text-xs xs:text-sm md:text-base text-gray-500">Update your password. Make sure it's strong and secure.</p>
               </div>
-              <div>
-                <Label className="text-xs xs:text-sm md:text-base">New Password</Label>
-                <div className="relative">
-                  <Input
-                    type={showPasswords.new ? "text" : "password"}
-                    value={passwordForm.newPassword}
-                    onChange={(e) => setPasswordForm({ ...passwordForm, newPassword: e.target.value })}
-                    onFocus={() => setFocusedField('newPassword')}
-                    onBlur={() => setFocusedField(null)}
-                    placeholder={focusedField === 'newPassword' ? '' : 'New Password'}
-                    className={`text-sm xs:text-base md:text-lg ${passwordErrors.newPassword ? "border-red-500" : ""}`}
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowPasswords({ ...showPasswords, new: !showPasswords.new })}
-                    className="absolute right-2 top-1/2 -translate-y-1/2"
-                  >
-                    {showPasswords.new ? <EyeOff className="h-4 w-4 md:h-5 md:w-5" /> : <Eye className="h-4 w-4 md:h-5 md:w-5" />}
-                  </button>
-                </div>
-                {passwordErrors.newPassword && (
-                  <p className="text-xs xs:text-sm md:text-base text-red-500 mt-1">{passwordErrors.newPassword}</p>
-                )}
-              </div>
-              <div>
-                <Label className="text-xs xs:text-sm md:text-base">Confirm New Password</Label>
-                <div className="relative">
-                  <Input
-                    type={showPasswords.confirm ? "text" : "password"}
-                    value={passwordForm.confirmPassword}
-                    onChange={(e) => setPasswordForm({ ...passwordForm, confirmPassword: e.target.value })}
-                    onFocus={() => setFocusedField('confirmPassword')}
-                    onBlur={() => setFocusedField(null)}
-                    placeholder={focusedField === 'confirmPassword' ? '' : 'Confirm New Password'}
-                    className={`text-sm xs:text-base md:text-lg ${passwordErrors.confirmPassword ? "border-red-500" : ""}`}
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowPasswords({ ...showPasswords, confirm: !showPasswords.confirm })}
-                    className="absolute right-2 top-1/2 -translate-y-1/2"
-                  >
-                    {showPasswords.confirm ? <EyeOff className="h-4 w-4 md:h-5 md:w-5" /> : <Eye className="h-4 w-4 md:h-5 md:w-5" />}
-                  </button>
-                </div>
-                {passwordErrors.confirmPassword && (
-                  <p className="text-xs xs:text-sm md:text-base text-red-500 mt-1">{passwordErrors.confirmPassword}</p>
-                )}
-              </div>
+              <button onClick={() => setShowPasswordDialog(false)} className="p-1.5 md:p-2 hover:bg-gray-100 rounded-full transition-colors">
+                <X className="w-4 h-4 md:w-5 md:h-5 text-gray-600" />
+              </button>
+            </div>
 
-              {/* Password Requirements */}
-              <div className="mt-4 md:mt-6 mb-2 md:mb-4">
-                <p className="text-sm md:text-base font-semibold text-gray-900 mb-2 md:mb-3">Password Requirements:</p>
-                <div className="space-y-1.5 md:space-y-2">
-                  <div className="flex items-center gap-2">
-                    <Check className="h-4 w-4 md:h-5 md:w-5 text-blue-600" />
-                    <p className="text-xs xs:text-sm md:text-base text-gray-700">At least 8 characters</p>
+            <div className="px-4 md:px-6 py-4 md:py-6 pb-20 md:pb-8">
+              <form onSubmit={handlePasswordSubmit} className="mt-4 md:mt-6 space-y-3 md:space-y-4">
+                <div>
+                  <Label className="text-xs xs:text-sm md:text-base">Current Password</Label>
+                  <div className="relative">
+                    <Input
+                      type={showPasswords.current ? "text" : "password"}
+                      value={passwordForm.currentPassword}
+                      onChange={(e) => setPasswordForm({ ...passwordForm, currentPassword: e.target.value })}
+                      onFocus={() => setFocusedField('currentPassword')}
+                      onBlur={() => setFocusedField(null)}
+                      placeholder={focusedField === 'currentPassword' ? '' : 'Current Password'}
+                      className={`text-sm xs:text-base md:text-lg ${passwordErrors.currentPassword ? "border-red-500" : ""}`}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPasswords({ ...showPasswords, current: !showPasswords.current })}
+                      className="absolute right-2 top-1/2 -translate-y-1/2"
+                    >
+                      {showPasswords.current ? <EyeOff className="h-4 w-4 md:h-5 md:w-5" /> : <Eye className="h-4 w-4 md:h-5 md:w-5" />}
+                    </button>
                   </div>
-                  <div className="flex items-center gap-2">
-                    <Check className="h-4 w-4 md:h-5 md:w-5 text-blue-600" />
-                    <p className="text-xs xs:text-sm md:text-base text-gray-700">One uppercase letter</p>
+                  {passwordErrors.currentPassword && (
+                    <p className="text-xs xs:text-sm md:text-base text-red-500 mt-1">{passwordErrors.currentPassword}</p>
+                  )}
+                </div>
+                <div>
+                  <Label className="text-xs xs:text-sm md:text-base">New Password</Label>
+                  <div className="relative">
+                    <Input
+                      type={showPasswords.new ? "text" : "password"}
+                      value={passwordForm.newPassword}
+                      onChange={(e) => setPasswordForm({ ...passwordForm, newPassword: e.target.value })}
+                      onFocus={() => setFocusedField('newPassword')}
+                      onBlur={() => setFocusedField(null)}
+                      placeholder={focusedField === 'newPassword' ? '' : 'New Password'}
+                      className={`text-sm xs:text-base md:text-lg ${passwordErrors.newPassword ? "border-red-500" : ""}`}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPasswords({ ...showPasswords, new: !showPasswords.new })}
+                      className="absolute right-2 top-1/2 -translate-y-1/2"
+                    >
+                      {showPasswords.new ? <EyeOff className="h-4 w-4 md:h-5 md:w-5" /> : <Eye className="h-4 w-4 md:h-5 md:w-5" />}
+                    </button>
                   </div>
-                  <div className="flex items-center gap-2">
-                    <Check className="h-4 w-4 md:h-5 md:w-5 text-blue-600" />
-                    <p className="text-xs xs:text-sm md:text-base text-gray-700">One number</p>
+                  {passwordErrors.newPassword && (
+                    <p className="text-xs xs:text-sm md:text-base text-red-500 mt-1">{passwordErrors.newPassword}</p>
+                  )}
+                </div>
+                <div>
+                  <Label className="text-xs xs:text-sm md:text-base">Confirm New Password</Label>
+                  <div className="relative">
+                    <Input
+                      type={showPasswords.confirm ? "text" : "password"}
+                      value={passwordForm.confirmPassword}
+                      onChange={(e) => setPasswordForm({ ...passwordForm, confirmPassword: e.target.value })}
+                      onFocus={() => setFocusedField('confirmPassword')}
+                      onBlur={() => setFocusedField(null)}
+                      placeholder={focusedField === 'confirmPassword' ? '' : 'Confirm New Password'}
+                      className={`text-sm xs:text-base md:text-lg ${passwordErrors.confirmPassword ? "border-red-500" : ""}`}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPasswords({ ...showPasswords, confirm: !showPasswords.confirm })}
+                      className="absolute right-2 top-1/2 -translate-y-1/2"
+                    >
+                      {showPasswords.confirm ? <EyeOff className="h-4 w-4 md:h-5 md:w-5" /> : <Eye className="h-4 w-4 md:h-5 md:w-5" />}
+                    </button>
+                  </div>
+                  {passwordErrors.confirmPassword && (
+                    <p className="text-xs xs:text-sm md:text-base text-red-500 mt-1">{passwordErrors.confirmPassword}</p>
+                  )}
+                </div>
+
+                {/* Password Requirements */}
+                <div className="mt-4 md:mt-6 mb-2 md:mb-4">
+                  <p className="text-sm md:text-base font-semibold text-gray-900 mb-2 md:mb-3">Password Requirements:</p>
+                  <div className="space-y-1.5 md:space-y-2">
+                    <div className="flex items-center gap-2">
+                      <Check className="h-4 w-4 md:h-5 md:w-5 text-blue-600" />
+                      <p className="text-xs xs:text-sm md:text-base text-gray-700">At least 8 characters</p>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Check className="h-4 w-4 md:h-5 md:w-5 text-blue-600" />
+                      <p className="text-xs xs:text-sm md:text-base text-gray-700">One uppercase letter</p>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Check className="h-4 w-4 md:h-5 md:w-5 text-blue-600" />
+                      <p className="text-xs xs:text-sm md:text-base text-gray-700">One number</p>
+                    </div>
                   </div>
                 </div>
-              </div>
-              <div className="flex gap-2 pt-3 md:pt-4 pb-4 md:pb-6">
-                <Button type="button" variant="outline" onClick={() => setShowPasswordDialog(false)} className="flex-1 text-sm xs:text-base md:text-lg py-2 md:py-2.5">
-                  Cancel
-                </Button>
-                <Button type="submit" disabled={changePasswordMutation.isPending} className="flex-1 text-sm xs:text-base md:text-lg py-2 md:py-2.5">
-                  {changePasswordMutation.isPending ? "Updating..." : "Update Password"}
-                </Button>
-              </div>
-            </form>
+                <div className="flex gap-2 pt-3 md:pt-4">
+                  <Button type="button" variant="outline" onClick={() => setShowPasswordDialog(false)} className="flex-1 text-sm xs:text-base md:text-lg py-2 md:py-2.5">
+                    Cancel
+                  </Button>
+                  <Button type="submit" disabled={changePasswordMutation.isPending} className="flex-1 text-sm xs:text-base md:text-lg py-2 md:py-2.5">
+                    {changePasswordMutation.isPending ? "Updating..." : "Update Password"}
+                  </Button>
+                </div>
+              </form>
+            </div>
           </div>
-        </SheetContent>
-      </Sheet>
+        </>
+      )}
 
-      {/* Change Email Bottom Sheet */}
-      <Sheet open={showEmailDialog} onOpenChange={setShowEmailDialog}>
-        <SheetContent side="bottom" className="h-auto max-h-[90vh] p-0 flex flex-col overflow-y-auto bg-white rounded-t-3xl shadow-2xl">
-          {/* Drag Handle - Fixed at top */}
-          <div className="sticky top-0 bg-white z-30 flex justify-center pt-3 pb-2">
-            <div className="w-12 h-1.5 bg-gray-300 rounded-full" />
-          </div>
-
-          <div className="px-3 md:px-4 pb-20 md:pb-6">
-            <SheetHeader className="bg-white sticky top-0 z-20 pt-4 pb-2 border-b border-gray-100 mb-4">
-              <SheetTitle className="text-lg xs:text-xl md:text-2xl font-bold text-gray-900">Change Email</SheetTitle>
-              <SheetDescription className="text-xs xs:text-sm md:text-base text-gray-500">
-                Update your email address. You'll need to verify your new email address after the change.
-              </SheetDescription>
-            </SheetHeader>
-
-            <form onSubmit={handleEmailSubmit} className="mt-4 md:mt-6 space-y-3 md:space-y-4">
+      {/* Change Email Modal */}
+      {showEmailDialog && (
+        <>
+          <div className="fixed inset-0 bg-black/50 z-50 transition-opacity" onClick={() => setShowEmailDialog(false)} />
+          <div
+            ref={emailModalRef}
+            className="fixed bottom-0 left-0 right-0 bg-white rounded-t-3xl shadow-2xl z-50 max-h-[90vh] overflow-y-auto"
+            style={{ animation: 'slideUp 0.3s ease-out' }}
+          >
+            {/* Header */}
+            <div className="sticky top-0 bg-white px-4 md:px-6 py-3 md:py-4 flex items-center justify-between z-20 border-b border-gray-100">
               <div>
-                <Label className="text-xs xs:text-sm md:text-base">New Email</Label>
-                <Input
-                  type="email"
-                  value={emailForm.newEmail}
-                  onChange={(e) => setEmailForm({ ...emailForm, newEmail: e.target.value })}
-                  onFocus={() => setFocusedField('newEmail')}
-                  onBlur={() => setFocusedField(null)}
-                  placeholder={focusedField === 'newEmail' ? '' : 'New Email'}
-                  className={`text-sm xs:text-base md:text-lg ${emailErrors.newEmail ? "border-red-500" : ""}`}
-                />
-                {emailErrors.newEmail && (
-                  <p className="text-xs xs:text-sm md:text-base text-red-500 mt-1">{emailErrors.newEmail}</p>
-                )}
+                <h2 className="text-lg xs:text-xl md:text-2xl font-bold text-gray-900">Change Email</h2>
+                <p className="text-xs xs:text-sm md:text-base text-gray-500">Update your email address. You'll need to verify your new email address after the change.</p>
               </div>
+              <button onClick={() => setShowEmailDialog(false)} className="p-1.5 md:p-2 hover:bg-gray-100 rounded-full transition-colors">
+                <X className="w-4 h-4 md:w-5 md:h-5 text-gray-600" />
+              </button>
+            </div>
+
+            <div className="px-4 md:px-6 py-4 md:py-6 pb-20 md:pb-8">
+              <form onSubmit={handleEmailSubmit} className="mt-4 md:mt-6 space-y-3 md:space-y-4">
+                <div>
+                  <Label className="text-xs xs:text-sm md:text-base">New Email</Label>
+                  <Input
+                    type="email"
+                    value={emailForm.newEmail}
+                    onChange={(e) => setEmailForm({ ...emailForm, newEmail: e.target.value })}
+                    onFocus={() => setFocusedField('newEmail')}
+                    onBlur={() => setFocusedField(null)}
+                    placeholder={focusedField === 'newEmail' ? '' : 'New Email'}
+                    className={`text-sm xs:text-base md:text-lg ${emailErrors.newEmail ? "border-red-500" : ""}`}
+                  />
+                  {emailErrors.newEmail && (
+                    <p className="text-xs xs:text-sm md:text-base text-red-500 mt-1">{emailErrors.newEmail}</p>
+                  )}
+                </div>
+                <div>
+                  <Label className="text-xs xs:text-sm md:text-base">Confirm New Email</Label>
+                  <Input
+                    type="email"
+                    value={emailForm.confirmEmail}
+                    onChange={(e) => setEmailForm({ ...emailForm, confirmEmail: e.target.value })}
+                    onFocus={() => setFocusedField('confirmEmail')}
+                    onBlur={() => setFocusedField(null)}
+                    placeholder={focusedField === 'confirmEmail' ? '' : 'Confirm New Email'}
+                    className={`text-sm xs:text-base md:text-lg ${emailErrors.confirmEmail ? "border-red-500" : ""}`}
+                  />
+                  {emailErrors.confirmEmail && (
+                    <p className="text-xs xs:text-sm md:text-base text-red-500 mt-1">{emailErrors.confirmEmail}</p>
+                  )}
+                </div>
+                <div className="flex gap-2 pt-3 md:pt-4">
+                  <Button type="button" variant="outline" onClick={() => setShowEmailDialog(false)} className="flex-1 text-sm xs:text-base md:text-lg py-2 md:py-2.5">
+                    Cancel
+                  </Button>
+                  <Button type="submit" disabled={updateEmailMutation.isPending} className="flex-1 text-sm xs:text-base md:text-lg py-2 md:py-2.5">
+                    {updateEmailMutation.isPending ? "Sending..." : "Send Verification Code"}
+                  </Button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </>
+      )}
+
+      {/* OTP Verification Modal */}
+      {showOTPDialog && (
+        <>
+          <div className="fixed inset-0 bg-black/50 z-50 transition-opacity" onClick={() => setShowOTPDialog(false)} />
+          <div
+            ref={otpModalRef}
+            className="fixed bottom-0 left-0 right-0 bg-white rounded-t-3xl shadow-2xl z-50 max-h-[90vh] overflow-y-auto"
+            style={{ animation: 'slideUp 0.3s ease-out' }}
+          >
+            {/* Header */}
+            <div className="sticky top-0 bg-white px-4 md:px-6 py-3 md:py-4 flex items-center justify-between z-20 border-b border-gray-100">
               <div>
-                <Label className="text-xs xs:text-sm md:text-base">Confirm New Email</Label>
-                <Input
-                  type="email"
-                  value={emailForm.confirmEmail}
-                  onChange={(e) => setEmailForm({ ...emailForm, confirmEmail: e.target.value })}
-                  onFocus={() => setFocusedField('confirmEmail')}
-                  onBlur={() => setFocusedField(null)}
-                  placeholder={focusedField === 'confirmEmail' ? '' : 'Confirm New Email'}
-                  className={`text-sm xs:text-base md:text-lg ${emailErrors.confirmEmail ? "border-red-500" : ""}`}
-                />
-                {emailErrors.confirmEmail && (
-                  <p className="text-xs xs:text-sm md:text-base text-red-500 mt-1">{emailErrors.confirmEmail}</p>
-                )}
+                <h2 className="text-lg xs:text-xl md:text-2xl font-bold text-gray-900">Verify Email</h2>
+                <p className="text-xs xs:text-sm md:text-base text-gray-500">Enter the verification code sent to your new email address.</p>
               </div>
-              <div className="flex gap-2 pt-3 md:pt-4 pb-4 md:pb-6">
-                <Button type="button" variant="outline" onClick={() => setShowEmailDialog(false)} className="flex-1 text-sm xs:text-base md:text-lg py-2 md:py-2.5">
-                  Cancel
-                </Button>
-                <Button type="submit" disabled={updateEmailMutation.isPending} className="flex-1 text-sm xs:text-base md:text-lg py-2 md:py-2.5">
-                  {updateEmailMutation.isPending ? "Sending..." : "Send Verification Code"}
-                </Button>
-              </div>
-            </form>
-          </div>
-        </SheetContent>
-      </Sheet>
+              <button onClick={() => setShowOTPDialog(false)} className="p-1.5 md:p-2 hover:bg-gray-100 rounded-full transition-colors">
+                <X className="w-4 h-4 md:w-5 md:h-5 text-gray-600" />
+              </button>
+            </div>
 
-      {/* OTP Verification Bottom Sheet */}
-      <Sheet open={showOTPDialog} onOpenChange={setShowOTPDialog}>
-        <SheetContent side="bottom" className="h-auto max-h-[90vh] p-0 flex flex-col overflow-y-auto bg-white rounded-t-3xl shadow-2xl">
-          {/* Drag Handle - Fixed at top */}
-          <div className="sticky top-0 bg-white z-30 flex justify-center pt-3 pb-2">
-            <div className="w-12 h-1.5 bg-gray-300 rounded-full" />
+            <div className="px-4 md:px-6 py-4 md:py-6 pb-20 md:pb-8">
+              <form onSubmit={handleOTPSubmit} className="mt-4 md:mt-6 space-y-3 md:space-y-4">
+                <div>
+                  <Label className="text-xs xs:text-sm md:text-base">Verification Code</Label>
+                  <Input
+                    type="text"
+                    value={otp}
+                    onChange={(e) => setOtp(e.target.value)}
+                    onFocus={() => setFocusedField('otp')}
+                    onBlur={() => setFocusedField(null)}
+                    placeholder={focusedField === 'otp' ? '' : "Enter 6-digit code"}
+                    maxLength={6}
+                    className="text-sm xs:text-base md:text-lg"
+                  />
+                </div>
+                <div className="flex gap-2 pt-3 md:pt-4">
+                  <Button type="button" variant="outline" onClick={() => setShowOTPDialog(false)} className="flex-1 text-sm xs:text-base md:text-lg py-2 md:py-2.5">
+                    Cancel
+                  </Button>
+                  <Button type="submit" disabled={verifyEmailMutation.isPending} className="flex-1 text-sm xs:text-base md:text-lg py-2 md:py-2.5">
+                    {verifyEmailMutation.isPending ? "Verifying..." : "Verify"}
+                  </Button>
+                </div>
+              </form>
+            </div>
           </div>
+        </>
+      )}
 
-          <div className="px-3 md:px-4 pb-20 md:pb-6">
-            <SheetHeader className="bg-white sticky top-0 z-20 pt-4 pb-2 border-b border-gray-100 mb-4">
-              <SheetTitle className="text-lg xs:text-xl md:text-2xl font-bold text-gray-900">Verify Email</SheetTitle>
-              <SheetDescription className="text-xs xs:text-sm md:text-base text-gray-500">
-                Enter the verification code sent to your new email address.
-              </SheetDescription>
-            </SheetHeader>
-
-            <form onSubmit={handleOTPSubmit} className="mt-4 md:mt-6 space-y-3 md:space-y-4">
-              <div>
-                <Label className="text-xs xs:text-sm md:text-base">Verification Code</Label>
-                <Input
-                  type="text"
-                  value={otp}
-                  onChange={(e) => setOtp(e.target.value)}
-                  onFocus={() => setFocusedField('otp')}
-                  onBlur={() => setFocusedField(null)}
-                  placeholder={focusedField === 'otp' ? '' : "Enter 6-digit code"}
-                  maxLength={6}
-                  className="text-sm xs:text-base md:text-lg"
-                />
-              </div>
-              <div className="flex gap-2 pt-3 md:pt-4 pb-4 md:pb-6">
-                <Button type="button" variant="outline" onClick={() => setShowOTPDialog(false)} className="flex-1 text-sm xs:text-base md:text-lg py-2 md:py-2.5">
-                  Cancel
-                </Button>
-                <Button type="submit" disabled={verifyEmailMutation.isPending} className="flex-1 text-sm xs:text-base md:text-lg py-2 md:py-2.5">
-                  {verifyEmailMutation.isPending ? "Verifying..." : "Verify"}
-                </Button>
-              </div>
-            </form>
-          </div>
-        </SheetContent>
-      </Sheet>
+      {/* Slide-up Animation Styles */}
+      <style>{`
+        @keyframes slideUp {
+          from {
+            transform: translateY(100%);
+            opacity: 0;
+          }
+          to {
+            transform: translateY(0);
+            opacity: 1;
+          }
+        }
+      `}</style>
 
       {/* Toast */}
       <Toast
