@@ -14,7 +14,6 @@ import {
   EyeOff,
   User,
   Check,
-  X,
 } from "lucide-react"
 import { useAuthStore } from '@/stores/store'
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
@@ -65,10 +64,21 @@ export default function NewSettings() {
     return () => window.removeEventListener('resize', handleResize);
   }, [showExitConfirmation]);
 
-  // Body scroll lock and click outside handling for custom modals
   const passwordModalRef = useRef<HTMLDivElement>(null);
   const emailModalRef = useRef<HTMLDivElement>(null);
   const otpModalRef = useRef<HTMLDivElement>(null);
+
+  const handleFocus = (field: string) => (e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    setFocusedField(field);
+    const target = e.target;
+    // Delay to allow keyboard animation and sheet adjustment
+    setTimeout(() => {
+      target.scrollIntoView({
+        behavior: "smooth",
+        block: "center",
+      });
+    }, 300);
+  };
 
   useEffect(() => {
     const isAnyModalOpen = showPasswordDialog || showEmailDialog || showOTPDialog;
@@ -873,15 +883,15 @@ export default function NewSettings() {
             className="fixed bottom-0 left-0 right-0 bg-white rounded-t-3xl shadow-2xl z-50 max-h-[90vh] overflow-y-auto"
             style={{ animation: 'slideUp 0.3s ease-out' }}
           >
+            {/* Drag Handle */}
+            <div className="sticky top-0 bg-white z-30 flex justify-center pt-3 pb-2">
+              <div className="w-12 h-1.5 bg-gray-300 rounded-full" />
+            </div>
+
             {/* Header */}
-            <div className="sticky top-0 bg-white px-4 md:px-6 py-3 md:py-4 flex items-center justify-between z-20 border-b border-gray-100">
-              <div>
-                <h2 className="text-lg xs:text-xl md:text-2xl font-bold text-gray-900">Change Password</h2>
-                <p className="text-xs xs:text-sm md:text-base text-gray-500">Update your password. Make sure it's strong and secure.</p>
-              </div>
-              <button onClick={() => setShowPasswordDialog(false)} className="p-1.5 md:p-2 hover:bg-gray-100 rounded-full transition-colors">
-                <X className="w-4 h-4 md:w-5 md:h-5 text-gray-600" />
-              </button>
+            <div className="bg-white px-4 md:px-6 py-3 md:py-4 border-b border-gray-100">
+              <h2 className="text-lg xs:text-xl md:text-2xl font-bold text-gray-900">Change Password</h2>
+              <p className="text-xs xs:text-sm md:text-base text-gray-500">Update your password. Make sure it's strong and secure.</p>
             </div>
 
             <div className="px-4 md:px-6 py-4 md:py-6 pb-20 md:pb-8">
@@ -893,7 +903,7 @@ export default function NewSettings() {
                       type={showPasswords.current ? "text" : "password"}
                       value={passwordForm.currentPassword}
                       onChange={(e) => setPasswordForm({ ...passwordForm, currentPassword: e.target.value })}
-                      onFocus={() => setFocusedField('currentPassword')}
+                      onFocus={handleFocus('currentPassword')}
                       onBlur={() => setFocusedField(null)}
                       placeholder={focusedField === 'currentPassword' ? '' : 'Current Password'}
                       className={`text-sm xs:text-base md:text-lg ${passwordErrors.currentPassword ? "border-red-500" : ""}`}
@@ -917,7 +927,7 @@ export default function NewSettings() {
                       type={showPasswords.new ? "text" : "password"}
                       value={passwordForm.newPassword}
                       onChange={(e) => setPasswordForm({ ...passwordForm, newPassword: e.target.value })}
-                      onFocus={() => setFocusedField('newPassword')}
+                      onFocus={handleFocus('newPassword')}
                       onBlur={() => setFocusedField(null)}
                       placeholder={focusedField === 'newPassword' ? '' : 'New Password'}
                       className={`text-sm xs:text-base md:text-lg ${passwordErrors.newPassword ? "border-red-500" : ""}`}
@@ -941,7 +951,7 @@ export default function NewSettings() {
                       type={showPasswords.confirm ? "text" : "password"}
                       value={passwordForm.confirmPassword}
                       onChange={(e) => setPasswordForm({ ...passwordForm, confirmPassword: e.target.value })}
-                      onFocus={() => setFocusedField('confirmPassword')}
+                      onFocus={handleFocus('confirmPassword')}
                       onBlur={() => setFocusedField(null)}
                       placeholder={focusedField === 'confirmPassword' ? '' : 'Confirm New Password'}
                       className={`text-sm xs:text-base md:text-lg ${passwordErrors.confirmPassword ? "border-red-500" : ""}`}
@@ -1000,15 +1010,15 @@ export default function NewSettings() {
             className="fixed bottom-0 left-0 right-0 bg-white rounded-t-3xl shadow-2xl z-50 max-h-[90vh] overflow-y-auto"
             style={{ animation: 'slideUp 0.3s ease-out' }}
           >
+            {/* Drag Handle */}
+            <div className="sticky top-0 bg-white z-30 flex justify-center pt-3 pb-2">
+              <div className="w-12 h-1.5 bg-gray-300 rounded-full" />
+            </div>
+
             {/* Header */}
-            <div className="sticky top-0 bg-white px-4 md:px-6 py-3 md:py-4 flex items-center justify-between z-20 border-b border-gray-100">
-              <div>
-                <h2 className="text-lg xs:text-xl md:text-2xl font-bold text-gray-900">Change Email</h2>
-                <p className="text-xs xs:text-sm md:text-base text-gray-500">Update your email address. You'll need to verify your new email address after the change.</p>
-              </div>
-              <button onClick={() => setShowEmailDialog(false)} className="p-1.5 md:p-2 hover:bg-gray-100 rounded-full transition-colors">
-                <X className="w-4 h-4 md:w-5 md:h-5 text-gray-600" />
-              </button>
+            <div className="bg-white px-4 md:px-6 py-3 md:py-4 border-b border-gray-100">
+              <h2 className="text-lg xs:text-xl md:text-2xl font-bold text-gray-900">Change Email</h2>
+              <p className="text-xs xs:text-sm md:text-base text-gray-500">Update your email address. You'll need to verify your new email address after the change.</p>
             </div>
 
             <div className="px-4 md:px-6 py-4 md:py-6 pb-20 md:pb-8">
@@ -1019,7 +1029,7 @@ export default function NewSettings() {
                     type="email"
                     value={emailForm.newEmail}
                     onChange={(e) => setEmailForm({ ...emailForm, newEmail: e.target.value })}
-                    onFocus={() => setFocusedField('newEmail')}
+                    onFocus={handleFocus('newEmail')}
                     onBlur={() => setFocusedField(null)}
                     placeholder={focusedField === 'newEmail' ? '' : 'New Email'}
                     className={`text-sm xs:text-base md:text-lg ${emailErrors.newEmail ? "border-red-500" : ""}`}
@@ -1034,7 +1044,7 @@ export default function NewSettings() {
                     type="email"
                     value={emailForm.confirmEmail}
                     onChange={(e) => setEmailForm({ ...emailForm, confirmEmail: e.target.value })}
-                    onFocus={() => setFocusedField('confirmEmail')}
+                    onFocus={handleFocus('confirmEmail')}
                     onBlur={() => setFocusedField(null)}
                     placeholder={focusedField === 'confirmEmail' ? '' : 'Confirm New Email'}
                     className={`text-sm xs:text-base md:text-lg ${emailErrors.confirmEmail ? "border-red-500" : ""}`}
@@ -1066,15 +1076,15 @@ export default function NewSettings() {
             className="fixed bottom-0 left-0 right-0 bg-white rounded-t-3xl shadow-2xl z-50 max-h-[90vh] overflow-y-auto"
             style={{ animation: 'slideUp 0.3s ease-out' }}
           >
+            {/* Drag Handle */}
+            <div className="sticky top-0 bg-white z-30 flex justify-center pt-3 pb-2">
+              <div className="w-12 h-1.5 bg-gray-300 rounded-full" />
+            </div>
+
             {/* Header */}
-            <div className="sticky top-0 bg-white px-4 md:px-6 py-3 md:py-4 flex items-center justify-between z-20 border-b border-gray-100">
-              <div>
-                <h2 className="text-lg xs:text-xl md:text-2xl font-bold text-gray-900">Verify Email</h2>
-                <p className="text-xs xs:text-sm md:text-base text-gray-500">Enter the verification code sent to your new email address.</p>
-              </div>
-              <button onClick={() => setShowOTPDialog(false)} className="p-1.5 md:p-2 hover:bg-gray-100 rounded-full transition-colors">
-                <X className="w-4 h-4 md:w-5 md:h-5 text-gray-600" />
-              </button>
+            <div className="bg-white px-4 md:px-6 py-3 md:py-4 border-b border-gray-100">
+              <h2 className="text-lg xs:text-xl md:text-2xl font-bold text-gray-900">Verify Email</h2>
+              <p className="text-xs xs:text-sm md:text-base text-gray-500">Enter the verification code sent to your new email address.</p>
             </div>
 
             <div className="px-4 md:px-6 py-4 md:py-6 pb-20 md:pb-8">
@@ -1085,7 +1095,7 @@ export default function NewSettings() {
                     type="text"
                     value={otp}
                     onChange={(e) => setOtp(e.target.value)}
-                    onFocus={() => setFocusedField('otp')}
+                    onFocus={handleFocus('otp')}
                     onBlur={() => setFocusedField(null)}
                     placeholder={focusedField === 'otp' ? '' : "Enter 6-digit code"}
                     maxLength={6}
