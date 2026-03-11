@@ -23,6 +23,7 @@ import JoinCollectiveBottomSheet from '@/components/newgroupcrwd/JoinCollectiveB
 import DiscoverMoreCollectives from '@/components/newgroupcrwd/DiscoverMoreCollectives';
 import { SharePost } from '@/components/ui/SharePost';
 import { Toast } from '@/components/ui/toast';
+import AddToDonationBoxBottomSheet from '@/components/newcause/AddToDonationBoxBottomSheet';
 import { useAuthStore } from '@/stores/store';
 import Footer from '@/components/Footer';
 import { toast } from 'sonner';
@@ -55,6 +56,7 @@ export default function NewGroupCrwdPage() {
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState('');
   const [showFounderPerk, setShowFounderPerk] = useState(true);
+  const [showDonationChoiceModal, setShowDonationChoiceModal] = useState(false);
 
   // Fetch collective data by name/slug
   const { data: crwdData, isLoading: isLoadingCrwd, error: crwdError } = useQuery({
@@ -390,7 +392,7 @@ export default function NewGroupCrwdPage() {
               navigate(`/onboarding?redirectTo=/g/${crwdData?.sort_name}`);
               return;
             }
-            setShowJoinModal(true);
+            setShowDonationChoiceModal(true);
           }}
         /> :
         <LoggedOutHeader />
@@ -446,7 +448,7 @@ export default function NewGroupCrwdPage() {
                     navigate(`/onboarding?redirectTo=/g/${crwdData?.sort_name}`);
                     return;
                   }
-                  setShowJoinModal(true);
+                  setShowDonationChoiceModal(true);
                 }}
                 className="flex-1 font-semibold py-2 md:py-4 lg:py-5 rounded-lg text-xs xs:text-sm lg:text-base bg-[#1600ff] hover:bg-[#1400cc] text-white shadow-sm"
               >
@@ -482,7 +484,7 @@ export default function NewGroupCrwdPage() {
                     navigate(`/onboarding?redirectTo=/g/${crwdData?.sort_name}`);
                     return;
                   }
-                  setShowJoinModal(true);
+                  setShowDonationChoiceModal(true);
                 }}
                 className="flex-1 font-semibold py-2 md:py-4 lg:py-5 rounded-lg text-xs xs:text-sm lg:text-base bg-[#1600ff] hover:bg-[#1400cc] text-white shadow-sm"
               >
@@ -623,6 +625,21 @@ export default function NewGroupCrwdPage() {
       </div>
 
       <Footer />
+
+      {/* Donation Choice Bottom Sheet */}
+      <AddToDonationBoxBottomSheet
+        isOpen={showDonationChoiceModal}
+        onClose={() => setShowDonationChoiceModal(false)}
+        hasDonationBox={!!donationBoxData?.id}
+        onConfirm={() => {
+          setShowDonationChoiceModal(false);
+          setShowJoinModal(true);
+        }}
+        onOneTimeDonation={() => {
+          setShowDonationChoiceModal(false);
+          handleOneTimeDonation();
+        }}
+      />
 
       {/* Join Collective Bottom Sheet */}
       <JoinCollectiveBottomSheet

@@ -12,12 +12,15 @@ import { useAuthStore } from "@/stores/store";
 import { DiscardSheet } from "@/components/ui/DiscardSheet";
 import { useUnsavedChanges } from "@/hooks/use-unsaved-changes";
 import { useMemo } from "react";
+import { mentionSearch } from "@/services/api/social";
+import { MentionSearchResults } from "@/components/post/MentionSearchResults";
 
 
 export default function CreatePostPage() {
   const navigate = useNavigate();
   const location = useLocation();
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
   const { user: currentUser } = useAuthStore();
   const queryClient = useQueryClient();
 
@@ -49,6 +52,10 @@ export default function CreatePostPage() {
 
   // Track link preview
   const [showPreview, setShowPreview] = useState(false);
+
+  const [mentionSearchQuery, setMentionSearchQuery] = useState<string | null>(null);
+  const [mentionResults, setMentionResults] = useState<any[]>([]);
+  const [selectedMentions, setSelectedMentions] = useState<{ type: string; id: number | string; name: string }[]>([]);
 
   // Validate URL format - defined before useQuery
   const validateUrl = (url: string): boolean => {
@@ -160,6 +167,76 @@ export default function CreatePostPage() {
     if (name === "url" && urlError) {
       setUrlError(null);
     }
+
+    // Mention search logic
+    if (name === "content") {
+      const cursorPosition = (e.target as HTMLTextAreaElement).selectionStart;
+      const textBeforeCursor = value.substring(0, cursorPosition);
+      const lastAtSymbolIndex = textBeforeCursor.lastIndexOf('@');
+
+      if (lastAtSymbolIndex !== -1) {
+        const query = textBeforeCursor.substring(lastAtSymbolIndex + 1);
+        const charBeforeAt = lastAtSymbolIndex > 0 ? textBeforeCursor[lastAtSymbolIndex - 1] : null;
+        const isStartOfWord = !charBeforeAt || charBeforeAt === ' ' || charBeforeAt === '\n';
+
+        if (isStartOfWord) {
+          // Allow up to 2 spaces in the query to support full name search
+          if (query.split(' ').length <= 3 && !query.includes('\n')) {
+            setMentionSearchQuery(query);
+          } else {
+            setMentionSearchQuery(null);
+          }
+        } else {
+          setMentionSearchQuery(null);
+        }
+      } else {
+        setMentionSearchQuery(null);
+      }
+    }
+  };
+
+  useEffect(() => {
+    const fetchMentions = async () => {
+      if (mentionSearchQuery !== null) {
+        try {
+          const data = await mentionSearch(mentionSearchQuery);
+          setMentionResults(data.results || (Array.isArray(data) ? data : []));
+        } catch (error) {
+          console.error('Mention search error:', error);
+          setMentionResults([]);
+        }
+      } else {
+        setMentionResults([]);
+      }
+    };
+
+    const timer = setTimeout(fetchMentions, 300);
+    return () => clearTimeout(timer);
+  }, [mentionSearchQuery]);
+
+  const handleMentionSelect = (user: any) => {
+    const cursorPosition = textareaRef.current?.selectionStart || 0;
+    const textBeforeCursor = form.content.substring(0, cursorPosition);
+    const textAfterCursor = form.content.substring(cursorPosition);
+
+    const lastAtSymbolIndex = textBeforeCursor.lastIndexOf('@');
+    const newTextBeforeCursor = textBeforeCursor.substring(0, lastAtSymbolIndex) + `@${user.name} `;
+
+    setForm(prev => ({ ...prev, content: newTextBeforeCursor + textAfterCursor }));
+    setSelectedMentions(prev => [
+      ...prev.filter(m => m.name !== user.name),
+      { type: user.type, id: user.id, name: user.name }
+    ]);
+    setMentionSearchQuery(null);
+    setMentionResults([]);
+
+    setTimeout(() => {
+      if (textareaRef.current) {
+        textareaRef.current.focus();
+        const newCursorPos = newTextBeforeCursor.length;
+        textareaRef.current.setSelectionRange(newCursorPos, newCursorPos);
+      }
+    }, 0);
   };
 
   // Handle URL validation
@@ -230,6 +307,14 @@ export default function CreatePostPage() {
     formData.append('collective_id', collectiveData.id.toString());
     formData.append('content', form.content);
 
+    const finalMentions = selectedMentions
+      .filter(m => form.content.includes(`@${m.name}`))
+      .map(({ type, id }) => ({ type, id }));
+
+    if (finalMentions.length > 0) {
+      formData.append('mentions', JSON.stringify(finalMentions));
+    }
+
     // Add media file if it's an image post
     if (postType === "image" && selectedImage) {
       formData.append('media_file', selectedImage);
@@ -241,6 +326,37 @@ export default function CreatePostPage() {
     }
 
     createPostMutation.mutate(formData);
+  };
+
+  const renderHighlightedText = (text: string) => {
+    if (!text) return null;
+
+    const mentionNames = selectedMentions.map(m => `@${m.name}`);
+    mentionNames.sort((a, b) => b.length - a.length);
+
+    if (mentionNames.length === 0) {
+      return text.split(/(\s+)/).map((part, index) => {
+        if (part.startsWith('@')) {
+          return <span key={index} className="text-blue-600 font-medium">{part}</span>;
+        }
+        return <span key={index}>{part}</span>;
+      });
+    }
+
+    const pattern = mentionNames.map(name => name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|');
+    const regex = new RegExp(`(${pattern})`, 'g');
+
+    return text.split(regex).map((part, index) => {
+      if (mentionNames.includes(part)) {
+        return <span key={index} className="text-blue-600 font-medium">{part}</span>;
+      }
+      return part.split(/(\s+)/).map((subPart, subIndex) => {
+        if (subPart.startsWith('@')) {
+          return <span key={`${index}-${subIndex}`} className="text-blue-600 font-medium">{subPart}</span>;
+        }
+        return <span key={`${index}-${subIndex}`}>{subPart}</span>;
+      });
+    });
   };
 
   if (!currentUser?.id) {
@@ -347,14 +463,29 @@ export default function CreatePostPage() {
       <div className="flex-1 flex flex-col px-4 py-6 max-w-2xl mx-auto w-full">
         {/* Main Content Input */}
         <div className="mb-6">
-          <div className="border-2 rounded-lg p-4 bg-gray-50 border-gray-300 transition-all">
+          <div className="border-2 rounded-lg p-4 bg-gray-50 border-gray-300 transition-all relative">
+            {/* Mirror Div for styling mentions */}
+            <div
+              className="absolute inset-x-4 inset-y-4 text-base whitespace-pre-wrap break-words pointer-events-none text-transparent border-none"
+              style={{ font: 'inherit', lineHeight: '1.5' }}
+            >
+              {renderHighlightedText(form.content)}
+              {form.content.endsWith('\n') ? '\n' : ''}
+            </div>
             <textarea
+              ref={textareaRef}
               name="content"
               value={form.content}
               onChange={handleInputChange}
               placeholder="What's on your mind?"
-              className="w-full min-h-[200px] p-0 border-0 bg-transparent text-base focus:outline-none resize-none placeholder:text-gray-400"
+              className="w-full min-h-[200px] p-0 border-0 bg-transparent text-base focus:outline-none resize-none placeholder:text-gray-400 relative z-10 text-gray-900 caret-black"
+              style={{ color: 'rgba(0,0,0,0.4)' }}
               maxLength={maxCharacters}
+            />
+            <MentionSearchResults
+              results={mentionResults}
+              onSelect={handleMentionSelect}
+              className="mt-1"
             />
           </div>
           {/* Character Count */}

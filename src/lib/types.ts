@@ -42,6 +42,20 @@ export interface PostDetail {
   comments: number;
   shares: number;
   isLiked?: boolean;
+  mentions?: CommentMention[];
+}
+
+export interface CommentMention {
+  id: number;
+  mention_type: 'user' | 'collective' | 'cause';
+  mention_details: {
+    type: 'user' | 'collective' | 'cause';
+    id: number | string;
+    name: string;
+    username: string;
+    color?: string;
+    logo?: string | null;
+  };
 }
 
 export type UserType = {

@@ -278,6 +278,7 @@ export default function NewHome() {
                             comments: item.comments_count || 0,
                             isLiked: item.is_liked || false,
                             timestamp: item.created_at,
+                            mentions: item.mentions,
                             fundraiser: item.fundraiser ? {
                                 id: item.fundraiser.id,
                                 name: item.fundraiser.name,
@@ -455,6 +456,7 @@ export default function NewHome() {
                             lastName: post.user.lastName,
                             avatarUrl: post.user.avatar,
                             color: post.user.color,
+                            mentions: post.mentions,
                         });
                         setShowCommentsSheet(true);
                     }}

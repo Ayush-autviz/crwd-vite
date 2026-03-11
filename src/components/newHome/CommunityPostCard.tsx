@@ -12,7 +12,6 @@ import CommentsBottomSheet from "@/components/post/CommentsBottomSheet";
 import { SharePost } from "@/components/ui/SharePost";
 import { Card, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
-import { formatDistanceToNow } from 'date-fns';
 import { useAuthStore } from "@/stores/store";
 import { DeletePostBottomSheet } from "@/components/post/DeletePostBottomSheet";
 
@@ -60,6 +59,7 @@ interface CommunityPostCardProps {
       site_name?: string;
       domain?: string;
     };
+    mentions?: any[];
   };
   onCommentPress?: (post: CommunityPostCardProps['post']) => void;
   showSimplifiedHeader?: boolean; // When true, only show name and timestamp (for collective view)
@@ -461,7 +461,16 @@ export default function CommunityPostCard({ post, onCommentPress, showSimplified
               {/* Post Content */}
               {post.content && (
                 <div className="text-xs xs:text-base text-gray-900 leading-relaxed mb-2 md:mb-4 whitespace-pre-line">
-                  {post.content}
+                  {post.content.split(/(\s+)/).map((part, index) => {
+                    if (part.startsWith('@')) {
+                      return (
+                        <span key={index} className="text-blue-600 font-medium">
+                          {part}
+                        </span>
+                      );
+                    }
+                    return part;
+                  })}
                 </div>
               )}
 
@@ -557,7 +566,92 @@ export default function CommunityPostCard({ post, onCommentPress, showSimplified
           ) : (
             <>
               <div className="text-xs xs:text-base text-gray-900 leading-relaxed mb-2 md:mb-4 whitespace-pre-line">
-                {post.content}
+                {(() => {
+                  const mentions = post.mentions || [];
+                  const content = post.content || "";
+
+                  if (!mentions || mentions.length === 0) {
+                    return content.split(/(@\w+)/g).map((part, index) => {
+                      if (part.startsWith('@')) {
+                        return (
+                          <span
+                            key={index}
+                            className="text-blue-600 font-medium cursor-pointer hover:underline"
+                            onClick={(e) => {
+                              e.preventDefault();
+                              e.stopPropagation();
+                              navigate(`/u/${part.substring(1)}`);
+                            }}
+                          >
+                            {part}
+                          </span>
+                        );
+                      }
+                      return part;
+                    });
+                  }
+
+                  const mentionMap: Record<string, any> = {};
+                  const triggers: string[] = [];
+
+                  mentions.forEach(m => {
+                    const details = m.mention_details;
+                    if (details?.name) {
+                      const nameKey = `@${details.name}`.toLowerCase();
+                      mentionMap[nameKey] = m;
+                      triggers.push(`@${details.name}`);
+                    }
+                    if (details?.username) {
+                      const userKey = `@${details.username}`.toLowerCase();
+                      if (!mentionMap[userKey]) {
+                        mentionMap[userKey] = m;
+                        triggers.push(`@${details.username}`);
+                      }
+                    }
+                  });
+
+                  triggers.sort((a, b) => b.length - a.length);
+
+                  const triggerPattern = triggers.length > 0
+                    ? `(${triggers.map(t => t.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|')}|@\\w+)`
+                    : '(@\\w+)';
+
+                  const regex = new RegExp(triggerPattern, 'gi');
+
+                  return content.split(regex).map((part, index) => {
+                    const partLower = part.toLowerCase();
+                    const mention = mentionMap[partLower];
+
+                    if (part.startsWith('@')) {
+                      let path = `/u/${part.substring(1)}`;
+                      if (mention) {
+                        const details = mention.mention_details;
+                        const type = (mention.mention_type || details.type || '').toLowerCase();
+                        const targetId = details.username || details.id;
+
+                        if (type === 'collective' || type === 'group') path = `/g/${targetId}`;
+                        else if (type === 'cause' || type === 'nonprofit' || type === 'organization') path = `/c/${targetId}`;
+                        else path = `/u/${targetId}`;
+                      }
+
+                      return (
+                        <span
+                          key={index}
+                          className="text-blue-600 font-medium cursor-pointer hover:underline"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            navigate(path);
+                          }}
+                        >
+                          {part}
+                        </span>
+                      );
+                    }
+
+                    return part;
+                  });
+                })()}
               </div>
 
               {/* Show preview card if previewDetails exists, otherwise show image */}
@@ -694,6 +788,7 @@ export default function CommunityPostCard({ post, onCommentPress, showSimplified
           firstName: post.user.firstName,
           lastName: post.user.lastName,
           color: post.user.color,
+          mentions: post.mentions,
         }}
       />
 

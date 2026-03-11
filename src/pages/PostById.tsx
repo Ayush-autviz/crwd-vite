@@ -1,14 +1,15 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useParams, useLocation } from "react-router-dom";
 import ProfileActivityCard from "@/components/profile/ProfileActivityCard";
-import { Loader2, Image as ImageIcon, Link as LinkIcon, X } from "lucide-react";
+import { Loader2, X } from "lucide-react";
 import ProfileNavbar from "@/components/profile/ProfileNavbar";
 import { Toast } from "@/components/ui/toast";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { getPostById, getPostComments, createPostComment, getCommentReplies } from "@/services/api/social";
+import { getPostById, getPostComments, createPostComment, getCommentReplies, mentionSearch } from "@/services/api/social";
 import type { PostDetail } from "@/lib/types";
 import { formatDistanceToNow } from 'date-fns';
 import { Comment, CommentData } from "@/components/post/Comment";
+import { MentionSearchResults } from "@/components/post/MentionSearchResults";
 import { useAuthStore } from "@/stores/store";
 import { DiscardSheet } from "@/components/ui/DiscardSheet";
 import { useUnsavedChanges } from "@/hooks/use-unsaved-changes";
@@ -28,6 +29,9 @@ export default function PostById() {
   const navigate = useNavigate();
   const location = useLocation();
   const { token, user: currentUser } = useAuthStore();
+  const [mentionSearchQuery, setMentionSearchQuery] = useState<string | null>(null);
+  const [mentionResults, setMentionResults] = useState<any[]>([]);
+  const [selectedMentions, setSelectedMentions] = useState<{ type: string; id: number | string; name: string }[]>([]);
 
   // Redirect to login if no token
   // useEffect(() => {
@@ -91,6 +95,7 @@ export default function PostById() {
     comments: postData.comments_count || 0,
     shares: 0,
     isLiked: postData.is_liked || false,
+    mentions: postData.mentions,
   } : undefined;
 
   const queryClient = useQueryClient();
@@ -120,6 +125,7 @@ export default function PostById() {
       repliesCount: comment.replies_count || 0,
       parentComment: comment.parent_comment,
       userId: comment.user?.id, // Add user ID for delete functionality
+      mentions: comment.mentions,
     }));
   }, [commentsData]);
 
@@ -138,9 +144,10 @@ export default function PostById() {
 
   // Create comment mutation
   const createCommentMutation = useMutation({
-    mutationFn: (data: { content: string }) => createPostComment(id || '', { content: data.content }), // No parent_comment_id for main comments
+    mutationFn: (data: { content: string; mentions?: any[] }) => createPostComment(id || '', { content: data.content, mentions: data.mentions }), // No parent_comment_id for main comments
     onSuccess: () => {
       setInputValue("");
+      setSelectedMentions([]);
       // setToastMessage("Comment added successfully!");
       // setShowToast(true);
       queryClient.invalidateQueries({ queryKey: ['postComments', id] });
@@ -157,10 +164,85 @@ export default function PostById() {
     }
   };
 
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setInputValue(value);
+
+    // Get cursor position
+    const cursorPosition = e.target.selectionStart;
+    if (cursorPosition === null) return;
+
+    const textBeforeCursor = value.substring(0, cursorPosition);
+    const lastAtSymbolIndex = textBeforeCursor.lastIndexOf('@');
+
+    if (lastAtSymbolIndex !== -1) {
+      const charBeforeAt = lastAtSymbolIndex > 0 ? textBeforeCursor[lastAtSymbolIndex - 1] : null;
+      const isStartOfWord = !charBeforeAt || charBeforeAt === ' ' || charBeforeAt === '\n';
+
+      if (isStartOfWord) {
+        const query = textBeforeCursor.substring(lastAtSymbolIndex + 1);
+        // Allow up to 2 spaces in the query to support full name search
+        if (query.split(' ').length <= 3 && !query.includes('\n')) {
+          setMentionSearchQuery(query);
+        } else {
+          setMentionSearchQuery(null);
+        }
+      } else {
+        setMentionSearchQuery(null);
+      }
+    } else {
+      setMentionSearchQuery(null);
+    }
+  };
+
+  useEffect(() => {
+    const fetchMentions = async () => {
+      if (mentionSearchQuery !== null) {
+        try {
+          const data = await mentionSearch(mentionSearchQuery);
+          setMentionResults(data.results || (Array.isArray(data) ? data : []));
+        } catch (error) {
+          console.error('Mention search error:', error);
+          setMentionResults([]);
+        }
+      } else {
+        setMentionResults([]);
+      }
+    };
+
+    const timer = setTimeout(fetchMentions, 300);
+    return () => clearTimeout(timer);
+  }, [mentionSearchQuery]);
+
+  const handleMentionSelect = (user: any) => {
+    const cursorPosition = inputRef.current?.selectionStart || 0;
+    const textBeforeCursor = inputValue.substring(0, cursorPosition);
+    const textAfterCursor = inputValue.substring(cursorPosition);
+
+    const lastAtSymbolIndex = textBeforeCursor.lastIndexOf('@');
+    const newTextBeforeCursor = textBeforeCursor.substring(0, lastAtSymbolIndex) + `@${user.name} `;
+
+    setInputValue(newTextBeforeCursor + textAfterCursor);
+    setSelectedMentions(prev => [
+      ...prev.filter(m => m.name !== user.name),
+      { type: user.type, id: user.id, name: user.name }
+    ]);
+    setMentionSearchQuery(null);
+    setMentionResults([]);
+
+    setTimeout(() => {
+      if (inputRef.current) {
+        inputRef.current.focus();
+        const newCursorPos = newTextBeforeCursor.length;
+        inputRef.current.setSelectionRange(newCursorPos, newCursorPos);
+      }
+    }, 0);
+  };
+
   // Create reply mutation
   const createReplyMutation = useMutation({
-    mutationFn: ({ commentId, data }: { commentId: number; data: { content: string } }) =>
-      createPostComment(id || '', { content: data.content, parent_comment_id: commentId }), // Use createPostComment with parent_comment_id
+    mutationFn: ({ commentId, data }: { commentId: number; data: { content: string; mentions?: any[] } }) =>
+      createPostComment(id || '', { content: data.content, parent_comment_id: commentId, mentions: data.mentions }), // Use createPostComment with parent_comment_id
     onSuccess: (_, variables) => {
       // setToastMessage("Reply added successfully!");
       // setShowToast(true);
@@ -168,6 +250,7 @@ export default function PostById() {
       // Fetch replies to show the new one and expand
       fetchReplies(variables.commentId);
       setInputValue("");
+      setSelectedMentions([]);
       setReplyingTo(null);
     },
     onError: () => {
@@ -200,10 +283,20 @@ export default function PostById() {
   const handleSubmit = (content: string) => {
     if (!content.trim()) return;
 
+    const finalMentions = selectedMentions
+      .filter(m => content.includes(`@${m.name}`))
+      .map(({ type, id }) => ({ type, id }));
+
     if (replyingTo) {
-      createReplyMutation.mutate({ commentId: replyingTo.id, data: { content: content.trim() } });
+      createReplyMutation.mutate({
+        commentId: replyingTo.id,
+        data: { content: content.trim(), mentions: finalMentions }
+      });
     } else {
-      createCommentMutation.mutate({ content: content.trim() });
+      createCommentMutation.mutate({
+        content: content.trim(),
+        mentions: finalMentions
+      });
     }
   };
 
@@ -230,6 +323,7 @@ export default function PostById() {
         repliesCount: reply.replies_count || 0,
         parentComment: reply.parent_comment,
         userId: reply.user?.id, // Add user ID for delete functionality
+        mentions: reply.mentions,
       })) || [];
 
       setComments(prevComments => {
@@ -304,6 +398,39 @@ export default function PostById() {
 
   const handleCancelLeave = () => {
     setShowDiscardSheet(false);
+  };
+
+  const renderHighlightedText = (text: string) => {
+    if (!text) return null;
+
+    const mentionNames = selectedMentions.map(m => `@${m.name}`);
+    const mentionNamesLower = mentionNames.map(n => n.toLowerCase());
+    mentionNames.sort((a, b) => b.length - a.length);
+
+    // Fallback: simple highlighter if no selected mentions
+    if (mentionNames.length === 0) {
+      return text.split(/(@[\w\s]{1,30}(?=\s|$)|@\w+)/g).map((part, index) => {
+        if (part.startsWith('@')) {
+          return <span key={index} className="text-blue-600 font-medium">{part}</span>;
+        }
+        return <span key={index}>{part}</span>;
+      });
+    }
+
+    const pattern = mentionNames.map(name => name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|');
+    const regex = new RegExp(`(${pattern})`, 'gi');
+
+    return text.split(regex).map((part, index) => {
+      if (mentionNamesLower.includes(part.toLowerCase())) {
+        return <span key={index} className="text-blue-600 font-medium">{part}</span>;
+      }
+      return part.split(/(@[\w\s]{1,30}(?=\s|$)|@\w+)/g).map((subPart, subIndex) => {
+        if (subPart.startsWith('@')) {
+          return <span key={`${index}-${subIndex}`} className="text-blue-600 font-medium">{subPart}</span>;
+        }
+        return <span key={`${index}-${subIndex}`}>{subPart}</span>;
+      });
+    });
   };
 
 
@@ -447,6 +574,7 @@ export default function PostById() {
                     // Invalidate queries to refresh
                     queryClient.invalidateQueries({ queryKey: ['postComments', id] });
                   }}
+                  mentions={comment.mentions}
                 />
               ))}
             </div>
@@ -475,17 +603,32 @@ export default function PostById() {
                 </button>
               </div>
             )}
-            <div className="relative flex items-center">
+            <div className="relative flex items-center w-full">
               <div className="absolute left-0 top-0 bottom-0 w-1 bg-[#1600ff] rounded-l-md z-10" />
-              <input
-                ref={inputRef}
-                type="text"
-                value={inputValue}
-                onChange={(e) => setInputValue(e.target.value)}
-                onKeyPress={handleKeyPress}
-                placeholder={replyingTo ? `Reply to ${replyingTo.username}...` : "Join the conversation"}
-                disabled={createCommentMutation.isPending || createReplyMutation.isPending}
-                className="w-full bg-gray-50 border-none outline-none focus:ring-0 text-base py-3 pl-4 rounded-md min-h-[35px]"
+              <div className="relative w-full">
+                {/* Mirror Div for styling mentions */}
+                <div
+                  className="absolute inset-0 py-3 pl-4 pr-4 text-base whitespace-nowrap overflow-hidden pointer-events-none text-transparent border-none flex items-center"
+                  style={{ font: 'inherit' }}
+                >
+                  {renderHighlightedText(inputValue)}
+                </div>
+                <input
+                  ref={inputRef}
+                  type="text"
+                  value={inputValue}
+                  onChange={handleInputChange}
+                  onKeyPress={handleKeyPress}
+                  placeholder={replyingTo ? `Reply to ${replyingTo.username}...` : "Join the conversation"}
+                  disabled={createCommentMutation.isPending || createReplyMutation.isPending}
+                  className="w-full bg-gray-50 border-none outline-none focus:ring-0 text-base py-3 pl-4 rounded-md min-h-[35px] relative z-10 text-gray-900 caret-black"
+                  style={{ color: 'rgba(0,0,0,0.4)' }}
+                />
+              </div>
+
+              <MentionSearchResults
+                results={mentionResults}
+                onSelect={handleMentionSelect}
               />
             </div>
 

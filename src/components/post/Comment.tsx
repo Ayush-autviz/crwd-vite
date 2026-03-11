@@ -337,6 +337,8 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { deleteComment } from '@/services/api/social';
 import { useAuthStore } from '@/stores/store';
 
+import { CommentMention } from "@/lib/types";
+
 export interface CommentData {
   id: number;
   username: string;
@@ -351,6 +353,7 @@ export interface CommentData {
   repliesCount?: number;
   parentComment?: any;
   userId?: string | number; // User ID to check if comment belongs to current user
+  mentions?: CommentMention[];
 }
 
 interface CommentProps extends CommentData {
@@ -382,6 +385,7 @@ export const Comment: React.FC<CommentProps> = ({
   showReplyButton = true,
   userId,
   onDelete,
+  mentions = [],
 }) => {
   // Get display name (first name + last name, or fallback to username)
   const displayName = firstName && lastName
@@ -539,7 +543,93 @@ export const Comment: React.FC<CommentProps> = ({
               )}
             </div>
             {/* Increased Content Size: text-sm (was text-xs) */}
-            <p className="text-sm md:text-base text-gray-800 break-words whitespace-pre-wrap">{content}</p>
+            <p className="text-sm md:text-base text-gray-800 break-words whitespace-pre-wrap">
+              {(() => {
+                // If no mentions metadata, use generic highlighter
+                if (!mentions || mentions.length === 0) {
+                  return content.split(/(@\w+)/g).map((part, index) => {
+                    if (part.startsWith('@')) {
+                      return (
+                        <span
+                          key={index}
+                          className="text-blue-600 font-medium cursor-pointer hover:underline"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            navigate(`/u/${part.substring(1)}`);
+                          }}
+                        >
+                          {part}
+                        </span>
+                      );
+                    }
+                    return part;
+                  });
+                }
+
+                // Build a map of potential mention triggers (names and usernames)
+                const mentionMap: Record<string, CommentMention> = {};
+                const triggers: string[] = [];
+
+                mentions.forEach(m => {
+                  const details = m.mention_details;
+                  if (details?.name) {
+                    const nameKey = `@${details.name}`.toLowerCase();
+                    mentionMap[nameKey] = m;
+                    triggers.push(`@${details.name}`);
+                  }
+                  if (details?.username) {
+                    const userKey = `@${details.username}`.toLowerCase();
+                    if (!mentionMap[userKey]) {
+                      mentionMap[userKey] = m;
+                      triggers.push(`@${details.username}`);
+                    }
+                  }
+                });
+
+                // Sort triggers by length descending to match longest first (prevents partial matches)
+                triggers.sort((a, b) => b.length - a.length);
+
+                // Add a generic trigger for any other @mentions
+                const triggerPattern = triggers.length > 0
+                  ? `(${triggers.map(t => t.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|')}|@\\w+)`
+                  : '(@\\w+)';
+
+                const regex = new RegExp(triggerPattern, 'gi');
+
+                return content.split(regex).map((part, index) => {
+                  const partLower = part.toLowerCase();
+                  const mention = mentionMap[partLower];
+
+                  if (part.startsWith('@')) {
+                    let path = `/u/${part.substring(1)}`;
+                    if (mention) {
+                      const details = mention.mention_details;
+                      const type = (mention.mention_type || details.type || '').toLowerCase();
+                      const targetId = details.username || details.id;
+
+                      if (type === 'collective' || type === 'group') path = `/g/${targetId}`;
+                      else if (type === 'cause' || type === 'nonprofit' || type === 'organization') path = `/c/${targetId}`;
+                      else path = `/u/${targetId}`;
+                    }
+
+                    return (
+                      <span
+                        key={index}
+                        className="text-blue-600 font-medium cursor-pointer hover:underline"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          navigate(path);
+                        }}
+                      >
+                        {part}
+                      </span>
+                    );
+                  }
+
+                  return part;
+                });
+              })()}
+            </p>
           </div>
           {/* Increased Action Text Size: text-xs/sm (was text-xs) */}
           <div className="flex items-center gap-3 md:gap-4 mt-1.5 md:mt-2 text-xs md:text-sm">

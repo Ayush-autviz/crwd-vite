@@ -1,10 +1,12 @@
 import { useState, useEffect, useRef, useMemo } from 'react';
-import { X, MessageCircle, Loader2, Image as ImageIcon, Link as LinkIcon } from 'lucide-react';
+import { X, MessageCircle, Loader2 } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { getPostComments, createPostComment, getCommentReplies } from '@/services/api/social';
+import { getPostComments, createPostComment, getCommentReplies, mentionSearch } from '@/services/api/social';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { useAuthStore } from '@/stores/store';
 import { Comment } from './Comment';
+import { MentionSearchResults } from './MentionSearchResults';
 
 interface CommentsBottomSheetProps {
   isOpen: boolean;
@@ -17,6 +19,7 @@ interface CommentsBottomSheetProps {
     firstName?: string;
     lastName?: string;
     color?: string;
+    mentions?: any[];
   };
 }
 
@@ -34,6 +37,7 @@ interface CommentData {
   repliesCount?: number;
   parentComment?: number;
   userId?: string | number;
+  mentions?: any[];
 }
 
 export default function CommentsBottomSheet({
@@ -49,9 +53,90 @@ export default function CommentsBottomSheet({
   const [loadingReplies, setLoadingReplies] = useState<Set<number>>(new Set());
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const { user: currentUser } = useAuthStore();
+  const navigate = useNavigate();
   const queryClient = useQueryClient();
 
   const [replyingTo, setReplyingTo] = useState<CommentData | null>(null);
+  const [mentionSearchQuery, setMentionSearchQuery] = useState<string | null>(null);
+  const [mentionResults, setMentionResults] = useState<any[]>([]);
+  const [selectedMentions, setSelectedMentions] = useState<{ type: string; id: number | string; name: string }[]>([]);
+
+  const handleTextChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const value = e.target.value;
+    setCommentText(value);
+
+    // Get cursor position
+    const cursorPosition = e.target.selectionStart;
+    const textBeforeCursor = value.substring(0, cursorPosition);
+
+    // Check if the last typed character or the block before cursor starts with @
+    const lastAtSymbolIndex = textBeforeCursor.lastIndexOf('@');
+
+    if (lastAtSymbolIndex !== -1) {
+      const charBeforeAt = lastAtSymbolIndex > 0 ? textBeforeCursor[lastAtSymbolIndex - 1] : null;
+      const isStartOfWord = !charBeforeAt || charBeforeAt === ' ' || charBeforeAt === '\n';
+
+      if (isStartOfWord) {
+        const query = textBeforeCursor.substring(lastAtSymbolIndex + 1);
+        // Allow up to 2 spaces in the query to support full name search
+        if (query.split(' ').length <= 3 && !query.includes('\n')) {
+          setMentionSearchQuery(query);
+        } else {
+          setMentionSearchQuery(null);
+        }
+      } else {
+        setMentionSearchQuery(null);
+      }
+    } else {
+      setMentionSearchQuery(null);
+    }
+  };
+
+  useEffect(() => {
+    const fetchMentions = async () => {
+      if (mentionSearchQuery !== null) {
+        try {
+          const data = await mentionSearch(mentionSearchQuery);
+          // If the API returns a paginated list, we use results
+          setMentionResults(data.results || (Array.isArray(data) ? data : []));
+        } catch (error) {
+          console.error('Mention search error:', error);
+          setMentionResults([]);
+        }
+      } else {
+        setMentionResults([]);
+      }
+    };
+
+    const timer = setTimeout(fetchMentions, 300);
+    return () => clearTimeout(timer);
+  }, [mentionSearchQuery]);
+
+  const handleMentionSelect = (user: any) => {
+    const cursorPosition = inputRef.current?.selectionStart || 0;
+    const textBeforeCursor = commentText.substring(0, cursorPosition);
+    const textAfterCursor = commentText.substring(cursorPosition);
+
+    const lastAtSymbolIndex = textBeforeCursor.lastIndexOf('@');
+    const newTextBeforeCursor = textBeforeCursor.substring(0, lastAtSymbolIndex) + `@${user.name} `;
+
+    setCommentText(newTextBeforeCursor + textAfterCursor);
+    setSelectedMentions(prev => [
+      ...prev.filter(m => m.name !== user.name),
+      { type: user.type, id: user.id, name: user.name }
+    ]);
+    setMentionSearchQuery(null);
+    setMentionResults([]);
+
+    // Focus back to input and set cursor position
+    setTimeout(() => {
+      if (inputRef.current) {
+        inputRef.current.focus();
+        const newCursorPos = newTextBeforeCursor.length;
+        inputRef.current.setSelectionRange(newCursorPos, newCursorPos);
+      }
+    }, 0);
+  };
 
   // Handle animation
   useEffect(() => {
@@ -164,6 +249,7 @@ export default function CommentsBottomSheet({
       repliesCount: comment.replies_count || 0,
       parentComment: comment.parent_comment,
       userId: comment.user?.id,
+      mentions: comment.mentions,
     })) || [];
   }, [commentsData?.results]);
 
@@ -191,9 +277,10 @@ export default function CommentsBottomSheet({
 
   // Create comment mutation
   const createCommentMutation = useMutation({
-    mutationFn: (data: { content: string }) => createPostComment(post.id.toString(), { content: data.content }),
+    mutationFn: (data: { content: string; mentions?: any[] }) => createPostComment(post.id.toString(), { content: data.content, mentions: data.mentions }),
     onSuccess: () => {
       setCommentText('');
+      setSelectedMentions([]);
       queryClient.invalidateQueries({ queryKey: ['postComments', post.id] });
       queryClient.invalidateQueries({ queryKey: ['posts'] });
     },
@@ -204,13 +291,14 @@ export default function CommentsBottomSheet({
 
   // Create reply mutation
   const createReplyMutation = useMutation({
-    mutationFn: ({ commentId, data }: { commentId: number; data: { content: string } }) =>
-      createPostComment(post.id.toString(), { content: data.content, parent_comment_id: commentId }),
+    mutationFn: ({ commentId, data }: { commentId: number; data: { content: string; mentions?: any[] } }) =>
+      createPostComment(post.id.toString(), { content: data.content, parent_comment_id: commentId, mentions: data.mentions }),
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ['postComments', post.id] });
       // Fetch replies to show the new one and expand
       fetchReplies(variables.commentId);
       setCommentText('');
+      setSelectedMentions([]);
       setReplyingTo(null);
     },
     onError: () => {
@@ -218,7 +306,7 @@ export default function CommentsBottomSheet({
     },
   });
 
-  const handleReply = (commentId: number, content: string) => {
+  const handleReply = (commentId: number, _content: string) => {
     // Find comment or handle based on ID if we have full comment object lookup available
     // For now we just need the ID and minimal info to show "Replying to..."
     // Since we pass content as "@username " from Comment.tsx, we can use that logic or refactor
@@ -270,6 +358,7 @@ export default function CommentsBottomSheet({
         repliesCount: reply.replies_count || 0,
         parentComment: reply.parent_comment || commentId,
         userId: reply.user?.id,
+        mentions: reply.mentions,
       }));
 
       setComments(prev => {
@@ -318,10 +407,20 @@ export default function CommentsBottomSheet({
   const handleSubmit = (e: React.SyntheticEvent) => {
     e.preventDefault();
     if (commentText.trim()) {
+      const finalMentions = selectedMentions
+        .filter(m => commentText.includes(`@${m.name}`))
+        .map(({ type, id }) => ({ type, id }));
+
       if (replyingTo) {
-        createReplyMutation.mutate({ commentId: replyingTo.id, data: { content: commentText.trim() } });
+        createReplyMutation.mutate({
+          commentId: replyingTo.id,
+          data: { content: commentText.trim(), mentions: finalMentions }
+        });
       } else if (!createCommentMutation.isPending) {
-        createCommentMutation.mutate({ content: commentText.trim() });
+        createCommentMutation.mutate({
+          content: commentText.trim(),
+          mentions: finalMentions
+        });
       }
     }
   };
@@ -361,6 +460,39 @@ export default function CommentsBottomSheet({
   };
 
   const postAvatarColor = post.color || getConsistentColor(post.id, avatarColors);
+
+  const renderHighlightedText = (text: string) => {
+    if (!text) return null;
+
+    const mentionNames = selectedMentions.map(m => `@${m.name}`);
+    const mentionNamesLower = mentionNames.map(n => n.toLowerCase());
+    mentionNames.sort((a, b) => b.length - a.length);
+
+    // Fallback: simple highlighter if no selected mentions
+    if (mentionNames.length === 0) {
+      return text.split(/(@[\w\s]{1,30}(?=\s|$)|@\w+)/g).map((part, index) => {
+        if (part.startsWith('@')) {
+          return <span key={index} className="text-blue-600 font-medium">{part}</span>;
+        }
+        return <span key={index}>{part}</span>;
+      });
+    }
+
+    const pattern = mentionNames.map(name => name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|');
+    const regex = new RegExp(`(${pattern})`, 'gi');
+
+    return text.split(regex).map((part, index) => {
+      if (mentionNamesLower.includes(part.toLowerCase())) {
+        return <span key={index} className="text-blue-600 font-medium">{part}</span>;
+      }
+      return part.split(/(@[\w\s]{1,30}(?=\s|$)|@\w+)/g).map((subPart, subIndex) => {
+        if (subPart.startsWith('@')) {
+          return <span key={`${index}-${subIndex}`} className="text-blue-600 font-medium">{subPart}</span>;
+        }
+        return <span key={`${index}-${subIndex}`}>{subPart}</span>;
+      });
+    });
+  };
 
   return (
     <div
@@ -415,7 +547,94 @@ export default function CommentsBottomSheet({
               <div className="flex items-center gap-1.5 md:gap-2 mb-0.5 md:mb-1">
                 <span className="font-bold text-xs md:text-sm text-foreground">{postDisplayName}</span>
               </div>
-              <p className="text-xs md:text-sm text-foreground whitespace-pre-line">{post.text}</p>
+              <p className="text-xs md:text-sm text-foreground whitespace-pre-line">
+                {(() => {
+                  const mentions = post.mentions || [];
+                  const content = post.text || "";
+
+                  if (!mentions || mentions.length === 0) {
+                    return content.split(/(@\w+)/g).map((part, index) => {
+                      if (part.startsWith('@')) {
+                        return (
+                          <span
+                            key={index}
+                            className="text-blue-600 font-medium cursor-pointer hover:underline"
+                            onClick={(e) => {
+                              e.preventDefault();
+                              e.stopPropagation();
+                              navigate(`/u/${part.substring(1)}`);
+                            }}
+                          >
+                            {part}
+                          </span>
+                        );
+                      }
+                      return part;
+                    });
+                  }
+
+                  const mentionMap: Record<string, any> = {};
+                  const triggers: string[] = [];
+
+                  mentions.forEach(m => {
+                    const details = m.mention_details;
+                    if (details?.name) {
+                      const nameKey = `@${details.name}`.toLowerCase();
+                      mentionMap[nameKey] = m;
+                      triggers.push(`@${details.name}`);
+                    }
+                    if (details?.username) {
+                      const userKey = `@${details.username}`.toLowerCase();
+                      if (!mentionMap[userKey]) {
+                        mentionMap[userKey] = m;
+                        triggers.push(`@${details.username}`);
+                      }
+                    }
+                  });
+
+                  triggers.sort((a, b) => b.length - a.length);
+
+                  const triggerPattern = triggers.length > 0
+                    ? `(${triggers.map(t => t.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|')}|@\\w+)`
+                    : '(@\\w+)';
+
+                  const regex = new RegExp(triggerPattern, 'gi');
+
+                  return content.split(regex).map((part, index) => {
+                    const partLower = part.toLowerCase();
+                    const mention = mentionMap[partLower];
+
+                    if (part.startsWith('@')) {
+                      let path = `/u/${part.substring(1)}`;
+                      if (mention) {
+                        const details = mention.mention_details;
+                        const type = (mention.mention_type || details.type || '').toLowerCase();
+                        const targetId = details.username || details.id;
+
+                        if (type === 'collective' || type === 'group') path = `/g/${targetId}`;
+                        else if (type === 'cause' || type === 'nonprofit' || type === 'organization') path = `/c/${targetId}`;
+                        else path = `/u/${targetId}`;
+                      }
+
+                      return (
+                        <span
+                          key={index}
+                          className="text-blue-600 font-medium cursor-pointer hover:underline"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            navigate(path);
+                          }}
+                        >
+                          {part}
+                        </span>
+                      );
+                    }
+
+                    return part;
+                  });
+                })()}
+              </p>
             </div>
           </div>
         </div>
@@ -456,6 +675,7 @@ export default function CommentsBottomSheet({
                     repliesCount: comment.repliesCount,
                     parentComment: comment.parentComment,
                     userId: comment.userId,
+                    mentions: comment.mentions,
                   };
 
                   const isExpanded = expandedComments.has(comment.id);
@@ -496,6 +716,7 @@ export default function CommentsBottomSheet({
                           });
                           queryClient.invalidateQueries({ queryKey: ['postComments', post.id] });
                         }}
+                        mentions={commentWithReplies.mentions}
                       />
                     </div>
                   );
@@ -521,22 +742,42 @@ export default function CommentsBottomSheet({
             </div>
           )}
           <form onSubmit={handleSubmit} className="flex flex-col">
-            <div className="relative flex items-center">
+            <div className="relative flex items-center w-full">
               <div className="absolute left-0 top-0 bottom-0 w-1 bg-[#1600ff] rounded-l-md z-10" />
-              <textarea
-                ref={inputRef}
-                placeholder={replyingTo ? `Reply to ${replyingTo.username}...` : "Join the conversation"}
-                value={commentText}
-                onChange={(e) => setCommentText(e.target.value)}
-                className="w-full bg-gray-50 border-none focus:ring-0 focus:outline-none text-base py-3 pl-4 rounded-md min-h-[45px] max-h-[120px] resize-none overflow-y-auto"
-                disabled={createCommentMutation.isPending || createReplyMutation.isPending || !currentUser}
-                rows={1}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter' && !e.shiftKey) {
-                    e.preventDefault();
-                    handleSubmit(e);
-                  }
-                }}
+              <div className="relative w-full">
+                {/* Mirror Div for styling mentions */}
+                <div
+                  className="absolute inset-0 py-3 pl-4 pr-4 text-base whitespace-pre-wrap break-words pointer-events-none text-transparent border-none min-h-[45px] max-h-[120px]"
+                  style={{ font: 'inherit', lineHeight: '1.5' }}
+                >
+                  {renderHighlightedText(commentText)}
+                  {commentText.endsWith('\n') ? '\n' : ''}
+                </div>
+                <textarea
+                  ref={inputRef}
+                  placeholder={replyingTo ? `Reply to ${replyingTo.username}...` : "Join the conversation"}
+                  value={commentText}
+                  onChange={handleTextChange}
+                  className="w-full bg-transparent border-none focus:ring-0 focus:outline-none text-base py-3 pl-4 rounded-md min-h-[45px] max-h-[120px] resize-none overflow-y-auto relative z-10 text-gray-900 caret-black"
+                  style={{
+                    color: 'rgba(0,0,0,0.4)', // Slightly transparent to let the blue show through more clearly if perfectly aligned, or use transparent if we want full custom.
+                    // Actually, let's use a subtle color or fully transparent.
+                    // Fully transparent is best if we can guarantee alignment.
+                  }}
+                  disabled={createCommentMutation.isPending || createReplyMutation.isPending || !currentUser}
+                  rows={1}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' && !e.shiftKey) {
+                      e.preventDefault();
+                      handleSubmit(e);
+                    }
+                  }}
+                />
+              </div>
+
+              <MentionSearchResults
+                results={mentionResults}
+                onSelect={handleMentionSelect}
               />
             </div>
 
