@@ -605,10 +605,10 @@ export default function PostById() {
             )}
             <div className="relative flex items-center w-full">
               <div className="absolute left-0 top-0 bottom-0 w-1 bg-[#1600ff] rounded-l-md z-10" />
-              <div className="relative w-full">
+              <div className="relative w-full bg-gray-50 rounded-md">
                 {/* Mirror Div for styling mentions */}
                 <div
-                  className="absolute inset-0 py-3 pl-4 pr-4 text-base whitespace-nowrap overflow-hidden pointer-events-none text-transparent border-none flex items-center"
+                  className="absolute inset-0 py-3 pl-4 pr-4 text-base whitespace-pre overflow-hidden pointer-events-none text-transparent border-none"
                   style={{ font: 'inherit' }}
                 >
                   {renderHighlightedText(inputValue)}
@@ -621,7 +621,7 @@ export default function PostById() {
                   onKeyPress={handleKeyPress}
                   placeholder={replyingTo ? `Reply to ${replyingTo.username}...` : "Join the conversation"}
                   disabled={createCommentMutation.isPending || createReplyMutation.isPending}
-                  className="w-full bg-gray-50 border-none outline-none focus:ring-0 text-base py-3 pl-4 rounded-md min-h-[35px] relative z-10 text-gray-900 caret-black"
+                  className="w-full bg-transparent border-none outline-none focus:ring-0 text-base py-3 pl-4 rounded-md min-h-[35px] relative z-10 text-gray-900 caret-black"
                   style={{ color: 'rgba(0,0,0,0.4)' }}
                 />
               </div>

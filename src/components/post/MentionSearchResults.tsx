@@ -22,7 +22,7 @@ export function MentionSearchResults({ results, onSelect, className }: MentionSe
                         <AvatarImage src={user.logo} />
                         <AvatarFallback
                             style={{ backgroundColor: user.color || '#3B82F6' }}
-                            className="text-[10px] text-white"
+                            className="text-sm text-white font-semibold"
                         >
                             {user.name?.charAt(0).toUpperCase()}
                         </AvatarFallback>
