@@ -9,7 +9,8 @@ import ReactConfetti from "react-confetti";
 import { getCollectiveById } from "@/services/api/crwd";
 import { useQueryClient, useQuery, useMutation } from "@tanstack/react-query";
 import { useAuthStore } from "@/stores/store";
-import { getDonationHistory, removeCauseFromBox, updateDonationBox, cancelDonationBox } from "@/services/api/donation";
+import { getDonationHistory, removeCauseFromBox, updateDonationBox, cancelDonationBox, addCausesToBox } from "@/services/api/donation";
+import { PreviouslySupportedCauses } from "./donation/PreviouslySupportedCauses";
 import RequestNonprofitModal from "@/components/newsearch/RequestNonprofitModal";
 import EditDonationSplitBottomSheet from "@/components/donation/EditDonationSplitBottomSheet";
 import { toast } from "sonner";
@@ -89,6 +90,7 @@ export const Checkout = ({
   // Also get manual_causes for backward compatibility
   const manualCauses = donationBox?.manual_causes || [];
   const attributingCollectives = donationBox?.attributing_collectives || [];
+  const previouslySupportedCauses = donationBox?.previously_supported_causes || [];
   const actualDonationAmount = parseFloat(donationBox?.monthly_amount || donationAmount.toString());
 
   // Use API data if available, otherwise fall back to selectedOrganizations
@@ -330,6 +332,19 @@ export const Checkout = ({
       removeCauseMutation.mutate(causeToRemove.id.toString());
     }
   };
+
+  // Mutation to add cause back to box
+  const addCauseMutation = useMutation({
+    mutationFn: (causeId: number) => addCausesToBox({ causes: [{ cause_id: causeId }] }),
+    onSuccess: () => {
+      // toast.success("Cause added back to your donation box!");
+      queryClient.invalidateQueries({ queryKey: ['donationBox', currentUser?.id] });
+    },
+    onError: (error: any) => {
+      console.error('Error adding cause:', error);
+      toast.error(error?.response?.data?.message || "Failed to add cause");
+    },
+  });
 
   // Calculate fees and capacity for amount editing
   // For donations < $10.00: Flat fee of $1.00
@@ -968,6 +983,12 @@ export const Checkout = ({
               </Link>
             </div>
           </div> */}
+
+          {/* Previously Supported Section */}
+          <PreviouslySupportedCauses
+            causes={previouslySupportedCauses}
+            onAdd={(causeId) => addCauseMutation.mutate(causeId)}
+          />
 
           {/* Can't see your nonprofit? Section */}
           <div className="mt-4 md:mt-6 mb-4 md:mb-6 text-center">
