@@ -6,8 +6,33 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
+    "postbuild": "react-snap",
     "lint": "eslint .",
     "preview": "vite preview"
+  },
+  "reactSnap": {
+    "source": "dist",
+    "inlineCss": false,
+    "crawl": true,
+    "skipThirdPartyRequests": true,
+    "routes": [
+      "/",
+      "/terms",
+      "/privacy"
+    ],
+    "include": [
+      "/",
+      "/article/how-to-donate-to-multiple-charities-at-once",
+      "/article/why-small-donations-matter"
+    ],
+    "puppeteerArgs": [
+      "--no-sandbox",
+      "--disable-setuid-sandbox"
+    ],
+    "minifyHtml": {
+      "collapseWhitespace": true,
+      "removeComments": true
+    }
   },
   "dependencies": {
     "@posthog/react": "^1.8.2",
@@ -59,6 +84,7 @@
     "eslint-plugin-react-hooks": "^5.2.0",
     "eslint-plugin-react-refresh": "^0.4.20",
     "globals": "^16.2.0",
+    "react-snap": "^1.23.0",
     "tw-animate-css": "^1.3.4",
     "typescript": "~5.8.3",
     "typescript-eslint": "^8.34.1",

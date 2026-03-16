@@ -18,6 +18,11 @@ instance.interceptors.request.use((config) => {
   const token = useAuthStore.getState().token?.access_token;
   config.baseURL = BaseURL;
 
+  // Detect ReactSnap
+  if (navigator.userAgent.includes("ReactSnap")) {
+    config.headers["x-prerender"] = "true";
+  }
+
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
@@ -29,6 +34,19 @@ instance.interceptors.request.use((config) => {
 instance.interceptors.response.use(
   (response) => response,
   async (error) => {
+
+    // ✅ DURING PRERENDER → RETURN SAFE DATA
+    if (navigator.userAgent.includes("ReactSnap")) {
+      console.log("Mock response for prerender");
+      return Promise.resolve({
+        data: {},
+        status: 200,
+        statusText: "OK",
+        headers: {},
+        config: error.config,
+      });
+    }
+
     const originalRequest = error.config;
 
     // Prevent infinite loops
