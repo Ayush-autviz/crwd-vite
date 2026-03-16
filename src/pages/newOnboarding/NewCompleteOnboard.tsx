@@ -59,9 +59,17 @@ export default function NewCompleteOnboard() {
 
   // Get selected categories from navigation state
   const selectedCategoryIds = (location.state?.selectedCategories as string[]) || [];
-  const selectedCategoryObjects = selectedCategoryIds
-    .map((id) => categories.find((cat) => cat.id === id))
-    .filter((cat) => cat !== undefined);
+  const selectedCategoryNames = (location.state?.selectedCategoryNames as string[]) || [];
+  
+  // Map by name first for better reliability between API and local constants
+  const selectedCategoryObjects = selectedCategoryNames.length > 0
+    ? selectedCategoryNames.map(name => categories.find(cat => cat.name === name)).filter(Boolean)
+    : selectedCategoryIds.map(id => categories.find(cat => cat.id === id)).filter(Boolean);
+
+  // Use the internal character IDs for queries if we have the objects
+  const internalCategoryIds = selectedCategoryObjects.length > 0
+    ? selectedCategoryObjects.map(cat => (cat as any).id)
+    : selectedCategoryIds;
 
   // Fetch surprise me causes
   const { data: surpriseData, isLoading: isLoadingSurprise, refetch: refetchSurprise } = useQuery({

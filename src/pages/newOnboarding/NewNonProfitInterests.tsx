@@ -78,8 +78,15 @@ export default function NewNonProfitInterests() {
       if (redirectTo && redirectTo !== '/') {
         navigate(redirectTo);
       } else {
+        const selectedCategoryNames = mainCategories
+          .filter((cat: any) => selectedCategories.includes(cat.id))
+          .map((cat: any) => cat.name);
+
         navigate(`/complete-onboard?redirectTo=${encodeURIComponent(redirectTo)}`, {
-          state: { selectedCategories }
+          state: { 
+            selectedCategories,
+            selectedCategoryNames 
+          }
         });
       }
     },
