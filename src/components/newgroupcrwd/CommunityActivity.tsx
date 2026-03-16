@@ -70,6 +70,7 @@ export default function CommunityActivity({
     comments: post.comments_count || 0,
     isLiked: post.is_liked || false,
     timestamp: post.created_at,
+    mentions: post.mentions,
     fundraiser: post.fundraiser ? {
       id: post.fundraiser.id,
       name: post.fundraiser.name,

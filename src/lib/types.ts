@@ -53,6 +53,7 @@ export interface CommentMention {
     id: number | string;
     name: string;
     username: string;
+    sort_name?: string;
     color?: string;
     logo?: string | null;
   };

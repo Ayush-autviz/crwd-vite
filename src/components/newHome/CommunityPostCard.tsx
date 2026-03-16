@@ -1,5 +1,5 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { Heart, MessageCircle, Share2, MoreHorizontal, Pin, Pencil, Flag, Trash2, Users } from "lucide-react";
 import dayjs from 'dayjs';
 import { useState, useRef, useEffect } from "react";
@@ -69,6 +69,7 @@ interface CommunityPostCardProps {
 export default function CommunityPostCard({ post, onCommentPress, showSimplifiedHeader = false, isHomeFeed = false }: CommunityPostCardProps) {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
+  const location = useLocation();
   const [isLiked, setIsLiked] = useState(post.isLiked || false);
   const [likesCount, setLikesCount] = useState(post.likes || 0);
   const [showCommentsSheet, setShowCommentsSheet] = useState(false);
@@ -141,6 +142,93 @@ export default function CommunityPostCard({ post, onCommentPress, showSimplified
       toast.error('Failed to delete post');
     },
   });
+
+  const renderContentWithMentions = (content: string, mentions: any[] = []) => {
+    if (!content) return null;
+    if (!mentions || mentions.length === 0) {
+      return content.split(/(@\w+)/g).map((part, index) => {
+        if (part.startsWith('@')) {
+          return (
+            <span
+              key={index}
+              className="text-blue-600 font-medium cursor-pointer hover:underline"
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                if (location.pathname === `/u/${part.substring(1)}`) return;
+                navigate(`/u/${part.substring(1)}`);
+              }}
+            >
+              {part}
+            </span>
+          );
+        }
+        return part;
+      });
+    }
+
+    const mentionMap: Record<string, any> = {};
+    const triggers: string[] = [];
+
+    mentions.forEach(m => {
+      const details = m.mention_details;
+      if (details?.name) {
+        const nameKey = `@${details.name}`.toLowerCase();
+        mentionMap[nameKey] = m;
+        triggers.push(`@${details.name}`);
+      }
+      if (details?.username) {
+        const userKey = `@${details.username}`.toLowerCase();
+        if (!mentionMap[userKey]) {
+          mentionMap[userKey] = m;
+          triggers.push(`@${details.username}`);
+        }
+      }
+    });
+
+    triggers.sort((a, b) => b.length - a.length);
+
+    const triggerPattern = triggers.length > 0
+      ? `(${triggers.map(t => t.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|')}|@\\w+)`
+      : '(@\\w+)';
+
+    const regex = new RegExp(triggerPattern, 'gi');
+
+    return content.split(regex).map((part, index) => {
+      const partLower = part.toLowerCase();
+      const mention = mentionMap[partLower];
+
+      if (part.startsWith('@')) {
+        let path = `/u/${part.substring(1)}`;
+        if (mention) {
+          const details = mention.mention_details;
+          const type = (mention.mention_type || details.type || '').toLowerCase();
+          const targetId = details.sort_name || details.username || details.id;
+
+          if (type === 'collective' || type === 'group') path = `/g/${targetId}`;
+          else if (type === 'cause' || type === 'nonprofit' || type === 'organization') path = `/c/${targetId}`;
+          else path = `/u/${targetId}`;
+        }
+
+        return (
+          <span
+            key={index}
+            className="text-blue-600 font-medium cursor-pointer hover:underline"
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              if (location.pathname === path) return;
+              navigate(path);
+            }}
+          >
+            {part}
+          </span>
+        );
+      }
+
+      return part;
+    });
+  };
 
   const handleDeleteClick = () => {
     deletePostMutation.mutate();
@@ -461,16 +549,7 @@ export default function CommunityPostCard({ post, onCommentPress, showSimplified
               {/* Post Content */}
               {post.content && (
                 <div className="text-xs xs:text-base text-gray-900 leading-relaxed mb-2 md:mb-4 whitespace-pre-line">
-                  {post.content.split(/(\s+)/).map((part, index) => {
-                    if (part.startsWith('@')) {
-                      return (
-                        <span key={index} className="text-blue-600 font-medium">
-                          {part}
-                        </span>
-                      );
-                    }
-                    return part;
-                  })}
+                  {renderContentWithMentions(post.content, post.mentions)}
                 </div>
               )}
 
@@ -566,92 +645,7 @@ export default function CommunityPostCard({ post, onCommentPress, showSimplified
           ) : (
             <>
               <div className="text-xs xs:text-base text-gray-900 leading-relaxed mb-2 md:mb-4 whitespace-pre-line">
-                {(() => {
-                  const mentions = post.mentions || [];
-                  const content = post.content || "";
-
-                  if (!mentions || mentions.length === 0) {
-                    return content.split(/(@\w+)/g).map((part, index) => {
-                      if (part.startsWith('@')) {
-                        return (
-                          <span
-                            key={index}
-                            className="text-blue-600 font-medium cursor-pointer hover:underline"
-                            onClick={(e) => {
-                              e.preventDefault();
-                              e.stopPropagation();
-                              navigate(`/u/${part.substring(1)}`);
-                            }}
-                          >
-                            {part}
-                          </span>
-                        );
-                      }
-                      return part;
-                    });
-                  }
-
-                  const mentionMap: Record<string, any> = {};
-                  const triggers: string[] = [];
-
-                  mentions.forEach(m => {
-                    const details = m.mention_details;
-                    if (details?.name) {
-                      const nameKey = `@${details.name}`.toLowerCase();
-                      mentionMap[nameKey] = m;
-                      triggers.push(`@${details.name}`);
-                    }
-                    if (details?.username) {
-                      const userKey = `@${details.username}`.toLowerCase();
-                      if (!mentionMap[userKey]) {
-                        mentionMap[userKey] = m;
-                        triggers.push(`@${details.username}`);
-                      }
-                    }
-                  });
-
-                  triggers.sort((a, b) => b.length - a.length);
-
-                  const triggerPattern = triggers.length > 0
-                    ? `(${triggers.map(t => t.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|')}|@\\w+)`
-                    : '(@\\w+)';
-
-                  const regex = new RegExp(triggerPattern, 'gi');
-
-                  return content.split(regex).map((part, index) => {
-                    const partLower = part.toLowerCase();
-                    const mention = mentionMap[partLower];
-
-                    if (part.startsWith('@')) {
-                      let path = `/u/${part.substring(1)}`;
-                      if (mention) {
-                        const details = mention.mention_details;
-                        const type = (mention.mention_type || details.type || '').toLowerCase();
-                        const targetId = details.username || details.id;
-
-                        if (type === 'collective' || type === 'group') path = `/g/${targetId}`;
-                        else if (type === 'cause' || type === 'nonprofit' || type === 'organization') path = `/c/${targetId}`;
-                        else path = `/u/${targetId}`;
-                      }
-
-                      return (
-                        <span
-                          key={index}
-                          className="text-blue-600 font-medium cursor-pointer hover:underline"
-                          onClick={(e) => {
-                            e.preventDefault();
-                            e.stopPropagation();
-                            navigate(path);
-                          }}
-                        >
-                          {part}
-                        </span>
-                      );
-                    }
-
-                    return part;
-                  });
-                })()}
+                {renderContentWithMentions(post.content || "", post.mentions)}
               </div>
 
               {/* Show preview card if previewDetails exists, otherwise show image */}

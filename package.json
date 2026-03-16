@@ -22,8 +22,18 @@
     ],
     "include": [
       "/",
+      "/terms",
+      "/privacy",
+      "/waitlist",
+      "/search",
+      "/circles",
+      "/articles",
+      "/onboarding",
+      "/claim-profile",
+      "/surprise-me",
       "/article/how-to-donate-to-multiple-charities-at-once",
-      "/article/why-small-donations-matter"
+      "/article/why-small-donations-matter",
+      "/article/what-is-a-crwd-collective"
     ],
     "puppeteerArgs": [
       "--no-sandbox",

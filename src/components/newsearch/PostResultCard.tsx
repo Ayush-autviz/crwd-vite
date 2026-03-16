@@ -1,4 +1,4 @@
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, Link, useLocation } from 'react-router-dom';
 import { Card, CardContent } from '@/components/ui/card';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { Heart, MessageCircle, Share2, MoreHorizontal, Trash2 } from 'lucide-react';
@@ -59,6 +59,7 @@ interface PostResultCardProps {
       total_donors?: number;
       end_date?: string;
     };
+    mentions?: any[];
   };
 }
 
@@ -77,6 +78,7 @@ const getConsistentColor = (id: number | string, colors: string[]) => {
 
 export default function PostResultCard({ post }: PostResultCardProps) {
   const navigate = useNavigate();
+  const location = useLocation();
   const queryClient = useQueryClient();
   const [showShareModal, setShowShareModal] = useState(false);
   const [showPostMenu, setShowPostMenu] = useState(false);
@@ -137,6 +139,93 @@ export default function PostResultCard({ post }: PostResultCardProps) {
     (user?.first_name && user?.last_name
       ? `${user.first_name} ${user.last_name}`
       : user?.first_name || user?.username || 'Unknown User');
+
+  const renderContentWithMentions = (content: string, mentions: any[] = []) => {
+    if (!content) return null;
+    if (!mentions || mentions.length === 0) {
+      return content.split(/(@\w+)/g).map((part, index) => {
+        if (part.startsWith('@')) {
+          return (
+            <span
+              key={index}
+              className="text-blue-600 font-medium cursor-pointer hover:underline"
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                if (location.pathname === `/u/${part.substring(1)}`) return;
+                navigate(`/u/${part.substring(1)}`);
+              }}
+            >
+              {part}
+            </span>
+          );
+        }
+        return part;
+      });
+    }
+
+    const mentionMap: Record<string, any> = {};
+    const triggers: string[] = [];
+
+    mentions.forEach(m => {
+      const details = m.mention_details;
+      if (details?.name) {
+        const nameKey = `@${details.name}`.toLowerCase();
+        mentionMap[nameKey] = m;
+        triggers.push(`@${details.name}`);
+      }
+      if (details?.username) {
+        const userKey = `@${details.username}`.toLowerCase();
+        if (!mentionMap[userKey]) {
+          mentionMap[userKey] = m;
+          triggers.push(`@${details.username}`);
+        }
+      }
+    });
+
+    triggers.sort((a, b) => b.length - a.length);
+
+    const triggerPattern = triggers.length > 0
+      ? `(${triggers.map(t => t.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|')}|@\\w+)`
+      : '(@\\w+)';
+
+    const regex = new RegExp(triggerPattern, 'gi');
+
+    return content.split(regex).map((part, index) => {
+      const partLower = part.toLowerCase();
+      const mention = mentionMap[partLower];
+
+      if (part.startsWith('@')) {
+        let path = `/u/${part.substring(1)}`;
+        if (mention) {
+          const details = mention.mention_details;
+          const type = (mention.mention_type || details.type || '').toLowerCase();
+          const targetId = details.sort_name || details.username || details.id;
+
+          if (type === 'collective' || type === 'group') path = `/g/${targetId}`;
+          else if (type === 'cause' || type === 'nonprofit' || type === 'organization') path = `/c/${targetId}`;
+          else path = `/u/${targetId}`;
+        }
+
+        return (
+          <span
+            key={index}
+            className="text-blue-600 font-medium cursor-pointer hover:underline"
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              if (location.pathname === path) return;
+              navigate(path);
+            }}
+          >
+            {part}
+          </span>
+        );
+      }
+
+      return part;
+    });
+  };
 
   return (
     <Card
@@ -223,9 +312,9 @@ export default function PostResultCard({ post }: PostResultCardProps) {
 
         {/* Post Content */}
         {post.content && !post.fundraiser && (
-          <p className="text-xs xs:text-sm md:text-base text-gray-900 mb-2.5 md:mb-3 line-clamp-3">
-            {post.content}
-          </p>
+          <div className="text-xs xs:text-sm md:text-base text-gray-900 mb-2.5 md:mb-3 line-clamp-3">
+            {renderContentWithMentions(post.content, post.mentions)}
+          </div>
         )}
 
         {/* Show fundraiser image like normal post image */}

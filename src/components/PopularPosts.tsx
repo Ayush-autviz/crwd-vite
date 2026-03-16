@@ -79,6 +79,7 @@ export const PopularPosts = ({
                 comments: post.comments_count || 0,
                 shares: 0, // API doesn't provide shares count
                 isLiked: post.is_liked === true, // Ensure boolean conversion
+                mentions: post.mentions,
               };
 
               return (

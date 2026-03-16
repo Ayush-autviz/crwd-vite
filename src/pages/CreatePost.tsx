@@ -157,6 +157,8 @@ export default function CreatePostPage() {
     },
   });
 
+  const [isSearchingMentions, setIsSearchingMentions] = useState(false);
+
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
@@ -175,13 +177,20 @@ export default function CreatePostPage() {
       const lastAtSymbolIndex = textBeforeCursor.lastIndexOf('@');
 
       if (lastAtSymbolIndex !== -1) {
-        const query = textBeforeCursor.substring(lastAtSymbolIndex + 1);
         const charBeforeAt = lastAtSymbolIndex > 0 ? textBeforeCursor[lastAtSymbolIndex - 1] : null;
         const isStartOfWord = !charBeforeAt || charBeforeAt === ' ' || charBeforeAt === '\n';
 
         if (isStartOfWord) {
+          const query = textBeforeCursor.substring(lastAtSymbolIndex + 1);
+          
+          // Check if this query already corresponds to a mention we just selected
+          // We look for the name followed by a space to see if we've moved past it
+          const isAlreadySelected = selectedMentions.some(m => 
+            query === m.name || query === m.name + ' ' || query.startsWith(m.name + ' ')
+          );
+
           // Allow up to 2 spaces in the query to support full name search
-          if (query.split(' ').length <= 3 && !query.includes('\n')) {
+          if (!isAlreadySelected && query.split(' ').length <= 3 && !query.includes('\n')) {
             setMentionSearchQuery(query);
           } else {
             setMentionSearchQuery(null);
@@ -196,21 +205,25 @@ export default function CreatePostPage() {
   };
 
   useEffect(() => {
-    const fetchMentions = async () => {
-      if (mentionSearchQuery !== null) {
-        try {
-          const data = await mentionSearch(mentionSearchQuery);
-          setMentionResults(data.results || (Array.isArray(data) ? data : []));
-        } catch (error) {
-          console.error('Mention search error:', error);
-          setMentionResults([]);
-        }
-      } else {
-        setMentionResults([]);
-      }
-    };
+    if (mentionSearchQuery === null) {
+      setMentionResults([]);
+      setIsSearchingMentions(false);
+      return;
+    }
 
-    const timer = setTimeout(fetchMentions, 300);
+    const timer = setTimeout(async () => {
+      setIsSearchingMentions(true);
+      try {
+        const data = await mentionSearch(mentionSearchQuery);
+        setMentionResults(data.results || (Array.isArray(data) ? data : []));
+      } catch (error) {
+        console.error('Mention search error:', error);
+        setMentionResults([]);
+      } finally {
+        setIsSearchingMentions(false);
+      }
+    }, 300);
+
     return () => clearTimeout(timer);
   }, [mentionSearchQuery]);
 
@@ -220,12 +233,14 @@ export default function CreatePostPage() {
     const textAfterCursor = form.content.substring(cursorPosition);
 
     const lastAtSymbolIndex = textBeforeCursor.lastIndexOf('@');
-    const newTextBeforeCursor = textBeforeCursor.substring(0, lastAtSymbolIndex) + `@${user.name} `;
+    // Use user.name or user.username - keeping consistent with user.name for now as per existing logic
+    const mentionName = user.name || user.username;
+    const newTextBeforeCursor = textBeforeCursor.substring(0, lastAtSymbolIndex) + `@${mentionName} `;
 
     setForm(prev => ({ ...prev, content: newTextBeforeCursor + textAfterCursor }));
     setSelectedMentions(prev => [
-      ...prev.filter(m => m.name !== user.name),
-      { type: user.type, id: user.id, name: user.name }
+      ...prev.filter(m => m.name !== mentionName),
+      { type: user.type, id: user.id, name: mentionName }
     ]);
     setMentionSearchQuery(null);
     setMentionResults([]);
@@ -332,10 +347,12 @@ export default function CreatePostPage() {
     if (!text) return null;
 
     const mentionNames = selectedMentions.map(m => `@${m.name}`);
+    const mentionNamesLower = mentionNames.map(n => n.toLowerCase());
     mentionNames.sort((a, b) => b.length - a.length);
 
+    // Fallback: simple highlighter if no selected mentions
     if (mentionNames.length === 0) {
-      return text.split(/(\s+)/).map((part, index) => {
+      return text.split(/(@[\w\s]{1,30}(?=\s|$)|@\w+)/g).map((part, index) => {
         if (part.startsWith('@')) {
           return <span key={index} className="text-blue-600 font-medium">{part}</span>;
         }
@@ -344,13 +361,13 @@ export default function CreatePostPage() {
     }
 
     const pattern = mentionNames.map(name => name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|');
-    const regex = new RegExp(`(${pattern})`, 'g');
+    const regex = new RegExp(`(${pattern})`, 'gi');
 
     return text.split(regex).map((part, index) => {
-      if (mentionNames.includes(part)) {
+      if (mentionNamesLower.includes(part.toLowerCase())) {
         return <span key={index} className="text-blue-600 font-medium">{part}</span>;
       }
-      return part.split(/(\s+)/).map((subPart, subIndex) => {
+      return part.split(/(@[\w\s]{1,30}(?=\s|$)|@\w+)/g).map((subPart, subIndex) => {
         if (subPart.startsWith('@')) {
           return <span key={`${index}-${subIndex}`} className="text-blue-600 font-medium">{subPart}</span>;
         }
@@ -482,11 +499,18 @@ export default function CreatePostPage() {
               style={{ color: 'rgba(0,0,0,0.4)' }}
               maxLength={maxCharacters}
             />
-            <MentionSearchResults
-              results={mentionResults}
-              onSelect={handleMentionSelect}
-              className="mt-1"
-            />
+            {isSearchingMentions ? (
+              <div className="absolute top-full left-0 right-0 bg-white border border-gray-200 rounded-lg shadow-xl mt-2 p-4 z-[60] flex items-center justify-center">
+                <Loader2 className="w-5 h-5 animate-spin text-blue-600" />
+              </div>
+            ) : (
+              <MentionSearchResults
+                results={mentionResults}
+                onSelect={handleMentionSelect}
+                className="mt-1"
+                position="bottom"
+              />
+            )}
           </div>
           {/* Character Count */}
           <div className="flex justify-end mt-2">

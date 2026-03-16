@@ -164,6 +164,8 @@ export default function PostById() {
     }
   };
 
+  const [isSearchingMentions, setIsSearchingMentions] = useState(false);
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setInputValue(value);
@@ -181,8 +183,14 @@ export default function PostById() {
 
       if (isStartOfWord) {
         const query = textBeforeCursor.substring(lastAtSymbolIndex + 1);
+        
+        // Check if this query already corresponds to a mention we just selected
+        const isAlreadySelected = selectedMentions.some(m => 
+          query === m.name || query === m.name + ' ' || query.startsWith(m.name + ' ')
+        );
+
         // Allow up to 2 spaces in the query to support full name search
-        if (query.split(' ').length <= 3 && !query.includes('\n')) {
+        if (!isAlreadySelected && query.split(' ').length <= 3 && !query.includes('\n')) {
           setMentionSearchQuery(query);
         } else {
           setMentionSearchQuery(null);
@@ -196,21 +204,25 @@ export default function PostById() {
   };
 
   useEffect(() => {
-    const fetchMentions = async () => {
-      if (mentionSearchQuery !== null) {
-        try {
-          const data = await mentionSearch(mentionSearchQuery);
-          setMentionResults(data.results || (Array.isArray(data) ? data : []));
-        } catch (error) {
-          console.error('Mention search error:', error);
-          setMentionResults([]);
-        }
-      } else {
-        setMentionResults([]);
-      }
-    };
+    if (mentionSearchQuery === null) {
+      setMentionResults([]);
+      setIsSearchingMentions(false);
+      return;
+    }
 
-    const timer = setTimeout(fetchMentions, 300);
+    const timer = setTimeout(async () => {
+      setIsSearchingMentions(true);
+      try {
+        const data = await mentionSearch(mentionSearchQuery);
+        setMentionResults(data.results || (Array.isArray(data) ? data : []));
+      } catch (error) {
+        console.error('Mention search error:', error);
+        setMentionResults([]);
+      } finally {
+        setIsSearchingMentions(false);
+      }
+    }, 300);
+
     return () => clearTimeout(timer);
   }, [mentionSearchQuery]);
 
@@ -629,7 +641,13 @@ export default function PostById() {
               <MentionSearchResults
                 results={mentionResults}
                 onSelect={handleMentionSelect}
+                position="bottom"
               />
+              {isSearchingMentions && (
+                <div className="absolute right-4 top-1/2 -translate-y-1/2 z-20">
+                  <Loader2 className="w-4 h-4 animate-spin text-gray-400" />
+                </div>
+              )}
             </div>
 
             <div className="flex items-center justify-between mt-3">

@@ -10,10 +10,7 @@ import ProfileStats from "../components/profile/ProfileStats";
 import { Button } from "@/components/ui/button";
 import {
   Ellipsis,
-  Share,
-  Share2,
   Loader2,
-  LogOut,
   ChevronLeft,
   Users,
   DoorOpenIcon,
@@ -58,7 +55,7 @@ const getConsistentColor = (id: number | string, colors: string[]) => {
   return colors[hash % colors.length];
 };
 
-const getInitials = (firstName?: string, lastName?: string, name?: string, username?: string) => {
+const getInitials = (firstName?: string, _lastName?: string, name?: string, username?: string) => {
   // if (firstName && lastName) {
   //   return `${firstName.charAt(0)}${lastName.charAt(0)}`.toUpperCase();
   // }
@@ -249,9 +246,6 @@ export default function ProfilePage() {
   const {
     data: postsData,
     isLoading: postsLoading,
-    fetchNextPage,
-    hasNextPage,
-    isFetchingNextPage,
   } = useInfiniteQuery({
     queryKey: ['posts', currentUser?.id],
     queryFn: ({ pageParam = 1 }) => getPosts(currentUser?.id || '', '', pageParam),
@@ -404,6 +398,7 @@ export default function ProfilePage() {
     comments: post.comments_count || 0,
     isLiked: post.is_liked || false,
     timestamp: post.created_at,
+    mentions: post.mentions,
     previewDetails: post.preview_details || post.previewDetails ? {
       url: post.preview_details?.url || post.previewDetails?.url,
       title: post.preview_details?.title || post.previewDetails?.title,

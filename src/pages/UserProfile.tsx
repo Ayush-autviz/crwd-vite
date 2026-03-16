@@ -285,6 +285,7 @@ export default function ProfilePage() {
     comments: post.comments_count || 0,
     isLiked: post.is_liked || false,
     timestamp: post.created_at,
+    mentions: post.mentions,
     previewDetails: post.preview_details || post.previewDetails ? {
       url: post.preview_details?.url || post.previewDetails?.url,
       title: post.preview_details?.title || post.previewDetails?.title,

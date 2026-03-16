@@ -4,13 +4,16 @@ interface MentionSearchResultsProps {
     results: any[];
     onSelect: (user: any) => void;
     className?: string;
+    position?: 'top' | 'bottom';
 }
 
-export function MentionSearchResults({ results, onSelect, className }: MentionSearchResultsProps) {
+export function MentionSearchResults({ results, onSelect, className, position = 'top' }: MentionSearchResultsProps) {
     if (!results || results.length === 0) return null;
 
+    const positionClass = position === 'top' ? 'bottom-full mb-2' : 'top-full mt-2';
+
     return (
-        <div className={`absolute bottom-full left-0 right-0 bg-white border border-gray-200 rounded-lg shadow-xl mb-2 max-h-48 overflow-y-auto z-[60] ${className}`}>
+        <div className={`absolute ${positionClass} left-0 right-0 bg-white border border-gray-200 rounded-lg shadow-xl max-h-48 overflow-y-auto z-[60] ${className}`}>
             {results.map((user: any) => (
                 <button
                     key={`${user.type}-${user.id}`}

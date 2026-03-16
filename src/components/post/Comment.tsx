@@ -320,7 +320,7 @@
 
 
 import React, { useState, useEffect, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { MessageCircle, EllipsisIcon, Trash2, Loader2 } from 'lucide-react';
 import { Button } from '../ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
@@ -444,6 +444,7 @@ export const Comment: React.FC<CommentProps> = ({
   }, [showMenu]);
 
   const navigate = useNavigate();
+  const location = useLocation();
 
   const handleReplyClick = () => {
     onReply(id, `@${username} `);
@@ -555,6 +556,7 @@ export const Comment: React.FC<CommentProps> = ({
                           className="text-blue-600 font-medium cursor-pointer hover:underline"
                           onClick={(e) => {
                             e.stopPropagation();
+                            if (location.pathname === `/u/${part.substring(1)}`) return;
                             navigate(`/u/${part.substring(1)}`);
                           }}
                         >
@@ -618,6 +620,7 @@ export const Comment: React.FC<CommentProps> = ({
                         className="text-blue-600 font-medium cursor-pointer hover:underline"
                         onClick={(e) => {
                           e.stopPropagation();
+                          if (location.pathname === path) return;
                           navigate(path);
                         }}
                       >
