@@ -1,4 +1,4 @@
-import { Eye, Plus } from "lucide-react";
+import { Plus } from "lucide-react";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
@@ -20,6 +20,9 @@ interface PreviouslySupportedItem {
 interface PreviouslySupportedCausesProps {
   causes: PreviouslySupportedItem[];
   onAdd: (causeId: number) => void;
+  hasNextPage: boolean;
+  fetchNextPage: () => void;
+  isFetchingNextPage: boolean;
 }
 
 const avatarColors = [
@@ -40,10 +43,16 @@ const getInitials = (name: string) => {
   return name.substring(0, 2).toUpperCase();
 };
 
-export const PreviouslySupportedCauses = ({ causes, onAdd }: PreviouslySupportedCausesProps) => {
+export const PreviouslySupportedCauses = ({ 
+  causes, 
+  onAdd,
+  hasNextPage,
+  fetchNextPage,
+  isFetchingNextPage
+}: PreviouslySupportedCausesProps) => {
   const navigate = useNavigate();
 
-  if (!causes || causes.length === 0) return null;
+  if (!causes || !Array.isArray(causes) || causes.length === 0) return null;
 
   return (
     <div className="mt-6 md:mt-8 mb-4 md:mb-6">
@@ -54,7 +63,9 @@ export const PreviouslySupportedCauses = ({ causes, onAdd }: PreviouslySupported
 
       <div className="space-y-2.5 md:space-y-3">
         {causes.map((item) => {
-          const { cause } = item;
+          const cause = (item as any).cause || item;
+          if (!cause || !cause.id) return null;
+
           const avatarBgColor = getConsistentColor(cause.id, avatarColors);
           const initials = getInitials(cause.name || 'N');
 
@@ -87,19 +98,12 @@ export const PreviouslySupportedCauses = ({ causes, onAdd }: PreviouslySupported
 
               {/* Actions */}
               <div className="flex items-center gap-2 md:gap-3 ml-2 md:ml-4">
-                {/* <button
-                  onClick={() => navigate(`/c/${cause.sort_name}`)}
-                  className="w-8 h-8 md:w-10 md:h-10 flex items-center justify-center rounded-full border border-blue-100 text-gray-400 hover:text-blue-600 hover:bg-blue-50 transition-colors"
-                  aria-label="View cause"
-                >
-                  <Eye className="w-4 h-4 md:w-5 md:h-5" />
-                </button> */}
                 <button
                   onClick={(e) => {
                     e.stopPropagation()
                     onAdd(cause.id)
                   }}
-                  className="bg-pink-100 hover:bg-pink-200 p-2 cursor-pointer text-pink-600 font-bold rounded-full  text-xs md:text-sm"
+                  className="bg-pink-100 hover:bg-pink-200 p-2 cursor-pointer text-pink-600 font-bold rounded-full text-xs md:text-sm"
                 >
                   <Plus className="w-3.5 h-3.5 md:w-4 md:h-4 " strokeWidth={3} />
                 </button>
@@ -108,6 +112,22 @@ export const PreviouslySupportedCauses = ({ causes, onAdd }: PreviouslySupported
           );
         })}
       </div>
+
+      {hasNextPage && (
+        <div className="mt-4 flex justify-center">
+          <Button
+            variant="outline"
+            onClick={(e) => {
+              e.stopPropagation();
+              fetchNextPage();
+            }}
+            disabled={isFetchingNextPage}
+            className="text-xs md:text-sm h-8 md:h-10 px-4"
+          >
+            {isFetchingNextPage ? "Loading..." : "Load More"}
+          </Button>
+        </div>
+      )}
     </div>
   );
 };

@@ -12,6 +12,7 @@ import CommunityPostCard from "@/components/newHome/CommunityPostCard";
 import { NotificationSummary } from "@/components/newHome/CommunityUpdates";
 import ExploreCards from "@/components/newHome/ExploreCards";
 import ProfileNavbar from "@/components/profile/ProfileNavbar";
+import HomeSkeleton from "@/components/newHome/HomeSkeleton";
 import { getCollectives, getCauses, getJoinCollective } from "@/services/api/crwd";
 import { getDonationBox } from "@/services/api/donation";
 import { getUserProfileById, getCommunityUpdatesPosts } from "@/services/api/social";
@@ -77,6 +78,11 @@ export default function NewHome() {
         initialPageParam: 1,
         enabled: !!token?.access_token,
     });
+    
+    // Combined loading states
+    const isInitialLoading = collectivesLoading || 
+                             nonprofitsLoading || 
+                             (!!user?.id && !!token?.access_token && (donationBoxLoading || joinedCollectivesLoading || communityUpdatesLoading));
 
     const allCommunityUpdates = useMemo(() => {
         return communityUpdatesPostsData?.pages.flatMap(page => page.results) || [];
@@ -498,26 +504,14 @@ export default function NewHome() {
                 onLogoClick={handleLogoClick}
             />
             {/* Main Content */}
-            <div className="bg-gradient-to-r from-blue-50 via-purple-50 to-pink-50 px-4 md:px-6 py-2 md:py-6">
+            {isInitialLoading ? (
+                <HomeSkeleton />
+            ) : (
+                <>
+                <div className="bg-gradient-to-r from-blue-50 via-purple-50 to-pink-50 px-4 md:px-6 py-2 md:py-6">
                 {/* My Donation Box Card or Prompt */}
                 {token?.access_token && (
-                    donationBoxLoading ? (
-                        <div className="w-full max-w-md mx-auto mt-2 md:mt-6">
-                            <div className="bg-white rounded-xl border border-gray-200 p-3 md:p-6 shadow-sm animate-pulse">
-                                <div className="flex items-center gap-2.5 md:gap-4">
-                                    <div className="w-10 h-10 md:w-16 md:h-16 bg-gray-200 rounded-lg"></div>
-                                    <div className="flex-1 space-y-2">
-                                        <div className="h-3.5 bg-gray-200 rounded w-3/4"></div>
-                                        <div className="h-2.5 bg-gray-200 rounded w-1/2"></div>
-                                    </div>
-                                </div>
-                                <div className="mt-3 md:mt-6 space-y-1.5">
-                                    <div className="h-2.5 bg-gray-200 rounded"></div>
-                                    <div className="h-2.5 bg-gray-200 rounded w-5/6"></div>
-                                </div>
-                            </div>
-                        </div>
-                    ) : donationBoxInfo ? (
+                    donationBoxInfo ? (
                         <>
                             <HelloGreeting />
                             <MyDonationBoxCard
@@ -539,21 +533,7 @@ export default function NewHome() {
 
                 {/* Collective Carousel Card - Show joined collectives or Create Collective Card */}
                 {token?.access_token && (
-                    joinedCollectivesLoading ? (
-                        <div className="w-full mt-2 md:mt-6">
-                            <div className="bg-white rounded-xl border border-gray-200 p-3 md:p-6 shadow-none animate-pulse">
-                                <div className="space-y-3">
-                                    <div className="h-5 bg-gray-200 rounded w-1/3"></div>
-                                    <div className="h-24 md:h-40 bg-gray-200 rounded-lg"></div>
-                                    <div className="flex gap-2 justify-center">
-                                        <div className="w-2 h-2 bg-gray-200 rounded-full"></div>
-                                        <div className="w-2 h-2 bg-gray-300 rounded-full"></div>
-                                        <div className="w-2 h-2 bg-gray-200 rounded-full"></div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    ) : transformedAttributingCollectives.length > 0 ? (
+                    transformedAttributingCollectives.length > 0 ? (
                         <CollectiveCarouselCard collectives={transformedAttributingCollectives} />
                     ) : (
                         <CreateCollectiveCard />
@@ -578,49 +558,16 @@ export default function NewHome() {
                                 </div>
                             )}
                             <div className="space-y-2.5 md:space-y-4">
-                                {communityUpdatesLoading && (
-                                    <div className="bg-white rounded-lg border border-gray-200 p-2.5 md:p-4 animate-pulse">
-                                        <div className="flex items-start gap-2 md:gap-4">
-                                            <div className="w-8 h-8 md:w-12 md:h-12 bg-gray-200 rounded-full flex-shrink-0"></div>
-                                            <div className="flex-1 space-y-2">
-                                                <div className="h-4 bg-gray-200 rounded w-3/4"></div>
-                                                <div className="h-3 bg-gray-200 rounded w-full"></div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                )}
                                 {feedPart1.map(renderFeedItem)}
                             </div>
                         </div>
                     )}
 
                     {/* Featured Nonprofits Section */}
-                    {nonprofitsLoading ? (
-                        <div className="py-4 md:py-6">
-                            {/* ... loading skeleton ... */}
-                            <div className="flex items-center justify-between mb-4 md:mb-6">
-                                <div className="h-6 bg-gray-200 rounded w-1/3 animate-pulse"></div>
-                                <div className="h-8 bg-gray-200 rounded-full w-20 animate-pulse"></div>
-                            </div>
-                            <div className="overflow-x-auto pb-2 -mx-4 px-4 md:mx-0 md:px-0">
-                                <div className="flex gap-3 md:gap-4 w-max">
-                                    {[1, 2, 3].map((i) => (
-                                        <div key={i} className="flex items-start gap-3 p-4 rounded-lg border border-gray-200 bg-white min-w-[240px] md:min-w-[280px] animate-pulse">
-                                            <div className="w-12 h-12 bg-gray-200 rounded-lg flex-shrink-0"></div>
-                                            <div className="flex-1 space-y-2">
-                                                <div className="h-4 bg-gray-200 rounded w-3/4"></div>
-                                            </div>
-                                        </div>
-                                    ))}
-                                </div>
-                            </div>
-                        </div>
-                    ) : (
-                        <NewFeaturedNonprofits
-                            nonprofits={filteredFeaturedNonprofits}
-                            seeAllLink="/search"
-                        />
-                    )}
+                    <NewFeaturedNonprofits
+                        nonprofits={filteredFeaturedNonprofits}
+                        seeAllLink="/search"
+                    />
 
                     {/* Feed Part 2 - 2 Items */}
                     {token?.access_token && (
@@ -632,28 +579,10 @@ export default function NewHome() {
                     )}
 
                     {/* Suggested Collectives Section */}
-                    {collectivesLoading ? (
-                        <div className="py-4 md:py-6">
-                            {/* ... loading skeleton ... */}
-                            <div className="flex items-center justify-between mb-4 md:mb-6">
-                                <div className="h-6 bg-gray-200 rounded w-1/3 animate-pulse"></div>
-                            </div>
-                            <div className="overflow-x-auto pb-2 -mx-4 px-4 md:mx-0 md:px-0">
-                                <div className="flex gap-3 md:gap-4 w-max">
-                                    {[1, 2, 3].map((i) => (
-                                        <div key={i} className="flex flex-col gap-3 p-4 rounded-lg bg-gray-50 min-w-[240px] md:min-w-[280px] animate-pulse">
-                                            <div className="w-12 h-12 bg-gray-200 rounded-lg"></div>
-                                        </div>
-                                    ))}
-                                </div>
-                            </div>
-                        </div>
-                    ) : (
-                        <NewSuggestedCollectives
-                            collectives={filteredSuggestedCollectives}
-                            seeAllLink="/circles"
-                        />
-                    )}
+                    <NewSuggestedCollectives
+                        collectives={filteredSuggestedCollectives}
+                        seeAllLink="/circles"
+                    />
 
                     {/* Feed Part 3 - Rest of Items */}
                     {token?.access_token && (
@@ -738,6 +667,8 @@ export default function NewHome() {
                 </div>
             )}
 
+                </>
+            )}
         </div>
     );
 }

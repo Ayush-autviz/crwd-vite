@@ -1,5 +1,5 @@
 import { Settings, X, ChevronDown, ChevronUp, Trash2, Pencil, Plus, Minus, Loader2, CreditCard } from "lucide-react";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 
 import { Button } from "@/components/ui/button";
 import { Link, useNavigate, useLocation } from "react-router-dom";
@@ -7,9 +7,9 @@ import ManageDonationBox from "./ManageDonationBox";
 import { CROWDS, RECENTS, SUGGESTED } from "@/constants";
 import ReactConfetti from "react-confetti";
 import { getCollectiveById } from "@/services/api/crwd";
-import { useQueryClient, useQuery, useMutation } from "@tanstack/react-query";
+import { useQueryClient, useQuery, useMutation, useInfiniteQuery } from "@tanstack/react-query";
 import { useAuthStore } from "@/stores/store";
-import { getDonationHistory, removeCauseFromBox, updateDonationBox, cancelDonationBox, addCausesToBox } from "@/services/api/donation";
+import { getDonationHistory, removeCauseFromBox, updateDonationBox, cancelDonationBox, addCausesToBox, getPreviouslySupportedCauses } from "@/services/api/donation";
 import { PreviouslySupportedCauses } from "./donation/PreviouslySupportedCauses";
 import RequestNonprofitModal from "@/components/newsearch/RequestNonprofitModal";
 import EditDonationSplitBottomSheet from "@/components/donation/EditDonationSplitBottomSheet";
@@ -105,10 +105,34 @@ export const Checkout = ({
     enabled: !!currentUser?.id,
   });
 
-  // Calculate lifetime amount from donation history
   const lifetimeAmount = donationHistoryData?.results?.reduce((sum: number, transaction: any) => {
     return sum + parseFloat(transaction.gross_amount || '0');
   }, 0) || 0;
+
+  // Fetch previously supported causes
+  const {
+      data: previouslySupportedInfiniteData,
+      fetchNextPage: fetchNextPreviouslySupported,
+      hasNextPage: hasMorePreviouslySupported,
+      isFetchingNextPage: isFetchingMorePreviouslySupported,
+  } = useInfiniteQuery({
+      queryKey: ['previouslySupportedCauses'],
+      queryFn: ({ pageParam = 1 }) => getPreviouslySupportedCauses(pageParam as number),
+      getNextPageParam: (lastPage: any) => {
+          if (lastPage.next) {
+              const url = new URL(lastPage.next);
+              const page = url.searchParams.get('page');
+              return page ? parseInt(page) : undefined;
+          }
+          return undefined;
+      },
+      initialPageParam: 1,
+      enabled: !!currentUser?.id,
+  });
+
+  const displayPreviouslySupported = useMemo(() => {
+      return previouslySupportedInfiniteData?.pages.flatMap((page: any) => page.results) || [];
+  }, [previouslySupportedInfiniteData]);
 
   // Calculate fees and capacity using the provided formula
   // For donations < $10.00: Flat fee of $1.00
@@ -314,6 +338,7 @@ export const Checkout = ({
     onSuccess: () => {
       console.log('Cause removed successfully');
       queryClient.invalidateQueries({ queryKey: ['donationBox', currentUser?.id] });
+      queryClient.invalidateQueries({ queryKey: ['previouslySupportedCauses'] });
       setShowRemoveModal(false);
       setCauseToRemove(null);
     },
@@ -339,6 +364,7 @@ export const Checkout = ({
     onSuccess: () => {
       // toast.success("Cause added back to your donation box!");
       queryClient.invalidateQueries({ queryKey: ['donationBox', currentUser?.id] });
+      queryClient.invalidateQueries({ queryKey: ['previouslySupportedCauses'] });
     },
     onError: (error: any) => {
       console.error('Error adding cause:', error);
@@ -986,8 +1012,11 @@ export const Checkout = ({
 
           {/* Previously Supported Section */}
           <PreviouslySupportedCauses
-            causes={previouslySupportedCauses}
+            causes={displayPreviouslySupported}
             onAdd={(causeId) => addCauseMutation.mutate(causeId)}
+            hasNextPage={hasMorePreviouslySupported}
+            fetchNextPage={fetchNextPreviouslySupported}
+            isFetchingNextPage={isFetchingMorePreviouslySupported}
           />
 
           {/* Can't see your nonprofit? Section */}

@@ -250,11 +250,11 @@ export default function SettingsHelp() {
               </div>
               <div>
                 <h4 className="font-semibold text-xs md:text-sm text-gray-900">Email Support</h4>
-                <p className="text-xs md:text-sm text-gray-600">support@crwd.app</p>
+                <p className="text-xs md:text-sm text-gray-600">info@crwdfund.org</p>
               </div>
             </a>
 
-            <a
+            {/* <a
               href="tel:+1-555-0123"
               className="flex items-center gap-2.5 md:gap-3 p-3 md:p-4 border border-gray-200 rounded-lg hover:border-blue-300 hover:bg-blue-50 transition-colors group"
             >
@@ -265,7 +265,7 @@ export default function SettingsHelp() {
                 <h4 className="font-semibold text-xs md:text-sm text-gray-900">Phone Support</h4>
                 <p className="text-xs md:text-sm text-gray-600">Mon-Fri, 9am-6pm EST</p>
               </div>
-            </a>
+            </a> */}
           </div>
 
           <div className="mt-4 md:mt-6 p-3 md:p-4 bg-blue-50 rounded-lg">

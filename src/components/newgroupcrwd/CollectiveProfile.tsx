@@ -35,13 +35,21 @@ export default function CollectiveProfile({
   const descriptionRef = useRef<HTMLParagraphElement>(null);
 
   useEffect(() => {
-    if (descriptionRef.current) {
-      // Check if text overflows 3 lines
-      if (descriptionRef.current.scrollHeight > descriptionRef.current.clientHeight) {
-        setCanExpand(true);
+    const element = descriptionRef.current;
+    if (!element) return;
+
+    const checkOverflow = () => {
+      if (!isExpanded) {
+        const isOverflowing = element.scrollHeight > element.clientHeight;
+        setCanExpand(isOverflowing);
       }
-    }
-  }, [description]);
+    };
+
+    checkOverflow();
+    const observer = new ResizeObserver(checkOverflow);
+    observer.observe(element);
+    return () => observer.disconnect();
+  }, [description, isExpanded]);
 
   const founderName = founder
     ? `${founder.first_name || ''} ${founder.last_name || ''}`.trim() || founder.username

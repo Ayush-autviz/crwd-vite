@@ -79,9 +79,30 @@ export default function CommunityPostCard({ post, onCommentPress, showSimplified
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
+  const [isExpanded, setIsExpanded] = useState(false);
+  const [showToggle, setShowToggle] = useState(false);
+  const contentRef = useRef<HTMLDivElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);
   const postMenuRef = useRef<HTMLDivElement>(null);
   const currentUser = useAuthStore((state) => state.user);
+
+  useEffect(() => {
+    const element = contentRef.current;
+    if (!element || !isHomeFeed) return;
+
+    const checkOverflow = () => {
+      if (!isExpanded) {
+        const isOverflowing = element.scrollHeight > element.clientHeight;
+        setShowToggle(isOverflowing);
+      }
+    };
+
+    checkOverflow();
+    const observer = new ResizeObserver(checkOverflow);
+    observer.observe(element);
+    return () => observer.disconnect();
+  }, [post.content, isHomeFeed, isExpanded]);
+
   console.log("post.collective", post.collective);
 
   const likeMutation = useMutation({
@@ -548,8 +569,28 @@ export default function CommunityPostCard({ post, onCommentPress, showSimplified
             <>
               {/* Post Content */}
               {post.content && (
-                <div className="text-xs xs:text-base text-gray-900 leading-relaxed mb-2 md:mb-4 whitespace-pre-line">
-                  {renderContentWithMentions(post.content, post.mentions)}
+                <div className="mb-2 md:mb-4">
+                  <div
+                    ref={contentRef}
+                    className={cn(
+                      "text-xs xs:text-base text-gray-900 leading-relaxed whitespace-pre-line",
+                      isHomeFeed && !isExpanded && "line-clamp-3 overflow-hidden"
+                    )}
+                  >
+                    {renderContentWithMentions(post.content, post.mentions)}
+                  </div>
+                  {isHomeFeed && (showToggle || isExpanded) && (
+                    <button
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        setIsExpanded(!isExpanded);
+                      }}
+                      className="text-[#1600ff] text-sm font-medium mt-1 hover:underline"
+                    >
+                      {isExpanded ? "Less" : "Read More"}
+                    </button>
+                  )}
                 </div>
               )}
 
@@ -644,8 +685,28 @@ export default function CommunityPostCard({ post, onCommentPress, showSimplified
             </>
           ) : (
             <>
-              <div className="text-xs xs:text-base text-gray-900 leading-relaxed mb-2 md:mb-4 whitespace-pre-line">
-                {renderContentWithMentions(post.content || "", post.mentions)}
+              <div className="mb-2 md:mb-4">
+                <div
+                  ref={contentRef}
+                  className={cn(
+                    "text-xs xs:text-base text-gray-900 leading-relaxed whitespace-pre-line",
+                    isHomeFeed && !isExpanded && "line-clamp-3 overflow-hidden"
+                  )}
+                >
+                  {renderContentWithMentions(post.content || "", post.mentions)}
+                </div>
+                {isHomeFeed && (showToggle || isExpanded) && (
+                  <button
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      setIsExpanded(!isExpanded);
+                    }}
+                    className="text-[#1600ff] text-sm font-medium mt-1 hover:underline"
+                  >
+                    {isExpanded ? "Less" : "Read More"}
+                  </button>
+                )}
               </div>
 
               {/* Show preview card if previewDetails exists, otherwise show image */}

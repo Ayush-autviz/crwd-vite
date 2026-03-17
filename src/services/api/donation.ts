@@ -126,3 +126,8 @@ export const updatePaymentMethod = async (data: any) => {
     const response = await axiosClient.post('/donations/payment-methods/portal-session/', data);
     return response.data;
 };
+export const getPreviouslySupportedCauses = async (page: number = 1) => {
+    const pageParam = page ? `?page=${page}` : '';
+    const response = await axiosClient.get(`/donations/previously-supported-causes/${pageParam}`);
+    return response.data;
+};

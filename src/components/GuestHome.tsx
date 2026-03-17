@@ -271,7 +271,7 @@ export default function GuestHome() {
             <LearnAndGetInspired />
 
             {/* Community Testimonials Section */}
-            <CommunityTestimonials />
+            {/* <CommunityTestimonials /> */}
 
             {/* Start Making a Difference Section */}
             <StartMakingDifference />
