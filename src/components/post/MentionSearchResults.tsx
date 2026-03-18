@@ -34,8 +34,8 @@ export function MentionSearchResults({ results, onSelect, className, position = 
                         <span className="text-sm font-semibold truncate">{user.name}</span>
                         <div className="flex items-center gap-2">
                             {/* <span className="text-[10px] text-gray-400 capitalize">{user.type}</span> */}
-                            {user.username && (
-                                <span className="text-[10px] text-gray-400">@{user.username}</span>
+                            {user.type && (
+                                <span className="text-xs text-gray-400">{user.type}</span>
                             )}
                         </div>
                     </div>

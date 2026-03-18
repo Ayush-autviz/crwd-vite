@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef } from 'react';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { truncateAtFirstPeriod } from '@/lib/utils';
 import { useNavigate } from 'react-router-dom';
@@ -31,25 +31,14 @@ export default function CollectiveProfile({
 }: CollectiveProfileProps) {
   const navigate = useNavigate();
   const [isExpanded, setIsExpanded] = useState(false);
-  const [canExpand, setCanExpand] = useState(false);
   const descriptionRef = useRef<HTMLParagraphElement>(null);
 
-  useEffect(() => {
-    const element = descriptionRef.current;
-    if (!element) return;
+  const wordLimit = 30;
+  const words = (description || '').split(/\s+/);
+  const isOverLimit = words.length > wordLimit;
 
-    const checkOverflow = () => {
-      if (!isExpanded) {
-        const isOverflowing = element.scrollHeight > element.clientHeight;
-        setCanExpand(isOverflowing);
-      }
-    };
-
-    checkOverflow();
-    const observer = new ResizeObserver(checkOverflow);
-    observer.observe(element);
-    return () => observer.disconnect();
-  }, [description, isExpanded]);
+  // We can still use shouldTruncate but based on word count
+  const canExpand = isOverLimit;
 
   const founderName = founder
     ? `${founder.first_name || ''} ${founder.last_name || ''}`.trim() || founder.username
@@ -133,18 +122,38 @@ export default function CollectiveProfile({
         <div className="mt-4 md:mt-5">
           <p
             ref={descriptionRef}
-            className={`text-foreground text-base xs:text-lg md:text-xl leading-relaxed ${!isExpanded ? 'line-clamp-3' : ''}`}
+            className="text-foreground text-base xs:text-lg md:text-xl leading-relaxed whitespace-pre-line"
           >
-            {description || ''}
+            {(() => {
+              if (isExpanded || !canExpand) {
+                return (
+                  <>
+                    {description || ''}
+                    {isExpanded && canExpand && (
+                      <span
+                        onClick={() => setIsExpanded(false)}
+                        className="text-[#4B5563] hover:underline font-bold text-sm xs:text-base ml-1 cursor-pointer select-none"
+                      >
+                         Read Less
+                      </span>
+                    )}
+                  </>
+                );
+              }
+              
+              return (
+                <>
+                  {words.slice(0, wordLimit).join(' ')}
+                  <span
+                    onClick={() => setIsExpanded(true)}
+                    className="text-[#4B5563] hover:underline font-bold text-sm xs:text-base ml-1 cursor-pointer select-none"
+                  >
+                    ... more
+                  </span>
+                </>
+              );
+            })()}
           </p>
-          {canExpand && (
-            <button
-              onClick={() => setIsExpanded(!isExpanded)}
-              className="text-[#1600ff] hover:underline font-medium text-sm xs:text-base mt-2"
-            >
-              {isExpanded ? 'Read Less' : 'Read More'}
-            </button>
-          )}
         </div>
       )}
     </div>

@@ -1,5 +1,5 @@
 import { Button } from "../ui/button";
-import { ChevronLeft, Bell, Settings, Search, Users, Mail, LogOut, ArrowRight } from "lucide-react";
+import { ChevronLeft, Bell, Settings, Search, Users, Mail, LogOut, ArrowRight, File } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuthStore } from "@/stores/store";
@@ -243,6 +243,18 @@ export default function ProfileNavbar({
                         </div>
                       </div>
 
+                      <div className="mx-4 sm:px-2 pt-3 pb-2 sm:pt-4 space-y-1 border-b border-gray-200">
+                        <p className="font-bold text-gray-700 text-xs xs:text-sm sm:text-base">CREATE</p>
+                        <Link
+                          to="/create-post"
+                          onClick={handleClose}
+                          className="flex items-center gap-2 px-2  sm:gap-3 py-2.5 sm:py-3 rounded-lg hover:bg-gray-100 transition-colors"
+                        >
+                          <File className="h-4 w-4 sm:h-5 sm:w-5 text-gray-700" />
+                          <span className="text-gray-900 font-medium text-sm xs:text-base sm:text-lg">New Post</span>
+                        </Link>
+                      </div>
+
                       {/* Menu Items */}
                       <div className="px-4 sm:px-6 py-3 sm:py-4 space-y-1">
                         <Link
@@ -407,6 +419,18 @@ export default function ProfileNavbar({
                             </Link>
                           </div>
                         </div>
+                      </div>
+
+                      <div className="mx-4 sm:px-2 pt-3 pb-2 sm:pt-4 space-y-1 border-b border-gray-200">
+                        <p className="font-bold text-gray-700 text-xs xs:text-sm sm:text-base">CREATE</p>
+                        <Link
+                          to="/create-post"
+                          onClick={handleClose}
+                          className="flex items-center gap-2 px-2  sm:gap-3 py-2.5 sm:py-3 rounded-lg hover:bg-gray-100 transition-colors"
+                        >
+                          <File className="h-4 w-4 sm:h-5 sm:w-5 text-gray-700" />
+                          <span className="text-gray-900 font-medium text-sm xs:text-base sm:text-lg">New Post</span>
+                        </Link>
                       </div>
 
                       {/* Menu Items */}

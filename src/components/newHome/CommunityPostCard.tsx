@@ -80,30 +80,18 @@ export default function CommunityPostCard({ post, onCommentPress, showSimplified
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
   const [isExpanded, setIsExpanded] = useState(false);
-  const [showToggle, setShowToggle] = useState(false);
   const contentRef = useRef<HTMLDivElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);
   const postMenuRef = useRef<HTMLDivElement>(null);
   const currentUser = useAuthStore((state) => state.user);
 
-  useEffect(() => {
-    const element = contentRef.current;
-    if (!element || !isHomeFeed) return;
-
-    const checkOverflow = () => {
-      if (!isExpanded) {
-        const isOverflowing = element.scrollHeight > element.clientHeight;
-        setShowToggle(isOverflowing);
-      }
-    };
-
-    checkOverflow();
-    const observer = new ResizeObserver(checkOverflow);
-    observer.observe(element);
-    return () => observer.disconnect();
-  }, [post.content, isHomeFeed, isExpanded]);
 
   console.log("post.collective", post.collective);
+
+  const wordLimit = 25;
+  const words = (post.content || '').split(/\s+/);
+  const isOverLimit = words.length > wordLimit;
+  const canExpand = isHomeFeed && isOverLimit;
 
   const likeMutation = useMutation({
     mutationFn: () => likePost(post.id.toString()),
@@ -164,8 +152,16 @@ export default function CommunityPostCard({ post, onCommentPress, showSimplified
     },
   });
 
-  const renderContentWithMentions = (content: string, mentions: any[] = []) => {
+  const renderContentWithMentions = (content: string, mentions: any[] = [], wordLimit?: number) => {
     if (!content) return null;
+    let displayContent = content;
+
+    if (wordLimit) {
+      const words = content.split(/\s+/);
+      if (words.length > wordLimit) {
+        displayContent = words.slice(0, wordLimit).join(' ');
+      }
+    }
     if (!mentions || mentions.length === 0) {
       return content.split(/(@\w+)/g).map((part, index) => {
         if (part.startsWith('@')) {
@@ -215,7 +211,7 @@ export default function CommunityPostCard({ post, onCommentPress, showSimplified
 
     const regex = new RegExp(triggerPattern, 'gi');
 
-    return content.split(regex).map((part, index) => {
+    return displayContent.split(regex).map((part, index) => {
       const partLower = part.toLowerCase();
       const mention = mentionMap[partLower];
 
@@ -572,25 +568,40 @@ export default function CommunityPostCard({ post, onCommentPress, showSimplified
                 <div className="mb-2 md:mb-4">
                   <div
                     ref={contentRef}
-                    className={cn(
-                      "text-xs xs:text-base text-gray-900 leading-relaxed whitespace-pre-line",
-                      isHomeFeed && !isExpanded && "line-clamp-3 overflow-hidden"
-                    )}
+                    className="text-xs xs:text-base text-gray-900 leading-relaxed whitespace-pre-line"
                   >
-                    {renderContentWithMentions(post.content, post.mentions)}
+                    {!isExpanded && canExpand ? (
+                      <>
+                        {renderContentWithMentions(post.content, post.mentions, wordLimit)}
+                        <span
+                          onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            setIsExpanded(true);
+                          }}
+                          className="text-[#4B5563] font-bold ml-1 hover:underline cursor-pointer select-none"
+                        >
+                          ... more
+                        </span>
+                      </>
+                    ) : (
+                      <>
+                        {renderContentWithMentions(post.content, post.mentions)}
+                        {isExpanded && canExpand && (
+                          <span
+                            onClick={(e) => {
+                              e.preventDefault();
+                              e.stopPropagation();
+                              setIsExpanded(false);
+                            }}
+                            className="text-[#4B5563] font-bold ml-1 hover:underline cursor-pointer select-none"
+                          >
+                            Read Less
+                          </span>
+                        )}
+                      </>
+                    )}
                   </div>
-                  {isHomeFeed && (showToggle || isExpanded) && (
-                    <button
-                      onClick={(e) => {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        setIsExpanded(!isExpanded);
-                      }}
-                      className="text-[#1600ff] text-sm font-medium mt-1 hover:underline"
-                    >
-                      {isExpanded ? "Less" : "Read More"}
-                    </button>
-                  )}
                 </div>
               )}
 
@@ -688,25 +699,40 @@ export default function CommunityPostCard({ post, onCommentPress, showSimplified
               <div className="mb-2 md:mb-4">
                 <div
                   ref={contentRef}
-                  className={cn(
-                    "text-xs xs:text-base text-gray-900 leading-relaxed whitespace-pre-line",
-                    isHomeFeed && !isExpanded && "line-clamp-3 overflow-hidden"
-                  )}
+                  className="text-xs xs:text-base text-gray-900 leading-relaxed whitespace-pre-line"
                 >
-                  {renderContentWithMentions(post.content || "", post.mentions)}
+                  {!isExpanded && canExpand ? (
+                    <>
+                      {renderContentWithMentions(post.content || "", post.mentions, wordLimit)}
+                      <span
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          setIsExpanded(true);
+                        }}
+                        className="text-[#4B5563] font-bold ml-1 hover:underline cursor-pointer select-none"
+                      >
+                        ... more
+                      </span>
+                    </>
+                  ) : (
+                    <>
+                      {renderContentWithMentions(post.content || "", post.mentions)}
+                      {isExpanded && canExpand && (
+                        <span
+                          onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            setIsExpanded(false);
+                          }}
+                          className="text-[#4B5563] font-bold ml-1 hover:underline cursor-pointer select-none"
+                        >
+                          Read Less
+                        </span>
+                      )}
+                    </>
+                  )}
                 </div>
-                {isHomeFeed && (showToggle || isExpanded) && (
-                  <button
-                    onClick={(e) => {
-                      e.preventDefault();
-                      e.stopPropagation();
-                      setIsExpanded(!isExpanded);
-                    }}
-                    className="text-[#1600ff] text-sm font-medium mt-1 hover:underline"
-                  >
-                    {isExpanded ? "Less" : "Read More"}
-                  </button>
-                )}
               </div>
 
               {/* Show preview card if previewDetails exists, otherwise show image */}

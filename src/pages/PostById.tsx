@@ -76,7 +76,7 @@ export default function PostById() {
     username: postData.user?.username,
     color: postData.user?.color,
     time: postData.created_at ? formatDistanceToNow(new Date(postData.created_at), { addSuffix: true }) : '',
-    org: postData.collective?.name || 'Unknown Collective',
+    org: postData.collective?.name || 'Feed',
     orgUrl: postData.collective?.id, // Collective ID for navigation
     text: postData.content || '',
     imageUrl: postData.media || undefined,
@@ -183,9 +183,9 @@ export default function PostById() {
 
       if (isStartOfWord) {
         const query = textBeforeCursor.substring(lastAtSymbolIndex + 1);
-        
+
         // Check if this query already corresponds to a mention we just selected
-        const isAlreadySelected = selectedMentions.some(m => 
+        const isAlreadySelected = selectedMentions.some(m =>
           query === m.name || query === m.name + ' ' || query.startsWith(m.name + ' ')
         );
 
