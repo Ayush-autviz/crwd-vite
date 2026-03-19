@@ -268,7 +268,7 @@ export default function GuestHome() {
             <PopularCollectives />
 
             {/* Learn & Get Inspired Section */}
-            <LearnAndGetInspired />
+            {/* <LearnAndGetInspired /> */}
 
             {/* Community Testimonials Section */}
             {/* <CommunityTestimonials /> */}
@@ -381,7 +381,7 @@ export default function GuestHome() {
                         <div className="border-t border-gray-100 mx-4 sm:mx-6"></div>
 
                         {/* Learn More */}
-                        <div className="px-4 sm:px-6 py-3 sm:py-4">
+                        {/* <div className="px-4 sm:px-6 py-3 sm:py-4">
                             <button
                                 onClick={() => {
                                     navigate("/waitlist");
@@ -392,7 +392,7 @@ export default function GuestHome() {
                                 <Settings className="h-4 w-4 sm:h-5 sm:w-5 text-[#1600ff]" />
                                 <span className="text-sm sm:text-base">Learn More</span>
                             </button>
-                        </div>
+                        </div> */}
                     </div>
                 </div>
             )}

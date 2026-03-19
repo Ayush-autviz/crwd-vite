@@ -464,7 +464,7 @@ export default function NewSettings() {
     },
     {
       question: "Can I cancel a recurring donation?",
-      answer: "Yes, you can cancel or modify your recurring donations at any time from the Payment & Receipts section in your settings."
+      answer: "Yes — you can cancel your recurring donation from your Donation Box. Go to your profile, open your Donation Box, and remove the nonprofit you'd like to stop supporting."
     }
   ]
 
@@ -630,7 +630,7 @@ export default function NewSettings() {
                   onFocus={() => setFocusedField('bio')}
                   onBlur={() => setFocusedField(null)}
                   disabled={!isEditMode}
-                  placeholder={focusedField === 'bio' ? '' : "Say something about yourself."}
+                  placeholder={focusedField === 'bio' ? '' : "Tell us about you"}
                   className={`bg-gray-100 border-0 min-h-[80px] md:min-h-[100px] text-sm xs:text-base md:text-lg ${isEditMode ? 'text-black' : ''}`}
                   rows={4}
                 />

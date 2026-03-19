@@ -91,7 +91,7 @@ export default function PostResultCard({ post }: PostResultCardProps) {
   const deletePostMutation = useMutation({
     mutationFn: () => deletePost(post.id.toString()),
     onSuccess: () => {
-      setToastMessage("Post deleted successfully");
+      // setToastMessage("Post deleted successfully");
       setShowToast(true);
       queryClient.invalidateQueries({ queryKey: ['posts'] });
       queryClient.invalidateQueries({ queryKey: ['search'] });

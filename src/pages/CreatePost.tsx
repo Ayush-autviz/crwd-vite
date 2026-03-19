@@ -1,19 +1,18 @@
 "use client";
 
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useNavigate, useLocation } from "react-router-dom";
-import { ImageIcon, X, Loader2, ArrowLeft, Globe, ChevronDown, Check, Link2, Calendar, Heart } from "lucide-react";
+import { ImageIcon, X, Loader2, ArrowLeft, Globe, ChevronDown, Check, Link2, Heart } from "lucide-react";
 import { Toast } from "@/components/ui/toast";
 import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
-import { createPost, getLinkPreview } from "@/services/api/social";
+import { createPost, getLinkPreview, mentionSearch } from "@/services/api/social";
 import { getJoinCollective } from "@/services/api/crwd";
 import { useAuthStore } from "@/stores/store";
 import { DiscardSheet } from "@/components/ui/DiscardSheet";
 import { useUnsavedChanges } from "@/hooks/use-unsaved-changes";
-import { useMemo } from "react";
-import { mentionSearch } from "@/services/api/social";
+
 import { MentionSearchResults } from "@/components/post/MentionSearchResults";
 import {
   DropdownMenu,
@@ -489,7 +488,7 @@ export default function CreatePostPage() {
         <div className="mb-6">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <button 
+              <button
                 disabled={isFromSpecificCollective}
                 className={`w-full flex items-center justify-between px-3 py-2.5 bg-[#f0f7ff] border border-[#cce3ff] rounded-xl text-[#0066ff] transition-all group ${isFromSpecificCollective ? 'cursor-not-allowed opacity-80' : 'hover:bg-[#e6f2ff]'}`}
               >
@@ -539,7 +538,7 @@ export default function CreatePostPage() {
                   </div>
                   {!selectedCollective && <Check className="w-5 h-5 text-blue-600" />}
                 </DropdownMenuItem>
-                
+
                 <div className="px-3 py-3 text-[10px] font-bold text-gray-400 uppercase tracking-widest">
                   YOUR COLLECTIVES
                 </div>
@@ -586,7 +585,7 @@ export default function CreatePostPage() {
           <div className="rounded-xl p-4 bg-gray-50 border border-gray-200 focus-within:border-blue-400 transition-all relative min-h-[240px]">
             {/* Mirror Div for styling mentions */}
             <div
-              className="absolute inset-x-4 inset-y-4 text-[16px] whitespace-pre-wrap break-words pointer-events-none text-transparent border-none"
+              className="absolute inset-x-4 inset-y-4 text-[16px] whitespace-pre-wrap break-words pointer-events-none text-gray-900 border-none"
               style={{ font: 'inherit', lineHeight: '1.6' }}
             >
               {renderHighlightedText(form.content)}
@@ -598,7 +597,7 @@ export default function CreatePostPage() {
               value={form.content}
               onChange={handleInputChange}
               placeholder="What's on your mind? Share your thoughts, updates, or stories about the impact you're making..."
-              className="w-full min-h-[200px] p-0 border-0 bg-transparent text-[16px] focus:outline-none resize-none placeholder:text-gray-500 relative z-10 text-gray-900 caret-blue-600"
+              className="w-full min-h-[200px] p-0 border-0 bg-transparent text-[16px] focus:outline-none resize-none placeholder:text-gray-500 relative z-10 text-transparent caret-blue-600"
               style={{ lineHeight: '1.6' }}
               maxLength={maxCharacters}
             />
@@ -815,7 +814,6 @@ export default function CreatePostPage() {
         onHide={() => setShowToast(false)}
         duration={2000}
       />
-
       <DiscardSheet
         isOpen={showDiscardSheet}
         onClose={() => setShowDiscardSheet(false)}

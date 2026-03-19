@@ -113,8 +113,8 @@ export default function ProfileActivityCard({
     onSuccess: () => {
       setIsLiked(true);
       setLikesCount(prev => prev + 1);
-      setToastMessage("Post liked!");
-      setShowToast(true);
+      // setToastMessage("Post liked!");
+      // setShowToast(true);
       queryClient.invalidateQueries({ queryKey: ['posts'] });
     },
     onError: (error) => {
@@ -129,8 +129,8 @@ export default function ProfileActivityCard({
     onSuccess: () => {
       setIsLiked(false);
       setLikesCount(prev => Math.max(0, prev - 1));
-      setToastMessage("Post unliked!");
-      setShowToast(true);
+      // setToastMessage("Post unliked!");
+      // setShowToast(true);
       queryClient.invalidateQueries({ queryKey: ['posts'] });
     },
     onError: (error) => {
@@ -231,8 +231,8 @@ export default function ProfileActivityCard({
   const deletePostMutation = useMutation({
     mutationFn: () => deletePost(post.id.toString()),
     onSuccess: () => {
-      setToastMessage("Post deleted successfully!");
-      setShowToast(true);
+      // setToastMessage("Post deleted successfully!");
+      // setShowToast(true);
       setShowDeleteConfirm(false);
       setShowMenu(false);
       // Invalidate posts queries to refresh the list

@@ -124,7 +124,7 @@ export default function CommunityPostCard({ post, onCommentPress, showSimplified
   const endFundraiserMutation = useMutation({
     mutationFn: (fundraiserId: number) => patchFundraiser(fundraiserId.toString(), { is_active: false }),
     onSuccess: () => {
-      setToastMessage('Fundraiser ended successfully');
+      // setToastMessage('Fundraiser ended successfully');
       setShowToast(true);
       queryClient.invalidateQueries({ queryKey: ['posts'] });
       queryClient.invalidateQueries({ queryKey: ['fundraiser', post.fundraiser?.id] });
@@ -141,7 +141,7 @@ export default function CommunityPostCard({ post, onCommentPress, showSimplified
   const deletePostMutation = useMutation({
     mutationFn: () => deletePost(post.id.toString()),
     onSuccess: () => {
-      setToastMessage("Post deleted successfully");
+      // setToastMessage("Post deleted successfully");
       setShowToast(true);
       queryClient.invalidateQueries({ queryKey: ['posts'] });
       setShowPostMenu(false);
