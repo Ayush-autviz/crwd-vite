@@ -88,7 +88,7 @@ export default function CommunityPostCard({ post, onCommentPress, showSimplified
 
   console.log("post.collective", post.collective);
 
-  const wordLimit = 25;
+  const wordLimit = 30;
   const words = (post.content || '').split(/\s+/);
   const isOverLimit = words.length > wordLimit;
   const canExpand = isHomeFeed && isOverLimit;
@@ -163,7 +163,7 @@ export default function CommunityPostCard({ post, onCommentPress, showSimplified
       }
     }
     if (!mentions || mentions.length === 0) {
-      return content.split(/(@\w+)/g).map((part, index) => {
+      return displayContent.split(/(@\w+)/g).map((part, index) => {
         if (part.startsWith('@')) {
           return (
             <span
