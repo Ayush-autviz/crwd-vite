@@ -271,7 +271,7 @@ export default function NewClaimProfile() {
         // If auto-login fails, navigate to login page
         setToastMessage("Email verified! Please login to continue.");
         setShowToast(true);
-        navigate("/login");
+        navigate(`/login?redirectTo=${encodeURIComponent(redirectTo)}`);
       }
     },
     onError: (error: any) => {

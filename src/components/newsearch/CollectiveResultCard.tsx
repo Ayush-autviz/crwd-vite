@@ -107,22 +107,34 @@ export default function CollectiveResultCard({ collective }: CollectiveResultCar
       <CardContent className="p-3 md:p-6">
         <div className="flex items-start gap-2.5 md:gap-4">
           {/* Icon with priority: color > logo > generated color with letter */}
-          <div
+          {/* <div
             className="w-8 h-8 md:w-12 md:h-12 rounded-lg flex items-center justify-center flex-shrink-0"
             style={iconColor ? { backgroundColor: iconColor } : {}}
           >
-            {showImage && imageUrl ? (
+            {imageUrl ? (
               <img
                 src={imageUrl}
                 alt={collective.name}
-                className="w-full h-full object-cover rounded-lg"
+                className="w-full h-full object-contai rounded-lg"
               />
             ) : (
               <span className="text-white font-bold text-sm md:text-xl">
                 {iconLetter}
               </span>
             )}
-          </div>
+          </div> */}
+          <Avatar className="w-14 h-14 md:w-16 md:h-16  rounded-xl flex-shrink-0">
+            {imageUrl ? (
+              <AvatarImage src={imageUrl} alt={collective.name} />
+            ) : (
+              <AvatarFallback
+                style={iconColor ? { backgroundColor: iconColor } : {}}
+                className="rounded-xl text-white font-bold text-2xl md:text-3xl"
+              >
+                {iconLetter}
+              </AvatarFallback>
+            )}
+          </Avatar>
 
           <div className="flex-1 min-w-0">
             {/* Title */}

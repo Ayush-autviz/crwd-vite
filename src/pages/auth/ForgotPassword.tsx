@@ -2,12 +2,11 @@
 
 import type React from "react"
 import { useState } from "react"
-import { ArrowLeft, Mail } from "lucide-react"
-import { Link } from "react-router-dom"
+import { ArrowLeft } from "lucide-react"
+import { Link, useNavigate, useSearchParams } from "react-router-dom"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { cn } from "@/lib/utils"
-import { useNavigate } from "react-router-dom"
 import { useMutation } from "@tanstack/react-query"
 import { forgotPassword } from "@/services/api/auth"
 import { Toast } from "@/components/ui/toast"
@@ -17,6 +16,8 @@ const ForgotPasswordPage: React.FC = () => {
   const [showToast, setShowToast] = useState(false)
   const [toastMessage, setToastMessage] = useState("")
   const navigate = useNavigate()
+  const [searchParams] = useSearchParams()
+  const redirectTo = searchParams.get('redirectTo') || '/'
 
   // Forgot password mutation
   const forgotPasswordMutation = useMutation({
@@ -24,7 +25,7 @@ const ForgotPasswordPage: React.FC = () => {
     onSuccess: (response) => {
       console.log('Forgot password successful:', response)
       // Navigate to verify page with email
-      navigate("/verify", { state: { email } })
+      navigate(`/verify${redirectTo ? `?redirectTo=${encodeURIComponent(redirectTo)}` : ''}`, { state: { email } })
     },
     onError: (error: any) => {
       console.error('Forgot password error:', error)
@@ -53,7 +54,7 @@ const ForgotPasswordPage: React.FC = () => {
         {/* Back Button */}
         <div className="mb-6">
           <Link
-            to="/login"
+            to={`/login${redirectTo ? `?redirectTo=${encodeURIComponent(redirectTo)}` : ''}`}
             className="inline-flex items-center text-gray-600 hover:text-gray-900 transition-colors"
           >
             <ArrowLeft className="h-4 w-4 mr-2" />
@@ -113,7 +114,7 @@ const ForgotPasswordPage: React.FC = () => {
           <p className="text-sm text-gray-600">
             Remember your password?{" "}
             <Link
-              to="/login"
+              to={`/login${redirectTo ? `?redirectTo=${encodeURIComponent(redirectTo)}` : ''}`}
               className="text-[#1600ff] hover:underline font-medium"
             >
               Sign in

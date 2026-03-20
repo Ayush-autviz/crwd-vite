@@ -3,11 +3,10 @@
 import type React from "react"
 import { useState, useRef, useEffect } from "react"
 import { ArrowLeft, Mail, RefreshCw, Eye, EyeOff } from "lucide-react"
-import { Link, useLocation } from "react-router-dom"
+import { Link, useLocation, useNavigate, useSearchParams } from "react-router-dom"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { cn } from "@/lib/utils"
-import { useNavigate } from "react-router-dom"
 import { useMutation } from "@tanstack/react-query"
 import { resetPassword, forgotPassword } from "@/services/api/auth"
 import { Toast } from "@/components/ui/toast"
@@ -24,6 +23,8 @@ const VerifyPage: React.FC = () => {
   const inputRefs = useRef<(HTMLInputElement | null)[]>([])
   const navigate = useNavigate()
   const location = useLocation()
+  const [searchParams] = useSearchParams()
+  const redirectTo = searchParams.get('redirectTo') || '/'
   const email = location.state?.email || "your email"
   
 
@@ -47,7 +48,7 @@ const VerifyPage: React.FC = () => {
     mutationFn: resetPassword,
     onSuccess: (response) => {
       console.log('Reset password successful:', response)
-      navigate("/login")
+      navigate(`/login${redirectTo ? `?redirectTo=${encodeURIComponent(redirectTo)}` : ''}`)
     },
     onError: (error: any) => {
       console.error('Reset password error:', error)
@@ -220,7 +221,7 @@ const VerifyPage: React.FC = () => {
                   value={digit}
                   onChange={(e) => handleCodeChange(index, e.target.value)}
                   onKeyDown={(e) => handleKeyDown(index, e)}
-                  onPaste={index === 0 ? handlePaste : undefined}
+                  onPaste={handlePaste}
                   onInput={(e) => {
                     // Additional protection - ensure only numbers
                     const target = e.target as HTMLInputElement

@@ -380,11 +380,12 @@ export function NotificationSummary({ update }: { update: CommunityUpdate }) {
                       <span className="font-bold">{match[1]}</span>
                     )} */}
                     {match[2].charAt(0).toUpperCase() + match[2].slice(1)} {' '}
-                    {/* <span className="font-bold">{match[3]}</span> */}
                     {match[4]} {match[5]}
                   </>
                 );
               }
+              // If regex doesn't match perfectly, strip amount from original text
+              return actionText.replace(/\$[\d,.]+\s*/, '');
             }
             return actionText;
           })()}

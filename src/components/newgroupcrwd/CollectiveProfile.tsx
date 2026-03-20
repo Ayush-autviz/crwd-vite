@@ -75,16 +75,16 @@ export default function CollectiveProfile({
   const iconColor = hasColor ? color : (!hasLogo ? getIconColor(name) : undefined);
   const iconLetter = getIconLetter(name);
   // Fallback to image prop if logo is not available (for backward compatibility)
-  const imageUrl = !hasColor && hasLogo ? logo : (!hasColor ? (image || undefined) : undefined);
+  const imageUrl = logo ?? ''
   const showImage = !hasColor && hasLogo;
 
   return (
     <div className="px-3 md:px-4 py-4 md:py-6">
       <div className="flex items-start gap-3 md:gap-4 mb-2.5 md:mb-3">
         <Avatar className="w-14 h-14 md:w-16 md:h-16 lg:w-20 lg:h-20 rounded-xl flex-shrink-0">
-          {showImage ? (
-            <AvatarImage src={imageUrl} alt={name} />
-          ) : null}
+          {/* {showImage ? ( */}
+          <AvatarImage src={imageUrl} alt={name} />
+          {/* ) : null} */}
           <AvatarFallback
             style={iconColor ? { backgroundColor: iconColor } : {}}
             className="rounded-xl text-white font-bold text-2xl md:text-3xl"
@@ -132,15 +132,15 @@ export default function CollectiveProfile({
                     {isExpanded && canExpand && (
                       <span
                         onClick={() => setIsExpanded(false)}
-                        className="text-[#4B5563] hover:underline font-bold text-sm xs:text-base ml-1 cursor-pointer select-none"
+                        className="text-[#4B5563] hover:underline font-bold text-sm sm:text-base ml-1 cursor-pointer select-none"
                       >
-                         Read Less
+                        Read Less
                       </span>
                     )}
                   </>
                 );
               }
-              
+
               return (
                 <>
                   {words.slice(0, wordLimit).join(' ')}

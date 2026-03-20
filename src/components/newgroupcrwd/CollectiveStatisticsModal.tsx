@@ -519,15 +519,15 @@ export default function CollectiveStatisticsModal({
                                 </span>
                               )} */}
                             </div>
-                            <div className="flex items-center gap-1.5 md:gap-2 flex-wrap mt-0.5 md:mt-1">
-                              {/* <p className="text-[10px] md:text-xs lg:text-sm text-gray-600">
+                            {/* <div className="flex items-center gap-1.5 md:gap-2 flex-wrap mt-0.5 md:mt-1"> */}
+                            {/* <p className="text-[10px] md:text-xs lg:text-sm text-gray-600">
                                 Donated to {causeCount} nonprofit{causeCount !== 1 ? 's' : ''}
                               </p> */}
-                              {/* <span className="text-gray-400">•</span> */}
-                              <p className="text-sm md:text-ba  se lg:text-base text-gray-600">
+                            {/* <span className="text-gray-400">•</span> */}
+                            {/* <p className="text-sm md:text-ba  se lg:text-base text-gray-600">
                                 {donation.charged_at ? formatTimeAgo(donation.charged_at) : 'Recently'}
-                              </p>
-                            </div>
+                              </p> */}
+                            {/* </div> */}
                           </div>
                         </div>
                       );

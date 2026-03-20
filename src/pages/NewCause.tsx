@@ -271,7 +271,7 @@ export default function NewCausePage() {
           onBack={handleBack}
         />
       ) : (
-        <LoggedOutHeader />
+        <LoggedOutHeader redirectTo={window.location.pathname} />
       )}
 
       <div className='lg:max-w-[60%] lg:mx-auto'>

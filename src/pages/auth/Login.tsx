@@ -271,7 +271,7 @@ const LoginPage: React.FC = () => {
               </label>
             </div>
             <Link
-              to="/forgot-password"
+              to={`/forgot-password${redirectTo ? `?redirectTo=${encodeURIComponent(redirectTo)}` : ''}`}
               className="text-sm text-gray-900 hover:text-gray-700 hover:underline transition-colors"
             >
               Forgot password?

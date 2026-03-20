@@ -163,7 +163,7 @@ const Circles = () => {
                         const hasLogo = circle.logo && (circle.logo.startsWith("http") || circle.logo.startsWith("/") || circle.logo.startsWith("data:"));
                         const iconColor = hasColor ? circle.color : (!hasLogo ? getIconColor(index) : undefined);
                         const iconLetter = getIconLetter(circle.name || 'C');
-                        const showImage = !hasColor && hasLogo;
+                        const showImage = hasLogo;
 
                         const founderName = circle.created_by
                           ? `${circle.created_by.first_name || ''} ${circle.created_by.last_name || ''}`.trim() || circle.created_by.username
@@ -178,13 +178,13 @@ const Circles = () => {
                             {/* Collective Icon */}
                             <div
                               className="w-10 h-10 md:w-12 md:h-12 rounded-lg flex items-center justify-center mb-2 md:mb-3"
-                              style={iconColor ? { backgroundColor: iconColor } : {}}
+                              style={!showImage && iconColor ? { backgroundColor: iconColor } : {}}
                             >
                               {showImage ? (
                                 <img
                                   src={circle.logo}
                                   alt={circle.name}
-                                  className="w-full h-full object-cover rounded-lg"
+                                  className="w-full h-full object-contain rounded-lg"
                                 />
                               ) : (
                                 <span className="text-white font-bold text-lg md:text-xl">
@@ -270,7 +270,7 @@ const Circles = () => {
                 const hasLogo = circle.logo && (circle.logo.startsWith("http") || circle.logo.startsWith("/") || circle.logo.startsWith("data:"));
                 const iconColor = hasColor ? circle.color : (!hasLogo ? getIconColor(index) : undefined);
                 const iconLetter = getIconLetter(circle.name || 'C');
-                const showImage = !hasColor && hasLogo;
+                const showImage = hasLogo;
 
                 const founderName = circle.created_by
                   ? `${circle.created_by.first_name || ''} ${circle.created_by.last_name || ''}`.trim() || circle.created_by.username
@@ -285,13 +285,13 @@ const Circles = () => {
                     {/* Collective Icon */}
                     <div
                       className="w-10 h-10 md:w-12 md:h-12 rounded-lg flex items-center justify-center mb-2 md:mb-3"
-                      style={iconColor ? { backgroundColor: iconColor } : {}}
+                      style={!showImage && iconColor ? { backgroundColor: iconColor } : {}}
                     >
                       {showImage ? (
                         <img
                           src={circle.logo}
                           alt={circle.name}
-                          className="w-full h-full object-cover rounded-lg"
+                          className="w-full h-full object-contain rounded-lg"
                         />
                       ) : (
                         <span className="text-white font-bold text-lg md:text-xl">

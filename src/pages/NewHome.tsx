@@ -12,7 +12,14 @@ import CommunityPostCard from "@/components/newHome/CommunityPostCard";
 import { NotificationSummary } from "@/components/newHome/CommunityUpdates";
 import ExploreCards from "@/components/newHome/ExploreCards";
 import ProfileNavbar from "@/components/profile/ProfileNavbar";
-import HomeSkeleton from "@/components/newHome/HomeSkeleton";
+import { 
+    HelloGreetingSkeleton, 
+    DonationBoxSkeleton, 
+    CollectiveCarouselSkeleton, 
+    CommunityUpdatesSkeleton, 
+    FeaturedNonprofitsSkeleton, 
+    SuggestedCollectivesSkeleton 
+} from "@/components/newHome/HomeSkeleton";
 import { getCollectives, getCauses, getJoinCollective } from "@/services/api/crwd";
 import { getDonationBox } from "@/services/api/donation";
 import { getUserProfileById, getCommunityUpdatesPosts } from "@/services/api/social";
@@ -80,9 +87,6 @@ export default function NewHome() {
     });
     
     // Combined loading states
-    const isInitialLoading = collectivesLoading || 
-                             nonprofitsLoading || 
-                             (!!user?.id && !!token?.access_token && (donationBoxLoading || joinedCollectivesLoading || communityUpdatesLoading));
 
     const allCommunityUpdates = useMemo(() => {
         return communityUpdatesPostsData?.pages.flatMap(page => page.results) || [];
@@ -504,73 +508,96 @@ export default function NewHome() {
                 onLogoClick={handleLogoClick}
             />
             {/* Main Content */}
-            {isInitialLoading ? (
-                <HomeSkeleton />
-            ) : (
-                <>
-                <div className="bg-gradient-to-r from-blue-50 via-purple-50 to-pink-50 px-4 md:px-6 py-2 md:py-6">
-                {/* My Donation Box Card or Prompt */}
-                {token?.access_token && (
-                    donationBoxInfo ? (
+            <div className="bg-gradient-to-r from-blue-50 via-purple-50 to-pink-50 px-4 md:px-6 py-2 md:py-6">
+                {token?.access_token ? (
+                    (donationBoxLoading) ? (
                         <>
-                            <HelloGreeting />
-                            <MyDonationBoxCard
-                                monthlyAmount={donationBoxInfo.monthlyAmount}
-                                causeCount={donationBoxInfo.causeCount}
-                            />
+                            <HelloGreetingSkeleton />
+                            <DonationBoxSkeleton />
                         </>
-                    ) : donationBoxData && !isDonationBoxNotFound && !isDonationBoxActive && inactiveBoxCauseCount > 0 ? (
-                        <DonationBoxPrompt
-                            causeCount={inactiveBoxCauseCount}
-                            hasJoinedCollectives={transformedAttributingCollectives.length > 0}
-                        />
                     ) : (
-                        <DonationBoxPrompt
-                            hasJoinedCollectives={transformedAttributingCollectives.length > 0}
-                        />
+                        donationBoxInfo ? (
+                            <>
+                                <HelloGreeting />
+                                <MyDonationBoxCard
+                                    monthlyAmount={donationBoxInfo.monthlyAmount}
+                                    causeCount={donationBoxInfo.causeCount}
+                                />
+                            </>
+                        ) : donationBoxData && !isDonationBoxNotFound && !isDonationBoxActive && inactiveBoxCauseCount > 0 ? (
+                            <DonationBoxPrompt
+                                causeCount={inactiveBoxCauseCount}
+                                hasJoinedCollectives={transformedAttributingCollectives.length > 0}
+                            />
+                        ) : (
+                            <DonationBoxPrompt
+                                hasJoinedCollectives={transformedAttributingCollectives.length > 0}
+                            />
+                        )
                     )
+                ) : (
+                    <>
+                        <HelloGreetingSkeleton />
+                        <DonationBoxSkeleton />
+                    </>
                 )}
 
                 {/* Collective Carousel Card - Show joined collectives or Create Collective Card */}
-                {token?.access_token && (
-                    transformedAttributingCollectives.length > 0 ? (
-                        <CollectiveCarouselCard collectives={transformedAttributingCollectives} />
+                {token?.access_token ? (
+                    joinedCollectivesLoading ? (
+                        <CollectiveCarouselSkeleton />
                     ) : (
-                        <CreateCollectiveCard />
+                        transformedAttributingCollectives.length > 0 ? (
+                            <CollectiveCarouselCard collectives={transformedAttributingCollectives} />
+                        ) : (
+                            <CreateCollectiveCard />
+                        )
                     )
+                ) : (
+                    <CollectiveCarouselSkeleton />
                 )}
             </div>
 
             <div className="w-full max-w-7xl mx-auto">
                 <div className="mx-0 md:mx-6">
                     {/* Feed Part 1 - 2 Items */}
-                    {token?.access_token && (
-                        <div className="w-full px-4 my-4 mb-6 md:px-0 md:my-8 md:mb-10">
-                            {/* Heading for the feed */}
-                            {feedPart1.length > 0 && (
-                                <div className="mb-3 md:mb-6">
-                                    <h2 className="text-base xs:text-lg sm:text-xl md:text-3xl font-bold text-gray-900 mb-1 md:mb-2">
-                                        Community Updates
-                                    </h2>
-                                    <p className="text-[10px] xs:text-[11px] sm:text-xs md:text-sm text-gray-600">
-                                        Updates, and discoveries from your community
-                                    </p>
+                    {token?.access_token ? (
+                        communityUpdatesLoading ? (
+                            <CommunityUpdatesSkeleton />
+                        ) : (
+                            <div className="w-full px-4 my-4 mb-6 md:px-0 md:my-8 md:mb-10">
+                                {/* Heading for the feed */}
+                                {feedPart1.length > 0 && (
+                                    <div className="mb-3 md:mb-6">
+                                        <h2 className="text-base xs:text-lg sm:text-xl md:text-3xl font-bold text-gray-900 mb-1 md:mb-2">
+                                            Community Updates
+                                        </h2>
+                                        <p className="text-[10px] xs:text-[11px] sm:text-xs md:text-sm text-gray-600">
+                                            Updates, and discoveries from your community
+                                        </p>
+                                    </div>
+                                )}
+                                <div className="space-y-2.5 md:space-y-4">
+                                    {feedPart1.map(renderFeedItem)}
                                 </div>
-                            )}
-                            <div className="space-y-2.5 md:space-y-4">
-                                {feedPart1.map(renderFeedItem)}
                             </div>
-                        </div>
+                        )
+                    ) : (
+                        <CommunityUpdatesSkeleton />
                     )}
 
                     {/* Featured Nonprofits Section */}
-                    <NewFeaturedNonprofits
-                        nonprofits={filteredFeaturedNonprofits}
-                        seeAllLink="/search"
-                    />
+                    {(!nonprofitsLoading && !communityUpdatesLoading) ? (
+                        <NewFeaturedNonprofits
+                            nonprofits={filteredFeaturedNonprofits}
+                            seeAllLink="/search"
+                        />
+                    ) : nonprofitsLoading && (
+                        <FeaturedNonprofitsSkeleton />
+                    )}
 
                     {/* Feed Part 2 - 2 Items */}
-                    {token?.access_token && (
+                    {token?.access_token && !communityUpdatesLoading && (
                         <div className="w-full px-4 my-4 mb-6 md:px-0 md:my-8 md:mb-10">
                             <div className="space-y-2.5 md:space-y-4">
                                 {feedPart2.map(renderFeedItem)}
@@ -579,13 +606,17 @@ export default function NewHome() {
                     )}
 
                     {/* Suggested Collectives Section */}
-                    <NewSuggestedCollectives
-                        collectives={filteredSuggestedCollectives}
-                        seeAllLink="/circles"
-                    />
+                    {(!collectivesLoading && !communityUpdatesLoading) ? (
+                        <NewSuggestedCollectives
+                            collectives={filteredSuggestedCollectives}
+                            seeAllLink="/circles"
+                        />
+                    ) : collectivesLoading && (
+                        <SuggestedCollectivesSkeleton />
+                    )}
 
                     {/* Feed Part 3 - Rest of Items */}
-                    {token?.access_token && (
+                    {token?.access_token && !communityUpdatesLoading && (
                         <div className="w-full px-4 my-4 mb-6 md:px-0 md:my-8 md:mb-10">
                             <div className="space-y-2.5 md:space-y-4">
                                 {feedPart3.map(renderFeedItem)}
@@ -667,8 +698,7 @@ export default function NewHome() {
                 </div>
             )}
 
-                </>
-            )}
+
         </div>
     );
 }

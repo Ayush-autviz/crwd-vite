@@ -412,7 +412,7 @@ export default function ProfilePage() {
             )}
           </div>
         </div> :
-        <LoggedOutHeader />
+        <LoggedOutHeader redirectTo={location.pathname} />
       }
 
       <div className="lg:max-w-[60%] lg:mx-auto">

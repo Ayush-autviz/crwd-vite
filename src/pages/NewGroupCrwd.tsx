@@ -140,7 +140,7 @@ export default function NewGroupCrwdPage() {
   // Extract stats
   const nonprofitCount = nonprofits.length || 0;
   const memberCount = crwdData?.member_count || statsData?.member_count || 0;
-  const donationCount = statsData?.contributions_count || statsData?.donation_count || 0;
+  const donationCount = crwdData?.total_donation_count || statsData?.contributions_count || statsData?.donation_count || 0;
 
   // Join collective mutation
   const joinCollectiveMutation = useMutation({
@@ -395,7 +395,7 @@ export default function NewGroupCrwdPage() {
             setShowDonationChoiceModal(true);
           }}
         /> :
-        <LoggedOutHeader />
+        <LoggedOutHeader redirectTo={window.location.pathname} />
       }
 
       <div className='lg:max-w-[60%] lg:mx-auto'>

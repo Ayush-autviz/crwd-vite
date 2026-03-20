@@ -452,7 +452,7 @@ export default function PostById() {
       <div className="bg-white min-h-screen flex flex-col relative pb-16 md:pb-0">
         {currentUser?.id ?
           <ProfileNavbar title={getUserDisplayName()} onBackClick={handleBack} />
-          : <LoggedOutHeader />
+          : <LoggedOutHeader redirectTo={window.location.pathname} />
         }
         <div className="flex-1 flex items-center justify-center">
           <div className="text-center py-8 md:py-10 px-4">
@@ -475,7 +475,7 @@ export default function PostById() {
       <div className="bg-white min-h-screen flex flex-col relative pb-16 md:pb-0">
         {currentUser?.id ?
           <ProfileNavbar title={getUserDisplayName()} onBackClick={handleBack} />
-          : <LoggedOutHeader />
+          : <LoggedOutHeader redirectTo={window.location.pathname} />
         }
         <div className="flex-1 flex items-center justify-center">
           <div className="text-center py-8 md:py-10 px-4">
@@ -501,7 +501,7 @@ export default function PostById() {
     <div className="bg-white min-h-screen flex flex-col relative pb-16">
       {currentUser?.id ?
         <ProfileNavbar title={post.org} onBackClick={handleBack} />
-        : <LoggedOutHeader />
+        : <LoggedOutHeader redirectTo={window.location.pathname} />
       }
       <main className="flex-1">
         <ProfileActivityCard
