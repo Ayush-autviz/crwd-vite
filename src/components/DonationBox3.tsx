@@ -513,7 +513,7 @@ export const DonationBox3 = ({
             Set your monthly gift
           </h1>
           <p className="text-gray-600 text-xs text-center mt-1.5 md:mt-2">
-            Support multiple causes with one donation, split evenly. Change anytime.
+            Support multiple nonprofits with one donation, split evenly. Change anytime.
           </p>
         </div>
 

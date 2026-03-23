@@ -724,7 +724,7 @@ const DonationBox = ({ tab = "setup", preselectedItem, activeTab, fromPaymentRes
                       <p className="text-xl md:text-2xl font-bold text-[#1600ff] text-center">
                         {(preselectedItem?.data?.name || collectiveName) ? `Supporting ${preselectedItem?.data?.name || collectiveName}` : "Set your monthly gift"}
                       </p>
-                      <p className="text-gray-600 text-xs text-center mt-1.5 md:mt-2">Support multiple causes with one donation, split evenly. Change anytime.</p>
+                      <p className="text-gray-600 text-xs text-center mt-1.5 md:mt-2">Support multiple nonprofits with one donation, split evenly. Change anytime.</p>
                     </div>
                     {/* Donation Box Card */}
                     <div className="bg-white rounded-xl mb-4 md:mb-6 p-4 md:p-6 shadow-sm border border-gray-100">

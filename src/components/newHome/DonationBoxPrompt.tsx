@@ -77,7 +77,7 @@ export default function DonationBoxPrompt({ causeCount }: DonationBoxPromptProps
                     Create a Donation Box
                   </h3>
                   <p className="text-xs xs:text-sm md:text-base text-gray-600 mb-1.5 md:mb-2 mt-0.5 md:mt-1">
-                    Support multiple causes with one donation
+                    Support multiple nonprofits with one donation
                   </p>
                   <button
                     onClick={(e) => {

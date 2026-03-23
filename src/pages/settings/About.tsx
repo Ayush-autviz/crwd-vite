@@ -69,7 +69,7 @@ export default function SettingsAbout() {
                 <section id="about-crwd" className="mb-8 md:mb-12">
                   <h2 className="text-xl md:text-2xl font-semibold mb-3 md:mb-4">About CRWD</h2>
                   <p className="text-sm md:text-base text-gray-600 mb-3 md:mb-4">
-                    CRWD is a collective giving platform that makes it easy to support multiple causes you care about with a single monthly donation. Our mission is to transform how people give by removing barriers and creating communities of changemakers who show up consistently for the causes that matter.
+                    CRWD is a collective giving platform that makes it easy to support multiple nonprofits you care about with a single monthly donation. Our mission is to transform how people give by removing barriers and creating communities of changemakers who show up consistently for the causes that matter.
                   </p>
                   <p className="text-sm md:text-base text-gray-600 mb-3 md:mb-4">
                     CRWD operates through two entities:

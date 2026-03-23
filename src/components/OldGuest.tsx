@@ -87,11 +87,9 @@ export default function GuestHome() {
     return (
         <div className="min-h-screen bg-background ">
 
-            <div className='min-h-screen flex flex-col bg-gradient-to-br from-[#f1f6ff] via-[#f7f6ff] to-[#fdf3f8]'>
-
+            <div className='min-h-screen bg-gradient-to-br from-[#f1f6ff] via-[#f7f6ff] to-[#fdf3f8]'>
                 {/* Navbar */}
                 <div className="sticky top-0 z-10 w-full flex items-center justify-between h-16 px-3 border-b bg-background">
-
                     {/* Logo with colored circles */}
 
                     {/* <Link to="/waitlist" className="flex-shrink-0"> */}
@@ -104,162 +102,162 @@ export default function GuestHome() {
                     />
                     {/* </Link> */}
 
+
                     {/* Right side buttons */}
                     <div className="flex items-center gap-1 sm:gap-2 md:gap-4">
-
                         {/* Search Icon */}
                         {/* <button
-                onClick={() => navigate("/search")}
-                className="p-1.5 sm:p-2 hover:bg-gray-100 rounded-full transition-colors flex-shrink-0"
-                aria-label="Search"
-            >
-                <Search className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 text-gray-700" />
-            </button> */}
+                        onClick={() => navigate("/search")}
+                        className="p-1.5 sm:p-2 hover:bg-gray-100 rounded-full transition-colors flex-shrink-0"
+                        aria-label="Search"
+                    >
+                        <Search className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 text-gray-700" />
+                    </button> */}
 
                         {/* Sign In Button */}
                         <button
                             onClick={() => navigate("/onboarding")}
-                            className="bg-[#ff3366] hover:bg-[#ff0033] text-white font-bold px-3 py-1 xs:px-4 md:px-6 md:py-2 rounded-full text-xs xs:text-sm md:text-base whitespace-nowrap"
+                            className="bg-[#ff3366] hover:bg-[#ff0033] text-white font-bold px-3 py-1 xs:px-4  md:px-6 md:py-2 rounded-full text-xs xs:text-sm md:text-base whitespace-nowrap"
                         >
                             Sign up
                         </button>
 
                         {/* Get the App Button
-            <button
-                className="border-[#1600ff] border text-[#1600ff] hover:bg-[#1600ff] hover:text-white font-bold px-2 py-0.5 sm:px-3 rounded-full text-[10px] xs:text-xs sm:text-sm md:text-base md:hidden whitespace-nowrap"
-            >
-                Get the App
-            </button> */}
+                        <button
+                            className="border-[#1600ff] border text-[#1600ff] hover:bg-[#1600ff] hover:text-white font-bold px-2 py-0.5 sm:px-3 rounded-full text-[10px] xs:text-xs sm:text-sm md:text-base md:hidden whitespace-nowrap"
+                        >
+                            Get the App
+                        </button> */}
 
                         {/* Hamburger Menu */}
                         {/* <button
-                onClick={() => setMenuOpen(true)}
-                className="p-1 sm:p-1.5 hover:bg-gray-100 rounded-full transition-colors flex-shrink-0"
-                aria-label="Menu"
-            >
-                <Menu className="h-5 w-5 sm:h-6 sm:w-6 md:h-7 md:w-7 lg:h-9 lg:w-9 text-gray-700" />
-            </button> */}
+                        onClick={() => setMenuOpen(true)}
+                        className="p-1 sm:p-1.5 hover:bg-gray-100 rounded-full transition-colors flex-shrink-0"
+                        aria-label="Menu"
+                    >
+                        <Menu className="h-5 w-5 sm:h-6 sm:w-6 md:h-7 md:w-7 lg:h-9 lg:w-9 text-gray-700" />
+                    </button> */}
                     </div>
                 </div>
 
-                {/* CONTENT AREA — fills remaining height */}
-                <div className="flex flex-col flex-1">
+                {/* Hero Section */}
+                <div className="bg-card pt-3 pb-6 md:pt-8 md:pb-16 px-4 md:px-6">
+                    {/* Launch Banner */}
+                    <div className="max-w-4xl mx-auto text-center mt-10 ">
 
-                    {/* Hero Section */}
-                    <div className="bg-card pt-3 pb-6 md:pt-8 md:pb-12 px-4 md:px-6 flex items-center">
-                        <div className="max-w-4xl mx-auto text-center mt-10">
 
-                            <h1
-                                className="font-[900] sm:font-[800] mb-2 md:mb-4 leading-none"
-                                style={{ fontSize: 'clamp(2.5rem, 10vw, 4rem)' }}
-                            >
-                                Stop Wishing You Made a Difference.
-                                <span className="text-[#1600ff]"> Start Being Someone Who Does.</span>
-                            </h1>
+                        <h1 className="font-[900] sm:font-[800] mb-2 md:mb-4 leading-none" style={{ fontSize: 'clamp(2.5rem, 10vw, 4.5rem)' }}>
+                            Stop Wishing You Made a Difference.
+                            <span className="text-[#1600ff]"> Start Being Someone Who Does.</span>
+                        </h1>
 
-                            <p
-                                className="text-muted-foreground my-8 max-w-2xl mx-auto text-base md:text-base"
-                                style={{ fontSize: 'clamp(1.5rem, 2vw, 1.5rem)' }}
-                            >
-                                {/* What if you could support every cause you care about automatically, affordably, and powerfully? */}
-                                Support multiple nonprofits with one donation.
+                        <p className="text-muted-foreground my-8  max-w-2xl mx-auto text-base md:text-base" style={{ fontSize: 'clamp(1.2rem, 2vw, 1.5rem)' }}>
+                            {/* What if you could support every cause you care about automatically, affordably, and powerfully? */}
+                            Support multiple nonprofits with one donation.
+                        </p>
+
+                        <Button
+                            onClick={() => navigate("/onboarding")}
+                            className="h-12 md:h-14 px-8 md:px-10 py-3 md:py-4 my-6 rounded-lg bg-[#1600ff] text-white font-bold text-lg md:text-lg"
+                        >
+                            Get started
+                        </Button>
+
+                    </div>
+                    {/* <div className="flex flex-col sm:flex-row justify-center items-center gap-2  mb-3 md:mb-6">
+                    <div className="flex items-center justify-center gap-1.5 md:gap-2">
+                        <div className="w-4 h-4 md:w-6 md:h-6 rounded-full flex items-center justify-center flex-shrink-0">
+                            <Check className="w-3.5 h-3.5 md:w-4 md:h-4 text-blue-600" />
+                        </div>
+                        <p className="text-gray-700 font-[600] text-sm xs:text-base md:text-lg">
+                            Thousands of verified nonprofits
+                        </p>
+                    </div>
+                    <div className="flex items-center justify-center gap-1.5 md:gap-2">
+                        <div className="w-4 h-4 md:w-6 md:h-6 rounded-full flex items-center justify-center flex-shrink-0">
+                            <Check className="w-3.5 h-3.5 md:w-4 md:h-4 text-blue-600" />
+                        </div>
+                        <p className="text-gray-700 font-[600] text-sm xs:text-base md:text-lg">
+                            Start with any amount
+                        </p>
+                    </div>
+                </div> */}
+                </div>
+
+                {/* See the Magic in Action Section */}
+                <div className="bg-gradient-to-br from-[#f1f6ff] via-[#f7f6ff] to-[#fdf3f8] py-4 md:py-16 px-4 md:px-6">
+                    <div className="max-w-4xl mx-auto">
+                        <h2 className="font-[800] text-foreground mb-1.5 md:mb-4 text-center text-xl xs:text-2xl md:text-2xl" style={{ fontSize: 'clamp(1.5rem, 5vw, 2.5rem)' }}>
+                            One Donation. <span className="text-[#1600ff]">Every</span> Nonprofit <span className='font-black'>YOU</span> Care About.
+                        </h2>
+                        {/* <p className="text-muted-foreground my-4 md:my-8 text-center text-sm xs:text-base md:text-base" style={{ fontSize: 'clamp(0.9rem, 2vw, 1.25rem)' }}>
+                        Set your monthly amount. We split it automatically.
+                    </p> */}
+
+                        {/* Demo Card */}
+                        {/* <Card className="max-w-[90%] md:max-w-[80%] lg:max-w-3xl mx-auto">
+                        <CardContent className="p-2.5 md:p-8">
+                            <div className="text-gray-500 mb-2 md:mb-4 text-center text-sm xs:text-base md:text-base" style={{ fontSize: 'clamp(0.875rem, 2vw, 1.125rem)' }}>
+                                <p>Move the slider to see your impact:</p>
+                                You can give <span className="text-[#1600ff] font-[900]" style={{ fontSize: 'clamp(1.65rem, 5vw, 2.9rem)' }}>${donationAmount}</span>/month to
+                            </div>
+
+                            
+                            <div className="mb-2 md:mb-6 relative">
+                                <input
+                                    type="range"
+                                    min="5"
+                                    max="100"
+                                    step="5"
+                                    value={donationAmount}
+                                    onChange={(e) => setDonationAmount(Math.round(Number(e.target.value) / 5) * 5)}
+                                    className="w-full h-3 md:h-3 bg-gray-200 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-5 [&::-webkit-slider-thumb]:h-5 md:[&::-webkit-slider-thumb]:w-6 md:[&::-webkit-slider-thumb]:h-6 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-[#fff] [&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-[#1600ff] [&::-webkit-slider-thumb]:cursor-pointer [&::-webkit-slider-thumb]:shadow-md [&::-moz-range-thumb]:w-5 [&::-moz-range-thumb]:h-5 md:[&::-moz-range-thumb]:w-6 md:[&::-moz-range-thumb]:h-6 [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:bg-[#1600ff] [&::-moz-range-thumb]:cursor-pointer [&::-moz-range-thumb]:border-0 [&::-moz-range-thumb]:shadow-md"
+                                    style={{
+                                        background: `linear-gradient(to right, #1600ff 0%, #1600ff ${((donationAmount - 5) / 95) * 100}%, #e5e7eb ${((donationAmount - 5) / 95) * 100}%, #e5e7eb 100%)`
+                                    }}
+                                />
+                            </div>
+
+                            
+                            <div className="grid grid-cols-2 md:flex md:flex-wrap gap-1.5 md:gap-3 mb-2 md:mb-6 justify-center">
+                                {causeSets[currentCauseSet].map((cause) => (
+                                    <button
+                                        key={`${cause.name}-${currentCauseSet}`}
+                                        className={`px-3 py-1.5 md:px-4 md:py-2 rounded-full text-primary-foreground text-xs xs:text-sm md:text-sm lg:text-base font-medium ${cause.bgColor} ${cause.hoverColor} transition-colors`}
+                                    >
+                                        {cause.name}
+                                    </button>
+                                ))}
+                            </div>
+
+                            <div className="font-bold text-[#1600ff] mb-1.5 md:mb-4 text-center text-sm xs:text-base md:text-base" style={{ fontSize: 'clamp(0.875rem, 2.5vw, 1.25rem)' }}>
+                                <span className="font-[700]" style={{ fontSize: 'clamp(1.125rem, 3vw, 1.875rem)' }}>= ${donationAmount * 12}</span> /year of impact
+                            </div>
+
+                            
+                            <div className="flex h-2 md:h-4 rounded-full overflow-hidden mb-1.5 md:mb-4">
+                                <div className="bg-pink-500 flex-1" />
+                                <div className="bg-orange-500 flex-1" />
+                                <div className="bg-green-500 flex-1" />
+                                <div className="bg-[#1600ff] flex-1" />
+                            </div>
+
+                            <p className="text-gray-700 mb-3 md:mb-8 text-center font-[600] mt-2 md:mt-6 text-sm xs:text-base md:text-base" style={{ fontSize: 'clamp(0.875rem, 2vw, 1rem)' }}>
+                                One gift. Multiple causes.
                             </p>
 
                             <Button
                                 onClick={() => navigate("/onboarding")}
-                                className="h-14 px-14  my-8  rounded-lg bg-[#1600ff] text-white font-bold text-xl"
+                                className="w-full h-9 md:h-12 rounded-full font-bold text-xs md:text-base lg:text-lg px-6 md:px-10 py-2 md:py-4 bg-[#1600ff] text-white"
                             >
-                                Get started
+                                Start Supporting <ChevronRight className="ml-1.5 md:ml-2 h-3.5 w-3.5 md:h-5 md:w-5" />
                             </Button>
-
-                        </div>
-
-                        {/* <div className="flex flex-col sm:flex-row justify-center items-center gap-2  mb-3 md:mb-6">
-                <div className="flex items-center justify-center gap-1.5 md:gap-2">
-                    <div className="w-4 h-4 md:w-6 md:h-6 rounded-full flex items-center justify-center flex-shrink-0">
-                        <Check className="w-3.5 h-3.5 md:w-4 md:h-4 text-blue-600" />
+                            <p className="text-gray-500 text-center mt-2 md:mt-4 text-xs xs:text-sm md:text-base" style={{ fontSize: 'clamp(0.75rem, 2vw, 1rem)' }}>All nonprofits are verified 501(c)(3) organizations</p>
+                        </CardContent>
+                    </Card> */}
                     </div>
-                    <p className="text-gray-700 font-[600] text-sm xs:text-base md:text-lg">
-                        Thousands of verified nonprofits
-                    </p>
                 </div>
-                <div className="flex items-center justify-center gap-1.5 md:gap-2">
-                    <div className="w-4 h-4 md:w-6 md:h-6 rounded-full flex items-center justify-center flex-shrink-0">
-                        <Check className="w-3.5 h-3.5 md:w-4 md:h-4 text-blue-600" />
-                    </div>
-                    <p className="text-gray-700 font-[600] text-sm xs:text-base md:text-lg">
-                        Start with any amount
-                    </p>
-                </div>
-            </div> */}
-                    </div>
 
-                    {/* See the Magic in Action Section */}
-                    <div className="bg-gradient-to-br from-[#f1f6ff] via-[#f7f6ff] to-[#fdf3f8] py-4 md:py-16 px-4 md:px-6 flex-1 flex items-center">
-
-                        <div className="max-w-4xl mx-auto w-full">
-
-                            <h2
-                                className="font-[800] text-foreground mb-1.5 md:mb-4 text-center text-xl xs:text-2xl md:text-2xl"
-                                style={{ fontSize: 'clamp(1.6rem, 4.8vw, 2.2rem)' }}
-                            >
-                                One Donation. <span className="text-[#1600ff]">Every</span> Nonprofit <span className='font-black'>YOU</span> Care About.
-                            </h2>
-
-                            {/* <p className="text-muted-foreground my-4 md:my-8 text-center text-sm xs:text-base md:text-base" style={{ fontSize: 'clamp(0.9rem, 2vw, 1.25rem)' }}>
-                    Set your monthly amount. We split it automatically.
-                </p> */}
-
-                            {/* Demo Card */}
-                            {/* <Card className="max-w-[90%] md:max-w-[80%] lg:max-w-3xl mx-auto">
-                    <CardContent className="p-2.5 md:p-8">
-
-                        <div className="text-gray-500 mb-2 md:mb-4 text-center text-sm xs:text-base md:text-base" style={{ fontSize: 'clamp(0.875rem, 2vw, 1.125rem)' }}>
-                            <p>Move the slider to see your impact:</p>
-                            You can give <span className="text-[#1600ff] font-[900]" style={{ fontSize: 'clamp(1.65rem, 5vw, 2.9rem)' }}>${donationAmount}</span>/month to
-                        </div>
-
-                        <div className="mb-2 md:mb-6 relative">
-                            <input
-                                type="range"
-                                min="5"
-                                max="100"
-                                step="5"
-                                value={donationAmount}
-                                onChange={(e) => setDonationAmount(Math.round(Number(e.target.value) / 5) * 5)}
-                                className="w-full h-3 md:h-3 bg-gray-200 rounded-lg appearance-none cursor-pointer"
-                            />
-                        </div>
-
-                        <div className="grid grid-cols-2 md:flex md:flex-wrap gap-1.5 md:gap-3 mb-2 md:mb-6 justify-center">
-                            {causeSets[currentCauseSet].map((cause) => (
-                                <button
-                                    key={`${cause.name}-${currentCauseSet}`}
-                                    className={`px-3 py-1.5 md:px-4 md:py-2 rounded-full text-primary-foreground text-xs xs:text-sm md:text-sm lg:text-base font-medium ${cause.bgColor} ${cause.hoverColor} transition-colors`}
-                                >
-                                    {cause.name}
-                                </button>
-                            ))}
-                        </div>
-
-                        <div className="font-bold text-[#1600ff] mb-1.5 md:mb-4 text-center text-sm xs:text-base md:text-base">
-                            <span className="font-[700]">${donationAmount * 12}</span> /year of impact
-                        </div>
-
-                        <Button
-                            onClick={() => navigate("/onboarding")}
-                            className="w-full h-9 md:h-12 rounded-full font-bold text-xs md:text-base lg:text-lg px-6 md:px-10 py-2 md:py-4 bg-[#1600ff] text-white"
-                        >
-                            Start Supporting
-                        </Button>
-
-                    </CardContent>
-                </Card> */}
-
-                        </div>
-                    </div>
-
-                </div>
             </div>
 
             {/* Automatic Impact Section */}

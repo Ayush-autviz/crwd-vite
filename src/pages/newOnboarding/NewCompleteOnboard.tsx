@@ -1,7 +1,7 @@
 
 import { useState, useEffect } from "react";
 import { useNavigate, useLocation, useSearchParams } from "react-router-dom";
-import { Heart, Sparkles, Search, Check, Loader2, ArrowRight, Users, ChevronDown, ArrowLeft } from "lucide-react";
+import { Heart, Sparkles, Search, Check, Loader2, ArrowRight, Users, ChevronDown, ArrowLeft, ChevronLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
@@ -60,7 +60,7 @@ export default function NewCompleteOnboard() {
   // Get selected categories from navigation state
   const selectedCategoryIds = (location.state?.selectedCategories as string[]) || [];
   const selectedCategoryNames = (location.state?.selectedCategoryNames as string[]) || [];
-  
+
   // Map by name first for better reliability between API and local constants
   const selectedCategoryObjects = selectedCategoryNames.length > 0
     ? selectedCategoryNames.map(name => categories.find(cat => cat.name === name)).filter(Boolean)
@@ -352,7 +352,7 @@ export default function NewCompleteOnboard() {
     setView('success');
   };
 
-  const handleFinalContinue = () => {
+  const handleFinalContinue = (home: boolean) => {
     if (addedNonprofitsCount === 0) {
       navigate(redirectTo);
       return;
@@ -369,7 +369,11 @@ export default function NewCompleteOnboard() {
       causes: causesBody
     }, {
       onSuccess: () => {
-        navigate(redirectTo);
+        if (home) {
+          navigate('/');
+        } else {
+          navigate('/donation');
+        }
       }
     });
   };
@@ -410,20 +414,20 @@ export default function NewCompleteOnboard() {
               <div className="h-1 w-8 sm:w-10 md:w-12 bg-gray-800 rounded-full"></div>
             </div>
 
-            {/* Heart Icon with Gradient */}
-            <div className="flex justify-center mb-4">
-              <div className="w-12 h-12 md:w-14 md:h-14 rounded-full bg-gradient-to-br from-purple-500 via-pink-500 to-blue-500 flex items-center justify-center shadow-md">
-                <Heart className="w-6 h-6 md:w-7 md:h-7 text-white fill-white" />
+            {/* Heart Icon */}
+            <div className="flex justify-center mb-4 sm:mb-6">
+              <div className="w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 bg-purple-100 rounded-full flex items-center justify-center">
+                <Heart className="w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8 text-purple-600 fill-purple-600" />
               </div>
             </div>
 
             {/* Title */}
-            <h1 className="text-xl md:text-2xl font-bold text-gray-900 text-center mb-1">
-              Start Supporting Causes
+            <h1 className="text-2xl md:text-3xl font-bold text-gray-900 text-center mb-1">
+              Start Supporting Nonprofits
             </h1>
 
             {/* Description */}
-            <p className="text-xs md:text-sm text-gray-600 text-center mb-3">
+            <p className="text-sm md:text-base text-gray-600 text-center mb-3">
               Choose how you'd like to select nonprofits
             </p>
 
@@ -451,20 +455,20 @@ export default function NewCompleteOnboard() {
               <button
                 onClick={handleJoinCollective}
                 disabled={isJoinLoading}
-                className="bg-white border border-gray-200 rounded-xl p-3 text-center hover:shadow-sm transition-all group disabled:opacity-70 disabled:cursor-not-allowed flex flex-col items-center"
+                className="bg-white border border-gray-200 rounded-xl p-4 sm:p-5 hover:bg-purple-50 hover:border-purple-300 group disabled:opacity-70 flex items-center"
               >
-                <div className="mb-2">
-                  <div className="w-10 h-10 rounded-full bg-[#d946ef] flex items-center justify-center group-hover:scale-105 transition-transform duration-300">
-                    {isJoinLoading ? (
+                <div className="mr-2">
+                  <div className="w-10 h-10 rounded-full bg-[#d946ef] flex items-center justify-center">
+                    {/* {isJoinLoading ? (
                       <Loader2 className="w-5 h-5 text-white animate-spin" />
-                    ) : (
-                      <Users className="w-5 h-5 text-white" />
-                    )}
+                    ) : ( */}
+                    <Users className="w-5 h-5 text-white" />
+                    {/* )} */}
                   </div>
                 </div>
-                <div>
+                <div className="flex flex-col items-start">
                   <h3 className="font-bold text-sm md:text-base text-gray-900">Join a Collective</h3>
-                  <p className="text-gray-400 text-[10px] md:text-xs">
+                  <p className="text-gray-400 text-xs md:text-sm">
                     Join curated giving communities
                   </p>
                 </div>
@@ -474,20 +478,21 @@ export default function NewCompleteOnboard() {
               <button
                 onClick={handleBrowseSearch}
                 disabled={isBrowseLoading}
-                className="bg-white border border-gray-200 rounded-xl p-3 text-center hover:shadow-sm transition-all group disabled:opacity-70 disabled:cursor-not-allowed flex flex-col items-center"
+                className="bg-white border border-gray-200 rounded-xl p-4 sm:p-5 hover:bg-purple-50 hover:border-purple-300 group disabled:opacity-70 flex items-center"
               >
-                <div className="mb-2">
-                  <div className="w-10 h-10 rounded-full bg-[#8b5cf6] flex items-center justify-center group-hover:scale-105 transition-transform duration-300">
-                    {isBrowseLoading ? (
+                <div className="mr-2">
+                  <div className="w-10 h-10 rounded-full bg-[#8b5cf6] flex items-center justify-center">
+                    {/* {isBrowseLoading ? (
                       <Loader2 className="w-5 h-5 text-white animate-spin" />
-                    ) : (
-                      <Search className="w-5 h-5 text-white" />
-                    )}
+                    ) : ( */}
+                    <Search className="w-5 h-5 text-white" />
+                    {/* )} */}
                   </div>
                 </div>
-                <div>
+                <div className="flex flex-col items-start">
+
                   <h3 className="font-bold text-sm md:text-base text-gray-900">I'll Choose My Own</h3>
-                  <p className="text-gray-400 text-[10px] md:text-xs">
+                  <p className="text-gray-400 text-xs md:text-sm">
                     Select nonprofits to add to your box
                   </p>
                 </div>
@@ -497,20 +502,20 @@ export default function NewCompleteOnboard() {
               <button
                 onClick={handleSurpriseMe}
                 disabled={isSurpriseLoading}
-                className="bg-white border border-gray-200 rounded-xl p-3 text-center hover:shadow-sm transition-all group disabled:opacity-70 disabled:cursor-not-allowed flex flex-col items-center"
+                className="bg-white border border-gray-200 rounded-xl p-4 sm:p-5 hover:bg-purple-50 hover:border-purple-300 group disabled:opacity-70 flex items-center"
               >
-                <div className="mb-2">
-                  <div className="w-10 h-10 rounded-full bg-[#ec4899] flex items-center justify-center group-hover:scale-105 transition-transform duration-300">
-                    {isSurpriseLoading ? (
+                <div className="mr-2">
+                  <div className="w-10 h-10 rounded-full bg-[#ec4899] flex items-center justify-center">
+                    {/* {isSurpriseLoading ? (
                       <Loader2 className="w-5 h-5 text-white animate-spin" />
-                    ) : (
-                      <Sparkles className="w-5 h-5 text-white" />
-                    )}
+                    ) : ( */}
+                    <Sparkles className="w-5 h-5 text-white" />
+                    {/* )} */}
                   </div>
                 </div>
-                <div>
+                <div className="flex flex-col items-start">
                   <h3 className="font-bold text-sm md:text-base text-gray-900">Surprise Me</h3>
-                  <p className="text-gray-400 text-[10px] md:text-xs">
+                  <p className="text-gray-400 text-xs md:text-sm">
                     We'll pick nonprofits based on interests
                   </p>
                 </div>
@@ -965,6 +970,9 @@ export default function NewCompleteOnboard() {
   if (view === 'success') {
     return (
       <div className="h-screen bg-white flex flex-col items-center justify-center px-4 py-8 relative">
+        <button className="absolute top-4 left-4" onClick={() => setView(previousView)}>
+          <ChevronLeft />
+        </button>
         <div className="w-full max-w-xl flex flex-col items-center text-center">
 
           <div className="relative mb-8 flex items-center justify-center">
@@ -985,7 +993,7 @@ export default function NewCompleteOnboard() {
           </p>
 
           <Button
-            onClick={handleFinalContinue}
+            onClick={() => handleFinalContinue(false)}
             disabled={createBoxMutation.isPending}
             className="w-full sm:w-auto min-w-[280px] h-14 bg-[#1600ff] hover:bg-[#0039CC] text-white text-lg font-bold rounded-xl mb-8 shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2"
           >
@@ -995,16 +1003,16 @@ export default function NewCompleteOnboard() {
                 Setting up Box...
               </>
             ) : (
-              'Continue to CRWD'
+              'Set my monthly amount'
             )}
           </Button>
 
           <button
-            onClick={() => setView(previousView)}
+            onClick={() => handleFinalContinue(true)}
             disabled={createBoxMutation.isPending}
             className="text-gray-500 hover:text-gray-800 text-base font-medium transition-colors flex items-center gap-2 disabled:opacity-50"
           >
-            <ArrowLeft className="w-5 h-5" /> {addedNonprofitsCount > 0 ? "Change My Selection" : "Go Back and Choose"}
+            Skip for now
           </button>
 
         </div>

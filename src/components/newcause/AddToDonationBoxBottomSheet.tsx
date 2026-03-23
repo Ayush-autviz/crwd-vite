@@ -99,7 +99,7 @@ export default function AddToDonationBoxBottomSheet({
                   <h3 className="text-[18px] font-bold leading-tight mb-0.5">
                     {hasDonationBox ? 'Add to Donation Box' : 'Create a Donation Box'}
                   </h3>
-                  <p className="text-[14px] text-white/80 font-medium">Support multiple causes monthly</p>
+                  <p className="text-[14px] text-white/80 font-medium">Support multiple nonprofits monthly</p>
                 </div>
               </div>
               <div className="w-8 h-8 flex items-center justify-center bg-white/20 rounded-full group-hover:translate-x-0.5 transition-transform">

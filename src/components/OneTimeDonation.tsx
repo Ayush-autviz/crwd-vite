@@ -383,7 +383,7 @@ export default function OneTimeDonation({
               </span>
             </div>
           )}
-          <p className="text-gray-600 text-xs text-center mt-1.5 md:mt-2">Support multiple causes with one donation, split evenly. Change anytime.</p>
+          <p className="text-gray-600 text-xs text-center mt-1.5 md:mt-2">Support multiple nonprofits with one donation, split evenly. Change anytime.</p>
         </div>
 
         {/* Donation Box Card */}

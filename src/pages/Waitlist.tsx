@@ -422,7 +422,7 @@ export default function WaitlistPage() {
               </p>
 
               <p className="text-muted-foreground mb-6 md:mb-8 mt-8" style={{ fontSize: 'clamp(1rem, 2vw, 1.25rem)' }}>
-                Join the waitlist. Support multiple causes with one decision. Set it once. Change everything.
+                Join the waitlist. Support multiple nonprofits with one decision. Set it once. Change everything.
               </p>
 
               <Button

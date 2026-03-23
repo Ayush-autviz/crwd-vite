@@ -83,9 +83,9 @@ export default function NewNonProfitInterests() {
           .map((cat: any) => cat.name);
 
         navigate(`/complete-onboard?redirectTo=${encodeURIComponent(redirectTo)}`, {
-          state: { 
+          state: {
             selectedCategories,
-            selectedCategoryNames 
+            selectedCategoryNames
           }
         });
       }
@@ -136,7 +136,7 @@ export default function NewNonProfitInterests() {
 
         {/* Title */}
         <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-900 text-center mb-2 sm:mb-3">
-          What causes do you care about?
+          What do you care about?
         </h1>
 
         {/* Subtitle */}

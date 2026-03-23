@@ -225,7 +225,7 @@ const Circles = () => {
 
                             {/* Supporting nonprofits count */}
                             <p className="text-[10px] md:text-xs text-gray-500">
-                              Supporting {circle.causes_count || circle.supported_causes_count || 0} nonprofits
+                              Supporting {circle.causes_count || circle.supported_causes_count || 0} nonprofit{circle.causes_count !== 1 ? 's' : ''}
                             </p>
                           </Link>
                         );
@@ -332,7 +332,7 @@ const Circles = () => {
 
                     {/* Supporting nonprofits count */}
                     <p className="text-[10px] md:text-xs text-gray-500">
-                      Supporting {circle.causes_count || circle.supported_causes_count || 0} nonprofits
+                      Supporting {circle.causes_count || circle.supported_causes_count || 0} nonprofit{circle.causes_count !== 1 ? 's' : ''}
                     </p>
                   </Link>
                 );

@@ -5,8 +5,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { getCauseByName } from '@/services/api/crwd';
-import { addCausesToBox } from '@/services/api/donation';
-import { getDonationBox } from '@/services/api/donation';
+import { addCausesToBox, getDonationBox, createDonationBox } from '@/services/api/donation';
 import CauseHeader from '@/components/newcause/CauseHeader';
 import CauseProfile from '@/components/newcause/CauseProfile';
 import CauseActionButtons from '@/components/newcause/CauseActionButtons';
@@ -102,6 +101,30 @@ export default function NewCausePage() {
     },
   });
 
+  // Create donation box mutation
+  const createDonationBoxMutation = useMutation({
+    mutationFn: async () => {
+      const id = causeData?.id ?? (causeId ? parseInt(causeId, 10) : NaN);
+      if (!id || isNaN(id)) throw new Error('Cause ID is missing');
+      return createDonationBox({
+        monthly_amount: "10",
+        causes: [{ cause_id: id }],
+      });
+    },
+    onSuccess: () => {
+      setShowAddToBoxModal(false);
+      queryClient.invalidateQueries({ queryKey: ['donationBox', currentUser?.id] });
+      setToastMessage('Donation box created with this cause!');
+      setShowToast(true);
+      navigate('/donation?tab=setup', { replace: true });
+    },
+    onError: (error: any) => {
+      console.error('Error creating donation box:', error);
+      setToastMessage('Failed to create donation box.');
+      setShowToast(true);
+    },
+  });
+
   // Loading state
   if (isLoadingCause) {
     return (
@@ -149,24 +172,7 @@ export default function NewCausePage() {
 
       // If donation box is not set up, navigate to donation page with cause preselected
       if (!donationBox || !donationBox.id || donationBox.message === "Donation box not found") {
-        setShowAddToBoxModal(false);
-        navigate('/donation?tab=setup', {
-          state: {
-            preselectedItem: {
-              id: (causeData?.id ?? causeId)?.toString() || '',
-              type: 'cause',
-              data: causeData,
-            },
-            preselectedCauses: causeData?.id ? [causeData.id] : (causeId && /^\d+$/.test(causeId) ? [parseInt(causeId)] : []),
-            preselectedCausesData: causeData ? [{
-              id: causeData.id,
-              name: causeData.name,
-              description: causeData.description || causeData.mission || '',
-              mission: causeData.mission || '',
-              logo: causeData.image || causeData.logo || '',
-            }] : [],
-          },
-        });
+        createDonationBoxMutation.mutate();
         return;
       }
 
@@ -216,25 +222,8 @@ export default function NewCausePage() {
       addToDonationBoxMutation.mutate();
     } catch (error) {
       console.error('Error checking donation box:', error);
-      // If there's an error (might be "Donation box not found"), navigate to setup with preselected cause
-      setShowAddToBoxModal(false);
-      navigate('/donation?tab=setup', {
-        state: {
-          preselectedItem: {
-            id: (causeData?.id ?? causeId)?.toString() || '',
-            type: 'cause',
-            data: causeData,
-          },
-          preselectedCauses: causeData?.id ? [causeData.id] : (causeId && /^\d+$/.test(causeId) ? [parseInt(causeId)] : []),
-          preselectedCausesData: causeData ? [{
-            id: causeData.id,
-            name: causeData.name,
-            description: causeData.description || causeData.mission || '',
-            mission: causeData.mission || '',
-            logo: causeData.image || causeData.logo || '',
-          }] : [],
-        },
-      });
+      // If there's an error (might be "Donation box not found"), try creating it
+      createDonationBoxMutation.mutate();
     }
   };
 
@@ -309,7 +298,7 @@ export default function NewCausePage() {
           onClose={() => setShowAddToBoxModal(false)}
           onConfirm={handleConfirmAddToBox}
           onOneTimeDonation={handleDonate}
-          isPending={addToDonationBoxMutation.isPending}
+          isPending={addToDonationBoxMutation.isPending || createDonationBoxMutation.isPending}
           hasDonationBox={!!donationBoxData?.id || !!donationBoxData?.box_id}
         />
       )}
