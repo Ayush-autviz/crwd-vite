@@ -3,6 +3,7 @@ import { getPosts } from "@/services/api/social";
 import { Heart, MessageCircle, Loader2 } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useNavigate } from "react-router-dom";
+import { encodePostId } from "@/lib/utils";
 
 interface CommunityTestimonialsProps {
   limit?: number;
@@ -127,7 +128,7 @@ export default function CommunityTestimonials({
                   </div>
 
                   {/* Post Content */}
-                  <p onClick={() => navigate(`/post/${post.id}`)} className="cursor-pointer text-gray-900 text-sm xs:text-base md:text-base lg:text-lg xl:text-xl mb-3 md:mb-5 lg:mb-6 leading-relaxed">
+                  <p onClick={() => navigate(`/post/${encodePostId(post.id)}`)} className="cursor-pointer text-gray-900 text-sm xs:text-base md:text-base lg:text-lg xl:text-xl mb-3 md:mb-5 lg:mb-6 leading-relaxed">
                     {post.content}
                   </p>
 

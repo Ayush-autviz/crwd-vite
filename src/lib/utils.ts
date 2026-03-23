@@ -38,3 +38,61 @@ export const truncateAtFirstPeriod = (
 };
 
 
+
+const ALPHABET =
+  "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+
+const BASE = ALPHABET.length;
+
+// keep SAME everywhere (frontend + backend)
+const SECRET_SALT = 918273645; // any large constant
+
+const MIN_LENGTH = 10;
+
+/* ---------------- BASE62 ---------------- */
+
+function base62Encode(num: number): string {
+  let str = "";
+
+  while (num > 0) {
+    str = ALPHABET[num % BASE] + str;
+    num = Math.floor(num / BASE);
+  }
+
+  return str || "0";
+}
+
+function base62Decode(str: any) {
+  let num = 0;
+
+  for (const ch of str) {
+    num = num * BASE + ALPHABET.indexOf(ch);
+  }
+
+  return num;
+}
+
+/* ---------------- ENCODE ---------------- */
+
+export function encodePostId(id: any) {
+  // hide sequential pattern
+  const mixed = id ^ SECRET_SALT;
+
+  let encoded = base62Encode(mixed);
+
+  // deterministic padding (NOT random)
+  encoded = encoded.padStart(MIN_LENGTH, "a");
+
+  return encoded;
+}
+
+/* ---------------- DECODE ---------------- */
+
+export function decodePostId(encoded: any) {
+  // remove padding
+  const clean = encoded.replace(/^a+/, "");
+
+  const mixed = base62Decode(clean);
+
+  return mixed ^ SECRET_SALT;
+}

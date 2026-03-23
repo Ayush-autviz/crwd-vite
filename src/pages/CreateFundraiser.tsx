@@ -18,6 +18,7 @@ import Confetti from 'react-confetti';
 import { CrwdAnimation } from '@/assets/newLogo';
 import { DiscardSheet } from '@/components/ui/DiscardSheet';
 import { useUnsavedChanges } from '@/hooks/use-unsaved-changes';
+import { encodePostId } from '@/lib/utils';
 
 // Avatar colors for consistent fallback styling
 const avatarColors = [
@@ -476,7 +477,7 @@ export default function CreateFundraiser() {
                 <Button
                   onClick={() => {
                     if (createdFundraiser?.id) {
-                      navigate(`/fundraiser/${createdFundraiser.id}`, { state: { fromCreate: true } });
+                      navigate(`/fundraiser/${encodePostId(createdFundraiser.id)}`, { state: { fromCreate: true } });
                     }
                   }}
                   className="w-full bg-[#1600ff] hover:bg-[#1400cc] text-white font-semibold rounded-lg py-3 md:py-4 text-sm md:text-base flex items-center justify-center gap-2"
@@ -530,7 +531,7 @@ export default function CreateFundraiser() {
           <SharePost
             isOpen={showShareModal}
             onClose={() => setShowShareModal(false)}
-            url={window.location.origin + `/fundraiser/${createdFundraiser.id}`}
+            url={window.location.origin + `/fundraiser/${encodePostId(createdFundraiser.id)}`}
             title={campaignTitle}
           />
         )}

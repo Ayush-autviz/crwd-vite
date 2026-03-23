@@ -7,7 +7,7 @@ import { Card } from "../ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { EllipsisIcon, Trash2 } from "lucide-react";
 import type { PostDetail } from "@/lib/types";
-import { cn } from "@/lib/utils";
+import { cn, encodePostId } from "@/lib/utils";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { SharePost } from "../ui/SharePost";
 import { Toast } from "../ui/toast";
@@ -432,7 +432,7 @@ export default function ProfileActivityCard({
                 )}
               </div>
 
-              <Link to={post.fundraiser ? `/fundraiser/${post.fundraiser.id}` : `/post/${post.id}`} className="block">
+              <Link to={post.fundraiser ? `/fundraiser/${encodePostId(post.fundraiser.id)}` : `/post/${encodePostId(post.id)}`} className="block">
                 {/* <a href={post.fundraiser ? `/fundraiser/${post.fundraiser.id}` : `/post/${post.id}`} className="block"> */}
                 {/* Fundraiser Post UI */}
                 {post.fundraiser ? (
@@ -607,7 +607,7 @@ export default function ProfileActivityCard({
       </Card>
 
       <SharePost
-        url={window.location.origin + `/post/${post.id}`}
+        url={window.location.origin + `/post/${encodePostId(post.id)}`}
         title={`${displayName} shared a post in ${post.org}`}
         description={post.text || `Check out this post from ${displayName} in the ${post.org} collective.`}
         isOpen={showShareModal}

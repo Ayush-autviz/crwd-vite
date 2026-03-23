@@ -13,6 +13,7 @@ import dayjs from 'dayjs';
 import { SharePost } from "@/components/ui/SharePost";
 import { queryClient } from '@/lib/react-query/client';
 import { Toast } from '@/components/ui/toast';
+import { decodePostId } from '@/lib/utils';
 
 // Avatar colors for consistent fallback styling
 const avatarColors = [
@@ -41,7 +42,8 @@ const getInitials = (name: string) => {
 };
 
 export default function FundraiserDetail() {
-  const { id } = useParams<{ id: string }>();
+  const { id: encodedId } = useParams<{ id: string }>();
+  const id = decodePostId(encodedId);
   const navigate = useNavigate();
   const location = useLocation();
   const [donationAmount, setDonationAmount] = useState('25');

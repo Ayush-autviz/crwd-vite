@@ -10,6 +10,7 @@ import { deletePost } from '@/services/api/social';
 import { useAuthStore } from '@/stores/store';
 import { DeletePostBottomSheet } from '@/components/post/DeletePostBottomSheet';
 import { Toast } from '@/components/ui/toast';
+import { encodePostId } from '@/lib/utils';
 
 interface PreviewDetails {
   title?: string | null;
@@ -229,7 +230,7 @@ export default function PostResultCard({ post }: PostResultCardProps) {
 
   return (
     <Card
-      onClick={() => navigate(post.fundraiser ? `/fundraiser/${post.fundraiser.id}` : `/post/${post.id}`)}
+      onClick={() => navigate(post.fundraiser ? `/fundraiser/${encodePostId(post.fundraiser.id)}` : `/post/${encodePostId(post.id)}`)}
       className="cursor-pointer hover:shadow-md transition-shadow border border-gray-200 bg-white rounded-lg py-3 relative"
     >
       <CardContent className="px-3 md:px-6">
@@ -334,7 +335,7 @@ export default function PostResultCard({ post }: PostResultCardProps) {
         {/* Fundraiser UI - show if fundraiser exists, otherwise show preview/media */}
         {post.fundraiser ? (
           <Link
-            to={`/fundraiser/${post.fundraiser.id}`}
+            to={`/fundraiser/${encodePostId(post.fundraiser.id)}`}
             onClick={(e) => e.stopPropagation()}
             className="block mb-2.5 md:mb-3 rounded-lg overflow-hidden border border-gray-200 bg-white"
           >
@@ -532,8 +533,8 @@ export default function PostResultCard({ post }: PostResultCardProps) {
         isOpen={showShareModal}
         onClose={() => setShowShareModal(false)}
         url={post.fundraiser
-          ? `${window.location.origin}/fundraiser/${post.fundraiser.id}`
-          : `${window.location.origin}/post/${post.id}`
+          ? `${window.location.origin}/fundraiser/${encodePostId(post.fundraiser.id)}`
+          : `${window.location.origin}/post/${encodePostId(post.id)}`
         }
         title={post.fundraiser
           ? post.fundraiser.name

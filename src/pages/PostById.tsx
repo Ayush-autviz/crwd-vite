@@ -14,9 +14,11 @@ import { useAuthStore } from "@/stores/store";
 import { DiscardSheet } from "@/components/ui/DiscardSheet";
 import { useUnsavedChanges } from "@/hooks/use-unsaved-changes";
 import LoggedOutHeader from "@/components/LoggedOutHeader";
+import { decodePostId } from "@/lib/utils";
 
 export default function PostById() {
-  const { id } = useParams();
+  const { id: encodedId } = useParams();
+  const id = decodePostId(encodedId || '');
   const [inputValue, setInputValue] = useState("");
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState("Comment added successfully!");

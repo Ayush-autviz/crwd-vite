@@ -11,7 +11,7 @@ import { Toast } from "@/components/ui/toast";
 import CommentsBottomSheet from "@/components/post/CommentsBottomSheet";
 import { SharePost } from "@/components/ui/SharePost";
 import { Card, CardContent } from "@/components/ui/card";
-import { cn } from "@/lib/utils";
+import { cn, encodePostId } from "@/lib/utils";
 import { useAuthStore } from "@/stores/store";
 import { DeletePostBottomSheet } from "@/components/post/DeletePostBottomSheet";
 
@@ -560,7 +560,7 @@ export default function CommunityPostCard({ post, onCommentPress, showSimplified
           </div>
         </div>
 
-        <Link to={post.fundraiser ? `/fundraiser/${post.fundraiser.id}` : `/post/${post.id}`} className="block">
+        <Link to={post.fundraiser ? `/fundraiser/${encodePostId(post.fundraiser.id)}` : `/post/${encodePostId(post.id)}`} className="block">
           {post.fundraiser ? (
             <>
               {/* Post Content */}
@@ -613,7 +613,7 @@ export default function CommunityPostCard({ post, onCommentPress, showSimplified
                   onClick={(e) => {
                     e.preventDefault();
                     e.stopPropagation();
-                    navigate(`/fundraiser/${post.fundraiser?.id}`);
+                    navigate(`/fundraiser/${encodePostId(post.fundraiser?.id)}`);
                   }}
                 >
                   <img
@@ -788,7 +788,7 @@ export default function CommunityPostCard({ post, onCommentPress, showSimplified
                     e.preventDefault();
                     e.stopPropagation();
                     // Add logic to open image modal if desired, or just navigate to post
-                    navigate(post.fundraiser ? `/fundraiser/${post.fundraiser.id}` : `/post/${post.id}`);
+                    navigate(post.fundraiser ? `/fundraiser/${encodePostId(post.fundraiser.id)}` : `/post/${encodePostId(post.id)}`);
                   }}
                 >
                   <img
@@ -878,8 +878,8 @@ export default function CommunityPostCard({ post, onCommentPress, showSimplified
         isOpen={showShareModal}
         onClose={() => setShowShareModal(false)}
         url={post.fundraiser
-          ? `${window.location.origin}/fundraiser/${post.fundraiser.id}`
-          : `${window.location.origin}/post/${post.id}`
+          ? `${window.location.origin}/fundraiser/${encodePostId(post.fundraiser.id)}`
+          : `${window.location.origin}/post/${encodePostId(post.id)}`
         }
         title={post.fundraiser
           ? post.fundraiser.name

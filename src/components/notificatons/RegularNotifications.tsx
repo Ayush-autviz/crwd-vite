@@ -125,6 +125,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useQueries } from "@tanstack/react-query";
 import { getUserProfileById } from "@/services/api/social";
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
+import { encodePostId } from '@/lib/utils';
 
 // Avatar colors for consistent coloring
 const avatarColors = [
@@ -487,7 +488,7 @@ const RegularNotifications: React.FC<RegularNotificationsProps> = ({
           className={`px-3 md:px-4 py-4 md:py-6 border-b border-gray-100 last:border-b-0 ${notification.postId || notification.userId ? 'cursor-pointer hover:bg-gray-50 transition-colors' : ''}`}
           onClick={() => {
             if (notification.postId) {
-              navigate(`/post/${notification.postId}`);
+              navigate(`/post/${encodePostId(notification.postId)}`);
             } else if (notification.collectiveId) {
               navigate(`/g/${notification.collectiveSortName || notification.collectiveId}`);
             } else if (notification.nonprofitId) {
