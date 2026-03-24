@@ -82,7 +82,7 @@ const Circles = () => {
             Discover Collectives
           </h1>
           <p className="text-sm md:text-base text-muted-foreground mb-3 md:mb-4 max-w-lg mx-auto px-4">
-            Join communities of people supporting causes together or start your
+            Join communities of people supporting nonprofits together or start your
             own.
           </p>
 

@@ -645,7 +645,7 @@ export default function ProfilePage() {
           <div className="px-4">
             <SheetHeader className="py-0">
               <SheetTitle className="text-xl font-bold text-gray-900 py-0">
-                {activeStatsTab === 'causes' && 'All Causes'}
+                {activeStatsTab === 'causes' && 'All Nonprofits'}
                 {activeStatsTab === 'crwds' && 'Collectives'}
                 {activeStatsTab === 'followers' && 'Followers'}
                 {activeStatsTab === 'following' && 'Following'}
@@ -663,7 +663,7 @@ export default function ProfilePage() {
           <div className="px-1 md:px-4 mb-2">
             <div className="flex justify-between gap-0.5 bg-gray-100 rounded-2xl p-0.5 md:p-1">
               {[
-                { label: 'Causes', value: 'causes' },
+                { label: 'Nonprofits', value: 'causes' },
                 { label: 'Collectives', value: 'crwds' },
                 { label: 'Followers', value: 'followers' },
                 { label: 'Following', value: 'following' },
@@ -742,7 +742,7 @@ export default function ProfilePage() {
                   </div>
                 ) : (
                   <div className="flex items-center justify-center py-10">
-                    <p className="text-sm text-gray-500">No causes found</p>
+                    <p className="text-sm text-gray-500">No nonprofits found</p>
                   </div>
                 )}
               </>

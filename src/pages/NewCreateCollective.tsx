@@ -601,7 +601,7 @@ export default function NewCreateCollectivePage() {
           Lead a Giving Community
         </h2>
         <p className="text-sm xs:text-base md:text-lg text-gray-700 text-center max-w-md mb-8 md:mb-12 px-4">
-          Pick your causes. Name your collective. Invite your people. Crwd handles the donations, you rally the movement.
+          Pick your nonprofits. Name your collective. Invite your people. Crwd handles the donations, you rally the movement.
         </p>
         <div className="w-full max-w-sm px-4 flex gap-3">
           <Button
@@ -643,10 +643,10 @@ export default function NewCreateCollectivePage() {
           </div>
         </div>
         <h2 className="text-xl md:text-2xl font-bold text-foreground text-center mb-4 md:mb-6 px-4">
-          Bring people together around causes
+          Bring people together around nonprofits
         </h2>
         <div className="text-sm xs:text-base md:text-lg text-gray-700 text-center max-w-md mb-8 md:mb-12 px-4 flex flex-col gap-6">
-          <p>You choose the causes. You invite the people.</p>
+          <p>You choose the nonprofits. You invite the people.</p>
           <p>
             Start conversations and share why you support the nonprofits you
             care about.
@@ -858,16 +858,16 @@ export default function NewCreateCollectivePage() {
               <p className="text-xs xs:text-sm md:text-base text-gray-600 text-center mb-6 md:mb-8 leading-relaxed">
                 {allCausesAlreadyAdded ? (
                   <>
-                    Your collective is ready to go! All causes are already in your donation box.{' '}
+                    Your collective is ready to go! All nonprofits are already in your donation box.{' '}
                     Start sharing to grow your community.
                   </>
                 ) : donationBoxData && donationBoxData.id ? (
                   <>
-                    Your collective is ready to go! Add causes to your donation box or start sharing to grow your community.
+                    Your collective is ready to go! Add nonprofits to your donation box or start sharing to grow your community.
                   </>
                 ) : (
                   <>
-                    Your collective is ready to go! Set up your donation box to support your causes, or start sharing to grow your community.
+                    Your collective is ready to go! Set up your donation box to support your nonprofits, or start sharing to grow your community.
                   </>
                 )}
               </p>
@@ -1227,7 +1227,7 @@ export default function NewCreateCollectivePage() {
             {/* Add or Remove Causes */}
             <div className="border border-gray-200 p-3 md:p-4 rounded-2xl">
               <h3 className="font-bold text-sm xs:text-base md:text-lg text-foreground mb-2 md:mb-3">
-                Add or Remove Causes <span className="text-red-500">*</span>
+                Add or Remove Nonprofits <span className="text-red-500">*</span>
               </h3>
 
               {/* Search Bar */}
@@ -1235,7 +1235,7 @@ export default function NewCreateCollectivePage() {
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 md:w-5 md:h-5 text-gray-400" />
                 <Input
                   type="text"
-                  placeholder={isSearchFocused ? "" : "Search causes or nonprofits"}
+                  placeholder={isSearchFocused ? "" : "Search nonprofits"}
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   onFocus={() => setIsSearchFocused(true)}

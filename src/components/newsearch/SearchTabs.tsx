@@ -4,8 +4,8 @@ interface SearchTabsProps {
 }
 
 export default function SearchTabs({ activeTab, onTabChange }: SearchTabsProps) {
-  const tabs: Array<'Causes' | 'Collectives' | 'Users' | 'Posts'> = [
-    'Causes',
+  const tabs: Array<'Nonprofits' | 'Collectives' | 'Users' | 'Posts'> = [
+    'Nonprofits',
     'Collectives',
     'Users',
     'Posts',

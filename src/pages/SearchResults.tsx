@@ -15,7 +15,7 @@ import UserResultCard from '@/components/newsearch/UserResultCard';
 import PostResultCard from '@/components/newsearch/PostResultCard';
 import RequestNonprofitModal from '@/components/newsearch/RequestNonprofitModal';
 
-type TabType = 'Causes' | 'Collectives' | 'Users' | 'Posts';
+type TabType = 'Nonprofits' | 'Collectives' | 'Users' | 'Posts';
 
 export default function SearchResultsPage() {
     const navigate = useNavigate();
@@ -29,7 +29,7 @@ export default function SearchResultsPage() {
 
     // Initialize activeTab from URL or default to Causes
     const tabParam = searchParams.get('tab');
-    const activeTab: TabType = (tabParam as TabType) || 'Causes';
+    const activeTab: TabType = (tabParam as TabType) || 'Nonprofits';
 
     // Handle updates to URL params
     const updateSearch = (newQuery: string) => {
@@ -59,7 +59,7 @@ export default function SearchResultsPage() {
     // Map tab names to API tab values
     const getTabValue = (tab: TabType): 'cause' | 'collective' | 'user' | 'post' => {
         switch (tab) {
-            case 'Causes': return 'cause';
+            case 'Nonprofits': return 'cause';
             case 'Collectives': return 'collective';
             case 'Users': return 'user';
             case 'Posts': return 'post';
@@ -170,7 +170,7 @@ export default function SearchResultsPage() {
                     ) : results.length > 0 ? (
                         <>
                             <div className="space-y-3 md:space-y-4">
-                                {activeTab === 'Causes' &&
+                                {activeTab === 'Nonprofits' &&
                                     results.map((cause: any) => (
                                         <CauseResultCard key={`${cause.id}-${activeTab}`} cause={cause} />
                                     ))}
@@ -209,7 +209,7 @@ export default function SearchResultsPage() {
                                 </div>
                             )}
                         </>
-                    ) : activeTab === 'Causes' ? (
+                    ) : activeTab === 'Nonprofits' ? (
                         <>
                             {/* Causes Empty State */}
                             <div className="text-center py-8 md:py-12 border-2 border-dashed border-gray-300 rounded-lg mb-6 md:mb-8">

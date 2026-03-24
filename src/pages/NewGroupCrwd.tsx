@@ -433,14 +433,14 @@ export default function NewGroupCrwdPage() {
           {isAdmin ? (
             <>
               {/* Joined Button - Non-clickable for admin */}
-              <Button
+              {/* <Button
                 disabled
                 variant="outline"
                 className="flex-1 font-semibold py-2 md:py-4 lg:py-5 rounded-lg text-xs xs:text-sm lg:text-base border-green-600 text-green-600 cursor-not-allowed opacity-75"
               >
                 <Check className="w-3 h-3 md:w-3.5 md:h-3.5 lg:w-4 lg:h-4 mr-1 md:mr-1.5 lg:mr-2 inline" />
                 Joined
-              </Button>
+              </Button> */}
               {/* Donate Button */}
               <Button
                 onClick={() => {
@@ -450,7 +450,7 @@ export default function NewGroupCrwdPage() {
                   }
                   setShowDonationChoiceModal(true);
                 }}
-                className="flex-1 font-semibold py-2 md:py-4 lg:py-5 rounded-lg text-xs xs:text-sm lg:text-base bg-[#1600ff] hover:bg-[#1400cc] text-white shadow-sm"
+                className="flex-1 font-semibold py-2 md:py-4 lg:py-5 rounded-full text-xs xs:text-sm lg:text-base bg-[#1600ff] hover:bg-[#1400cc] text-white shadow-sm"
               >
                 {/* <Heart className="w-3 h-3 md:w-3.5 md:h-3.5 lg:w-4 lg:h-4 mr-1 md:mr-1.5 lg:mr-2 inline fill-white" /> */}
                 Donate
@@ -459,7 +459,7 @@ export default function NewGroupCrwdPage() {
           ) : crwdData.is_joined ? (
             <>
               {/* Joined Button - Clickable for non-admin, prompts to unjoin */}
-              <Button
+              {/* <Button
                 onClick={handleJoinCollective}
                 disabled={leaveCollectiveMutation.isPending}
                 variant="outline"
@@ -476,7 +476,7 @@ export default function NewGroupCrwdPage() {
                     Joined
                   </>
                 )}
-              </Button>
+              </Button> */}
               {/* Donate Button */}
               <Button
                 onClick={() => {
@@ -486,7 +486,7 @@ export default function NewGroupCrwdPage() {
                   }
                   setShowDonationChoiceModal(true);
                 }}
-                className="flex-1 font-semibold py-2 md:py-4 lg:py-5 rounded-lg text-xs xs:text-sm lg:text-base bg-[#1600ff] hover:bg-[#1400cc] text-white shadow-sm"
+                className="flex-1 font-semibold py-2 md:py-4 lg:py-5 rounded-full text-xs xs:text-sm lg:text-base bg-[#1600ff] hover:bg-[#1400cc] text-white shadow-sm"
               >
                 {/* <Heart className="w-3 h-3 md:w-3.5 md:h-3.5 lg:w-4 lg:h-4 mr-1 md:mr-1.5 lg:mr-2 inline fill-white" /> */}
                 Donate
@@ -498,7 +498,7 @@ export default function NewGroupCrwdPage() {
                 onClick={handleJoinCollective}
                 disabled={joinCollectiveMutation.isPending}
                 variant="outline"
-                className="flex-1 font-semibold py-2 md:py-4 lg:py-5 rounded-lg text-xs xs:text-sm lg:text-base border-[#1600ff] text-[#1600ff] hover:bg-[#EEF2FF]"
+                className="flex-1 font-semibold py-2 md:py-4 lg:py-5 rounded-full text-xs xs:text-sm lg:text-base border-[#1600ff] text-[#1600ff] hover:bg-[#EEF2FF]"
               >
                 {joinCollectiveMutation.isPending ? (
                   <>
@@ -509,12 +509,12 @@ export default function NewGroupCrwdPage() {
                   'Join Collective'
                 )}
               </Button>
-              <Button
+              {/* <Button
                 onClick={handleOneTimeDonation}
                 className="flex-1 font-semibold py-2 md:py-4 lg:py-5 rounded-lg text-xs xs:text-sm lg:text-base bg-[#1600ff] hover:bg-[#1400cc] text-white shadow-sm"
               >
                 One-Time Donation
-              </Button>
+              </Button> */}
             </>
           )}
         </div>

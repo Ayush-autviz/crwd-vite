@@ -49,7 +49,7 @@ const ProfileStats: React.FC<ProfileStatsProps> = ({
         ) : (
           <>
             <span className="text-base sm:text-lg font-semibold text-gray-700 text-center">{causes ?? 0}</span>
-            <span className="text-sm sm:text-base text-gray-600 text-center">cause{causes !== 1 ? 's' : ''}</span>
+            <span className="text-sm sm:text-base text-gray-600 text-center">nonprofit{causes !== 1 ? 's' : ''}</span>
           </>
         )}
       </button>

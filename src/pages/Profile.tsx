@@ -689,7 +689,7 @@ export default function ProfilePage() {
           <div className="px-3 md:px-4">
             <SheetHeader className="py-0">
               <SheetTitle className="text-xl  font-bold text-gray-900">
-                {activeStatsTab === 'causes' && 'All Causes'}
+                {activeStatsTab === 'causes' && 'All Nonprofits'}
                 {activeStatsTab === 'crwds' && 'Collectives'}
                 {activeStatsTab === 'followers' && 'Followers'}
                 {activeStatsTab === 'following' && 'Following'}
@@ -707,7 +707,7 @@ export default function ProfilePage() {
           <div className="px-1 md:px-4">
             <div className="flex justify-between gap-0.5 bg-gray-100 rounded-2xl p-0.5 md:p-1">
               {[
-                { label: 'Causes', value: 'causes' },
+                { label: 'Nonprofits', value: 'causes' },
                 { label: 'Collectives', value: 'crwds' },
                 { label: 'Followers', value: 'followers' },
                 { label: 'Following', value: 'following' },
@@ -733,7 +733,7 @@ export default function ProfilePage() {
                 {statsCausesLoading ? (
                   <div className="flex flex-col items-center justify-center py-8 md:py-10">
                     <Loader2 className="w-5 h-5 md:w-6 md:h-6 animate-spin text-blue-600" />
-                    <p className="text-xs md:text-sm text-gray-600 mt-2 md:mt-2.5">Loading causes...</p>
+                    <p className="text-xs md:text-sm text-gray-600 mt-2 md:mt-2.5">Loading nonprofits...</p>
                   </div>
                 ) : statsCausesData?.results?.length > 0 ? (
                   <div className="space-y-0">
@@ -782,7 +782,7 @@ export default function ProfilePage() {
                   </div>
                 ) : (
                   <div className="flex items-center justify-center py-8 md:py-10">
-                    <p className="text-xs md:text-sm text-gray-500">No causes found</p>
+                    <p className="text-xs md:text-sm text-gray-500">No nonprofits found</p>
                   </div>
                 )}
               </>
