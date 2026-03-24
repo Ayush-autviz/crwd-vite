@@ -1,7 +1,7 @@
 
 import { useState, useEffect } from "react";
 import { useNavigate, useLocation, useSearchParams } from "react-router-dom";
-import { Heart, Sparkles, Search, Check, Loader2, ArrowRight, Users, ChevronDown, ArrowLeft, ChevronLeft } from "lucide-react";
+import { Heart, Sparkles, Search, Check, Loader2, ArrowRight, Users, ChevronDown, ChevronLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
@@ -416,8 +416,8 @@ export default function NewCompleteOnboard() {
 
             {/* Heart Icon */}
             <div className="flex justify-center mb-4 sm:mb-6">
-              <div className="w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 bg-purple-100 rounded-full flex items-center justify-center">
-                <Heart className="w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8 text-purple-600 fill-purple-600" />
+              <div className="w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 bg-[#EDE0F5] rounded-full flex items-center justify-center">
+                <Heart className="w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8 text-[#9333EA] fill-[#9333EA]" />
               </div>
             </div>
 
@@ -427,18 +427,18 @@ export default function NewCompleteOnboard() {
             </h1>
 
             {/* Description */}
-            <p className="text-sm md:text-base text-gray-600 text-center mb-3">
+            <p className="text-sm md:text-base text-gray-600 text-center mb-4">
               Choose how you'd like to select nonprofits
             </p>
 
             {/* Selected Categories Tags */}
             {selectedCategoryObjects.length > 0 && (
-              <div className="flex flex-wrap justify-center gap-1.5 mb-4">
-                {selectedCategoryObjects.map((category) => (
+              <div className="flex flex-wrap justify-center gap-1.5 mb-8">
+                {selectedCategoryObjects.map((category) => category && (
                   <div
                     key={category.id}
-                    className="px-3 py-1 rounded-full text-[10px] md:text-xs font-bold text-white border border-gray-200"
-                    style={{ backgroundColor: category.background }}
+                    className="px-3 py-1 rounded-full text-[10px] md:text-xs font-bold border border-transparent"
+                    style={{ backgroundColor: '#F9C9B6', color: '#824C38' }}
                   >
                     {category.name}
                   </div>
@@ -457,12 +457,12 @@ export default function NewCompleteOnboard() {
                 disabled={isJoinLoading}
                 className="bg-white border border-gray-200 rounded-xl p-4 sm:p-5 hover:bg-purple-50 hover:border-purple-300 group disabled:opacity-70 flex items-center"
               >
-                <div className="mr-2">
-                  <div className="w-10 h-10 rounded-full bg-[#d946ef] flex items-center justify-center">
+                <div className="mr-3">
+                  <div className="w-10 h-10 rounded-full bg-[#F0D6F5] flex items-center justify-center">
                     {/* {isJoinLoading ? (
                       <Loader2 className="w-5 h-5 text-white animate-spin" />
                     ) : ( */}
-                    <Users className="w-5 h-5 text-white" />
+                    <Users className="w-5 h-5 text-[#9333EA]" />
                     {/* )} */}
                   </div>
                 </div>
@@ -480,12 +480,12 @@ export default function NewCompleteOnboard() {
                 disabled={isBrowseLoading}
                 className="bg-white border border-gray-200 rounded-xl p-4 sm:p-5 hover:bg-purple-50 hover:border-purple-300 group disabled:opacity-70 flex items-center"
               >
-                <div className="mr-2">
-                  <div className="w-10 h-10 rounded-full bg-[#8b5cf6] flex items-center justify-center">
+                <div className="mr-3">
+                  <div className="w-10 h-10 rounded-full bg-[#D6D6F5] flex items-center justify-center">
                     {/* {isBrowseLoading ? (
                       <Loader2 className="w-5 h-5 text-white animate-spin" />
                     ) : ( */}
-                    <Search className="w-5 h-5 text-white" />
+                    <Search className="w-5 h-5 text-[#9333EA]" />
                     {/* )} */}
                   </div>
                 </div>
@@ -504,12 +504,12 @@ export default function NewCompleteOnboard() {
                 disabled={isSurpriseLoading}
                 className="bg-white border border-gray-200 rounded-xl p-4 sm:p-5 hover:bg-purple-50 hover:border-purple-300 group disabled:opacity-70 flex items-center"
               >
-                <div className="mr-2">
-                  <div className="w-10 h-10 rounded-full bg-[#ec4899] flex items-center justify-center">
+                <div className="mr-3">
+                  <div className="w-10 h-10 rounded-full bg-[#F5D6D6] flex items-center justify-center">
                     {/* {isSurpriseLoading ? (
                       <Loader2 className="w-5 h-5 text-white animate-spin" />
                     ) : ( */}
-                    <Sparkles className="w-5 h-5 text-white" />
+                    <Sparkles className="w-5 h-5 text-[#E91E63]" />
                     {/* )} */}
                   </div>
                 </div>
@@ -523,8 +523,8 @@ export default function NewCompleteOnboard() {
             </div>
           </div>
 
-          <div className="p-3 md:p-6 flex-shrink-0 bg-white border-t border-gray-200">
-            <div className="flex flex-col items-center gap-3">
+          <div className="p-4 md:p-6 pb-8 flex-shrink-0 bg-white border-t border-gray-200">
+            <div className="flex flex-col items-center gap-4">
               <div className="flex gap-4 w-full">
                 <Button
                   onClick={handleEditCategories}
@@ -533,21 +533,13 @@ export default function NewCompleteOnboard() {
                 >
                   Back
                 </Button>
-                {/* <Button
-                  disabled={true}
-                  className="flex-1 py-6 rounded-full bg-[#1600ff] opacity-50 text-white font-bold flex items-center justify-center gap-2 text-base shadow-lg shadow-blue-100"
-                >
-                  Continue
-                  <ArrowRight className="w-5 h-5" />
-                </Button> */}
                 <button
                   onClick={handleSkip}
-                  className="flex-1 text-gray-500 font-semibold text-sm hover:text-gray-900 transition-all"
+                  className="flex-1 text-gray-500 font-semibold text-sm hover:text-gray-900 transition-all text-center"
                 >
                   Skip for now
                 </button>
               </div>
-
             </div>
           </div>
         </div>

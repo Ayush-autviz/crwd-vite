@@ -26,7 +26,7 @@ const Footer = () => {
       <div className="max-w-7xl mx-auto px-3 md:px-4 lg:px-8 py-8 md:py-12 lg:py-16">
         {/* Logo at Top */}
         <div className="mb-4 md:mb-6">
-          <div 
+          <div
             onClick={() => navigate('/')}
             className="text-xl md:text-2xl lg:text-3xl font-bold cursor-pointer">
             crwd
@@ -183,7 +183,7 @@ const Footer = () => {
         {/* Copyright Section - Bottom Center */}
         <div className="border-t border-gray-800 pt-6 md:pt-8">
           <div className="text-center space-y-1.5 md:space-y-2 text-[10px] md:text-xs lg:text-sm text-gray-400">
-            <p>© 2026 CRWD Collective. Making the world better, together.</p>
+            <p>© <span>{new Date().getFullYear()}</span> CRWD Collective.</p>
             <p>All donations are made to and gifted from CRWD Foundation</p>
             <p>EIN: 41-2423690</p>
           </div>
