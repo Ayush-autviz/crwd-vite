@@ -29,7 +29,7 @@ export default function MyDonationBoxCard({
           <p className="text-xs xs:text-sm md:text-base text-gray-600 mb-2 md:mb-3 font-[500]">
             You are currently donating{" "}
             <span className="font-bold text-gray-800">${monthlyAmount} per month</span> to{" "}
-            <span className="font-bold text-gray-800">{causeCount} causes</span>.
+            <span className="font-bold text-gray-800">{causeCount} nonprofit{causeCount !== 1 ? 's' : ''}</span>.
           </p>
           <Link
             to="/donation"
