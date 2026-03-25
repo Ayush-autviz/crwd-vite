@@ -63,7 +63,7 @@ const ProfileStats: React.FC<ProfileStatsProps> = ({
         ) : (
           <>
             <span className="text-base sm:text-lg font-semibold text-gray-700 text-center">{crwds ?? 0}</span>
-            <span className="text-sm sm:text-base text-gray-600 text-center">Giving Group{crwds !== 1 ? 's' : ''}</span>
+            <span className="text-sm sm:text-base text-gray-600 text-center">Group{crwds !== 1 ? 's' : ''}</span>
           </>
         )}
       </button>
