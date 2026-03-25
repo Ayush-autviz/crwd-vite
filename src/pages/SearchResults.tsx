@@ -15,7 +15,7 @@ import UserResultCard from '@/components/newsearch/UserResultCard';
 import PostResultCard from '@/components/newsearch/PostResultCard';
 import RequestNonprofitModal from '@/components/newsearch/RequestNonprofitModal';
 
-type TabType = 'Nonprofits' | 'Collectives' | 'Users' | 'Posts';
+type TabType = 'Nonprofits' | 'Giving Groups' | 'Users' | 'Posts';
 
 export default function SearchResultsPage() {
     const navigate = useNavigate();
@@ -60,7 +60,7 @@ export default function SearchResultsPage() {
     const getTabValue = (tab: TabType): 'cause' | 'collective' | 'user' | 'post' => {
         switch (tab) {
             case 'Nonprofits': return 'cause';
-            case 'Collectives': return 'collective';
+            case 'Giving Groups': return 'collective';
             case 'Users': return 'user';
             case 'Posts': return 'post';
             default: return 'cause';
@@ -79,7 +79,7 @@ export default function SearchResultsPage() {
             ? ['causes-by-category', categoryId, searchQuery, activeTab]
             : ['new-search', activeTab, searchQuery],
         queryFn: ({ pageParam = 1 }: { pageParam?: number }) => {
-            if (categoryId && activeTab === 'Causes') {
+            if (categoryId && activeTab === 'Nonprofits') {
                 const searchTerm = (categoryName && searchQuery === categoryName) ? '' : searchQuery;
                 return getCausesBySearch(searchTerm || '', categoryId, pageParam);
             }
@@ -105,15 +105,15 @@ export default function SearchResultsPage() {
         if (!searchData?.pages) return [];
 
         return searchData.pages.flatMap((page: any) => {
-            if (categoryId && activeTab === 'Causes' && page.results) {
+            if (categoryId && activeTab === 'Nonprofits' && page.results) {
                 return page.results;
             }
 
             switch (activeTab) {
-                case 'Causes':
+                case 'Nonprofits':
                     if (page.causes || page.cause) return page.causes || page.cause;
                     break;
-                case 'Collectives':
+                case 'Giving Groups':
                     if (page.collectives || page.collective) return page.collectives || page.collective;
                     break;
                 case 'Users':
@@ -174,7 +174,7 @@ export default function SearchResultsPage() {
                                     results.map((cause: any) => (
                                         <CauseResultCard key={`${cause.id}-${activeTab}`} cause={cause} />
                                     ))}
-                                {activeTab === 'Collectives' &&
+                                {activeTab === 'Giving Groups' &&
                                     results.map((collective: any) => (
                                         <CollectiveResultCard key={`${collective.id}-${activeTab}`} collective={collective} />
                                     ))}
@@ -235,13 +235,13 @@ export default function SearchResultsPage() {
                                 </Button>
                             </div>
                         </>
-                    ) : activeTab === 'Collectives' ? (
+                    ) : activeTab === 'Giving Groups' ? (
                         <>
                             {/* Collectives Empty State */}
                             <div className="text-center py-8 md:py-12 border-2 border-dashed border-gray-300 rounded-lg mb-6 md:mb-8">
                                 <SearchIcon className="w-12 h-12 md:w-16 md:h-16 mx-auto mb-4 text-gray-400" />
                                 <p className="font-semibold mb-2 text-gray-700 text-sm xs:text-base md:text-lg">
-                                    No "{searchQuery}" collective found
+                                    No "{searchQuery}" Giving Groups found
                                 </p>
                                 <p className="text-sm xs:text-base md:text-lg text-gray-500">
                                     Want to start one?

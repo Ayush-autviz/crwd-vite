@@ -646,13 +646,13 @@ export default function ProfilePage() {
             <SheetHeader className="py-0">
               <SheetTitle className="text-xl font-bold text-gray-900 py-0">
                 {activeStatsTab === 'causes' && 'All Nonprofits'}
-                {activeStatsTab === 'crwds' && 'Collectives'}
+                {activeStatsTab === 'crwds' && 'Giving Groups'}
                 {activeStatsTab === 'followers' && 'Followers'}
                 {activeStatsTab === 'following' && 'Following'}
               </SheetTitle>
               <SheetDescription className="text-sm text-gray-500">
                 {activeStatsTab === 'causes' && `All nonprofits that ${fullName} support`}
-                {activeStatsTab === 'crwds' && `Collectives ${fullName} is part of`}
+                {activeStatsTab === 'crwds' && `Giving Groups ${fullName} is part of`}
                 {activeStatsTab === 'followers' && `People following ${fullName}`}
                 {activeStatsTab === 'following' && `People ${fullName} is following`}
               </SheetDescription>
@@ -664,7 +664,7 @@ export default function ProfilePage() {
             <div className="flex justify-between gap-0.5 bg-gray-100 rounded-2xl p-0.5 md:p-1">
               {[
                 { label: 'Nonprofits', value: 'causes' },
-                { label: 'Collectives', value: 'crwds' },
+                { label: 'Groups', value: 'crwds' },
                 { label: 'Followers', value: 'followers' },
                 { label: 'Following', value: 'following' },
               ].map((tab) => (
@@ -689,7 +689,7 @@ export default function ProfilePage() {
                 {statsCausesLoading ? (
                   <div className="flex flex-col items-center justify-center py-10">
                     <Loader2 className="w-6 h-6 animate-spin text-blue-600" />
-                    <p className="text-sm text-gray-600 mt-2.5">Loading causes...</p>
+                    <p className="text-sm text-gray-600 mt-2.5">Loading nonprofits...</p>
                   </div>
                 ) : statsCausesData?.results?.length > 0 ? (
                   <div className="space-y-0">
@@ -753,7 +753,7 @@ export default function ProfilePage() {
                 {statsCollectivesLoading ? (
                   <div className="flex flex-col items-center justify-center py-10">
                     <Loader2 className="w-6 h-6 animate-spin text-blue-600" />
-                    <p className="text-sm text-gray-600 mt-2.5">Loading collectives...</p>
+                    <p className="text-sm text-gray-600 mt-2.5">Loading Giving Groups...</p>
                   </div>
                 ) : statsCollectivesData?.data?.length > 0 ? (
                   <div className="space-y-0">

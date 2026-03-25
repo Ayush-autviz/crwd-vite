@@ -12,13 +12,13 @@ import CommunityPostCard from "@/components/newHome/CommunityPostCard";
 import { NotificationSummary } from "@/components/newHome/CommunityUpdates";
 import ExploreCards from "@/components/newHome/ExploreCards";
 import ProfileNavbar from "@/components/profile/ProfileNavbar";
-import { 
-    HelloGreetingSkeleton, 
-    DonationBoxSkeleton, 
-    CollectiveCarouselSkeleton, 
-    CommunityUpdatesSkeleton, 
-    FeaturedNonprofitsSkeleton, 
-    SuggestedCollectivesSkeleton 
+import {
+    HelloGreetingSkeleton,
+    DonationBoxSkeleton,
+    CollectiveCarouselSkeleton,
+    CommunityUpdatesSkeleton,
+    FeaturedNonprofitsSkeleton,
+    SuggestedCollectivesSkeleton
 } from "@/components/newHome/HomeSkeleton";
 import { getCollectives, getCauses, getJoinCollective } from "@/services/api/crwd";
 import { getDonationBox } from "@/services/api/donation";
@@ -85,7 +85,7 @@ export default function NewHome() {
         initialPageParam: 1,
         enabled: !!token?.access_token,
     });
-    
+
     // Combined loading states
 
     const allCommunityUpdates = useMemo(() => {
@@ -543,7 +543,7 @@ export default function NewHome() {
                 )}
 
                 {/* Collective Carousel Card - Show joined collectives or Create Collective Card */}
-                {token?.access_token ? (
+                {/* {token?.access_token ? (
                     joinedCollectivesLoading ? (
                         <CollectiveCarouselSkeleton />
                     ) : (
@@ -555,7 +555,7 @@ export default function NewHome() {
                     )
                 ) : (
                     <CollectiveCarouselSkeleton />
-                )}
+                )} */}
             </div>
 
             <div className="w-full max-w-7xl mx-auto">

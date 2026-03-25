@@ -690,13 +690,13 @@ export default function ProfilePage() {
             <SheetHeader className="py-0">
               <SheetTitle className="text-xl  font-bold text-gray-900">
                 {activeStatsTab === 'causes' && 'All Nonprofits'}
-                {activeStatsTab === 'crwds' && 'Collectives'}
+                {activeStatsTab === 'crwds' && 'Giving Groups'}
                 {activeStatsTab === 'followers' && 'Followers'}
                 {activeStatsTab === 'following' && 'Following'}
               </SheetTitle>
               <SheetDescription className="text-xs md:text-sm text-gray-500">
                 {activeStatsTab === 'causes' && 'All nonprofits that you support'}
-                {activeStatsTab === 'crwds' && "Collectives you're part of"}
+                {activeStatsTab === 'crwds' && "Giving Groups you're part of"}
                 {activeStatsTab === 'followers' && 'People following you'}
                 {activeStatsTab === 'following' && "People you're following"}
               </SheetDescription>
@@ -708,7 +708,7 @@ export default function ProfilePage() {
             <div className="flex justify-between gap-0.5 bg-gray-100 rounded-2xl p-0.5 md:p-1">
               {[
                 { label: 'Nonprofits', value: 'causes' },
-                { label: 'Collectives', value: 'crwds' },
+                { label: 'Groups', value: 'crwds' },
                 { label: 'Followers', value: 'followers' },
                 { label: 'Following', value: 'following' },
               ].map((tab) => (
@@ -793,7 +793,7 @@ export default function ProfilePage() {
                 {statsCollectivesLoading ? (
                   <div className="flex flex-col items-center justify-center py-8 md:py-10">
                     <Loader2 className="w-5 h-5 md:w-6 md:h-6 animate-spin text-blue-600" />
-                    <p className="text-xs md:text-sm text-gray-600 mt-2 md:mt-2.5">Loading collectives...</p>
+                    <p className="text-xs md:text-sm text-gray-600 mt-2 md:mt-2.5">Loading Giving Groups...</p>
                   </div>
                 ) : statsCollectivesData?.data?.length > 0 ? (
                   <div className="space-y-0">
@@ -841,7 +841,7 @@ export default function ProfilePage() {
                   </div>
                 ) : (
                   <div className="flex items-center justify-center py-8 md:py-10">
-                    <p className="text-xs md:text-sm text-gray-500">No collectives found</p>
+                    <p className="text-xs md:text-sm text-gray-500">No Giving Groups found</p>
                   </div>
                 )}
               </>
@@ -988,7 +988,7 @@ export default function ProfilePage() {
             {/* Header */}
             <div className="mb-4 md:mb-6">
               <p className="text-sm md:text-base text-gray-500">
-                Collectives founded by {fullName}
+                Giving Groups founded by {fullName}
               </p>
             </div>
 

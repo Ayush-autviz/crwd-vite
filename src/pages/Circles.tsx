@@ -66,7 +66,7 @@ const Circles = () => {
   return (
     <div className="">
       <ProfileNavbar
-        title="Collectives"
+        title="Give Together"
         showMobileMenu={true}
         showDesktopMenu={true}
         showBackButton={true}
@@ -79,7 +79,7 @@ const Circles = () => {
         {/* Header Section */}
         <div className="p-4 md:p-6 text-center flex flex-col items-center">
           <h1 className="text-2xl md:text-3xl font-bold text-foreground mb-1.5 md:mb-2">
-            Discover Collectives
+            Give Together
           </h1>
           <p className="text-sm md:text-base text-muted-foreground mb-3 md:mb-4 max-w-lg mx-auto px-4">
             Join communities of people supporting nonprofits together or start your
@@ -92,7 +92,7 @@ const Circles = () => {
             className="flex items-center gap-1.5 md:gap-2 justify-center w-fit bg-[#00c854] hover:bg-green-700 text-white px-3 md:px-4 py-1.5 md:py-2 rounded-full text-sm md:text-base font-semibold shadow-lg"
           >
             <Plus className="w-4 h-4 md:w-5 md:h-5" strokeWidth={3} />
-            <p> Start a Collective</p>
+            <p> Start a Giving Group</p>
           </Link>
         </div>
 
@@ -107,8 +107,8 @@ const Circles = () => {
                 }`}
             >
               <Users className="w-3.5 h-3.5 md:w-4 md:h-4 flex-shrink-0" />
-              <span className="hidden sm:inline">My Collectives</span>
-              <span className="sm:hidden">My Collectives</span>
+              <span className="hidden sm:inline">My Giving Groups</span>
+              <span className="sm:hidden">My Giving Groups</span>
               <span className="ml-0.5">({joinCollectiveData?.data?.length || 0})</span>
             </button>
             <button
@@ -236,8 +236,8 @@ const Circles = () => {
                       <div className="bg-gray-100 p-3 md:p-4 w-fit rounded-full mx-auto">
                         <Users className="w-10 h-10 md:w-12 md:h-12 text-gray-400" />
                       </div>
-                      <p className="text-base md:text-lg font-semibold text-gray-900 mt-3 md:mt-4">You haven't joined any collectives yet</p>
-                      <p className="text-sm md:text-base text-gray-500 mt-1">Check out the discover tab to join a collective</p>
+                      <p className="text-base md:text-lg font-semibold text-gray-900 mt-3 md:mt-4">You haven't joined any Giving Groups yet</p>
+                      <p className="text-sm md:text-base text-gray-500 mt-1">Check out the discover tab to join a Giving Group</p>
                     </div>
                   )}
                 </>

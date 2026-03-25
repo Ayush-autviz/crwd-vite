@@ -506,7 +506,7 @@ export default function NewGroupCrwdPage() {
                     Joining...
                   </>
                 ) : (
-                  'Join Collective'
+                  'Join Giving Group'
                 )}
               </Button>
               {/* <Button

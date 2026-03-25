@@ -63,7 +63,7 @@ export default function NewSearchPage() {
             <SearchIcon className="absolute left-2.5 md:left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 md:w-5 md:h-5 text-gray-400" />
             <Input
               type="text"
-              placeholder="Search nonprofits, collectives, or people"
+              placeholder="Search nonprofits, giving groups, or people"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               onKeyPress={(e) => {

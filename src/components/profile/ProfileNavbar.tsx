@@ -263,7 +263,7 @@ export default function ProfileNavbar({
                           className="flex items-center gap-2 sm:gap-3 py-2.5 sm:py-3 px-2 rounded-lg hover:bg-gray-100 transition-colors"
                         >
                           <Users className="h-4 w-4 sm:h-5 sm:w-5 text-gray-700" />
-                          <span className="text-gray-900 font-medium text-sm xs:text-base sm:text-lg">Collectives</span>
+                          <span className="text-gray-900 font-medium text-sm xs:text-base sm:text-lg">Giving Groups</span>
                         </Link>
                         <Link
                           to="/donation"
@@ -441,7 +441,7 @@ export default function ProfileNavbar({
                           className="flex items-center gap-2 sm:gap-3 py-2.5 sm:py-3 px-2 rounded-lg hover:bg-gray-100 transition-colors"
                         >
                           <Users className="h-4 w-4 sm:h-5 sm:w-5 text-gray-700" />
-                          <span className="text-gray-900 font-medium text-xs xs:text-sm sm:text-base">Collectives</span>
+                          <span className="text-gray-900 font-medium text-xs xs:text-sm sm:text-base">Giving Groups</span>
                         </Link>
                         <Link
                           to="/donation"

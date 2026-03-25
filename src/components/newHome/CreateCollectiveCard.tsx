@@ -19,7 +19,7 @@ export default function CreateCollectiveCard() {
             </div>
             <div className="flex-1 min-w-0 text-left w-full md:w-auto">
               <h3 className="font-bold text-sm xs:text-base md:text-lg text-foreground">
-                Start Your Own Collective
+                Start Your Own Giving Group
               </h3>
               <p className="text-xs xs:text-sm md:text-base text-gray-600 mb-1.5 md:mb-2 mt-0.5 md:mt-1">
                 Bring people together around causes you care about.
@@ -31,7 +31,7 @@ export default function CreateCollectiveCard() {
                 }}
                 className="text-foreground font-semibold text-sm xs:text-base md:text-lg hover:underline flex items-center gap-1 self-start"
               >
-                Create collective
+                Create Giving Group
                 <ArrowRight className="w-3 h-3 md:w-4 md:h-4" />
               </button>
             </div>

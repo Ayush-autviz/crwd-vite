@@ -590,7 +590,7 @@ export default function NewCreateCollectivePage() {
           >
             <ArrowLeft className="w-4 h-4 md:w-5 md:h-5 text-gray-700" />
           </button>
-          <h1 className="font-bold text-lg md:text-xl text-foreground">Start a Collective</h1>
+          <h1 className="font-bold text-lg md:text-xl text-foreground">Start a Giving Group</h1>
         </div>
         <div className="mb-6 md:mb-8">
           <div className="w-12 h-12 md:w-16 md:h-16 rounded-full mt-4 md:mt-5 bg-blue-100 flex items-center justify-center">
@@ -601,7 +601,7 @@ export default function NewCreateCollectivePage() {
           Lead a Giving Community
         </h2>
         <p className="text-sm xs:text-base md:text-lg text-gray-700 text-center max-w-md mb-8 md:mb-12 px-4">
-          Pick your nonprofits. Name your collective. Invite your people. Crwd handles the donations, you rally the movement.
+          Pick your nonprofits. Name your giving group. Invite your people. Crwd handles the donations, you rally the movement.
         </p>
         <div className="w-full max-w-sm px-4 flex gap-3">
           <Button
@@ -635,7 +635,7 @@ export default function NewCreateCollectivePage() {
           >
             <ArrowLeft className="w-4 h-4 md:w-5 md:h-5 text-gray-700" />
           </button>
-          <h1 className="font-bold text-lg md:text-xl text-foreground">Start a Collective</h1>
+          <h1 className="font-bold text-lg md:text-xl text-foreground">Start a Giving Group</h1>
         </div>
         <div className="mb-6 md:mb-8">
           <div className="w-12 h-12 md:w-16 md:h-16 rounded-full mt-4 md:mt-5 bg-blue-100 flex items-center justify-center">
@@ -729,7 +729,7 @@ export default function NewCreateCollectivePage() {
             {/* Supported Causes Section */}
             <div className="mb-4 md:mb-6">
               <p className="text-[10px] md:text-xs text-gray-500 uppercase tracking-wide mb-3 md:mb-4">
-                Supporting {selectedCauses.length} {selectedCauses.length === 1 ? 'Cause' : 'Causes'}
+                Supporting {selectedCauses.length} {selectedCauses.length === 1 ? 'Nonprofit' : 'Nonprofits'}
               </p>
               <div className="space-y-2 md:space-y-3">
                 {selectedCauses.map((cause) => {
@@ -804,7 +804,7 @@ export default function NewCreateCollectivePage() {
               className="bg-[#1600ff] hover:bg-[#1400cc] text-white font-semibold rounded-full px-4 md:px-6 py-5 md:py-6 w-full text-sm md:text-base"
               disabled={createCollectiveMutation.isPending}
             >
-              Create Collective
+              Create Giving Group
             </Button>
           </div>
         </div>
@@ -858,16 +858,16 @@ export default function NewCreateCollectivePage() {
               <p className="text-xs xs:text-sm md:text-base text-gray-600 text-center mb-6 md:mb-8 leading-relaxed">
                 {allCausesAlreadyAdded ? (
                   <>
-                    Your collective is ready to go! All nonprofits are already in your donation box.{' '}
+                    Your giving group is ready to go! All nonprofits are already in your donation box.{' '}
                     Start sharing to grow your community.
                   </>
                 ) : donationBoxData && donationBoxData.id ? (
                   <>
-                    Your collective is ready to go! Add nonprofits to your donation box or start sharing to grow your community.
+                    Your giving group is ready to go! Add nonprofits to your donation box or start sharing to grow your community.
                   </>
                 ) : (
                   <>
-                    Your collective is ready to go! Set up your donation box to support your nonprofits, or start sharing to grow your community.
+                    Your giving group is ready to go! Set up your donation box to support your nonprofits, or start sharing to grow your community.
                   </>
                 )}
               </p>
@@ -890,7 +890,7 @@ export default function NewCreateCollectivePage() {
                   className="w-full border border-gray-300 text-gray-900 hover:bg-gray-50 font-semibold rounded-lg py-3 md:py-4 text-sm md:text-base flex items-center justify-center gap-2"
                 >
                   <Eye className="w-4 h-4 md:w-5 md:h-5" />
-                  View My Collective
+                  View My Giving Group
                 </Button>
 
                 <button
@@ -970,7 +970,7 @@ export default function NewCreateCollectivePage() {
           >
             <ArrowLeft className="w-4 h-4 md:w-5 md:h-5 text-gray-700" />
           </button>
-          <h1 className="font-bold text-lg md:text-xl text-foreground">Start a Collective</h1>
+          <h1 className="font-bold text-lg md:text-xl text-foreground">Start a Giving Group</h1>
         </div>
 
         <div className="px-3 md:px-4 py-4 md:py-6 pb-24 md:pb-28 lg:max-w-[60%] lg:mx-auto">
@@ -978,7 +978,7 @@ export default function NewCreateCollectivePage() {
           <div className="border border-gray-200 rounded-lg p-3 md:p-4 mb-3 md:mb-4">
             <div className="flex items-center gap-2 mb-2">
               <label className="font-semibold text-sm xs:text-base md:text-lg text-foreground">
-                Name Your Collective <span className="text-red-500">*</span>
+                Name Your Giving Group <span className="text-red-500">*</span>
               </label>
               <div className="group relative">
                 <HelpCircle className="w-3.5 h-3.5 md:w-4 md:h-4 text-gray-400 cursor-pointer" />
@@ -1045,7 +1045,7 @@ export default function NewCreateCollectivePage() {
               </Avatar>
               <div className="flex-1">
                 <label className="font-bold text-sm xs:text-base md:text-lg text-foreground block">
-                  Collective Logo
+                  Giving Group Logo
                 </label>
                 <p className="text-[10px] md:text-xs text-muted-foreground">
                   {logoType === 'letter' ? 'Letter logo' : 'Custom image'}

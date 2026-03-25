@@ -1,12 +1,12 @@
 interface SearchTabsProps {
-  activeTab: 'Causes' | 'Collectives' | 'Users' | 'Posts';
-  onTabChange: (tab: 'Causes' | 'Collectives' | 'Users' | 'Posts') => void;
+  activeTab: 'Nonprofits' | 'Giving Groups' | 'Users' | 'Posts';
+  onTabChange: (tab: 'Nonprofits' | 'Giving Groups' | 'Users' | 'Posts') => void;
 }
 
 export default function SearchTabs({ activeTab, onTabChange }: SearchTabsProps) {
-  const tabs: Array<'Nonprofits' | 'Collectives' | 'Users' | 'Posts'> = [
+  const tabs: Array<'Nonprofits' | 'Giving Groups' | 'Users' | 'Posts'> = [
     'Nonprofits',
-    'Collectives',
+    'Giving Groups',
     'Users',
     'Posts',
   ];

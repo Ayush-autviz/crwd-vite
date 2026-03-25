@@ -64,13 +64,13 @@ const Footer = () => {
                 to="/create-crwd"
                 className="block text-white hover:text-gray-300 transition-colors text-xs md:text-sm lg:text-base"
               >
-                Start a Collective
+                Start a Giving Group
               </Link>
               <Link
                 to="/circles"
                 className="block text-white hover:text-gray-300 transition-colors text-xs md:text-sm lg:text-base"
               >
-                Browse Collectives
+                Browse Giving Groups
               </Link>
             </nav>
           </div>
@@ -101,7 +101,7 @@ const Footer = () => {
                 to="/articles"
                 className="block text-white hover:text-gray-300 transition-colors text-xs md:text-sm lg:text-base"
               >
-                What is a CRWD collective?
+                What is a CRWD Giving Group?
               </Link>
               <Link
                 to="/settings/help"

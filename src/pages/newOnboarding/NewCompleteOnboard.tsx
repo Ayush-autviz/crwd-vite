@@ -452,27 +452,27 @@ export default function NewCompleteOnboard() {
             {/* Three Option Cards */}
             <div className="grid grid-cols-1 gap-4 mb-6">
               {/* Join a Collective Card */}
-              <button
+              {/* <button
                 onClick={handleJoinCollective}
                 disabled={isJoinLoading}
                 className="bg-white border border-gray-200 rounded-xl p-4 sm:p-5 hover:bg-purple-50 hover:border-purple-300 group disabled:opacity-70 flex items-center"
               >
                 <div className="mr-3">
                   <div className="w-10 h-10 rounded-full bg-[#F0D6F5] flex items-center justify-center">
-                    {/* {isJoinLoading ? (
+                    {isJoinLoading ? (
                       <Loader2 className="w-5 h-5 text-white animate-spin" />
-                    ) : ( */}
-                    <Users className="w-5 h-5 text-[#9333EA]" />
-                    {/* )} */}
+                    ) : (
+                      <Users className="w-5 h-5 text-[#9333EA]" />
+                    )}
                   </div>
                 </div>
                 <div className="flex flex-col items-start">
-                  <h3 className="font-bold text-sm md:text-base text-gray-900">Join a Collective</h3>
+                  <h3 className="font-bold text-sm md:text-base text-gray-900">Join a Giving Group</h3>
                   <p className="text-gray-400 text-xs md:text-sm">
                     Join curated giving communities
                   </p>
                 </div>
-              </button>
+              </button> */}
 
               {/* I'll Choose My Own Card */}
               <button

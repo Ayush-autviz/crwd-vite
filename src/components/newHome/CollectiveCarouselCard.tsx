@@ -141,7 +141,7 @@ export default function CollectiveCarouselCard({
               <div className={`flex-1 min-w-0 ${showNavigation ? 'pr-28 md:pr-36' : ''}`}>
                 <h3 className="font-bold text-xs xs:text-base md:text-lg text-gray-900 mb-0.5 md:mb-1 truncate">
                   {/* {currentCollective.name} */}
-                  My Collectives
+                  My Giving Groups
                 </h3>
                 {/* {currentCollective.role === 'Admin' && (
                   <p className={`${currentCollective.role === 'Admin' ? 'bg-pink-100 text-red-600' : 'bg-[#a955f7] text-white'} text-[10px] xs:text-xs md:text-sm font-medium px-1.5 md:px-2 py-0.5 rounded-md whitespace-nowrap w-fit`}>

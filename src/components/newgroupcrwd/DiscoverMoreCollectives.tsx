@@ -47,10 +47,10 @@ export default function DiscoverMoreCollectives({ collectiveId }: DiscoverMoreCo
   if (isLoading) {
     return (
       <div className="px-3 md:px-4 mt-6 md:mt-8">
-        <h2 className="text-base xs:text-lg md:text-xl font-bold mb-4 md:mb-6">Discover More Collectives</h2>
+        <h2 className="text-base xs:text-lg md:text-xl font-bold mb-4 md:mb-6">Discover More Giving Groups</h2>
         <div className="flex items-center justify-center py-8">
           <Loader2 className="w-6 h-6 animate-spin mr-2" />
-          <span className="text-sm md:text-base text-gray-600">Loading collectives...</span>
+          <span className="text-sm md:text-base text-gray-600">Loading Giving Groups...</span>
         </div>
       </div>
     );
@@ -62,7 +62,7 @@ export default function DiscoverMoreCollectives({ collectiveId }: DiscoverMoreCo
 
   return (
     <div className="px-3 md:px-4 mt-6 md:mt-8">
-      <h2 className="text-base xs:text-lg md:text-xl font-bold mb-4 md:mb-6">Discover More Collectives</h2>
+      <h2 className="text-base xs:text-lg md:text-xl font-bold mb-4 md:mb-6">Discover More Giving Groups</h2>
 
       <div className="space-y-4 md:space-y-5">
         {suggestedCollectives.map((collective: any, index: number) => {
@@ -167,7 +167,7 @@ export default function DiscoverMoreCollectives({ collectiveId }: DiscoverMoreCo
             variant="outline"
             className="border-[#1600ff] border-2 text-[#1600ff] hover:bg-[#1600ff] hover:text-white font-semibold px-6 md:px-8 py-2 md:py-3 rounded-lg text-sm xs:text-base md:text-lg"
           >
-            Browse All Collectives
+            Browse All Giving Groups
           </Button>
         </Link>
       </div>
