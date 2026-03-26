@@ -97,8 +97,8 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
           fallbackText={name.charAt(0).toUpperCase()}
           fallbackColor={avatarBgColor}
         >
-          <Avatar className="w-28 h-28 md:w-28 md:h-28 rounded-full object-contain cursor-pointer hover:opacity-80 transition-opacity">
-            <AvatarImage src={avatarUrl} alt={name} />
+          <Avatar className="w-28 h-28 md:w-28 md:h-28 rounded-full cursor-pointer hover:opacity-80 transition-opacity">
+            <AvatarImage src={avatarUrl} alt={name} className="object-cover" />
             <AvatarFallback
               style={{ backgroundColor: avatarBgColor }}
               className="text-white text-2xl md:text-4xl font-medium"

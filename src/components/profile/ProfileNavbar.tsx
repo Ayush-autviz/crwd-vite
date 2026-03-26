@@ -191,7 +191,7 @@ export default function ProfileNavbar({
                   className="p-0 cursor-pointer"
                 >
                   <Avatar className="h-8 w-8">
-                    <AvatarImage src={user?.profile_picture} />
+                    <AvatarImage src={user?.profile_picture} className="object-cover" />
                     <AvatarFallback className="text-white font-bold md:text-sm" style={{ backgroundColor: user?.color }}>
                       {getUserInitials()}
                     </AvatarFallback>
@@ -220,7 +220,7 @@ export default function ProfileNavbar({
                       <div className="px-4 sm:px-6 pt-3 sm:pt-4 pb-4 sm:pb-6 border-b">
                         <div className="flex items-center gap-2 sm:gap-3">
                           <Avatar className="h-10 w-10 sm:h-12 sm:w-12">
-                            <AvatarImage src={user?.profile_picture} />
+                            <AvatarImage src={user?.profile_picture} className="object-cover" />
                             <AvatarFallback className="text-white" style={{ backgroundColor: user?.color }}>
                               {getUserInitials()}
                             </AvatarFallback>
@@ -367,7 +367,7 @@ export default function ProfileNavbar({
                   className="p-0 cursor-pointer"
                 >
                   <Avatar className="h-8 w-8">
-                    <AvatarImage src={user?.profile_picture} />
+                    <AvatarImage src={user?.profile_picture} className="object-cover" />
                     <AvatarFallback className={`text-white font-bold text-[8px] xs:text-[10px] md:text-sm`} style={{ backgroundColor: user?.color }}>
                       {getUserInitials()}
                     </AvatarFallback>
@@ -396,7 +396,7 @@ export default function ProfileNavbar({
                       <div className="px-4 sm:px-6 pt-3 sm:pt-4 pb-4 sm:pb-6 border-b">
                         <div className="flex items-center gap-2 sm:gap-3">
                           <Avatar className="h-10 w-10 sm:h-12 sm:w-12">
-                            <AvatarImage src={user?.profile_picture} />
+                            <AvatarImage src={user?.profile_picture} className="object-cover" />
                             <AvatarFallback
                               className="text-white font-bold text-[8px] xs:text-[10px] md:text-sm"
                               style={{ backgroundColor: user?.color }}>

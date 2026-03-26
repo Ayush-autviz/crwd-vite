@@ -714,7 +714,7 @@ export const Checkout = ({
               {/* Supported Entities */}
               <div className="bg-gray-100 rounded-lg px-3 md:px-4 py-2.5 md:py-3 mb-4 md:mb-6 text-center">
                 <p className="text-xs md:text-sm font-bold text-gray-900">
-                  {totalCauses} Cause{totalCauses !== 1 ? 's' : ''} • {totalCollectives} Collective{totalCollectives !== 1 ? 's' : ''}
+                  {totalCauses} Cause{totalCauses !== 1 ? 's' : ''} • {totalCollectives} Giving Group{totalCollectives !== 1 ? 's' : ''}
                 </p>
               </div>
 

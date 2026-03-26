@@ -166,14 +166,14 @@ export default function OneTimeDonation({
   });
 
   const incrementDonation = () => {
-    const newAmount = donationAmount + 5;
+    const newAmount = donationAmount + 1;
     setDonationAmount(newAmount);
     setInputValue(newAmount.toString());
   };
 
   const decrementDonation = () => {
     if (donationAmount > 5) {
-      const newAmount = donationAmount - 5;
+      const newAmount = donationAmount - 1;
 
       // Calculate max capacity for new amount
       // For donations < $10.00: Flat fee of $1.00
