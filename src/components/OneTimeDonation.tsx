@@ -453,7 +453,7 @@ export default function OneTimeDonation({
           <div className="mb-4 md:mb-6">
             <div className="flex items-center justify-between mb-2">
               <div>
-                <h2 className="text-lg md:text-xl font-bold text-gray-800">Your Selected Causes</h2>
+                <h2 className="text-lg md:text-xl font-bold text-gray-800">Your Selected Nonprofits</h2>
                 <p className="text-xs md:text-sm text-gray-600 mt-0.5 md:mt-1">Your One-Time Donation. Add or remove anytime.</p>
               </div>
               <div className="w-7 h-7 md:w-8 md:h-8 rounded-full bg-[#1600ff] flex items-center justify-center">

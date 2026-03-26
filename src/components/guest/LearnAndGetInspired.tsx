@@ -48,11 +48,11 @@ export default function LearnAndGetInspired({
     },
     {
       id: 3,
-      title: "What is a CRWD Collective?",
-      description: "Learn how collectives amplify your giving power",
+      title: "What is a CRWD giving group?",
+      description: "Learn how giving groups amplify your giving power",
       readTime: "5 min read",
       image: "/learn/learn3.jpeg",
-      slug: "what-is-a-crwd-collective",
+      slug: "what-is-a-crwd-giving-groups",
     },
   ];
 

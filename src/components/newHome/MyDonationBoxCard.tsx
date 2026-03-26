@@ -28,7 +28,8 @@ export default function MyDonationBoxCard({
           <h3 className="font-[700] text-sm xs:text-base md:text-lg text-gray-900 mb-0.5 md:mb-1 hidden md:block">My Donation Box</h3>
           <p className="text-xs xs:text-sm md:text-base text-gray-600 mb-2 md:mb-3 font-[500]">
             You are currently donating{" "}
-            <span className="font-bold text-gray-800">${monthlyAmount} per month</span> to{" "}
+            {/* <span className="font-bold text-gray-800">${monthlyAmount} per month</span> */}
+            to{" "}
             <span className="font-bold text-gray-800">{causeCount} nonprofit{causeCount !== 1 ? 's' : ''}</span>.
           </p>
           <Link

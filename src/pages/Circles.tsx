@@ -66,7 +66,7 @@ const Circles = () => {
   return (
     <div className="">
       <ProfileNavbar
-        title="Give Together"
+        title="Giving Groups"
         showMobileMenu={true}
         showDesktopMenu={true}
         showBackButton={true}

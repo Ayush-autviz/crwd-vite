@@ -214,12 +214,12 @@ export const DonationBox3 = ({
   };
 
   const incrementAmount = () => {
-    setEditableAmount(prev => Math.round(prev) + 5);
+    setEditableAmount(prev => Math.round(prev) + 1);
   };
 
   const decrementAmount = () => {
     if (editableAmount > 5) {
-      setEditableAmount(prev => Math.max(5, Math.round(prev) - 5));
+      setEditableAmount(prev => Math.max(5, Math.round(prev) - 1));
     }
   };
 
@@ -621,7 +621,7 @@ export const DonationBox3 = ({
         <div className="mb-4 md:mb-6">
           <div className="flex items-center justify-between mb-3 md:mb-4">
             <div className="">
-              <h2 className="text-lg md:text-xl font-bold text-gray-900">Your Selected Causes</h2>
+              <h2 className="text-lg md:text-xl font-bold text-gray-900">Your Selected Nonprofits</h2>
               <p className="text-xs md:text-sm text-gray-600 mt-0.5 md:mt-1">
                 Your Donation Box. Add or remove anytime.
               </p>
@@ -707,7 +707,7 @@ export const DonationBox3 = ({
         {/* Add More Causes Section */}
         <div className="mb-4 md:mb-6">
           <h2 className="text-lg md:text-xl font-bold text-gray-800 mb-3 md:mb-4">
-            Add More Causes
+            Add More Nonprofits
           </h2>
 
           {/* Search Bar */}

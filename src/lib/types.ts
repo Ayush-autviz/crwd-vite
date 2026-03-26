@@ -21,6 +21,8 @@ export interface PostDetail {
   userId: string;
   avatarUrl: string;
   username: string;
+  firstName: string;
+  lastName: string;
   color?: string;
   time: string;
   org: string;

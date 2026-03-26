@@ -116,7 +116,7 @@ const ArticleDetail = () => {
             </p>
           </div>
 
-          {/* 4. Giving Collectives */}
+          {/* 4. Giving Giving Groups */}
           <div className="mb-10 border-b border-gray-100 pb-8">
             <h3
               className="mb-3"
@@ -126,13 +126,13 @@ const ArticleDetail = () => {
                 fontSize: '1.5rem'
               }}
             >
-              4. Giving Collectives
+              4. Giving Giving Groups
             </h3>
             <p className="text-gray-700 mb-4" style={{ fontFamily: 'var(--font-subhead)', lineHeight: '1.8' }}>
               Join a group of people pooling donations together for shared causes. Your contribution combines with others for greater impact.
             </p>
             <p className="text-gray-700 mb-2" style={{ fontFamily: 'var(--font-subhead)', lineHeight: '1.6' }}>
-              <span className="text-emerald-500 font-bold" style={{ fontFamily: 'var(--font-headline)' }}>Good for:</span> People who want community and collective power
+              <span className="text-emerald-500 font-bold" style={{ fontFamily: 'var(--font-headline)' }}>Good for:</span> People who want community and giving group power
             </p>
             <p className="text-gray-700" style={{ fontFamily: 'var(--font-subhead)', lineHeight: '1.6' }}>
               <span className="text-red-500 font-bold" style={{ fontFamily: 'var(--font-headline)' }}>Downside:</span> Less control over individual nonprofit selection
@@ -420,7 +420,7 @@ const ArticleDetail = () => {
 
               <div
                 className="bg-white border border-gray-100 rounded-xl p-6 cursor-pointer hover:shadow-md transition-all"
-                onClick={() => navigate('/article/what-is-a-crwd-collective')}
+                onClick={() => navigate('/article/what-is-a-crwd-giving-group')}
               >
                 <h3
                   className="mb-2"
@@ -430,7 +430,7 @@ const ArticleDetail = () => {
                     fontSize: '1.125rem'
                   }}
                 >
-                  What is a CRWD Collective?
+                  What is a CRWD Giving Group?
                 </h3>
                 <p className="text-gray-500 text-sm" style={{ fontFamily: 'var(--font-subhead)' }}>
                   5 min read
@@ -554,7 +554,7 @@ const ArticleDetail = () => {
               fontSize: '2rem'
             }}
           >
-            The Power of Collective Giving
+            The Power of Giving Group Giving
           </h2>
 
           <p className="text-gray-700 mb-8" style={{ fontFamily: 'var(--font-subhead)', lineHeight: '1.8' }}>
@@ -570,7 +570,7 @@ const ArticleDetail = () => {
                 fontSize: '1.25rem'
               }}
             >
-              The Math of Collective Impact
+              The Math of Giving Group Impact
             </h3>
             <ul className="space-y-3">
               <li className="text-gray-700 bg-white/50 p-2 rounded" style={{ fontFamily: 'var(--font-subhead)' }}>
@@ -797,7 +797,7 @@ const ArticleDetail = () => {
 
               <div
                 className="bg-white border border-gray-100 rounded-xl p-6 cursor-pointer hover:shadow-md transition-all"
-                onClick={() => navigate('/article/what-is-a-crwd-collective')}
+                onClick={() => navigate('/article/what-is-a-crwd-giving-group')}
               >
                 <h3
                   className="mb-2"
@@ -807,7 +807,7 @@ const ArticleDetail = () => {
                     fontSize: '1.125rem'
                   }}
                 >
-                  What is a CRWD Collective?
+                  What is a CRWD Giving Group?
                 </h3>
                 <p className="text-gray-500 text-sm" style={{ fontFamily: 'var(--font-subhead)' }}>
                   5 min read
@@ -818,12 +818,12 @@ const ArticleDetail = () => {
         </>
       )
     },
-    "what-is-a-crwd-collective": {
-      title: "What is a CRWD Collective?",
+    "what-is-a-crwd-giving-group": {
+      title: "What is a CRWD Giving Group?",
       date: "November 11, 2025",
       readTime: "5 min read",
       author: "CRWD Team",
-      category: "Collectives",
+      category: "Giving Groups",
       content: (
         <>
           <p className="text-gray-700 mb-6" style={{ fontFamily: 'var(--font-subhead)', lineHeight: '1.8', fontSize: '1.125rem' }}>
@@ -831,11 +831,11 @@ const ArticleDetail = () => {
           </p>
 
           <p className="text-gray-700 mb-6" style={{ fontFamily: 'var(--font-subhead)', lineHeight: '1.8', fontSize: '1.125rem' }}>
-            That's the magic of a CRWD Collective.
+            That's the magic of a CRWD Giving Group.
           </p>
 
           <p className="text-gray-700 mb-10" style={{ fontFamily: 'var(--font-subhead)', lineHeight: '1.8', fontSize: '1.125rem' }}>
-            A Collective is a group of people who pool their monthly donations together to support multiple nonprofits at once. Think of it as a giving circle, but automated, transparent, and built for modern donors.
+            A Giving Group is a group of people who pool their monthly donations together to support multiple nonprofits at once. Think of it as a giving circle, but automated, transparent, and built for modern donors.
           </p>
 
           <h2
@@ -846,11 +846,11 @@ const ArticleDetail = () => {
               fontSize: '2rem'
             }}
           >
-            How Collectives Work
+            How Giving Groups Work
           </h2>
 
           <p className="text-gray-700 mb-8" style={{ fontFamily: 'var(--font-subhead)', lineHeight: '1.8' }}>
-            Every Collective on CRWD is built around a shared purpose, whether that's protecting the ocean, advancing education, supporting mental health, or any cause that matters to you.
+            Every Giving Group on CRWD is built around a shared purpose, whether that's protecting the ocean, advancing education, supporting mental health, or any cause that matters to you.
           </p>
 
           <div className="bg-gray-50 rounded-xl p-8 mb-12 border border-gray-100">
@@ -887,10 +887,10 @@ const ArticleDetail = () => {
                       fontSize: '1.125rem'
                     }}
                   >
-                    Join (or create) a Collective
+                    Join (or create) a Giving Group
                   </h3>
                   <p className="text-gray-600" style={{ fontFamily: 'var(--font-subhead)', lineHeight: '1.6' }}>
-                    Browse Collectives by cause, join one that aligns with your values, or create your own.
+                    Browse Giving Groups by cause, join one that aligns with your values, or create your own.
                   </p>
                 </div>
               </div>
@@ -919,7 +919,7 @@ const ArticleDetail = () => {
                     Set your monthly amount
                   </h3>
                   <p className="text-gray-600" style={{ fontFamily: 'var(--font-subhead)', lineHeight: '1.6' }}>
-                    Choose what you can afford. Your donation gets split evenly among the Collective's nonprofits.
+                    Choose what you can afford. Your donation gets split evenly among the Giving Group's nonprofits.
                   </p>
                 </div>
               </div>
@@ -948,7 +948,7 @@ const ArticleDetail = () => {
                     Watch the impact grow
                   </h3>
                   <p className="text-gray-600" style={{ fontFamily: 'var(--font-subhead)', lineHeight: '1.6' }}>
-                    As more people join your Collective, you'll see the total monthly giving grow.
+                    As more people join your Giving Group, you'll see the total monthly giving grow.
                   </p>
                 </div>
               </div>
@@ -967,7 +967,7 @@ const ArticleDetail = () => {
           </h2>
 
           <p className="text-gray-700 mb-8" style={{ fontFamily: 'var(--font-subhead)', lineHeight: '1.8' }}>
-            Let's say you care about ocean conservation. You join the <strong style={{ fontFamily: 'var(--font-headline)', fontWeight: 600 }}>"Team Ocean Cleanup"</strong> Collective.
+            Let's say you care about ocean conservation. You join the <strong style={{ fontFamily: 'var(--font-headline)', fontWeight: 600 }}>"Team Ocean Cleanup"</strong> Giving Group.
           </p>
 
           <div className="border border-gray-200 rounded-xl p-8 mb-12">
@@ -977,19 +977,19 @@ const ArticleDetail = () => {
                 <p className="text-blue-600 text-2xl font-bold" style={{ fontFamily: 'var(--font-headline)' }}>$10/month</p>
               </div>
               <div>
-                <p className="text-xs text-gray-500 uppercase tracking-wider mb-1" style={{ fontFamily: 'var(--font-headline)', fontWeight: 600 }}>Collective members:</p>
+                <p className="text-xs text-gray-500 uppercase tracking-wider mb-1" style={{ fontFamily: 'var(--font-headline)', fontWeight: 600 }}>Giving Group members:</p>
                 <p className="text-purple-500 text-2xl font-bold" style={{ fontFamily: 'var(--font-headline)' }}>150 people</p>
               </div>
             </div>
 
             <div className="bg-gray-50 rounded-lg p-6 mb-6">
-              <p className="text-xs text-gray-500 uppercase tracking-wider mb-2" style={{ fontFamily: 'var(--font-headline)', fontWeight: 600 }}>Collective Impact:</p>
+              <p className="text-xs text-gray-500 uppercase tracking-wider mb-2" style={{ fontFamily: 'var(--font-headline)', fontWeight: 600 }}>Giving Group Impact:</p>
               <p className="text-black text-4xl font-bold mb-2" style={{ fontFamily: 'var(--font-headline)' }}>$1,500/month</p>
               <p className="text-gray-500 text-sm" style={{ fontFamily: 'var(--font-subhead)' }}>$18,000 per year going to ocean conservation</p>
             </div>
 
             <p className="text-gray-600 text-sm" style={{ fontFamily: 'var(--font-subhead)', lineHeight: '1.6' }}>
-              The Collective supports 5 verified ocean nonprofits, so each organization receives <strong className="text-gray-900">$300/month</strong> from your group.
+              The Giving Group supports 5 verified ocean nonprofits, so each organization receives <strong className="text-gray-900">$300/month</strong> from your group.
             </p>
           </div>
 
@@ -1005,11 +1005,11 @@ const ArticleDetail = () => {
               fontSize: '2rem'
             }}
           >
-            Why Join a Collective?
+            Why Join a Giving Group?
           </h2>
 
           <p className="text-gray-700 mb-8" style={{ fontFamily: 'var(--font-subhead)', lineHeight: '1.8' }}>
-            You could donate on your own. But here's what you get when you join a Collective:
+            You could donate on your own. But here's what you get when you join a Giving Group:
           </p>
 
           <div className="space-y-6 mb-12">
@@ -1025,7 +1025,7 @@ const ArticleDetail = () => {
                 Curated nonprofits
               </h3>
               <p className="text-gray-600" style={{ fontFamily: 'var(--font-subhead)', lineHeight: '1.6' }}>
-                Every Collective selects high-impact nonprofits, so you don't have to do hours of research.
+                Every Giving Group selects high-impact nonprofits, so you don't have to do hours of research.
               </p>
             </div>
 
@@ -1070,11 +1070,11 @@ const ArticleDetail = () => {
               fontSize: '2rem'
             }}
           >
-            Can I Create My Own Collective?
+            Can I Create My Own Giving Group?
           </h2>
 
           <p className="text-gray-700 mb-8" style={{ fontFamily: 'var(--font-subhead)', lineHeight: '1.8' }}>
-            Absolutely! Creating a Collective takes just a few minutes.
+            Absolutely! Creating a Giving Group takes just a few minutes.
           </p>
 
           <div className="bg-gray-50 rounded-xl p-8 mb-12 border border-gray-100">
@@ -1086,7 +1086,7 @@ const ArticleDetail = () => {
                 fontSize: '1.125rem'
               }}
             >
-              When you create a Collective, you:
+              When you create a Giving Group, you:
             </h3>
             <ul className="space-y-3">
               <li className="flex items-start gap-2 text-gray-700" style={{ fontFamily: 'var(--font-subhead)', lineHeight: '1.6' }}>
@@ -1095,7 +1095,7 @@ const ArticleDetail = () => {
               </li>
               <li className="flex items-start gap-2 text-gray-700" style={{ fontFamily: 'var(--font-subhead)', lineHeight: '1.6' }}>
                 <span className="text-blue-600 font-bold mt-1">•</span>
-                <span>Select nonprofits to support (you can add more as your Collective grows)</span>
+                <span>Select nonprofits to support (you can add more as your Giving Group grows)</span>
               </li>
               <li className="flex items-start gap-2 text-gray-700" style={{ fontFamily: 'var(--font-subhead)', lineHeight: '1.6' }}>
                 <span className="text-blue-600 font-bold mt-1">•</span>
@@ -1103,7 +1103,7 @@ const ArticleDetail = () => {
               </li>
               <li className="flex items-start gap-2 text-gray-700" style={{ fontFamily: 'var(--font-subhead)', lineHeight: '1.6' }}>
                 <span className="text-blue-600 font-bold mt-1">•</span>
-                <span><strong style={{ fontFamily: 'var(--font-headline)' }}>Create fundraisers for urgent causes</strong>, even for nonprofits outside your Collective's main list</span>
+                <span><strong style={{ fontFamily: 'var(--font-headline)' }}>Create fundraisers for urgent causes</strong>, even for nonprofits outside your Giving Group's main list</span>
               </li>
             </ul>
           </div>
@@ -1131,7 +1131,7 @@ const ArticleDetail = () => {
                 fontWeight: 600,
               }}
             >
-              With CRWD Collectives, you always know:
+              With CRWD Giving Groups, you always know:
             </h3>
             <ul className="space-y-3">
               <li className="flex items-start gap-2 text-gray-700" style={{ fontFamily: 'var(--font-subhead)', lineHeight: '1.6' }}>
@@ -1144,7 +1144,7 @@ const ArticleDetail = () => {
               </li>
               <li className="flex items-start gap-2 text-gray-700" style={{ fontFamily: 'var(--font-subhead)', lineHeight: '1.6' }}>
                 <span className="text-blue-600 font-bold mt-1">•</span>
-                <span>The total impact your Collective is making each month</span>
+                <span>The total impact your Giving Group is making each month</span>
               </li>
               <li className="flex items-start gap-2 text-gray-700" style={{ fontFamily: 'var(--font-subhead)', lineHeight: '1.6' }}>
                 <span className="text-blue-600 font-bold mt-1">•</span>
@@ -1162,10 +1162,10 @@ const ArticleDetail = () => {
                 fontSize: '2rem'
               }}
             >
-              Your Collective is Waiting
+              Your Giving Group is Waiting
             </h2>
             <p className="mb-8 text-slate-300 max-w-2xl" style={{ fontFamily: 'var(--font-subhead)', lineHeight: '1.8', fontSize: '1.125rem' }}>
-              Browse Collectives by cause, see how many members each has, and find the community that aligns with your values. Or create your own and become the change you want to see.
+              Browse Giving Groups by cause, see how many members each has, and find the community that aligns with your values. Or create your own and become the change you want to see.
             </p>
             <div className="flex flex-col sm:flex-row gap-4">
               <Button
@@ -1173,7 +1173,7 @@ const ArticleDetail = () => {
                 size="lg"
                 className="rounded-full bg-[#1600ff] hover:bg-[#1400cc] text-white px-8 py-6 text-lg font-bold"
               >
-                Browse Collectives
+                Browse Giving Groups
               </Button>
               <Button
                 onClick={() => navigate('/new')}
@@ -1181,7 +1181,7 @@ const ArticleDetail = () => {
                 variant="outline"
                 className="rounded-full border-white text-white hover:bg-white hover:text-slate-900 px-8 py-6 text-lg font-bold bg-transparent"
               >
-                Create a Collective
+                Create a Giving Group
               </Button>
             </div>
           </div>

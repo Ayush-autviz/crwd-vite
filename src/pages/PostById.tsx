@@ -76,6 +76,8 @@ export default function PostById() {
     userId: postData.user?.id?.toString() || '',
     avatarUrl: postData.user?.profile_picture || '/placeholder.svg',
     username: postData.user?.username,
+    firstName: postData.user?.first_name,
+    lastName: postData.user?.last_name,
     color: postData.user?.color,
     time: postData.created_at ? formatDistanceToNow(new Date(postData.created_at), { addSuffix: true }) : '',
     org: postData.collective?.name || 'Feed',

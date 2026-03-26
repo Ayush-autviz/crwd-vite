@@ -361,14 +361,14 @@ const DonationBox = ({ tab = "setup", preselectedItem, activeTab, fromPaymentRes
   }, [preselectedCauses, preselectedCausesData, preselectedCollectiveId, activeTabState, step, preselectedCausesProcessed]);
 
   const incrementDonation = () => {
-    const newAmount = donationAmount + 5;
+    const newAmount = donationAmount + 1;
     setDonationAmount(newAmount);
     setInputValue(newAmount.toString());
   };
 
   const decrementDonation = () => {
     if (donationAmount > 5) {
-      const newAmount = Math.max(5, donationAmount - 5);
+      const newAmount = Math.max(5, donationAmount - 1);
 
       // Calculate max capacity for new amount
       // For donations < $10.00: Flat fee of $1.00
@@ -844,7 +844,7 @@ const DonationBox = ({ tab = "setup", preselectedItem, activeTab, fromPaymentRes
                       <div className="mb-4 md:mb-6">
                         <div className="flex items-center justify-between mb-2">
                           <div>
-                            <h2 className="text-lg md:text-xl font-bold text-gray-800">Your Selected Causes</h2>
+                            <h2 className="text-lg md:text-xl font-bold text-gray-800">Your Selected Nonprofits</h2>
                             <p className="text-xs md:text-sm text-gray-600 mt-0.5 md:mt-1">Your Donation Box. Add or remove anytime.</p>
                           </div>
                           <div className="w-7 h-7 md:w-8 md:h-8 rounded-full bg-[#1600ff] flex items-center justify-center">
@@ -900,7 +900,7 @@ const DonationBox = ({ tab = "setup", preselectedItem, activeTab, fromPaymentRes
                     {/* Add More Causes Section */}
                     <div className="mb-4 md:mb-6">
                       <h2 className="text-lg md:text-xl font-bold text-gray-800 mb-3 md:mb-4">
-                        Add More Causes
+                        Add More Nonprofits
                       </h2>
 
                       {/* Search Bar with All Button */}

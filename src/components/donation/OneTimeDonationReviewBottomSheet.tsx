@@ -300,7 +300,7 @@ export default function OneTimeDonationReviewBottomSheet({
 
             {/* Selected Causes */}
             <div className="mb-4 md:mb-6">
-              <h3 className="text-base md:text-lg font-bold text-gray-900 mb-3 md:mb-4">Your Selected Causes ({totalCauses})</h3>
+              <h3 className="text-base md:text-lg font-bold text-gray-900 mb-3 md:mb-4">Your Selected Nonprofits ({totalCauses})</h3>
               <div className="space-y-2 md:space-y-3">
                 {selectedCauses.map((cause: any) => {
                   const avatarBgColor = getConsistentColor(cause.id, avatarColors);

@@ -221,7 +221,7 @@ export default function DonationReviewBottomSheet({
             {/* Selected Causes */}
             <div className="mb-4 md:mb-6">
               <div className="flex items-center justify-between mb-3 md:mb-4">
-                <h3 className="text-base md:text-lg font-bold text-gray-900">Your Selected Causes ({totalCauses})</h3>
+                <h3 className="text-base md:text-lg font-bold text-gray-900">Your Selected Nonprofits ({totalCauses})</h3>
                 {showEditButton && onEditCauses && (
                   <button
                     onClick={onEditCauses}

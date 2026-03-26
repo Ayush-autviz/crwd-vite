@@ -129,7 +129,7 @@ export default function DonationCauseSelector({
   return (
     <div className="w-full">
       <div className="mb-4 md:mb-6">
-        <h2 className="text-lg md:text-xl font-bold text-gray-900">Add More Causes</h2>
+        <h2 className="text-lg md:text-xl font-bold text-gray-900">Add More Nonprofits</h2>
       </div>
 
       {/* Search Section */}

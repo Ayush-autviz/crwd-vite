@@ -111,27 +111,27 @@ export const Checkout = ({
 
   // Fetch previously supported causes
   const {
-      data: previouslySupportedInfiniteData,
-      fetchNextPage: fetchNextPreviouslySupported,
-      hasNextPage: hasMorePreviouslySupported,
-      isFetchingNextPage: isFetchingMorePreviouslySupported,
+    data: previouslySupportedInfiniteData,
+    fetchNextPage: fetchNextPreviouslySupported,
+    hasNextPage: hasMorePreviouslySupported,
+    isFetchingNextPage: isFetchingMorePreviouslySupported,
   } = useInfiniteQuery({
-      queryKey: ['previouslySupportedCauses'],
-      queryFn: ({ pageParam = 1 }) => getPreviouslySupportedCauses(pageParam as number),
-      getNextPageParam: (lastPage: any) => {
-          if (lastPage.next) {
-              const url = new URL(lastPage.next);
-              const page = url.searchParams.get('page');
-              return page ? parseInt(page) : undefined;
-          }
-          return undefined;
-      },
-      initialPageParam: 1,
-      enabled: !!currentUser?.id,
+    queryKey: ['previouslySupportedCauses'],
+    queryFn: ({ pageParam = 1 }) => getPreviouslySupportedCauses(pageParam as number),
+    getNextPageParam: (lastPage: any) => {
+      if (lastPage.next) {
+        const url = new URL(lastPage.next);
+        const page = url.searchParams.get('page');
+        return page ? parseInt(page) : undefined;
+      }
+      return undefined;
+    },
+    initialPageParam: 1,
+    enabled: !!currentUser?.id,
   });
 
   const displayPreviouslySupported = useMemo(() => {
-      return previouslySupportedInfiniteData?.pages.flatMap((page: any) => page.results) || [];
+    return previouslySupportedInfiniteData?.pages.flatMap((page: any) => page.results) || [];
   }, [previouslySupportedInfiniteData]);
 
   // Calculate fees and capacity using the provided formula
@@ -397,12 +397,12 @@ export const Checkout = ({
   };
 
   const incrementAmount = () => {
-    setEditableAmount(prev => Math.round(prev) + 5);
+    setEditableAmount(prev => Math.round(prev) + 1);
   };
 
   const decrementAmount = () => {
     if (editableAmount > 5) {
-      setEditableAmount(prev => Math.max(5, Math.round(prev) - 5));
+      setEditableAmount(prev => Math.max(5, Math.round(prev) - 1));
     }
   };
 

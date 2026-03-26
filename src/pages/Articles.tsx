@@ -3,10 +3,10 @@ import ProfileNavbar from "@/components/profile/ProfileNavbar";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import Footer from "@/components/Footer";
-import { 
-  BookOpen, 
-  Clock, 
-  TrendingUp, 
+import {
+  BookOpen,
+  Clock,
+  TrendingUp,
   ArrowRight,
   Search
 } from "lucide-react";
@@ -20,11 +20,11 @@ const Articles = () => {
   const articles = [
     {
       id: 1,
-      title: "How to Start Your First CRWD Collective",
-      excerpt: "Everything you need to know about creating a collective and bringing together like-minded people to support causes you care about.",
+      title: "How to Start Your First CRWD giving group",
+      excerpt: "Everything you need to know about creating a giving group and bringing together like-minded people to support causes you care about.",
       author: "CRWD Team",
       readTime: "5 min read",
-      category: "Collectives",
+      category: "giving groups",
       publishedDate: "2 days ago",
       featured: true,
     },
@@ -32,7 +32,7 @@ const Articles = () => {
       id: 2,
       title: "Supporting Causes That Matter: A Beginner's Guide",
       excerpt: "Learn how to find, evaluate, and support causes that align with your values and create real impact in your community.",
-      author: "Alex Thompson",
+      author: "CRWD Team",
       readTime: "7 min read",
       category: "Causes",
       publishedDate: "1 week ago",
@@ -42,7 +42,7 @@ const Articles = () => {
       id: 3,
       title: "Making the Most of Your Donation Box",
       excerpt: "Tips and strategies for organizing your giving and tracking your impact through CRWD's donation features.",
-      author: "Maria Garcia",
+      author: "CRWD Team",
       readTime: "6 min read",
       category: "Donations",
       publishedDate: "1 week ago",
@@ -50,9 +50,9 @@ const Articles = () => {
     },
     {
       id: 4,
-      title: "Building Community Through Collective Action",
-      excerpt: "Discover how joining CRWD collectives helps you connect with others and amplify your social impact together.",
-      author: "James Chen",
+      title: "Building Community Through giving group Action",
+      excerpt: "Discover how joining CRWD giving groups helps you connect with others and amplify your social impact together.",
+      author: "CRWD Team",
       readTime: "8 min read",
       category: "Community",
       publishedDate: "2 weeks ago",
@@ -62,7 +62,7 @@ const Articles = () => {
       id: 5,
       title: "Finding Causes Near You: Local Impact Matters",
       excerpt: "How to discover and support causes in your area, and why local giving creates the most lasting change.",
-      author: "Sarah Williams",
+      author: "CRWD Team",
       readTime: "4 min read",
       category: "Local Impact",
       publishedDate: "3 weeks ago",
@@ -70,7 +70,7 @@ const Articles = () => {
     },
     {
       id: 6,
-      title: "The Future of Collective Giving with CRWD",
+      title: "The Future of giving group Giving with CRWD",
       excerpt: "Understanding how CRWD is revolutionizing the way people come together to support causes and create positive change.",
       author: "CRWD Team",
       readTime: "9 min read",
@@ -85,17 +85,17 @@ const Articles = () => {
 
   const filteredArticles = searchQuery
     ? articles.filter(
-        article =>
-          article.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          article.excerpt.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          article.author.toLowerCase().includes(searchQuery.toLowerCase())
-      )
+      article =>
+        article.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        article.excerpt.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        article.author.toLowerCase().includes(searchQuery.toLowerCase())
+    )
     : [];
 
   return (
     <div className="min-h-screen bg-background">
-      <ProfileNavbar 
-        title="Articles" 
+      <ProfileNavbar
+        title="Articles"
         showBackButton={true}
         showMobileMenu={true}
         showDesktopMenu={true}
@@ -109,7 +109,7 @@ const Articles = () => {
               CRWD Articles
             </h1>
             <p className="text-sm md:text-base text-muted-foreground max-w-2xl mx-auto">
-              Learn how to make a difference through collectives, causes, and community giving
+              Learn how to make a difference through giving groups, causes, and community giving
             </p>
           </div>
 
@@ -143,7 +143,7 @@ const Articles = () => {
                   Clear
                 </Button>
               </div>
-              
+
               {filteredArticles.length > 0 ? (
                 <div className="space-y-3 md:space-y-4">
                   {filteredArticles.map((article) => (
@@ -260,7 +260,7 @@ const Articles = () => {
                 <div className="space-y-3 md:space-y-4">
                   {regularArticles.map((article) => (
                     <Card
-                      key={ article.id}
+                      key={article.id}
                       className="hover:shadow-md transition-shadow cursor-pointer"
                     >
                       <CardHeader className="p-4 md:p-6">
