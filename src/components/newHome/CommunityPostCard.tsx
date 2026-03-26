@@ -737,35 +737,43 @@ export default function CommunityPostCard({ post, onCommentPress, showSimplified
 
               {/* Show preview card if previewDetails exists, otherwise show image */}
               {post.previewDetails ? (
-                // <a
-                //   href={post.previewDetails.url}
-                //   target="_blank"
-                //   rel="noopener noreferrer"
-                //   onClick={(e) => e.stopPropagation()}
-                //   className="block w-full rounded-lg overflow-hidden mb-3 border border-gray-200 bg-white hover:opacity-90 transition-opacity cursor-pointer"
-                // >
-                <div className="flex flex-col md:flex-row bg-white">
+                <div 
+                  className="flex flex-col md:flex-row bg-white border border-gray-200 rounded-lg overflow-hidden mb-3 hover:bg-gray-50 transition-colors"
+                  onClick={(e) => {
+                    if (post.previewDetails?.url) {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      window.open(post.previewDetails.url, '_blank', 'noopener,noreferrer');
+                    }
+                  }}
+                >
                   {/* Preview Image */}
                   {post.previewDetails.image && (
                     <div className="w-full md:w-48 md:h-auto flex-shrink-0">
                       <img
                         src={post.previewDetails.image}
                         alt={post.previewDetails.title || 'Link preview'}
-                        className="max-h-[300px] rounded-lg object-contain"
+                        className="w-full h-full object-cover max-h-[300px]"
                       />
                     </div>
                   )}
                   {/* Preview Content */}
-                  <div className="flex-1 p-2 md:p-3">
+                  <div className="flex-1 p-2 md:p-3 overflow-hidden">
                     {post.previewDetails.site_name && (
                       <div className="text-[10px] md:text-[12px] text-gray-500 uppercase tracking-wide mb-0.5 md:mb-1">
                         {post.previewDetails.site_name}
                       </div>
                     )}
-                    {post.previewDetails.title && (
+                    {post.previewDetails.title ? (
                       <h3 className="text-sm md:text-base font-semibold text-gray-900 mb-0.5 md:mb-1 line-clamp-2">
                         {post.previewDetails.title}
                       </h3>
+                    ) : (
+                      !post.previewDetails.description && !post.previewDetails.image && post.previewDetails.url && (
+                        <div className="text-xs md:text-sm text-blue-600 truncate underline mb-1">
+                          {post.previewDetails.url}
+                        </div>
+                      )
                     )}
                     {post.previewDetails.description && (
                       <p className="text-xs md:text-sm text-gray-500 mb-0.5 md:mb-1 line-clamp-2">
@@ -777,9 +785,13 @@ export default function CommunityPostCard({ post, onCommentPress, showSimplified
                         {post.previewDetails.domain}
                       </div>
                     )}
+                    {!post.previewDetails.title && (post.previewDetails.description || post.previewDetails.image) && post.previewDetails.url && (
+                        <div className="text-xs md:text-sm text-blue-600 truncate underline mt-1">
+                            {post.previewDetails.url}
+                        </div>
+                    )}
                   </div>
                 </div>
-                // </a>
               ) : post.imageUrl ? (
                 <div
                   className=" rounded-lg overflow-hidden mb-2 md:mb-3  cursor-pointer hover:opacity-90 transition-opacity relative"

@@ -438,7 +438,7 @@ export default function NewCompleteOnboard() {
                   <div
                     key={category.id}
                     className="px-3 py-1 rounded-full text-[10px] md:text-xs font-bold border border-transparent"
-                    style={{ backgroundColor: '#F9C9B6', color: '#824C38' }}
+                    style={{ backgroundColor: category.background, color: category.text }}
                   >
                     {category.name}
                   </div>

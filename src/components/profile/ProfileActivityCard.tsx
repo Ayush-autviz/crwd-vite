@@ -513,16 +513,22 @@ export default function ProfileActivityCard({
                             </div>
                           )}
                           {/* Preview Content */}
-                          <div className="flex-1 p-3 md:p-3">
+                          <div className="flex-1 p-3 md:p-3 overflow-hidden">
                             {post.previewDetails.site_name && (
                               <div className="text-[10px] md:text-[10px] text-gray-500 uppercase tracking-wide mb-1 md:mb-1">
                                 {post.previewDetails.site_name}
                               </div>
                             )}
-                            {post.previewDetails.title && (
+                            {post.previewDetails.title ? (
                               <h3 className="text-sm md:text-sm font-semibold text-gray-900 mb-1 md:mb-1 line-clamp-2">
                                 {post.previewDetails.title}
                               </h3>
+                            ) : (
+                              !post.previewDetails.description && !post.previewDetails.image && post.previewDetails.url && (
+                                <div className="text-xs md:text-sm text-blue-600 truncate underline mb-1">
+                                  {post.previewDetails.url}
+                                </div>
+                              )
                             )}
                             {post.previewDetails.description && (
                               <p className="text-xs md:text-xs text-gray-500 mb-1 md:mb-1 line-clamp-2">
@@ -532,6 +538,11 @@ export default function ProfileActivityCard({
                             {post.previewDetails.domain && (
                               <div className="text-[11px] md:text-[11px] text-gray-500 truncate">
                                 {post.previewDetails.domain}
+                              </div>
+                            )}
+                            {!post.previewDetails.title && (post.previewDetails.description || post.previewDetails.image) && post.previewDetails.url && (
+                              <div className="text-[11px] md:text-[11px] text-blue-600 truncate underline mt-1">
+                                {post.previewDetails.url}
                               </div>
                             )}
                           </div>

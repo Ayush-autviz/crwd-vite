@@ -428,16 +428,22 @@ export default function PostResultCard({ post }: PostResultCardProps) {
                 </div>
               )}
               {/* Preview Content */}
-              <div className="flex-1 p-2.5 md:p-3">
+              <div className="flex-1 p-2.5 md:p-3 overflow-hidden">
                 {post.preview_details.site_name && (
                   <div className="text-[9px] xs:text-[10px] md:text-xs text-gray-500 uppercase tracking-wide mb-0.5 md:mb-1">
                     {post.preview_details.site_name}
                   </div>
                 )}
-                {post.preview_details.title && (
+                {post.preview_details.title ? (
                   <h3 className="text-xs xs:text-sm md:text-base font-semibold text-gray-900 mb-0.5 md:mb-1 line-clamp-2">
                     {post.preview_details.title}
                   </h3>
+                ) : (
+                  !post.preview_details.description && !post.preview_details.image && post.preview_details.url && (
+                    <div className="text-[10px] xs:text-[11px] md:text-xs text-blue-600 truncate underline mb-1">
+                      {post.preview_details.url}
+                    </div>
+                  )
                 )}
                 {post.preview_details.description && (
                   <p className="text-[10px] xs:text-xs md:text-sm text-gray-500 mb-0.5 md:mb-1 line-clamp-2">
@@ -447,6 +453,11 @@ export default function PostResultCard({ post }: PostResultCardProps) {
                 {post.preview_details.domain && (
                   <div className="text-[10px] xs:text-[11px] md:text-xs text-gray-500 truncate">
                     {post.preview_details.domain}
+                  </div>
+                )}
+                {!post.preview_details.title && (post.preview_details.description || post.preview_details.image) && post.preview_details.url && (
+                  <div className="text-[10px] xs:text-[11px] md:text-xs text-blue-600 truncate underline mt-1">
+                    {post.preview_details.url}
                   </div>
                 )}
               </div>
