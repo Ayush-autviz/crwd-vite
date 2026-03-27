@@ -38,7 +38,7 @@ export default function NewDonationBoxIntro() {
           <p className="text-[#1600ff] font-semibold text-lg md:text-lg mb-1">
             Meet your Donation Box.
           </p>
-          <h1 className="text-3xl sm:text-3xl md:text-3xl font-semibold text-gray-900 leading-tight mb-4 tracking-tight">
+          <h1 className="text-2xl sm:text-3xl md:text-3xl font-semibold text-gray-900 leading-tight mb-4 tracking-tight">
             One amount. Split across every nonprofit you support.
           </h1>
           <div className="space-y-3 sm:space-y-4 text-base sm:text-lg md:text-lg text-gray-600 font-medium">
