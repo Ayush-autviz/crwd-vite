@@ -302,8 +302,11 @@ export default function NewClaimProfile() {
 
       // If last_login_at is null, navigate to nonprofit interests page (new user)
       if (response.user && !response.user.last_login_at) {
-        navigate(`/non-profit-interests?redirectTo=${encodeURIComponent(redirectTo)}`, {
-          state: { fromAuth: true },
+        navigate(`/donation-box-intro?redirectTo=${encodeURIComponent(redirectTo)}`, {
+          state: { 
+            fromAuth: true, 
+            userName: response.user.full_name || `${formData.firstName} ${formData.lastName}` 
+          },
           replace: true,
         });
       } else {
@@ -362,8 +365,9 @@ export default function NewClaimProfile() {
       <div className="w-full  max-w-md bg-white rounded-3xl flex flex-col max-h-full overflow-y-auto scrollbar-hide">
         {/* Progress Indicator - Step 2 */}
         <div className="flex items-center justify-center space-x-1.5 sm:space-x-2 mb-6 sm:mb-8">
+          <div className="h-1 w-8 sm:w-10 md:w-12 bg-[#1600ff] rounded-full"></div>
           <div className="h-1 w-8 sm:w-10 md:w-12 bg-gray-300 rounded-full"></div>
-          <div className="h-1 w-8 sm:w-10 md:w-12 bg-gray-800 rounded-full"></div>
+          <div className="h-1 w-8 sm:w-10 md:w-12 bg-gray-300 rounded-full"></div>
           <div className="h-1 w-8 sm:w-10 md:w-12 bg-gray-300 rounded-full"></div>
           <div className="h-1 w-8 sm:w-10 md:w-12 bg-gray-300 rounded-full"></div>
         </div>
@@ -371,7 +375,7 @@ export default function NewClaimProfile() {
         {/* Title and Subtitle */}
         <div className="text-center mb-6 shrink-0">
           <h1 className="text-2xl font-extrabold text-gray-900 mb-1">
-            Finish your profile
+            Create your profile
           </h1>
           <p className="text-base text-gray-500">
             So others can connect with you on CRWD
@@ -393,8 +397,8 @@ export default function NewClaimProfile() {
                 />
               </div>
             ) : (
-              <div className="w-20 h-20 rounded-full bg-gradient-to-br from-purple-200 to-blue-200 flex items-center justify-center mx-auto">
-                <Camera className="h-8 w-8 text-purple-600" />
+              <div className="w-20 h-20 rounded-full bg-gray-100 border-2 border-gray-200 flex items-center justify-center mx-auto">
+                <Camera className="h-8 w-8 text-gray-400" />
               </div>
             )}
           </button>
@@ -649,8 +653,8 @@ export default function NewClaimProfile() {
           className={cn(
             "w-full h-12 text-white font-bold text-lg rounded-lg shadow-sm transition-all mb-4 shrink-0",
             (emailRegistrationMutation.isPending || !isFormValid)
-              ? "bg-indigo-300 cursor-not-allowed opacity-70"
-              : "bg-[#525ae2] hover:bg-[#434ac9] shadow-md"
+              ? "bg-[#2222EE] cursor-not-allowed opacity-70"
+              : "bg-[#2222EE] hover:bg-[#434ac9] shadow-md"
           )}
         >
           {emailRegistrationMutation.isPending ? (

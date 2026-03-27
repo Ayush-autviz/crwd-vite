@@ -95,7 +95,7 @@ export default function NewOnboard() {
         ) : (
           <>
             <h1 className="text-4xl sm:text-5xl font-[900] text-gray-900">
-              Stop Wishing You Made a Difference. <span className="text-[#1600ff]">Start Being Someone Who Does.</span>
+              One donation. One receipt. <span className="text-[#1600ff]">Every nonprofit you care about.</span>
             </h1>
           </>
         )}

@@ -156,9 +156,9 @@ export default function GuestHome() {
                         text-[clamp(2.5rem,8vw,4.2rem)]
                     "
                             >
-                                Stop Wishing You Made a Difference.
+                                One monthly donation.
                                 <span className="text-[#1600ff] block md:inline">
-                                    {" "}Start Being Someone Who Does.
+                                    {" "}Every nonprofit you care about.
                                 </span>
                             </h1>
 
@@ -173,7 +173,7 @@ export default function GuestHome() {
                         text-[clamp(1.15rem,2.4vw,1.4rem)]
                     "
                             >
-                                One monthly donation, split across every nonprofit you care about.
+                                Discover nonprofits worth supporting. Give to all of them.
                             </p>
 
                             {/* CTA BUTTON */}

@@ -50,7 +50,7 @@ export default function AppleCallback() {
 
                 // If last_login_at is null, navigate to nonprofit interests page (new user)
                 if (googleCallbackQuery.data.user && !googleCallbackQuery.data.user.last_login_at) {
-                    navigate(`/non-profit-interests?redirectTo=${encodeURIComponent(redirectTo)}`, {
+                    navigate(`/donation-box-intro?redirectTo=${encodeURIComponent(redirectTo)}`, {
                         state: { fromAuth: true },
                         replace: true
                     });

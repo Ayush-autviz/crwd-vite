@@ -78,6 +78,10 @@ import NewClaimProfile from "./pages/newOnboarding/NewClaimProfile";
 import NewNonProfitInterests from "./pages/newOnboarding/NewNonProfitInterests";
 import NewCompleteOnboard from "./pages/newOnboarding/NewCompleteOnboard";
 import SurpriseMe from "./pages/SurpriseMe";
+import NewDonationBoxIntro from "./pages/newOnboarding/NewDonationBoxIntro";
+import NewAddNonprofits from "./pages/newOnboarding/NewAddNonprofits";
+import NewDonationAmount from "./pages/newOnboarding/NewDonationAmount";
+import NewOnboardSuccess from "./pages/newOnboarding/NewOnboardSuccess";
 import NewSaved from "./pages/NewSaved";
 import NewCreateCollective from "./pages/NewCreateCollective";
 import OneTimeDonationPage from "./pages/OneTimeDonationPage";
@@ -216,6 +220,9 @@ function App() {
                   element={<NonProfitInterests />}
                 /> */}
                       <Route path="/non-profit-interests" element={<NewNonProfitInterests />} />
+                      <Route path="/donation-box-intro" element={<NewDonationBoxIntro />} />
+                      <Route path="/add-nonprofits" element={<NewAddNonprofits />} />
+                      <Route path="/donation-amount" element={<NewDonationAmount />} />
                       <Route path="/profile" element={<Profile />} />
                       {/* <Route path="/profile/:id" element={<ProfileById />} /> */}
                       <Route path="/profile/edit" element={<ProfileById />} />
@@ -283,6 +290,7 @@ function App() {
                       <Route path="/article/:slug" element={<ArticleDetail />} />
                       {/* <Route path="/complete-onboard" element={<CompleteOnboard />} /> */}
                       <Route path="/complete-onboard" element={<NewCompleteOnboard />} />
+                      <Route path="/onboard-success" element={<NewOnboardSuccess />} />
 
                     </Routes>
                   </Layout>
