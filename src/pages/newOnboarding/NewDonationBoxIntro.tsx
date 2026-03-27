@@ -62,7 +62,7 @@ export default function NewDonationBoxIntro() {
                 </div> */}
                 <img src="/ngo/aspca.jpg" alt="" className="w-[60px] h-[60px] sm:w-[70px] sm:h-[70px] rounded-lg" />
                 <div className="bg-white px-2 py-1 rounded-full shadow-sm">
-                  <span className="text-[#1600ff] font-bold text-[9px] sm:text-[10px] text-center block">33%</span>
+                  <span className="text-[#1600ff] font-bold text-xs sm:text-sm text-center block">33%</span>
                 </div>
               </div>
 
@@ -70,7 +70,7 @@ export default function NewDonationBoxIntro() {
               <div className="flex flex-col items-center gap-2">
                 <img src="/ngo/CRI.jpg" alt="" className="w-[60px] h-[60px] sm:w-[70px] sm:h-[70px] rounded-lg" />
                 <div className="bg-white px-2 py-1 rounded-full shadow-sm">
-                  <span className="text-[#1600ff] font-bold text-[9px] sm:text-[10px] text-center block">33%</span>
+                  <span className="text-[#1600ff] font-bold text-xs sm:text-sm text-center block">33%</span>
                 </div>
               </div>
 
@@ -78,7 +78,7 @@ export default function NewDonationBoxIntro() {
               <div className="flex flex-col items-center gap-2">
                 <img src="/ngo/girlCode.png" alt="" className="w-[60px] h-[60px] sm:w-[70px] sm:h-[70px] rounded-lg" />
                 <div className="bg-white px-2 py-1 rounded-full shadow-sm">
-                  <span className="text-[#1600ff] font-bold text-[9px] sm:text-[10px] text-center block">33%</span>
+                  <span className="text-[#1600ff] font-bold text-xs sm:text-sm text-center block">33%</span>
                 </div>
               </div>
 
@@ -88,8 +88,8 @@ export default function NewDonationBoxIntro() {
                   <span className="text-gray-400 text-lg font-light">+</span>
                 </div>
                 {/* <div className="h-[18px] w-1"></div> Spacer */}
-                <div className="bg-white px-2 py-1 rounded-full shadow-sm">
-                  <span className="text-[#1600ff] font-bold text-[9px] sm:text-[10px] text-center block">33%</span>
+                <div className="px-2 py-1">
+                  <span className="text-gray-900 font-bold text-xs sm:text-sm text-center block">$30/mo</span>
                 </div>
               </div>
             </div>
