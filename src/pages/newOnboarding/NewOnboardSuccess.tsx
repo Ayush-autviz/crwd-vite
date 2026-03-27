@@ -162,7 +162,7 @@ export default function NewOnboardSuccess() {
       </div>
 
       <SharePost
-        url={`${window.location.origin}/u/${user?.id || ''}`}
+        url={`${window.location.origin}/u/${user?.username || ''}`}
         title="Join my Donation Box"
         description={`I'm supporting ${addedNonprofits.length} nonprofits on CRWD. Join me!`}
         isOpen={isShareModalOpen}
