@@ -56,9 +56,10 @@ export default function NewAddNonprofits() {
   };
 
   const handleSkip = () => {
-    navigate(`/donation-amount?redirectTo=${encodeURIComponent(redirectTo)}`, {
-      state: { ...(location.state as any) }
-    });
+    // navigate(`/donation-amount?redirectTo=${encodeURIComponent(redirectTo)}`, {
+    //   state: { ...(location.state as any) }
+    // });
+    navigate('/')
   };
 
   return (
@@ -228,12 +229,12 @@ export default function NewAddNonprofits() {
             Next
           </Button>
 
-          {/* <button
+          <button
             onClick={handleSkip}
             className="w-full text-center text-gray-500 font-bold text-sm hover:text-gray-900 transition-colors"
           >
             Skip for now
-          </button> */}
+          </button>
         </div>
 
       </div>

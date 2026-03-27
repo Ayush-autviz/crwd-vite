@@ -74,9 +74,10 @@ export default function NewDonationAmount() {
   };
 
   const handleSkip = () => {
-    navigate(`/onboard-success?redirectTo=${encodeURIComponent(redirectTo)}`, {
-      state: { ...(location.state as any) }
-    });
+    // navigate(`/onboard-success?redirectTo=${encodeURIComponent(redirectTo)}`, {
+    //   state: { ...(location.state as any) }
+    // });
+    navigate('/')
   };
 
   return (
@@ -171,12 +172,12 @@ export default function NewDonationAmount() {
           Continue
         </Button>
 
-        {/* <button
+        <button
           onClick={handleSkip}
           className="w-full text-center text-gray-500 font-bold text-sm sm:text-base hover:text-gray-900"
         >
           Skip for now, I'll set this up later
-        </button> */}
+        </button>
 
       </div>
     </div>
