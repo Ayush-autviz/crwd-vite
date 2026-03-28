@@ -5,6 +5,7 @@ import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { useQuery } from "@tanstack/react-query";
 import { getCausesBySearch, getCategories } from "@/services/api/crwd";
+import { truncateAtFirstPeriod } from "@/lib/utils";
 
 export default function NewAddNonprofits() {
   const navigate = useNavigate();
@@ -150,7 +151,7 @@ export default function NewAddNonprofits() {
         </div>
 
         {/* Scrollable Nonprofit List */}
-        <div className="w-full flex-1 overflow-y-auto px-4 sm:px-6  pb-32 scrollbar-hide">
+        <div className="w-full flex-1 overflow-y-auto px-4 sm:px-6  pb-65 scrollbar-hide">
           <div className="space-y-1">
             {isLoadingCauses ? (
               <div className="flex justify-center py-12">
@@ -173,7 +174,7 @@ export default function NewAddNonprofits() {
                     </Avatar>
                     <div className="flex-1 min-w-0">
                       <h3 className="text-sm sm:text-base font-extrabold text-gray-900 truncate">{item.name}</h3>
-                      <p className="text-xs sm:text-sm text-gray-500 truncate font-medium">{item.description || item.bio || item.about_us || "Disaster relief and emergency assistance"}</p>
+                      <p className="text-xs sm:text-sm text-gray-500 font-medium">{truncateAtFirstPeriod(item.mission || item.bio || item.about_us || "Disaster relief and emergency assistance")}</p>
                     </div>
                     <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all ${isSelected
                       ? "bg-[#1600ff] border-[#1600ff]"
