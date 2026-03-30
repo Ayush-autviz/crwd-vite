@@ -772,7 +772,7 @@ export default function CreatePostPage() {
         )}
 
         {/* Posting Tips Box */}
-        <div className="mt-auto bg-[#f0f7ff] rounded-2xl p-5 border border-[#e0efff]">
+        {/* <div className="mt-auto bg-[#f0f7ff] rounded-2xl p-5 border border-[#e0efff]">
           <div className="flex items-center gap-2 mb-4">
             <span className="text-lg">💡</span>
             <h3 className="text-[15px] font-bold text-[#0047cc]">Posting Tips</h3>
@@ -795,7 +795,7 @@ export default function CreatePostPage() {
               <span className="text-[14px] text-[#0047cc] font-medium leading-tight">Use "Create Event" or "Create Fundraiser" to organize your community</span>
             </li>
           </ul>
-        </div>
+        </div> */}
       </div>
 
       {/* Hidden file input for image selection */}
