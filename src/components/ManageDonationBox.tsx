@@ -780,7 +780,7 @@ const ManageDonationBox: React.FC<ManageDonationBoxProps> = ({
 
         {/* Donation Box Summary Card */}
         <div className="mx-3 md:mx-4 mt-3 md:mt-4 mb-4 md:mb-6">
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+          <div className="bg-[#F5F9F2] rounded-xl shadow-sm border border-gray-200 overflow-hidden">
             {/* Gradient Header */}
             <div className="bg-gradient-to-r from-blue-500 to-purple-500 h-1 md:h-2"></div>
 
@@ -810,20 +810,20 @@ const ManageDonationBox: React.FC<ManageDonationBoxProps> = ({
                     <button
                       onClick={decrementAmount}
                       disabled={editableAmount <= 5}
-                      className={`w-7 h-7 md:w-8 md:h-8 rounded-full flex items-center justify-center transition-colors ${editableAmount > 5
-                        ? 'bg-gray-100 hover:bg-gray-200'
+                      className={`w-10 h-10 md:w-12 md:h-12 rounded-full flex items-center justify-center transition-colors ${editableAmount > 5
+                        ? 'bg-[#1600ff] hover:bg-[#1600ff]'
                         : 'bg-gray-200 cursor-not-allowed opacity-50'
-                        }`}
+                        } cursor-pointer`}
                       aria-label="Decrease amount"
                     >
-                      <Minus className="w-3.5 h-3.5 md:w-4 md:h-4 text-gray-600 font-bold" strokeWidth={3} />
+                      <Minus className={`w-4 h-4 md:w-5 md:h-5 ${editableAmount > 5 ? 'text-white' : 'text-gray-400'} font-bold`} strokeWidth={3} />
                     </button>
                     <button
                       onClick={incrementAmount}
-                      className="w-7 h-7 md:w-8 md:h-8 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center transition-colors"
+                      className="w-10 h-10 md:w-12 md:h-12 rounded-full bg-[#1600ff] hover:bg-[#1600ff] flex items-center justify-center transition-colors cursor-pointer"
                       aria-label="Increase amount"
                     >
-                      <Plus className="w-3.5 h-3.5 md:w-4 md:h-4 text-gray-600" />
+                      <Plus className="w-4 h-4 md:w-5 md:h-5 text-white" strokeWidth={3} />
                     </button>
                   </div>
                 </div>
@@ -941,7 +941,7 @@ const ManageDonationBox: React.FC<ManageDonationBoxProps> = ({
                         <p className="text-xs md:text-sm text-gray-600 mt-0.5 md:mt-1">Your Donation Box. Add or remove anytime.</p>
                       </div>
                     </div>
-                    <div className="space-y-2.5 md:space-y-3">
+                    <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
                       {selectedCausesForDisplay.map((org) => {
                         const causeId = org.isNewlySelected ? (org as any).causeId : parseInt(org.id.replace('cause-', ''));
                         const colors = getNonprofitColor(causeId || org.name);
@@ -949,7 +949,7 @@ const ManageDonationBox: React.FC<ManageDonationBoxProps> = ({
                           <div
                             key={org.id}
                             onClick={() => navigate(`/c/${org.sort_name}`)}
-                            className="bg-white rounded-xl px-3 md:px-4 py-3 md:py-4 shadow-sm border border-gray-200"
+                            className="flex items-center p-3.5 md:p-4 border-b last:border-b-0 hover:bg-gray-50 transition-colors cursor-pointer"
                           >
                             <div className="flex gap-3 md:gap-4 items-center">
                               <Avatar className="w-10 h-10 md:w-12 md:h-12 rounded-lg flex-shrink-0 border border-gray-200">
@@ -988,7 +988,7 @@ const ManageDonationBox: React.FC<ManageDonationBoxProps> = ({
                                   </div>
                                 </div> */}
                                 <button
-                                  className="text-red-500 hover:text-red-600 transition-colors flex-shrink-0"
+                                  className="p-1.5 md:p-2 text-gray-400 hover:text-[#1600ff] transition-colors flex-shrink-0 cursor-pointer"
                                   onClick={(e) => {
                                     e.stopPropagation();
                                     handleDeselectCause(causeId, org.isNewlySelected, org.name)
@@ -1013,7 +1013,7 @@ const ManageDonationBox: React.FC<ManageDonationBoxProps> = ({
                   Add More Nonprofits
                 </h2>
                 <div className="flex gap-2 mb-3 md:mb-4">
-                  <div className="relative flex-1">
+                  <div className="relative flex-1 bg-[#F5F9F2] rounded-xl">
                     <Search className="absolute left-2.5 md:left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4 md:w-5 md:h-5" />
                     <input
                       type="text"
@@ -1052,47 +1052,49 @@ const ManageDonationBox: React.FC<ManageDonationBoxProps> = ({
                   {defaultCausesLoading ? (
                     <p className="text-gray-500 text-center py-3 md:py-4 text-sm md:text-base">Loading...</p>
                   ) : defaultCauses.length > 0 ? (
-                    <div className="space-y-2.5 md:space-y-3">
+                    <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
                       {defaultCauses.map((cause: any) => {
                         const isSelected = selectedCauses.includes(cause.id);
                         const colors = getNonprofitColor(cause.id || cause.name);
                         return (
                           <div
                             key={cause.id}
-                            className="flex items-center gap-3 md:gap-4 bg-white rounded-xl px-3 md:px-4 py-3 md:py-4 shadow-sm border border-gray-200 hover:bg-gray-50 transition-colors cursor-pointer"
+                            className="flex items-center p-3.5 md:p-4 border-b last:border-b-0 hover:bg-gray-50 transition-colors cursor-pointer"
                             onClick={() => navigate(`/c/${cause.sort_name}`)}
                           >
-                            <Avatar className="w-10 h-10 md:w-12 md:h-12 rounded-lg flex-shrink-0 border border-gray-200">
-                              <AvatarImage src={cause.image} />
-                              <AvatarFallback
-                                style={{ backgroundColor: colors.bgColor }}
-                                className="font-semibold rounded-lg text-lg md:text-xl"
-                              >
-                                {cause.name?.charAt(0)?.toUpperCase() || 'C'}
-                              </AvatarFallback>
-                            </Avatar>
-                            <div className="flex-1 min-w-0">
-                              <h3 className="font-bold text-gray-900 text-sm md:text-base mb-0.5 md:mb-1">{cause.name}</h3>
-                              <p className="text-xs md:text-sm text-gray-500 line-clamp-1">{cause.mission || cause.description}</p>
-                            </div>
-                            {!isSelected && (
-                              <button
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  handleToggleCause(cause.id);
-                                }}
-                                className="w-7 h-7 md:w-8 md:h-8 rounded-full bg-red-100 hover:bg-red-200 flex items-center justify-center transition-colors flex-shrink-0"
-                              >
-                                <Plus size={14} className="md:w-4 md:h-4 text-pink-600" strokeWidth={3} />
-                              </button>
-                            )}
-                            {isSelected && (
-                              <div className="w-7 h-7 md:w-8 md:h-8 rounded-full bg-blue-600 flex items-center justify-center flex-shrink-0">
-                                <svg className="w-3.5 h-3.5 md:w-4 md:h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
-                                  <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                                </svg>
+                            <div className="flex gap-3 md:gap-4 items-center">
+                              <Avatar className="w-10 h-10 md:w-12 md:h-12 rounded-lg flex-shrink-0 border border-gray-200">
+                                <AvatarImage src={cause.image} />
+                                <AvatarFallback
+                                  style={{ backgroundColor: colors.bgColor }}
+                                  className="font-semibold rounded-lg text-lg md:text-xl"
+                                >
+                                  {cause.name?.charAt(0)?.toUpperCase() || 'C'}
+                                </AvatarFallback>
+                              </Avatar>
+                              <div className="flex-1 min-w-0">
+                                <h3 className="font-bold text-gray-900 text-sm md:text-base mb-0.5 md:mb-1">{cause.name}</h3>
+                                <p className="text-xs md:text-sm text-gray-500 line-clamp-1">{cause.mission || cause.description}</p>
                               </div>
-                            )}
+                              {!isSelected && (
+                                <button
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleToggleCause(cause.id);
+                                  }}
+                                  className="w-7 h-7 md:w-8 md:h-8 rounded-full border border-[#1600ff] hover:bg-[#1600ff]/10 flex items-center justify-center transition-colors flex-shrink-0 cursor-pointer"
+                                >
+                                  <Plus size={14} className="md:w-4 md:h-4 text-[#1600ff]" strokeWidth={3} />
+                                </button>
+                              )}
+                              {isSelected && (
+                                <div className="w-7 h-7 md:w-8 md:h-8 rounded-full bg-blue-600 flex items-center justify-center flex-shrink-0">
+                                  <svg className="w-3.5 h-3.5 md:w-4 md:h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                                  </svg>
+                                </div>
+                              )}
+                            </div>
                           </div>
                         );
                       })}
@@ -1112,14 +1114,14 @@ const ManageDonationBox: React.FC<ManageDonationBoxProps> = ({
                   {causesLoading ? (
                     <p className="text-gray-500 text-center py-3 md:py-4 text-sm md:text-base">Loading...</p>
                   ) : searchResults.length > 0 ? (
-                    <div className="space-y-2.5 md:space-y-3">
+                    <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
                       {searchResults.map((cause: any) => {
                         const isSelected = selectedCauses.includes(cause.id);
                         const colors = getNonprofitColor(cause.id || cause.name);
                         return (
                           <div
                             key={cause.id}
-                            className="flex items-center gap-3 md:gap-4 bg-white rounded-xl px-3 md:px-4 py-3 md:py-4 shadow-sm border border-gray-200 hover:bg-gray-50 transition-colors cursor-pointer"
+                            className="flex items-center p-3.5 md:p-4 border-b last:border-b-0 hover:bg-gray-50 transition-colors cursor-pointer"
                             onClick={() => navigate(`/c/${cause.sort_name}`)}
                           >
                             <Avatar className="w-10 h-10 md:w-12 md:h-12 rounded-lg flex-shrink-0 border border-gray-200">
@@ -1141,9 +1143,9 @@ const ManageDonationBox: React.FC<ManageDonationBoxProps> = ({
                                   e.stopPropagation();
                                   handleToggleCause(cause.id);
                                 }}
-                                className="w-7 h-7 md:w-8 md:h-8 rounded-full bg-red-100 hover:bg-red-200 flex items-center justify-center transition-colors flex-shrink-0"
+                                className="w-7 h-7 md:w-8 md:h-8 rounded-full border border-[#1600ff] hover:bg-[#1600ff]/10 flex items-center justify-center transition-colors flex-shrink-0 cursor-pointer"
                               >
-                                <Plus size={14} className="md:w-4 md:h-4 text-pink-600" strokeWidth={3} />
+                                <Plus size={14} className="md:w-4 md:h-4 text-[#1600ff]" strokeWidth={3} />
                               </button>
                             )}
                             {isSelected && (
@@ -1243,7 +1245,7 @@ const ManageDonationBox: React.FC<ManageDonationBoxProps> = ({
                                       )
                                     )}
                                     <button
-                                      className="text-red-500 hover:text-red-600 transition-colors flex-shrink-0"
+                                      className="p-1.5 md:p-2 text-gray-400 hover:text-[#1600ff] transition-colors flex-shrink-0 cursor-pointer"
                                       onClick={(e) => {
                                         e.stopPropagation();
                                         handleDeselectCollective(collectiveId, org.isNewlySelected, org.name);

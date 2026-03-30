@@ -239,21 +239,22 @@ export default function OneTimeDonationReviewBottomSheet({
           </div>
 
           {/* Header */}
-          <div className="px-4 md:px-6 pt-3 md:pt-4 pb-4 md:pb-6 border-b border-gray-200">
+          <div className="px-5 md:px-7 pt-4 md:pt-6 pb-4 md:pb-6 border-b border-gray-100">
             <div className="flex items-start justify-between">
-              <div className="flex-1 pr-2">
-                <h2 className="text-xl md:text-2xl font-bold text-gray-900 mb-1">
-                  Review Your Donation
+              <div className="flex-1 pr-4">
+                <h2 className="text-xl md:text-2xl font-bold text-gray-900 mb-1.5 leading-tight">
+                  Review your donation
                 </h2>
-                <p className="text-xs md:text-sm text-gray-600">
-                  Review your donation details before proceeding to payment.
+                <p className="text-xs md:text-sm text-gray-600 font-medium">
+                  Review and confirm. You can change this anytime.
                 </p>
               </div>
               <button
                 onClick={onClose}
-                className="ml-2 md:ml-4 p-1.5 md:p-2 hover:bg-gray-100 rounded-full transition-colors flex-shrink-0"
+                className="p-1.5 md:p-2 hover:bg-gray-100 rounded-full transition-colors flex-shrink-0 -mt-1"
+                aria-label="Close"
               >
-                <X className="w-4 h-4 md:w-5 md:h-5 text-gray-500" />
+                <X className="w-5 h-5 md:w-6 md:h-6 text-gray-400" />
               </button>
             </div>
           </div>
@@ -261,35 +262,31 @@ export default function OneTimeDonationReviewBottomSheet({
           {/* Content - Scrollable */}
           <div className="flex-1 overflow-y-auto px-4 md:px-6 py-4 md:py-6">
             {/* Summary Box */}
-            <div className="bg-gray-50 rounded-lg md:rounded-xl p-3 md:p-4 mb-4 md:mb-6 space-y-2.5 md:space-y-3">
-              <div className="flex justify-between items-center">
-                <span className="text-xs md:text-sm text-gray-600">Amount:</span>
-                <span className="text-sm md:text-base font-semibold text-gray-900">${donationAmount.toFixed(2)}</span>
+            <div className="bg-[#FEFCE8] rounded-2xl p-4 md:p-6 mb-5 md:mb-7 space-y-3 md:space-y-4">
+              <div className="flex justify-between items-center border-b border-gray-200/50 pb-3 md:pb-4">
+                <span className="text-sm md:text-base text-gray-600">Amount</span>
+                <span className="text-sm md:text-base font-bold text-gray-900">${donationAmount.toFixed(2)}</span>
               </div>
-              <div className="flex justify-between items-center">
-                <span className="text-xs md:text-sm text-gray-600">Split among:</span>
-                <span className="text-sm md:text-base font-semibold text-gray-900">{totalCauses} cause{totalCauses !== 1 ? 's' : ''}</span>
+              <div className="flex justify-between items-center border-b border-gray-200/50 pb-3 md:pb-4">
+                <span className="text-sm md:text-base text-gray-600">Split among</span>
+                <span className="text-sm md:text-base font-bold text-gray-900">{totalCauses} nonprofit{totalCauses !== 1 ? 's' : ''}</span>
               </div>
-              <div className="flex justify-between items-center">
+              <div className="flex justify-between items-center border-b border-gray-200/50 pb-3 md:pb-4">
                 <button
                   type="button"
                   className="flex items-center gap-1.5 group cursor-pointer"
                   onClick={() => setIsPlatformFeeInfoOpen(true)}
                 >
-                  <span className="text-xs md:text-sm text-gray-600">Platform fee:</span>
-                  <div className="bg-gray-100 p-0.5 rounded-full text-gray-400 group-hover:text-gray-600 transition-colors">
-                    <Info className="w-3.5 h-3.5 md:w-4 md:h-4" />
+                  <span className="text-sm md:text-base text-gray-600">Platform fee</span>
+                  <div className="bg-gray-200/50 p-0.5 rounded-full text-gray-400 group-hover:text-gray-600 transition-colors">
+                    <Info className="w-4 h-4" />
                   </div>
                 </button>
-                <span className="text-sm md:text-base font-semibold text-gray-900">${platformFee.toFixed(2)}</span>
+                <span className="text-sm md:text-base font-bold text-gray-900">${platformFee.toFixed(2)}</span>
               </div>
-              <div className="flex justify-between items-center">
-                <span className="text-xs md:text-sm text-gray-600">Per cause:</span>
-                <span className="text-sm md:text-base font-semibold text-gray-900">${perCause.toFixed(2)}</span>
-              </div>
-              <div className="pt-2 border-t border-gray-200 flex justify-between items-center">
-                <span className="text-sm md:text-base font-semibold text-gray-900">Total:</span>
-                <span className="text-lg md:text-xl font-bold text-[#1600ff]">${donationAmount.toFixed(2)}</span>
+              <div className="pt-1 flex justify-between items-center">
+                <span className="text-base md:text-lg font-bold text-gray-900">Total</span>
+                <span className="text-xl md:text-2xl font-bold text-[#1600ff]">${donationAmount.toFixed(2)}</span>
               </div>
             </div>
 
@@ -299,29 +296,29 @@ export default function OneTimeDonationReviewBottomSheet({
             </p>
 
             {/* Selected Causes */}
-            <div className="mb-4 md:mb-6">
-              <h3 className="text-base md:text-lg font-bold text-gray-900 mb-3 md:mb-4">Your Selected Nonprofits ({totalCauses})</h3>
-              <div className="space-y-2 md:space-y-3">
+            <div className="mb-6 md:mb-8">
+              <h3 className="text-base md:text-lg font-bold text-gray-900 mb-4">Your Donation Box</h3>
+              <div className="border border-gray-200 rounded-2xl overflow-hidden divide-y divide-gray-100">
                 {selectedCauses.map((cause: any) => {
                   const avatarBgColor = getConsistentColor(cause.id, avatarColors);
                   const initials = getInitials(cause.name);
                   return (
-                    <div key={cause.id} className="flex items-center gap-2.5 md:gap-3 p-2.5 md:p-3 bg-gray-50 rounded-lg">
-                      <Avatar className="w-9 h-9 md:w-10 md:h-10 rounded-lg flex-shrink-0 border border-gray-200">
-                        <AvatarImage src={cause.image || cause.logo} />
+                    <div key={cause.id} className="flex items-center gap-3 md:gap-4 p-4 md:p-5 bg-white hover:bg-gray-50 transition-colors">
+                      <Avatar className="w-10 h-10 md:w-12 md:h-12 rounded-xl flex-shrink-0 border border-gray-100">
+                        <AvatarImage src={cause.image || cause.logo} className="object-cover" />
                         <AvatarFallback
-                          style={{ backgroundColor: avatarBgColor }}
-                          className="font-semibold rounded-lg text-white text-xs md:text-sm"
+                          style={{ backgroundColor: avatarBgColor + '15', color: avatarBgColor }}
+                          className="font-bold rounded-xl text-[10px] md:text-xs"
                         >
                           {initials}
                         </AvatarFallback>
                       </Avatar>
                       <div className="flex-1 min-w-0">
-                        <h4 className="font-semibold text-xs md:text-sm text-gray-900 truncate">
+                        <h4 className="font-bold text-sm md:text-base text-gray-900 truncate">
                           {cause.name}
                         </h4>
                       </div>
-                      <div className="text-xs md:text-sm font-semibold text-gray-900">
+                      <div className="text-sm md:text-lg font-bold text-[#1600ff]">
                         ${perCause.toFixed(2)}
                       </div>
                     </div>
@@ -332,35 +329,32 @@ export default function OneTimeDonationReviewBottomSheet({
           </div>
 
           {/* Footer Button */}
-          <div className="px-4 md:px-6 py-3 md:py-4 border-t border-gray-200 bg-white">
+          <div className="px-5 md:px-7 py-4 md:py-6 border-t border-gray-100 bg-white">
             <button
               onClick={handleCompleteDonation}
               disabled={isProcessing || showLogoAnimation}
               className={cn(
-                "w-full bg-black hover:bg-black/80 text-white font-semibold py-3 md:py-4 rounded-full transition-colors text-sm md:text-base flex items-center justify-center gap-2 shadow-lg shadow-blue-100",
+                "w-full bg-[#1600ff] hover:bg-[#1400cc] text-white font-bold py-4 md:py-5 rounded-2xl transition-all shadow-lg shadow-blue-200 text-base md:text-lg flex items-center justify-center gap-3 cursor-pointer",
                 (isProcessing || showLogoAnimation) && 'opacity-60'
               )}
             >
               {isProcessing ? (
                 <>
-                  <Loader2 className="w-4 h-4 md:w-5 md:h-5 animate-spin" />
+                  <Loader2 className="w-5 h-5 md:w-6 md:h-6 animate-spin" />
                   <span>Processing...</span>
                 </>
               ) : (
-                'Complete One-Time Gift'
+                'Confirm Donation'
               )}
             </button>
-            <div className="mt-4 flex flex-col items-center gap-4">
+            {/* <div className="mt-4 flex flex-col items-center">
               <button
                 onClick={onClose}
-                className="text-[#64748b] font-semibold text-sm md:text-base hover:text-gray-900 transition-colors"
+                className="text-[#64748b] font-bold text-sm md:text-base hover:text-gray-900 transition-colors py-2 cursor-pointer"
               >
                 Go Back
               </button>
-              <p className="text-xs md:text-sm text-[#64748b] text-center leading-relaxed ">
-                Donations are distributed as grants through the CRWD Foundation, a 501(c)(3) (EIN: 41-2423690). Tax-deductible receipts sent via email.
-              </p>
-            </div>
+            </div> */}
           </div>
         </div>
       </div>

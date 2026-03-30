@@ -177,31 +177,27 @@ export default function OneTimeReviewBottomSheet({
                     {/* Content - Scrollable */}
                     <div className="flex-1 overflow-y-auto px-4 md:px-6 py-4 md:py-6">
                         {/* Summary Box */}
-                        <div className="bg-gray-50 rounded-lg md:rounded-xl p-3 md:p-4 mb-4 md:mb-6 space-y-2.5 md:space-y-3">
-                            <div className="flex justify-between items-center">
-                                <span className="text-xs md:text-sm text-gray-600">Amount:</span>
-                                <span className="text-sm md:text-base font-semibold text-gray-900">${actualDonationAmount.toFixed(2)}</span>
+                        <div className="bg-[#FEFCE8] rounded-2xl p-4 md:p-6 mb-5 md:mb-7 space-y-3 md:space-y-4">
+                            <div className="flex justify-between items-center border-b border-gray-200/50 pb-3 md:pb-4">
+                                <span className="text-sm md:text-base text-gray-600">Amount</span>
+                                <span className="text-sm md:text-base font-bold text-gray-900">${actualDonationAmount.toFixed(2)}</span>
                             </div>
-                            <div className="flex justify-between items-center">
-                                <span className="text-xs md:text-sm text-gray-600">Split among:</span>
-                                <span className="text-sm md:text-base font-semibold text-gray-900">{totalCauses} cause{totalCauses !== 1 ? 's' : ''}</span>
+                            <div className="flex justify-between items-center border-b border-gray-200/50 pb-3 md:pb-4">
+                                <span className="text-sm md:text-base text-gray-600">Split among</span>
+                                <span className="text-sm md:text-base font-bold text-gray-900">{totalCauses} nonprofit{totalCauses !== 1 ? 's' : ''}</span>
                             </div>
-                            <div className="flex justify-between items-center">
+                            <div className="flex justify-between items-center border-b border-gray-200/50 pb-3 md:pb-4">
                                 <div className="flex items-center gap-1.5 group">
-                                    <span className="text-xs md:text-sm text-gray-600">Platform fee:</span>
-                                    <div className="bg-gray-100 p-0.5 rounded-full text-gray-400">
-                                        <Info className="w-3.5 h-3.5 md:w-4 md:h-4" />
+                                    <span className="text-sm md:text-base text-gray-600">Platform fee</span>
+                                    <div className="bg-gray-200/50 p-0.5 rounded-full text-gray-400">
+                                        <Info className="w-4 h-4" />
                                     </div>
                                 </div>
-                                <span className="text-sm md:text-base font-semibold text-gray-900">${platformFee.toFixed(2)}</span>
+                                <span className="text-sm md:text-base font-bold text-gray-900">${platformFee.toFixed(2)}</span>
                             </div>
-                            <div className="flex justify-between items-center">
-                                <span className="text-xs md:text-sm text-gray-600">Per cause:</span>
-                                <span className="text-sm md:text-base font-semibold text-gray-900">${perCause.toFixed(2)}</span>
-                            </div>
-                            <div className="pt-2 border-t border-gray-200 flex justify-between items-center">
-                                <span className="text-sm md:text-base font-semibold text-gray-900">Total:</span>
-                                <span className="text-lg md:text-xl font-bold text-[#1600ff]">${actualDonationAmount.toFixed(2)}</span>
+                            <div className="pt-1 flex justify-between items-center text-gray-900">
+                                <span className="text-base md:text-lg font-bold">Total</span>
+                                <span className="text-xl md:text-2xl font-bold text-[#1600ff]">${actualDonationAmount.toFixed(2)}</span>
                             </div>
                         </div>
 

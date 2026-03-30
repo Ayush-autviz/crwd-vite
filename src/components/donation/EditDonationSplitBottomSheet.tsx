@@ -251,7 +251,7 @@ export default function EditDonationSplitBottomSheet({
 
   const handleInputKeyDown = (e: React.KeyboardEvent, causeId: number) => {
     if (e.key === 'Enter') {
-      e.currentTarget.blur();
+      (e.currentTarget as HTMLElement).blur();
     }
   };
 
@@ -368,7 +368,7 @@ export default function EditDonationSplitBottomSheet({
 
   return (
     <>
-      <style jsx global>{`
+      <style>{`
         input[type=range]::-webkit-slider-thumb {
           -webkit-appearance: none;
           height: 16px;
@@ -446,31 +446,37 @@ export default function EditDonationSplitBottomSheet({
                 const amount = (netAmount * percentage) / 100;
                 const avatarBgColor = getConsistentColor(cause.id, avatarColors);
                 const initials = getInitials(cause.name || 'N');
-                const sliderColor = sliderColors[index % sliderColors.length];
+                const sliderColor = "#E5E7EB";
 
                 return (
-                  <div key={cause.id} className="bg-white border border-gray-300 rounded-lg p-3 md:p-4">
-                    <div className="flex items-center gap-2 md:gap-3 mb-3 md:mb-4">
-                      <Avatar className="w-10 h-10 md:w-12 md:h-12 rounded-full flex-shrink-0">
+                  <div key={cause.id} className="bg-white border border-gray-200 rounded-2xl p-4">
+                    <div className="flex items-start justify-between gap-3 mb-3 md:mb-4">
+                      <div className="flex items-center gap-3 md:gap-4 min-w-0">
+                        <Avatar className="w-10 h-10 md:w-12 md:h-12 rounded-xl flex-shrink-0">
                         <AvatarImage src={cause.image} alt={cause.name} />
                         <AvatarFallback
-                          style={{ backgroundColor: avatarBgColor }}
-                          className="text-white font-bold text-xs md:text-base"
+                          style={{ backgroundColor: avatarBgColor + '15', color: avatarBgColor }}
+                          className="font-bold text-xs md:text-base"
                         >
                           {initials}
                         </AvatarFallback>
                       </Avatar>
-                      <div className="flex-1 min-w-0">
-                        <h3 className="font-bold text-xs md:text-base text-gray-900 truncate">
-                          {cause.name}
-                        </h3>
-                        <p className="text-xs text-gray-600">
-                          ${amount.toFixed(2)}/mo
-                        </p>
+                        <div className="flex-1 min-w-0">
+                          <h3 className="font-bold text-sm md:text-base text-gray-900 truncate">
+                            {cause.name}
+                          </h3>
+                          <p className="text-xs md:text-sm font-medium text-gray-900">
+                            ${amount.toFixed(2)}/mo
+                          </p>
+                        </div>
                       </div>
+
+                      <span className="text-lg md:text-2xl font-bold text-[#1600ff] tabular-nums">
+                        {percentage}%
+                      </span>
                     </div>
 
-                    <div className="flex items-center gap-1.5 md:gap-2">
+                    <div className="hidden">
                       <button
                         onClick={() => handleDecrease(cause.id)}
                         disabled={percentage <= calculateMinPercentage()}
@@ -503,27 +509,25 @@ export default function EditDonationSplitBottomSheet({
                       </button>
                     </div>
 
-                    <span className="text-[10px] md:text-xs text-gray-500 flex justify-center mt-2 md:mt-4">percent</span>
-
-                    <div className="px-2">
+                    <div className="px-1">
                       <Slider
                         min={calculateMinPercentage()}
                         max={100}
                         step={0.01}
                         value={percentage}
                         onChange={(val) => handlePercentageChange(cause.id, val as number)}
-                        trackStyle={{ backgroundColor: sliderColor, height: 6 }} // Active track
+                        trackStyle={{ backgroundColor: sliderColor, height: 4 }}
                         handleStyle={{
-                          borderColor: sliderColor,
-                          height: 16,
-                          width: 16,
+                          borderColor: '#D1D5DB',
+                          height: 14,
+                          width: 14,
                           marginTop: -5,
                           backgroundColor: '#ffffff',
-                          borderWidth: 2,
+                          borderWidth: 1,
                           opacity: 1,
-                          boxShadow: '0 1px 3px rgba(0,0,0,0.3)',
+                          boxShadow: '0 1px 3px rgba(0,0,0,0.12)',
                         }}
-                        railStyle={{ backgroundColor: '#E5E7EB', height: 6 }} // Inactive track
+                        railStyle={{ backgroundColor: '#E5E7EB', height: 4 }}
                       />
                     </div>
                   </div>

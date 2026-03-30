@@ -372,9 +372,9 @@ export default function OneTimeDonation({
 
   return (
     <div className="w-full h-full bg-gray-50 flex flex-col pb-20 md:pb-24">
-      <div className="flex-1 overflow-auto mt-3 md:mt-4 flex flex-col p-3 md:p-4 mb-20 md:mb-24 space-y-3 md:space-y-4">
+      <div className="flex-1 overflow-auto mt-3 md:mt-4 flex flex-col p-3 md:p-4 mb-20 md:mb-24 space-y-3 md:space-y-4 ">
         {/* Header Section */}
-        <div>
+        {/* <div>
           <p className="text-xl md:text-2xl font-bold text-[#1600ff] text-center">Set your one-time gift</p>
           {(collectiveName || fundraiserTitle) && (
             <div className="flex justify-center mt-2 mb-2">
@@ -384,10 +384,10 @@ export default function OneTimeDonation({
             </div>
           )}
           <p className="text-gray-600 text-xs text-center mt-1.5 md:mt-2">Support multiple nonprofits with one donation, split evenly. Change anytime.</p>
-        </div>
+        </div> */}
 
         {/* Donation Box Card */}
-        <div className="bg-white rounded-xl mb-4 md:mb-6 p-4 md:p-6 shadow-sm border border-gray-100">
+        <div className="bg-[#F5F9F2] rounded-xl mb-4 md:mb-6 p-4 md:p-6 shadow-sm border border-gray-100">
           {/* Your One-Time Impact Section */}
           <div className="mb-4 md:mb-6">
             <h2 className="text-lg md:text-xl font-bold text-gray-900 text-center mb-4 md:mb-6">
@@ -399,7 +399,7 @@ export default function OneTimeDonation({
               <button
                 onClick={decrementDonation}
                 disabled={donationAmount <= 5}
-                className={`flex items-center justify-center w-10 h-10 md:w-12 md:h-12 rounded-lg transition-colors ${donationAmount > 5
+                className={`flex items-center justify-center w-10 h-10 md:w-12 md:h-12 rounded-full transition-colors cursor-pointer ${donationAmount > 5
                   ? 'bg-[#1600ff] hover:bg-[#1600ff]'
                   : 'bg-gray-200 hover:bg-gray-300 cursor-not-allowed'
                   }`}
@@ -410,13 +410,16 @@ export default function OneTimeDonation({
                 <div className="text-[#1600ff] text-3xl md:text-4xl font-bold">
                   ${donationAmount}
                 </div>
-                <div className="text-gray-900 text-xs md:text-sm mt-1">
+                {/* <div className="text-gray-900 text-xs md:text-sm mt-1">
                   per donation
+                </div> */}
+                <div className="text-gray-900 text-xs md:text-sm mt-1">
+                  <h2 className="text-lg md:text-lg font-bold text-gray-900 text-center mb-0 md:mb-0">per donation</h2>
                 </div>
               </div>
               <button
                 onClick={incrementDonation}
-                className="flex items-center justify-center w-10 h-10 md:w-12 md:h-12 rounded-lg bg-[#1600ff] hover:bg-[#1600ff] transition-colors"
+                className="flex items-center justify-center w-10 h-10 md:w-12 md:h-12 rounded-full bg-[#1600ff] hover:bg-[#1600ff] transition-colors cursor-pointer"
               >
                 <Plus size={18} className="md:w-5 md:h-5 text-white font-bold" strokeWidth={3} />
               </button>
@@ -461,7 +464,7 @@ export default function OneTimeDonation({
               </div>
             </div>
 
-            <div className="space-y-2 md:space-y-3 mt-3 md:mt-4">
+            <div className="border border-gray-200 rounded-lg">
               {selectedItems
                 .filter(item => item.type === 'cause')
                 .map((item) => {
@@ -472,7 +475,7 @@ export default function OneTimeDonation({
                   return (
                     <div
                       key={item.id}
-                      className="flex items-center p-2.5 md:p-3 border border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors"
+                      className="flex items-center p-3.5 md:p-4 border-b last:border-b-0 hover:bg-gray-50 transition-colors cursor-pointer"
                       onClick={() => navigate(`/c/${cause.sort_name || cause.id}`)}
                     >
                       <Avatar className="w-10 h-10 md:w-12 md:h-12 rounded-lg flex-shrink-0 border border-gray-200 mr-2.5 md:mr-3">
@@ -497,7 +500,7 @@ export default function OneTimeDonation({
                           e.stopPropagation();
                           handleRemoveItem(`${item.type}-${item.id}`);
                         }}
-                        className="p-1.5 md:p-2 text-gray-400 hover:text-red-500 transition-colors flex-shrink-0"
+                        className="p-1 md:p-2 text-gray-400 hover:text-[#1600ff] transition-colors flex-shrink-0 cursor-pointer"
                       >
                         <Trash2 size={16} className="md:w-[18px] md:h-[18px]" />
                       </button>
@@ -529,13 +532,13 @@ export default function OneTimeDonation({
         <Button
           onClick={handleCheckout}
           disabled={selectedItems.length === 0}
-          className="bg-[#1600ff] hover:bg-[#1400cc] text-white w-full py-4 md:py-6 rounded-full font-bold transition-colors flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed text-sm md:text-base"
+          className="bg-[#1600ff] hover:bg-[#1400cc] text-white w-full py-4 md:py-6 rounded-xl font-bold transition-colors flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed text-sm md:text-base"
         >
           Continue to Review
         </Button>
-        <button onClick={() => navigate(-1)} className="text-xs md:text-sm text-[#64748b] text-center leading-relaxed w-full mt-2 ">
+        {/* <button onClick={() => navigate(-1)} className="text-xs md:text-sm text-[#64748b] text-center leading-relaxed w-full mt-2 ">
           Skip for now
-        </button>
+        </button> */}
       </div>
 
       {/* Request Nonprofit Modal */}

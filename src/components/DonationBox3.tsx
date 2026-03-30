@@ -37,6 +37,7 @@ interface DonationSummaryProps {
   donationAmount: number;
   donationBox?: any;
   onManageDonationBox?: () => void;
+  onRequestNonprofit: () => void;
 }
 
 export const DonationBox3 = ({
@@ -48,6 +49,7 @@ export const DonationBox3 = ({
   donationAmount,
   donationBox,
   onManageDonationBox,
+  onRequestNonprofit,
 }: DonationSummaryProps) => {
   const queryClient = useQueryClient();
   const { user: currentUser } = useAuthStore();
@@ -506,87 +508,82 @@ export const DonationBox3 = ({
 
   return (
     <div className="w-full h-full bg-gray-50 flex flex-col pb-20 md:pb-24">
-      <div className="flex-1 overflow-auto mt-2 mx-3 md:mx-4">
+      <div className="flex-1 overflow-auto mt-2 px-3 md:px-4">
         {/* Header Section */}
-        <div className="text-center my-4 md:my-6">
+        {/* <div className="text-center my-4 md:my-6">
           <h1 className="text-xl md:text-2xl font-bold text-[#1600ff] mb-1 md:mb-2">
             Set your monthly gift
           </h1>
           <p className="text-gray-600 text-xs text-center mt-1.5 md:mt-2">
             Support multiple nonprofits with one donation, split evenly. Change anytime.
           </p>
-        </div>
+        </div> */}
 
-        {/* Donation Box Summary Card */}
-        <div className="bg-white rounded-xl mb-4 md:mb-6 shadow-sm border border-gray-200 overflow-hidden">
-          <div className="p-4 md:p-6">
-            {/* Your Monthly Impact Section */}
-            <div className="mb-4 md:mb-6">
-              <h2 className="text-lg md:text-xl font-bold text-gray-900 text-center mb-4 md:mb-6">
-                Your Monthly Impact
-              </h2>
+        {/* Monthly Donation Card */}
+        <div className="bg-[#F5F9F2] rounded-xl mb-4 md:mb-6 p-4 md:p-6 shadow-sm border border-gray-100">
+          {/* Your Monthly Impact Section */}
+          <div className="mb-4 md:mb-6">
+            <h2 className="text-lg md:text-xl font-bold text-gray-900 text-center mb-4 md:mb-6">
+              Monthly Donation
+            </h2>
 
-              {/* Amount Selector with Plus/Minus */}
-              <div className="flex items-center justify-center gap-3 md:gap-4">
-                <button
-                  onClick={() => {
-                    if (!isEditingAmount) {
-                      setIsEditingAmount(true);
-                    }
-                    decrementAmount();
-                  }}
-                  disabled={editableAmount <= 5}
-                  className={`flex items-center justify-center w-10 h-10 md:w-12 md:h-12 rounded-lg transition-colors ${editableAmount > 5
-                    ? 'bg-[#1600ff] hover:bg-[#1400cc]'
-                    : 'bg-gray-200 cursor-not-allowed'
-                    }`}
-                >
-                  <Minus size={18} className="md:w-5 md:h-5 text-white font-bold" strokeWidth={3} />
-                </button>
-
-                <div className="text-center cursor-pointer" onClick={() => setShowAmountSheet(true)}>
-                  <div className="text-[#1600ff] text-3xl md:text-4xl font-bold">
-                    ${Math.round(editableAmount)}
-                  </div>
-                  <div className="text-gray-900 text-xs md:text-sm mt-1">
-                    per month
-                  </div>
+            {/* Amount Selector */}
+            <div className="flex items-center justify-center gap-3 md:gap-4">
+              <button
+                onClick={() => {
+                  if (!isEditingAmount) {
+                    setIsEditingAmount(true);
+                  }
+                  decrementAmount();
+                }}
+                className={`flex items-center justify-center w-10 h-10 md:w-12 md:h-12 rounded-full cursor-pointer ${editableAmount > 5 ? 'bg-[#1600ff] hover:bg-[#1600ff]' : 'bg-gray-200 hover:bg-gray-300'} transition-colors`}
+              >
+                <Minus size={18} className="md:w-5 md:h-5 text-white font-bold" strokeWidth={3} />
+              </button>
+              <div
+                className="text-center cursor-pointer hover:opacity-80 transition-opacity align-middle"
+                onClick={() => setShowAmountSheet(true)}
+              >
+                <div className="text-[#1600ff] text-3xl md:text-4xl font-bold">
+                  ${Math.round(editableAmount)}
                 </div>
-
-                <button
-                  onClick={() => {
-                    if (!isEditingAmount) {
-                      setIsEditingAmount(true);
-                    }
-                    incrementAmount();
-                  }}
-                  className="flex items-center justify-center w-10 h-10 md:w-12 md:h-12 rounded-lg bg-[#1600ff] hover:bg-[#1400cc] transition-colors"
-                >
-                  <Plus size={18} className="md:w-5 md:h-5 text-white font-bold" strokeWidth={3} />
-                </button>
+                <div className="text-gray-900 text-xs md:text-sm mt-1">
+                  <h2 className="text-lg md:text-lg font-bold text-gray-900 text-center mb-0 md:mb-0">per month</h2>
+                </div>
               </div>
+              <button
+                onClick={() => {
+                  if (!isEditingAmount) {
+                    setIsEditingAmount(true);
+                  }
+                  incrementAmount();
+                }}
+                className="flex items-center justify-center w-10 h-10 md:w-12 md:h-12 rounded-full bg-[#1600ff] hover:bg-[#1600ff] transition-colors cursor-pointer"
+              >
+                <Plus size={18} className="md:w-5 md:h-5 text-white font-bold" strokeWidth={3} />
+              </button>
             </div>
-
-            {/* Save/Cancel Buttons - Only show when editing */}
-            {isEditingAmount && (
-              <div className="flex items-center gap-2 md:gap-3 mt-4 md:mt-6">
-                <button
-                  onClick={handleCancelEdit}
-                  disabled={updateAmountMutation.isPending}
-                  className="flex-1 bg-white border border-gray-300 text-gray-900 font-semibold py-3 rounded-lg transition-colors disabled:opacity-50 hover:bg-gray-50"
-                >
-                  Cancel
-                </button>
-                <button
-                  onClick={handleSaveAmount}
-                  disabled={updateAmountMutation.isPending}
-                  className="flex-1 bg-[#1600ff] hover:bg-[#1400cc] text-white font-semibold py-3 rounded-lg transition-colors disabled:opacity-50"
-                >
-                  {updateAmountMutation.isPending ? 'Saving...' : 'Save'}
-                </button>
-              </div>
-            )}
           </div>
+
+          {/* Save/Cancel Buttons - Only show when editing */}
+          {isEditingAmount && (
+            <div className="flex items-center gap-2 md:gap-3 mt-4 md:mt-6">
+              <button
+                onClick={handleCancelEdit}
+                disabled={updateAmountMutation.isPending}
+                className="flex-1 bg-white border border-gray-300 text-gray-900 font-semibold py-3 rounded-lg transition-colors disabled:opacity-50 hover:bg-gray-50"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleSaveAmount}
+                disabled={updateAmountMutation.isPending}
+                className="flex-1 bg-[#1600ff] hover:bg-[#1400cc] text-white font-semibold py-3 rounded-lg transition-colors disabled:opacity-50"
+              >
+                {updateAmountMutation.isPending ? 'Saving...' : 'Save Changes'}
+              </button>
+            </div>
+          )}
         </div>
 
         {/* Donation Box Capacity */}
@@ -617,28 +614,19 @@ export const DonationBox3 = ({
           </div>
         </div> */}
 
-        {/* Currently Supporting Section */}
+        {/* Your Selected Causes */}
         <div className="mb-4 md:mb-6">
-          <div className="flex items-center justify-between mb-3 md:mb-4">
-            <div className="">
-              <h2 className="text-lg md:text-xl font-bold text-gray-900">Your Selected Nonprofits</h2>
-              <p className="text-xs md:text-sm text-gray-600 mt-0.5 md:mt-1">
-                Your Donation Box. Add or remove anytime.
-              </p>
+          <div className="flex items-center justify-between mb-2">
+            <div>
+              <h2 className="text-lg md:text-xl font-bold text-gray-800">Your Selected Nonprofits</h2>
+              <p className="text-xs md:text-sm text-gray-600 mt-0.5 md:mt-1">Your Donation Box. Add or remove anytime.</p>
             </div>
-            {/* <button
-              onClick={() => setShowEditSplitSheet(true)}
-              className="bg-gray-100 text-gray-600 font-medium py-1.5 px-3 md:py-2 md:px-4 rounded-lg transition-colors flex items-center gap-1.5 md:gap-2 hover:bg-gray-200"
-            >
-              <Pencil size={16} className="md:w-[18px] md:h-[18px] text-gray-600 flex-shrink-0" />
-              <span className="text-xs md:text-sm leading-tight">Edit Split</span>
-            </button> */}
-            <div className="bg-[#1600ff] text-white font-medium py-1.5 px-3 rounded-full transition-colors flex items-center gap-1.5 md:gap-2">
-              {causes.length}
+            <div className="w-7 h-7 md:w-8 md:h-8 rounded-full bg-[#1600ff] flex items-center justify-center transition-colors">
+              <span className="text-white text-xs md:text-sm font-bold">{causes.length}</span>
             </div>
           </div>
-          {/* Causes List from box_causes */}
-          <div className="space-y-2.5 md:space-y-3">
+
+          <div className="border border-gray-200 rounded-lg bg-white overflow-hidden">
             {causes.length > 0 ? (
               causes.map((cause: any) => {
                 const avatarBgColor = getConsistentColor(cause.id, avatarColors);
@@ -646,65 +634,46 @@ export const DonationBox3 = ({
                 return (
                   <div
                     key={cause.id}
-                    className="flex items-center p-3 md:p-4 bg-white border border-gray-200 rounded-lg shadow-sm hover:bg-gray-50 transition-colors cursor-pointer"
+                    className="flex items-center p-3.5 md:p-4 border-b last:border-b-0 hover:bg-gray-50 transition-colors cursor-pointer"
                     onClick={() => navigate(`/c/${cause.sort_name}`)}
                   >
-                    {/* Avatar */}
-                    <Avatar className="w-10 h-10 md:w-12 md:h-12 rounded-lg flex-shrink-0 border border-gray-200 mr-3 md:mr-4">
+                    <Avatar className="w-10 h-10 md:w-12 md:h-12 rounded-lg flex-shrink-0 border border-gray-200 mr-2.5 md:mr-3">
                       <AvatarImage src={cause.image || cause.logo} />
                       <AvatarFallback
                         style={{ backgroundColor: avatarBgColor }}
-                        className="font-semibold rounded-lg text-white text-base md:text-lg"
+                        className="font-semibold rounded-lg text-white text-sm md:text-base"
                       >
                         {initials}
                       </AvatarFallback>
                     </Avatar>
-
-                    {/* Cause Info */}
                     <div className="flex-1 min-w-0">
-                      <h3 className="font-bold text-sm md:text-base text-gray-900 mb-0.5 md:mb-1">{cause.name}</h3>
+                      <div className="flex items-center gap-1.5 md:gap-2 mb-0.5 md:mb-1">
+                        <h3 className="font-bold text-sm md:text-base text-gray-900">{cause.name}</h3>
+                      </div>
                       <p className="text-xs md:text-sm text-gray-600 line-clamp-1">
                         {cause.mission || cause.description || 'Making a positive impact in the community'}
                       </p>
                     </div>
-
-                    {/* Donation Info & Action */}
-                    <div className="flex items-center gap-3 md:gap-4 ">
-                      {/* <div className="text-right">
-                        <p className="font-bold text-sm md:text-base text-gray-900">
-                          {(() => {
-                            const customPercentage = getCausePercentage(cause.id);
-                            return customPercentage != null
-                              ? `${Number(customPercentage).toFixed(1)}%`
-                              : distributionPercentage != null
-                                ? `${Number(distributionPercentage).toFixed(1)}%`
-                                : '0%';
-                          })()}
-                        </p>
-                        <p className="text-xs md:text-sm text-gray-600">${getAmountPerItem(cause.id).toFixed(2)}/mo</p>
-                      </div> */}
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setItemToDelete({ id: cause.id.toString(), name: cause.name, type: 'cause' });
-                          setShowDeleteModal(true);
-                        }}
-                        className="hover:bg-red-50 rounded-lg transition-colors flex-shrink-0"
-                        aria-label="Remove cause"
-                      >
-                        <Trash2 className="w-4 h-4 md:w-5 md:h-5 text-red-500" />
-                      </button>
-                    </div>
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setItemToDelete({ id: cause.id.toString(), name: cause.name, type: 'cause' });
+                        setShowDeleteModal(true);
+                      }}
+                      className="p-1.5 md:p-2 text-gray-400 hover:text-[#1600ff] transition-colors flex-shrink-0 cursor-pointer"
+                    >
+                      <Trash2 size={16} className="md:w-[18px] md:h-[18px]" />
+                    </button>
                   </div>
                 );
               })
             ) : (
-              <p className="text-gray-500 text-center py-3 md:py-4 text-sm md:text-base">No causes</p>
+              <p className="text-gray-500 text-center py-6 md:py-8 text-sm md:text-base">No nonprofits selected yet.</p>
             )}
           </div>
         </div>
 
-        {/* Add More Causes Section */}
+        {/* Add More Nonprofits Section */}
         <div className="mb-4 md:mb-6">
           <h2 className="text-lg md:text-xl font-bold text-gray-800 mb-3 md:mb-4">
             Add More Nonprofits
@@ -712,38 +681,27 @@ export const DonationBox3 = ({
 
           {/* Search Bar */}
           <div className="flex gap-2 mb-3 md:mb-4">
-            <div className="relative flex-1">
+            <div className="relative flex-1 bg-[#F5F9F2] rounded-xl">
               <Search className="absolute left-2.5 md:left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4 md:w-5 md:h-5" />
               <input
                 type="text"
-                placeholder="Search for causes..."
+                placeholder="Search nonprofits..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-8 md:pl-10 pr-3 md:pr-4 py-2 md:py-2.5 border border-gray-300 rounded-xl text-sm md:text-base"
-
+                className="w-full pl-8 md:pl-10 pr-3 md:pr-4 py-2 md:py-2.5 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#1600ff] text-sm md:text-base"
               />
             </div>
           </div>
 
-          {/* Request Nonprofit Link */}
-          <div className="mb-3 md:mb-4 flex justify-center">
-            <button
-              onClick={() => navigate('/request-nonprofit')}
-              className="text-xs md:text-sm text-[#1600ff] underline font-medium"
-            >
-              Can't find your nonprofit? Request it here
-            </button>
-          </div>
-
-          {/* Causes List */}
-          <div className="space-y-2 md:space-y-3">
+          {/* Nonprofits List */}
+          <div className="border border-gray-200 rounded-lg bg-white overflow-hidden">
             {searchCausesLoading ? (
               <div className="flex justify-center py-6 md:py-8">
                 <Loader2 className="w-5 h-5 md:w-6 md:h-6 animate-spin text-gray-400" />
               </div>
             ) : searchCausesData?.results?.length > 0 ? (
               searchCausesData.results
-                .filter((cause: any) => !causes.some((c: any) => c.id === cause.id))
+                .filter((cause: any) => !causes.some((item: any) => item.id === cause.id))
                 .slice(0, 10)
                 .map((cause: any) => {
                   const avatarBgColor = getConsistentColor(cause.id, avatarColors);
@@ -751,7 +709,7 @@ export const DonationBox3 = ({
                   return (
                     <div
                       key={cause.id}
-                      className="flex items-center p-2.5 md:p-3 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors cursor-pointer"
+                      className="flex items-center p-3.5 md:p-4 border-b last:border-b-0 hover:bg-gray-50 transition-colors cursor-pointer"
                       onClick={() => navigate(`/c/${cause.sort_name}`)}
                     >
                       <Avatar className="w-10 h-10 md:w-12 md:h-12 rounded-lg flex-shrink-0 border border-gray-200 mr-2.5 md:mr-3">
@@ -775,12 +733,12 @@ export const DonationBox3 = ({
                           addCausesMutation.mutate(cause.id);
                         }}
                         disabled={addCausesMutation.isPending}
-                        className="w-7 h-7 md:w-8 md:h-8 rounded-full bg-red-100 hover:bg-red-200 flex items-center justify-center transition-colors flex-shrink-0 disabled:opacity-50"
+                        className="w-7 h-7 md:w-8 md:h-8 rounded-full border border-[#1600ff] hover:bg-[#1600ff]/10 flex items-center justify-center transition-colors flex-shrink-0 cursor-pointer"
                       >
                         {addCausesMutation.isPending ? (
-                          <Loader2 size={14} className="md:w-4 md:h-4 text-pink-600 animate-spin" />
+                          <Loader2 size={14} className="md:w-4 md:h-4 text-[#1600ff] animate-spin" />
                         ) : (
-                          <Plus size={14} className="md:w-4 md:h-4 text-pink-600" strokeWidth={3} />
+                          <Plus size={14} className="md:w-4 md:h-4 text-[#1600ff]" strokeWidth={3} />
                         )}
                       </button>
                     </div>
@@ -790,6 +748,18 @@ export const DonationBox3 = ({
               <p className="text-gray-500 text-center py-6 md:py-8 text-sm md:text-base">No nonprofits found</p>
             )}
           </div>
+        </div>
+
+        {/* Request Nonprofit Link */}
+        <div className="mb-3 md:mb-4 flex justify-center">
+          <button
+            onClick={() => {
+              onRequestNonprofit();
+            }}
+            className="text-xs md:text-sm text-[#1600ff] underline font-medium cursor-pointer"
+          >
+            Can't find your nonprofit? Request it here
+          </button>
         </div>
 
 

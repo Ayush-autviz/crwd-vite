@@ -134,12 +134,12 @@ export default function DonationCauseSelector({
 
       {/* Search Section */}
       <div className="space-y-4 mb-4 md:mb-6">
-        <div className="flex gap-2">
-          <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4 md:w-5 md:h-5" />
+        <div className="flex gap-2 mb-3 md:mb-4">
+          <div className="relative flex-1 bg-[#F5F9F2] rounded-xl">
+            <Search className="absolute left-2.5 md:left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4 md:w-5 md:h-5" />
             <Input
               type="text"
-              placeholder="Search for causes..."
+              placeholder="Search nonprofits..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               onKeyDown={(e) => {
@@ -147,7 +147,7 @@ export default function DonationCauseSelector({
                   handleSearch();
                 }
               }}
-              className="pl-10 pr-4 py-2 md:py-2.5"
+              className="w-full pl-8 md:pl-10 pr-3 md:pr-4 py-2 md:py-2.5 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#1600ff] text-sm md:text-base"
             />
           </div>
           {/* <Button 
@@ -158,13 +158,7 @@ export default function DonationCauseSelector({
             All
           </Button> */}
         </div>
-        {/* {onRequestNonprofit ? ( */}
-        <button
-          onClick={onRequestNonprofit}
-          className="text-[#1600ff] text-sm md:text-base underline flex justify-center w-full"
-        >
-          Can't find your nonprofit? Request it here
-        </button>
+
         {/* ) : (
           <Link to="/request-nonprofit" className="text-[#1600ff] text-sm md:text-base underline">
             Can't find your nonprofit? Request it here
@@ -173,7 +167,7 @@ export default function DonationCauseSelector({
       </div>
 
       {/* Causes List */}
-      <div className="space-y-2.5 md:space-y-3">
+      <div className="border border-gray-200 rounded-lg">
         {showSearchResults ? (
           causesLoading ? (
             <div className="text-center py-4">
@@ -204,14 +198,14 @@ export default function DonationCauseSelector({
               return (
                 <div
                   key={cause.id}
-                  className="flex items-center gap-3 md:gap-4 p-3 md:p-4 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer transition-colors"
+                  className="flex items-center p-3 md:p-3.5 border-b last:border-b-0 hover:bg-gray-50 transition-colors cursor-pointer"
                   // onClick={() => handleItemSelect(cause)}
                   onClick={() => navigate(`/c/${cause.sort_name}`)}
                 >
-                  <Avatar className="w-10 h-10 md:w-12 md:h-12 rounded-lg flex-shrink-0 border border-gray-200">
+                  <Avatar className="w-10 h-10 md:w-12 md:h-12 rounded-lg flex-shrink-0 border border-gray-200 mr-2.5 md:mr-3">
                     <AvatarImage src={cause.image} />
                     <AvatarFallback
-                      style={{ backgroundColor: avatarBgColor }}
+                      style={{ baFckgroundColor: avatarBgColor }}
                       className="font-semibold rounded-lg text-white text-base md:text-lg"
                     >
                       {initials}
@@ -267,11 +261,11 @@ export default function DonationCauseSelector({
               return (
                 <div
                   key={cause.id}
-                  className="flex items-center gap-3 md:gap-4 p-3 md:p-4 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer transition-colors"
+                  className="flex items-center p-3 md:p-4 border-b last:border-b-0 hover:bg-gray-50  cursor-pointer transition-colors"
                   // onClick={() => handleItemSelect(cause)}`
                   onClick={() => navigate(`/c/${cause.sort_name}`)}
                 >
-                  <Avatar className="w-10 h-10 md:w-12 md:h-12 rounded-lg flex-shrink-0 border border-gray-200">
+                  <Avatar className="w-10 h-10 md:w-12 md:h-12 rounded-lg flex-shrink-0 border border-gray-200 mr-2.5 md:mr-3">
                     <AvatarImage src={cause.image} />
                     <AvatarFallback
                       style={{ backgroundColor: avatarBgColor }}
@@ -289,8 +283,8 @@ export default function DonationCauseSelector({
                   <button onClick={(e) => {
                     e.stopPropagation();
                     handleItemSelect(cause)
-                  }} className="w-8 h-8 md:w-10 md:h-10 rounded-full bg-pink-100 hover:bg-pink-200 flex items-center justify-center transition-colors flex-shrink-0">
-                    <Plus size={16} className="text-pink-600" strokeWidth={3} />
+                  }} className="w-8 h-8 md:w-10 md:h-10 rounded-full border border-[#1600ff] hover:bg-[#1600ff]/10 flex items-center justify-center transition-colors flex-shrink-0 cursor-pointer">
+                    <Plus size={16} className="text-[#1600ff]" strokeWidth={3} />
                   </button>
                 </div>
               );
@@ -301,6 +295,16 @@ export default function DonationCauseSelector({
             </div>
           )
         )}
+      </div>
+
+      {/* {onRequestNonprofit ? ( */}
+      <div className="m-3 md:m-4 flex justify-center">
+        <button
+          onClick={onRequestNonprofit}
+          className="text-[#1600ff] text-sm md:text-base underline flex justify-center w-full"
+        >
+          Can't find your nonprofit? Request it here
+        </button>
       </div>
 
       {/* Discover More Link */}

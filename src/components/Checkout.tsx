@@ -606,7 +606,7 @@ export const Checkout = ({
         {/* Content Container with max-width */}
         <div className="w-full">
           {/* Donation Box Summary Card */}
-          <div className="bg-white rounded-xl mb-4 md:mb-6 shadow-sm border border-gray-200 overflow-hidden">
+          <div className="bg-[#F5F9F2] rounded-xl mb-4 md:mb-6 shadow-sm border border-gray-200 overflow-hidden">
             {/* Gradient Header */}
             <div className="h-1 md:h-2 bg-gradient-to-r from-blue-700 to-[#de3982]"></div>
 
@@ -648,18 +648,20 @@ export const Checkout = ({
                       <button
                         onClick={decrementAmount}
                         disabled={editableAmount <= 5}
-                        className={`flex items-center justify-center w-10 h-10 md:w-12 md:h-12 rounded-lg transition-colors ${editableAmount > 5
-                          ? 'bg-gray-100 hover:bg-gray-200'
+                        className={`flex items-center justify-center w-10 h-10 md:w-12 md:h-12 rounded-full transition-colors cursor-pointer ${editableAmount > 5
+                          ? 'bg-[#1600ff] hover:bg-[#1600ff]'
                           : 'bg-gray-200 cursor-not-allowed opacity-50'
                           }`}
+                        aria-label="Decrease amount"
                       >
-                        <Minus size={20} className="text-gray-600 font-bold" strokeWidth={3} />
+                        <Minus size={20} className={`${editableAmount > 5 ? 'text-white' : 'text-gray-400'} font-bold`} strokeWidth={3} />
                       </button>
                       <button
                         onClick={incrementAmount}
-                        className="flex items-center justify-center w-10 h-10 md:w-12 md:h-12 rounded-lg bg-gray-100 hover:bg-gray-200 transition-colors"
+                        className="flex items-center justify-center w-10 h-10 md:w-12 md:h-12 rounded-full bg-[#1600ff] hover:bg-[#1600ff] transition-colors cursor-pointer"
+                        aria-label="Increase amount"
                       >
-                        <Plus size={20} className="text-gray-600" strokeWidth={3} />
+                        <Plus size={20} className="text-white" strokeWidth={3} />
                       </button>
                     </div>
                   )}
@@ -668,7 +670,7 @@ export const Checkout = ({
                   {!isEditingAmount && (
                     <button
                       onClick={() => setIsEditingAmount(true)}
-                      className="w-9 h-9 md:w-10 md:h-10 rounded-lg bg-gray-100 hover:bg-gray-200 flex items-center justify-center transition-colors"
+                      className="w-9 h-9 md:w-10 md:h-10 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center transition-colors cursor-pointer"
                       aria-label="Edit amount"
                     >
                       <Pencil className="w-3.5 h-3.5 md:w-4 md:h-4 text-gray-600" />
@@ -737,13 +739,13 @@ export const Checkout = ({
 
               {/* Add Causes Button */}
               <div className="flex items-center justify-between">
-                <Button onClick={() => setShowPaymentMethods(true)} className="w-[48%] bg-white hover:bg-gray-100 border border-gray-300 text-gray-900 font-semibold py-5 rounded-lg transition-colors flex items-center justify-center gap-2">
+                <Button onClick={() => setShowPaymentMethods(true)} className="w-[48%] bg-white hover:bg-gray-100 border border-gray-300 text-gray-900 font-semibold py-5 rounded-lg transition-colors flex items-center justify-center gap-2 cursor-pointer">
                   <CreditCard size={18} className="text-gray-900" />
                   <span>Edit payment</span>
                 </Button>
                 <Button
                   onClick={() => navigate('/donation/manage')}
-                  className="w-[48%] bg-[#1600ff] hover:bg-[#1400cc] text-white font-semibold py-5 rounded-lg transition-colors flex items-center justify-center gap-2"
+                  className="w-[48%] bg-[#1600ff] hover:bg-[#1400cc] text-white font-semibold py-5 rounded-lg transition-colors flex items-center justify-center gap-2 cursor-pointer"
                 >
                   <Plus size={18} className="text-white" />
                   <span>Add Causes</span>
@@ -768,30 +770,30 @@ export const Checkout = ({
                 {causes.length > 1 && (
                   <button
                     onClick={() => setShowEditSplit(true)}
-                    className="bg-gray-100 text-gray-600 font-medium py-1.5 px-3 md:py-2 md:px-4 rounded-lg transition-colors flex items-center gap-1.5 md:gap-2 hover:bg-gray-200"
+                    className="bg-gray-100 text-gray-600 font-medium py-1.5 px-3 md:py-2 md:px-4 rounded-lg transition-colors flex items-center gap-1.5 md:gap-2 hover:bg-gray-200 cursor-pointer"
                   >
                     <Pencil size={16} className="md:w-[18px] md:h-[18px] text-gray-600 flex-shrink-0" />
                     <div className="flex flex-col items-start">
                       <span className="text-xs md:text-sm leading-tight">Edit Split</span>
-
                     </div>
                   </button>
                 )}
               </div>
 
               {/* Causes List from box_causes */}
-              <div className="space-y-2.5 md:space-y-3">
+              <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
                 {causes.map((cause: any) => {
                   const avatarBgColor = getConsistentColor(cause.id, avatarColors);
                   const initials = getInitials(cause.name || 'N');
                   return (
                     <div
                       key={cause.id}
-                      className="flex items-center p-3 md:p-4 bg-white border border-gray-200 rounded-lg shadow-sm hover:bg-gray-50 transition-colors cursor-pointer"
+                      className="flex items-center p-3.5 md:p-4 border-b last:border-b-0 hover:bg-gray-50 transition-colors cursor-pointer"
                       onClick={() => navigate(`/c/${cause.sort_name}`)}
                     >
-                      {/* Avatar */}
-                      <Avatar className="w-10 h-10 md:w-12 md:h-12 rounded-lg flex-shrink-0 border border-gray-200 mr-3 md:mr-4">
+                      <div className="flex gap-3 md:gap-4 items-center flex-1 min-w-0">
+                        {/* Avatar */}
+                        <Avatar className="w-10 h-10 md:w-12 md:h-12 rounded-lg flex-shrink-0 border border-gray-200">
                         <AvatarImage src={cause.image} />
                         <AvatarFallback
                           style={{ backgroundColor: avatarBgColor }}
@@ -825,16 +827,17 @@ export const Checkout = ({
                             }/mo
                           </p>
                         </div>
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleRemoveCause(cause)
-                          }}
-                          className="p-1.5 md:p-2 hover:bg-red-50 rounded-lg transition-colors flex-shrink-0"
-                          aria-label="Remove cause"
-                        >
-                          <Trash2 className="w-4 h-4 md:w-5 md:h-5 text-red-500" />
-                        </button>
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleRemoveCause(cause)
+                            }}
+                            className="p-1.5 md:p-2 text-gray-400 hover:text-[#1600ff] transition-colors flex-shrink-0 cursor-pointer"
+                            aria-label="Remove cause"
+                          >
+                            <Trash2 size={16} className="md:w-[18px] md:h-[18px]" />
+                          </button>
+                        </div>
                       </div>
                     </div>
                   );
@@ -959,33 +962,35 @@ export const Checkout = ({
                   Supporting {selectedOrganizations.length} nonprofit{selectedOrganizations.length !== 1 ? 's' : ''}
                 </p>
               </div>
-              <div className="space-y-2.5 md:space-y-3">
+              <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
                 {selectedOrganizations.map((orgName: string, index: number) => {
                   const avatarBgColor = getConsistentColor(orgName, avatarColors);
                   const initials = getInitials(orgName);
                   return (
                     <div
                       key={`${orgName}-${index}`}
-                      className="flex items-center p-3 md:p-4 bg-white border border-gray-200 rounded-lg shadow-sm"
+                      className="flex items-center p-3.5 md:p-4 border-b last:border-b-0 hover:bg-gray-50 transition-colors cursor-pointer"
                     >
-                      <div
-                        className="w-10 h-10 md:w-12 md:h-12 rounded-xl flex items-center justify-center mr-3 md:mr-4 flex-shrink-0"
-                        style={{ backgroundColor: avatarBgColor }}
-                      >
-                        <span className="text-white font-bold text-base md:text-lg">
-                          {initials}
-                        </span>
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <h3 className="font-bold text-sm md:text-base text-gray-900 mb-0.5 md:mb-1">{orgName}</h3>
-                        <p className="text-xs md:text-sm text-gray-600 line-clamp-1">
-                          {getOrganizationDescription(orgName)}
-                        </p>
-                      </div>
-                      <div className="flex items-center gap-3 md:gap-4 ml-2 md:ml-4">
-                        <div className="text-right">
-                          <p className="font-bold text-sm md:text-base text-gray-900">{distributionPercentage.toFixed(1)}%</p>
-                          <p className="text-xs md:text-sm text-gray-600">${amountPerItem.toFixed(2)}/mo</p>
+                      <div className="flex gap-3 md:gap-4 items-center flex-1 min-w-0">
+                        <div
+                          className="w-10 h-10 md:w-12 md:h-12 rounded-xl flex items-center justify-center flex-shrink-0"
+                          style={{ backgroundColor: avatarBgColor }}
+                        >
+                          <span className="text-white font-bold text-base md:text-lg">
+                            {initials}
+                          </span>
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <h3 className="font-bold text-sm md:text-base text-gray-900 mb-0.5 md:mb-1">{orgName}</h3>
+                          <p className="text-xs md:text-sm text-gray-600 line-clamp-1">
+                            {getOrganizationDescription(orgName)}
+                          </p>
+                        </div>
+                        <div className="flex items-center gap-3 md:gap-4 ml-2 md:ml-4">
+                          <div className="text-right">
+                            <p className="font-bold text-sm md:text-base text-gray-900">{distributionPercentage.toFixed(1)}%</p>
+                            <p className="text-xs md:text-sm text-gray-600">${amountPerItem.toFixed(2)}/mo</p>
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -1023,7 +1028,7 @@ export const Checkout = ({
           <div className="mt-4 md:mt-6 mb-4 md:mb-6 text-center">
             <button
               onClick={() => setShowRequestModal(true)}
-              className="text-sm md:text-base text-[#1600ff] hover:text-[#1400cc] underline font-medium"
+              className="text-sm md:text-base text-[#1600ff] hover:text-[#1400cc] underline font-medium cursor-pointer"
             >
               Don't see your nonprofit? Request it
             </button>
@@ -1043,7 +1048,6 @@ export const Checkout = ({
           <button
             onClick={handleCancelSubscription}
             disabled={cancelDonationBoxMutation.isPending}
-            // className="w-full text-xs text-red-600 hover:text-red-700 font-medium py-1.5 transition-colors disabled:opacity-50"
             className="text-sm md:text-base text-red-600 text-center cursor-pointer hover:text-red-700 w-full"
           >
             {cancelDonationBoxMutation.isPending ? 'Cancelling...' : 'Cancel subscription completely'}
