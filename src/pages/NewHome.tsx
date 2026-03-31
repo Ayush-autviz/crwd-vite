@@ -518,7 +518,7 @@ export default function NewHome() {
                     ) : (
                         donationBoxInfo ? (
                             <>
-                                <HelloGreeting />
+                                <HelloGreeting causeCount={donationBoxInfo.causeCount} />
                                 <MyDonationBoxCard
                                     monthlyAmount={donationBoxInfo.monthlyAmount}
                                     causeCount={donationBoxInfo.causeCount}

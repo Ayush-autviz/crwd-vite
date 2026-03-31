@@ -1,6 +1,6 @@
 import { useAuthStore } from "@/stores/store";
 
-export default function HelloGreeting() {
+export default function HelloGreeting({ causeCount }: { causeCount: any }) {
   const { user } = useAuthStore();
 
   // Get user's first name or fallback to a default
@@ -19,7 +19,7 @@ export default function HelloGreeting() {
   return (
     <div className="w-full md:max-w-2xl md:mx-auto">
       <h1 className="text-base xs:text-lg md:text-2xl font-bold text-foreground mb-3 ">
-        Hi {userName}! You're making a difference.
+        Hi {userName}. {causeCount} nonprofits are counting on you.
       </h1>
     </div>
   );

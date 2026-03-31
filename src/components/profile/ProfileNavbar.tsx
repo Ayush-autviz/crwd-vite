@@ -101,7 +101,7 @@ export default function ProfileNavbar({
     return "U";
   };
 
-  console.log('color', user?.color);
+  // console.log('color', user?.color);
 
 
 

@@ -21,7 +21,7 @@ export default function DonationBoxPrompt({ causeCount }: DonationBoxPromptProps
       {/* Greeting - Only show if not showing "Almost There" card */}
 
       <h2 className="text-base xs:text-lg md:text-2xl font-bold text-foreground mb-3 md:mb-6">
-        Hi {firstName}, ready to make an impact?
+        Hi {firstName}. Your Donation Box is waiting.
       </h2>
 
 

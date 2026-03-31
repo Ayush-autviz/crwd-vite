@@ -86,7 +86,7 @@ export default function CommunityPostCard({ post, onCommentPress, showSimplified
   const currentUser = useAuthStore((state) => state.user);
 
 
-  console.log("post.collective", post.collective);
+  // console.log("post.collective", post.collective);
 
   const wordLimit = 30;
   const words = (post.content || '').split(/\s+/);
@@ -737,7 +737,7 @@ export default function CommunityPostCard({ post, onCommentPress, showSimplified
 
               {/* Show preview card if previewDetails exists, otherwise show image */}
               {post.previewDetails ? (
-                <div 
+                <div
                   className="flex flex-col md:flex-row bg-white border border-gray-200 rounded-lg overflow-hidden mb-3 hover:bg-gray-50 transition-colors"
                   onClick={(e) => {
                     if (post.previewDetails?.url) {
@@ -786,9 +786,9 @@ export default function CommunityPostCard({ post, onCommentPress, showSimplified
                       </div>
                     )}
                     {!post.previewDetails.title && (post.previewDetails.description || post.previewDetails.image) && post.previewDetails.url && (
-                        <div className="text-xs md:text-sm text-blue-600 truncate underline mt-1">
-                            {post.previewDetails.url}
-                        </div>
+                      <div className="text-xs md:text-sm text-blue-600 truncate underline mt-1">
+                        {post.previewDetails.url}
+                      </div>
                     )}
                   </div>
                 </div>

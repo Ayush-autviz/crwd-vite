@@ -88,7 +88,7 @@ export default function NewSuggestedCollectives({
                         <img
                           src={collective.icon}
                           alt={collective.name}
-                          className="w-full h-full object-contain rounded-lg"
+                          className="w-full h-full object-cover rounded-lg"
                         />
                       ) : (
                         <span className="text-white font-bold text-base xs:text-lg md:text-xl">
