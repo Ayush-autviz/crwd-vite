@@ -1,135 +1,186 @@
-import React, { useState } from "react";
-import { Button } from "../ui/button";
-import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
-import { Locate, LocateIcon, Map, MapPin, Upload } from "lucide-react";
-import { Link } from "react-router-dom";
-import { Toast } from "../ui/toast";
-import ImageModal from "../ui/ImageModal";
+// import React, { useState } from "react";
+// import { Button } from "../ui/button";
+// import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
+// import { Locate, LocateIcon, Map, MapPin, Upload } from "lucide-react";
+// import { Link } from "react-router-dom";
+// import { Toast } from "../ui/toast";
+// import ImageModal from "../ui/ImageModal";
 
-// Avatar colors for consistent fallback styling (same as NewCreateCollective.tsx)
-const avatarColors = [
-  '#FF6B6B', '#4CAF50', '#FF9800', '#9C27B0', '#2196F3',
-  '#FFC107', '#E91E63', '#00BCD4', '#8BC34A', '#FF5722',
-  '#673AB7', '#009688', '#FFEB3B', '#795548', '#607D8B',
-];
+// // Avatar colors for consistent fallback styling (same as NewCreateCollective.tsx)
+// const avatarColors = [
+//   '#FF6B6B', '#4CAF50', '#FF9800', '#9C27B0', '#2196F3',
+//   '#FFC107', '#E91E63', '#00BCD4', '#8BC34A', '#FF5722',
+//   '#673AB7', '#009688', '#FFEB3B', '#795548', '#607D8B',
+// ];
 
-const getConsistentColor = (id: number | string, colors: string[]) => {
-  const hash = typeof id === 'number' ? id : id.toString().split('').reduce((acc: number, char: string) => acc + char.charCodeAt(0), 0);
-  return colors[hash % colors.length];
-};
+// const getConsistentColor = (id: number | string, colors: string[]) => {
+//   const hash = typeof id === 'number' ? id : id.toString().split('').reduce((acc: number, char: string) => acc + char.charCodeAt(0), 0);
+//   return colors[hash % colors.length];
+// };
 
-interface ProfileHeaderProps {
-  avatarUrl: string;
-  name: string;
-  location: string;
-  link: string;
-  follow?: boolean;
-  activeSince: string;
-  color?: string;
-  founder?: boolean;
-  onFounderClick?: () => void;
+// interface ProfileHeaderProps {
+//   avatarUrl: string;
+//   name: string;
+//   location: string;
+//   link: string;
+//   follow?: boolean;
+//   activeSince: string;
+//   color?: string;
+//   founder?: boolean;
+//   onFounderClick?: () => void;
+// }
+
+// const ProfileHeader: React.FC<ProfileHeaderProps> = ({
+//   avatarUrl,
+//   name,
+//   location,
+//   link,
+//   follow = false,
+//   activeSince,
+//   color,
+//   founder = true,
+//   onFounderClick,
+// }) => {
+//   const [isFollowing, setIsFollowing] = useState(false);
+//   const [toastState, setToastState] = useState({ show: false, message: "" });
+
+//   // Use color from API if available, otherwise get consistent color for avatar fallback based on name
+//   const avatarBgColor = color || getConsistentColor(name || link || 'U', avatarColors);
+
+//   const showToast = (message: string) => {
+//     setToastState({ show: true, message });
+//     setTimeout(() => setToastState({ show: false, message: "" }), 1500);
+//   };
+
+//   const handleFollowClick = () => {
+//     setIsFollowing(!isFollowing);
+//     // showToast(isFollowing ? `Unfollowed ${name}` : `Following ${name}`);
+//   };
+
+//   return (
+//     <div className="pt-3 md:pt-4  px-3 md:px-4 bg-white">
+//       <Toast
+//         show={toastState.show}
+//         message={toastState.message}
+//         onHide={() => setToastState({ show: false, message: "" })}
+//       />
+//       {/* Top right buttons */}
+//       {/* <div className="flex justify-end gap-3 ">
+//         <Button className="h-8 rounded-lg text-sm font-semibold bg-white text-gray-700 border border-gray-300 shadow-none hover:bg-gray-50 transition-none">
+//           <Upload className="w-2 h-2" />
+//         </Button>
+//         {follow ? (
+//           <Button
+//             onClick={handleFollowClick}
+//             className={`h-8 rounded-lg text-sm font-semibold transition-colors ${
+//               isFollowing
+//                 ? "bg-blue-500 text-white hover:bg-blue-600"
+//                 : "bg-white text-gray-700 border border-gray-300 hover:bg-gray-50"
+//             }`}
+//           >
+//             {isFollowing ? "Following" : "Follow"}
+//           </Button>
+//         ) : (
+//           <Link
+//             to={`/profile/${name}`}
+//             className="h-8 px-4 flex items-center justify-center rounded-lg text-sm font-semibold bg-blue-100 text-blue-700 border bg-blue-500 text-white shadow-none hover:bg-blue-600 hover:text-white transition-none"
+//           >
+//             Edit
+//           </Link>
+//         )}
+//       </div> */}
+//       {/* Avatar and info */}
+//       <div className="flex flex-col items-center gap-3 md:gap-4 mb-2.5 md:mb-3">
+//         <ImageModal
+//           src={avatarUrl}
+//           alt={name}
+//           fallbackText={name.charAt(0).toUpperCase()}
+//           fallbackColor={avatarBgColor}
+//         >
+//           <Avatar className="w-28 h-28 md:w-28 md:h-28 rounded-full cursor-pointer hover:opacity-80 transition-opacity">
+//             <AvatarImage src={avatarUrl} alt={name} className="object-cover" />
+//             <AvatarFallback
+//               style={{ backgroundColor: avatarBgColor }}
+//               className="text-white text-2xl md:text-4xl font-medium"
+//             >
+//               {name.charAt(0).toUpperCase()}
+//             </AvatarFallback>
+//           </Avatar>
+//         </ImageModal>
+//         <div className="font-bold text-base sm:text-lg md:text-xl leading-tight">{name}</div>
+//       </div>
+
+//       <div className="flex-1 flex flex-col items-center">
+//         {/* <div className="text-[10px] md:text-xs text-gray-500 flex items-center gap-1.5 md:gap-2 mt-0.5 md:mt-1"> */}
+//         {founder && (
+//           <div
+//             className={`bg-pink-100 rounded-full py-1 px-3 mb-2 ${onFounderClick ? 'cursor-pointer hover:bg-pink-200 transition-colors' : ''}`}
+//             onClick={onFounderClick}
+//           >
+//             <p className="text-pink-500 font-medium text-sm md:text-base">Organizer</p>
+//           </div>
+//         )}
+//         {location && (
+//           <div className="flex items-center gap-0.5 md:gap-1">
+//             <MapPin className="w-3.5 h-3.5 md:w-4 md:h-4" />
+//             <span className="text-sm md:text-base">{location}</span>
+//           </div>
+//         )}
+//         {/* </div> */}
+//       </div>
+//     </div>
+//   );
+// };
+
+// export default ProfileHeader;
+
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+
+interface UserProfileHeaderProps {
+  profilePicture?: string;
+  firstName?: string;
+  lastName?: string;
+  username?: string;
+  fullName?: string;
+  location?: string;
+  followersCount?: number;
+  followingCount?: number;
+  getInitials: (firstName?: string, lastName?: string, fullName?: string, username?: string) => string;
 }
 
-const ProfileHeader: React.FC<ProfileHeaderProps> = ({
-  avatarUrl,
-  name,
+export const UserProfileHeader = ({
+  profilePicture,
+  firstName,
+  lastName,
+  username,
+  fullName,
   location,
-  link,
-  follow = false,
-  activeSince,
-  color,
-  founder = true,
-  onFounderClick,
-}) => {
-  const [isFollowing, setIsFollowing] = useState(false);
-  const [toastState, setToastState] = useState({ show: false, message: "" });
-
-  // Use color from API if available, otherwise get consistent color for avatar fallback based on name
-  const avatarBgColor = color || getConsistentColor(name || link || 'U', avatarColors);
-
-  const showToast = (message: string) => {
-    setToastState({ show: true, message });
-    setTimeout(() => setToastState({ show: false, message: "" }), 1500);
-  };
-
-  const handleFollowClick = () => {
-    setIsFollowing(!isFollowing);
-    // showToast(isFollowing ? `Unfollowed ${name}` : `Following ${name}`);
-  };
-
+  followersCount = 0,
+  followingCount = 0,
+  getInitials,
+}: UserProfileHeaderProps) => {
   return (
-    <div className="pt-3 md:pt-4  px-3 md:px-4 bg-white">
-      <Toast
-        show={toastState.show}
-        message={toastState.message}
-        onHide={() => setToastState({ show: false, message: "" })}
-      />
-      {/* Top right buttons */}
-      {/* <div className="flex justify-end gap-3 ">
-        <Button className="h-8 rounded-lg text-sm font-semibold bg-white text-gray-700 border border-gray-300 shadow-none hover:bg-gray-50 transition-none">
-          <Upload className="w-2 h-2" />
-        </Button>
-        {follow ? (
-          <Button
-            onClick={handleFollowClick}
-            className={`h-8 rounded-lg text-sm font-semibold transition-colors ${
-              isFollowing
-                ? "bg-blue-500 text-white hover:bg-blue-600"
-                : "bg-white text-gray-700 border border-gray-300 hover:bg-gray-50"
-            }`}
-          >
-            {isFollowing ? "Following" : "Follow"}
-          </Button>
-        ) : (
-          <Link
-            to={`/profile/${name}`}
-            className="h-8 px-4 flex items-center justify-center rounded-lg text-sm font-semibold bg-blue-100 text-blue-700 border bg-blue-500 text-white shadow-none hover:bg-blue-600 hover:text-white transition-none"
-          >
-            Edit
-          </Link>
-        )}
-      </div> */}
-      {/* Avatar and info */}
-      <div className="flex flex-col items-center gap-3 md:gap-4 mb-2.5 md:mb-3">
-        <ImageModal
-          src={avatarUrl}
-          alt={name}
-          fallbackText={name.charAt(0).toUpperCase()}
-          fallbackColor={avatarBgColor}
+    <div className="flex items-start gap-5">
+      {/* Avatar */}
+      <Avatar className="w-20 h-20 rounded-full flex-shrink-0 border-none">
+        <AvatarImage src={profilePicture} className="object-cover" />
+        <AvatarFallback
+          className="text-2xl font-bold text-[#106D4E] border-none"
+          style={{ backgroundColor: '#E4F8F0' }}
         >
-          <Avatar className="w-28 h-28 md:w-28 md:h-28 rounded-full cursor-pointer hover:opacity-80 transition-opacity">
-            <AvatarImage src={avatarUrl} alt={name} className="object-cover" />
-            <AvatarFallback
-              style={{ backgroundColor: avatarBgColor }}
-              className="text-white text-2xl md:text-4xl font-medium"
-            >
-              {name.charAt(0).toUpperCase()}
-            </AvatarFallback>
-          </Avatar>
-        </ImageModal>
-        <div className="font-bold text-base sm:text-lg md:text-xl leading-tight">{name}</div>
-      </div>
+          {getInitials(firstName, lastName, fullName, username)}
+        </AvatarFallback>
+      </Avatar>
 
-      <div className="flex-1 flex flex-col items-center">
-        {/* <div className="text-[10px] md:text-xs text-gray-500 flex items-center gap-1.5 md:gap-2 mt-0.5 md:mt-1"> */}
-        {founder && (
-          <div
-            className={`bg-pink-100 rounded-full py-1 px-3 mb-2 ${onFounderClick ? 'cursor-pointer hover:bg-pink-200 transition-colors' : ''}`}
-            onClick={onFounderClick}
-          >
-            <p className="text-pink-500 font-medium text-sm md:text-base">Organizer</p>
-          </div>
-        )}
-        {location && (
-          <div className="flex items-center gap-0.5 md:gap-1">
-            <MapPin className="w-3.5 h-3.5 md:w-4 md:h-4" />
-            <span className="text-sm md:text-base">{location}</span>
-          </div>
-        )}
-        {/* </div> */}
+      {/* Name/Location/Stats */}
+      <div className="flex-1 space-y-1">
+        <h2 className="text-xl font-bold text-gray-900 leading-tight">{fullName}</h2>
+        <p className="text-sm font-medium text-gray-500">{location || 'Your Location'}</p>
+        <div className="flex items-center gap-4 text-sm italic text-gray-600 pt-1">
+          <span><span className="font-bold">{followersCount}</span> followers</span>
+          <span><span className="font-bold">{followingCount}</span> following</span>
+        </div>
       </div>
     </div>
   );
 };
-
-export default ProfileHeader;

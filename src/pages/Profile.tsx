@@ -1,20 +1,16 @@
 import { useEffect, useState, useRef } from "react";
 import { SharePost } from "@/components/ui/SharePost";
-import ProfileHeader from "../components/profile/ProfileHeader";
-import ProfileBio from "../components/profile/ProfileBio";
-import Footer from "@/components/Footer";
-
-import CommunityPostCard from "../components/newHome/CommunityPostCard";
-import ProfileSidebar from "../components/profile/ProfileSidebar";
-import ProfileStats from "../components/profile/ProfileStats";
 import { Button } from "@/components/ui/button";
+import Footer from "@/components/Footer";
+import ProfileBio from "@/components/profile/ProfileBio";
+import CommunityPostCard from "@/components/newHome/CommunityPostCard";
 import {
-  Ellipsis,
   Loader2,
   ChevronLeft,
   Users,
   DoorOpenIcon,
   Share2Icon,
+  Ellipsis,
 } from "lucide-react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { Toast } from "../components/ui/toast";
@@ -42,6 +38,7 @@ import {
   SheetDescription,
 } from "@/components/ui/sheet";
 import { truncateAtFirstPeriod } from "@/lib/utils";
+import { UserProfileHeader } from "@/components/profile/ProfileHeader";
 
 // Avatar colors for consistent fallback styling (same as NewCreateCollective.tsx)
 const avatarColors = [
@@ -410,57 +407,36 @@ export default function ProfilePage() {
   })) || [];
 
   return (
-    <div className="">
-      {/* Custom Navbar for Profile Page */}
-      <header className="w-full flex items-center justify-between h-16 px-3 bg-gray-50 border-b sticky top-0 z-10">
-        {/* Left Section */}
+    <div className="bg-white min-h-screen">
+      {/* Navbar */}
+      <header className="w-full flex items-center justify-between h-14 px-4 bg-white border-b sticky top-0 z-10 transition-colors">
         <div className="flex items-center gap-3">
-          <button
-            onClick={handleBack}
-            className="flex items-center justify-center h-6 w-6 sm:h-8 sm:w-8 rounded-full bg-gray-100 text-gray-700 hover:bg-gray-200 transition-colors mr-2 cursor-pointer md:hidden"
-            aria-label="Go back"
-          >
-            <ChevronLeft size={18} />
+          <button onClick={handleBack} className="p-1 -ml-1 text-gray-700 hover:bg-gray-100 rounded-full md:hidden">
+            <ChevronLeft size={24} />
           </button>
-          <h1 className="text-base sm:text-lg md:text-xl font-bold text-gray-800 tracking-tight">
-            Me
-          </h1>
+          <h1 className="text-lg font-bold text-gray-900 tracking-tight">{fullName}</h1>
         </div>
-
-        {/* Right Section - Ellipsis Menu */}
         <div className="relative" ref={menuRef}>
-          <button
-            onClick={() => setShowMenu(!showMenu)}
-            className="p-1.5 md:p-2 cursor-pointer rounded-full transition-colors hover:bg-gray-200"
-          >
-            <Ellipsis className="w-5 h-5 md:w-6 md:h-6" strokeWidth={3} />
+          <button onClick={() => setShowMenu(!showMenu)} className="p-2 text-gray-700 hover:bg-gray-100 rounded-full">
+            <Ellipsis size={20} strokeWidth={3} />
           </button>
-
           {showMenu && (
-            <div className="absolute right-0 top-9 md:top-10 bg-white border border-gray-200 rounded-md shadow-lg z-20 w-32 md:w-36">
+            <div className="absolute right-0 top-11 bg-white border border-gray-200 rounded-xl shadow-xl z-20 w-44 py-1 animate-in fade-in slide-in-from-top-2 duration-300">
               <button
-                onClick={() => {
-                  setShowMenu(false);
-                  handleShareProfile();
-                }}
-                className="flex items-center gap-1.5 md:gap-2 w-full px-2.5 md:px-3 py-1.5 md:py-2 text-sm md:text-base text-gray-700 hover:bg-gray-50 transition-colors"
+                onClick={() => { setShowMenu(false); handleShareProfile(); }}
+                className="flex items-center gap-3 w-full px-4 py-2.5 text-sm font-semibold text-gray-700 hover:bg-gray-50 transition-colors"
               >
-                <Share2Icon className="h-3.5 w-3.5 md:h-4 md:w-4" />
-                Share Profile
+                <Share2Icon size={16} /> Share Profile
               </button>
-
               <button
-                onClick={() => {
-                  setShowMenu(false);
-                  handleLogout();
-                }}
+                onClick={() => { setShowMenu(false); handleLogout(); }}
                 disabled={logoutMutation.isPending}
-                className="flex items-center gap-1.5 md:gap-2 w-full px-2.5 md:px-3 py-1.5 md:py-2 text-sm md:text-base text-red-600 hover:bg-gray-50 transition-colors disabled:opacity-50"
+                className="flex items-center gap-3 w-full px-4 py-2.5 text-sm font-semibold text-red-600 hover:bg-gray-50 transition-colors"
               >
                 {logoutMutation.isPending ? (
-                  <Loader2 className="h-3.5 w-3.5 md:h-4 md:w-4 animate-spin" />
+                  <Loader2 className="animate-spin text-red-600" size={16} />
                 ) : (
-                  <DoorOpenIcon className="h-3.5 w-3.5 md:h-4 md:w-4" />
+                  <DoorOpenIcon size={16} />
                 )}
                 {logoutMutation.isPending ? 'Logging out...' : 'Logout'}
               </button>
@@ -469,214 +445,183 @@ export default function ProfilePage() {
         </div>
       </header>
 
-      <div className="lg:max-w-[60%] lg:mx-auto">
-        <div className="md:grid md:grid-cols-12 md:gap-6 md:px-4 lg:px-6 md:pt-2 md:pb-6">
-          {/* Main Content */}
-          <div className="md:col-span-12">
-            <div className="flex flex-col space-y-3 md:space-y-4 px-3 md:px-4 lg:px-0">
-              <ProfileHeader
-                avatarUrl={profileData?.profile_picture}
-                name={fullName}
-                location={profileData?.location || ''}
-                link={profileData?.username || ''}
-                activeSince={activeSince}
-                color={profileData?.color}
-                founder={adminCollectives.length > 0}
-                onFounderClick={() => setShowFounderSheet(true)}
-              />
+      <div className="max-w-3xl mx-auto">
+        {/* User Info Section */}
+        <section className="px-5 py-6 space-y-5">
+          <UserProfileHeader
+            profilePicture={profileData?.profile_picture}
+            firstName={profileData?.first_name}
+            lastName={profileData?.last_name}
+            username={profileData?.username}
+            fullName={fullName}
+            location={profileData?.location}
+            followersCount={profileData?.followers_count}
+            followingCount={profileData?.following_count}
+            getInitials={getInitials}
+          />
 
-              {profileData?.bio && (
-                <ProfileBio bio={profileData?.bio} />
-              )}
+          {/* Bio */}
+          {profileData?.bio && (
+            <ProfileBio bio={profileData?.bio} />
+          )}
 
-              {/* {profileData?.inspired_people_count > 0 && (
+          {/* {profileData?.inspired_people_count > 0 && (
                 <p className="text-xs md:text-sm lg:text-base mx-auto font-bold text-gray-900">{profileData?.inspired_people_count} {profileData?.inspired_people_count === 1 ? 'Person' : 'People'} Inspired</p>
               )} */}
 
-              {/* Edit Profile and Share Profile buttons */}
-              <div className="flex items-center justify-center gap-3 md:gap-4 mt-1">
-                <Button
-                  onClick={() => navigate("/settings")}
-                  variant="outline"
-                  className="px-3 md:px-4 py-2 md:py-2.5 border border-gray-300 rounded-lg min-w-[100px] md:min-w-[120px]"
-                >
-                  <span className="text-sm md:text-base font-semibold text-gray-700">Edit Profile</span>
-                </Button>
-                <Button
-                  onClick={handleShareProfile}
-                  variant="outline"
-                  className="px-3 md:px-4 py-2 md:py-2.5 border border-gray-300 rounded-lg min-w-[100px] md:min-w-[120px]"
-                >
-                  <div className="flex items-center gap-1">
-                    {/* <Share2 className="w-3.5 h-3.5 md:w-4 md:h-4 text-gray-700" /> */}
-                    <span className="text-sm md:text-base font-semibold text-gray-700">Share Profile</span>
+          {/* Button */}
+          <Button
+            onClick={() => navigate("/settings")}
+            variant="outline"
+            className="w-full h-11 border-2 border-gray-300 rounded-xl text-base font-bold text-gray-900 hover:bg-gray-50"
+          >
+            Edit Profile
+          </Button>
+        </section>
+
+        {/* Donation Box Section */}
+        <section className="border-t border-gray-100 pt-6 pb-2">
+          <div className="px-5 mb-4">
+            <h3 className="text-xs md:text-md font-bold text-gray-400 tracking-widest uppercase">
+              DONATION BOX · {profileData?.supported_causes_count || 0} NONPROFITS
+            </h3>
+          </div>
+
+          <div className="grid grid-cols-4 gap-2 sm:gap-3 md:gap-4 px-5 pb-4">
+            {profileData?.recently_supported_causes?.slice(0, 3).map((cause: any) => (
+              <Link
+                key={cause.id}
+                to={`/c/${cause.sort_name}`}
+                className="w-full bg-white border border-gray-200 rounded-2xl p-2 sm:p-3 md:p-4 min-h-[96px] sm:min-h-[110px] md:min-h-[132px] flex flex-col items-center justify-center space-y-1.5 sm:space-y-2 md:space-y-2.5 hover:bg-gray-50 transition-colors"
+              >
+                <Avatar className="w-9 h-9 sm:w-11 sm:h-11 md:w-14 md:h-14 !rounded-xl flex-shrink-0 border-none">
+                  <AvatarImage src={cause.image || cause.logo} className="object-cover" />
+                  <AvatarFallback
+                    className="text-[10px] sm:text-xs md:text-sm font-bold text-gray-700 border-none !rounded-xl"
+                    style={{ backgroundColor: getConsistentColor(cause.id, avatarColors) + '20' }}
+                  >
+                    {cause.name?.split(' ').map((n: string) => n[0]).join('').slice(0, 2).toUpperCase()}
+                  </AvatarFallback>
+                </Avatar>
+                <span className="text-[9px] sm:text-[10px] md:text-xs font-bold text-gray-900 text-center leading-tight break-words">
+                  {cause?.name || 'N'}
+                </span>
+              </Link>
+            ))}
+            {profileData?.supported_causes_count > 3 && (
+              <button
+                onClick={() => handleStatPress('causes')}
+                className="w-full bg-gray-50/50 border border-gray-200 rounded-2xl p-2 sm:p-3 md:p-4 min-h-[96px] sm:min-h-[110px] md:min-h-[132px] flex items-center justify-center text-[10px] sm:text-sm md:text-base font-bold text-gray-600 hover:bg-gray-100 text-center"
+              >
+                +{profileData.supported_causes_count - 3} {profileData.supported_causes_count - 3 === 1 ? 'other' : 'others'}
+              </button>
+            )}
+            {(!profileData?.recently_supported_causes || profileData.recently_supported_causes.length === 0) && (
+              <p className="text-xs text-gray-400 italic px-2">No nonprofits added yet.</p>
+            )}
+          </div>
+        </section>
+
+        {/* Groups Section */}
+        <section className="border-t border-gray-100 pt-6 pb-2">
+          <div className="px-5 mb-4">
+            <h3 className="text-xs md:text-md font-bold text-gray-400 tracking-widest uppercase">
+              GROUPS · {allCollectivesData?.data?.length || 0}
+            </h3>
+          </div>
+
+          <div className="grid grid-cols-4 gap-2 sm:gap-3 md:gap-4 px-5 pb-4">
+            {allCollectivesData?.data && allCollectivesData.data.length > 0 ? (
+              allCollectivesData.data.slice(0, 3).map((item: any) => {
+                const collective = item.collective || item;
+                const hasLogo = collective.logo && (collective.logo.startsWith("http") || collective.logo.startsWith("/") || collective.logo.startsWith("data:"));
+                const imageUrl = hasLogo ? collective.logo : (collective.image || collective.avatar || undefined);
+                const iconColor = collective.color || (!hasLogo ? getConsistentColor(collective.id || collective.name, avatarColors) : undefined);
+
+                return (
+                  <Link
+                    key={collective.id}
+                    to={`/g/${collective.sort_name}`}
+                    className="w-full bg-white border border-gray-200 rounded-2xl p-2 sm:p-3 md:p-4 min-h-[96px] sm:min-h-[110px] md:min-h-[132px] flex flex-col items-center justify-center space-y-1.5 sm:space-y-2 md:space-y-2.5 hover:bg-gray-50 transition-colors"
+                  >
+                    <Avatar className="w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 !rounded-2xl flex-shrink-0 border-none">
+                      <AvatarImage src={imageUrl} className="object-cover" />
+                      <AvatarFallback
+                        className="text-sm sm:text-base md:text-lg font-bold text-white border-none !rounded-2xl"
+                        style={iconColor ? { backgroundColor: iconColor } : { backgroundColor: '#E4F8F0', color: '#106D4E' }}
+                      >
+                        {collective.name?.charAt(0).toUpperCase()}
+                      </AvatarFallback>
+                    </Avatar>
+                    <span className="text-[9px] sm:text-[10px] md:text-xs font-bold text-gray-900 text-center leading-tight break-words">
+                      {collective.name}
+                    </span>
+                  </Link>
+                );
+              })
+            ) : (
+              <p className="text-xs text-gray-400 italic px-2">No groups created yet.</p>
+            )}
+            {(allCollectivesData?.data?.length || 0) > 3 && (
+              <button
+                onClick={() => handleStatPress('crwds')}
+                className="w-full bg-gray-50/50 border border-gray-200 rounded-2xl p-2 sm:p-3 md:p-4 min-h-[96px] sm:min-h-[110px] md:min-h-[132px] flex items-center justify-center text-[10px] sm:text-sm md:text-base font-bold text-gray-600 hover:bg-gray-100 text-center"
+              >
+                +{(allCollectivesData?.data?.length || 0) - 3} {((allCollectivesData?.data?.length || 0) - 3) === 1 ? 'other' : 'others'}
+              </button>
+            )}
+          </div>
+        </section>
+
+        <section className="border-t border-gray-100 pt-8 pb-20">
+          <div className="px-5 mb-6">
+            {userPosts.length > 0 && (
+              <>
+                <h3 className="text-sm md:text-md font-bold text-gray-400 tracking-widest uppercase">
+                  POSTS
+                </h3>
+              </>
+            )}
+          </div>
+
+          <div className="px-5">
+            {postsLoading ? (
+              <div className="space-y-4">
+                {[1, 2].map((i) => (
+                  <div key={i} className="bg-white rounded-lg border border-gray-200 p-4 animate-pulse">
+                    <div className="flex items-start gap-4">
+                      <div className="w-10 h-10 bg-gray-200 rounded-full flex-shrink-0"></div>
+                      <div className="flex-1 space-y-2">
+                        <div className="h-4 bg-gray-200 rounded w-3/4"></div>
+                        <div className="h-4 bg-gray-200 rounded w-full"></div>
+                        <div className="h-32 bg-gray-200 rounded-lg"></div>
+                      </div>
+                    </div>
                   </div>
-                </Button>
+                ))}
               </div>
-
-              <ProfileStats
-                profileId={profileData?.id?.toString() || ''}
-                causes={profileData?.supported_causes_count || 0}
-                crwds={profileData?.joined_collectives_count || 0}
-                followers={profileData?.followers_count || 0}
-                following={profileData?.following_count || 0}
-                isLoadingCauses={profileLoading}
-                isLoadingCrwds={profileLoading}
-                isLoadingFollowers={profileLoading}
-                isLoadingFollowing={profileLoading}
-                onStatPress={handleStatPress}
-              />
-
-
-              {/* Divider */}
-              <div className="h-px bg-gray-200 mt-2"></div>
-
-              {/* Supports Section */}
-              {profileData?.recently_supported_causes && profileData.recently_supported_causes.length > 0 && (
-                <>
-                  <div className="mt-4 md:mt-6">
-                    <div className="flex justify-between items-center mb-3 md:mb-4">
-                      <h2 className="text-sm xs:text-base sm:text-xl md:text-3xl font-bold text-gray-900">Supports</h2>
-                    </div>
-
-                    {/* Grid Layout - Responsive: 2 cols mobile, 3 cols tablet, 4 cols desktop */}
-                    <div className="flex flex-wrap -mx-1 sm:-mx-1.5 md:-mx-2">
-                      {profileData.recently_supported_causes.slice(0, 6).map((cause: any, i: number) => {
-                        // Generate consistent color based on cause ID
-                        const bgColor = getConsistentColor(cause.id || cause.name || 'N', avatarColors);
-
-                        return (
-                          <Link
-                            key={cause.id || i}
-                            to={`/c/${cause.sort_name}`}
-                            // className="w-1/2 sm:w-1/3 lg:w-1/4 px-1 sm:px-1.5 md:px-2 mb-2 md:mb-3"
-                            className="w-1/3 flex-none px-1 sm:px-1.5 md:px-2 mb-2 md:mb-3"
-                          >
-                            <div className="bg-white border border-gray-200 rounded-lg p-1.5 sm:p-2 md:p-3 flex flex-col items-center justify-between h-[90px] sm:h-[100px] md:h-[120px]">
-                              {cause.image || cause.logo ? (
-                                <Avatar className="w-9 h-9 sm:w-10 sm:h-10 md:w-12 md:h-12 rounded-lg mb-1.5 md:mb-2 flex-shrink-0">
-                                  <AvatarImage src={cause.image || cause.logo} alt={cause.name} />
-                                  <AvatarFallback
-                                    style={{ backgroundColor: bgColor }}
-                                    className="text-white text-[10px] sm:text-xs md:text-sm font-semibold rounded-lg"
-                                  >
-                                    {cause.name?.charAt(0)?.toUpperCase() || 'N'}
-                                  </AvatarFallback>
-                                </Avatar>
-                              ) : (
-                                <div
-                                  className="w-9 h-9 sm:w-10 sm:h-10 md:w-12 md:h-12 rounded-lg mb-1.5 md:mb-2 flex items-center justify-center flex-shrink-0"
-                                  style={{ backgroundColor: bgColor }}
-                                >
-                                  <span className="text-base sm:text-lg md:text-xl font-semibold text-white">
-                                    {cause.name?.charAt(0)?.toUpperCase() || 'N'}
-                                  </span>
-                                </div>
-                              )}
-                              {/* <p className="text-[10px] sm:text-xs font-semibold text-gray-900 text-center line-clamp-2 flex-grow flex items-center justify-center">
-                                {cause.name}
-                              </p> */}
-                              <div className="flex items-center justify-center flex-grow">
-                                <p className="text-xs sm:text-sm font-semibold text-gray-900 text-center line-clamp-2">
-                                  {cause.name}
-                                </p>
-                              </div>
-
-                            </div>
-                          </Link>
-                        );
-                      })}
-                    </div>
-
-                    {/* Show more causes text and link */}
-                    {profileData.recently_supported_causes.length > 5 && (
-                      <div className="flex flex-col items-center gap-1.5 md:gap-2 mt-3 md:mt-4">
-                        {/* <p className="text-xs md:text-sm text-gray-500">
-                            {profileData.supported_causes_count - 5} more causes
-                          </p> */}
-                        <div onClick={() => {
-                          setActiveStatsTab('causes');
-                          setShowStatsSheet(true);
-                        }}>
-                          <span className="cursor-pointer hover:underline text-xs md:text-sm text-[#1600ff] font-medium">
-                            See all {profileData.supported_causes_count} →
-                          </span>
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                  <div className="h-px bg-gray-200 mt-4"></div>
-
-                </>
-              )}
-
-              {/* Divider */}
-
-              <div className="py-4">
-                <div className="w-full my-4 mb-6 md:px-0 md:my-8 md:mb-10">
-                  <div className="mb-3 md:mb-6">
-                    {userPosts.length > 0 && (
-                      <>
-                        <h2 className="text-sm xs:text-base sm:text-xl md:text-3xl font-bold text-gray-900 mb-1 md:mb-2">
-                          Recent Activity
-                        </h2>
-
-                        {/* <p className="text-[10px] sm:text-xs md:text-sm text-gray-600">
-                          Activity, updates, and discoveries from your community
-                        </p> */}
-                      </>
-                    )}
-                  </div>
-
-                  {postsLoading ? (
-                    <div className="space-y-2.5 md:space-y-4">
-                      {[1, 2].map((i) => (
-                        <div key={i} className="bg-white rounded-lg border border-gray-200 p-2.5 md:p-4 animate-pulse">
-                          <div className="flex items-start gap-2 md:gap-4">
-                            <div className="w-8 h-8 md:w-12 md:h-12 bg-gray-200 rounded-full flex-shrink-0"></div>
-                            <div className="flex-1 space-y-2">
-                              <div className="h-4 bg-gray-200 rounded w-3/4"></div>
-                              <div className="h-3 bg-gray-200 rounded w-full"></div>
-                              <div className="h-3 bg-gray-200 rounded w-5/6"></div>
-                              <div className="h-32 md:h-40 bg-gray-200 rounded-lg"></div>
-                            </div>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  ) : userPosts.length > 0 ? (
-                    <div className="space-y-2.5 md:space-y-4">
-                      {userPosts.map((post: any) => (
-                        <CommunityPostCard key={post.id} post={post} />
-                      ))}
-                    </div>
-                  ) : (
-                    <div className="flex flex-col items-center justify-center py-12 md:py-16">
-                      <div className="w-16 h-16 md:w-20 md:h-20 rounded-full bg-blue-50 flex items-center justify-center mb-4 md:mb-6">
-                        <Users className="w-8 h-8 md:w-10 md:h-10 text-[#1600ff]" strokeWidth={1.5} />
-                      </div>
-                      <h3 className="text-base md:text-lg font-bold text-gray-900 mb-2 md:mb-3">No posts yet</h3>
-                      <p className="text-xs md:text-sm text-gray-600 text-center max-w-md px-4">
-                        Posts appear when you share updates in your collectives. Join or start a collective to start sharing your impact!
-                      </p>
-                    </div>
-                  )}
+            ) : userPosts.length > 0 ? (
+              <div className="space-y-4">
+                {userPosts.map((post: any) => (
+                  <CommunityPostCard key={post.id} post={post} />
+                ))}
+              </div>
+            ) : (
+              <div className="flex flex-col items-center justify-center py-16">
+                <div className="w-16 h-16 rounded-full bg-emerald-50 flex items-center justify-center mb-6">
+                  <Users className="w-8 h-8 text-emerald-600" strokeWidth={1.5} />
                 </div>
+                <h3 className="text-lg font-bold text-gray-900 mb-2">No posts yet</h3>
+                <p className="text-sm text-gray-500 text-center max-w-sm">
+                  Updates will appear here as you share and interact in your Giving Groups. Join a new group to get started!
+                </p>
               </div>
-            </div>
+            )}
           </div>
-
-          {/* Sidebar - Only visible on desktop */}
-          <div className="hidden  md:col-span-4">
-            <ProfileSidebar />
-          </div>
-        </div>
+        </section>
       </div>
 
-      {/* Footer */}
-      <div className="">
-        <Footer />
-      </div>
+      <Footer />
 
       {/* Statistics Bottom Sheet */}
       <Sheet open={showStatsSheet} onOpenChange={setShowStatsSheet}>
@@ -749,11 +694,11 @@ export default function ProfilePage() {
                           className="flex items-center gap-2.5 md:gap-3 py-3 md:py-4 border-b border-gray-100 hover:bg-gray-50 transition-colors"
                         >
                           {cause.image || cause.logo ? (
-                            <Avatar className="w-10 h-10 md:w-12 md:h-12 rounded-lg flex-shrink-0">
+                            <Avatar className="w-10 h-10 md:w-12 md:h-12 !rounded-lg flex-shrink-0">
                               <AvatarImage src={cause.image || cause.logo} alt={cause.name} />
                               <AvatarFallback
                                 style={{ backgroundColor: causeBgColor }}
-                                className="text-white rounded-lg font-bold text-base md:text-lg"
+                                className="text-white !rounded-lg font-bold text-base md:text-lg"
                               >
                                 {cause.name?.charAt(0)?.toUpperCase() || 'N'}
                               </AvatarFallback>
@@ -817,11 +762,11 @@ export default function ProfilePage() {
                             onClick={() => setShowStatsSheet(false)}
                             className="flex items-center gap-2.5 md:gap-3 flex-1 min-w-0"
                           >
-                            <Avatar className="w-9 h-9 md:w-10 md:h-10 flex-shrink-0 rounded-lg">
+                            <Avatar className="w-9 h-9 md:w-10 md:h-10 flex-shrink-0 !rounded-lg">
                               <AvatarImage src={imageUrl} alt={collective.name} />
                               <AvatarFallback
                                 style={iconColor ? { backgroundColor: iconColor } : {}}
-                                className="rounded-lg text-white font-bold text-xs md:text-sm"
+                                className="!rounded-lg text-white font-bold text-xs md:text-sm"
                               >
                                 {iconLetter}
                               </AvatarFallback>

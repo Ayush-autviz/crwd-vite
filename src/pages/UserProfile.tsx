@@ -1,9 +1,7 @@
 import { useEffect, useState, useRef } from "react";
-import ProfileHeader from "../components/profile/ProfileHeader";
 import ProfileBio from "../components/profile/ProfileBio";
 import CommunityPostCard from "../components/newHome/CommunityPostCard";
 import ProfileSidebar from "../components/profile/ProfileSidebar";
-import ProfileStats from "../components/profile/ProfileStats";
 import { useLocation, useNavigate, useParams, Link } from "react-router-dom";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
@@ -38,6 +36,7 @@ import {
 import { SharePost } from "@/components/ui/SharePost";
 import { truncateAtFirstPeriod } from "@/lib/utils";
 import LoggedOutHeader from "@/components/LoggedOutHeader";
+import { UserProfileHeader } from "@/components/profile/ProfileHeader";
 
 // Avatar colors for consistent fallback styling
 const avatarColors = [
@@ -49,6 +48,16 @@ const avatarColors = [
 const getConsistentColor = (id: number | string, colors: string[]) => {
   const hash = typeof id === 'number' ? id : id.toString().split('').reduce((acc: number, char: string) => acc + char.charCodeAt(0), 0);
   return colors[hash % colors.length];
+};
+
+const getInitials = (firstName?: string, lastName?: string, fullName?: string, username?: string) => {
+  if (firstName && lastName) return `${firstName[0]}${lastName[0]}`.toUpperCase();
+  if (fullName) {
+    const words = fullName.trim().split(' ');
+    if (words.length >= 2) return `${words[0][0]}${words[1][0]}`.toUpperCase();
+    return words[0]?.[0]?.toUpperCase() || 'U';
+  }
+  return username?.[0]?.toUpperCase() || 'U';
 };
 
 export default function ProfilePage() {
@@ -419,205 +428,208 @@ export default function ProfilePage() {
         <div className="md:grid md:grid-cols-12 md:gap-6 md:px-6 md:pt-2 md:pb-6">
           {/* Main Content */}
           <div className="md:col-span-12">
-            <div className="flex flex-col space-y-4 px-4 md:px-0">
-              <ProfileHeader
-                avatarUrl={userProfile.profile_picture || imageUrl}
-                name={`${userProfile.first_name} ${userProfile.last_name}`}
-                location={userProfile.location || ""}
-                activeSince={userProfile.date_joined || "Not specified"}
-                link={userProfile.username || ''}
-                color={userProfile.color}
-                founder={adminCollectives.length > 0}
-                onFounderClick={() => setShowFounderSheet(true)}
-              />
+            <div className="max-w-3xl mx-auto">
+              <section className="px-5 py-6 space-y-5">
+                <UserProfileHeader
+                  profilePicture={userProfile?.profile_picture}
+                  firstName={userProfile?.first_name}
+                  lastName={userProfile?.last_name}
+                  username={userProfile?.username}
+                  fullName={fullName}
+                  location={userProfile?.location}
+                  followersCount={userProfile?.followers_count}
+                  followingCount={userProfile?.following_count}
+                  getInitials={getInitials}
+                />
 
-              {userProfile.bio && (
-                <ProfileBio bio={userProfile.bio} />
-              )}
+                {userProfile.bio && (
+                  <ProfileBio bio={userProfile.bio} />
+                )}
 
-              {/* {userProfile.inspired_people_count > 0 && (
-                <p className="text-xs md:text-sm lg:text-base mx-auto font-bold text-gray-900">{userProfile.inspired_people_count} {userProfile.inspired_people_count === 1 ? 'Person' : 'People'} Inspired</p>
-              )} */}
-
-
-              <Button
-                onClick={handleFollowClick}
-                size="sm"
-                className="w-fit mx-auto px-8 mt-0 pt-0"
-                variant={isFollowing ? "outline" : "default"}
-                disabled={followMutation.isPending || unfollowMutation.isPending}
-              >
-                {followMutation.isPending || unfollowMutation.isPending ? (
-
-                  <Loader2 className="w-4 h-4 animate-spin" />
-                ) : isFollowing ? "Following" : "Follow"}
-              </Button>
-
-
-              <ProfileStats
-                profileId={effectiveUserId}
-                causes={userProfile.supported_causes_count || 0}
-                crwds={userProfile.joined_collectives_count || 0}
-                followers={userProfile.followers_count || 0}
-                following={userProfile.following_count || 0}
-                isLoadingCauses={isLoading}
-                isLoadingCrwds={isLoading}
-                isLoadingFollowers={isLoading}
-                isLoadingFollowing={isLoading}
-                onStatPress={handleStatPress}
-              />
+                <Button
+                  onClick={handleFollowClick}
+                  variant={isFollowing ? "outline" : "default"}
+                  disabled={followMutation.isPending || unfollowMutation.isPending}
+                  className="w-full h-11 border-2 border-gray-300 rounded-xl text-base font-bold text-gray-900 hover:bg-gray-50"
+                >
+                  {followMutation.isPending || unfollowMutation.isPending ? (
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                  ) : isFollowing ? "Following" : "Follow"}
+                </Button>
+              </section>
 
               {/* Divider */}
               <div className="h-px bg-gray-200 mx-2 mt-2"></div>
 
-              {/* Supports Section */}
-              {/* Supports Section */}
-              {userProfile.recently_supported_causes && userProfile.recently_supported_causes.length > 0 && (
-                <>
-                  <div className="mt-4 md:mt-6">
-                    <div className="flex justify-between items-center mb-3 md:mb-4">
-                      <h2 className="text-sm xs:text-base sm:text-xl md:text-3xl font-bold text-gray-900">Supports</h2>
-                    </div>
+              {/* Donation Box Section */}
+              <section className="border-t border-gray-100 pt-6 pb-2">
+                <div className="px-5 mb-4">
+                  <h3 className="text-xs md:text-md font-bold text-gray-400 tracking-widest uppercase">
+                    DONATION BOX · {userProfile.supported_causes_count || 0} NONPROFITS
+                  </h3>
+                </div>
 
-                    {/* Grid Layout - Responsive: 2 cols mobile, 3 cols tablet, 4 cols desktop */}
-                    <div className="flex flex-wrap -mx-1 sm:-mx-1.5 md:-mx-2">
-                      {userProfile.recently_supported_causes.slice(0, 6).map((cause: any, i: number) => {
-                        // Generate consistent color based on cause ID
-                        const bgColor = getConsistentColor(cause.id || cause.name || 'N', avatarColors);
+                <div className="grid grid-cols-4 gap-2 sm:gap-3 md:gap-4 px-5 pb-4">
+                  {userProfile.recently_supported_causes?.slice(0, 3).map((cause: any) => {
+                    const bgColor = getConsistentColor(cause.id || cause.name || 'N', avatarColors);
 
-                        return (
-                          <Link
-                            key={cause.id || i}
-                            to={`/c/${cause.sort_name}`}
-                            className="w-1/3 flex-none px-1 sm:px-1.5 md:px-2 mb-2 md:mb-3"
+                    return (
+                      <Link
+                        key={cause.id}
+                        to={`/c/${cause.sort_name}`}
+                        className="w-full bg-white border border-gray-200 rounded-2xl p-2 sm:p-3 md:p-4 min-h-[96px] sm:min-h-[110px] md:min-h-[132px] flex flex-col items-center justify-center space-y-1.5 sm:space-y-2 md:space-y-2.5 hover:bg-gray-50 transition-colors"
+                      >
+                        <Avatar className="w-9 h-9 sm:w-11 sm:h-11 md:w-14 md:h-14 rounded-xl flex-shrink-0">
+                          <AvatarImage src={cause.image || cause.logo} alt={cause.name} />
+                          <AvatarFallback
+                            style={{ backgroundColor: bgColor }}
+                            className="text-white text-[10px] sm:text-xs md:text-sm font-semibold rounded-xl"
                           >
-                            <div className="bg-white border border-gray-200 rounded-lg p-1.5 sm:p-2 md:p-3 flex flex-col items-center justify-between h-[90px] sm:h-[100px] md:h-[120px]">
-                              {cause.image || cause.logo ? (
-                                <Avatar className="w-9 h-9 sm:w-10 sm:h-10 md:w-12 md:h-12 rounded-lg mb-1.5 md:mb-2 flex-shrink-0">
-                                  <AvatarImage src={cause.image || cause.logo} alt={cause.name} />
-                                  <AvatarFallback
-                                    style={{ backgroundColor: bgColor }}
-                                    className="text-white text-[10px] sm:text-xs md:text-sm font-semibold rounded-lg"
-                                  >
-                                    {cause.name?.charAt(0)?.toUpperCase() || 'N'}
-                                  </AvatarFallback>
-                                </Avatar>
-                              ) : (
-                                <div
-                                  className="w-9 h-9 sm:w-10 sm:h-10 md:w-12 md:h-12 rounded-lg mb-1.5 md:mb-2 flex items-center justify-center flex-shrink-0"
-                                  style={{ backgroundColor: bgColor }}
-                                >
-                                  <span className="text-base sm:text-lg md:text-xl font-semibold text-white">
-                                    {cause.name?.charAt(0)?.toUpperCase() || 'N'}
-                                  </span>
-                                </div>
-                              )}
-                              <div className="flex items-center justify-center flex-grow">
-                                <p className="text-[10px] sm:text-xs font-semibold text-gray-900 text-center line-clamp-2">
-                                  {cause.name}
-                                </p>
-                              </div>
+                            {cause.name?.charAt(0)?.toUpperCase() || 'N'}
+                          </AvatarFallback>
+                        </Avatar>
+                        <span className="text-[9px] sm:text-[10px] md:text-xs font-bold text-gray-900 text-center leading-tight break-words">
+                          {cause.name}
+                        </span>
+                      </Link>
+                    );
+                  })}
+                  {userProfile.supported_causes_count > 3 && (
+                    <button
+                      onClick={() => handleStatPress('causes')}
+                      className="w-full bg-gray-50/50 border border-gray-200 rounded-2xl p-2 sm:p-3 md:p-4 min-h-[96px] sm:min-h-[110px] md:min-h-[132px] flex items-center justify-center text-[10px] sm:text-sm md:text-base font-bold text-gray-600 hover:bg-gray-100 text-center"
+                    >
+                      +{userProfile.supported_causes_count - 3} {userProfile.supported_causes_count - 3 === 1 ? 'other' : 'others'}
+                    </button>
+                  )}
+                  {(!userProfile.recently_supported_causes || userProfile.recently_supported_causes.length === 0) && (
+                    <p className="text-xs text-gray-400 italic px-2">No nonprofits added yet.</p>
+                  )}
+                </div>
+              </section>
 
-                            </div>
-                          </Link>
-                        );
-                      })}
-                    </div>
+              {/* Groups Section */}
+              <section className="border-t border-gray-100 pt-6 pb-2">
+                <div className="px-5 mb-4">
+                  <h3 className="text-xs md:text-md font-bold text-gray-400 tracking-widest uppercase">
+                    GROUPS · {allCollectivesData?.data?.length || 0}
+                  </h3>
+                </div>
 
-                    {/* Show more causes text and link */}
-                    {userProfile.recently_supported_causes.length > 5 && (
-                      <div className="flex flex-col items-center gap-1.5 md:gap-2 mt-3 md:mt-4">
-                        {/* <p className="text-xs md:text-sm text-gray-500">
-                          + {userProfile.supported_causes_count - 6} more causes
-                        </p> */}
-                        <div onClick={() => {
-                          setActiveStatsTab('causes');
-                          setShowStatsSheet(true);
-                        }}>
-                          <span className="cursor-pointer hover:underline text-xs md:text-sm text-[#1600ff] font-medium">
-                            See all {userProfile.supported_causes_count} →
+                <div className="grid grid-cols-4 gap-2 sm:gap-3 md:gap-4 px-5 pb-4">
+                  {allCollectivesData?.data && allCollectivesData.data.length > 0 ? (
+                    allCollectivesData.data.slice(0, 3).map((item: any) => {
+                      const collective = item.collective || item;
+                      const hasLogo = collective.logo && (collective.logo.startsWith("http") || collective.logo.startsWith("/") || collective.logo.startsWith("data:"));
+                      const imageUrl = hasLogo ? collective.logo : (collective.image || collective.avatar || undefined);
+                      const iconColor = collective.color || (!hasLogo ? getConsistentColor(collective.id || collective.name, avatarColors) : undefined);
+
+                      return (
+                        <Link
+                          key={collective.id}
+                          to={`/g/${collective.sort_name}`}
+                          className="w-full bg-white border border-gray-200 rounded-2xl p-2 sm:p-3 md:p-4 min-h-[96px] sm:min-h-[110px] md:min-h-[132px] flex flex-col items-center justify-center space-y-1.5 sm:space-y-2 md:space-y-2.5 hover:bg-gray-50 transition-colors"
+                        >
+                          <Avatar className="w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 !rounded-2xl flex-shrink-0 border-none">
+                            <AvatarImage src={imageUrl} className="object-cover" />
+                            <AvatarFallback
+                              className="text-sm sm:text-base md:text-lg font-bold text-white border-none !rounded-2xl"
+                              style={iconColor ? { backgroundColor: iconColor } : { backgroundColor: '#E4F8F0', color: '#106D4E' }}
+                            >
+                              {collective.name?.charAt(0).toUpperCase()}
+                            </AvatarFallback>
+                          </Avatar>
+                          <span className="text-[9px] sm:text-[10px] md:text-xs font-bold text-gray-900 text-center leading-tight break-words">
+                            {collective.name}
                           </span>
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                  <div className="h-px bg-gray-200 mt-4"></div>
-
-                </>
-              )}
+                        </Link>
+                      );
+                    })
+                  ) : (
+                    <p className="text-xs text-gray-400 italic px-2">No groups created yet.</p>
+                  )}
+                  {(allCollectivesData?.data?.length || 0) > 3 && (
+                    <button
+                      onClick={() => handleStatPress('crwds')}
+                      className="w-full bg-gray-50/50 border border-gray-200 rounded-2xl p-2 sm:p-3 md:p-4 min-h-[96px] sm:min-h-[110px] md:min-h-[132px] flex items-center justify-center text-[10px] sm:text-sm md:text-base font-bold text-gray-600 hover:bg-gray-100 text-center"
+                    >
+                      +{(allCollectivesData?.data?.length || 0) - 3} {((allCollectivesData?.data?.length || 0) - 3) === 1 ? 'other' : 'others'}
+                    </button>
+                  )}
+                </div>
+              </section>
 
               {/* Divider */}
 
 
-              <div className="py-4">
-                <div className="w-full my-4 mb-6 md:my-8 md:mb-10">
-                  <div className="mb-3 md:mb-6">
-                    {userPosts.length > 0 && (
-                      <>
-                        <h2 className="text-sm xs:text-base sm:text-xl md:text-3xl font-bold text-gray-900 mb-1 md:mb-2">
-                          Recent Activity
-                        </h2>
-                        {/* <p className="text-[10px] sm:text-xs md:text-sm text-gray-600">
+              <section className="border-t border-gray-100 pt-8 pb-20">
+                <div className="px-5 mb-6">
+                  {userPosts.length > 0 && (
+                    <>
+                      <h3 className="text-sm md:text-md font-bold text-gray-400 tracking-widest uppercase">
+                        POSTS
+                      </h3>
+                      {/* <p className="text-[10px] sm:text-xs md:text-sm text-gray-600">
                           Activity, updates, and discoveries from your community
                         </p> */}
-                      </>
-                    )}
-                  </div>
-
-                  {postsLoading ? (
-                    <div className="space-y-2.5 md:space-y-4">
-                      {[1, 2].map((i) => (
-                        <div key={i} className="bg-white rounded-lg border border-gray-200 p-2.5 md:p-4 animate-pulse">
-                          <div className="flex items-start gap-2 md:gap-4">
-                            <div className="w-8 h-8 md:w-12 md:h-12 bg-gray-200 rounded-full flex-shrink-0"></div>
-                            <div className="flex-1 space-y-2">
-                              <div className="h-4 bg-gray-200 rounded w-3/4"></div>
-                              <div className="h-3 bg-gray-200 rounded w-full"></div>
-                              <div className="h-3 bg-gray-200 rounded w-5/6"></div>
-                              <div className="h-32 md:h-40 bg-gray-200 rounded-lg"></div>
-                            </div>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  ) : userPosts.length > 0 ? (
-                    <div className="space-y-2.5 md:space-y-4">
-                      {userPosts.map((post: any) => (
-                        <CommunityPostCard key={post.id} post={post} />
-                      ))}
-                      {hasNextPage && (
-                        <div className="flex justify-center mt-4 md:mt-6">
-                          <Button
-                            onClick={() => fetchNextPage()}
-                            disabled={isFetchingNextPage}
-                            variant="outline"
-                            className="px-4 md:px-6 py-1.5 md:py-2 text-sm md:text-base"
-                          >
-                            {isFetchingNextPage ? (
-                              <>
-                                <Loader2 className="w-3.5 h-3.5 md:w-4 md:h-4 mr-1.5 md:mr-2 animate-spin" />
-                                Loading...
-                              </>
-                            ) : (
-                              "Load More"
-                            )}
-                          </Button>
-                        </div>
-                      )}
-                    </div>
-                  ) : (
-                    <div className="flex flex-col items-center justify-center py-12 md:py-16">
-                      <div className="w-16 h-16 md:w-20 md:h-20 rounded-full bg-blue-50 flex items-center justify-center mb-4 md:mb-6">
-                        <Users className="w-8 h-8 md:w-10 md:h-10 text-[#1600ff]" strokeWidth={1.5} />
-                      </div>
-                      <h3 className="text-base md:text-lg font-bold text-gray-900 mb-2 md:mb-3">No posts yet</h3>
-                      <p className="text-xs md:text-sm text-gray-600 text-center max-w-md px-4">
-                        Posts appear when you share updates in your collectives. Join or start a collective to start sharing your impact!
-                      </p>
-                    </div>
+                    </>
                   )}
                 </div>
-              </div>
+                <div className="px-5">
+                {postsLoading ? (
+                  <div className="space-y-2.5 md:space-y-4">
+                    {[1, 2].map((i) => (
+                      <div key={i} className="bg-white rounded-lg border border-gray-200 p-2.5 md:p-4 animate-pulse">
+                        <div className="flex items-start gap-2 md:gap-4">
+                          <div className="w-8 h-8 md:w-12 md:h-12 bg-gray-200 rounded-full flex-shrink-0"></div>
+                          <div className="flex-1 space-y-2">
+                            <div className="h-4 bg-gray-200 rounded w-3/4"></div>
+                            <div className="h-3 bg-gray-200 rounded w-full"></div>
+                            <div className="h-3 bg-gray-200 rounded w-5/6"></div>
+                            <div className="h-32 md:h-40 bg-gray-200 rounded-lg"></div>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : userPosts.length > 0 ? (
+                  <div className="space-y-2.5 md:space-y-4">
+                    {userPosts.map((post: any) => (
+                      <CommunityPostCard key={post.id} post={post} />
+                    ))}
+                    {hasNextPage && (
+                      <div className="flex justify-center mt-4 md:mt-6">
+                        <Button
+                          onClick={() => fetchNextPage()}
+                          disabled={isFetchingNextPage}
+                          variant="outline"
+                          className="px-4 md:px-6 py-1.5 md:py-2 text-sm md:text-base"
+                        >
+                          {isFetchingNextPage ? (
+                            <>
+                              <Loader2 className="w-3.5 h-3.5 md:w-4 md:h-4 mr-1.5 md:mr-2 animate-spin" />
+                              Loading...
+                            </>
+                          ) : (
+                            "Load More"
+                          )}
+                        </Button>
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  <div className="flex flex-col items-center justify-center py-12 md:py-16">
+                    <div className="w-16 h-16 md:w-20 md:h-20 rounded-full bg-blue-50 flex items-center justify-center mb-4 md:mb-6">
+                      <Users className="w-8 h-8 md:w-10 md:h-10 text-[#1600ff]" strokeWidth={1.5} />
+                    </div>
+                    <h3 className="text-base md:text-lg font-bold text-gray-900 mb-2 md:mb-3">No posts yet</h3>
+                    <p className="text-xs md:text-sm text-gray-600 text-center max-w-md px-4">
+                      Posts appear when you share updates in your collectives. Join or start a collective to start sharing your impact!
+                    </p>
+                  </div>
+                )}
+                </div>
+              </section>
             </div>
           </div>
 
@@ -627,15 +639,15 @@ export default function ProfilePage() {
           </div>
         </div>
 
-      </div>
+      </div >
 
       {/* Footer */}
-      <div className="">
+      < div className="" >
         <Footer />
-      </div>
+      </div >
 
       {/* Statistics Bottom Sheet */}
-      <Sheet open={showStatsSheet} onOpenChange={setShowStatsSheet}>
+      < Sheet open={showStatsSheet} onOpenChange={setShowStatsSheet} >
         <SheetContent side="bottom" className="h-[85vh] max-h-[85vh] p-0 flex flex-col rounded-t-3xl">
           {/* Drag Handle */}
           <div className="flex justify-center pt-2">
@@ -951,10 +963,10 @@ export default function ProfilePage() {
             )}
           </div>
         </SheetContent>
-      </Sheet>
+      </Sheet >
 
       {/* Founder Collectives Bottom Sheet */}
-      <Sheet open={showFounderSheet} onOpenChange={setShowFounderSheet}>
+      < Sheet open={showFounderSheet} onOpenChange={setShowFounderSheet} >
         <SheetContent side="bottom" className=" max-h-[85vh] p-0 flex flex-col rounded-t-3xl">
           {/* Drag Handle */}
           <div className="flex justify-center pt-3 pb-2">
@@ -1065,12 +1077,13 @@ export default function ProfilePage() {
             </div>
           </div>
         </SheetContent>
-      </Sheet>
+      </Sheet >
 
       {/* Share Modal */}
-      <SharePost
+      < SharePost
         isOpen={showShareModal}
-        onClose={() => setShowShareModal(false)}
+        onClose={() => setShowShareModal(false)
+        }
         url={`${window.location.origin}/u/${userProfile?.username || userId}`}
         title={`Check out ${userProfile?.first_name} ${userProfile?.last_name}'s profile on CRWD`}
         description={`See the causes and collectives supported by ${userProfile?.first_name} ${userProfile?.last_name} on CRWD.`}
@@ -1083,6 +1096,6 @@ export default function ProfilePage() {
         onHide={() => setShowToast(false)}
         duration={2000}
       />
-    </div>
+    </div >
   );
 }

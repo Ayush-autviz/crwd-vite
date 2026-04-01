@@ -1,216 +1,111 @@
 "use client";
 import { useEffect } from "react";
 import { useSearchParams, useNavigate, Link } from "react-router-dom";
-import { CheckCircle2, XCircle, ArrowRight, Home, Heart } from "lucide-react";
+import { XCircle, Home, Heart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Footer from "@/components/Footer";
-import { useQuery } from "@tanstack/react-query";
-import { getDonationHistory } from "@/services/api/donation";
+
 
 export default function PaymentResult() {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
-  const type = searchParams.get("type")
+  const type = searchParams.get("type");
 
   const isSuccess = type === "success";
-  const isFailure = type === "failure";
-
-  // Fetch transaction history when success
-  const { data: donationHistoryData, isLoading: isLoadingHistory } = useQuery({
-    queryKey: ['donationHistory'],
-    queryFn: getDonationHistory,
-    enabled: isSuccess,
-  });
 
   useEffect(() => {
     // Scroll to top on mount
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, []);
 
-  if(!type) {
+  if (!type) {
     return null;
   }
 
-  // Extract the most recent transaction
-  const transactions = donationHistoryData?.results || [];
-  const latestTransaction = transactions[0]; // Most recent transaction is first
-  
-  // Extract data from transaction
-  const monthlyAmount = latestTransaction ? parseFloat(latestTransaction.gross_amount || '0') : 0;
-  const donationType = latestTransaction?.donation_type || 'recurring';
-  
-  // Get causes from transaction
-  const causes = latestTransaction?.causes || [];
-  const firstCause = causes[0];
-  const remainingCount = causes.length > 1 ? causes.length - 1 : 0;
-  
-  // For one-time donations, also check if there are collectives
-  const collectives = latestTransaction?.collectives || [];
-
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col">
-      <div className="flex-1 flex items-center justify-center px-3 sm:px-4 py-8 sm:py-16">
-        <div className="w-full max-w-md">
+    <div className={`min-h-screen ${isSuccess ? 'bg-[#129D6E]' : 'bg-[#E11D48]'} flex flex-col`}>
+      <div className="flex-1 flex items-center justify-center px-4 py-10 sm:py-8">
+        <div className={`w-full ${isSuccess ? 'max-w-sm' : 'max-w-md'}`}>
           {isSuccess ? (
-            <>
+            <div className="flex flex-col items-center text-center text-white animate-in fade-in zoom-in duration-700">
+              {/* Heart Icon in Squircle */}
+              <div className="w-20 h-20 sm:w-24 sm:h-24 bg-white/20 rounded-3xl flex items-center justify-center mb-8 sm:mb-12 shadow-inner hover:scale-105 transition-transform">
+                <Heart className="w-10 h-10 sm:w-12 sm:h-12 text-white fill-white" />
+              </div>
+
               {/* Title */}
-              <h1 className="text-2xl sm:text-3xl font-bold text-center mb-6 sm:mb-8 text-gray-900">
-                You're all set!
+              <h1 className="text-3xl sm:text-4xl font-bold mb-6 leading-tight tracking-tight px-4">
+                Your giving just<br />got easier.
               </h1>
 
-              {isLoadingHistory ? (
-                <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-6 mb-4 sm:mb-6 shadow-sm text-center">
-                  <p className="text-sm sm:text-base text-gray-600">Loading transaction details...</p>
-                </div>
-              ) : latestTransaction ? (
-                <>
-                  {/* Donation Box Card */}
-                  <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-6 mb-4 sm:mb-6 shadow-sm">
-                    <div className="flex items-start gap-3 sm:gap-4">
-                      {/* Purple Icon with Heart */}
-                      <div className="w-10 h-10 sm:w-12 sm:h-12 bg-[#9333EA] rounded-lg flex items-center justify-center flex-shrink-0">
-                        <Heart className="w-5 h-5 sm:w-6 sm:h-6 text-white fill-white" />
-                      </div>
-                      
-                      <div className="flex-1 min-w-0">
-                        <h2 className="text-base sm:text-lg font-bold text-gray-900 mb-1">
-                          {donationType === 'recurring' ? 'Monthly Donation Box' : 'Donation'}
-                        </h2>
-                        <p className="text-sm sm:text-base text-gray-600 mb-3 sm:mb-4">
-                          ${monthlyAmount.toFixed(2)} {donationType === 'recurring' ? '/ month' : ''}
-                        </p>
-                        
-                       
-                      </div>
-                    </div>
+              {/* Description */}
+              <p className="text-base sm:text-lg text-white/90 mb-10 px-6 max-w-sm leading-relaxed font-medium">
+                Your donation is pooled with others on CRWD and disbursed to your nonprofits every quarter.
+              </p>
 
-                    <div className="h-px bg-gray-200 my-3 sm:my-4"></div>
-                     {/* Supporting Causes Section */}
-                     {firstCause && (
-                          <div className="bg-blue-50 rounded-lg p-3 sm:p-4 flex items-center gap-2">
-                            <div className="w-10 h-10 sm:w-12 sm:h-12 bg-[#fff] rounded-lg flex items-center justify-center flex-shrink-0">
-                            <Heart className="w-5 h-5 sm:w-6 sm:h-6 text-[#1600ff]" strokeWidth={2} />
-                            </div>
-                            <span className="text-xs sm:text-sm text-gray-700">
-                              Supporting {firstCause.name || 'Unknown Cause'}
-                              {remainingCount > 0 && ` +${remainingCount} more`}
-                            </span>
-                          </div>
-                        )}
-                        {!firstCause && collectives.length > 0 && (
-                          <div className="bg-blue-50 rounded-lg p-3 sm:p-4 flex items-center gap-2">
-                            <div className="w-10 h-10 sm:w-12 sm:h-12 bg-[#fff] rounded-lg flex items-center justify-center flex-shrink-0">
-                            <Heart className="w-5 h-5 sm:w-6 sm:h-6 text-[#1600ff]" strokeWidth={2} />
-                            </div>
-                            <span className="text-xs sm:text-sm text-gray-700">
-                              Supporting {collectives[0].name || 'Unknown Collective'}
-                              {collectives.length > 1 && ` +${collectives.length - 1} more`}
-                            </span>
-                          </div>
-                        )}
-                  </div>
-                </>
-              ) : (
-                <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-6 mb-4 sm:mb-6 shadow-sm text-center">
-                  <p className="text-sm sm:text-base text-gray-600">No transaction data available.</p>
-                </div>
-              )}
+              {/* Divider */}
+              <div className="w-full max-w-xs h-[1px] bg-white/20 mb-2"></div>
 
-              {/* View My Donation Box Button */}
+              {/* Secondary Info */}
+              <div className="space-y-5 mb-10 p-4 text-white">
+                <p className="text-sm sm:text-base text-white/60 font-medium mb-2">
+                  One receipt. Sent to your email each month.
+                </p>
+                <p className="text-sm sm:text-base text-white/60 font-medium">
+                  Make changes anytime in your Donation Box.
+                </p>
+              </div>
+
+              {/* Action Button */}
               <Button
-                onClick={() => navigate("/donation", { replace: true })}
-                className="w-full bg-[#1600ff] hover:bg-[#1400e6] text-white py-3 sm:py-4 text-sm sm:text-base font-semibold rounded-full mb-3 sm:mb-4 flex items-center justify-center gap-2"
+                onClick={() => navigate("/", { replace: true })}
+                className="w-full bg-white hover:bg-gray-100 text-[#129D6E] py-6 sm:py-7 text-lg font-bold rounded-2xl shadow-lg border-none transition-all active:scale-[0.98]"
               >
-                <Heart className="w-4 h-4 sm:w-5 sm:h-5 fill-white text-white" />
-                <span>View My Donation Box</span>
+                Go to my feed
               </Button>
-
-              {/* Go to Homepage Link */}
-              <div className="text-center mb-6 sm:mb-8">
-                <button
-                  onClick={() => navigate("/", { replace: true })}
-                  className="text-xs sm:text-sm text-gray-600 hover:text-gray-900 underline"
-                >
-                  Go to Homepage
-                </button>
-              </div>
-
-              {/* Legal Text */}
-              <div className="text-center space-y-2">
-                <p className="text-[10px] sm:text-xs text-gray-500 leading-relaxed px-2">
-                  Donations are distributed monthly as grants through the CRWD Foundation, a 501(c)(3) (EIN: 41-2423690).
-                </p>
-                <p className="text-[10px] sm:text-xs text-gray-500">
-                  Tax-deductible receipt sent to your email.
-                </p>
-              </div>
-            </>
+            </div>
           ) : (
-            <>
-              {/* Failure State - Keep existing design */}
-              <div className="bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden">
-                <div className="px-4 sm:px-8 pt-8 sm:pt-12 pb-6 sm:pb-8 text-center bg-gradient-to-br from-red-50 to-rose-50">
-                  <div className="inline-flex items-center justify-center w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-red-100 mb-4 sm:mb-6">
-                    <XCircle className="w-10 h-10 sm:w-12 sm:h-12 text-red-600" strokeWidth={2} />
-                  </div>
-                  
-                  <h1 className="text-2xl sm:text-3xl font-bold mb-2 sm:mb-3 text-red-900">
-                    Payment Failed
-                  </h1>
-                  
-                  <p className="text-base sm:text-lg text-red-700 font-medium">
-                    We couldn't process your payment
-                  </p>
-                </div>
-
-                <div className="px-4 sm:px-8 py-6 sm:py-8 space-y-4 sm:space-y-6">
-                  <div className="text-center space-y-2">
-                    <p className="text-sm sm:text-base text-gray-600 leading-relaxed">
-                      We encountered an issue processing your payment. This could be due to several reasons:
-                    </p>
-                  </div>
-
-                  <div className="bg-red-50 border border-red-100 rounded-lg p-3 sm:p-4">
-                    <div className="flex items-start gap-2 sm:gap-3">
-                      <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-red-100 flex items-center justify-center flex-shrink-0 mt-0.5">
-                        <svg className="w-4 h-4 sm:w-5 sm:h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-                        </svg>
-                      </div>
-                      <div className="flex-1">
-                        <p className="text-xs sm:text-sm font-semibold text-red-900 mb-2">
-                          Common issues:
-                        </p>
-                        <ul className="text-xs sm:text-sm text-red-800 space-y-1 list-disc list-inside">
-                          <li>Insufficient funds in your account</li>
-                          <li>Card details were incorrect</li>
-                          <li>Network connectivity issues</li>
-                          <li>Payment was declined by your bank</li>
-                        </ul>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="space-y-3 pt-4">
-                    <Button
-                      variant="outline"
-                      onClick={() => navigate("/", { replace: true })}
-                      className="w-full border-2 border-gray-300 hover:border-gray-400 py-4 sm:py-6 text-sm sm:text-base font-semibold"
-                    >
-                      <div className="flex items-center justify-center gap-2">
-                        <Home className="w-4 h-4 sm:w-5 sm:h-5" />
-                        <span>Return to Home</span>
-                      </div>
-                    </Button>
-                  </div>
-                </div>
+            <div className="flex flex-col items-center text-center text-white animate-in fade-in zoom-in duration-700">
+              {/* X Icon in Squircle */}
+              <div className="w-20 h-20 sm:w-24 sm:h-24 bg-white/20 rounded-3xl flex items-center justify-center mb-8 sm:mb-12 shadow-inner hover:scale-105 transition-transform">
+                <XCircle className="w-10 h-10 sm:w-12 sm:h-12 text-white" />
               </div>
-            </>
+
+              {/* Title */}
+              <h1 className="text-3xl sm:text-4xl font-bold mb-6 leading-tight tracking-tight px-4">
+                Payment Failed
+              </h1>
+
+              {/* Description */}
+              <p className="text-base sm:text-lg text-white/90 mb-10 px-6 max-w-sm leading-relaxed font-medium">
+                We encountered an issue processing your payment. This could be due to:
+              </p>
+
+              {/* Divider */}
+              <div className="w-full max-w-xs h-[1px] bg-white/20 mb-8"></div>
+
+              {/* Failure Reasons list */}
+              <div className="space-y-4 mb-14 text-white/90 text-sm sm:text-base font-medium">
+                <p>• Insufficient funds or card expired</p>
+                <p>• Incorrect payment information</p>
+                <p>• Transaction declined by your bank</p>
+                <p>• Connection issues with payment provider</p>
+              </div>
+
+              {/* Action Button */}
+              <Button
+                onClick={() => navigate("/", { replace: true })}
+                className="w-full bg-white hover:bg-gray-100 text-[#E11D48] py-6 sm:py-7 text-lg font-bold rounded-2xl shadow-lg border-none transition-all active:scale-[0.98] flex items-center justify-center gap-2"
+              >
+                <Home className="w-5 h-5 stroke-[2.5px]" />
+                <span>Return to Home</span>
+              </Button>
+            </div>
           )}
         </div>
       </div>
 
-      <Footer />
+
     </div>
   );
 }
