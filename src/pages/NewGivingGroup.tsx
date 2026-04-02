@@ -25,6 +25,7 @@ import Footer from '@/components/Footer';
 import { toast } from 'sonner';
 import LoggedOutHeader from '@/components/LoggedOutHeader';
 import JoinGroupBottomsheet from '@/components/newGivingGroup/JoinGroupBottomsheet';
+import CreatePostBottomSheet from '@/components/post/CreatePostBottomSheet';
 import GivingGroupDetailsBottomSheet from '@/components/newGivingGroup/GivingGroupDetailsBottomSheet';
 
 export default function NewGivingGroupPage() {
@@ -48,6 +49,7 @@ export default function NewGivingGroupPage() {
     };
     const [showShareModal, setShowShareModal] = useState(false);
     const [showStatisticsModal, setShowStatisticsModal] = useState(false);
+    const [showCreatePostModal, setShowCreatePostModal] = useState(false);
     const [statisticsTab, setStatisticsTab] = useState<'Nonprofits' | 'Members' | 'Donations'>('Nonprofits');
     const [showJoinModal, setShowJoinModal] = useState(false);
     const [showDetailsModal, setShowDetailsModal] = useState(false);
@@ -558,12 +560,19 @@ export default function NewGivingGroupPage() {
                 onHide={() => setShowToast(false)}
             />
 
+            {/* Create Post Bottom Sheet */}
+            <CreatePostBottomSheet
+                isOpen={showCreatePostModal}
+                onClose={() => setShowCreatePostModal(false)}
+                collectiveData={crwdData}
+            />
+
             {/* New Fixed Thread Bar */}
             {crwdData?.is_joined && (
                 <div className="fixed bottom-0 inset-x-0 bg-white/95  border-t border-gray-300 p-4 pb-4 z-40">
                     <div className=" mx-auto md:px-0">
                         <div
-                            onClick={() => navigate("/create-post", { state: { collectiveData: crwdData } })}
+                            onClick={() => setShowCreatePostModal(true)}
                             className="flex items-center gap-3 bg-[#f6f5ed] hover:bg-[#efeee5] p-2.5 rounded-full cursor-pointer transition-all "
                         >
                             <div className="flex-1 text-sm md:text-base text-gray-600 font-medium ml-3">

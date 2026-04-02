@@ -153,11 +153,11 @@ export default function GuestHome() {
                         leading-[1.05]
                         tracking-tight
                         mb-6
-                        text-[clamp(2.5rem,8vw,4.2rem)]
+                        text-[clamp(2.4rem,8vw,4.2rem)]
                     "
                             >
                                 The easiest way to support
-                                <span className="text-[#1600ff] block md:inline">
+                                <span className="text-[#1600ff]">
                                     {" "}nonprofits you care about.
                                 </span>
                             </h1>

@@ -572,9 +572,9 @@ export default function NewHome() {
                                         <h2 className="text-base xs:text-lg sm:text-xl md:text-3xl font-bold text-gray-900 mb-1 md:mb-2">
                                             Community Updates
                                         </h2>
-                                        <p className="text-[10px] xs:text-[11px] sm:text-xs md:text-sm text-gray-600">
+                                        {/* <p className="text-[10px] xs:text-[11px] sm:text-xs md:text-sm text-gray-600">
                                             Updates, and discoveries from your community
-                                        </p>
+                                        </p> */}
                                     </div>
                                 )}
                                 <div className="space-y-2.5 md:space-y-4">
