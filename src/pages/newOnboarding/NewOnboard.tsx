@@ -11,6 +11,7 @@ export default function NewOnboard() {
   const redirectTo = searchParams.get('redirectTo') || '/';
   const isFromCreateCollective = redirectTo === '/create-crwd';
   const isFromCollective = redirectTo.includes('/g/');
+  const isFromUserProfile = redirectTo.includes('/u/')
 
   const googleLoginQuery = useQuery({
     queryKey: ["googleLogin"],
@@ -89,16 +90,24 @@ export default function NewOnboard() {
         ) : isFromCollective ? (
           <>
             <h1 className="text-4xl sm:text-5xl font-[900] text-gray-900">
-              <span className="text-[#1600ff]">Join a Movement.</span> Connect with a Collective
+              <span className="text-[#1600ff]">Give Together.</span> Make More Happen.
             </h1>
           </>
-        ) : (
-          <>
-            <h1 className="text-4xl sm:text-5xl font-[900] text-gray-900">
-              One donation. One receipt. <span className="text-[#1600ff]">Every nonprofit you care about.</span>
-            </h1>
-          </>
-        )}
+        ) :
+          isFromUserProfile ? (
+            <>
+              <h1 className="text-4xl sm:text-5xl font-[900] text-gray-900">
+                <span className="text-[#1600ff]">Stop Wishing.</span> Start Doing.
+              </h1>
+            </>
+          ) :
+            (
+              <>
+                <h1 className="text-4xl sm:text-5xl font-[900] text-gray-900">
+                  One donation. One receipt. <span className="text-[#1600ff]">Every nonprofit you care about.</span>
+                </h1>
+              </>
+            )}
       </div>
 
       {/* Auth Buttons */}

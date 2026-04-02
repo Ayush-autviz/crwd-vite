@@ -97,12 +97,12 @@ const Footer = () => {
               >
                 How it works
               </Link>
-              <Link
+              {/* <Link
                 to="/articles"
                 className="block text-white hover:text-gray-300 transition-colors text-xs md:text-sm lg:text-base"
               >
                 What is a CRWD Giving Group?
-              </Link>
+              </Link> */}
               <Link
                 to="/settings/help"
                 className="block text-white hover:text-gray-300 transition-colors text-xs md:text-sm lg:text-base"
@@ -134,12 +134,12 @@ const Footer = () => {
               >
                 Help Center
               </Link>
-              <Link
+              {/* <Link
                 to="/settings/report"
                 className="block text-white hover:text-gray-300 transition-colors text-xs md:text-sm lg:text-base"
               >
                 Contact Us
-              </Link>
+              </Link> */}
               <Link
                 to="/settings/privacy"
                 className="block text-white hover:text-gray-300 transition-colors text-xs md:text-sm lg:text-base"

@@ -2,9 +2,10 @@ import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
 import { useState, useRef, useEffect } from 'react';
 import { useAuthStore } from '@/stores/store';
-import { MessageCircle, Heart } from 'lucide-react';
+import { MessageCircle, Heart, Users } from 'lucide-react';
 import ActivityCard from './ActivityCard';
 import CommunityPostCard from '@/components/newHome/CommunityPostCard';
+import GivingPostCard from '../newGivingGroup/GivingPostCard';
 
 interface CommunityActivityProps {
   posts: any[];
@@ -13,6 +14,7 @@ interface CommunityActivityProps {
   isJoined?: boolean;
   collectiveData?: any;
   onJoin?: () => void;
+  fromCollective?: boolean;
 }
 
 export default function CommunityActivity({
@@ -21,6 +23,7 @@ export default function CommunityActivity({
   collectiveId,
   isJoined = false,
   collectiveData,
+  fromCollective = false,
   onJoin,
 }: CommunityActivityProps) {
   const navigate = useNavigate();
@@ -96,66 +99,67 @@ export default function CommunityActivity({
 
   return (
     <div className="px-3 md:px-4 py-4 md:py-6">
-      <div className="flex items-center justify-between mb-3 md:mb-4">
-        <div>
-          <h3 className="font-bold text-base xs:text-lg md:text-xl text-foreground">
-            Community Activity
-          </h3>
-          {/* {posts && posts.length > 0 && (
+      {!fromCollective &&
+        <div className="flex items-center justify-between mb-3 md:mb-4">
+          <div>
+            <h3 className="font-bold text-base xs:text-lg md:text-xl text-foreground">
+              Community Activity
+            </h3>
+            {/* {posts && posts.length > 0 && (
             <p className="text-xs md:text-sm text-muted-foreground mt-0.5">
               {posts.length} Update{posts.length !== 1 ? 's' : ''}
             </p>
           )} */}
-        </div>
-        {!isJoined ? (
-          <div
-            onClick={onJoin}
-            role="button"
-            className="bg-white hover:bg-gray-100 text-gray-800 font-semibold border-1 border-gray-200 px-2 md:px-3 lg:px-4 py-1 md:py-1.5 lg:py-2 rounded-full text-xs xs:text-sm md:text-base cursor-pointer transition-colors"
-          >
-            Join to post updates
           </div>
-        ) : (
-          <div className="relative" ref={menuRef}>
-            <Button
-              onClick={isFounder ? toggleMenu : () => navigate("/create-post", { state: { collectiveData } })}
-              variant="default"
-              className="px-2 md:px-4 bg-white text-gray-800 shadow-none border-1 border-gray-200 hover:bg-gray-100 hover:text-gray-900  lg:px-6 py-1 md:py-1.5 lg:py-2 rounded-full text-xs xs:text-sm md:text-base font-semibold flex items-center gap-1"
+          {!isJoined ? (
+            <div
+              onClick={onJoin}
+              role="button"
+              className="bg-white hover:bg-gray-100 text-gray-800 font-semibold border-1 border-gray-200 px-2 md:px-3 lg:px-4 py-1 md:py-1.5 lg:py-2 rounded-full text-xs xs:text-sm md:text-base cursor-pointer transition-colors"
             >
-              {isFounder ? '+ Create' : 'Create Post'}
-            </Button>
+              Join to post updates
+            </div>
+          ) : (
+            <div className="relative" ref={menuRef}>
+              <Button
+                onClick={isFounder ? toggleMenu : () => navigate("/create-post", { state: { collectiveData } })}
+                variant="default"
+                className="px-2 md:px-4 bg-white text-gray-800 shadow-none border-1 border-gray-200 hover:bg-gray-100 hover:text-gray-900  lg:px-6 py-1 md:py-1.5 lg:py-2 rounded-full text-xs xs:text-sm md:text-base font-semibold flex items-center gap-1"
+              >
+                {isFounder ? '+ Create' : 'Create Post'}
+              </Button>
 
-            {showCreateMenu && isFounder && (
-              <div className="absolute right-0 top-full mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-100 z-50 overflow-hidden">
-                <div className="py-1">
-                  <button
-                    onClick={() => navigate("/create-post", { state: { collectiveData } })}
-                    className="w-full text-left px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-3 transition-colors font-medium"
-                  >
-                    <MessageCircle className="w-4 h-4 text-gray-500" />
-                    Create Post
-                  </button>
-                  {/* <button
+              {showCreateMenu && isFounder && (
+                <div className="absolute right-0 top-full mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-100 z-50 overflow-hidden">
+                  <div className="py-1">
+                    <button
+                      onClick={() => navigate("/create-post", { state: { collectiveData } })}
+                      className="w-full text-left px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-3 transition-colors font-medium"
+                    >
+                      <MessageCircle className="w-4 h-4 text-gray-500" />
+                      Create Post
+                    </button>
+                    {/* <button
                     onClick={() => navigate("/create-event", { state: { collectiveData } })}
                     className="w-full text-left px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-3 transition-colors"
                   >
                     <Calendar className="w-4 h-4 text-gray-500" />
                     Create Event
                   </button> */}
-                  <button
-                    onClick={() => navigate(`/create-fundraiser/${collectiveId}`)}
-                    className="w-full text-left px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-3 transition-colors font-medium"
-                  >
-                    <Heart className="w-4 h-4 text-gray-500" />
-                    Create Fundraiser
-                  </button>
+                    <button
+                      onClick={() => navigate(`/create-fundraiser/${collectiveId}`)}
+                      className="w-full text-left px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-3 transition-colors font-medium"
+                    >
+                      <Heart className="w-4 h-4 text-gray-500" />
+                      Create Fundraiser
+                    </button>
+                  </div>
                 </div>
-              </div>
-            )}
-          </div>
-        )}
-      </div>
-
+              )}
+            </div>
+          )}
+        </div>
+      }
       {isLoading ? (
         <div className="space-y-2.5 md:space-y-4">
           {[1, 2].map((i) => (
@@ -178,19 +182,27 @@ export default function CommunityActivity({
           {transformedPosts && transformedPosts.length > 0 ? (
             <div className="space-y-2.5 md:space-y-4">
               {transformedPosts.map((post: any) => (
-                <CommunityPostCard key={post.id} post={post} showSimplifiedHeader={true} />
+                fromCollective ? (
+                  <GivingPostCard key={post.id} post={post} showSimplifiedHeader={true} />
+                ) : (
+                  <CommunityPostCard key={post.id} post={post} showSimplifiedHeader={true} />
+                )
               ))}
             </div>
           ) : (
-            <div className="text-center py-6 md:py-8">
-              <p className="text-sm xs:text-base md:text-lg text-muted-foreground">
-                No community activity yet. Be the first to post!
+            <div className="flex flex-col items-center justify-center py-16">
+              <div className="w-16 h-16 rounded-full bg-[#f6f5ed] flex items-center justify-center mb-6">
+                <Users className="w-8 h-8 text-[#606060]" strokeWidth={2} />
+              </div>
+              <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-2">No posts yet</h3>
+              <p className="text-sm sm:text-base text-gray-500 text-center max-w-sm">
+                Updates will appear here as you share and interact in your Giving Groups. Join a group to get started!
               </p>
             </div>
           )}
 
           {/* Recent Activities Section */}
-          {recentActivities.length > 0 && (
+          {recentActivities.length > 0 && !fromCollective && (
             <div className="mt-6 md:mt-8 space-y-0">
               <h3 className="font-bold text-base xs:text-lg md:text-xl text-foreground mb-3 md:mb-4">
                 Recent Activities

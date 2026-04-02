@@ -156,9 +156,9 @@ export default function GuestHome() {
                         text-[clamp(2.5rem,8vw,4.2rem)]
                     "
                             >
-                                One monthly donation.
+                                The easiest way to support
                                 <span className="text-[#1600ff] block md:inline">
-                                    {" "}Every nonprofit you care about.
+                                    {" "}nonprofits you care about.
                                 </span>
                             </h1>
 
@@ -173,7 +173,7 @@ export default function GuestHome() {
                         text-[clamp(1.15rem,2.4vw,1.4rem)]
                     "
                             >
-                                Discover nonprofits worth supporting. Give to all of them.
+                                Set one donation amount and add as many as you want.
                             </p>
 
                             {/* CTA BUTTON */}

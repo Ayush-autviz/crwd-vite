@@ -780,10 +780,10 @@ const DonationBox = ({ tab = "setup", preselectedItem, activeTab, fromPaymentRes
                             net = gross - crwdFee;
                           }
 
-                          console.log('=== Fee Calculation (Donationbox Step 1) ===');
-                          console.log('Gross Amount:', gross);
-                          console.log('CRWD Fee:', crwdFee);
-                          console.log('Net (Gross - CRWD Fee):', net);
+                          // console.log('=== Fee Calculation (Donationbox Step 1) ===');
+                          // console.log('Gross Amount:', gross);
+                          // console.log('CRWD Fee:', crwdFee);
+                          // console.log('Net (Gross - CRWD Fee):', net);
 
                           return {
                             crwdFee: Math.round(crwdFee * 100) / 100,
@@ -798,14 +798,14 @@ const DonationBox = ({ tab = "setup", preselectedItem, activeTab, fromPaymentRes
                         const currentCapacity = selectedCauseIds.length + selectedCollectiveIds.length;
                         const capacityPercentage = maxCapacity > 0 ? Math.min(100, (currentCapacity / maxCapacity) * 100) : 0;
 
-                        console.log('=== Capacity Calculation (Donationbox Step 1) ===');
-                        console.log('Donation Amount:', donationAmount);
-                        console.log('Actual Donation Amount:', actualDonationAmount);
-                        console.log('Fees object:', fees);
-                        console.log('Net amount:', net);
-                        console.log('Max Capacity (net / 0.20):', maxCapacity);
-                        console.log('Current Capacity:', currentCapacity);
-                        console.log('Capacity Percentage:', capacityPercentage);
+                        // console.log('=== Capacity Calculation (Donationbox Step 1) ===');
+                        // console.log('Donation Amount:', donationAmount);
+                        // console.log('Actual Donation Amount:', actualDonationAmount);
+                        // console.log('Fees object:', fees);
+                        // console.log('Net amount:', net);
+                        // console.log('Max Capacity (net / 0.20):', maxCapacity);
+                        // console.log('Current Capacity:', currentCapacity);
+                        // console.log('Capacity Percentage:', capacityPercentage);
 
                         return (
                           <></>
@@ -886,7 +886,7 @@ const DonationBox = ({ tab = "setup", preselectedItem, activeTab, fromPaymentRes
                                   }}
                                   className="p-1.5 md:p-2 text-[#1600ff] hover:text-[#1400cc] transition-colors flex-shrink-0 cursor-pointer"
                                 >
-                                  <Trash2 size={16} className="md:w-[18px] md:h-[18px]" />
+                                  <Trash2 size={16} className="md:w-[18px] md:h-[18px] text-gray-500" />
                                 </button>
                               </div>
                             );

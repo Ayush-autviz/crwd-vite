@@ -137,6 +137,7 @@
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 
 interface UserProfileHeaderProps {
+  profileData: any;
   profilePicture?: string;
   firstName?: string;
   lastName?: string;
@@ -149,6 +150,7 @@ interface UserProfileHeaderProps {
 }
 
 export const UserProfileHeader = ({
+  profileData,
   profilePicture,
   firstName,
   lastName,
@@ -165,20 +167,22 @@ export const UserProfileHeader = ({
       <Avatar className="w-20 h-20 rounded-full flex-shrink-0 border-none">
         <AvatarImage src={profilePicture} className="object-cover" />
         <AvatarFallback
-          className="text-2xl font-bold text-[#106D4E] border-none"
-          style={{ backgroundColor: '#E4F8F0' }}
+          className="text-2xl font-bold text-white border-none"
+          style={{ backgroundColor: profileData?.color }}
         >
           {getInitials(firstName, lastName, fullName, username)}
         </AvatarFallback>
       </Avatar>
 
       {/* Name/Location/Stats */}
-      <div className="flex-1 space-y-1">
+      <div className="flex-1 ">
         <h2 className="text-xl font-bold text-gray-900 leading-tight">{fullName}</h2>
-        <p className="text-sm font-medium text-gray-500">{location || 'Your Location'}</p>
-        <div className="flex items-center gap-4 text-sm italic text-gray-600 pt-1">
-          <span><span className="font-bold">{followersCount}</span> followers</span>
-          <span><span className="font-bold">{followingCount}</span> following</span>
+        {location && (
+          <p className="text-sm font-medium text-gray-500">{location}</p>
+        )}
+        <div className="flex items-center gap-4 italic text-sm text-gray-600 ">
+          <span><span className="font-semibold">{followersCount}</span> followers</span>
+          <span><span className="font-semibold">{followingCount}</span> following</span>
         </div>
       </div>
     </div>

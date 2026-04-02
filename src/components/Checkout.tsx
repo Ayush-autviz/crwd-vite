@@ -670,7 +670,7 @@ export const Checkout = ({
                   {!isEditingAmount && (
                     <button
                       onClick={() => setIsEditingAmount(true)}
-                      className="w-9 h-9 md:w-10 md:h-10 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center transition-colors cursor-pointer"
+                      className="w-9 h-9 md:w-10 md:h-10 rounded-full bg-gray-200 hover:bg-gray-200 flex items-center justify-center transition-colors cursor-pointer"
                       aria-label="Edit amount"
                     >
                       <Pencil className="w-3.5 h-3.5 md:w-4 md:h-4 text-gray-600" />
@@ -714,9 +714,9 @@ export const Checkout = ({
               </div>
 
               {/* Supported Entities */}
-              <div className="bg-gray-100 rounded-lg px-3 md:px-4 py-2.5 md:py-3 mb-4 md:mb-6 text-center">
+              <div className="bg-gray-200 rounded-lg px-3 md:px-4 py-2.5 md:py-3 mb-4 md:mb-6 text-center">
                 <p className="text-xs md:text-sm font-bold text-gray-900">
-                  {totalCauses} Cause{totalCauses !== 1 ? 's' : ''} • {totalCollectives} Giving Group{totalCollectives !== 1 ? 's' : ''}
+                  {totalCauses} Nonprofit{totalCauses !== 1 ? 's' : ''} • {totalCollectives} Giving Group{totalCollectives !== 1 ? 's' : ''}
                 </p>
               </div>
 
@@ -774,7 +774,7 @@ export const Checkout = ({
                   >
                     <Pencil size={16} className="md:w-[18px] md:h-[18px] text-gray-600 flex-shrink-0" />
                     <div className="flex flex-col items-start">
-                      <span className="text-xs md:text-sm leading-tight">Edit Split</span>
+                      <span className="text-xs md:text-sm leading-tight">Adjust Split</span>
                     </div>
                   </button>
                 )}
@@ -794,39 +794,39 @@ export const Checkout = ({
                       <div className="flex gap-3 md:gap-4 items-center flex-1 min-w-0">
                         {/* Avatar */}
                         <Avatar className="w-10 h-10 md:w-12 md:h-12 rounded-lg flex-shrink-0 border border-gray-200">
-                        <AvatarImage src={cause.image} />
-                        <AvatarFallback
-                          style={{ backgroundColor: avatarBgColor }}
-                          className="font-semibold rounded-lg text-white text-base md:text-lg"
-                        >
-                          {initials}
-                        </AvatarFallback>
-                      </Avatar>
+                          <AvatarImage src={cause.image} />
+                          <AvatarFallback
+                            style={{ backgroundColor: avatarBgColor }}
+                            className="font-semibold rounded-lg text-white text-base md:text-lg"
+                          >
+                            {initials}
+                          </AvatarFallback>
+                        </Avatar>
 
-                      {/* Cause Info */}
-                      <div className="flex-1 min-w-0">
-                        <h3 className="font-bold text-xs sm:text-sm md:text-base text-gray-900 mb-0.5 md:mb-1 line-clamp-1">{cause.name}</h3>
-                        <p className="text-xs md:text-sm text-gray-600 line-clamp-1">
-                          {cause.mission || cause.description || 'Making a positive impact in the community'}
-                        </p>
-                      </div>
-
-                      {/* Donation Info & Remove Button */}
-                      <div className="flex items-center gap-3 md:gap-4 ml-2 md:ml-4">
-                        <div className="text-right">
-                          <p className="font-bold text-sm md:text-base text-gray-900">
-                            {hasCustomPercentages
-                              ? `${getCausePercentage(cause.id).toFixed(1)}%`
-                              : `${distributionPercentage.toFixed(1)}%`
-                            }
-                          </p>
-                          <p className="text-xs md:text-sm text-gray-600">
-                            ${hasCustomPercentages
-                              ? ((net * getCausePercentage(cause.id) / 100)).toFixed(2)
-                              : amountPerItem.toFixed(2)
-                            }/mo
+                        {/* Cause Info */}
+                        <div className="flex-1 min-w-0">
+                          <h3 className="font-bold text-xs sm:text-sm md:text-base text-gray-900 mb-0.5 md:mb-1 line-clamp-1">{cause.name}</h3>
+                          <p className="text-xs md:text-sm text-gray-600 line-clamp-1">
+                            {cause.mission || cause.description || 'Making a positive impact in the community'}
                           </p>
                         </div>
+
+                        {/* Donation Info & Remove Button */}
+                        <div className="flex items-center gap-3 md:gap-4 ml-2 md:ml-4">
+                          <div className="text-right">
+                            <p className="font-bold text-sm md:text-base text-gray-900">
+                              {hasCustomPercentages
+                                ? `${getCausePercentage(cause.id).toFixed(1)}%`
+                                : `${distributionPercentage.toFixed(1)}%`
+                              }
+                            </p>
+                            <p className="text-xs md:text-sm text-gray-600">
+                              ${hasCustomPercentages
+                                ? ((net * getCausePercentage(cause.id) / 100)).toFixed(2)
+                                : amountPerItem.toFixed(2)
+                              }/mo
+                            </p>
+                          </div>
                           <button
                             onClick={(e) => {
                               e.stopPropagation();

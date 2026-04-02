@@ -409,7 +409,7 @@ export default function ProfilePage() {
   return (
     <div className="bg-white min-h-screen">
       {/* Navbar */}
-      <header className="w-full flex items-center justify-between h-14 px-4 bg-white border-b sticky top-0 z-10 transition-colors">
+      <header className="w-full flex items-center justify-between h-16 px-3 bg-white border-b sticky top-0 z-10 transition-colors">
         <div className="flex items-center gap-3">
           <button onClick={handleBack} className="p-1 -ml-1 text-gray-700 hover:bg-gray-100 rounded-full md:hidden">
             <ChevronLeft size={24} />
@@ -424,14 +424,14 @@ export default function ProfilePage() {
             <div className="absolute right-0 top-11 bg-white border border-gray-200 rounded-xl shadow-xl z-20 w-44 py-1 animate-in fade-in slide-in-from-top-2 duration-300">
               <button
                 onClick={() => { setShowMenu(false); handleShareProfile(); }}
-                className="flex items-center gap-3 w-full px-4 py-2.5 text-sm font-semibold text-gray-700 hover:bg-gray-50 transition-colors"
+                className="flex items-center gap-3 w-full px-4 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
               >
                 <Share2Icon size={16} /> Share Profile
               </button>
               <button
                 onClick={() => { setShowMenu(false); handleLogout(); }}
                 disabled={logoutMutation.isPending}
-                className="flex items-center gap-3 w-full px-4 py-2.5 text-sm font-semibold text-red-600 hover:bg-gray-50 transition-colors"
+                className="flex items-center gap-3 w-full px-4 py-2.5 text-sm font-medium text-red-600 hover:bg-gray-50 transition-colors"
               >
                 {logoutMutation.isPending ? (
                   <Loader2 className="animate-spin text-red-600" size={16} />
@@ -447,8 +447,9 @@ export default function ProfilePage() {
 
       <div className="max-w-3xl mx-auto">
         {/* User Info Section */}
-        <section className="px-5 py-6 space-y-5">
+        <section className="px-4 py-6 space-y-5">
           <UserProfileHeader
+            profileData={profileData}
             profilePicture={profileData?.profile_picture}
             firstName={profileData?.first_name}
             lastName={profileData?.last_name}
@@ -473,37 +474,37 @@ export default function ProfilePage() {
           <Button
             onClick={() => navigate("/settings")}
             variant="outline"
-            className="w-full h-11 border-2 border-gray-300 rounded-xl text-base font-bold text-gray-900 hover:bg-gray-50"
+            className="w-full h-11 border border-gray-400 rounded-lg text-base font-semibold text-gray-900 hover:bg-gray-50"
           >
             Edit Profile
           </Button>
         </section>
 
         {/* Donation Box Section */}
-        <section className="border-t border-gray-100 pt-6 pb-2">
-          <div className="px-5 mb-4">
-            <h3 className="text-xs md:text-md font-bold text-gray-400 tracking-widest uppercase">
+        <section className="border-t border-gray-200 pt-6 pb-2">
+          <div className="px-4 mb-4">
+            <h3 className="text-xs md:text-sm font-bold text-gray-500 uppercase">
               DONATION BOX · {profileData?.supported_causes_count || 0} NONPROFITS
             </h3>
           </div>
 
-          <div className="grid grid-cols-4 gap-2 sm:gap-3 md:gap-4 px-5 pb-4">
+          <div className="grid grid-cols-4 gap-2 sm:gap-3 md:gap-4 px-4 pb-4">
             {profileData?.recently_supported_causes?.slice(0, 3).map((cause: any) => (
               <Link
                 key={cause.id}
                 to={`/c/${cause.sort_name}`}
-                className="w-full bg-white border border-gray-200 rounded-2xl p-2 sm:p-3 md:p-4 min-h-[96px] sm:min-h-[110px] md:min-h-[132px] flex flex-col items-center justify-center space-y-1.5 sm:space-y-2 md:space-y-2.5 hover:bg-gray-50 transition-colors"
+                className="w-full bg-white border border-gray-200 rounded-lg p-2 sm:p-3 md:p-4 min-h-[96px] sm:min-h-[110px] md:min-h-[132px] flex flex-col items-center justify-center space-y-1.5 sm:space-y-2 md:space-y-2.5 hover:bg-gray-50 transition-colors"
               >
-                <Avatar className="w-9 h-9 sm:w-11 sm:h-11 md:w-14 md:h-14 !rounded-xl flex-shrink-0 border-none">
+                <Avatar className="w-9 h-9 sm:w-11 sm:h-11 md:w-14 md:h-14 !rounded-lg flex-shrink-0 border-none">
                   <AvatarImage src={cause.image || cause.logo} className="object-cover" />
                   <AvatarFallback
-                    className="text-[10px] sm:text-xs md:text-sm font-bold text-gray-700 border-none !rounded-xl"
+                    className="text-[10px] sm:text-xs md:text-sm font-bold text-gray-700 border-none !rounded-lg"
                     style={{ backgroundColor: getConsistentColor(cause.id, avatarColors) + '20' }}
                   >
                     {cause.name?.split(' ').map((n: string) => n[0]).join('').slice(0, 2).toUpperCase()}
                   </AvatarFallback>
                 </Avatar>
-                <span className="text-[9px] sm:text-[10px] md:text-xs font-bold text-gray-900 text-center leading-tight break-words">
+                <span className="text-xs sm:text-sm font-bold text-gray-900 text-center leading-tight break-words">
                   {cause?.name || 'N'}
                 </span>
               </Link>
@@ -511,9 +512,9 @@ export default function ProfilePage() {
             {profileData?.supported_causes_count > 3 && (
               <button
                 onClick={() => handleStatPress('causes')}
-                className="w-full bg-gray-50/50 border border-gray-200 rounded-2xl p-2 sm:p-3 md:p-4 min-h-[96px] sm:min-h-[110px] md:min-h-[132px] flex items-center justify-center text-[10px] sm:text-sm md:text-base font-bold text-gray-600 hover:bg-gray-100 text-center"
+                className="w-full bg-gray-50/50 border border-gray-200 rounded-lg p-2 sm:p-3 md:p-4 min-h-[96px] sm:min-h-[110px] md:min-h-[132px] flex items-center justify-center text-sm sm:text-base font-bold text-gray-600 hover:bg-gray-100 text-center"
               >
-                +{profileData.supported_causes_count - 3} {profileData.supported_causes_count - 3 === 1 ? 'other' : 'others'}
+                +{profileData.supported_causes_count - 3}
               </button>
             )}
             {(!profileData?.recently_supported_causes || profileData.recently_supported_causes.length === 0) && (
@@ -523,14 +524,14 @@ export default function ProfilePage() {
         </section>
 
         {/* Groups Section */}
-        <section className="border-t border-gray-100 pt-6 pb-2">
-          <div className="px-5 mb-4">
-            <h3 className="text-xs md:text-md font-bold text-gray-400 tracking-widest uppercase">
+        <section className="border-t border-gray-200 pt-6 pb-2">
+          <div className="px-4 mb-4">
+            <h3 className="text-xs md:text-sm font-bold text-gray-500 uppercase">
               GROUPS · {allCollectivesData?.data?.length || 0}
             </h3>
           </div>
 
-          <div className="grid grid-cols-4 gap-2 sm:gap-3 md:gap-4 px-5 pb-4">
+          <div className="grid grid-cols-4 gap-2 sm:gap-3 md:gap-4 px-4 pb-4">
             {allCollectivesData?.data && allCollectivesData.data.length > 0 ? (
               allCollectivesData.data.slice(0, 3).map((item: any) => {
                 const collective = item.collective || item;
@@ -542,18 +543,18 @@ export default function ProfilePage() {
                   <Link
                     key={collective.id}
                     to={`/g/${collective.sort_name}`}
-                    className="w-full bg-white border border-gray-200 rounded-2xl p-2 sm:p-3 md:p-4 min-h-[96px] sm:min-h-[110px] md:min-h-[132px] flex flex-col items-center justify-center space-y-1.5 sm:space-y-2 md:space-y-2.5 hover:bg-gray-50 transition-colors"
+                    className="w-full bg-white border border-gray-200 rounded-md p-2 sm:p-3 md:p-4 min-h-[96px] sm:min-h-[110px] md:min-h-[132px] flex flex-col items-center justify-center space-y-1.5 sm:space-y-2 md:space-y-2.5 hover:bg-gray-50 transition-colors"
                   >
-                    <Avatar className="w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 !rounded-2xl flex-shrink-0 border-none">
+                    <Avatar className="w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 rounded-md flex-shrink-0 border-none">
                       <AvatarImage src={imageUrl} className="object-cover" />
                       <AvatarFallback
-                        className="text-sm sm:text-base md:text-lg font-bold text-white border-none !rounded-2xl"
+                        className="text-sm sm:text-base md:text-lg font-bold text-white border-none rounded-md"
                         style={iconColor ? { backgroundColor: iconColor } : { backgroundColor: '#E4F8F0', color: '#106D4E' }}
                       >
                         {collective.name?.charAt(0).toUpperCase()}
                       </AvatarFallback>
                     </Avatar>
-                    <span className="text-[9px] sm:text-[10px] md:text-xs font-bold text-gray-900 text-center leading-tight break-words">
+                    <span className="text-xs sm:text-sm font-bold text-gray-900 text-center leading-tight break-words">
                       {collective.name}
                     </span>
                   </Link>
@@ -565,26 +566,26 @@ export default function ProfilePage() {
             {(allCollectivesData?.data?.length || 0) > 3 && (
               <button
                 onClick={() => handleStatPress('crwds')}
-                className="w-full bg-gray-50/50 border border-gray-200 rounded-2xl p-2 sm:p-3 md:p-4 min-h-[96px] sm:min-h-[110px] md:min-h-[132px] flex items-center justify-center text-[10px] sm:text-sm md:text-base font-bold text-gray-600 hover:bg-gray-100 text-center"
+                className="w-full bg-gray-50/50 border border-gray-200 rounded-md p-2 sm:p-3 md:p-4 min-h-[96px] sm:min-h-[110px] md:min-h-[132px] flex items-center justify-center text-sm sm:text-base font-bold text-gray-600 hover:bg-gray-100 text-center"
               >
-                +{(allCollectivesData?.data?.length || 0) - 3} {((allCollectivesData?.data?.length || 0) - 3) === 1 ? 'other' : 'others'}
+                +{(allCollectivesData?.data?.length || 0) - 3}
               </button>
             )}
           </div>
         </section>
 
-        <section className="border-t border-gray-100 pt-8 pb-20">
-          <div className="px-5 mb-6">
+        <section className="border-t border-gray-200 pt-6 pb-20">
+          <div className="px-4  mb-2">
             {userPosts.length > 0 && (
               <>
-                <h3 className="text-sm md:text-md font-bold text-gray-400 tracking-widest uppercase">
+                <h3 className="text-xs md:text-sm font-bold text-gray-500 uppercase">
                   POSTS
                 </h3>
               </>
             )}
           </div>
 
-          <div className="px-5">
+          <div className="px-4">
             {postsLoading ? (
               <div className="space-y-4">
                 {[1, 2].map((i) => (

@@ -282,7 +282,8 @@ export default function EditCollectivePage() {
   // Redirect if not admin
   useEffect(() => {
     if (crwdData && !isAdmin) {
-      navigate(`/groupcrwd/${crwdId}`);
+      // navigate(`/g/${crwdData.sort_name}`);
+      navigate(-1)
     }
   }, [crwdData, isAdmin, navigate, crwdId]);
 

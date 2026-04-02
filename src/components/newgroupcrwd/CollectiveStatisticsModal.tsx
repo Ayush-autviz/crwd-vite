@@ -535,7 +535,7 @@ export default function CollectiveStatisticsModal({
                   </div>
                 </>
               ) : (
-                <div className="text-center py-4 md:py-6 lg:py-8 text-[10px] md:text-xs lg:text-sm text-muted-foreground">
+                <div className="text-center py-4 md:py-6 lg:py-8 text-sm md:text-base lg:text-base text-muted-foreground">
                   No donations found
                 </div>
               )}

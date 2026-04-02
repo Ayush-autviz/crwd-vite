@@ -453,14 +453,14 @@ export default function EditDonationSplitBottomSheet({
                     <div className="flex items-start justify-between gap-3 mb-3 md:mb-4">
                       <div className="flex items-center gap-3 md:gap-4 min-w-0">
                         <Avatar className="w-10 h-10 md:w-12 md:h-12 rounded-xl flex-shrink-0">
-                        <AvatarImage src={cause.image} alt={cause.name} />
-                        <AvatarFallback
-                          style={{ backgroundColor: avatarBgColor + '15', color: avatarBgColor }}
-                          className="font-bold text-xs md:text-base"
-                        >
-                          {initials}
-                        </AvatarFallback>
-                      </Avatar>
+                          <AvatarImage src={cause.image} alt={cause.name} />
+                          <AvatarFallback
+                            style={{ backgroundColor: avatarBgColor + '15', color: avatarBgColor }}
+                            className="font-bold text-xs md:text-base"
+                          >
+                            {initials}
+                          </AvatarFallback>
+                        </Avatar>
                         <div className="flex-1 min-w-0">
                           <h3 className="font-bold text-sm md:text-base text-gray-900 truncate">
                             {cause.name}
@@ -471,7 +471,7 @@ export default function EditDonationSplitBottomSheet({
                         </div>
                       </div>
 
-                      <span className="text-lg md:text-2xl font-bold text-[#1600ff] tabular-nums">
+                      <span className="text-base md:text-lg font-semibold text-[#1600ff] tabular-nums">
                         {percentage}%
                       </span>
                     </div>

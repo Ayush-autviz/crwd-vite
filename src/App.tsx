@@ -89,6 +89,7 @@ import CreateFundraiser from "./pages/CreateFundraiser";
 import EditFundraiser from "./pages/EditFundraiser";
 import FundraiserDetail from "./pages/FundraiserDetail";
 import AppleCallback from "./pages/auth/AppleCallback";
+import NewGivingGroupPage from "./pages/NewGivingGroup";
 
 // Initialize PostHog
 posthog.init('phc_H8FvO89VZLDakgosw6EbwV9LPl7u2Mvjz9Iu7rPDpQF', {
@@ -163,7 +164,7 @@ function App() {
 
   return (
     <PostHogProvider client={posthog}>
-      <Router>
+      <Router future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
         <ScrollToTop />
         <PostHogPageviewTracker />
         <FavoritesProvider>
@@ -272,7 +273,7 @@ function App() {
                       {/* <Route path="/cause-detail" element={<CauseDetail />} /> */}
                       {/* <Route path="/cause/:id" element={<CauseById />} /> */}
                       {/* <Route path="/groupcrwd/:crwdId" element={<GroupCrwd />} /> */}
-                      <Route path="/g/:crwdId" element={<NewGroupCrwd />} />
+                      <Route path="/g/:crwdId" element={<NewGivingGroupPage />} />
                       <Route path="/edit-collective/:crwdId" element={<EditCollective />} />
                       <Route path="/create-fundraiser/:collectiveId" element={<CreateFundraiser />} />
                       <Route path="/edit-fundraiser/:id" element={<EditFundraiser />} />

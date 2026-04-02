@@ -846,7 +846,7 @@ const ManageDonationBox: React.FC<ManageDonationBoxProps> = ({
               {/* Supported Entities */}
               <div className="bg-gray-100 rounded-lg px-3 md:px-4 py-2.5 md:py-3 mb-4 md:mb-6 text-center">
                 <p className="text-xs md:text-sm font-bold text-gray-900">
-                  {totalCausesCount} Cause{totalCausesCount !== 1 ? 's' : ''} • {totalCollectivesCount} Giving Group{totalCollectivesCount !== 1 ? 's' : ''}
+                  {totalCausesCount} Nonprofit{totalCausesCount !== 1 ? 's' : ''} • {totalCollectivesCount} Giving Group{totalCollectivesCount !== 1 ? 's' : ''}
                 </p>
               </div>
 

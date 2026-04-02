@@ -51,10 +51,10 @@ const getConsistentColor = (id: number | string, colors: string[]) => {
 };
 
 const getInitials = (firstName?: string, lastName?: string, fullName?: string, username?: string) => {
-  if (firstName && lastName) return `${firstName[0]}${lastName[0]}`.toUpperCase();
+  if (firstName && lastName) return `${firstName[0]}`.toUpperCase();
   if (fullName) {
     const words = fullName.trim().split(' ');
-    if (words.length >= 2) return `${words[0][0]}${words[1][0]}`.toUpperCase();
+    if (words.length >= 2) return `${words[0][0]}`.toUpperCase();
     return words[0]?.[0]?.toUpperCase() || 'U';
   }
   return username?.[0]?.toUpperCase() || 'U';
@@ -429,8 +429,9 @@ export default function ProfilePage() {
           {/* Main Content */}
           <div className="md:col-span-12">
             <div className="max-w-3xl mx-auto">
-              <section className="px-5 py-6 space-y-5">
+              <section className="px-4 py-6 space-y-5">
                 <UserProfileHeader
+                  profileData={userProfile}
                   profilePicture={userProfile?.profile_picture}
                   firstName={userProfile?.first_name}
                   lastName={userProfile?.last_name}
@@ -448,9 +449,9 @@ export default function ProfilePage() {
 
                 <Button
                   onClick={handleFollowClick}
-                  variant={isFollowing ? "outline" : "default"}
+                  variant={'outline'}
                   disabled={followMutation.isPending || unfollowMutation.isPending}
-                  className="w-full h-11 border-2 border-gray-300 rounded-xl text-base font-bold text-gray-900 hover:bg-gray-50"
+                  className="w-full h-11 border border-gray-400 rounded-lg text-base font-semibold text-gray-900 hover:bg-gray-50"
                 >
                   {followMutation.isPending || unfollowMutation.isPending ? (
                     <Loader2 className="w-4 h-4 animate-spin" />
@@ -459,17 +460,17 @@ export default function ProfilePage() {
               </section>
 
               {/* Divider */}
-              <div className="h-px bg-gray-200 mx-2 mt-2"></div>
+              {/* <div className="h-px bg-gray-200 mx-2"></div> */}
 
               {/* Donation Box Section */}
-              <section className="border-t border-gray-100 pt-6 pb-2">
-                <div className="px-5 mb-4">
-                  <h3 className="text-xs md:text-md font-bold text-gray-400 tracking-widest uppercase">
+              <section className="border-t border-gray-200 pt-6 pb-2">
+                <div className="px-4 mb-4">
+                  <h3 className="text-xs md:text-sm font-bold text-gray-500 uppercase">
                     DONATION BOX · {userProfile.supported_causes_count || 0} NONPROFITS
                   </h3>
                 </div>
 
-                <div className="grid grid-cols-4 gap-2 sm:gap-3 md:gap-4 px-5 pb-4">
+                <div className="grid grid-cols-4 gap-2 sm:gap-3 md:gap-4 px-4 pb-4">
                   {userProfile.recently_supported_causes?.slice(0, 3).map((cause: any) => {
                     const bgColor = getConsistentColor(cause.id || cause.name || 'N', avatarColors);
 
@@ -477,18 +478,18 @@ export default function ProfilePage() {
                       <Link
                         key={cause.id}
                         to={`/c/${cause.sort_name}`}
-                        className="w-full bg-white border border-gray-200 rounded-2xl p-2 sm:p-3 md:p-4 min-h-[96px] sm:min-h-[110px] md:min-h-[132px] flex flex-col items-center justify-center space-y-1.5 sm:space-y-2 md:space-y-2.5 hover:bg-gray-50 transition-colors"
+                        className="w-full bg-white border border-gray-200 rounded-md p-2 sm:p-3 md:p-4 min-h-[96px] sm:min-h-[110px] md:min-h-[132px] flex flex-col items-center justify-center space-y-1.5 sm:space-y-2 md:space-y-2.5 hover:bg-gray-50 transition-colors"
                       >
                         <Avatar className="w-9 h-9 sm:w-11 sm:h-11 md:w-14 md:h-14 rounded-xl flex-shrink-0">
                           <AvatarImage src={cause.image || cause.logo} alt={cause.name} />
                           <AvatarFallback
                             style={{ backgroundColor: bgColor }}
-                            className="text-white text-[10px] sm:text-xs md:text-sm font-semibold rounded-xl"
+                            className="text-white text-sm sm:text-base font-semibold rounded-xl"
                           >
                             {cause.name?.charAt(0)?.toUpperCase() || 'N'}
                           </AvatarFallback>
                         </Avatar>
-                        <span className="text-[9px] sm:text-[10px] md:text-xs font-bold text-gray-900 text-center leading-tight break-words">
+                        <span className="text-xs sm:text-sm font-bold text-gray-900 text-center leading-tight break-words">
                           {cause.name}
                         </span>
                       </Link>
@@ -497,9 +498,9 @@ export default function ProfilePage() {
                   {userProfile.supported_causes_count > 3 && (
                     <button
                       onClick={() => handleStatPress('causes')}
-                      className="w-full bg-gray-50/50 border border-gray-200 rounded-2xl p-2 sm:p-3 md:p-4 min-h-[96px] sm:min-h-[110px] md:min-h-[132px] flex items-center justify-center text-[10px] sm:text-sm md:text-base font-bold text-gray-600 hover:bg-gray-100 text-center"
+                      className="w-full bg-gray-50/50 border border-gray-200 rounded-md p-2 sm:p-3 md:p-4 min-h-[96px] sm:min-h-[110px] md:min-h-[132px] flex items-center justify-center text-sm sm:text-base  font-bold text-gray-600 hover:bg-gray-100 text-center"
                     >
-                      +{userProfile.supported_causes_count - 3} {userProfile.supported_causes_count - 3 === 1 ? 'other' : 'others'}
+                      +{userProfile.supported_causes_count - 3}
                     </button>
                   )}
                   {(!userProfile.recently_supported_causes || userProfile.recently_supported_causes.length === 0) && (
@@ -509,14 +510,14 @@ export default function ProfilePage() {
               </section>
 
               {/* Groups Section */}
-              <section className="border-t border-gray-100 pt-6 pb-2">
-                <div className="px-5 mb-4">
-                  <h3 className="text-xs md:text-md font-bold text-gray-400 tracking-widest uppercase">
+              <section className="border-t border-gray-200 pt-6 pb-2">
+                <div className="px-4 mb-4">
+                  <h3 className="text-xs md:text-sm font-bold text-gray-500 uppercase">
                     GROUPS · {allCollectivesData?.data?.length || 0}
                   </h3>
                 </div>
 
-                <div className="grid grid-cols-4 gap-2 sm:gap-3 md:gap-4 px-5 pb-4">
+                <div className="grid grid-cols-4 gap-2 sm:gap-3 md:gap-4 px-4 pb-4">
                   {allCollectivesData?.data && allCollectivesData.data.length > 0 ? (
                     allCollectivesData.data.slice(0, 3).map((item: any) => {
                       const collective = item.collective || item;
@@ -528,18 +529,18 @@ export default function ProfilePage() {
                         <Link
                           key={collective.id}
                           to={`/g/${collective.sort_name}`}
-                          className="w-full bg-white border border-gray-200 rounded-2xl p-2 sm:p-3 md:p-4 min-h-[96px] sm:min-h-[110px] md:min-h-[132px] flex flex-col items-center justify-center space-y-1.5 sm:space-y-2 md:space-y-2.5 hover:bg-gray-50 transition-colors"
+                          className="w-full bg-white border border-gray-200 rounded-md p-2 sm:p-3 md:p-4 min-h-[96px] sm:min-h-[110px] md:min-h-[132px] flex flex-col items-center justify-center space-y-1.5 sm:space-y-2 md:space-y-2.5 hover:bg-gray-50 transition-colors"
                         >
-                          <Avatar className="w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 !rounded-2xl flex-shrink-0 border-none">
+                          <Avatar className="w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 !rounded-md flex-shrink-0 border-none">
                             <AvatarImage src={imageUrl} className="object-cover" />
                             <AvatarFallback
-                              className="text-sm sm:text-base md:text-lg font-bold text-white border-none !rounded-2xl"
+                              className="text-sm sm:text-base md:text-lg font-bold text-white border-none !rounded-md"
                               style={iconColor ? { backgroundColor: iconColor } : { backgroundColor: '#E4F8F0', color: '#106D4E' }}
                             >
                               {collective.name?.charAt(0).toUpperCase()}
                             </AvatarFallback>
                           </Avatar>
-                          <span className="text-[9px] sm:text-[10px] md:text-xs font-bold text-gray-900 text-center leading-tight break-words">
+                          <span className="text-xs sm:text-sm font-bold text-gray-900 text-center leading-tight break-words">
                             {collective.name}
                           </span>
                         </Link>
@@ -551,9 +552,9 @@ export default function ProfilePage() {
                   {(allCollectivesData?.data?.length || 0) > 3 && (
                     <button
                       onClick={() => handleStatPress('crwds')}
-                      className="w-full bg-gray-50/50 border border-gray-200 rounded-2xl p-2 sm:p-3 md:p-4 min-h-[96px] sm:min-h-[110px] md:min-h-[132px] flex items-center justify-center text-[10px] sm:text-sm md:text-base font-bold text-gray-600 hover:bg-gray-100 text-center"
+                      className="w-full bg-gray-50/50 border border-gray-200 rounded-md p-2 sm:p-3 md:p-4 min-h-[96px] sm:min-h-[110px] md:min-h-[132px] flex items-center justify-center text-sm sm:text-base font-bold text-gray-600 hover:bg-gray-100 text-center"
                     >
-                      +{(allCollectivesData?.data?.length || 0) - 3} {((allCollectivesData?.data?.length || 0) - 3) === 1 ? 'other' : 'others'}
+                      +{(allCollectivesData?.data?.length || 0) - 3}
                     </button>
                   )}
                 </div>
@@ -562,11 +563,11 @@ export default function ProfilePage() {
               {/* Divider */}
 
 
-              <section className="border-t border-gray-100 pt-8 pb-20">
-                <div className="px-5 mb-6">
+              <section className="border-t border-gray-200 pt-6 pb-20">
+                <div className="px-4 ">
                   {userPosts.length > 0 && (
                     <>
-                      <h3 className="text-sm md:text-md font-bold text-gray-400 tracking-widest uppercase">
+                      <h3 className="text-xs md:text-sm font-bold text-gray-500 uppercase">
                         POSTS
                       </h3>
                       {/* <p className="text-[10px] sm:text-xs md:text-sm text-gray-600">
@@ -575,59 +576,59 @@ export default function ProfilePage() {
                     </>
                   )}
                 </div>
-                <div className="px-5">
-                {postsLoading ? (
-                  <div className="space-y-2.5 md:space-y-4">
-                    {[1, 2].map((i) => (
-                      <div key={i} className="bg-white rounded-lg border border-gray-200 p-2.5 md:p-4 animate-pulse">
-                        <div className="flex items-start gap-2 md:gap-4">
-                          <div className="w-8 h-8 md:w-12 md:h-12 bg-gray-200 rounded-full flex-shrink-0"></div>
-                          <div className="flex-1 space-y-2">
-                            <div className="h-4 bg-gray-200 rounded w-3/4"></div>
-                            <div className="h-3 bg-gray-200 rounded w-full"></div>
-                            <div className="h-3 bg-gray-200 rounded w-5/6"></div>
-                            <div className="h-32 md:h-40 bg-gray-200 rounded-lg"></div>
+                <div className="px-4">
+                  {postsLoading ? (
+                    <div className="space-y-2.5 md:space-y-4">
+                      {[1, 2].map((i) => (
+                        <div key={i} className="bg-white rounded-lg border border-gray-200 p-2.5 md:p-4 animate-pulse">
+                          <div className="flex items-start gap-2 md:gap-4">
+                            <div className="w-8 h-8 md:w-12 md:h-12 bg-gray-200 rounded-full flex-shrink-0"></div>
+                            <div className="flex-1 space-y-2">
+                              <div className="h-4 bg-gray-200 rounded w-3/4"></div>
+                              <div className="h-3 bg-gray-200 rounded w-full"></div>
+                              <div className="h-3 bg-gray-200 rounded w-5/6"></div>
+                              <div className="h-32 md:h-40 bg-gray-200 rounded-lg"></div>
+                            </div>
                           </div>
                         </div>
-                      </div>
-                    ))}
-                  </div>
-                ) : userPosts.length > 0 ? (
-                  <div className="space-y-2.5 md:space-y-4">
-                    {userPosts.map((post: any) => (
-                      <CommunityPostCard key={post.id} post={post} />
-                    ))}
-                    {hasNextPage && (
-                      <div className="flex justify-center mt-4 md:mt-6">
-                        <Button
-                          onClick={() => fetchNextPage()}
-                          disabled={isFetchingNextPage}
-                          variant="outline"
-                          className="px-4 md:px-6 py-1.5 md:py-2 text-sm md:text-base"
-                        >
-                          {isFetchingNextPage ? (
-                            <>
-                              <Loader2 className="w-3.5 h-3.5 md:w-4 md:h-4 mr-1.5 md:mr-2 animate-spin" />
-                              Loading...
-                            </>
-                          ) : (
-                            "Load More"
-                          )}
-                        </Button>
-                      </div>
-                    )}
-                  </div>
-                ) : (
-                  <div className="flex flex-col items-center justify-center py-12 md:py-16">
-                    <div className="w-16 h-16 md:w-20 md:h-20 rounded-full bg-blue-50 flex items-center justify-center mb-4 md:mb-6">
-                      <Users className="w-8 h-8 md:w-10 md:h-10 text-[#1600ff]" strokeWidth={1.5} />
+                      ))}
                     </div>
-                    <h3 className="text-base md:text-lg font-bold text-gray-900 mb-2 md:mb-3">No posts yet</h3>
-                    <p className="text-xs md:text-sm text-gray-600 text-center max-w-md px-4">
-                      Posts appear when you share updates in your collectives. Join or start a collective to start sharing your impact!
-                    </p>
-                  </div>
-                )}
+                  ) : userPosts.length > 0 ? (
+                    <div className="space-y-2.5 md:space-y-4">
+                      {userPosts.map((post: any) => (
+                        <CommunityPostCard key={post.id} post={post} />
+                      ))}
+                      {hasNextPage && (
+                        <div className="flex justify-center mt-4 md:mt-6">
+                          <Button
+                            onClick={() => fetchNextPage()}
+                            disabled={isFetchingNextPage}
+                            variant="outline"
+                            className="px-4 md:px-6 py-1.5 md:py-2 text-sm md:text-base"
+                          >
+                            {isFetchingNextPage ? (
+                              <>
+                                <Loader2 className="w-3.5 h-3.5 md:w-4 md:h-4 mr-1.5 md:mr-2 animate-spin" />
+                                Loading...
+                              </>
+                            ) : (
+                              "Load More"
+                            )}
+                          </Button>
+                        </div>
+                      )}
+                    </div>
+                  ) : (
+                    <div className="flex flex-col items-center justify-center py-12 md:py-16">
+                      <div className="w-16 h-16 md:w-20 md:h-20 rounded-full bg-blue-50 flex items-center justify-center mb-4 md:mb-6">
+                        <Users className="w-8 h-8 md:w-10 md:h-10 text-[#1600ff]" strokeWidth={1.5} />
+                      </div>
+                      <h3 className="text-base md:text-lg font-bold text-gray-900 mb-2 md:mb-3">No posts yet</h3>
+                      <p className="text-xs md:text-sm text-gray-600 text-center max-w-md px-4">
+                        Posts appear when you share updates in your collectives. Join or start a collective to start sharing your impact!
+                      </p>
+                    </div>
+                  )}
                 </div>
               </section>
             </div>
