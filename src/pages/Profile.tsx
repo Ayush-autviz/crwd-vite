@@ -518,7 +518,7 @@ export default function ProfilePage() {
               </button>
             )}
             {(!profileData?.recently_supported_causes || profileData.recently_supported_causes.length === 0) && (
-              <p className="text-xs text-gray-400 italic px-2">No nonprofits added yet.</p>
+              <p className="text-sm text-gray-400 px-2">No nonprofits added yet.</p>
             )}
           </div>
         </section>
@@ -561,7 +561,7 @@ export default function ProfilePage() {
                 );
               })
             ) : (
-              <p className="text-xs text-gray-400 italic px-2">No groups created yet.</p>
+              <p className="text-sm text-gray-400 px-2">No groups created yet.</p>
             )}
             {(allCollectivesData?.data?.length || 0) > 3 && (
               <button
