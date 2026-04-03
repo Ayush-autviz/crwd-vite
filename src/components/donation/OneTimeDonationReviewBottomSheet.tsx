@@ -347,6 +347,9 @@ export default function OneTimeDonationReviewBottomSheet({
                 'Confirm Donation'
               )}
             </button>
+            <button onClick={onClose} className="w-full text-gray-500 font-medium pt-3 rounded-xl transition-all text-base md:text-lg flex items-center justify-center gap-3 cursor-pointer">
+              skip for now
+            </button>
             {/* <div className="mt-4 flex flex-col items-center">
               <button
                 onClick={onClose}

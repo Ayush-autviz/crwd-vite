@@ -282,6 +282,9 @@ export default function DonationReviewBottomSheet({
                 </>
               )}
             </button>
+            <button onClick={onClose} className="w-full text-gray-500 font-medium pt-3 rounded-xl transition-all text-base md:text-lg flex items-center justify-center gap-3 cursor-pointer">
+              skip for now
+            </button>
           </div>
         </div>
       </div>
