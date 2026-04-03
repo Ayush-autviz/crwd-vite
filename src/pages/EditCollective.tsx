@@ -682,7 +682,7 @@ export default function EditCollectivePage() {
         <Button
           onClick={() => navigate(-1)}
           variant="outline"
-          className="border-gray-300 rounded-full font-semibold text-xs md:text-sm text-foreground w-[48%] py-2 md:py-3"
+          className="border-gray-300 rounded-full font-semibold text-xs md:text-sm text-foreground w-[48%] py-2 md:py-5"
         >
           Cancel
         </Button>
@@ -691,7 +691,7 @@ export default function EditCollectivePage() {
             await handleSave();
             await handleSaveCauses();
           }}
-          className="bg-[#1600ff] hover:bg-[#1400cc] text-white font-semibold rounded-full px-4 md:px-6 w-[48%] py-2 md:py-3 text-xs md:text-sm"
+          className="bg-[#1600ff] hover:bg-[#1400cc] text-white font-semibold rounded-full px-4 md:px-6 w-[48%] py-2 md:py-5 text-xs md:text-sm"
           disabled={updateMutation.isPending}
         >
           {updateMutation.isPending ? (

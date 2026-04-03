@@ -147,6 +147,7 @@ interface UserProfileHeaderProps {
   followersCount?: number;
   followingCount?: number;
   getInitials: (firstName?: string, lastName?: string, fullName?: string, username?: string) => string;
+  onStatPress?: (tab: 'causes' | 'following' | 'followers' | 'crwds') => void;
 }
 
 export const UserProfileHeader = ({
@@ -160,6 +161,7 @@ export const UserProfileHeader = ({
   followersCount = 0,
   followingCount = 0,
   getInitials,
+  onStatPress,
 }: UserProfileHeaderProps) => {
   return (
     <div className="flex items-start gap-5">
@@ -180,9 +182,19 @@ export const UserProfileHeader = ({
         {location && (
           <p className="text-sm font-medium text-gray-500">{location}</p>
         )}
-        <div className="flex items-center gap-4 italic text-sm text-gray-600 ">
-          <span><span className="font-semibold">{followersCount}</span> followers</span>
-          <span><span className="font-semibold">{followingCount}</span> following</span>
+        <div className="flex items-center gap-4 italic text-sm text-gray-600 mt-1">
+          <button
+            onClick={() => onStatPress?.('followers')}
+            className="hover:underline"
+          >
+            <span className="font-bold text-black">{followersCount}</span> followers
+          </button>
+          <button
+            onClick={() => onStatPress?.('following')}
+            className="hover:underline"
+          >
+            <span className="font-bold text-black">{followingCount}</span> following
+          </button>
         </div>
       </div>
     </div>

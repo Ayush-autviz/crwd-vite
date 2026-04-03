@@ -441,6 +441,7 @@ export default function ProfilePage() {
                   followersCount={userProfile?.followers_count}
                   followingCount={userProfile?.following_count}
                   getInitials={getInitials}
+                  onStatPress={handleStatPress}
                 />
 
                 {userProfile.bio && (
@@ -463,102 +464,112 @@ export default function ProfilePage() {
               {/* <div className="h-px bg-gray-200 mx-2"></div> */}
 
               {/* Donation Box Section */}
-              <section className="border-t border-gray-200 pt-6 pb-2">
-                <div className="px-4 mb-4">
-                  <h3 className="text-xs md:text-sm font-bold text-gray-500 uppercase">
-                    DONATION BOX · {userProfile.supported_causes_count || 0} NONPROFITS
-                  </h3>
-                </div>
+              {userProfile.supported_causes_count > 0 && (
+                <section className="border-t border-gray-200 pt-6 pb-2">
+                  <div
+                    className="px-4 mb-4 cursor-pointer"
+                    onClick={() => handleStatPress('causes')}
+                  >
+                    <h3 className="text-xs md:text-sm font-bold text-gray-500 hover:text-gray-700 uppercase">
+                      DONATION BOX · {userProfile.supported_causes_count || 0} NONPROFITS
+                    </h3>
+                  </div>
 
-                <div className="grid grid-cols-4 gap-2 sm:gap-3 md:gap-4 px-4 pb-4">
-                  {userProfile.recently_supported_causes?.slice(0, 3).map((cause: any) => {
-                    const bgColor = getConsistentColor(cause.id || cause.name || 'N', avatarColors);
-
-                    return (
-                      <Link
-                        key={cause.id}
-                        to={`/c/${cause.sort_name}`}
-                        className="w-full bg-white border border-gray-200 rounded-md p-2 sm:p-3 md:p-4 min-h-[96px] sm:min-h-[110px] md:min-h-[132px] flex flex-col items-center justify-center space-y-1.5 sm:space-y-2 md:space-y-2.5 hover:bg-gray-50 transition-colors"
-                      >
-                        <Avatar className="w-9 h-9 sm:w-11 sm:h-11 md:w-14 md:h-14 rounded-xl flex-shrink-0">
-                          <AvatarImage src={cause.image || cause.logo} alt={cause.name} />
-                          <AvatarFallback
-                            style={{ backgroundColor: bgColor }}
-                            className="text-white text-sm sm:text-base font-semibold rounded-xl"
-                          >
-                            {cause.name?.charAt(0)?.toUpperCase() || 'N'}
-                          </AvatarFallback>
-                        </Avatar>
-                        <span className="text-xs sm:text-sm font-bold text-gray-900 text-center leading-tight break-words">
-                          {cause.name}
-                        </span>
-                      </Link>
-                    );
-                  })}
-                  {userProfile.supported_causes_count > 3 && (
-                    <button
-                      onClick={() => handleStatPress('causes')}
-                      className="w-full bg-gray-50/50 border border-gray-200 rounded-md p-2 sm:p-3 md:p-4 min-h-[96px] sm:min-h-[110px] md:min-h-[132px] flex items-center justify-center text-sm sm:text-base  font-bold text-gray-600 hover:bg-gray-100 text-center"
-                    >
-                      +{userProfile.supported_causes_count - 3}
-                    </button>
-                  )}
-                  {(!userProfile.recently_supported_causes || userProfile.recently_supported_causes.length === 0) && (
-                    <p className="text-sm  text-gray-400 px-2">No nonprofits added yet.</p>
-                  )}
-                </div>
-              </section>
-
-              {/* Groups Section */}
-              <section className="border-t border-gray-200 pt-6 pb-2">
-                <div className="px-4 mb-4">
-                  <h3 className="text-xs md:text-sm font-bold text-gray-500 uppercase">
-                    GROUPS · {allCollectivesData?.data?.length || 0}
-                  </h3>
-                </div>
-
-                <div className="grid grid-cols-4 gap-2 sm:gap-3 md:gap-4 px-4 pb-4">
-                  {allCollectivesData?.data && allCollectivesData.data.length > 0 ? (
-                    allCollectivesData.data.slice(0, 3).map((item: any) => {
-                      const collective = item.collective || item;
-                      const hasLogo = collective.logo && (collective.logo.startsWith("http") || collective.logo.startsWith("/") || collective.logo.startsWith("data:"));
-                      const imageUrl = hasLogo ? collective.logo : (collective.image || collective.avatar || undefined);
-                      const iconColor = collective.color || (!hasLogo ? getConsistentColor(collective.id || collective.name, avatarColors) : undefined);
+                  <div className="grid grid-cols-4 gap-2 sm:gap-3 md:gap-4 px-4 pb-4">
+                    {userProfile.recently_supported_causes?.slice(0, 3).map((cause: any) => {
+                      const bgColor = getConsistentColor(cause.id || cause.name || 'N', avatarColors);
 
                       return (
                         <Link
-                          key={collective.id}
-                          to={`/g/${collective.sort_name}`}
+                          key={cause.id}
+                          to={`/c/${cause.sort_name}`}
                           className="w-full bg-white border border-gray-200 rounded-md p-2 sm:p-3 md:p-4 min-h-[96px] sm:min-h-[110px] md:min-h-[132px] flex flex-col items-center justify-center space-y-1.5 sm:space-y-2 md:space-y-2.5 hover:bg-gray-50 transition-colors"
                         >
-                          <Avatar className="w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 !rounded-md flex-shrink-0 border-none">
-                            <AvatarImage src={imageUrl} className="object-cover" />
+                          <Avatar className="w-9 h-9 sm:w-11 sm:h-11 md:w-14 md:h-14 rounded-lg flex-shrink-0">
+                            <AvatarImage src={cause.image || cause.logo} alt={cause.name} />
                             <AvatarFallback
-                              className="text-sm sm:text-base md:text-lg font-bold text-white border-none !rounded-md"
-                              style={iconColor ? { backgroundColor: iconColor } : { backgroundColor: '#E4F8F0', color: '#106D4E' }}
+                              style={{ backgroundColor: bgColor }}
+                              className="text-white text-sm sm:text-base font-semibold rounded-lg"
                             >
-                              {collective.name?.charAt(0).toUpperCase()}
+                              {cause.name?.charAt(0)?.toUpperCase() || 'N'}
                             </AvatarFallback>
                           </Avatar>
                           <span className="text-xs sm:text-sm font-bold text-gray-900 text-center leading-tight break-words">
-                            {collective.name}
+                            {cause.name}
                           </span>
                         </Link>
                       );
-                    })
-                  ) : (
-                    <p className="text-sm text-gray-400 px-2">No groups created yet.</p>
-                  )}
-                  {(allCollectivesData?.data?.length || 0) > 3 && (
-                    <button
-                      onClick={() => handleStatPress('crwds')}
-                      className="w-full bg-gray-50/50 border border-gray-200 rounded-md p-2 sm:p-3 md:p-4 min-h-[96px] sm:min-h-[110px] md:min-h-[132px] flex items-center justify-center text-sm sm:text-base font-bold text-gray-600 hover:bg-gray-100 text-center"
-                    >
-                      +{(allCollectivesData?.data?.length || 0) - 3}
-                    </button>
-                  )}
-                </div>
-              </section>
+                    })}
+                    {userProfile.supported_causes_count > 3 && (
+                      <button
+                        onClick={() => handleStatPress('causes')}
+                        className="w-full bg-gray-50/50 border border-gray-200 rounded-md p-2 sm:p-3 md:p-4 min-h-[96px] sm:min-h-[110px] md:min-h-[132px] flex items-center justify-center text-sm sm:text-base  font-bold text-gray-600 hover:bg-gray-100 text-center"
+                      >
+                        +{userProfile.supported_causes_count - 3}
+                      </button>
+                    )}
+                    {(!userProfile.recently_supported_causes || userProfile.recently_supported_causes.length === 0) && (
+                      <p className="text-sm  text-gray-400 px-2">No nonprofits added yet.</p>
+                    )}
+                  </div>
+                </section>
+              )}
+
+              {/* Groups Section */}
+              {allCollectivesData?.data?.length > 0 && (
+                <section className="border-t border-gray-200 pt-6 pb-2">
+                  <div
+                    className="px-4 mb-4 cursor-pointer"
+                    onClick={() => handleStatPress('crwds')}
+                  >
+                    <h3 className="text-xs md:text-sm font-bold text-gray-500 hover:text-gray-700 uppercase">
+                      GROUPS · {allCollectivesData?.data?.length || 0}
+                    </h3>
+                  </div>
+
+                  <div className="grid grid-cols-4 gap-2 sm:gap-3 md:gap-4 px-4 pb-4">
+                    {allCollectivesData?.data && allCollectivesData.data.length > 0 ? (
+                      allCollectivesData.data.slice(0, 3).map((item: any) => {
+                        const collective = item.collective || item;
+                        const hasLogo = collective.logo && (collective.logo.startsWith("http") || collective.logo.startsWith("/") || collective.logo.startsWith("data:"));
+                        const imageUrl = hasLogo ? collective.logo : (collective.image || collective.avatar || undefined);
+                        const iconColor = collective.color || (!hasLogo ? getConsistentColor(collective.id || collective.name, avatarColors) : undefined);
+
+                        return (
+                          <Link
+                            key={collective.id}
+                            to={`/g/${collective.sort_name}`}
+                            className="w-full bg-white border border-gray-200 rounded-md p-2 sm:p-3 md:p-4 min-h-[96px] sm:min-h-[110px] md:min-h-[132px] flex flex-col items-center justify-center space-y-1.5 sm:space-y-2 md:space-y-2.5 hover:bg-gray-50 transition-colors"
+                          >
+                            <Avatar className="w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 !rounded-lg flex-shrink-0 border-none">
+                              <AvatarImage src={imageUrl} className="object-cover" />
+                              <AvatarFallback
+                                className="text-sm sm:text-base md:text-lg font-bold text-white border-none !rounded-lg"
+                                style={iconColor ? { backgroundColor: iconColor } : { backgroundColor: '#E4F8F0', color: '#106D4E' }}
+                              >
+                                {collective.name?.charAt(0).toUpperCase()}
+                              </AvatarFallback>
+                            </Avatar>
+                            <span className="text-xs sm:text-sm font-bold text-gray-900 text-center leading-tight break-words">
+                              {collective.name}
+                            </span>
+                          </Link>
+                        );
+                      })
+                    ) : (
+                      <p className="text-sm text-gray-400 px-2">No groups created yet.</p>
+                    )}
+                    {(allCollectivesData?.data?.length || 0) > 3 && (
+                      <button
+                        onClick={() => handleStatPress('crwds')}
+                        className="w-full bg-gray-50/50 border border-gray-200 rounded-md p-2 sm:p-3 md:p-4 min-h-[96px] sm:min-h-[110px] md:min-h-[132px] flex items-center justify-center text-sm sm:text-base font-bold text-gray-600 hover:bg-gray-100 text-center"
+                      >
+                        +{(allCollectivesData?.data?.length || 0) - 3}
+                      </button>
+                    )}
+                  </div>
+                </section>
+              )}
 
               {/* Divider */}
 

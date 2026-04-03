@@ -85,7 +85,7 @@ export default function NewDonationBoxIntro() {
                   <span className="text-gray-400 text-lg font-light">+</span>
                 </div>
                 <div className="px-2 py-1">
-                  <span className="text-gray-900 font-bold text-xs sm:text-sm text-center block">$30/mo</span>
+                  {/* <span className="text-gray-900 font-bold text-xs sm:text-sm text-center block">$30/mo</span> */}
                 </div>
               </div>
             </div>

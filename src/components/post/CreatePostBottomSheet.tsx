@@ -335,18 +335,20 @@ export default function CreatePostBottomSheet({
                     </div>
                     <Button
                         onClick={handleSubmitPost}
+                        variant={'outline'}
                         disabled={!canSubmitPost() || createPostMutation.isPending}
-                        className="rounded-full font-bold transition-all px-6 py-1.5"
+                        // className="rounded-full font-bold transition-all px-6 py-1.5"
                         style={{
-                            backgroundColor: canSubmitPost() ? '#1600ff' : '#f3f4f6',
-                            color: canSubmitPost() ? '#fff' : '#d1d5db'
+                            // backgroundColor: canSubmitPost() ? '#1600ff' : '#f3f4f6',
+                            color: canSubmitPost() ? '#000000' : '#4B5563'
+
                         }}
                     >
                         {createPostMutation.isPending ? <Loader2 size={18} className="animate-spin" /> : "Post"}
                     </Button>
                 </div>
 
-                <div className="flex-1 overflow-y-auto px-4 py-4 w-full">
+                <div className="flex-1 overflow-y-auto px-4 pb-4 w-full">
                     <div className="max-w-2xl mx-auto w-full">
                         {/* Collective Selector */}
                         <div className="mb-6">
@@ -354,7 +356,7 @@ export default function CreatePostBottomSheet({
                                 <DropdownMenuTrigger asChild>
                                     <button
                                         disabled={isFromSpecificCollective}
-                                        className={`w-full flex items-center justify-between px-3 py-2.5 bg-[#f0f7ff] border border-[#cce3ff] rounded-xl text-[#0066ff] transition-all group ${isFromSpecificCollective ? 'cursor-not-allowed opacity-80' : 'hover:bg-[#e6f2ff]'}`}
+                                        className={`w-full flex items-center justify-between px-3 py-2.5 bg-blue-100 border border-[#cce3ff] rounded-xl text-[#0066ff] transition-all group ${isFromSpecificCollective ? 'cursor-not-allowed opacity-80' : 'hover:bg-[#e6f2ff]'}`}
                                     >
                                         <div className="flex items-center gap-2">
                                             <div
@@ -382,7 +384,7 @@ export default function CreatePostBottomSheet({
                                         {!isFromSpecificCollective && <ChevronDown className="w-4 h-4 text-[#0066ff] group-data-[state=open]:rotate-180 transition-transform" />}
                                     </button>
                                 </DropdownMenuTrigger>
-                                {!isFromSpecificCollective && (
+                                {/* {!isFromSpecificCollective && (
                                     <DropdownMenuContent className="w-[var(--radix-dropdown-menu-trigger-width)] p-2 rounded-2xl shadow-2xl border-gray-100 z-[100]" align="start">
                                         <DropdownMenuItem onClick={() => setSelectedCollective(null)} className="flex items-center gap-3 p-3 rounded-xl cursor-pointer hover:bg-blue-50">
                                             <div className="w-10 h-10 rounded-lg bg-blue-100 flex items-center justify-center text-blue-600">
@@ -407,13 +409,13 @@ export default function CreatePostBottomSheet({
                                             );
                                         })}
                                     </DropdownMenuContent>
-                                )}
+                                )} */}
                             </DropdownMenu>
                         </div>
 
                         {/* Main Content Input */}
                         <div className="mb-6">
-                            <div className="rounded-xl p-4 bg-gray-50 border border-gray-200 focus-within:border-blue-400 transition-all relative min-h-[200px]">
+                            <div className="rounded-xl p-4 bg-[#f6f5ed] focus-within:border-blue-400 transition-all relative min-h-[200px]">
                                 <div className="absolute inset-x-4 inset-y-4 text-[16px] whitespace-pre-wrap break-words pointer-events-none text-gray-900 border-none" style={{ font: 'inherit', lineHeight: '1.6' }}>
                                     {renderHighlightedText(form.content)}{form.content.endsWith('\n') ? '\n' : ''}
                                 </div>
@@ -434,12 +436,12 @@ export default function CreatePostBottomSheet({
                                 ) : (
                                     <MentionSearchResults results={mentionResults} onSelect={handleMentionSelect} className="mt-1" position="bottom" />
                                 )}
-                                <div className="absolute bottom-3 right-4"><span className="text-[13px] font-medium text-gray-400">{characterCount}/{maxCharacters}</span></div>
+                                {/* <div className="absolute bottom-3 right-4"><span className="text-[13px] font-medium text-gray-400">{characterCount}/{maxCharacters}</span></div> */}
                             </div>
                         </div>
 
                         {/* Action Buttons */}
-                        <div className="flex flex-wrap gap-2.5 mb-8">
+                        {/* <div className="flex flex-wrap gap-2.5 mb-8">
                             <button onClick={() => handlePostTypeSelect("image")} className="flex items-center gap-2 px-4 py-2.5 border border-gray-200 rounded-full hover:bg-gray-50 active:scale-95 transition-all"><ImageIcon className="w-5 h-5 text-gray-600" /><span className="text-[14px] font-bold text-gray-800">Add Image</span></button>
                             <button onClick={() => handlePostTypeSelect("link")} className="flex items-center gap-2 px-4 py-2.5 border border-gray-200 rounded-full hover:bg-gray-50 active:scale-95 transition-all"><Link2 className="w-5 h-5 text-gray-600" /><span className="text-[14px] font-bold text-gray-800">Add Link</span></button>
                             {selectedCollective && (selectedCollective.role === "admin" || selectedCollective.role === "Admin") && (
@@ -451,7 +453,7 @@ export default function CreatePostBottomSheet({
                                     <span className="text-[14px] font-bold text-gray-800">Create Fundraiser</span>
                                 </button>
                             )}
-                        </div>
+                        </div> */}
 
                         {/* Link Input Field */}
                         {(postType === "link" || form.url) && (
@@ -485,11 +487,29 @@ export default function CreatePostBottomSheet({
                         {/* Image Preview */}
                         {selectedImage && imagePreview && (
                             <div className="mb-4">
-                                <div className="relative rounded-lg overflow-hidden w-full max-w-[600px]">
-                                    <img src={imagePreview} alt="Selected" className="w-full object-contain" />
+                                <div className="relative rounded-lg overflow-hidden w-fit max-w-[600px] max-h-[180px]">
+                                    <img src={imagePreview} alt="Selected" className="max-h-[180px] object-contain rounded-lg" />
                                     <button onClick={() => { setSelectedImage(null); setImagePreview(null); if (postType === "image") setPostType(null); }} className="absolute top-2 right-2 w-8 h-8 bg-black/50 rounded-full flex items-center justify-center text-white"><X size={16} /></button>
                                 </div>
                             </div>
+                        )}
+                    </div>
+                </div>
+
+                <div className="p-4  max-w-2xl mx-auto w-full">
+                    <div className="text-right mb-4"><span className="text-[13px] font-medium text-gray-400">{characterCount}/{maxCharacters}</span></div>
+
+                    <div className="flex flex-wrap gap-2.5 mb-8">
+                        <button onClick={() => handlePostTypeSelect("image")} className="flex items-center gap-2 px-4 py-2.5 border border-gray-200 rounded-full hover:bg-gray-50 active:scale-95 transition-all"><ImageIcon className="w-5 h-5 text-gray-600" /><span className="text-[14px] font-bold text-gray-800">Add Image</span></button>
+                        <button onClick={() => handlePostTypeSelect("link")} className="flex items-center gap-2 px-4 py-2.5 border border-gray-200 rounded-full hover:bg-gray-50 active:scale-95 transition-all"><Link2 className="w-5 h-5 text-gray-600" /><span className="text-[14px] font-bold text-gray-800">Add Link</span></button>
+                        {selectedCollective && (selectedCollective.role === "admin" || selectedCollective.role === "Admin") && (
+                            <button
+                                onClick={() => navigate(`/create-fundraiser/${(selectedCollective.collective || selectedCollective).id}`)}
+                                className="flex items-center gap-2 px-4 py-2.5 border border-gray-200 rounded-full hover:bg-gray-50 active:scale-95 transition-all"
+                            >
+                                <Heart className="w-5 h-5 text-gray-600" />
+                                <span className="text-[14px] font-bold text-gray-800">Create Fundraiser</span>
+                            </button>
                         )}
                     </div>
                 </div>

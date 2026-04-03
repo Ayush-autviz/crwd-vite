@@ -467,11 +467,12 @@ export default function CreatePostPage() {
           </div>
           <Button
             onClick={handleSubmitPost}
+            variant={'outline'}
             disabled={!canSubmitPost() || createPostMutation.isPending}
-            className="bg-[#f3f4f6] hover:bg-gray-200 text-gray-400 disabled:text-gray-300 px-6 py-1.5 rounded-full font-bold transition-all"
+            // className="bg-[#f3f4f6] hover:bg-gray-200 text-gray-400 disabled:text-gray-300 px-6 py-1.5 rounded-md font-bold transition-all"
             style={{
-              backgroundColor: canSubmitPost() ? '#1600ff' : '#f3f4f6',
-              color: canSubmitPost() ? '#fff' : '#d1d5db'
+              // backgroundColor: canSubmitPost() ? '#1600ff' : '#f3f4f6',
+              color: canSubmitPost() ? '#000000' : '#4B5563'
             }}
           >
             {createPostMutation.isPending ? (
@@ -489,8 +490,9 @@ export default function CreatePostPage() {
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <button
-                disabled={isFromSpecificCollective}
-                className={`w-full flex items-center justify-between px-3 py-2.5 bg-[#f0f7ff] border border-[#cce3ff] rounded-xl text-[#0066ff] transition-all group ${isFromSpecificCollective ? 'cursor-not-allowed opacity-80' : 'hover:bg-[#e6f2ff]'}`}
+                // disabled={isFromSpecificCollective}
+                disabled={true}
+                className={`w-full flex items-center justify-between px-3 py-2.5 bg-blue-100 border border-[#cce3ff] rounded-xl text-[#0066ff] transition-all group ${isFromSpecificCollective ? ' opacity-80' : 'hover:bg-[#e6f2ff]'}`}
               >
                 <div className="flex items-center gap-2">
                   <div
@@ -519,12 +521,12 @@ export default function CreatePostPage() {
                     Posting to <span className="font-bold">{selectedCollective ? (selectedCollective.collective || selectedCollective).name : "Your Feed"}</span>
                   </span>
                 </div>
-                {!isFromSpecificCollective && (
+                {/* {!isFromSpecificCollective && (
                   <ChevronDown className="w-4 h-4 text-[#0066ff] group-data-[state=open]:rotate-180 transition-transform" />
-                )}
+                )} */}
               </button>
             </DropdownMenuTrigger>
-            {!isFromSpecificCollective && (
+            {/* {!isFromSpecificCollective && (
               <DropdownMenuContent className="w-[var(--radix-dropdown-menu-trigger-width)] p-2 rounded-2xl shadow-2xl border-gray-100" align="start">
                 <DropdownMenuItem
                   onClick={() => setSelectedCollective(null)}
@@ -577,12 +579,12 @@ export default function CreatePostPage() {
                   );
                 })}
               </DropdownMenuContent>
-            )}
+            )} */}
           </DropdownMenu>
         </div>
         {/* Main Content Input */}
         <div className="mb-6">
-          <div className="rounded-xl p-4 bg-gray-50 border border-gray-200 focus-within:border-blue-400 transition-all relative min-h-[240px]">
+          <div className=" rounded-xl p-4 bg-[#f6f5ed]  focus-within:border-blue-400 transition-all relative min-h-[240px]">
             {/* Mirror Div for styling mentions */}
             <div
               className="absolute inset-x-4 inset-y-4 text-[16px] whitespace-pre-wrap break-words pointer-events-none text-gray-900 border-none"
@@ -597,7 +599,7 @@ export default function CreatePostPage() {
               value={form.content}
               onChange={handleInputChange}
               placeholder="What's on your mind? Share your thoughts, updates, or stories about the impact you're making..."
-              className="w-full min-h-[200px] p-0 border-0 bg-transparent text-[16px] focus:outline-none resize-none placeholder:text-gray-500 relative z-10 text-transparent caret-blue-600"
+              className="w-full min-h-[200px] p-0 border-0 bg-transparent text-base focus:outline-none resize-none placeholder:text-gray-700 relative z-10 text-transparent caret-black"
               style={{ lineHeight: '1.6' }}
               maxLength={maxCharacters}
             />
@@ -615,16 +617,16 @@ export default function CreatePostPage() {
             )}
 
             {/* Character Count */}
-            <div className="absolute bottom-3 right-4">
+            {/* <div className="absolute bottom-3 right-4">
               <span className="text-[13px] font-medium text-gray-400">
                 {characterCount}/{maxCharacters}
               </span>
-            </div>
+            </div> */}
           </div>
         </div>
 
         {/* Action Buttons */}
-        <div className="flex flex-wrap gap-2.5 mb-8">
+        {/* <div className="flex flex-wrap gap-2.5 mb-8">
           <button
             onClick={() => handlePostTypeSelect("image")}
             className="flex items-center gap-2 px-4 py-2.5 border border-gray-200 rounded-full hover:bg-gray-50 hover:border-gray-300 transition-all active:scale-95"
@@ -639,12 +641,6 @@ export default function CreatePostPage() {
             <Link2 className="w-5 h-5 text-gray-600" />
             <span className="text-[14px] font-bold text-gray-800">Add Link</span>
           </button>
-          {/* <button
-            className="flex items-center gap-2 px-4 py-2.5 border border-gray-200 rounded-full hover:bg-gray-50 hover:border-gray-300 transition-all active:scale-95"
-          >
-            <Calendar className="w-5 h-5 text-gray-600" />
-            <span className="text-[14px] font-bold text-gray-800">Create Event</span>
-          </button> */}
           {selectedCollective && (selectedCollective.role === "admin" || selectedCollective.role === "Admin") && (
             <button
               onClick={() => navigate(`/create-fundraiser/${(selectedCollective.collective || selectedCollective).id}`)}
@@ -654,7 +650,7 @@ export default function CreatePostPage() {
               <span className="text-[14px] font-bold text-gray-800">Create Fundraiser</span>
             </button>
           )}
-        </div>
+        </div> */}
 
         {/* Link Input Field - Show when link is selected or URL is entered */}
         {(postType === "link" || form.url) && (
@@ -751,11 +747,11 @@ export default function CreatePostPage() {
         {/* Image Preview */}
         {selectedImage && imagePreview && (
           <div className="mb-4">
-            <div className="relative rounded-lg overflow-hidden w-full " style={{ maxWidth: '600px' }}>
+            <div className="relative rounded-lg overflow-hidden w-fit" style={{ maxWidth: '600px', maxHeight: '200px' }}>
               <img
                 src={imagePreview}
                 alt="Selected"
-                className="w-full h-full  object-contain"
+                className="max-h-[200px] object-contain rounded-lg"
               />
               <button
                 onClick={() => {
@@ -771,8 +767,43 @@ export default function CreatePostPage() {
           </div>
         )}
 
-        {/* Posting Tips Box */}
-        {/* <div className="mt-auto bg-[#f0f7ff] rounded-2xl p-5 border border-[#e0efff]">
+      </div>
+
+      <div className="px-4 py-4 max-w-2xl mx-auto w-full">
+        <div className="text-right mb-4">
+          <span className="text-sm font-medium text-gray-400">
+            {characterCount}/{maxCharacters}
+          </span>
+        </div>
+        <div className="flex flex-wrap gap-2.5 mb-8 ">
+          <button
+            onClick={() => handlePostTypeSelect("image")}
+            className="flex items-center gap-2 px-4 py-2.5 border border-gray-200 rounded-full hover:bg-gray-50 hover:border-gray-300 transition-all active:scale-95"
+          >
+            <ImageIcon className="w-5 h-5 text-gray-600" />
+            <span className="text-[14px] font-bold text-gray-800">Add Image</span>
+          </button>
+          <button
+            onClick={() => handlePostTypeSelect("link")}
+            className="flex items-center gap-2 px-4 py-2.5 border border-gray-200 rounded-full hover:bg-gray-50 hover:border-gray-300 transition-all active:scale-95"
+          >
+            <Link2 className="w-5 h-5 text-gray-600" />
+            <span className="text-[14px] font-bold text-gray-800">Add Link</span>
+          </button>
+          {selectedCollective && (selectedCollective.role === "admin" || selectedCollective.role === "Admin") && (
+            <button
+              onClick={() => navigate(`/create-fundraiser/${(selectedCollective.collective || selectedCollective).id}`)}
+              className="flex items-center gap-2 px-4 py-2.5 border border-gray-200 rounded-full hover:bg-gray-50 hover:border-gray-300 transition-all active:scale-95"
+            >
+              <Heart className="w-5 h-5 text-gray-600" />
+              <span className="text-[14px] font-bold text-gray-800">Create Fundraiser</span>
+            </button>
+          )}
+        </div>
+      </div>
+
+      {/* Posting Tips Box */}
+      {/* <div className="mt-auto bg-[#f0f7ff] rounded-2xl p-5 border border-[#e0efff]">
           <div className="flex items-center gap-2 mb-4">
             <span className="text-lg">💡</span>
             <h3 className="text-[15px] font-bold text-[#0047cc]">Posting Tips</h3>
@@ -796,7 +827,7 @@ export default function CreatePostPage() {
             </li>
           </ul>
         </div> */}
-      </div>
+      {/* </div> */}
 
       {/* Hidden file input for image selection */}
       <input

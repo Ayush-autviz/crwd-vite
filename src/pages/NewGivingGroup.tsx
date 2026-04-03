@@ -370,23 +370,23 @@ export default function NewGivingGroupPage() {
 
     return (
         <div className="min-h-screen bg-white">
-            {currentUser?.id ?
-                <GivingGroupHeader
-                    title={crwdData.name || 'Collective'}
-                    memberCount={memberCount}
-                    avatar={crwdData.avatar || crwdData.image}
-                    color={crwdData.color}
-                    isAdmin={isAdmin}
-                    isJoined={crwdData.is_joined}
-                    onShare={handleShare}
-                    onBack={handleBack}
-                    onJoin={handleJoinCollective}
-                    onMore={() => setShowDetailsModal(true)}
-                /> :
+            {!currentUser?.id &&
                 <LoggedOutHeader redirectTo={window.location.pathname} />
             }
+            <GivingGroupHeader
+                title={crwdData.name || 'Collective'}
+                memberCount={memberCount}
+                avatar={crwdData.logo || crwdData.image}
+                color={crwdData.color}
+                isAdmin={isAdmin}
+                isJoined={crwdData.is_joined}
+                onShare={handleShare}
+                onBack={handleBack}
+                onJoin={handleJoinCollective}
+                onMore={() => setShowDetailsModal(true)}
+            />
 
-            <div className='lg:max-w-[60%] lg:mx-auto pb-32'>
+            <div className='lg:max-w-[60%] lg:mx-auto'>
 
                 <CommunityActivity
                     fromCollective={true}
@@ -400,11 +400,13 @@ export default function NewGivingGroupPage() {
 
 
                 {/* Legal Disclaimer */}
-                <div className="px-3 md:px-4 py-4 md:py-6 border-t border-gray-200 mt-6 md:mt-8">
-                    <p className="text-xs md:text-sm text-gray-500 text-center leading-relaxed">
-                        All donations are made to CRWD Foundation Inc. (EIN: 41-2423690), a 501(c)(3) nonprofit organization. CRWD Foundation grants funds to qualified 501(c)(3) organizations selected by donors.
-                    </p>
-                </div>
+                {!currentUser?.id && (
+                    <div className="px-3 md:px-4 py-4 md:py-6 border-t border-gray-200 mt-6 md:mt-8">
+                        <p className="text-xs md:text-sm text-gray-500 text-center leading-relaxed">
+                            All donations are made to CRWD Foundation Inc. (EIN: 41-2423690), a 501(c)(3) nonprofit organization. CRWD Foundation grants funds to qualified 501(c)(3) organizations selected by donors.
+                        </p>
+                    </div>
+                )}
 
                 {/* Share Modal */}
                 {showShareModal && (
@@ -569,7 +571,7 @@ export default function NewGivingGroupPage() {
 
             {/* New Fixed Thread Bar */}
             {crwdData?.is_joined && (
-                <div className="fixed bottom-0 inset-x-0 bg-white/95  border-t border-gray-300 p-4 pb-4 z-40">
+                <div className="fixed bottom-0 inset-x-0 bg-white border-t border-gray-300 p-4 pb-4 z-40">
                     <div className=" mx-auto md:px-0">
                         <div
                             onClick={() => setShowCreatePostModal(true)}

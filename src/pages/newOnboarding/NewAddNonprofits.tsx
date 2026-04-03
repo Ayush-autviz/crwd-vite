@@ -64,8 +64,8 @@ export default function NewAddNonprofits() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center px-3 sm:px-4  bg-white overflow-hidden">
-      <div className="w-full max-w-2xl bg-white rounded-xl flex flex-col items-start h-[90vh] sm:h-[800px] md:border border-gray-100 md:shadow-sm overflow-hidden relative">
+    <div className="h-screen flex flex-col items-center px-3 sm:px-4 bg-white overflow-hidden">
+      <div className="mt-auto w-full max-w-2xl bg-white  rounded-t-2xl sm:rounded-xl flex flex-col items-start h-[95vh] sm:h-[800px] md:border border-gray-100 md:shadow-md overflow-hidden relative">
 
         {/* Top Header Section */}
         <div className="w-full p-4 sm:p-6  pb-4 shrink-0">
@@ -205,15 +205,24 @@ export default function NewAddNonprofits() {
             </div>
           </div>
 
-          <div className="flex overflow-x-auto gap-2 mb-4 px-1 scrollbar-hide pb-2">
+          <div className="flex overflow-x-auto gap-3 mb-2 px-2 scrollbar-hide py-2">
             {selectedCauses.map((cause) => (
-              <div key={`selected-${cause.id}`} className="w-[60px] h-[60px] rounded-lg border-2 border-dashed border-gray-100 flex items-center justify-center overflow-hidden bg-gray-50/50 shrink-0">
+              <div key={`selected-${cause.id}`} className="w-[60px] h-[60px] rounded-lg border border-gray-100 flex items-center justify-center overflow-visible bg-gray-50/50 shrink-0 relative group">
                 <Avatar className="w-full h-full rounded-lg">
                   <AvatarImage src={cause.image} alt={cause.name} />
                   <AvatarFallback className="rounded-lg">
                     <img src={`https://ui-avatars.com/api/?name=${cause.name}&background=1600ff&color=fff`} alt="" />
                   </AvatarFallback>
                 </Avatar>
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    toggleSelection(cause);
+                  }}
+                  className="absolute -top-2 -right-2 w-5 h-5 bg-gray-500 text-white rounded-full flex items-center justify-center shadow-lg hover:bg-red-500 transition-all z-50 border-2 border-white"
+                >
+                  <X className="w-3 h-3 stroke-[3px]" />
+                </button>
               </div>
             ))}
             {[...Array(Math.max(0, 5 - selectedCauses.length))].map((_, i) => (

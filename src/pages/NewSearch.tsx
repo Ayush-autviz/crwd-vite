@@ -1,13 +1,16 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { ArrowLeft, Search as SearchIcon, Sparkles, Plus } from 'lucide-react';
+import { ArrowLeft, Search as SearchIcon, Sparkles, Plus, Loader2 } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent } from '@/components/ui/card';
+import { useQuery } from "@tanstack/react-query";
+import { getCategories } from "@/services/api/crwd";
 
 export default function NewSearchPage() {
   const navigate = useNavigate();
   const location = useLocation();
   const [searchQuery, setSearchQuery] = useState('');
+  const [showCategories, setShowCategories] = useState(false);
 
   // Handle category filtering from location state
   useEffect(() => {
@@ -24,6 +27,15 @@ export default function NewSearchPage() {
     }
   }, [location.state, navigate]);
 
+  // Fetch categories
+  const { data: categoriesData, isLoading: isLoadingCategories } = useQuery({
+    queryKey: ['categories'],
+    queryFn: getCategories,
+    enabled: true,
+  });
+
+  const categories = categoriesData?.data || [];
+
   const handleSearch = () => {
     if (searchQuery.trim()) {
       navigate(`/search-results?q=${encodeURIComponent(searchQuery)}`);
@@ -31,15 +43,15 @@ export default function NewSearchPage() {
   };
 
   const handleSurpriseMe = () => {
-    // Get categories from URL params if available
-    const categoriesParam = new URLSearchParams(window.location.search).get('categories');
-    const categories = categoriesParam ? categoriesParam.split(',').filter(Boolean) : undefined;
+    setShowCategories(!showCategories);
+  };
 
-    if (categories && categories.length > 0) {
-      navigate(`/surprise-me?categories=${categories.join(',')}`);
-    } else {
-      navigate('/surprise-me');
-    }
+  const handleCategoryClick = (cat: any) => {
+    const params = new URLSearchParams();
+    params.set('categoryId', cat.id.toString());
+    params.set('categoryName', cat.name);
+    params.set('q', cat.name);
+    navigate(`/search-results?${params.toString()}`);
   };
 
   return (
@@ -98,13 +110,43 @@ export default function NewSearchPage() {
 
                 <div className="flex-1">
                   <h3 className="font-bold text-sm xs:text-base md:text-lg text-foreground mb-0.5 md:mb-1">
-                    Surprise Me
+                    Browse
                   </h3>
                   <p className="text-xs xs:text-sm md:text-base text-gray-600">
-                    We'll pick 5 amazing nonprofits for you
+                    Discover nonprofits by category
                   </p>
                 </div>
               </div>
+
+              {/* Categories Pills */}
+              {showCategories && (
+                <div className="mt-4 pt-4 border-t border-gray-100">
+                  {isLoadingCategories ? (
+                    <div className="flex justify-center py-4">
+                      <Loader2 className="w-6 h-6 animate-spin text-[#1600ff]" />
+                    </div>
+                  ) : (
+                    <div className="flex flex-wrap gap-2">
+                      {categories.map((cat: any) => (
+                        <button
+                          key={cat.id}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleCategoryClick(cat);
+                          }}
+                          className="px-3 py-1.5 rounded-full text-xs font-bold transition-all whitespace-nowrap shadow-sm hover:scale-[1.05] active:scale-[0.95]"
+                          style={{ 
+                            backgroundColor: cat.background_color || '#f3f4f6', 
+                            color: cat.text_color || cat.color || '#111'
+                          }}
+                        >
+                          {cat.name}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )}
             </CardContent>
           </Card>
         </div>

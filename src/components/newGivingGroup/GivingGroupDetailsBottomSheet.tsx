@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from 'react';
-import { Bell, UserPlus, Settings, Star } from 'lucide-react';
+import { Bell, UserPlus, Settings, Star, X, SquarePen } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
@@ -70,6 +70,7 @@ export default function GivingGroupDetailsBottomSheet({
 }: GivingGroupDetailsProps) {
   const [isVisible, setIsVisible] = useState(false);
   const [isAnimating, setIsAnimating] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(false);
 
   const existingCauseIds = useMemo(() => {
     const ids = new Set<number>();
@@ -107,6 +108,11 @@ export default function GivingGroupDetailsBottomSheet({
       .toUpperCase();
   };
 
+  const wordLimit = 25;
+  const words = (groupData.description || '').split(/\s+/);
+  const isOverLimit = words.length > wordLimit;
+  const canExpand = isOverLimit;
+
   return (
     <div
       className={cn(
@@ -119,11 +125,19 @@ export default function GivingGroupDetailsBottomSheet({
 
       <div
         className={cn(
-          "absolute bottom-0 left-0 right-0 bg-white rounded-t-[32px] shadow-2xl transition-transform duration-300 max-h-[95vh] overflow-hidden flex flex-col mx-auto",
+          "absolute bottom-0 left-0 right-0 bg-white rounded-t-[32px] shadow-2xl transition-transform duration-300 max-h-[90vh] overflow-hidden flex flex-col mx-auto",
           isAnimating ? "translate-y-0" : "translate-y-full"
         )}
         onClick={(e) => e.stopPropagation()}
       >
+        {/* Close Button */}
+        <button
+          onClick={onClose}
+          className="absolute right-6 top-6 p-2 hover:bg-gray-100 rounded-full transition-colors z-10"
+        >
+          <X className="w-6 h-6 text-gray-500" />
+        </button>
+
         {/* Handle */}
         <div className="flex justify-center pt-3 pb-3">
           <div className="w-12 h-1 bg-gray-400 rounded-full" />
@@ -145,12 +159,34 @@ export default function GivingGroupDetailsBottomSheet({
             <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mt-4">
               {groupData.name}
             </h2>
-            <p className="text-sm sm:text-base text-gray-500 font-medium">
+            <p className="text-base sm:text-lg text-gray-800 ">
               Founded by {groupData.founderName} · {groupData.memberCount.toLocaleString()} members
             </p>
-            <p className="text-sm sm:text-base text-gray-700 mt-1 max-w-[90%] font-medium">
-              {groupData.description}
-            </p>
+            <div className="text-base sm:text-lg text-gray-800 mt-1 font-normal ">
+              {!isExpanded && canExpand ? (
+                <>
+                  {words.slice(0, wordLimit).join(' ')}
+                  <span
+                    onClick={() => setIsExpanded(true)}
+                    className="text-[#4B5563] font-bold ml-1 hover:underline cursor-pointer select-none"
+                  >
+                    ... more
+                  </span>
+                </>
+              ) : (
+                <>
+                  {groupData.description}
+                  {isExpanded && canExpand && (
+                    <span
+                      onClick={() => setIsExpanded(false)}
+                      className="text-[#4B5563] font-bold ml-1 hover:underline cursor-pointer select-none"
+                    >
+                      Read Less
+                    </span>
+                  )}
+                </>
+              )}
+            </div>
           </div>
 
           {/* Stats Grid */}
@@ -186,7 +222,7 @@ export default function GivingGroupDetailsBottomSheet({
               label={isFavorited ? "Saved" : "Save"}
               onClick={onFavorite}
             />
-            {isAdmin && <ActionButton icon={<Settings className="w-6 h-6" />} label="Manage" onClick={onManage} />}
+            {isAdmin && <ActionButton icon={<SquarePen className="w-6 h-6" />} label="Manage" onClick={onManage} />}
           </div>
 
           {/* Nonprofits Section */}

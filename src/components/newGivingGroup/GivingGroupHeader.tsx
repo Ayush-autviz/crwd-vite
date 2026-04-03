@@ -56,10 +56,10 @@ export default function GivingGroupHeader({
       <div className="flex items-center gap-3 overflow-hidden grow">
         <button
           onClick={handleBack}
-          className="flex-shrink-0 p-1 hover:bg-gray-50 rounded-full transition-colors"
+          className=" hover:bg-gray-100 rounded-full transition-colors flex-shrink-0"
           aria-label="Go back"
         >
-          <ArrowLeft className="w-5 h-5 text-gray-700" strokeWidth={2.5} />
+          <ArrowLeft strokeWidth={2.5} className="w-4 h-4 md:w-5 md:h-5 text-gray-700" />
         </button>
 
         <div className="flex items-center gap-2.5 min-w-0">
@@ -79,9 +79,9 @@ export default function GivingGroupHeader({
             <h1 className="text-lg sm:text-xl font-bold text-gray-900 truncate tracking-tight">
               {title}
             </h1>
-            <p className="text-sm sm:text-base text-gray-500 font-medium whitespace-nowrap">
+            {/* <p className="text-sm sm:text-base text-gray-500 font-medium whitespace-nowrap">
               {memberCount.toLocaleString()} members
-            </p>
+            </p> */}
           </div>
         </div>
       </div>
