@@ -372,7 +372,7 @@ export default function OneTimeDonation({
 
   return (
     <div className="w-full h-full bg-gray-50 flex flex-col pb-20 md:pb-24">
-      <div className="flex-1 overflow-auto mt-3 md:mt-4 flex flex-col p-3 md:p-4 mb-20 md:mb-24 space-y-3 md:space-y-4 ">
+      <div className="flex-1 overflow-auto  flex flex-col p-3 md:p-4 mb-20 md:mb-24 space-y-3 md:space-y-4 ">
         {/* Header Section */}
         {/* <div>
           <p className="text-xl md:text-2xl font-bold text-[#1600ff] text-center">Set your one-time gift</p>
@@ -528,14 +528,16 @@ export default function OneTimeDonation({
       </div>
 
       {/* Checkout button - Fixed at bottom */}
-      <div className="fixed bottom-0 left-0 right-0 p-4 md:p-4 bg-white border-t border-gray-200 z-10">
-        <Button
+      <div className="fixed bottom-0 left-0 right-0 px-4  sm:px-6  bg-white border-t border-gray-200 z-10">
+        <button
           onClick={handleCheckout}
           disabled={selectedItems.length === 0}
-          className="bg-[#1600ff] hover:bg-[#1400cc] text-white w-full py-4 md:py-6 rounded-xl font-bold transition-colors flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed text-sm md:text-base"
+          // className="bg-[#1600ff] hover:bg-[#1400cc] text-white w-full py-5 md:py-7 rounded-xl font-bold transition-colors flex items-center justify-center disabled:opacity-50 text-sm md:text-base"
+          className={`w-full ${selectedItems.length === 0 ? 'bg-gray-400' : 'bg-[#1600ff]'} text-white px-4 my-3 md:px-6 py-3 md:py-4 rounded-xl font-bold text-sm md:text-base transition-colors`}
+
         >
           Continue to Review
-        </Button>
+        </button>
         {/* <button onClick={() => navigate(-1)} className="text-xs md:text-sm text-[#64748b] text-center leading-relaxed w-full mt-2 ">
           Skip for now
         </button> */}

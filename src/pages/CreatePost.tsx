@@ -598,7 +598,7 @@ export default function CreatePostPage() {
               name="content"
               value={form.content}
               onChange={handleInputChange}
-              placeholder="What's on your mind? Share your thoughts, updates, or stories about the impact you're making..."
+              placeholder="What's on your mind?"
               className="w-full min-h-[200px] p-0 border-0 bg-transparent text-base focus:outline-none resize-none placeholder:text-gray-700 relative z-10 text-transparent caret-black"
               style={{ lineHeight: '1.6' }}
               maxLength={maxCharacters}

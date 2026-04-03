@@ -185,10 +185,10 @@ export default function DonationReviewBottomSheet({
             <div className="bg-[#FEFCE8] rounded-2xl p-4 md:p-6 mb-5 md:mb-7 space-y-3 md:space-y-4">
               <div className="flex justify-between items-center border-b border-gray-200/50 pb-3 md:pb-4">
                 <span className="text-sm md:text-base text-gray-600">Amount</span>
-                  <span className="text-sm md:text-base font-bold text-gray-900">
-                    ${donationAmount.toFixed(2)}
-                    {showEditButton ? "/mo" : ""}
-                  </span>
+                <span className="text-sm md:text-base font-bold text-gray-900">
+                  ${donationAmount.toFixed(2)}
+                  {showEditButton ? "/mo" : ""}
+                </span>
               </div>
               <div className="flex justify-between items-center border-b border-gray-200/50 pb-3 md:pb-4">
                 <span className="text-sm md:text-base text-gray-600">Split among</span>
@@ -253,8 +253,8 @@ export default function DonationReviewBottomSheet({
                       </div>
                       <div className="text-sm md:text-lg font-bold text-[#1600ff]">
                         {cause.percentage != null
-                            ? `${Number(cause.percentage).toFixed(0)}%`
-                            : `${(100 / (selectedCauses.length || 1)).toFixed(0)}%`}
+                          ? `${Number(cause.percentage).toFixed(0)}%`
+                          : `${(100 / (selectedCauses.length || 1)).toFixed(0)}%`}
                       </div>
                     </div>
                   );
@@ -268,7 +268,7 @@ export default function DonationReviewBottomSheet({
             <button
               onClick={() => activateBoxMutation.mutate()}
               disabled={activateBoxMutation.isPending || showLogoAnimation}
-              className={`w-full bg-[#1600ff] hover:bg-[#1400cc] text-white font-bold py-4 md:py-5 rounded-2xl transition-all shadow-lg shadow-blue-200 text-base md:text-lg flex items-center justify-center gap-3 cursor-pointer ${activateBoxMutation.isPending || showLogoAnimation ? 'opacity-50 cursor-not-allowed' : ''
+              className={`w-full bg-[#1600ff] hover:bg-[#1400cc] text-white font-bold py-3 rounded-xl transition-all text-base md:text-lg flex items-center justify-center gap-3 cursor-pointer ${activateBoxMutation.isPending || showLogoAnimation ? 'opacity-50 cursor-not-allowed' : ''
                 }`}
             >
               {activateBoxMutation.isPending ? (

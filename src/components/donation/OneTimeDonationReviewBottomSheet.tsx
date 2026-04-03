@@ -334,7 +334,7 @@ export default function OneTimeDonationReviewBottomSheet({
               onClick={handleCompleteDonation}
               disabled={isProcessing || showLogoAnimation}
               className={cn(
-                "w-full bg-[#1600ff] hover:bg-[#1400cc] text-white font-bold py-4 md:py-5 rounded-2xl transition-all shadow-lg shadow-blue-200 text-base md:text-lg flex items-center justify-center gap-3 cursor-pointer",
+                "w-full bg-[#1600ff] hover:bg-[#1400cc] text-white font-bold py-3 rounded-2xl transition-all text-base md:text-lg flex items-center justify-center gap-3 cursor-pointer",
                 (isProcessing || showLogoAnimation) && 'opacity-60'
               )}
             >
