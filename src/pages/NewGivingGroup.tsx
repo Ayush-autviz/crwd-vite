@@ -10,10 +10,10 @@ import {
     SheetHeader,
     SheetTitle,
 } from '@/components/ui/sheet';
-import { getCollectiveByName, getCollectiveCauses, getCollectiveStats, joinCollective, leaveCollective } from '@/services/api/crwd';
+import { getCollectiveByName, getCollectiveCauses, getCollectiveStats, joinCollective, leaveCollective, deleteCollective } from '@/services/api/crwd';
 import { favoriteCollective, unfavoriteCollective } from '@/services/api/social';
 import { getPosts } from '@/services/api/social';
-import { getDonationBox, addCausesToBox } from '@/services/api/donation';
+import { getDonationBox, addCausesToBox, removeCauseFromBox } from '@/services/api/donation';
 import GivingGroupHeader from '@/components/newGivingGroup/GivingGroupHeader';
 import CommunityActivity from '@/components/newgroupcrwd/CommunityActivity';
 import CollectiveStatisticsModal from '@/components/newgroupcrwd/CollectiveStatisticsModal';
@@ -22,7 +22,6 @@ import { Toast } from '@/components/ui/toast';
 import AddToDonationBoxBottomSheet from '@/components/newcause/AddToDonationBoxBottomSheet';
 import { useAuthStore } from '@/stores/store';
 import Footer from '@/components/Footer';
-import { toast } from 'sonner';
 import LoggedOutHeader from '@/components/LoggedOutHeader';
 import JoinGroupBottomsheet from '@/components/newGivingGroup/JoinGroupBottomsheet';
 import CreatePostBottomSheet from '@/components/post/CreatePostBottomSheet';
@@ -52,11 +51,13 @@ export default function NewGivingGroupPage() {
     const [showCreatePostModal, setShowCreatePostModal] = useState(false);
     const [statisticsTab, setStatisticsTab] = useState<'Nonprofits' | 'Members' | 'Donations'>('Nonprofits');
     const [showJoinModal, setShowJoinModal] = useState(false);
-    const [showDetailsModal, setShowDetailsModal] = useState(false);
+    const [showDetailsModal, setShowDetailsModal] = useState(true);
     const [showConfirmDialog, setShowConfirmDialog] = useState(false);
+    const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
     const [showToast, setShowToast] = useState(false);
     const [toastMessage, setToastMessage] = useState('');
     const [showDonationChoiceModal, setShowDonationChoiceModal] = useState(false);
+    const [loadingCauseId, setLoadingCauseId] = useState<number | null>(null);
 
     // Fetch collective data by name/slug
     const { data: crwdData, isLoading: isLoadingCrwd, error: crwdError } = useQuery({
@@ -163,7 +164,8 @@ export default function NewGivingGroupPage() {
         },
         onError: (error: any) => {
             console.error('Join collective error:', error);
-            toast.error('Failed to join collective. Please try again.');
+            setToastMessage('Failed to join collective. Please try again.');
+            setShowToast(true);
         },
     });
 
@@ -187,8 +189,6 @@ export default function NewGivingGroupPage() {
             console.error('Leave collective error:', error);
         },
     });
-
-
     // Toggle favorite mutation
     const toggleFavoriteMutation = useMutation({
         mutationFn: () => {
@@ -203,12 +203,46 @@ export default function NewGivingGroupPage() {
         },
         onError: (error: any) => {
             console.error('Toggle favorite error:', error);
-            toast.error('Failed to update favorite. Please try again.');
+            setToastMessage('Failed to update favorite. Please try again.');
+            setShowToast(true);
         },
     });
 
-    const isJoined = crwdData?.is_joined || false;
+    // Delete collective mutation
+    const deleteCollectiveMutation = useMutation({
+        mutationFn: () => deleteCollective(crwdData?.id || ''),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['joined-collectives'] });
+            queryClient.invalidateQueries({ queryKey: ['joined-collectives', currentUser?.id] });
+            queryClient.invalidateQueries({ queryKey: ['joined-collectives-manage'] });
+            queryClient.invalidateQueries({ queryKey: ['joinedCollectives'] });
+            
+            setToastMessage('Giving Group deleted successfully');
+            setShowToast(true);
+            
+            // Navigate back to home or collectives list
+            setTimeout(() => {
+                navigate('/');
+            }, 1000);
+        },
+        onError: (error: any) => {
+            console.error('Delete collective error:', error);
+            setToastMessage('Failed to delete Giving Group');
+            setShowToast(true);
+        },
+    });
 
+    const handleDeleteCollective = () => {
+        setShowDeleteConfirm(true);
+    };
+
+    const handleConfirmDelete = () => {
+        deleteCollectiveMutation.mutate();
+        setShowDeleteConfirm(false);
+    };
+
+
+    const isJoined = crwdData?.is_joined || false;
 
     // Loading state
     if (isLoadingCrwd) {
@@ -312,7 +346,8 @@ export default function NewGivingGroupPage() {
                 // toast.success('Nonprofits added to your donation box!');
             } catch (error) {
                 console.error('Error adding causes to donation box:', error);
-                toast.error('Failed to add nonprofits to donation box. Please try again.');
+                setToastMessage('Failed to add nonprofits to donation box. Please try again.');
+                setShowToast(true);
             }
         }
 
@@ -321,6 +356,47 @@ export default function NewGivingGroupPage() {
 
     const handleCloseJoinModal = () => {
         setShowJoinModal(false);
+    };
+
+    const handleToggleCause = async (causeId: number, isAdding: boolean) => {
+        if (!currentUser?.id || !token?.access_token) {
+            setToastMessage('Please log in to manage your donation box');
+            setShowToast(true);
+            return;
+        }
+
+        const handleOperation = async () => {
+            try {
+                setLoadingCauseId(causeId);
+                if (isAdding) {
+                    const currentCount = donationBoxData?.box_causes?.length || 0;
+                    const capacity = donationBoxData?.capacity || 0;
+                    if (donationBoxData?.id && currentCount >= capacity) {
+                        throw new Error('Donation box is at capacity');
+                    }
+
+                    await addCausesToBox({
+                        causes: [{
+                            cause_id: causeId,
+                            attributed_collective: parseInt(collectiveId)
+                        }]
+                    });
+                } else {
+                    await removeCauseFromBox(String(causeId));
+                }
+                queryClient.invalidateQueries({ queryKey: ['donationBox'] });
+                await refetchDonationBox();
+                setToastMessage(`Nonprofit ${isAdding ? 'added' : 'removed'} successfully!`);
+                setShowToast(true);
+            } catch (err: any) {
+                setToastMessage(err.message || `Failed to ${isAdding ? 'add' : 'remove'} nonprofit`);
+                setShowToast(true);
+            } finally {
+                setLoadingCauseId(null);
+            }
+        };
+
+        handleOperation();
     };
 
     const handleConfirmUnjoin = () => {
@@ -386,7 +462,7 @@ export default function NewGivingGroupPage() {
                 onMore={() => setShowDetailsModal(true)}
             />
 
-            <div className='lg:max-w-[60%] lg:mx-auto'>
+            <div className='lg:max-w-[60%] lg:mx-auto pb-20'>
 
                 <CommunityActivity
                     fromCollective={true}
@@ -454,7 +530,8 @@ export default function NewGivingGroupPage() {
                     onFavorite={() => toggleFavoriteMutation.mutate()}
                     onNotifications={() => {
                         setShowDetailsModal(false);
-                        toast.info("Notification settings coming soon!");
+                        setToastMessage("Notification settings coming soon!");
+                        setShowToast(true);
                     }}
                     onJoin={() => {
                         setShowDetailsModal(false);
@@ -468,25 +545,27 @@ export default function NewGivingGroupPage() {
                         setShowDetailsModal(false);
                         setShowConfirmDialog(true);
                     }}
-                    onStatClick={(tab) => {
-                        setShowDetailsModal(false);
-                        setStatisticsTab(tab);
-                        setShowStatisticsModal(true);
-                    }}
                     onManage={() => {
                         setShowDetailsModal(false);
                         navigate(`/edit-collective/${collectiveId}`);
                     }}
                     onDelete={() => {
                         setShowDetailsModal(false);
-                        // Handle delete logic or confirm dialog
+                        handleDeleteCollective();
                     }}
+                    onStatClick={(tab) => {
+                        setShowDetailsModal(false);
+                        setStatisticsTab(tab);
+                        setShowStatisticsModal(true);
+                    }}
+                    onToggleCause={handleToggleCause}
                     donationBox={donationBoxData}
+                    loadingCauseId={loadingCauseId}
                 />
 
             </div>
 
-            <Footer />
+            {/* <Footer /> */}
 
             {/* Donation Choice Bottom Sheet */}
             <AddToDonationBoxBottomSheet
@@ -548,6 +627,45 @@ export default function NewGivingGroupPage() {
                             className="w-full py-6 rounded-xl font-semibold text-base bg-gray-100 border-none hover:bg-gray-200"
                             onClick={() => setShowConfirmDialog(false)}
                             disabled={leaveCollectiveMutation.isPending}
+                        >
+                            Cancel
+                        </Button>
+                    </div>
+                </SheetContent>
+            </Sheet>
+
+            {/* Delete Collective Bottom Sheet */}
+            <Sheet open={showDeleteConfirm} onOpenChange={setShowDeleteConfirm}>
+                <SheetContent side="bottom" className="rounded-t-[20px] p-6 mx-auto">
+                    <SheetHeader className="text-center p-0">
+                        <SheetTitle className="text-xl font-bold text-gray-900">
+                            Delete Giving Group
+                        </SheetTitle>
+                        <SheetDescription className="text-gray-500 mt-2">
+                            Are you sure you want to delete this Giving Group? This action cannot be undone.
+                        </SheetDescription>
+                    </SheetHeader>
+                    <div className="flex flex-col gap-3 mt-6 ">
+                        <Button
+                            variant="destructive"
+                            className="w-full py-6 rounded-xl font-bold text-base"
+                            onClick={handleConfirmDelete}
+                            disabled={deleteCollectiveMutation.isPending}
+                        >
+                            {deleteCollectiveMutation.isPending ? (
+                                <>
+                                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                                    Deleting...
+                                </>
+                            ) : (
+                                'Delete Giving Group'
+                            )}
+                        </Button>
+                        <Button
+                            variant="secondary"
+                            className="w-full py-6 rounded-xl font-semibold text-base bg-gray-100 border-none hover:bg-gray-200"
+                            onClick={() => setShowDeleteConfirm(false)}
+                            disabled={deleteCollectiveMutation.isPending}
                         >
                             Cancel
                         </Button>

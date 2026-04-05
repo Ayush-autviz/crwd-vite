@@ -749,7 +749,6 @@ const ManageDonationBox: React.FC<ManageDonationBoxProps> = ({
   const defaultCauses = !showSearchResults && defaultCausesData?.results
     ? defaultCausesData.results
       .filter((cause: any) => !allSelectedCauseIds.includes(cause.id))
-      .slice(0, 5)
     : [];
 
   // Get joined collectives, excluding all selected ones

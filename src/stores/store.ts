@@ -51,7 +51,23 @@ export const useAuthStore = create<AuthState>()(
       token: null,
       setUser: (user) => set({ user }),
       setToken: (token) => set({ token }),
-      logout: () => set({ user: null, token: null }),
+      logout: () => {
+        set({ user: null, token: null });
+        // Manually clear storage just in case persist didn't catch it immediately
+        localStorage.removeItem('crwd-storage');
+        // Clear any other potential auth-related keys if they exist
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+        // Optionally clear session storage too 
+        sessionStorage.clear();
+        
+        // Clear all cookies
+        document.cookie.split(";").forEach((c) => {
+          document.cookie = c
+            .replace(/^ +/, "")
+            .replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/");
+        });
+      },
     }),
     persistConfig
   )

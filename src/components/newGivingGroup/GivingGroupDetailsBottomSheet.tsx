@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from 'react';
-import { Bell, UserPlus, Settings, Star, X, SquarePen } from 'lucide-react';
+import { Bell, UserPlus, Settings, Star, X, SquarePen, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
@@ -44,8 +44,10 @@ interface GivingGroupDetailsProps {
   onDelete?: () => void;
   onJoin?: () => void;
   onLeave?: () => void;
+  onToggleCause?: (causeId: number, isAdding: boolean) => void;
   onStatClick?: (tab: 'Nonprofits' | 'Members' | 'Donations') => void;
   donationBox?: any;
+  loadingCauseId?: number | null;
   isFavorited?: boolean;
   onFavorite?: () => void;
 }
@@ -63,8 +65,10 @@ export default function GivingGroupDetailsBottomSheet({
   onDelete,
   onJoin,
   onLeave,
+  onToggleCause,
   onStatClick,
   donationBox,
+  loadingCauseId = null,
   isFavorited = false,
   onFavorite,
 }: GivingGroupDetailsProps) {
@@ -251,13 +255,22 @@ export default function GivingGroupDetailsBottomSheet({
                       <span className="text-base sm:text-lg font-semibold text-gray-900">{name}</span>
                     </div>
                     <button
-                      onClick={() => {
-                        onClose();
-                        onJoin?.();
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        if (loadingCauseId === causeId) return;
+                        onToggleCause?.(causeId, !isInBox);
                       }}
-                      className={`text-sm font-bold ${isInBox ? 'text-gray-400' : 'text-[#1600ff]'}`}
+                      className={cn(
+                        "text-sm font-bold flex items-center justify-center min-w-[60px]",
+                        isInBox ? 'text-red-500' : 'text-[#1600ff]',
+                        loadingCauseId === causeId && "opacity-70 cursor-not-allowed"
+                      )}
                     >
-                      {isInBox ? 'Edit' : '+Add'}
+                      {loadingCauseId === causeId ? (
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                      ) : (
+                        isInBox ? 'Remove' : '+Add'
+                      )}
                     </button>
                   </div>
                 );

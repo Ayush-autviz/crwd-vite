@@ -49,9 +49,10 @@ const Circles = () => {
           to="/create-crwd"
           className="flex items-center gap-4 py-4 px-4 hover:bg-gray-50 transition-colors border-b border-gray-200"
         >
-          <div className="w-12 h-12 rounded-lg bg-blue-50 flex items-center justify-center shrink-0">
-            <span className="text-[#2222EE] font-bold text-xl">G</span>
-          </div>
+          <Avatar className="w-12 h-12 rounded-lg">
+            <AvatarImage src={currentUser?.profile_picture} />
+            <AvatarFallback className="text-white text-lg rounded-lg font-bold" style={{ backgroundColor: currentUser?.color }}>{currentUser?.first_name.charAt(0).toUpperCase()}</AvatarFallback>
+          </Avatar>
           <div className="flex-1 min-w-0">
             <h3 className="font-bold text-lg text-gray-900 leading-tight">Start a Giving Group</h3>
             <p className="text-sm text-gray-500 font-medium truncate">Bring people together around causes you care about</p>
@@ -77,7 +78,7 @@ const Circles = () => {
           <div className="flex items-center gap-4">
             <Avatar className="w-12 h-12 rounded-lg">
               <AvatarImage src={circle.logo} />
-              <AvatarFallback className="text-white rounded-lg font-bold" style={{ backgroundColor: circle.color }}>{initials}</AvatarFallback>
+              <AvatarFallback className="text-white text-lg rounded-lg font-bold" style={{ backgroundColor: circle.color }}>{initials}</AvatarFallback>
             </Avatar>
             <div className="flex-1 min-w-0">
               <div className="flex justify-between items-start">

@@ -47,11 +47,7 @@ instance.interceptors.response.use(
         return instance(originalRequest);
 
       } catch {
-        useAuthStore.getState().setToken({
-          access_token: "",
-          refresh_token: "",
-        });
-        useAuthStore.getState().setUser({});
+        useAuthStore.getState().logout();
         window.location.href = "/login";
       }
     }
