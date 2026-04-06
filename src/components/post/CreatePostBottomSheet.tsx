@@ -502,7 +502,7 @@ export default function CreatePostBottomSheet({
                     <div className="flex flex-wrap gap-2.5 mb-8">
                         <button onClick={() => handlePostTypeSelect("image")} className="flex items-center gap-2 px-4 py-2.5 border border-gray-200 rounded-full hover:bg-gray-50 active:scale-95 transition-all"><ImageIcon className="w-5 h-5 text-gray-600" /><span className="text-[14px] font-bold text-gray-800">Add Image</span></button>
                         <button onClick={() => handlePostTypeSelect("link")} className="flex items-center gap-2 px-4 py-2.5 border border-gray-200 rounded-full hover:bg-gray-50 active:scale-95 transition-all"><Link2 className="w-5 h-5 text-gray-600" /><span className="text-[14px] font-bold text-gray-800">Add Link</span></button>
-                        {selectedCollective && (selectedCollective.role === "admin" || selectedCollective.role === "Admin") && (
+                        {selectedCollective && (selectedCollective.created_by.id === currentUser?.id) && (
                             <button
                                 onClick={() => navigate(`/create-fundraiser/${(selectedCollective.collective || selectedCollective).id}`)}
                                 className="flex items-center gap-2 px-4 py-2.5 border border-gray-200 rounded-full hover:bg-gray-50 active:scale-95 transition-all"

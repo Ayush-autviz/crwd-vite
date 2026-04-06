@@ -110,7 +110,7 @@ export default function NewSearchPage() {
 
                 <div className="flex-1">
                   <h3 className="font-bold text-sm xs:text-base md:text-lg text-foreground mb-0.5 md:mb-1">
-                    Browse
+                    Browse Nonprofits
                   </h3>
                   <p className="text-xs xs:text-sm md:text-base text-gray-600">
                     Discover nonprofits by category
@@ -135,8 +135,8 @@ export default function NewSearchPage() {
                             handleCategoryClick(cat);
                           }}
                           className="px-3 py-1.5 rounded-full text-xs font-bold transition-all whitespace-nowrap shadow-sm hover:scale-[1.05] active:scale-[0.95]"
-                          style={{ 
-                            backgroundColor: cat.background_color || '#f3f4f6', 
+                          style={{
+                            backgroundColor: cat.background_color || '#f3f4f6',
                             color: cat.text_color || cat.color || '#111'
                           }}
                         >
