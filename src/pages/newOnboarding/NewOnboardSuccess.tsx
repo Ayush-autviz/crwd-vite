@@ -47,7 +47,7 @@ export default function NewOnboardSuccess() {
         return;
       }
     }
-    navigate(destination);
+    navigate(destination, { state: { from: 'onboarding' } });
   };
 
   const handleShare = () => {
@@ -151,7 +151,7 @@ export default function NewOnboardSuccess() {
           </Button>
 
           <button
-            onClick={() => handleFinalAction("/")}
+            onClick={() => handleFinalAction("/profile")}
             disabled={createDonationBoxMutation.isPending}
             className="w-full text-center text-gray-400 font-bold text-xs sm:text-sm hover:text-gray-900"
           >

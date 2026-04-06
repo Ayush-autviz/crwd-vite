@@ -11,6 +11,7 @@ import {
   DoorOpenIcon,
   Share2Icon,
   Ellipsis,
+  Heart,
 } from "lucide-react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { Toast } from "../components/ui/toast";
@@ -83,7 +84,7 @@ export default function ProfilePage() {
 
   const handleBack = () => {
     const from = location.state?.from;
-    if (from === 'onboarding' || from === 'Login' || from === 'ClaimProfile') {
+    if (from === 'onboarding' || from === 'Login' || from === 'ClaimProfile' || location.key === 'default') {
       navigate('/');
     } else {
       navigate(-1);
@@ -411,7 +412,7 @@ export default function ProfilePage() {
       {/* Navbar */}
       <header className="w-full flex items-center justify-between h-16 px-3 bg-white border-b sticky top-0 z-10 transition-colors">
         <div className="flex items-center gap-3">
-          <button onClick={handleBack} className="p-1 -ml-1 text-gray-700 hover:bg-gray-100 rounded-full md:hidden">
+          <button onClick={handleBack} className="p-1 -ml-1 text-gray-700 hover:bg-gray-100 rounded-full">
             <ChevronLeft size={24} />
           </button>
           <h1 className="text-lg font-bold text-gray-900 tracking-tight">{fullName}</h1>
@@ -444,6 +445,16 @@ export default function ProfilePage() {
           )}
         </div>
       </header>
+
+      {/* Activate Donation Box Prompt */}
+      {(!profileData?.supported_causes_count || profileData?.supported_causes_count === 0) && (
+        <div className="sticky top-16 z-20 w-full bg-red-50/95 backdrop-blur-md border-b border-red-100 py-3 flex justify-center shadow-sm transition-all hover:bg-red-50">
+          <div className="text-red-500 hover:text-red-600 font-semibold text-sm flex items-center gap-2 group">
+            <Heart size={16} color="#EF4444" fill="#EF4444" />
+            Activate your Donation Box
+          </div>
+        </div>
+      )}
 
       <div className="max-w-3xl mx-auto">
         {/* User Info Section */}

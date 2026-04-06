@@ -60,7 +60,7 @@ export default function NewAddNonprofits() {
     // navigate(`/donation-amount?redirectTo=${encodeURIComponent(redirectTo)}`, {
     //   state: { ...(location.state as any) }
     // });
-    navigate('/')
+    navigate('/profile', { state: { from: 'onboarding' } });
   };
 
   return (

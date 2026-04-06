@@ -77,7 +77,7 @@ export default function NewDonationAmount() {
     // navigate(`/onboard-success?redirectTo=${encodeURIComponent(redirectTo)}`, {
     //   state: { ...(location.state as any) }
     // });
-    navigate('/')
+    navigate('/profile', { state: { from: 'onboarding' } });
   };
 
   return (
