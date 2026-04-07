@@ -30,6 +30,7 @@ import { getJoinCollective } from "@/services/api/crwd";
 import { logout } from "@/services/api/auth";
 import { useAuthStore } from "@/stores/store";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import { getDonationBox } from "@/services/api/donation";
 import { queryClient } from "@/lib/react-query/client";
 import {
   Sheet,
@@ -142,6 +143,12 @@ export default function ProfilePage() {
   const { data: profileData, isLoading: profileLoading, error: profileError, refetch: refetchProfile } = useQuery({
     queryKey: ['userProfile', currentUser?.id],
     queryFn: () => getUserProfileById(currentUser?.id || ''),
+    enabled: !!currentUser?.id,
+  });
+
+  const { data: donationBoxData, isLoading: donationBoxLoading } = useQuery({
+    queryKey: ['donationBox'],
+    queryFn: getDonationBox,
     enabled: !!currentUser?.id,
   });
 
@@ -447,7 +454,7 @@ export default function ProfilePage() {
       </header>
 
       {/* Activate Donation Box Prompt */}
-      {(!profileData?.supported_causes_count || profileData?.supported_causes_count === 0) && (
+      {!donationBoxData?.is_active && !donationBoxLoading && (
         <div className="sticky top-16 z-20 w-full bg-red-50/95 backdrop-blur-md border-b border-red-100 py-3 flex justify-center shadow-sm transition-all hover:bg-red-50">
           <div className="text-red-500 hover:text-red-600 font-semibold text-sm flex items-center gap-2 group">
             <Heart size={16} color="#EF4444" fill="#EF4444" />
