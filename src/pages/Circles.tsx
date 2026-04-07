@@ -54,7 +54,7 @@ const Circles = () => {
             <AvatarFallback className="text-white text-lg rounded-lg font-bold" style={{ backgroundColor: currentUser?.color }}>{currentUser?.first_name.charAt(0).toUpperCase()}</AvatarFallback>
           </Avatar>
           <div className="flex-1 min-w-0">
-            <h3 className="font-bold text-lg text-gray-900 leading-tight">Start a Giving Group</h3>
+            <h3 className="font-semibold text-lg text-gray-900 leading-tight">Start a Giving Group</h3>
             <p className="text-sm text-gray-500 font-medium truncate">Bring people together around causes you care about</p>
           </div>
           <ChevronRight className="w-5 h-5 text-gray-500" />
@@ -82,7 +82,7 @@ const Circles = () => {
             </Avatar>
             <div className="flex-1 min-w-0">
               <div className="flex justify-between items-start">
-                <h3 className="font-bold text-lg sm:text-xl text-gray-900 leading-tight truncate">{name}</h3>
+                <h3 className="font-semibold text-lg sm:text-xl text-gray-900 leading-tight truncate">{name}</h3>
               </div>
               <div className="flex justify-between items-center">
                 <p className="text-base sm:text-base text-gray-600 font-medium">
