@@ -452,10 +452,11 @@ export default function CommunityPostCard({ post, onCommentPress, showSimplified
           </div>
         )}
 
-        <div className="flex items-center gap-2 md:gap-3">
+        {/* Header Row (Avatar + Name + Meta + Actions) */}
+        <div className="flex items-center gap-2 md:gap-3 mb-3">
           {/* Avatar */}
-          <Link to={`/u/${post.user.username}`}>
-            <Avatar className="h-8 w-8 xs:w-9 xs:h-9 md:h-10 md:w-10 flex-shrink-0">
+          <Link to={`/u/${post.user.username}`} className="flex-shrink-0">
+            <Avatar className="h-8 w-8 xs:w-9 xs:h-9 md:h-10 md:w-10">
               <AvatarImage src={post.user.avatar} alt={displayName} />
               <AvatarFallback
                 style={{ backgroundColor: avatarBgColor }}
@@ -467,43 +468,38 @@ export default function CommunityPostCard({ post, onCommentPress, showSimplified
           </Link>
 
           {/* User Info and Follow Button */}
-          <div className="flex-1 min-w-0">
-            <div className="mb-1.5 md:mb-3 flex items-center justify-between">
-              <div className="flex flex-col">
-                <div className="flex items-center gap-1 md:gap-2 flex-wrap">
-                  <Link
-                    to={`/u/${post.user.username}`}
-                    onClick={(e) => e.stopPropagation()}
-                    className="text-xs xs:text-base md:text-lg font-bold text-gray-900 hover:underline cursor-pointer"
-                  >
-                    {displayName}
-                  </Link>
-                  {post.fundraiser?.is_active && (
-                    <span className="px-2 py-0.5 bg-[#1600ff] text-white text-[8px] xs:text-[10px] md:text-[12px] font-medium rounded-full">
-                      Organizer
-                    </span>
-                  )}
-                </div>
-                {!showSimplifiedHeader && post.collective && (
-                  <Link
-                    to={post.collective.id ? `/g/${post.collective.sort_name}` : '#'}
-                    onClick={(e) => e.stopPropagation()}
-                    className="text-[11px] xs:text-sm md:text-base text-gray-500 hover:text-gray-700 flex items-center gap-1"
-                  >
-                    <Users className="text-gray-500 w-3 h-3 md:w-4 md:h-4" strokeWidth={2.5} />
-                    {post.collective.name}
-                  </Link>
+          <div className="flex-1 flex items-center justify-between min-w-0">
+            <div className="flex flex-col min-w-0">
+              <div className="flex items-center gap-1 md:gap-2 flex-wrap min-w-0">
+                <Link
+                  to={`/u/${post.user.username}`}
+                  onClick={(e) => e.stopPropagation()}
+                  className="text-xs xs:text-base md:text-lg font-bold text-gray-900 hover:underline cursor-pointer truncate"
+                >
+                  {displayName}
+                </Link>
+                {post.fundraiser?.is_active && (
+                  <span className="px-2 py-0.5 bg-[#1600ff] text-white text-[8px] xs:text-[10px] md:text-[12px] font-medium rounded-full">
+                    Organizer
+                  </span>
                 )}
-                {post.fundraiser && !isHomeFeed && (
-                  <p className="text-[10px] xs:text-xs md:text-sm text-gray-500 mb-0.5">Started a fundraiser</p>
-                )}
-                {/* {showSimplifiedHeader && post.timestamp && !post.fundraiser?.is_active && (
-                  <div className="text-[10px] xs:text-xs md:text-sm text-gray-500">
-                    {formatDistanceToNow(new Date(post.timestamp), { addSuffix: true })}
-                  </div>
-                )} */}
               </div>
+              {!showSimplifiedHeader && post.collective && (
+                <Link
+                  to={post.collective.id ? `/g/${post.collective.sort_name}` : '#'}
+                  onClick={(e) => e.stopPropagation()}
+                  className="text-[11px] xs:text-sm md:text-base text-gray-500 hover:text-gray-700 flex items-center gap-1 truncate"
+                >
+                  <Users className="text-gray-500 w-3 h-3 md:w-4 md:h-4 flex-shrink-0" strokeWidth={2.5} />
+                  <span className="truncate">{post.collective.name}</span>
+                </Link>
+              )}
+              {post.fundraiser && !isHomeFeed && (
+                <p className="text-[10px] xs:text-xs md:text-sm text-gray-500">Started a fundraiser</p>
+              )}
+            </div>
 
+            <div className="flex items-center gap-2">
               {/* Follow Button - Only show for not current user & in home feed */}
               {isHomeFeed && !isFollowing && post.user.id !== currentUser?.id && (
                 <button
@@ -513,7 +509,7 @@ export default function CommunityPostCard({ post, onCommentPress, showSimplified
                     handleFollowClick();
                   }}
                   disabled={followMutation.isPending || unfollowMutation.isPending || isLoadingProfile}
-                  className={`ml-2 text-[10px] xs:text-xs md:text-sm font-semibold px-2 xs:px-3 md:px-4 py-1 rounded-full flex-shrink-0 transition-colors ${isFollowing
+                  className={`text-[10px] xs:text-xs md:text-sm font-semibold px-2 xs:px-3 md:px-4 py-1 rounded-full flex-shrink-0 transition-colors ${isFollowing
                     ? 'bg-[#1600ff] text-white border border-[#1600ff] hover:bg-[#1400cc]'
                     : 'bg-white text-[#1600ff] border border-[#1600ff] hover:bg-blue-50'
                     }`}
@@ -524,7 +520,7 @@ export default function CommunityPostCard({ post, onCommentPress, showSimplified
 
               {/* Ellipsis Menu for User's Own Posts */}
               {post.user.id === currentUser?.id && !post.fundraiser?.is_active && (
-                <div className="relative ml-2" ref={postMenuRef}>
+                <div className="relative" ref={postMenuRef}>
                   <button
                     onClick={(e) => {
                       e.preventDefault();
@@ -559,6 +555,13 @@ export default function CommunityPostCard({ post, onCommentPress, showSimplified
             </div>
           </div>
         </div>
+
+        {/* Content Row (Indented) */}
+        <div className="flex gap-2 md:gap-3">
+          {/* Spacer matching avatar width (h-8 w-8 xs:w-9 xs:h-9 md:h-10 md:w-10) */}
+          <div className="w-8 xs:w-9 md:w-10 flex-shrink-0 hidden md:block" />
+          
+          <div className="flex-1 min-w-0">
 
         <Link to={post.fundraiser ? `/fundraiser/${encodePostId(post.fundraiser.id)}` : `/post/${encodePostId(post.id)}`} className="block">
           {post.fundraiser ? (
@@ -867,6 +870,8 @@ export default function CommunityPostCard({ post, onCommentPress, showSimplified
         </Link>
         {/* </div> */}
         {/* </div> */}
+          </div>
+        </div>
       </CardContent>
 
       {/* Comments Bottom Sheet */}

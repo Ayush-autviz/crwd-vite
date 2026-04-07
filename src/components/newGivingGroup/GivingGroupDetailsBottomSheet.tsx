@@ -1,8 +1,12 @@
 import { useState, useEffect, useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Bell, UserPlus, Settings, Star, X, SquarePen, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
+
+import { Link } from "react-router-dom";
+import { useAuthStore } from "@/stores/store";
 
 interface Nonprofit {
   id: number;
@@ -18,6 +22,7 @@ interface Nonprofit {
     image?: string;
     mission?: string;
     description?: string;
+    sort_name?: string;
   };
 }
 
@@ -34,6 +39,7 @@ interface GivingGroupDetailsProps {
     description: string;
     avatar?: string;
     color?: string;
+    founderUsername?: string;
   };
   nonprofits: Nonprofit[];
   isAdmin?: boolean;
@@ -75,6 +81,8 @@ export default function GivingGroupDetailsBottomSheet({
   const [isVisible, setIsVisible] = useState(false);
   const [isAnimating, setIsAnimating] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
+  const navigate = useNavigate();
+  const currentUser = useAuthStore((state) => state.user);
 
   const existingCauseIds = useMemo(() => {
     const ids = new Set<number>();
@@ -110,6 +118,24 @@ export default function GivingGroupDetailsBottomSheet({
       .join('')
       .substring(0, 1)
       .toUpperCase();
+  };
+
+  const avatarColors = [
+    '#F97316', // Orange
+    '#EC4899', // Pink
+    '#10B981', // Green
+    '#3B82F6', // Blue
+    '#8B5CF6', // Purple
+    '#F59E0B', // Amber
+    '#EF4444', // Red
+    '#06B6D4', // Cyan
+    '#84CC16', // Lime
+    '#A855F7', // Violet
+  ];
+
+  const getConsistentColor = (id: number | string, colors: string[]) => {
+    const hash = typeof id === 'number' ? id : id.split('').reduce((acc: number, char: string) => acc + char.charCodeAt(0), 0);
+    return colors[hash % colors.length];
   };
 
   const wordLimit = 25;
@@ -164,7 +190,18 @@ export default function GivingGroupDetailsBottomSheet({
               {groupData.name}
             </h2>
             <p className="text-base sm:text-lg text-gray-800 ">
-              Founded by {groupData.founderName} · {groupData.memberCount.toLocaleString()} members
+              Founded by{' '}
+              <Link 
+                to={currentUser?.username === groupData.founderUsername ? '/profile' : `/u/${groupData.founderUsername}`}
+                className="text-[#2222EE] font-medium hover:underline"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onClose();
+                }}
+              >
+                {groupData.founderName}
+              </Link>
+              {' '}· {groupData.memberCount.toLocaleString()} member{groupData.memberCount !== 1 ? 's' : ''}
             </p>
             <div className="text-base sm:text-lg text-gray-800 mt-1 font-normal ">
               {!isExpanded && canExpand ? (
@@ -240,38 +277,49 @@ export default function GivingGroupDetailsBottomSheet({
                 const name = cause.name || np.name || 'Unknown Nonprofit';
                 const logo = cause.logo || cause.image || np.logo || np.image;
                 const initials = name.charAt(0).toUpperCase();
-                const causeId = cause.id || np.id;
+                const causeId = cause.sort_name || np.id;
                 const isInBox = existingCauseIds.has(causeId);
 
                 return (
                   <div key={np.id} className="flex items-center justify-between py-3 border-b border-gray-50 last:border-0 grow">
-                    <div className="flex items-center gap-3 max-w-[87%]">
+                    <div
+                      className="flex items-center gap-3 max-w-[87%] cursor-pointer hover:opacity-80 transition-opacity"
+                      onClick={() => {
+                        onClose();
+                        navigate(`/c/${causeId}`);
+                      }}
+                    >
                       <Avatar className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg">
                         <AvatarImage src={logo} />
-                        <AvatarFallback className="bg-gray-100 text-gray-500 text-xs font-bold rounded-lg">
+                        <AvatarFallback
+                          style={{ backgroundColor: getConsistentColor(causeId, avatarColors) }}
+                          className="text-white text-xs font-bold rounded-lg"
+                        >
                           {initials}
                         </AvatarFallback>
                       </Avatar>
                       <span className="text-base sm:text-lg font-semibold text-gray-900">{name}</span>
                     </div>
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        if (loadingCauseId === causeId) return;
-                        onToggleCause?.(causeId, !isInBox);
-                      }}
-                      className={cn(
-                        "text-sm font-bold flex items-center justify-center min-w-[60px]",
-                        isInBox ? 'text-red-500' : 'text-[#1600ff]',
-                        loadingCauseId === causeId && "opacity-70 cursor-not-allowed"
-                      )}
-                    >
-                      {loadingCauseId === causeId ? (
-                        <Loader2 className="w-4 h-4 animate-spin" />
-                      ) : (
-                        isInBox ? 'Remove' : '+Add'
-                      )}
-                    </button>
+                    {(isJoined || isAdmin) && (
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          if (loadingCauseId === causeId) return;
+                          onToggleCause?.(causeId, !isInBox);
+                        }}
+                        className={cn(
+                          "text-sm font-bold flex items-center justify-center min-w-[60px]",
+                          isInBox ? 'text-red-500' : 'text-[#1600ff]',
+                          loadingCauseId === causeId && "opacity-70 cursor-not-allowed"
+                        )}
+                      >
+                        {loadingCauseId === causeId ? (
+                          <Loader2 className="w-4 h-4 animate-spin" />
+                        ) : (
+                          isInBox ? 'Remove' : '+Add'
+                        )}
+                      </button>
+                    )}
                   </div>
                 );
               })}

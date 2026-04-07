@@ -1,6 +1,6 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Link, useNavigate, useLocation } from "react-router-dom";
-import { Heart, MessageCircle, Share2, MoreHorizontal, Pin, Pencil, Flag, Trash2, Users, MessagesSquare, MessageSquare } from "lucide-react";
+import { Heart, MoreHorizontal, Pin, Pencil, Flag, Trash2, Users, MessageSquare } from "lucide-react";
 import dayjs from 'dayjs';
 import { useState, useRef, useEffect } from "react";
 import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
@@ -452,10 +452,10 @@ export default function GivingPostCard({ post, onCommentPress, showSimplifiedHea
                     </div>
                 )}
 
-                <div className="flex items-start gap-2 md:gap-3 border-b border-gray-200">
-                    {/* Avatar */}
-                    <Link to={`/u/${post.user.username}`}>
-                        <Avatar className="h-8 w-8 xs:w-9 xs:h-9 md:h-10 md:w-10 flex-shrink-0">
+                {/* Header Row (Avatar + Name + Meta + Actions) */}
+                <div className="flex items-center gap-2 md:gap-3 mb-3">
+                    <Link to={`/u/${post.user.username}`} className="flex-shrink-0">
+                        <Avatar className="h-8 w-8 xs:w-9 xs:h-9 md:h-10 md:w-10">
                             <AvatarImage src={post.user.avatar} alt={displayName} />
                             <AvatarFallback
                                 style={{ backgroundColor: avatarBgColor }}
@@ -465,101 +465,102 @@ export default function GivingPostCard({ post, onCommentPress, showSimplifiedHea
                             </AvatarFallback>
                         </Avatar>
                     </Link>
-                    <div className="flex-1 min-w-0">
-                        {/* User Info and Follow Button */}
-                        <div className="flex-1 min-w-0">
-                            <div className="mb-1.5 md:mb-3 flex items-center justify-between">
-                                <div className="flex flex-col">
-                                    <div className="flex items-center gap-1 md:gap-2 flex-wrap">
-                                        <Link
-                                            to={`/u/${post.user.username}`}
-                                            onClick={(e) => e.stopPropagation()}
-                                            className="text-xs xs:text-base md:text-lg font-bold text-gray-900 hover:underline cursor-pointer"
-                                        >
-                                            {displayName}
-                                        </Link>
-                                        {post.fundraiser?.is_active && (
-                                            <span className="px-2 py-0.5 bg-[#1600ff] text-white text-[8px] xs:text-[10px] md:text-[12px] font-medium rounded-full">
-                                                Organizer
-                                            </span>
-                                        )}
-                                    </div>
-                                    {!showSimplifiedHeader && post.collective && (
-                                        <Link
-                                            to={post.collective.id ? `/g/${post.collective.sort_name}` : '#'}
-                                            onClick={(e) => e.stopPropagation()}
-                                            className="text-[11px] xs:text-sm md:text-base text-gray-500 hover:text-gray-700 flex items-center gap-1"
-                                        >
-                                            <Users className="text-gray-500 w-3 h-3 md:w-4 md:h-4" strokeWidth={2.5} />
-                                            {post.collective.name}
-                                        </Link>
-                                    )}
-                                    {post.fundraiser && !isHomeFeed && (
-                                        <p className="text-[10px] xs:text-xs md:text-sm text-gray-500 mb-0.5">Started a fundraiser</p>
-                                    )}
-                                    {/* {showSimplifiedHeader && post.timestamp && !post.fundraiser?.is_active && (
-                  <div className="text-[10px] xs:text-xs md:text-sm text-gray-500">
-                    {formatDistanceToNow(new Date(post.timestamp), { addSuffix: true })}
-                  </div>
-                )} */}
-                                </div>
+                    
+                    <div className="flex-1 flex items-center justify-between min-w-0">
+                        <div className="flex flex-col min-w-0">
+                            <div className="flex items-center gap-1 md:gap-2 flex-wrap">
+                                <Link
+                                    to={`/u/${post.user.username}`}
+                                    onClick={(e) => e.stopPropagation()}
+                                    className="text-xs xs:text-base md:text-lg font-bold text-gray-900 hover:underline cursor-pointer truncate"
+                                >
+                                    {displayName}
+                                </Link>
+                                {post.fundraiser?.is_active && (
+                                    <span className="px-2 py-0.5 bg-[#1600ff] text-white text-[8px] xs:text-[10px] md:text-[12px] font-medium rounded-full">
+                                        Organizer
+                                    </span>
+                                )}
+                            </div>
+                            
+                            {!showSimplifiedHeader && post.collective && (
+                                <Link
+                                    to={post.collective.id ? `/g/${post.collective.sort_name}` : '#'}
+                                    onClick={(e) => e.stopPropagation()}
+                                    className="text-[11px] xs:text-sm md:text-base text-gray-500 hover:text-gray-700 flex items-center gap-1"
+                                >
+                                    <Users className="text-gray-500 w-3 h-3 md:w-4 md:h-4" strokeWidth={2.5} />
+                                    {post.collective.name}
+                                </Link>
+                            )}
+                            {post.fundraiser && !isHomeFeed && (
+                                <p className="text-[10px] xs:text-xs md:text-sm text-gray-500">Started a fundraiser</p>
+                            )}
+                        </div>
 
-                                {/* Follow Button - Only show for not current user & in home feed */}
-                                {isHomeFeed && !isFollowing && post.user.id !== currentUser?.id && (
+                        <div className="flex items-center gap-2">
+                            {/* Follow Button - Only show for not current user & in home feed */}
+                            {isHomeFeed && !isFollowing && post.user.id !== currentUser?.id && (
+                                <button
+                                    onClick={(e) => {
+                                        e.preventDefault();
+                                        e.stopPropagation();
+                                        handleFollowClick();
+                                    }}
+                                    disabled={followMutation.isPending || unfollowMutation.isPending || isLoadingProfile}
+                                    className={`text-[10px] xs:text-xs md:text-sm font-semibold px-2 xs:px-3 md:px-4 py-1 rounded-full flex-shrink-0 transition-colors ${isFollowing
+                                        ? 'bg-[#1600ff] text-white border border-[#1600ff] hover:bg-[#1400cc]'
+                                        : 'bg-white text-[#1600ff] border border-[#1600ff] hover:bg-blue-50'
+                                        }`}
+                                >
+                                    {followMutation.isPending || unfollowMutation.isPending || isLoadingProfile ? '...' : isFollowing ? 'Following' : 'Follow'}
+                                </button>
+                            )}
+
+                            {/* Ellipsis Menu for User's Own Posts */}
+                            {post.user.id === currentUser?.id && !post.fundraiser?.is_active && (
+                                <div className="relative" ref={postMenuRef}>
                                     <button
                                         onClick={(e) => {
                                             e.preventDefault();
                                             e.stopPropagation();
-                                            handleFollowClick();
+                                            setShowPostMenu(!showPostMenu);
                                         }}
-                                        disabled={followMutation.isPending || unfollowMutation.isPending || isLoadingProfile}
-                                        className={`ml-2 text-[10px] xs:text-xs md:text-sm font-semibold px-2 xs:px-3 md:px-4 py-1 rounded-full flex-shrink-0 transition-colors ${isFollowing
-                                            ? 'bg-[#1600ff] text-white border border-[#1600ff] hover:bg-[#1400cc]'
-                                            : 'bg-white text-[#1600ff] border border-[#1600ff] hover:bg-blue-50'
-                                            }`}
+                                        className="p-1 hover:bg-gray-100 rounded-full transition-colors flex-shrink-0"
                                     >
-                                        {followMutation.isPending || unfollowMutation.isPending || isLoadingProfile ? '...' : isFollowing ? 'Following' : 'Follow'}
+                                        <MoreHorizontal className="w-4 h-4 md:w-5 md:h-5 text-gray-500" />
                                     </button>
-                                )}
 
-                                {/* Ellipsis Menu for User's Own Posts */}
-                                {post.user.id === currentUser?.id && !post.fundraiser?.is_active && (
-                                    <div className="relative ml-2" ref={postMenuRef}>
-                                        <button
-                                            onClick={(e) => {
-                                                e.preventDefault();
-                                                e.stopPropagation();
-                                                setShowPostMenu(!showPostMenu);
-                                            }}
-                                            className="p-1 hover:bg-gray-100 rounded-full transition-colors flex-shrink-0"
-                                        >
-                                            <MoreHorizontal className="w-4 h-4 md:w-5 md:h-5 text-gray-500" />
-                                        </button>
-
-                                        {/* Dropdown Menu */}
-                                        {showPostMenu && (
-                                            <div className="absolute right-0 top-8 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-50 min-w-[140px]">
-                                                <button
-                                                    onClick={(e) => {
-                                                        e.preventDefault();
-                                                        e.stopPropagation();
-                                                        setShowPostMenu(false);
-                                                        setShowDeleteDialog(true);
-                                                    }}
-                                                    disabled={deletePostMutation.isPending}
-                                                    className="w-full flex items-center gap-2 px-3 py-2 text-xs md:text-sm text-red-600 hover:bg-gray-50 transition-colors"
-                                                >
-                                                    <Trash2 className="w-4 h-4 text-red-600" />
-                                                    <span>Delete Post</span>
-                                                </button>
-                                            </div>
-                                        )}
-                                    </div>
-                                )}
-                            </div>
+                                    {/* Dropdown Menu */}
+                                    {showPostMenu && (
+                                        <div className="absolute right-0 top-8 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-50 min-w-[140px]">
+                                            <button
+                                                onClick={(e) => {
+                                                    e.preventDefault();
+                                                    e.stopPropagation();
+                                                    setShowPostMenu(false);
+                                                    setShowDeleteDialog(true);
+                                                }}
+                                                disabled={deletePostMutation.isPending}
+                                                className="w-full flex items-center gap-2 px-3 py-2 text-xs md:text-sm text-red-600 hover:bg-gray-50 transition-colors"
+                                            >
+                                                <Trash2 className="w-4 h-4 text-red-600" />
+                                                <span>Delete Post</span>
+                                            </button>
+                                        </div>
+                                    )}
+                                </div>
+                            )}
                         </div>
-                        {/* </div> */}
+                    </div>
+                </div>
 
+                {/* Body Content Row (Indented) */}
+                <div className="flex gap-2 md:gap-3">
+                    {/* Spacer for indentation on desktop */}
+                    <div className="w-8 xs:w-9 md:w-10 flex-shrink-0 hidden md:block" />
+                    
+                    <div className="flex-1 min-w-0">
                         <Link to={post.fundraiser ? `/fundraiser/${encodePostId(post.fundraiser.id)}` : `/post/${encodePostId(post.id)}`} className="block">
                             {post.fundraiser ? (
                                 <>

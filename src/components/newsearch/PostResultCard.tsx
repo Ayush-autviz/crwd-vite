@@ -235,81 +235,90 @@ export default function PostResultCard({ post }: PostResultCardProps) {
     >
       <CardContent className="px-3 md:px-6">
         {/* User Header */}
-        <div className="flex items-start justify-between mb-2.5 md:mb-3">
-          <div className="flex items-start gap-2.5 md:gap-3 flex-1 min-w-0">
-            {user && (
-              <Avatar className="w-8 h-8 md:w-11 md:h-11 rounded-full flex-shrink-0">
-                <AvatarImage src={user.profile_picture} alt={fullName} />
-                <AvatarFallback
-                  style={{ backgroundColor: avatarBgColor }}
-                  className="text-white font-bold text-xs md:text-sm"
-                >
-                  {initials}
-                </AvatarFallback>
-              </Avatar>
-            )}
-            <div className="flex-1 min-w-0">
-              <div className="flex items-center gap-1.5 md:gap-2 flex-wrap">
+        {/* Header Row (Avatar + Name + Collective + Ellipsis) */}
+        <div className="flex items-center gap-2.5 md:gap-3 mb-3">
+          {user && (
+            <Avatar className="w-8 h-8 md:w-11 md:h-11 rounded-full flex-shrink-0">
+              <AvatarImage src={user.profile_picture} alt={fullName} />
+              <AvatarFallback
+                style={{ backgroundColor: avatarBgColor }}
+                className="text-white font-bold text-xs md:text-sm"
+              >
+                {initials}
+              </AvatarFallback>
+            </Avatar>
+          )}
+          
+          <div className="flex-1 flex items-center justify-between min-w-0">
+            <div className="flex-1 flex flex-col min-w-0">
+              <div className="flex items-center gap-1.5 md:gap-2 flex-wrap min-w-0">
                 {user && (
                   <Link
                     to={`/u/${user.username}`}
                     onClick={(e) => e.stopPropagation()}
-                    className="font-bold text-xs xs:text-sm md:text-base text-gray-900 hover:text-blue-600 transition-colors cursor-pointer"
+                    className="font-bold text-xs xs:text-sm md:text-base text-gray-900 hover:text-blue-600 transition-colors cursor-pointer truncate"
                   >
                     {fullName}
                   </Link>
                 )}
                 {post.collective && (
-                  <>
-                    <span className="text-gray-400">•</span>
+                  <div className="flex items-center gap-1.5 md:gap-2 min-w-0">
+                    <span className="text-gray-400 flex-shrink-0">•</span>
                     <Link
                       to={`/g/${post.collective.sort_name}`}
                       onClick={(e) => e.stopPropagation()}
-                      className="text-xs xs:text-sm md:text-base text-gray-500 font-medium hover:underline transition-colors cursor-pointer"
+                      className="text-xs xs:text-sm md:text-base text-gray-500 font-medium hover:underline transition-colors cursor-pointer truncate"
                     >
                       {post.collective.name}
                     </Link>
-                  </>
+                  </div>
                 )}
               </div>
             </div>
+
+            {/* Ellipsis Menu for User's Own Posts */}
+            {user?.id === currentUser?.id && !post.fundraiser?.is_active && (
+              <div className="relative ml-2" ref={postMenuRef}>
+                <button
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    setShowPostMenu(!showPostMenu);
+                  }}
+                  className="p-1 hover:bg-gray-100 rounded-full transition-colors flex-shrink-0"
+                >
+                  <MoreHorizontal className="w-4 h-4 md:w-5 md:h-5 text-gray-500" />
+                </button>
+
+                {/* Dropdown Menu */}
+                {showPostMenu && (
+                  <div className="absolute right-0 top-8 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-50 min-w-[140px]">
+                    <button
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        setShowPostMenu(false);
+                        setShowDeleteDialog(true);
+                      }}
+                      disabled={deletePostMutation.isPending}
+                      className="w-full flex items-center gap-2 px-3 py-2 text-xs md:text-sm text-red-600 hover:bg-gray-50 transition-colors"
+                    >
+                      <Trash2 className="w-4 h-4 text-red-600" />
+                      <span>Delete Post</span>
+                    </button>
+                  </div>
+                )}
+              </div>
+            )}
           </div>
-
-          {/* Ellipsis Menu for User's Own Posts */}
-          {user?.id === currentUser?.id && !post.fundraiser?.is_active && (
-            <div className="relative ml-2" ref={postMenuRef}>
-              <button
-                onClick={(e) => {
-                  e.preventDefault();
-                  e.stopPropagation();
-                  setShowPostMenu(!showPostMenu);
-                }}
-                className="p-1 hover:bg-gray-100 rounded-full transition-colors flex-shrink-0"
-              >
-                <MoreHorizontal className="w-4 h-4 md:w-5 md:h-5 text-gray-500" />
-              </button>
-
-              {/* Dropdown Menu */}
-              {showPostMenu && (
-                <div className="absolute right-0 top-8 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-50 min-w-[140px]">
-                  <button
-                    onClick={(e) => {
-                      e.preventDefault();
-                      e.stopPropagation();
-                      setShowPostMenu(false);
-                      setShowDeleteDialog(true);
-                    }}
-                    disabled={deletePostMutation.isPending}
-                    className="w-full flex items-center gap-2 px-3 py-2 text-xs md:text-sm text-red-600 hover:bg-gray-50 transition-colors"
-                  >
-                    <Trash2 className="w-4 h-4 text-red-600" />
-                    <span>Delete Post</span>
-                  </button>
-                </div>
-              )}
-            </div>
-          )}
         </div>
+
+        {/* Content Area (Indented) */}
+        <div className="flex gap-2.5 md:gap-3">
+          {/* Spacer matching avatar width (w-8 md:w-11) */}
+          <div className="w-8 md:w-11 flex-shrink-0 hidden md:block" />
+          
+          <div className="flex-1 min-w-0">
 
         {/* Post Content */}
         {post.content && !post.fundraiser && (
@@ -536,6 +545,8 @@ export default function PostResultCard({ post }: PostResultCardProps) {
           >
             <Share2 className="w-4 h-4 md:w-5 md:h-5 text-gray-500" strokeWidth={2} />
           </button>
+            </div>
+          </div>
         </div>
       </CardContent>
 

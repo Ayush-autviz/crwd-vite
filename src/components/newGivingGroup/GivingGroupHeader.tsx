@@ -62,14 +62,10 @@ export default function GivingGroupHeader({
           <ArrowLeft strokeWidth={2.5} className="w-4 h-4 md:w-5 md:h-5 text-gray-700" />
         </button>
 
-        <div className="flex items-center gap-2.5 min-w-0">
-          {/* <div className="w-9 h-9 bg-[#1600ff] rounded-xl flex items-center justify-center text-white font-bold text-[10px] flex-shrink-0 overflow-hidden">
-            {avatar ? (
-              <img src={avatar} alt={title} className="w-full h-full object-cover" />
-            ) : (
-              <span>{getInitials(title)}</span>
-            )}
-          </div> */}
+        <div 
+          className="flex items-center gap-2.5 min-w-0 cursor-pointer hover:opacity-80 transition-opacity"
+          onClick={onMore}
+        >
           <Avatar className='rounded-md w-10 h-10'>
             <AvatarImage src={avatar} />
             <AvatarFallback className='text-white rounded-md font-semibold text-lg sm:text-xl' style={{ backgroundColor: color }}>{getInitials(title)}</AvatarFallback>
@@ -79,9 +75,6 @@ export default function GivingGroupHeader({
             <h1 className="text-lg sm:text-xl font-bold text-gray-900 truncate tracking-tight">
               {title}
             </h1>
-            {/* <p className="text-sm sm:text-base text-gray-500 font-medium whitespace-nowrap">
-              {memberCount.toLocaleString()} members
-            </p> */}
           </div>
         </div>
       </div>

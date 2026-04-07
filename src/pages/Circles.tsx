@@ -86,7 +86,7 @@ const Circles = () => {
               </div>
               <div className="flex justify-between items-center">
                 <p className="text-base sm:text-base text-gray-600 font-medium">
-                  {nonprofitCount} nonprofits · {memberCount} members
+                  {nonprofitCount} nonprofit{nonprofitCount !== 1 ? 's' : ''} · {memberCount} member{memberCount !== 1 ? 's' : ''}
                 </p>
               </div>
             </div>
@@ -99,6 +99,17 @@ const Circles = () => {
 
   const myGroups = joinCollectiveData?.data?.map((item: any) => item.collective || item) || [];
   const discoverGroups = collectiveData?.results?.filter((c: any) => !joinedCollectiveIds.has(c.id)) || [];
+
+  const CircleSkeleton = () => (
+    <div className="flex items-center gap-4 py-4 px-4 border-b border-gray-200 animate-pulse">
+      <div className="w-12 h-12 bg-gray-200 rounded-lg shrink-0" />
+      <div className="flex-1 min-w-0 space-y-2">
+        <div className="h-5 bg-gray-200 rounded w-1/3" />
+        <div className="h-4 bg-gray-200 rounded w-1/2" />
+      </div>
+      <div className="w-5 h-5 bg-gray-100 rounded-full" />
+    </div>
+  );
 
   return (
     <div className="min-h-screen bg-white">
@@ -159,25 +170,35 @@ const Circles = () => {
           {activeTab === "my-crwds" ? (
             <>
               <GroupItem isStartAction />
-              {myGroups.map((group: any) => (
-                <GroupItem key={group.id} circle={group} />
-              ))}
-              {myGroups.length === 0 && !isLoadingJoinCollective && (
-                <div className="text-center py-20 px-6">
-                  <div className="bg-gray-50 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <Users className="w-10 h-10 text-gray-300" />
-                  </div>
-                  <h3 className="text-xl font-bold text-gray-900 mb-2">No groups yet</h3>
-                  <p className="text-gray-500 font-medium">Join a group from the discover tab or start your own!</p>
-                </div>
+              {isLoadingJoinCollective ? (
+                Array(5).fill(0).map((_, i) => <CircleSkeleton key={i} />)
+              ) : (
+                <>
+                  {myGroups.map((group: any) => (
+                    <GroupItem key={group.id} circle={group} />
+                  ))}
+                  {myGroups.length === 0 && (
+                    <div className="text-center py-20 px-6">
+                      <div className="bg-gray-50 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <Users className="w-10 h-10 text-gray-300" />
+                      </div>
+                      <h3 className="text-xl font-bold text-gray-900 mb-2">No groups yet</h3>
+                      <p className="text-gray-500 font-medium">Join a group from the discover tab or start your own!</p>
+                    </div>
+                  )}
+                </>
               )}
             </>
           ) : (
             <div className="divide-y divide-gray-100">
               <GroupItem isStartAction />
-              {discoverGroups.map((group: any) => (
-                <GroupItem key={group.id} circle={group} />
-              ))}
+              {isLoadingJoinCollective || (activeTab === 'discover' && !collectiveData) ? (
+                Array(5).fill(0).map((_, i) => <CircleSkeleton key={i} />)
+              ) : (
+                discoverGroups.map((group: any) => (
+                  <GroupItem key={group.id} circle={group} />
+                ))
+              )}
             </div>
           )}
         </div>
@@ -191,4 +212,4 @@ const Circles = () => {
   );
 };
 
-export default Circles;
+export default Circles; 

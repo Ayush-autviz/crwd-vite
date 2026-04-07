@@ -356,16 +356,14 @@ export default function ProfileActivityCard({
       >
         {/* Base padding px-4 (increased from px-3), md remains px-4 */}
         <CardContent className="px-4 md:px-4">
-          <div className="flex gap-3 md:gap-3">
-            {/* <Link to={isOwnPost ? `/profile` : `/user-profile/${post.userId}`}> */}
-            <a href={isOwnPost ? `/profile` : `/u/${post.username}`}>
-              {/* Increased mobile avatar size: h-10 w-10 (was 9) */}
+          {/* Header Row (Avatar + Name + Ellipsis) */}
+          <div className="flex items-center gap-3 md:gap-3 mb-2">
+            <Link to={isOwnPost ? `/profile` : `/u/${post.username}`}>
               <Avatar className="h-10 w-10 md:h-10 md:w-10 flex-shrink-0">
                 <AvatarImage
                   src={imageUrl ?? post.avatarUrl}
                   alt={displayName}
                 />
-                {/* Increased mobile font size */}
                 <AvatarFallback
                   style={{ backgroundColor: avatarBgColor }}
                   className="text-white font-bold text-sm md:text-sm"
@@ -373,71 +371,70 @@ export default function ProfileActivityCard({
                   {initials}
                 </AvatarFallback>
               </Avatar>
-            </a>
-            {/* </Link> */}
-            <div className="flex-1 min-w-0">
-              <div className="flex items-start justify-between mb-2 md:mb-3">
-                <div className="flex-1 flex-wrap items-center">
-                  {/* Increased mobile name text to text-sm */}
-                  <span className="text-sm md:text-sm font-semibold text-gray-900">{displayName}</span>
-                  <div className="flex items-center gap-1">
-                    {/* Increased mobile time text to text-xs (was 10px) */}
-                    <span className="text-xs md:text-xs text-gray-500">{finalFormattedTime}</span>
-                  </div>
-                </div>
-                {isOwnPost && (
-                  <div className="relative" ref={menuRef}>
-                    <button
-                      onClick={(e) => {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        setShowMenu(!showMenu);
-                      }}
-                      className="p-1 md:p-1 rounded-full hover:bg-gray-100 transition-colors"
-                    >
-                      {/* Increased mobile icon size */}
-                      <EllipsisIcon className="h-5 w-5 md:h-5 md:w-5 text-gray-500 cursor-pointer" />
-                    </button>
+            </Link>
 
-                    {showMenu && (
-                      <div className="absolute right-0 top-8 md:top-8 bg-white border border-gray-200 rounded-md shadow-lg z-10 w-36 md:w-36">
-                        <button
-                          onClick={(e) => {
-                            e.preventDefault();
-                            e.stopPropagation();
-                            setShowMenu(false);
-                            setShowShareModal(true);
-                          }}
-                          // Increased mobile menu text
-                          className="flex items-center gap-2 md:gap-2 w-full px-3 md:px-3 py-2 md:py-2 text-sm md:text-sm text-gray-700 hover:bg-gray-50 transition-colors"
-                        >
-                          <Share2 className="h-4 w-4 md:h-4 md:w-4" />
-                          Share Post
-                        </button>
-                        <button
-                          onClick={(e) => {
-                            e.preventDefault();
-                            e.stopPropagation();
-                            setShowMenu(false);
-                            setShowDeleteConfirm(true);
-                          }}
-                          className="flex items-center gap-2 md:gap-2 w-full px-3 md:px-3 py-2 md:py-2 text-sm md:text-sm text-red-600 hover:bg-gray-50 transition-colors"
-                        >
-                          <Trash2 className="h-4 w-4 md:h-4 md:w-4" />
-                          Delete Post
-                        </button>
-                      </div>
-                    )}
-                  </div>
-                )}
+            <div className="flex-1 flex items-center justify-between min-w-0">
+              <div className="flex flex-col min-w-0">
+                <span className="text-sm md:text-sm font-semibold text-gray-900 truncate">{displayName}</span>
+                <span className="text-xs md:text-xs text-gray-500">{finalFormattedTime}</span>
               </div>
 
+              {isOwnPost && (
+                <div className="relative" ref={menuRef}>
+                  <button
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      setShowMenu(!showMenu);
+                    }}
+                    className="p-1 md:p-1 rounded-full hover:bg-gray-100 transition-colors"
+                  >
+                    <EllipsisIcon className="h-5 w-5 md:h-5 md:w-5 text-gray-500 cursor-pointer" />
+                  </button>
+
+                  {showMenu && (
+                    <div className="absolute right-0 top-8 md:top-8 bg-white border border-gray-200 rounded-md shadow-lg z-20 w-36 md:w-36">
+                      <button
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          setShowMenu(false);
+                          setShowShareModal(true);
+                        }}
+                        className="flex items-center gap-2 md:gap-2 w-full px-3 md:px-3 py-2 md:py-2 text-sm md:text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+                      >
+                        <Share2 className="h-4 w-4 md:h-4 md:w-4" />
+                        Share Post
+                      </button>
+                      <button
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          setShowMenu(false);
+                          setShowDeleteConfirm(true);
+                        }}
+                        className="flex items-center gap-2 md:gap-2 w-full px-3 md:px-3 py-2 md:py-2 text-sm md:text-sm text-red-600 hover:bg-gray-50 transition-colors"
+                      >
+                        <Trash2 className="h-4 w-4 md:h-4 md:w-4" />
+                        Delete Post
+                      </button>
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Content Block (Indented under avatar) */}
+          <div className="flex gap-3 md:gap-3">
+            {/* Left Spacer to match avatar width (w-10 = 40px) */}
+            <div className="w-10 flex-shrink-0 hidden md:block" />
+
+            <div className="flex-1 min-w-0">
               <Link to={post.fundraiser ? `/fundraiser/${encodePostId(post.fundraiser.id)}` : `/post/${encodePostId(post.id)}`} className="block">
-                {/* <a href={post.fundraiser ? `/fundraiser/${post.fundraiser.id}` : `/post/${post.id}`} className="block"> */}
                 {/* Fundraiser Post UI */}
                 {post.fundraiser ? (
                   <>
-                    {/* Fundraiser Cover Image/Color */}
                     <div className="w-full rounded-lg overflow-hidden mb-3 md:mb-3 aspect-[2/1]" style={{ maxWidth: '600px' }}>
                       {post.fundraiser.image ? (
                         <img
@@ -457,17 +454,14 @@ export default function ProfileActivityCard({
                       )}
                     </div>
 
-                    {/* Fundraiser Info */}
                     <div className="mb-3 md:mb-3">
                       <p className="text-sm md:text-sm text-gray-500 mb-1">Started a fundraiser</p>
                       <h3 className="text-base md:text-base font-bold text-gray-900 mb-3 md:mb-3">
                         {post.fundraiser.name}
                       </h3>
 
-                      {/* Amount and Progress */}
                       <div className="mb-2">
                         <div className="flex items-baseline gap-2 mb-1.5">
-                          {/* Increased amount size */}
                           <span className="text-xl md:text-xl font-bold text-[#1600ff]">
                             ${parseFloat(post.fundraiser.current_amount || '0').toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
                           </span>
@@ -475,7 +469,6 @@ export default function ProfileActivityCard({
                             raised of ${parseFloat(post.fundraiser.target_amount || '0').toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 })} goal
                           </span>
                         </div>
-                        {/* Progress Bar */}
                         <div className="w-full h-2 md:h-2 bg-gray-200 rounded-full overflow-hidden">
                           <div
                             className="h-full bg-[#1600ff] transition-all duration-300"
@@ -487,22 +480,19 @@ export default function ProfileActivityCard({
                   </>
                 ) : (
                   <>
-                    {/* Increased mobile post text to text-sm */}
                     <div className="text-sm md:text-sm text-gray-900 leading-6 mb-3 md:mb-3 whitespace-pre-line">
                       {renderContentWithMentions(post.text || "", post.mentions)}
                     </div>
 
-                    {/* Show preview card if previewDetails exists, otherwise show image */}
                     {post.previewDetails ? (
-                      <a
-                        href={post.previewDetails.url}
+                      <Link
+                        to={post.previewDetails.url}
                         target="_blank"
                         rel="noopener noreferrer"
                         onClick={(e) => e.stopPropagation()}
                         className="block w-full rounded-lg overflow-hidden mb-3 border border-gray-200 bg-white hover:opacity-90 transition-opacity cursor-pointer"
                       >
                         <div className="flex flex-col md:flex-row bg-white">
-                          {/* Preview Image */}
                           {post.previewDetails.image && (
                             <div className="w-full md:w-48 aspect-[2/1] md:aspect-auto flex-shrink-0">
                               <img
@@ -512,7 +502,6 @@ export default function ProfileActivityCard({
                               />
                             </div>
                           )}
-                          {/* Preview Content */}
                           <div className="flex-1 p-3 md:p-3 overflow-hidden">
                             {post.previewDetails.site_name && (
                               <div className="text-[10px] md:text-[10px] text-gray-500 uppercase tracking-wide mb-1 md:mb-1">
@@ -536,7 +525,7 @@ export default function ProfileActivityCard({
                               </p>
                             )}
                             {post.previewDetails.domain && (
-                              <div className="text-[11px] md:text-[11px] text-gray-500 truncate">
+                              <div className="text-[12px] md:text-[12px] text-gray-500 truncate">
                                 {post.previewDetails.domain}
                               </div>
                             )}
@@ -547,10 +536,10 @@ export default function ProfileActivityCard({
                             )}
                           </div>
                         </div>
-                      </a>
+                      </Link>
                     ) : post.imageUrl ? (
-                      <a
-                        href={post.imageUrl}
+                      <Link
+                        to={post.imageUrl}
                         target="_blank"
                         rel="noopener noreferrer"
                         onClick={(e) => e.stopPropagation()}
@@ -562,7 +551,7 @@ export default function ProfileActivityCard({
                           alt="Post"
                           className=" max-h-[300px] rounded-lg object-contain"
                         />
-                      </a>
+                      </Link>
                     ) : null}
                   </>
                 )}
@@ -579,7 +568,6 @@ export default function ProfileActivityCard({
                         <Loader2 className="w-5 h-5 md:w-5 md:h-5 animate-spin text-gray-500" />
                       ) : (
                         <Heart
-                          // Increased mobile icon size to 5/20px (was 4/16px)
                           className={`w-5 h-5 md:w-5 md:h-5 ${isLiked ? "fill-[#ef4444] text-[#ef4444]" : "text-gray-500"
                             }`}
                         />
@@ -594,7 +582,6 @@ export default function ProfileActivityCard({
                       }}
                       className="flex items-center gap-1.5 md:gap-1.5 hover:opacity-80 transition-opacity"
                     >
-                      {/* Increased mobile icon size */}
                       <MessageCircle className="w-5 h-5 md:w-5 md:h-5 text-gray-500" />
                       <span className="text-sm md:text-sm text-gray-500">{post.comments}</span>
                     </button>
@@ -610,7 +597,6 @@ export default function ProfileActivityCard({
                     <Share2 className="w-5 h-5 md:w-5 md:h-5 text-gray-500" />
                   </button>
                 </div>
-                {/* </a> */}
               </Link>
             </div>
           </div>

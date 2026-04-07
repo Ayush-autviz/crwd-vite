@@ -5,6 +5,7 @@ import { getCollectiveCauses, getCollectiveMembers, getCollectiveDonationHistory
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { useNavigate } from 'react-router-dom';
 import { truncateAtFirstPeriod } from '@/lib/utils';
+import { useAuthStore } from '@/stores/store';
 
 interface CollectiveStatisticsModalProps {
   isOpen: boolean;
@@ -13,6 +14,7 @@ interface CollectiveStatisticsModalProps {
   collectiveName?: string;
   initialTab?: 'Nonprofits' | 'Members' | 'Donations';
   previouslySupported?: any[];
+  founderId?: number;
 }
 
 type TabType = 'Nonprofits' | 'Members' | 'Donations';
@@ -23,8 +25,10 @@ export default function CollectiveStatisticsModal({
   collectiveId,
   initialTab = 'Nonprofits',
   previouslySupported = [],
+  founderId,
 }: CollectiveStatisticsModalProps) {
   const [activeTab, setActiveTab] = useState<TabType>(initialTab);
+  const { user } = useAuthStore();
   const [isVisible, setIsVisible] = useState(false);
   const [isAnimating, setIsAnimating] = useState(false);
   const navigate = useNavigate();
@@ -383,13 +387,15 @@ export default function CollectiveStatisticsModal({
                     {/* Collective Donations Box */}
                     <div className="bg-[#f0fdf4] border border-[#86efac] rounded-lg p-2 md:p-3 lg:p-4">
                       <h3 className="text-sm md:text-base lg:text-base font-semibold text-gray-700 mb-1 md:mb-2">
-                        Collective Donations
+                        Group Donations
                       </h3>
-                      {/* <p className="text-xl md:text-2xl lg:text-3xl font-bold text-blue-600 mb-1">
-                        ${donationHistoryData?.total_donated_to_collective?.toFixed(2) || '0.00'}
-                      </p> */}
+                      {founderId === user?.id &&
+                        <p className="text-xl md:text-2xl lg:text-3xl font-bold text-blue-600 mb-1">
+                          ${donationHistoryData?.total_donated_to_collective?.toFixed(2) || '0.00'}
+                        </p>
+                      }
                       <p className="text-xs md:text-sm lg:text-sm text-gray-600">
-                        {donations.filter((d: any) => d.amount_attributed_to_collective > 0).length} donation{donations.filter((d: any) => d.amount_attributed_to_collective > 0).length !== 1 ? 's' : ''} credited to this collective
+                        {donations.filter((d: any) => d.amount_attributed_to_collective > 0).length} donation{donations.filter((d: any) => d.amount_attributed_to_collective > 0).length !== 1 ? 's' : ''} credited to this group
                       </p>
                     </div>
 

@@ -5,7 +5,7 @@ interface ProfileBioProps {
 }
 
 const ProfileBio: React.FC<ProfileBioProps> = ({ bio }) => (
-  <div className="pb-2 mx-auto text-base md:text-md text-gray-600 leading-snug">
+  <div className="pb-2 text-base md:text-md text-gray-600 leading-snug">
     {bio}
   </div>
 );

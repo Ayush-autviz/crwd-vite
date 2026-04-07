@@ -216,10 +216,10 @@ export default function NewGivingGroupPage() {
             queryClient.invalidateQueries({ queryKey: ['joined-collectives', currentUser?.id] });
             queryClient.invalidateQueries({ queryKey: ['joined-collectives-manage'] });
             queryClient.invalidateQueries({ queryKey: ['joinedCollectives'] });
-            
+
             setToastMessage('Giving Group deleted successfully');
             setShowToast(true);
-            
+
             // Navigate back to home or collectives list
             setTimeout(() => {
                 navigate('/');
@@ -259,10 +259,10 @@ export default function NewGivingGroupPage() {
             <div className="min-h-screen bg-white flex items-center justify-center px-3 md:px-4">
                 <div className="text-center">
                     <p className="text-base md:text-lg font-semibold text-gray-900 mb-1.5 md:mb-2">
-                        Collective not found
+                        Givng Group not found
                     </p>
                     <p className="text-sm md:text-base text-gray-600 mb-3 md:mb-4">
-                        The collective you're looking for doesn't exist or has been removed.
+                        The Giving Group you're looking for doesn't exist or has been removed.
                     </p>
                     <Button onClick={() => navigate('/')} variant="outline" className="text-sm md:text-base py-2 md:py-2.5 px-3 md:px-4">
                         Go Home
@@ -502,6 +502,7 @@ export default function NewGivingGroupPage() {
                     collectiveName={crwdData.name}
                     initialTab={statisticsTab}
                     previouslySupported={inactiveCauses}
+                    founderId={crwdData.created_by.id}
                 />
 
                 {/* Details Modal */}
@@ -518,6 +519,7 @@ export default function NewGivingGroupPage() {
                         description: crwdData.description,
                         avatar: crwdData.avatar,
                         color: crwdData.color,
+                        founderUsername: crwdData.created_by?.username,
                     }}
                     nonprofits={nonprofits}
                     isAdmin={isAdmin}
@@ -600,10 +602,10 @@ export default function NewGivingGroupPage() {
                 <SheetContent side="bottom" className="rounded-t-[20px] p-6 mx-auto">
                     <SheetHeader className="text-center p-0">
                         <SheetTitle className="text-xl font-bold text-gray-900">
-                            Leave Collective
+                            Leave Group
                         </SheetTitle>
                         <SheetDescription className="text-gray-500 mt-2">
-                            Are you sure you want to leave this collective? You can always join back later.
+                            Are you sure you want to leave this Group? You can always join back later.
                         </SheetDescription>
                     </SheetHeader>
                     <div className="flex flex-col gap-3 mt-6 ">
@@ -619,7 +621,7 @@ export default function NewGivingGroupPage() {
                                     Leaving...
                                 </>
                             ) : (
-                                'Leave Collective'
+                                'Leave Group'
                             )}
                         </Button>
                         <Button
