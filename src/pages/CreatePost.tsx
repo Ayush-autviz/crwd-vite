@@ -617,16 +617,16 @@ export default function CreatePostPage() {
             )}
 
             {/* Character Count */}
-            {/* <div className="absolute bottom-3 right-4">
+            <div className="absolute bottom-3 right-4">
               <span className="text-[13px] font-medium text-gray-400">
                 {characterCount}/{maxCharacters}
               </span>
-            </div> */}
+            </div>
           </div>
         </div>
 
         {/* Action Buttons */}
-        {/* <div className="flex flex-wrap gap-2.5 mb-8">
+        <div className="flex flex-wrap gap-2.5 mb-8">
           <button
             onClick={() => handlePostTypeSelect("image")}
             className="flex items-center gap-2 px-4 py-2.5 border border-gray-200 rounded-full hover:bg-gray-50 hover:border-gray-300 transition-all active:scale-95"
@@ -641,7 +641,7 @@ export default function CreatePostPage() {
             <Link2 className="w-5 h-5 text-gray-600" />
             <span className="text-[14px] font-bold text-gray-800">Add Link</span>
           </button>
-          {selectedCollective && (selectedCollective.role === "admin" || selectedCollective.role === "Admin") && (
+          {selectedCollective && (selectedCollective.created_by.id === currentUser?.id) && (
             <button
               onClick={() => navigate(`/create-fundraiser/${(selectedCollective.collective || selectedCollective).id}`)}
               className="flex items-center gap-2 px-4 py-2.5 border border-gray-200 rounded-full hover:bg-gray-50 hover:border-gray-300 transition-all active:scale-95"
@@ -650,7 +650,7 @@ export default function CreatePostPage() {
               <span className="text-[14px] font-bold text-gray-800">Create Fundraiser</span>
             </button>
           )}
-        </div> */}
+        </div>
 
         {/* Link Input Field - Show when link is selected or URL is entered */}
         {(postType === "link" || form.url) && (
@@ -769,7 +769,7 @@ export default function CreatePostPage() {
 
       </div>
 
-      <div className="px-4 py-4 max-w-2xl mx-auto w-full">
+      {/* <div className="px-4 py-4 max-w-2xl mx-auto w-full">
         <div className="text-right mb-4">
           <span className="text-sm font-medium text-gray-400">
             {characterCount}/{maxCharacters}
@@ -800,7 +800,7 @@ export default function CreatePostPage() {
             </button>
           )}
         </div>
-      </div>
+      </div> */}
 
       {/* Posting Tips Box */}
       {/* <div className="mt-auto bg-[#f0f7ff] rounded-2xl p-5 border border-[#e0efff]">

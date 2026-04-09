@@ -436,15 +436,15 @@ export default function CreatePostBottomSheet({
                                 ) : (
                                     <MentionSearchResults results={mentionResults} onSelect={handleMentionSelect} className="mt-1" position="bottom" />
                                 )}
-                                {/* <div className="absolute bottom-3 right-4"><span className="text-[13px] font-medium text-gray-400">{characterCount}/{maxCharacters}</span></div> */}
+                                <div className="absolute bottom-3 right-4"><span className="text-[13px] font-medium text-gray-400">{characterCount}/{maxCharacters}</span></div>
                             </div>
                         </div>
 
                         {/* Action Buttons */}
-                        {/* <div className="flex flex-wrap gap-2.5 mb-8">
+                        <div className="flex flex-wrap gap-2.5 mb-8">
                             <button onClick={() => handlePostTypeSelect("image")} className="flex items-center gap-2 px-4 py-2.5 border border-gray-200 rounded-full hover:bg-gray-50 active:scale-95 transition-all"><ImageIcon className="w-5 h-5 text-gray-600" /><span className="text-[14px] font-bold text-gray-800">Add Image</span></button>
                             <button onClick={() => handlePostTypeSelect("link")} className="flex items-center gap-2 px-4 py-2.5 border border-gray-200 rounded-full hover:bg-gray-50 active:scale-95 transition-all"><Link2 className="w-5 h-5 text-gray-600" /><span className="text-[14px] font-bold text-gray-800">Add Link</span></button>
-                            {selectedCollective && (selectedCollective.role === "admin" || selectedCollective.role === "Admin") && (
+                            {selectedCollective && (selectedCollective.created_by.id === currentUser?.id) && (
                                 <button
                                     onClick={() => navigate(`/create-fundraiser/${(selectedCollective.collective || selectedCollective).id}`)}
                                     className="flex items-center gap-2 px-4 py-2.5 border border-gray-200 rounded-full hover:bg-gray-50 active:scale-95 transition-all"
@@ -453,7 +453,7 @@ export default function CreatePostBottomSheet({
                                     <span className="text-[14px] font-bold text-gray-800">Create Fundraiser</span>
                                 </button>
                             )}
-                        </div> */}
+                        </div>
 
                         {/* Link Input Field */}
                         {(postType === "link" || form.url) && (
@@ -496,7 +496,7 @@ export default function CreatePostBottomSheet({
                     </div>
                 </div>
 
-                <div className="p-4  max-w-2xl mx-auto w-full">
+                {/* <div className="p-4  max-w-2xl mx-auto w-full">
                     <div className="text-right mb-4"><span className="text-[13px] font-medium text-gray-400">{characterCount}/{maxCharacters}</span></div>
 
                     <div className="flex flex-wrap gap-2.5 mb-8">
@@ -512,7 +512,7 @@ export default function CreatePostBottomSheet({
                             </button>
                         )}
                     </div>
-                </div>
+                </div> */}
 
                 <input type="file" ref={fileInputRef} className="hidden" accept="image/*" onChange={handleImageSelect} />
             </SheetContent>

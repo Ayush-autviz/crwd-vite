@@ -22,7 +22,7 @@ const Footer = () => {
   };
 
   return (
-    <div className="bg-black text-white">
+    <div className="bg-black text-white hidden md:block">
       <div className="max-w-7xl mx-auto px-3 md:px-4 lg:px-8 py-8 md:py-12 lg:py-16">
         {/* Logo at Top */}
         <div className="mb-4 md:mb-6">

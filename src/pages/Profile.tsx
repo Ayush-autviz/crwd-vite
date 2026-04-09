@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { SharePost } from "@/components/ui/SharePost";
 import { Button } from "@/components/ui/button";
 import Footer from "@/components/Footer";
@@ -12,6 +12,7 @@ import {
   Share2Icon,
   Ellipsis,
   Heart,
+  Pencil,
 } from "lucide-react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { Toast } from "../components/ui/toast";
@@ -40,7 +41,7 @@ import {
   SheetDescription,
 } from "@/components/ui/sheet";
 import { truncateAtFirstPeriod } from "@/lib/utils";
-import { UserProfileHeader } from "@/components/profile/ProfileHeader";
+import UserProfileHeader from "../components/profile/ProfileHeader";
 
 // Avatar colors for consistent fallback styling (same as NewCreateCollective.tsx)
 const avatarColors = [
@@ -417,7 +418,7 @@ export default function ProfilePage() {
   return (
     <div className="bg-white min-h-screen">
       {/* Navbar */}
-      <header className="w-full flex items-center justify-between h-16 px-3 bg-white border-b sticky top-0 z-10 transition-colors">
+      <header className="sticky top-0 z-40 w-full flex items-center justify-between h-16 px-3 bg-white border-b transition-colors">
         <div className="flex items-center gap-3">
           <button onClick={handleBack} className="p-1 -ml-1 text-gray-700 hover:bg-gray-100 rounded-full">
             <ChevronLeft size={24} />
@@ -429,7 +430,7 @@ export default function ProfilePage() {
             <Ellipsis size={20} strokeWidth={3} />
           </button>
           {showMenu && (
-            <div className="absolute right-0 top-11 bg-white border border-gray-200 rounded-xl shadow-xl z-20 w-44 py-1 animate-in fade-in slide-in-from-top-2 duration-300">
+            <div className="absolute right-0 top-11 bg-white border border-gray-200 rounded-xl shadow-xl z-[100] w-44 py-1 animate-in fade-in slide-in-from-top-2 duration-300">
               <button
                 onClick={() => { setShowMenu(false); handleShareProfile(); }}
                 className="flex items-center gap-3 w-full px-4 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
@@ -455,7 +456,10 @@ export default function ProfilePage() {
 
       {/* Activate Donation Box Prompt */}
       {!donationBoxData?.is_active && !donationBoxLoading && (
-        <div className="sticky top-16 z-20 w-full bg-red-50/95 backdrop-blur-md border-b border-red-100 py-3 flex justify-center shadow-sm transition-all hover:bg-red-50">
+        <div
+          onClick={() => navigate("/donation")}
+          className="sticky top-16 z-20 w-full bg-red-50/95 backdrop-blur-md border-b border-red-100 py-3 flex justify-center shadow-sm transition-all hover:bg-red-50 cursor-pointer"
+        >
           <div className="text-red-500 hover:text-red-600 font-semibold text-sm flex items-center gap-2 group">
             <Heart size={16} color="#EF4444" fill="#EF4444" />
             Activate your Donation Box
@@ -478,11 +482,19 @@ export default function ProfilePage() {
             followingCount={profileData?.following_count}
             getInitials={getInitials}
             onStatPress={handleStatPress}
+            isOwnProfile={true}
           />
 
           {/* Bio */}
-          {profileData?.bio && (
+          {profileData?.bio ? (
             <ProfileBio bio={profileData?.bio} />
+          ) : (
+            <button
+              onClick={() => navigate("/settings")}
+              className="text-sm font-semibold text-[#2222EE] hover:underline block mb-4"
+            >
+              Add a bio
+            </button>
           )}
 
           {/* {profileData?.inspired_people_count > 0 && (

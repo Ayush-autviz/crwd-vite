@@ -72,7 +72,7 @@ export default function NewGivingGroupPage() {
     const collectiveId = crwdData?.id?.toString() ?? crwdId;
 
     // Fetch collective causes (nonprofits) - use resolved collective id
-    const { data: causesData } = useQuery({
+    const { data: causesData, isLoading: isLoadingCauses } = useQuery({
         queryKey: ['collective-causes', collectiveId],
         queryFn: () => getCollectiveCauses(crwdData?.id || ''),
         enabled: !!crwdData?.id,
@@ -563,6 +563,7 @@ export default function NewGivingGroupPage() {
                     onToggleCause={handleToggleCause}
                     donationBox={donationBoxData}
                     loadingCauseId={loadingCauseId}
+                    isLoadingNonprofits={isLoadingCauses}
                 />
 
             </div>

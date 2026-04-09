@@ -56,6 +56,7 @@ interface GivingGroupDetailsProps {
   loadingCauseId?: number | null;
   isFavorited?: boolean;
   onFavorite?: () => void;
+  isLoadingNonprofits?: boolean;
 }
 
 export default function GivingGroupDetailsBottomSheet({
@@ -77,6 +78,7 @@ export default function GivingGroupDetailsBottomSheet({
   loadingCauseId = null,
   isFavorited = false,
   onFavorite,
+  isLoadingNonprofits = false,
 }: GivingGroupDetailsProps) {
   const [isVisible, setIsVisible] = useState(false);
   const [isAnimating, setIsAnimating] = useState(false);
@@ -268,11 +270,24 @@ export default function GivingGroupDetailsBottomSheet({
 
           {/* Nonprofits Section */}
           <div className="mt-10">
-            <h3 className="text-sm sm:text-base font-bold text-gray-500 uppercase tracking-wide mb-4">
-              Nonprofits in this group
+            <h3 className="text-sm sm:text-base font-bold text-gray-500 uppercase tracking-wide mb-1">
+              WHERE YOUR DONATION GOES
             </h3>
+            <p className="text-xs text-gray-400 mb-4">
+              Your monthly amount is split evenly across these nonprofits.
+            </p>
             <div className="space-y-0">
-              {nonprofits.map((np) => {
+              {isLoadingNonprofits ? (
+                Array.from({ length: 3 }).map((_, i) => (
+                  <div key={i} className="flex items-center justify-between py-3 border-b border-gray-50 last:border-0 animate-pulse">
+                    <div className="flex items-center gap-3">
+                      <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg bg-gray-200" />
+                      <div className="h-5 w-32 bg-gray-200 rounded" />
+                    </div>
+                    <div className="h-5 w-12 bg-gray-100 rounded" />
+                  </div>
+                ))
+              ) : nonprofits.map((np) => {
                 const cause = np.cause || np;
                 const name = cause.name || np.name || 'Unknown Nonprofit';
                 const logo = cause.logo || cause.image || np.logo || np.image;
