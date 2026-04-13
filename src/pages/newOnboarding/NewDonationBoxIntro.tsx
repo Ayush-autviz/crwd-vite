@@ -49,7 +49,7 @@ export default function NewDonationBoxIntro() {
 
         {/* Donation Box Preview Card */}
         <div className="w-full bg-[#f9f9f5] rounded-3xl p-5 sm:p-6 md:p-8 mb-8 sm:mb-10 relative animate-slide-ltr-bottom animate-delay-1200">
-          <p className="text-[10px] font-black text-gray-400 tracking-widest uppercase mb-4 sm:mb-6">
+          <p className="text-xs font-black text-gray-400 tracking-widest uppercase mb-4 sm:mb-6">
             YOUR DONATION BOX
           </p>
 
@@ -90,6 +90,8 @@ export default function NewDonationBoxIntro() {
               </div>
             </div>
           </div>
+
+          <p className="text-sm text-gray-400 font-semibold pt-3">Not your actual box</p>
         </div>
 
         {/* Action Button */}

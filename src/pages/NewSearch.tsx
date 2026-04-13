@@ -47,11 +47,7 @@ export default function NewSearchPage() {
   };
 
   const handleCategoryClick = (cat: any) => {
-    const params = new URLSearchParams();
-    params.set('categoryId', cat.id.toString());
-    params.set('categoryName', cat.name);
-    params.set('q', cat.name);
-    navigate(`/search-results?${params.toString()}`);
+    navigate(`/search-results?q=${encodeURIComponent(cat.name)}`);
   };
 
   return (

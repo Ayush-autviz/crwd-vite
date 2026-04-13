@@ -465,7 +465,7 @@ export default function GivingPostCard({ post, onCommentPress, showSimplifiedHea
                             </AvatarFallback>
                         </Avatar>
                     </Link>
-                    
+
                     <div className="flex-1 flex items-center justify-between min-w-0">
                         <div className="flex flex-col min-w-0">
                             <div className="flex items-center gap-1 md:gap-2 flex-wrap">
@@ -482,7 +482,7 @@ export default function GivingPostCard({ post, onCommentPress, showSimplifiedHea
                                     </span>
                                 )}
                             </div>
-                            
+
                             {!showSimplifiedHeader && post.collective && (
                                 <Link
                                     to={post.collective.id ? `/g/${post.collective.sort_name}` : '#'}
@@ -559,7 +559,7 @@ export default function GivingPostCard({ post, onCommentPress, showSimplifiedHea
                 <div className="flex gap-2 md:gap-3">
                     {/* Spacer for indentation on desktop */}
                     <div className="w-8 xs:w-9 md:w-10 flex-shrink-0 hidden md:block" />
-                    
+
                     <div className="flex-1 min-w-0">
                         <Link to={post.fundraiser ? `/fundraiser/${encodePostId(post.fundraiser.id)}` : `/post/${encodePostId(post.id)}`} className="block">
                             {post.fundraiser ? (
@@ -815,7 +815,7 @@ export default function GivingPostCard({ post, onCommentPress, showSimplifiedHea
                             )}
 
                             {/* Footer */}
-                            <div className=" py-2 md:py-4">
+                            <div className=" py-2 md:py-4 border-b-1 border-gray-200">
                                 <div className="flex items-center justify-between">
                                     <div className="flex items-center gap-3 md:gap-6">
                                         <button

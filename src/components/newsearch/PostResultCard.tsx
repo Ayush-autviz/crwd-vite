@@ -248,7 +248,7 @@ export default function PostResultCard({ post }: PostResultCardProps) {
               </AvatarFallback>
             </Avatar>
           )}
-          
+
           <div className="flex-1 flex items-center justify-between min-w-0">
             <div className="flex-1 flex flex-col min-w-0">
               <div className="flex items-center gap-1.5 md:gap-2 flex-wrap min-w-0">
@@ -317,234 +317,234 @@ export default function PostResultCard({ post }: PostResultCardProps) {
         <div className="flex gap-2.5 md:gap-3">
           {/* Spacer matching avatar width (w-8 md:w-11) */}
           <div className="w-8 md:w-11 flex-shrink-0 hidden md:block" />
-          
+
           <div className="flex-1 min-w-0">
 
-        {/* Post Content */}
-        {post.content && !post.fundraiser && (
-          <div className="text-xs xs:text-sm md:text-base text-gray-900 mb-2.5 md:mb-3 line-clamp-3">
-            {renderContentWithMentions(post.content, post.mentions)}
-          </div>
-        )}
-
-        {/* Show fundraiser image like normal post image */}
-        {post.fundraiser?.image ? (
-          <div
-            className="w-full rounded-lg overflow-hidden mb-2.5 md:mb-3 cursor-pointer hover:opacity-90 transition-opacity relative"
-            style={{ maxWidth: '600px', maxHeight: '300px' }}
-          >
-            <img
-              src={post.fundraiser.image}
-              alt="Fundraiser"
-              className="max-h-[300px] object-contain rounded-lg"
-            />
-          </div>
-        ) : null}
-
-        {/* Fundraiser UI - show if fundraiser exists, otherwise show preview/media */}
-        {post.fundraiser ? (
-          <Link
-            to={`/fundraiser/${encodePostId(post.fundraiser.id)}`}
-            onClick={(e) => e.stopPropagation()}
-            className="block mb-2.5 md:mb-3 rounded-lg overflow-hidden border border-gray-200 bg-white"
-          >
-            {/* Fundraiser Cover Image/Color - Only show if no image */}
-            {!post.fundraiser.image && (
-              <div className="w-full rounded-t-lg overflow-hidden">
-                {post.fundraiser.color ? (
-                  <div
-                    className="w-full h-[200px] flex items-center justify-center"
-                    style={{ backgroundColor: post.fundraiser.color }}
-                  >
-                    <span className="text-white text-sm xs:text-base md:text-lg font-bold text-center">
-                      {post.fundraiser.name}
-                    </span>
-                  </div>
-                ) : (
-                  <div
-                    className="w-full h-full flex items-center justify-center"
-                    style={{ backgroundColor: '#1600ff' }}
-                  >
-                    <span className="text-white text-lg xs:text-xl md:text-2xl font-bold text-center">
-                      {post.fundraiser.name}
-                    </span>
-                  </div>
-                )}
+            {/* Post Content */}
+            {post.content && !post.fundraiser && (
+              <div className="text-xs xs:text-sm md:text-base text-gray-900 mb-2.5 md:mb-3 line-clamp-3">
+                {renderContentWithMentions(post.content, post.mentions)}
               </div>
             )}
 
-            {/* Fundraiser Info */}
-            <div className="bg-white p-4 rounded-b-lg border border-t-0 border-gray-100">
-              <h3 className="text-sm xs:text-base md:text-lg font-bold text-gray-900 mb-2 md:mb-3">
-                {post.fundraiser.name}
-              </h3>
-
-              {/* Amount and Progress */}
-              <div className="mb-2">
-                <div className="flex items-baseline gap-2 mb-1.5">
-                  <span className="text-lg xs:text-xl md:text-2xl font-bold text-[#1600ff]">
-                    ${parseFloat(post.fundraiser.current_amount || '0').toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
-                  </span>
-                  <span className="text-xs xs:text-sm md:text-base text-gray-500">
-                    raised of ${parseFloat(post.fundraiser.target_amount || '0').toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 })} goal
-                  </span>
-                </div>
-                {/* Progress Bar */}
-                <div className="w-full h-1.5 md:h-2 bg-gray-200 rounded-full overflow-hidden mb-1.5">
-                  <div
-                    className="h-full bg-[#1600ff] transition-all duration-300"
-                    style={{ width: `${Math.min(post.fundraiser.progress_percentage || 0, 100)}%` }}
-                  />
-                </div>
-                {/* Donors and Days Left */}
-                <div className="flex items-center gap-3 md:gap-4 text-xs xs:text-sm md:text-base text-gray-900">
-                  {post.fundraiser.total_donors !== undefined && (
-                    <span>
-                      <span className="font-semibold">{post.fundraiser.total_donors}</span> donor{post.fundraiser.total_donors !== 1 ? 's' : ''}
-                    </span>
-                  )}
-                  {post.fundraiser.end_date && post.fundraiser.is_active && (
-                    <span>
-                      <span className="font-semibold">
-                        {Math.max(0, dayjs(post.fundraiser.end_date).diff(dayjs(), 'day'))}
-                      </span> days left
-                    </span>
-                  )}
-                  {!post.fundraiser.is_active && (
-                    <span className="text-gray-500 font-medium">Fundraiser Ended</span>
-                  )}
-                </div>
+            {/* Show fundraiser image like normal post image */}
+            {post.fundraiser?.image ? (
+              <div
+                className="w-full rounded-lg overflow-hidden mb-2.5 md:mb-3 cursor-pointer hover:opacity-90 transition-opacity relative"
+                style={{ maxWidth: '600px', maxHeight: '300px' }}
+              >
+                <img
+                  src={post.fundraiser.image}
+                  alt="Fundraiser"
+                  className="max-h-[300px] object-contain rounded-lg"
+                />
               </div>
-            </div>
-          </Link>
-        ) : post.preview_details ? (
-          <a
-            href={post.preview_details.url || post.media}
-            target="_blank"
-            rel="noopener noreferrer"
-            onClick={(e) => e.stopPropagation()}
-            className="block w-full rounded-lg overflow-hidden mb-2.5 md:mb-3 border border-gray-200 bg-white hover:opacity-90 transition-opacity cursor-pointer"
-          >
-            <div className="flex flex-col md:flex-row bg-white">
-              {/* Preview Image */}
-              {post.preview_details.image && (
-                <div className="w-full md:w-48 aspect-[2/1] md:aspect-auto lg:h-auto flex-shrink-0">
-                  <img
-                    src={post.preview_details.image}
-                    alt={post.preview_details.title || 'Link preview'}
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-              )}
-              {/* Preview Content */}
-              <div className="flex-1 p-2.5 md:p-3 overflow-hidden">
-                {post.preview_details.site_name && (
-                  <div className="text-[9px] xs:text-[10px] md:text-xs text-gray-500 uppercase tracking-wide mb-0.5 md:mb-1">
-                    {post.preview_details.site_name}
-                  </div>
-                )}
-                {post.preview_details.title ? (
-                  <h3 className="text-xs xs:text-sm md:text-base font-semibold text-gray-900 mb-0.5 md:mb-1 line-clamp-2">
-                    {post.preview_details.title}
-                  </h3>
-                ) : (
-                  !post.preview_details.description && !post.preview_details.image && post.preview_details.url && (
-                    <div className="text-[10px] xs:text-[11px] md:text-xs text-blue-600 truncate underline mb-1">
-                      {post.preview_details.url}
-                    </div>
-                  )
-                )}
-                {post.preview_details.description && (
-                  <p className="text-[10px] xs:text-xs md:text-sm text-gray-500 mb-0.5 md:mb-1 line-clamp-2">
-                    {post.preview_details.description}
-                  </p>
-                )}
-                {post.preview_details.domain && (
-                  <div className="text-[10px] xs:text-[11px] md:text-xs text-gray-500 truncate">
-                    {post.preview_details.domain}
-                  </div>
-                )}
-                {!post.preview_details.title && (post.preview_details.description || post.preview_details.image) && post.preview_details.url && (
-                  <div className="text-[10px] xs:text-[11px] md:text-xs text-blue-600 truncate underline mt-1">
-                    {post.preview_details.url}
-                  </div>
-                )}
-              </div>
-            </div>
-          </a>
-        ) : post.media ? (
-          (() => {
-            const isImage = /\.(jpg|jpeg|png|gif|webp|svg|bmp)(\?|$)/i.test(post.media) ||
-              /unsplash\.com|s3\.amazonaws\.com|crwd-bucket|imgur\.com/i.test(post.media);
+            ) : null}
 
-            if (isImage) {
-              return (
-                <div
-                  className="w-full rounded-lg overflow-hidden mb-2.5 md:mb-3 cursor-pointer hover:opacity-90 transition-opacity relative"
-                  style={{ maxWidth: '600px', maxHeight: '300px' }}
-                >
-                  <img
-                    src={post.media}
-                    alt="Post"
-                    className="max-h-[300px] object-contain rounded-lg"
-                  />
-                </div>
-              );
-            } else {
-              try {
-                const url = new URL(post.media);
-                const domain = url.hostname.replace('www.', '');
-                const siteName = domain.split('.')[0].toUpperCase();
-
-                return (
-                  <a
-                    href={post.media}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    onClick={(e) => e.stopPropagation()}
-                    className="block w-full rounded-lg overflow-hidden mb-2.5 md:mb-3 border border-gray-200 bg-white hover:opacity-90 transition-opacity cursor-pointer"
-                  >
-                    <div className="flex flex-col md:flex-row bg-white">
-                      <div className="flex-1 p-2.5 md:p-4">
-                        <div className="text-[9px] xs:text-[10px] md:text-xs text-gray-500 uppercase tracking-wide mb-0.5 md:mb-1">
-                          {siteName}
-                        </div>
-                        <div className="text-[10px] xs:text-[11px] md:text-xs text-gray-500 truncate">
-                          {domain}
-                        </div>
+            {/* Fundraiser UI - show if fundraiser exists, otherwise show preview/media */}
+            {post.fundraiser ? (
+              <Link
+                to={`/fundraiser/${encodePostId(post.fundraiser.id)}`}
+                onClick={(e) => e.stopPropagation()}
+                className="block mb-2.5 md:mb-3 rounded-lg overflow-hidden border border-gray-200 bg-white"
+              >
+                {/* Fundraiser Cover Image/Color - Only show if no image */}
+                {!post.fundraiser.image && (
+                  <div className="w-full rounded-t-lg overflow-hidden">
+                    {post.fundraiser.color ? (
+                      <div
+                        className="w-full h-[200px] flex items-center justify-center"
+                        style={{ backgroundColor: post.fundraiser.color }}
+                      >
+                        <span className="text-white text-sm xs:text-base md:text-lg font-bold text-center">
+                          {post.fundraiser.name}
+                        </span>
                       </div>
-                    </div>
-                  </a>
-                );
-              } catch {
-                return null;
-              }
-            }
-          })()
-        ) : null}
+                    ) : (
+                      <div
+                        className="w-full h-full flex items-center justify-center"
+                        style={{ backgroundColor: '#1600ff' }}
+                      >
+                        <span className="text-white text-lg xs:text-xl md:text-2xl font-bold text-center">
+                          {post.fundraiser.name}
+                        </span>
+                      </div>
+                    )}
+                  </div>
+                )}
 
-        {/* Like, Comment, and Share */}
-        <div className="flex items-center justify-between border-y border-gray-100 py-2 md:py-4">
-          <div className="flex items-center gap-3 md:gap-6">
-            <div className="flex items-center gap-1">
-              <Heart className={`w-4 h-4 md:w-5 md:h-5 ${post.is_liked ? 'fill-red-500 text-red-500' : 'text-gray-500'}`} />
-              <span className="text-xs xs:text-sm md:text-base font-medium text-gray-500">{post.likes_count}</span>
-            </div>
-            <div className="flex items-center gap-1">
-              <MessageCircle className="w-4 h-4 md:w-5 md:h-5 text-gray-500" />
-              <span className="text-xs xs:text-sm md:text-base font-medium text-gray-500">{post.comments_count}</span>
-            </div>
-          </div>
-          <button
-            className="flex items-center gap-1 p-0.5 hover:opacity-80 transition-opacity"
-            onClick={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
-              setShowShareModal(true);
-            }}
-          >
-            <Share2 className="w-4 h-4 md:w-5 md:h-5 text-gray-500" strokeWidth={2} />
-          </button>
+                {/* Fundraiser Info */}
+                <div className="bg-white p-4 rounded-b-lg border border-t-0 border-gray-100">
+                  <h3 className="text-sm xs:text-base md:text-lg font-bold text-gray-900 mb-2 md:mb-3">
+                    {post.fundraiser.name}
+                  </h3>
+
+                  {/* Amount and Progress */}
+                  <div className="mb-2">
+                    <div className="flex items-baseline gap-2 mb-1.5">
+                      <span className="text-lg xs:text-xl md:text-2xl font-bold text-[#1600ff]">
+                        ${parseFloat(post.fundraiser.current_amount || '0').toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
+                      </span>
+                      <span className="text-xs xs:text-sm md:text-base text-gray-500">
+                        raised of ${parseFloat(post.fundraiser.target_amount || '0').toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 })} goal
+                      </span>
+                    </div>
+                    {/* Progress Bar */}
+                    <div className="w-full h-1.5 md:h-2 bg-gray-200 rounded-full overflow-hidden mb-1.5">
+                      <div
+                        className="h-full bg-[#1600ff] transition-all duration-300"
+                        style={{ width: `${Math.min(post.fundraiser.progress_percentage || 0, 100)}%` }}
+                      />
+                    </div>
+                    {/* Donors and Days Left */}
+                    <div className="flex items-center gap-3 md:gap-4 text-xs xs:text-sm md:text-base text-gray-900">
+                      {post.fundraiser.total_donors !== undefined && (
+                        <span>
+                          <span className="font-semibold">{post.fundraiser.total_donors}</span> donor{post.fundraiser.total_donors !== 1 ? 's' : ''}
+                        </span>
+                      )}
+                      {post.fundraiser.end_date && post.fundraiser.is_active && (
+                        <span>
+                          <span className="font-semibold">
+                            {Math.max(0, dayjs(post.fundraiser.end_date).diff(dayjs(), 'day'))}
+                          </span> days left
+                        </span>
+                      )}
+                      {!post.fundraiser.is_active && (
+                        <span className="text-gray-500 font-medium">Fundraiser Ended</span>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </Link>
+            ) : post.preview_details ? (
+              <a
+                href={post.preview_details.url || post.media}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={(e) => e.stopPropagation()}
+                className="block w-full rounded-lg overflow-hidden mb-2.5 md:mb-3 border border-gray-200 bg-white hover:opacity-90 transition-opacity cursor-pointer"
+              >
+                <div className="flex flex-col md:flex-row bg-white">
+                  {/* Preview Image */}
+                  {post.preview_details.image && (
+                    <div className="w-full md:w-48 aspect-[2/1] md:aspect-auto lg:h-auto flex-shrink-0">
+                      <img
+                        src={post.preview_details.image}
+                        alt={post.preview_details.title || 'Link preview'}
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                  )}
+                  {/* Preview Content */}
+                  <div className="flex-1 p-2.5 md:p-3 overflow-hidden">
+                    {post.preview_details.site_name && (
+                      <div className="text-[9px] xs:text-[10px] md:text-xs text-gray-500 uppercase tracking-wide mb-0.5 md:mb-1">
+                        {post.preview_details.site_name}
+                      </div>
+                    )}
+                    {post.preview_details.title ? (
+                      <h3 className="text-xs xs:text-sm md:text-base font-semibold text-gray-900 mb-0.5 md:mb-1 line-clamp-2">
+                        {post.preview_details.title}
+                      </h3>
+                    ) : (
+                      !post.preview_details.description && !post.preview_details.image && post.preview_details.url && (
+                        <div className="text-[10px] xs:text-[11px] md:text-xs text-blue-600 truncate underline mb-1">
+                          {post.preview_details.url}
+                        </div>
+                      )
+                    )}
+                    {post.preview_details.description && (
+                      <p className="text-[10px] xs:text-xs md:text-sm text-gray-500 mb-0.5 md:mb-1 line-clamp-2">
+                        {post.preview_details.description}
+                      </p>
+                    )}
+                    {post.preview_details.domain && (
+                      <div className="text-[10px] xs:text-[11px] md:text-xs text-gray-500 truncate">
+                        {post.preview_details.domain}
+                      </div>
+                    )}
+                    {!post.preview_details.title && (post.preview_details.description || post.preview_details.image) && post.preview_details.url && (
+                      <div className="text-[10px] xs:text-[11px] md:text-xs text-blue-600 truncate underline mt-1">
+                        {post.preview_details.url}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </a>
+            ) : post.media ? (
+              (() => {
+                const isImage = /\.(jpg|jpeg|png|gif|webp|svg|bmp)(\?|$)/i.test(post.media) ||
+                  /unsplash\.com|s3\.amazonaws\.com|crwd-bucket|imgur\.com/i.test(post.media);
+
+                if (isImage) {
+                  return (
+                    <div
+                      className="w-full rounded-lg overflow-hidden mb-2.5 md:mb-3 cursor-pointer hover:opacity-90 transition-opacity relative"
+                      style={{ maxWidth: '600px', maxHeight: '300px' }}
+                    >
+                      <img
+                        src={post.media}
+                        alt="Post"
+                        className="max-h-[300px] object-contain rounded-lg"
+                      />
+                    </div>
+                  );
+                } else {
+                  try {
+                    const url = new URL(post.media);
+                    const domain = url.hostname.replace('www.', '');
+                    const siteName = domain.split('.')[0].toUpperCase();
+
+                    return (
+                      <a
+                        href={post.media}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        onClick={(e) => e.stopPropagation()}
+                        className="block w-full rounded-lg overflow-hidden mb-2.5 md:mb-3 border border-gray-200 bg-white hover:opacity-90 transition-opacity cursor-pointer"
+                      >
+                        <div className="flex flex-col md:flex-row bg-white">
+                          <div className="flex-1 p-2.5 md:p-4">
+                            <div className="text-[9px] xs:text-[10px] md:text-xs text-gray-500 uppercase tracking-wide mb-0.5 md:mb-1">
+                              {siteName}
+                            </div>
+                            <div className="text-[10px] xs:text-[11px] md:text-xs text-gray-500 truncate">
+                              {domain}
+                            </div>
+                          </div>
+                        </div>
+                      </a>
+                    );
+                  } catch {
+                    return null;
+                  }
+                }
+              })()
+            ) : null}
+
+            {/* Like, Comment, and Share */}
+            <div className="flex items-center justify-between border-b border-gray-200 py-2 md:py-3">
+              <div className="flex items-center gap-3 md:gap-6">
+                <div className="flex items-center gap-1">
+                  <Heart className={`w-4 h-4 md:w-5 md:h-5 ${post.is_liked ? 'fill-red-500 text-red-500' : 'text-gray-500'}`} />
+                  <span className="text-xs xs:text-sm md:text-base font-medium text-gray-500">{post.likes_count}</span>
+                </div>
+                <div className="flex items-center gap-1">
+                  <MessageCircle className="w-4 h-4 md:w-5 md:h-5 text-gray-500" />
+                  <span className="text-xs xs:text-sm md:text-base font-medium text-gray-500">{post.comments_count}</span>
+                </div>
+              </div>
+              <button
+                className="flex items-center gap-1 p-0.5 hover:opacity-80 transition-opacity"
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  setShowShareModal(true);
+                }}
+              >
+                <Share2 className="w-4 h-4 md:w-5 md:h-5 text-gray-500" strokeWidth={2} />
+              </button>
             </div>
           </div>
         </div>

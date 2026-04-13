@@ -73,7 +73,7 @@ export const DonationBox3 = ({
   const { data: searchCausesData, isLoading: searchCausesLoading } = useQuery({
     queryKey: ['searchCauses', searchQuery],
     queryFn: () => getCausesBySearch(searchQuery || '', '', 1),
-    enabled: true,
+    enabled: !!searchQuery,
   });
 
   // Mutation for adding causes to donation box
@@ -745,6 +745,7 @@ export const DonationBox3 = ({
                   );
                 })
             ) : (
+              searchQuery &&
               <p className="text-gray-500 text-center py-6 md:py-8 text-sm md:text-base">No nonprofits found</p>
             )}
           </div>

@@ -531,7 +531,7 @@ export default function ProfilePage() {
                   className="w-full bg-white border border-gray-200 rounded-lg p-2 sm:p-3 md:p-4 min-h-[96px] sm:min-h-[110px] md:min-h-[132px] flex flex-col items-center justify-center space-y-1.5 sm:space-y-2 md:space-y-2.5 hover:bg-gray-50 transition-colors"
                 >
                   <Avatar className="w-9 h-9 sm:w-11 sm:h-11 md:w-14 md:h-14 !rounded-lg flex-shrink-0 border-none">
-                    <AvatarImage src={cause.imasge || cause.lsogo} className="object-cover" />
+                    <AvatarImage src={cause.image || cause.logo} className="object-cover" />
                     <AvatarFallback
                       className="text-sm sm:text-base md:text-lg font-bold text-white border-none rounded-md"
                       style={{ backgroundColor: getConsistentColor(cause.id, avatarColors) }}

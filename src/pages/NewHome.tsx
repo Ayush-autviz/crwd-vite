@@ -508,7 +508,7 @@ export default function NewHome() {
                 onLogoClick={handleLogoClick}
             />
             {/* Main Content */}
-            <div className="bg-gradient-to-r from-blue-50 via-purple-50 to-pink-50 px-4 md:px-6 py-2 md:py-6">
+            {/* <div className="bg-gradient-to-r from-blue-50 via-purple-50 to-pink-50 px-4 md:px-6 py-2 md:py-6">
                 {token?.access_token ? (
                     (donationBoxLoading) ? (
                         <>
@@ -540,10 +540,10 @@ export default function NewHome() {
                         <HelloGreetingSkeleton />
                         <DonationBoxSkeleton />
                     </>
-                )}
+                )} */}
 
-                {/* Collective Carousel Card - Show joined collectives or Create Collective Card */}
-                {/* {token?.access_token ? (
+            {/* Collective Carousel Card - Show joined collectives or Create Collective Card */}
+            {/* {token?.access_token ? (
                     joinedCollectivesLoading ? (
                         <CollectiveCarouselSkeleton />
                     ) : (
@@ -556,7 +556,7 @@ export default function NewHome() {
                 ) : (
                     <CollectiveCarouselSkeleton />
                 )} */}
-            </div>
+            {/* </div> */}
 
             <div className="w-full max-w-7xl mx-auto">
                 <div className="mx-0 md:mx-6">
@@ -567,16 +567,16 @@ export default function NewHome() {
                         ) : (
                             <div className="w-full px-4 my-4 mb-6 md:px-0 md:my-8 md:mb-10">
                                 {/* Heading for the feed */}
-                                {feedPart1.length > 0 && (
+                                {/* {feedPart1.length > 0 && (
                                     <div className="mb-3 md:mb-6">
                                         <h2 className="text-base xs:text-lg sm:text-xl md:text-3xl font-bold text-gray-900 mb-1 md:mb-2">
                                             Community Updates
                                         </h2>
-                                        {/* <p className="text-[10px] xs:text-[11px] sm:text-xs md:text-sm text-gray-600">
+                                        <p className="text-[10px] xs:text-[11px] sm:text-xs md:text-sm text-gray-600">
                                             Updates, and discoveries from your community
-                                        </p> */}
+                                        </p>
                                     </div>
-                                )}
+                                )} */}
                                 <div className="space-y-2.5 md:space-y-4">
                                     {feedPart1.map(renderFeedItem)}
                                 </div>

@@ -67,6 +67,15 @@ export default function NewOnboardSuccess() {
           <div className="h-1 w-8 sm:w-10 md:w-12 bg-[#1600ff] rounded-full"></div>
         </div>
 
+        {/* Text Sections */}
+        <div className="w-full mb-6 text-center sm:text-left">
+          <h1 className="text-xl sm:text-2xl font-bold text-gray-900 leading-tight mb-1.5">
+            Your profile is live.
+          </h1>
+          <p className="text-sm sm:text-base text-gray-500 font-medium leading-relaxed">
+            The nonprofits you support show up publicly. When others see what you give to, it moves them to do the same.
+          </p>
+        </div>
         {/* Profile Card Overlay Section */}
         <div className="w-full bg-[#f7f7f2] rounded-xl p-5 mb-8 flex flex-col items-center border border-gray-200  relative overflow-hidden">
           {/* Top Profile */}
@@ -110,60 +119,51 @@ export default function NewOnboardSuccess() {
           </div>
         </div>
 
-        {/* Text Sections */}
-        <div className="w-full mb-6 text-center sm:text-left">
-          <h1 className="text-xl sm:text-2xl font-bold text-gray-900 leading-tight mb-1.5">
-            Giving is better with people you know.
-          </h1>
-          <p className="text-sm sm:text-base text-gray-500 font-medium leading-relaxed">
-            Share your page. Invite someone to build theirs.
-          </p>
-        </div>
 
         {/* Invite Link Card */}
         <button
           onClick={handleShare}
-          className="w-full bg-[#f7f7f2] border border-gray-100 rounded-2xl p-3.5 sm:p-4 flex items-center gap-3.5 mb-5 transition-all hover:bg-gray-100 active:scale-[0.99] group text-left"
+          className="w-full bg-[#f7f7f2] border border-gray-200 rounded-2xl p-3.5 sm:p-4 flex items-center gap-3.5 mb-5 transition-all hover:bg-gray-100 active:scale-[0.99] group text-left"
         >
           <div className="w-10 h-10 sm:w-11 sm:h-11 bg-[#1600ff] rounded-xl flex items-center justify-center shrink-0 shadow-lg shadow-blue-100 transition-transform group-hover:scale-105">
             <Share2 className="w-5 h-5 text-white" />
           </div>
           <div className="flex-1">
-            <h4 className="text-base font-extrabold text-gray-900">Share your invite link</h4>
+            <h4 className="text-base font-extrabold text-gray-900">Invite others</h4>
             <p className="text-xs sm:text-sm text-gray-500 font-medium">Text, email, DM — whatever works</p>
           </div>
           <ChevronRight className="w-4 h-4 text-gray-400 group-hover:translate-x-1 transition-transform" />
         </button>
 
-        <p className="text-sm sm:text-base text-gray-500 font-medium text-center w-full mb-8">
+        {/* <p className="text-sm sm:text-base text-gray-500 font-medium text-center w-full mb-8">
           You can always invite people later from your profile.
-        </p>
+        </p> */}
 
         {/* Footer Buttons */}
         <div className="w-full space-y-3">
           <Button
             onClick={() => handleFinalAction("/donation")}
             disabled={createDonationBoxMutation.isPending}
-            className="w-full h-12 sm:h-13 bg-[#1600ff] hover:bg-[#1100cc] text-sm sm:text-base font-bold rounded-xl shadow-xl shadow-blue-100 transition-all active:scale-[0.98] flex items-center justify-center gap-2"
+            className="w-full h-12 sm:h-13 bg-[#2222EE] hover:bg-[#1100cc] text-sm sm:text-base font-bold rounded-xl shadow-xl shadow-blue-100 transition-all active:scale-[0.98] flex items-center justify-center gap-2"
           >
             {createDonationBoxMutation.isPending && <Loader2 className="w-5 h-5 animate-spin" />}
             Go to my Donation Box
           </Button>
 
-          <button
+          {/* <button
             onClick={() => handleFinalAction("/profile")}
             disabled={createDonationBoxMutation.isPending}
             className="w-full text-center text-gray-400 font-bold text-xs sm:text-sm hover:text-gray-900"
           >
             Skip for now
-          </button>
+          </button> */}
         </div>
 
       </div>
 
       <SharePost
         url={`${window.location.origin}/u/${user?.username || ''}`}
-        title="Join my Donation Box"
+        title="Join me on CRWD"
         description={`I'm supporting ${addedNonprofits.length} nonprofits on CRWD. Join me!`}
         isOpen={isShareModalOpen}
         onClose={() => setIsShareModalOpen(false)}

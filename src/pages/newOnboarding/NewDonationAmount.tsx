@@ -9,7 +9,7 @@ export default function NewDonationAmount() {
   const [searchParams] = useSearchParams();
   const redirectTo = searchParams.get('redirectTo') || '/';
 
-  const [amount, setAmount] = useState<number | string>(10);
+  const [amount, setAmount] = useState<number | string>(20);
   const [isCustom, setIsCustom] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -148,12 +148,12 @@ export default function NewDonationAmount() {
             </button>
           </div>
 
-          <button
+          {/* <button
             onClick={handleCustomClick}
             className="text-gray-500 font-bold text-sm sm:text-base underline decoration-2 underline-offset-4 hover:text-gray-900 transition-colors"
           >
             Enter custom amount
-          </button>
+          </button> */}
         </div>
 
         {/* Info Box */}
@@ -173,8 +173,15 @@ export default function NewDonationAmount() {
         </Button>
 
         <button
+          onClick={handleCustomClick}
+          className="mx-auto text-gray-500 font-bold text-sm sm:text-base underline decoration-2 underline-offset-4 hover:text-gray-900 transition-colors"
+        >
+          Enter custom amount
+        </button>
+
+        <button
           onClick={handleSkip}
-          className="w-full text-center text-gray-500 font-bold text-sm sm:text-base hover:text-gray-900"
+          className="w-full pt-2 text-center text-gray-500 font-bold text-sm sm:text-base hover:text-gray-900"
         >
           Skip for now, I'll set this up later
         </button>
