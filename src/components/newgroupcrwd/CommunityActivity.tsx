@@ -2,7 +2,7 @@ import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
 import { useState, useRef, useEffect } from 'react';
 import { useAuthStore } from '@/stores/store';
-import { MessageCircle, Heart, Users } from 'lucide-react';
+import { MessageCircle, Heart, Users, Loader2 } from 'lucide-react';
 import ActivityCard from './ActivityCard';
 import CommunityPostCard from '@/components/newHome/CommunityPostCard';
 import GivingPostCard from '../newGivingGroup/GivingPostCard';
@@ -15,6 +15,9 @@ interface CommunityActivityProps {
   collectiveData?: any;
   onJoin?: () => void;
   fromCollective?: boolean;
+  hasMore?: boolean;
+  onLoadMore?: () => void;
+  isFetchingNextPage?: boolean;
 }
 
 export default function CommunityActivity({
@@ -24,6 +27,9 @@ export default function CommunityActivity({
   isJoined = false,
   collectiveData,
   fromCollective = false,
+  hasMore = false,
+  onLoadMore,
+  isFetchingNextPage = false,
   onJoin,
 }: CommunityActivityProps) {
   const navigate = useNavigate();
@@ -188,6 +194,25 @@ export default function CommunityActivity({
                   <CommunityPostCard key={post.id} post={post} showSimplifiedHeader={true} />
                 )
               ))}
+              {hasMore && (
+                <div className="mt-8 flex justify-center">
+                  <Button 
+                    variant="outline" 
+                    onClick={onLoadMore}
+                    disabled={isFetchingNextPage}
+                    className="min-w-[120px]"
+                  >
+                    {isFetchingNextPage ? (
+                        <>
+                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                            Loading...
+                        </>
+                    ) : (
+                        'Show More Posts'
+                    )}
+                  </Button>
+                </div>
+              )}
             </div>
           ) : (
             <div className="flex flex-col items-center justify-center py-16">

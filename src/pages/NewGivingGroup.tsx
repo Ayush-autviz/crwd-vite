@@ -105,6 +105,9 @@ export default function NewGivingGroupPage() {
     const {
         data: postsData,
         isLoading: isLoadingPosts,
+        fetchNextPage,
+        hasNextPage,
+        isFetchingNextPage,
     } = useInfiniteQuery({
         queryKey: ['posts', collectiveId],
         queryFn: ({ pageParam = 1 }) => getPosts('', crwdData?.id || '', pageParam),
@@ -468,6 +471,12 @@ export default function NewGivingGroupPage() {
                     fromCollective={true}
                     posts={posts?.results || []}
                     isLoading={isLoadingPosts}
+                    hasMore={hasNextPage}
+                    onLoadMore={() => {
+                        if (hasNextPage && !isFetchingNextPage) {
+                            fetchNextPage();
+                        }
+                    }}
                     collectiveId={collectiveId}
                     isJoined={crwdData.is_joined}
                     collectiveData={crwdData}

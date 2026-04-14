@@ -275,6 +275,7 @@ function App() {
                       {/* <Route path="/groupcrwd/:crwdId" element={<GroupCrwd />} /> */}
                       <Route path="/g/:crwdId" element={<NewGivingGroupPage />} />
                       <Route path="/edit-collective/:crwdId" element={<EditCollective />} />
+                      <Route path="/create-fundraiser" element={<CreateFundraiser />} />
                       <Route path="/create-fundraiser/:collectiveId" element={<CreateFundraiser />} />
                       <Route path="/edit-fundraiser/:id" element={<EditFundraiser />} />
                       <Route path="/fundraiser/:id" element={<FundraiserDetail />} />

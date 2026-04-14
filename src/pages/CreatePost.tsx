@@ -641,15 +641,22 @@ export default function CreatePostPage() {
             <Link2 className="w-5 h-5 text-gray-600" />
             <span className="text-[14px] font-bold text-gray-800">Add Link</span>
           </button>
-          {selectedCollective && (selectedCollective.created_by.id === currentUser?.id) && (
-            <button
-              onClick={() => navigate(`/create-fundraiser/${(selectedCollective.collective || selectedCollective).id}`)}
-              className="flex items-center gap-2 px-4 py-2.5 border border-gray-200 rounded-full hover:bg-gray-50 hover:border-gray-300 transition-all active:scale-95"
-            >
-              <Heart className="w-5 h-5 text-gray-600" />
-              <span className="text-[14px] font-bold text-gray-800">Create Fundraiser</span>
-            </button>
-          )}
+          {/* {selectedCollective && (selectedCollective.created_by.id === currentUser?.id) && ( */}
+          <button
+            onClick={() => {
+              const collective = selectedCollective?.collective || selectedCollective;
+              if (collective?.id) {
+                navigate(`/create-fundraiser/${collective.id}`);
+              } else {
+                navigate('/create-fundraiser');
+              }
+            }}
+            className="flex items-center gap-2 px-4 py-2.5 border border-gray-200 rounded-full hover:bg-gray-50 hover:border-gray-300 transition-all active:scale-95"
+          >
+            <Heart className="w-5 h-5 text-gray-600" />
+            <span className="text-[14px] font-bold text-gray-800">Create Fundraiser</span>
+          </button>
+          {/* )} */}
         </div>
 
         {/* Link Input Field - Show when link is selected or URL is entered */}
@@ -792,7 +799,14 @@ export default function CreatePostPage() {
           </button>
           {selectedCollective && (selectedCollective.role === "admin" || selectedCollective.role === "Admin") && (
             <button
-              onClick={() => navigate(`/create-fundraiser/${(selectedCollective.collective || selectedCollective).id}`)}
+              onClick={() => {
+                const collective = selectedCollective?.collective || selectedCollective;
+                if (collective?.id) {
+                  navigate(`/create-fundraiser/${collective.id}`);
+                } else {
+                  navigate('/create-fundraiser');
+                }
+              }}
               className="flex items-center gap-2 px-4 py-2.5 border border-gray-200 rounded-full hover:bg-gray-50 hover:border-gray-300 transition-all active:scale-95"
             >
               <Heart className="w-5 h-5 text-gray-600" />

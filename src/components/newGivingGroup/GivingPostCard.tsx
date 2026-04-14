@@ -476,7 +476,7 @@ export default function GivingPostCard({ post, onCommentPress, showSimplifiedHea
                                 >
                                     {displayName}
                                 </Link>
-                                {post.fundraiser?.is_active && (
+                                {post.fundraiser && (
                                     <span className="px-2 py-0.5 bg-[#1600ff] text-white text-[8px] xs:text-[10px] md:text-[12px] font-medium rounded-full">
                                         Organizer
                                     </span>

@@ -478,7 +478,7 @@ export default function CommunityPostCard({ post, onCommentPress, showSimplified
                 >
                   {displayName}
                 </Link>
-                {post.fundraiser?.is_active && (
+                {post.fundraiser && (
                   <span className="px-2 py-0.5 bg-[#1600ff] text-white text-[8px] xs:text-[10px] md:text-[12px] font-medium rounded-full">
                     Organizer
                   </span>
@@ -519,7 +519,7 @@ export default function CommunityPostCard({ post, onCommentPress, showSimplified
               )}
 
               {/* Ellipsis Menu for User's Own Posts */}
-              {post.user.id === currentUser?.id && !post.fundraiser?.is_active && (
+              {post.user.id === currentUser?.id && (
                 <div className="relative" ref={postMenuRef}>
                   <button
                     onClick={(e) => {

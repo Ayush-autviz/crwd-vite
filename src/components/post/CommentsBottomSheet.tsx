@@ -1,12 +1,13 @@
 import { useState, useEffect, useRef, useMemo } from 'react';
 import { X, MessageCircle, Loader2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient, useInfiniteQuery } from '@tanstack/react-query';
 import { getPostComments, createPostComment, getCommentReplies, mentionSearch } from '@/services/api/social';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { useAuthStore } from '@/stores/store';
 import { Comment } from './Comment';
 import { MentionSearchResults } from './MentionSearchResults';
+import { Button } from '@/components/ui/button';
 
 interface CommentsBottomSheetProps {
   isOpen: boolean;
@@ -215,11 +216,25 @@ export default function CommentsBottomSheet({
     };
   }, [isVisible]);
 
-  // Fetch comments
-  const { data: commentsData, isLoading: isLoadingComments } = useQuery({
+  // Fetch comments with infinite query
+  const {
+    data: commentsData,
+    isLoading: isLoadingComments,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage
+  } = useInfiniteQuery({
     queryKey: ['postComments', post.id],
-    queryFn: () => getPostComments(post.id.toString()),
+    queryFn: ({ pageParam = 1 }) => getPostComments(post.id.toString(), pageParam),
     enabled: isOpen && !!post.id,
+    getNextPageParam: (lastPage) => {
+      if (lastPage.next) {
+        const match = lastPage.next.match(/[?&]page=(\d+)/);
+        return match ? parseInt(match[1]) : undefined;
+      }
+      return undefined;
+    },
+    initialPageParam: 1,
   });
 
   // Get display name helper
@@ -235,23 +250,28 @@ export default function CommentsBottomSheet({
 
   // Transform API comments to CommentData format - memoized to prevent infinite loops
   const apiComments = useMemo(() => {
-    return commentsData?.results?.map((comment: any) => ({
-      id: comment.id,
-      username: getDisplayName(comment.user),
-      firstName: comment.user?.first_name,
-      lastName: comment.user?.last_name,
-      avatarUrl: comment.user?.profile_picture || '/placeholder.svg',
-      color: comment.user?.color,
-      content: comment.content,
-      timestamp: new Date(comment.created_at),
-      likes: 0,
-      replies: [],
-      repliesCount: comment.replies_count || 0,
-      parentComment: comment.parent_comment,
-      userId: comment.user?.id,
-      mentions: comment.mentions,
-    })) || [];
-  }, [commentsData?.results]);
+    if (!commentsData?.pages) return [];
+
+    return commentsData.pages.flatMap(page =>
+      (page.results || []).map((comment: any) => ({
+        id: comment.id,
+        username: getDisplayName(comment.user),
+        firstName: comment.user?.first_name,
+        lastName: comment.user?.last_name,
+        avatarUrl: comment.user?.profile_picture || '/placeholder.svg',
+        color: comment.user?.color,
+        content: comment.content,
+        timestamp: new Date(comment.created_at),
+        likes: comment.likes_count || 0,
+        replies: [],
+        repliesCount: comment.replies_count || 0,
+        parentComment: comment.parent_comment,
+        isLiked: comment.is_liked || false,
+        userId: comment.user?.id,
+        mentions: comment.mentions,
+      }))
+    );
+  }, [commentsData?.pages]);
 
   // Update comments when API data changes, but preserve existing replies
   useEffect(() => {
@@ -721,6 +741,27 @@ export default function CommentsBottomSheet({
                     </div>
                   );
                 })}
+
+              {/* Show More Button for Web */}
+              {hasNextPage && (
+                <div className="flex justify-center py-4">
+                  <Button
+                    variant="outline"
+                    onClick={() => fetchNextPage()}
+                    disabled={isFetchingNextPage}
+                    className="min-w-[120px]"
+                  >
+                    {isFetchingNextPage ? (
+                      <>
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        Loading...
+                      </>
+                    ) : (
+                      "Show More Comments"
+                    )}
+                  </Button>
+                </div>
+              )}
             </div>
           )}
         </div>

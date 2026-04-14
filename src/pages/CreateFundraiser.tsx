@@ -306,7 +306,9 @@ export default function CreateFundraiser() {
       formData.append('name', campaignTitle);
       formData.append('description', campaignStory);
       formData.append('image_file', uploadedCoverImage);
-      formData.append('collective_id', collectiveId || '');
+      if (collectiveId) {
+        formData.append('collective_id', collectiveId);
+      }
       formData.append('target_amount', fundraisingGoal);
       formData.append('start_date', startDate);
       formData.append('end_date', endDateISO);
@@ -318,17 +320,20 @@ export default function CreateFundraiser() {
       createFundraiserMutation.mutate(formData);
     } else if (coverType === 'color') {
       // Use JSON for color-based cover - send only color, no image
-      const requestData = {
+      const requestData: any = {
         name: campaignTitle,
         description: campaignStory,
         color: coverColor,
-        collective_id: parseInt(collectiveId || '0', 10),
         target_amount: parseFloat(fundraisingGoal),
         start_date: startDate,
         end_date: endDateISO,
         is_active: true,
         cause_ids: selectedNonprofits,
       };
+
+      if (collectiveId) {
+        requestData.collective_id = parseInt(collectiveId, 10);
+      }
 
       createFundraiserMutation.mutate(requestData);
     }
@@ -487,16 +492,18 @@ export default function CreateFundraiser() {
                 </Button>
 
                 {/* Back to Collective Button */}
-                <Button
-                  onClick={() => {
-                    setShowSuccessModal(false);
-                    navigate(`/g/${collectiveData?.sort_name}`, { state: { fromCreate: true } });
-                  }}
-                  variant="outline"
-                  className="w-full border border-gray-300 text-gray-900 hover:bg-gray-50 font-semibold rounded-lg py-3 md:py-4 text-sm md:text-base"
-                >
-                  Back to Giving Group
-                </Button>
+                {collectiveId && (
+                  <Button
+                    onClick={() => {
+                      setShowSuccessModal(false);
+                      navigate(`/g/${collectiveData?.sort_name}`, { state: { fromCreate: true } });
+                    }}
+                    variant="outline"
+                    className="w-full border border-gray-300 text-gray-900 hover:bg-gray-50 font-semibold rounded-lg py-3 md:py-4 text-sm md:text-base"
+                  >
+                    Back to Giving Group
+                  </Button>
+                )}
 
                 {/* Share Campaign Link */}
                 <button

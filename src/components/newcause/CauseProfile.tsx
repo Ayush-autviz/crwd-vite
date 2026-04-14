@@ -16,7 +16,7 @@ export default function CauseProfile({ causeData }: CauseProfileProps) {
   );
 
   const handleCategoryClick = (cat: { id: string | number; name: string }) => {
-    navigate(`/search-results?categoryId=${cat.id}&categoryName=${encodeURIComponent(cat.name)}&q=${encodeURIComponent(cat.name)}`);
+    navigate(`/search-results?q=${encodeURIComponent(cat.name)}`);
   };
 
   // Get first letter for avatar fallback

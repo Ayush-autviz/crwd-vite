@@ -4,7 +4,7 @@ import ProfileActivityCard from "@/components/profile/ProfileActivityCard";
 import { Loader2, X } from "lucide-react";
 import ProfileNavbar from "@/components/profile/ProfileNavbar";
 import { Toast } from "@/components/ui/toast";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient, useInfiniteQuery } from "@tanstack/react-query";
 import { getPostById, getPostComments, createPostComment, getCommentReplies, mentionSearch } from "@/services/api/social";
 import type { PostDetail } from "@/lib/types";
 import { formatDistanceToNow } from 'date-fns';
@@ -15,6 +15,7 @@ import { DiscardSheet } from "@/components/ui/DiscardSheet";
 import { useUnsavedChanges } from "@/hooks/use-unsaved-changes";
 import LoggedOutHeader from "@/components/LoggedOutHeader";
 import { decodePostId } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
 
 export default function PostById() {
   const { id: encodedId } = useParams();
@@ -104,34 +105,51 @@ export default function PostById() {
 
   const queryClient = useQueryClient();
 
-  // Fetch comments for the post
-  const { data: commentsData, isLoading: isLoadingComments } = useQuery({
+  // Fetch comments for the post with infinite query
+  const { 
+    data: commentsData, 
+    isLoading: isLoadingComments,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage
+  } = useInfiniteQuery({
     queryKey: ['postComments', id],
-    queryFn: () => getPostComments(id || ''),
+    queryFn: ({ pageParam = 1 }) => getPostComments(id || '', pageParam),
     enabled: !!id,
+    getNextPageParam: (lastPage) => {
+      if (lastPage.next) {
+        const match = lastPage.next.match(/[?&]page=(\d+)/);
+        return match ? parseInt(match[1]) : undefined;
+      }
+      return undefined;
+    },
+    initialPageParam: 1,
   });
 
   // Transform API comments to CommentData format
   const apiComments = React.useMemo(() => {
-    if (!commentsData?.results) return [];
+    if (!commentsData?.pages) return [];
 
-    return commentsData.results.map((comment: any) => ({
-      id: comment.id,
-      username: comment.user?.username || 'Unknown User',
-      firstName: comment.user?.first_name,
-      lastName: comment.user?.last_name,
-      avatarUrl: comment.user?.profile_picture || '/placeholder.svg',
-      color: comment.user?.color,
-      content: comment.content,
-      timestamp: new Date(comment.created_at),
-      likes: 0,
-      replies: [],
-      repliesCount: comment.replies_count || 0,
-      parentComment: comment.parent_comment,
-      userId: comment.user?.id, // Add user ID for delete functionality
-      mentions: comment.mentions,
-    }));
-  }, [commentsData]);
+    return commentsData.pages.flatMap(page =>
+      (page.results || []).map((comment: any) => ({
+        id: comment.id,
+        username: comment.user?.username || 'Unknown User',
+        firstName: comment.user?.first_name,
+        lastName: comment.user?.last_name,
+        avatarUrl: comment.user?.profile_picture || '/placeholder.svg',
+        color: comment.user?.color,
+        content: comment.content,
+        timestamp: new Date(comment.created_at),
+        likes: comment.likes_count || 0,
+        replies: [],
+        repliesCount: comment.replies_count || 0,
+        parentComment: comment.parent_comment,
+        isLiked: comment.is_liked || false,
+        userId: comment.user?.id, // Add user ID for delete functionality
+        mentions: comment.mentions,
+      }))
+    );
+  }, [commentsData?.pages]);
 
 
   // Use API comments if available, otherwise fall back to mock comments
@@ -593,6 +611,27 @@ export default function PostById() {
                   mentions={comment.mentions}
                 />
               ))}
+
+              {/* Show More Button for Web */}
+              {hasNextPage && (
+                <div className="flex justify-center mt-4 mb-6">
+                  <Button
+                    variant="outline"
+                    onClick={() => fetchNextPage()}
+                    disabled={isFetchingNextPage}
+                    className="min-w-[120px]"
+                  >
+                    {isFetchingNextPage ? (
+                      <>
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        Loading...
+                      </>
+                    ) : (
+                      "Show More Comments"
+                    )}
+                  </Button>
+                </div>
+              )}
             </div>
           )}
         </div>

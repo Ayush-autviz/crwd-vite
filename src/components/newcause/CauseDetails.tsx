@@ -76,7 +76,7 @@ export default function CauseDetails({ causeData }: CauseDetailsProps) {
           <div className="flex flex-wrap gap-x-1.5">
             {displayedCategories.map((cat: any, index: number) => (
               <span key={cat.id}>
-                <Link to={`/search-results?categoryId=${cat.id}&categoryName=${encodeURIComponent(cat.name)}&q=${encodeURIComponent(cat.name)}`}
+                <Link to={`/search-results?q=${encodeURIComponent(cat.name)}`}
                   className="text-xs xs:text-sm md:text-base font-medium hover:underline"
                   style={{ color: '#1600ff' }}>
                   {cat.name}

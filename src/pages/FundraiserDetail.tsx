@@ -167,8 +167,8 @@ export default function FundraiserDetail() {
       return;
     }
     const fromCreate = location.state?.fromCreate;
-    if (fromCreate && fundraiserData?.collective?.sort_name) {
-      navigate(`/g/${fundraiserData.collective.sort_name}`, { state: { fromCreate: true } });
+    if (fromCreate) {
+      navigate(-2);
     } else {
       navigate(-1);
     }
