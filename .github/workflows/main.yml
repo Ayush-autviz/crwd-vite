@@ -1,0 +1,51 @@
+name: Deploy to EC2
+
+on:
+  push:
+    branches:
+      - main
+      
+  workflow_dispatch:
+
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4         
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Deploy to EC2
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ubuntu
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+          
+            cd /home/ubuntu/crwd-vite
+            git pull origin main
+            docker build -t crwd-frontend:latest .
+            # Stop and remove old container
+            if [ "$(docker ps -q -f name=crwd-frontend)" ]; then
+              docker stop crwd-frontend
+              docker rm crwd-frontend
+            fi
+
+            # Start new container
+            docker run -d \
+              --name crwd-frontend \
+              -p $3000:80 \
+              crwd-frontend:latest
+
+            echo '[+] Pruning unused images...'
+            docker image prune -f
+
+            echo '[+] Service status:'
+            docker compose ps
