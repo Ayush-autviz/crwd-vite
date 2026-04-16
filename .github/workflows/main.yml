@@ -34,7 +34,7 @@ jobs:
             # Start new container
             docker run -d \
               --name crwd-frontend \
-              -p $3000:80 \
+              -p 3000:80 \
               crwd-frontend:latest
 
             echo '[+] Pruning unused images...'
