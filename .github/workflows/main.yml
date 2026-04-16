@@ -41,4 +41,4 @@ jobs:
             docker image prune -f
 
             echo '[+] Service status:'
-            docker compose ps
+            docker ps
