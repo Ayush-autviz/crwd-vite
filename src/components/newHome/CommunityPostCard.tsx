@@ -60,6 +60,7 @@ interface CommunityPostCardProps {
       domain?: string;
     };
     mentions?: any[];
+    isFollowing?: boolean;
   };
   onCommentPress?: (post: CommunityPostCardProps['post']) => void;
   showSimplifiedHeader?: boolean; // When true, only show name and timestamp (for collective view)
@@ -283,16 +284,17 @@ export default function CommunityPostCard({ post, onCommentPress, showSimplified
   const { data: userProfile, isLoading: isLoadingProfile } = useQuery({
     queryKey: ['userProfile', String(post.user.id)],
     queryFn: () => getUserProfileById(post.user.id?.toString() || ''),
-    enabled: !!post.user.id && !!currentUser?.token?.access_token && isHomeFeed && post.user.id !== currentUser?.id,
+    enabled: !!post.user.id && !!currentUser?.token?.access_token && isHomeFeed && post.user.id !== currentUser?.id && post.isFollowing === undefined,
   });
 
-  const isFollowing = userProfile?.is_following || false;
+  const isFollowing = post.isFollowing !== undefined ? post.isFollowing : (userProfile?.is_following || false);
 
   // Follow user mutation
   const followMutation = useMutation({
     mutationFn: (userId: string) => followUser(userId),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['userProfile', String(post.user.id)] });
+      queryClient.invalidateQueries({ queryKey: ['following', currentUser?.id] });
       // toast.success('Following user');
     },
     onError: (error) => {
@@ -306,6 +308,7 @@ export default function CommunityPostCard({ post, onCommentPress, showSimplified
     mutationFn: (userId: string) => unfollowUser(userId),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['userProfile', String(post.user.id)] });
+      queryClient.invalidateQueries({ queryKey: ['following', currentUser?.id] });
       // toast.success('Unfollowed user');
     },
     onError: (error) => {

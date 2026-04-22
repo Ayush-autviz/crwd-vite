@@ -36,6 +36,7 @@ interface CommunityUpdate {
     collective_id?: string | number;
     collective_sort_name?: string;
   };
+  isFollowing?: boolean;
 }
 
 interface CommunityUpdatesProps {
@@ -136,11 +137,11 @@ export function NotificationSummary({ update }: { update: CommunityUpdate }) {
   const { data: userProfile, isLoading: isLoadingProfile } = useQuery({
     queryKey: ['userProfile', update.user.id],
     queryFn: () => getUserProfileById(update.user.id?.toString() || ''),
-    enabled: !!update.user.id && !!token?.access_token && isDonationNotification && String(currentUser?.id) !== String(update.user.id),
+    enabled: !!update.user.id && !!token?.access_token && String(currentUser?.id) !== String(update.user.id) && update.isFollowing === undefined,
   });
 
   // Check if user is being followed
-  const isFollowing = userProfile?.is_following || false;
+  const isFollowing = update.isFollowing !== undefined ? update.isFollowing : (userProfile?.is_following || false);
 
   // Follow user mutation
   const followMutation = useMutation({
@@ -148,6 +149,7 @@ export function NotificationSummary({ update }: { update: CommunityUpdate }) {
     onSuccess: () => {
       // toast.success('Following user');
       queryClient.invalidateQueries({ queryKey: ['userProfile', update.user.id] });
+      queryClient.invalidateQueries({ queryKey: ['following', currentUser?.id] });
     },
     onError: (error: any) => {
       console.error('Error following user:', error);
@@ -161,6 +163,7 @@ export function NotificationSummary({ update }: { update: CommunityUpdate }) {
     onSuccess: () => {
       // toast.success('Unfollowed user');
       queryClient.invalidateQueries({ queryKey: ['userProfile', update.user.id] });
+      queryClient.invalidateQueries({ queryKey: ['following', currentUser?.id] });
     },
     onError: (error: any) => {
       console.error('Error unfollowing user:', error);
@@ -256,15 +259,31 @@ export function NotificationSummary({ update }: { update: CommunityUpdate }) {
             </div>
           </div>
 
-          {/* Join Button - Only show if user hasn't joined */}
-          {update.collective && !hasJoinedCollective && (
-            <button
-              onClick={handleJoinClick}
-              className="ml-1.5 sm:ml-2 md:ml-3 bg-white text-[#1600ff] border border-[#1600ff] hover:bg-[#1600ff] hover:text-white text-[10px] xs:text-xs sm:text-xs md:text-sm lg:text-base font-semibold px-2 xs:px-2.5 sm:px-3 md:px-4 lg:px-5 py-1 xs:py-1.5 sm:py-1.5 rounded-full flex-shrink-0"
-            >
-              Join
-            </button>
-          )}
+          <div className="flex items-center gap-1.5 md:gap-2">
+            {/* Follow Button - Only show if not followed */}
+            {update.user.id && String(currentUser?.id) !== String(update.user.id) && !isFollowing && (
+              <button
+                onClick={handleFollowClick}
+                disabled={followMutation.isPending || unfollowMutation.isPending || isLoadingProfile}
+                className={`text-[10px] xs:text-xs sm:text-xs md:text-sm font-semibold px-2 xs:px-2.5 sm:px-3 md:px-4 py-1 xs:py-1.5 sm:py-1.5 rounded-full flex-shrink-0 transition-colors ${isFollowing
+                  ? 'bg-[#1600ff] text-white border border-[#1600ff] hover:bg-[#1400cc]'
+                  : 'bg-white text-[#1600ff] border border-[#1600ff] hover:bg-blue-50'
+                  }`}
+              >
+                {followMutation.isPending || unfollowMutation.isPending ? '...' : isFollowing ? 'Following' : 'Follow'}
+              </button>
+            )}
+
+            {/* Join Button - Only show if user hasn't joined */}
+            {update.collective && !hasJoinedCollective && (
+              <button
+                onClick={handleJoinClick}
+                className="bg-white text-[#1600ff] border border-[#1600ff] hover:bg-[#1600ff] hover:text-white text-[10px] xs:text-xs sm:text-xs md:text-sm font-semibold px-2 xs:px-2.5 sm:px-3 md:px-4 py-1 xs:py-1.5 sm:py-1.5 rounded-full flex-shrink-0 transition-colors"
+              >
+                Join
+              </button>
+            )}
+          </div>
         </div>
 
         {/* Content Box */}
@@ -340,8 +359,8 @@ export function NotificationSummary({ update }: { update: CommunityUpdate }) {
           </div>
         </div>
 
-        {/* Action Button - Follow for donation notifications */}
-        {isDonationNotification && update.user.id && String(currentUser?.id) !== String(update.user.id) && !isFollowing && (
+        {/* Action Button - Follow for notifications involving other users */}
+        {update.user.id && String(currentUser?.id) !== String(update.user.id) && !isFollowing && (
           <button
             onClick={handleFollowClick}
             disabled={followMutation.isPending || unfollowMutation.isPending || isLoadingProfile}

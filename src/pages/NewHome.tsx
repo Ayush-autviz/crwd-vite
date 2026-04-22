@@ -22,7 +22,7 @@ import {
 } from "@/components/newHome/HomeSkeleton";
 import { getCollectives, getCauses, getJoinCollective } from "@/services/api/crwd";
 import { getDonationBox } from "@/services/api/donation";
-import { getUserProfileById, getCommunityUpdatesPosts } from "@/services/api/social";
+import { getUserProfileById, getCommunityUpdatesPosts, getUserFollowing } from "@/services/api/social";
 import { useAuthStore } from "@/stores/store";
 import GuestHome from "@/components/GuestHome";
 import Footer from "@/components/Footer";
@@ -64,6 +64,23 @@ export default function NewHome() {
         queryFn: () => getJoinCollective(user?.id?.toString() || ''),
         enabled: !!user?.id && !!token?.access_token,
     });
+
+    // Fetch users the current user is following
+    const { data: followingData } = useQuery({
+        queryKey: ["following", user?.id],
+        queryFn: () => getUserFollowing(user?.id?.toString() || ''),
+        enabled: !!user?.id && !!token?.access_token,
+    });
+
+    const followingIds = useMemo(() => {
+        if (followingData?.following) {
+            return new Set(followingData.following.map((item: any) => {
+                const userData = item.followee || item.following || item.user || item;
+                return userData.id?.toString();
+            }));
+        }
+        return new Set<string>();
+    }, [followingData]);
 
     // Fetch community updates (posts and notifications mixed)
     const {
@@ -310,6 +327,7 @@ export default function NewHome() {
                                 site_name: item.preview_details?.site_name || item.previewDetails?.site_name,
                                 domain: item.preview_details?.domain || item.previewDetails?.domain,
                             } : undefined,
+                            isFollowing: item.user?.id ? followingIds.has(item.user.id.toString()) : false,
                         }
                     };
                 } else if (item.item_type === 'notification') {
@@ -436,14 +454,15 @@ export default function NewHome() {
                                 profile_picture: notification.data?.user_profile_picture,
                                 color: notification.data?.user_color,
                                 collective_sort_name: notification.data?.collective_sort_name || notification.data?.collective?.sort_name,
-                            }
+                            },
+                            isFollowing: userId ? followingIds.has(userId.toString()) : false,
                         }
                     };
                 }
                 return null;
             })
             .filter(Boolean) || [];
-    }, [communityUpdatesPostsData, userProfilesMap]);
+    }, [communityUpdatesPostsData, userProfilesMap, followingIds]);
 
     const feedPart1 = transformedFeedItems.slice(0, 4);
     const feedPart2 = transformedFeedItems.slice(4, 8);
