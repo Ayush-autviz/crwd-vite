@@ -281,7 +281,7 @@ export default function GuestHome() {
             {/* <StartMakingDifference /> */}
 
             {/* Footer */}
-            <Footer />
+            <Footer showOnMobile={true} />
 
             {/* Fixed iOS App Banner */}
             {showAppBanner && (

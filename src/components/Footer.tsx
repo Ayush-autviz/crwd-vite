@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { ChevronDown } from "lucide-react";
 
-const Footer = () => {
+const Footer = ({ showOnMobile = false }: { showOnMobile?: boolean }) => {
   const [openSections, setOpenSections] = useState<{
     platform: boolean;
     resources: boolean;
@@ -22,7 +22,7 @@ const Footer = () => {
   };
 
   return (
-    <div className="bg-black text-white hidden md:block">
+    <div className={`bg-black text-white ${showOnMobile ? 'block' : 'hidden md:block'}`}>
       <div className="max-w-7xl mx-auto px-3 md:px-4 lg:px-8 py-8 md:py-12 lg:py-16">
         {/* Logo at Top */}
         <div className="mb-4 md:mb-6">
