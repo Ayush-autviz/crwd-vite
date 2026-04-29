@@ -252,6 +252,9 @@ export default function ProfilePage() {
   const {
     data: postsData,
     isLoading: postsLoading,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
   } = useInfiniteQuery({
     queryKey: ['posts', currentUser?.id],
     queryFn: ({ pageParam = 1 }) => getPosts(currentUser?.id || '', '', pageParam),
@@ -648,6 +651,25 @@ export default function ProfilePage() {
                 {userPosts.map((post: any) => (
                   <CommunityPostCard key={post.id} post={post} />
                 ))}
+                {hasNextPage && (
+                  <div className="mt-8 flex justify-center">
+                    <Button
+                      variant="outline"
+                      onClick={() => fetchNextPage()}
+                      disabled={isFetchingNextPage}
+                      className="min-w-[120px]"
+                    >
+                      {isFetchingNextPage ? (
+                        <>
+                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                          Loading...
+                        </>
+                      ) : (
+                        'Show More Posts'
+                      )}
+                    </Button>
+                  </div>
+                )}
               </div>
             ) : (
               <div className="flex flex-col items-center justify-center py-16">

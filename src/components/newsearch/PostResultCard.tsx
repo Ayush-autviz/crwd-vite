@@ -482,9 +482,13 @@ export default function PostResultCard({ post }: PostResultCardProps) {
 
                 if (isVideo) {
                   return (
-                    <div className=" mb-3 rounded-lg overflow-hidden">
+                    <div
+                      className="mb-3 rounded-lg overflow-hidden"
+                      style={{ maxWidth: '600px', maxHeight: '300px' }}
+                    >
                       <VideoPlayer
                         src={post.media}
+                        className="max-h-[300px]"
                         poster={post.preview_details?.image || undefined}
                         user={{
                           name: fullName,
