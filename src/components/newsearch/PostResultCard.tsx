@@ -11,6 +11,7 @@ import { useAuthStore } from '@/stores/store';
 import { DeletePostBottomSheet } from '@/components/post/DeletePostBottomSheet';
 import { Toast } from '@/components/ui/toast';
 import { encodePostId } from '@/lib/utils';
+import VideoPlayer from '@/components/ui/VideoPlayer';
 
 interface PreviewDetails {
   title?: string | null;
@@ -26,6 +27,7 @@ interface PostResultCardProps {
     id: number;
     content: string;
     media?: string;
+    media_type?: 'image' | 'video' | string;
     preview_details?: PreviewDetails | null;
     created_at: string;
     likes_count: number;
@@ -474,8 +476,29 @@ export default function PostResultCard({ post }: PostResultCardProps) {
               </a>
             ) : post.media ? (
               (() => {
-                const isImage = /\.(jpg|jpeg|png|gif|webp|svg|bmp)(\?|$)/i.test(post.media) ||
+                const isVideo = post.media_type === 'video' || /\.(mp4|mov|avi|wmv|flv|mkv|webm)(\?|$)/i.test(post.media);
+                const isImage = post.media_type === 'image' || /\.(jpg|jpeg|png|gif|webp|svg|bmp)(\?|$)/i.test(post.media) ||
                   /unsplash\.com|s3\.amazonaws\.com|crwd-bucket|imgur\.com/i.test(post.media);
+
+                if (isVideo) {
+                  return (
+                    <div className=" mb-3 rounded-lg overflow-hidden">
+                      <VideoPlayer
+                        src={post.media}
+                        poster={post.preview_details?.image || undefined}
+                        user={{
+                          name: fullName,
+                          username: user?.username || '',
+                          avatar: user?.profile_picture || '',
+                        }}
+                        caption={post.content}
+                        likes={post.likes_count}
+                        comments={post.comments_count}
+                        isLiked={post.is_liked}
+                      />
+                    </div>
+                  );
+                }
 
                 if (isImage) {
                   return (

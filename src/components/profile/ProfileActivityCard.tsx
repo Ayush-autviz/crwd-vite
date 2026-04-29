@@ -24,6 +24,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { likePost, unlikePost, deletePost } from "@/services/api/social";
 import { Loader2 } from "lucide-react";
 import { useAuthStore } from "@/stores/store";
+import VideoPlayer from "../ui/VideoPlayer";
 import CommentsBottomSheet from "../post/CommentsBottomSheet";
 
 // Format date to relative time or full date
@@ -87,10 +88,12 @@ export default function ProfileActivityCard({
   post,
   className,
   imageUrl,
+  isPostDetail,
 }: {
   post: PostDetail;
   className?: string;
   imageUrl?: string;
+  isPostDetail?: boolean;
 }) {
   const navigate = useNavigate();
   const location = useLocation();
@@ -431,11 +434,12 @@ export default function ProfileActivityCard({
             <div className="w-10 flex-shrink-0 hidden md:block" />
 
             <div className="flex-1 min-w-0">
-              <Link to={post.fundraiser ? `/fundraiser/${encodePostId(post.fundraiser.id)}` : `/post/${encodePostId(post.id)}`} className="block">
-                {/* Fundraiser Post UI */}
-                {post.fundraiser ? (
-                  <>
-                    <div className="w-full rounded-lg overflow-hidden mb-3 md:mb-3 aspect-[2/1]" style={{ maxWidth: '600px' }}>
+            <div className="block">
+              {/* Fundraiser Post UI */}
+              {post.fundraiser ? (
+                <>
+                  {isPostDetail ? (
+                    <div className="block w-full rounded-lg overflow-hidden mb-3 md:mb-3 aspect-[2/1]" style={{ maxWidth: '600px' }}>
                       {post.fundraiser.image ? (
                         <img
                           src={post.fundraiser.image}
@@ -453,7 +457,28 @@ export default function ProfileActivityCard({
                         </div>
                       )}
                     </div>
+                  ) : (
+                    <Link to={`/fundraiser/${encodePostId(post.fundraiser.id)}`} className="block w-full rounded-lg overflow-hidden mb-3 md:mb-3 aspect-[2/1]" style={{ maxWidth: '600px' }}>
+                      {post.fundraiser.image ? (
+                        <img
+                          src={post.fundraiser.image}
+                          alt={post.fundraiser.name}
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <div
+                          className="w-full h-full flex items-center justify-center"
+                          style={{ backgroundColor: post.fundraiser.color || '#1600ff' }}
+                        >
+                          <span className="text-white text-2xl md:text-2xl font-bold opacity-50">
+                            {post.fundraiser.name}
+                          </span>
+                        </div>
+                      )}
+                    </Link>
+                  )}
 
+                  {isPostDetail ? (
                     <div className="mb-3 md:mb-3">
                       <p className="text-sm md:text-sm text-gray-500 mb-1">Started a fundraiser</p>
                       <h3 className="text-base md:text-base font-bold text-gray-900 mb-3 md:mb-3">
@@ -477,12 +502,43 @@ export default function ProfileActivityCard({
                         </div>
                       </div>
                     </div>
-                  </>
-                ) : (
-                  <>
-                    <div className="text-sm md:text-sm text-gray-900 leading-6 mb-3 md:mb-3 whitespace-pre-line">
+                  ) : (
+                    <Link to={`/fundraiser/${encodePostId(post.fundraiser.id)}`} className="block mb-3 md:mb-3">
+                      <p className="text-sm md:text-sm text-gray-500 mb-1">Started a fundraiser</p>
+                      <h3 className="text-base md:text-base font-bold text-gray-900 mb-3 md:mb-3">
+                        {post.fundraiser.name}
+                      </h3>
+
+                      <div className="mb-2">
+                        <div className="flex items-baseline gap-2 mb-1.5">
+                          <span className="text-xl md:text-xl font-bold text-[#1600ff]">
+                            ${parseFloat(post.fundraiser.current_amount || '0').toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
+                          </span>
+                          <span className="text-sm md:text-sm text-gray-500">
+                            raised of ${parseFloat(post.fundraiser.target_amount || '0').toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 })} goal
+                          </span>
+                        </div>
+                        <div className="w-full h-2 md:h-2 bg-gray-200 rounded-full overflow-hidden">
+                          <div
+                            className="h-full bg-[#1600ff] transition-all duration-300"
+                            style={{ width: `${Math.min(post.fundraiser.progress_percentage || 0, 100)}%` }}
+                          />
+                        </div>
+                      </div>
+                    </Link>
+                  )}
+                </>
+              ) : (
+                <>
+                  {isPostDetail ? (
+                    <div className="block text-sm md:text-sm text-gray-900 leading-6 mb-3 md:mb-3 whitespace-pre-line">
                       {renderContentWithMentions(post.text || "", post.mentions)}
                     </div>
+                  ) : (
+                    <Link to={`/post/${encodePostId(post.id)}`} className="block text-sm md:text-sm text-gray-900 leading-6 mb-3 md:mb-3 whitespace-pre-line">
+                      {renderContentWithMentions(post.text || "", post.mentions)}
+                    </Link>
+                  )}
 
                     {post.previewDetails ? (
                       <Link
@@ -538,20 +594,45 @@ export default function ProfileActivityCard({
                         </div>
                       </Link>
                     ) : post.imageUrl ? (
-                      <Link
-                        to={post.imageUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        onClick={(e) => e.stopPropagation()}
-                        className="block w-full rounded-lg overflow-hidden mb-3 md:mb-3 cursor-pointer hover:opacity-90 transition-opacity relative "
+                      <div
+                        className="block w-full rounded-lg overflow-hidden mb-3 md:mb-3 relative "
                         style={{ maxWidth: '600px', maxHeight: '300px' }}
                       >
-                        <img
-                          src={post.imageUrl}
-                          alt="Post"
-                          className=" max-h-[300px] rounded-lg object-contain"
-                        />
-                      </Link>
+                        {post.mediaType === 'video' ? (
+                          <VideoPlayer
+                            src={post.imageUrl}
+                            className="max-h-[300px]"
+                            user={{
+                              name: displayName,
+                              username: post.username,
+                              avatar: post.avatarUrl || '',
+                              isVerified: false
+                            }}
+                            caption={post.text}
+                            likes={likesCount}
+                            comments={post.comments}
+                            isLiked={isLiked}
+                            onLike={() => handleLikeClick({ stopPropagation: () => {}, preventDefault: () => {} } as any)}
+                            onComment={() => setShowCommentsSheet(true)}
+                          />
+                        ) : (
+                          <div 
+                            className="cursor-pointer hover:opacity-90 transition-opacity"
+                            onClick={(e) => {
+                              if (isPostDetail) return;
+                              e.preventDefault();
+                              e.stopPropagation();
+                              navigate(post.fundraiser ? `/fundraiser/${encodePostId(post.fundraiser.id)}` : `/post/${encodePostId(post.id)}`);
+                            }}
+                          >
+                            <img
+                              src={post.imageUrl}
+                              alt="Post"
+                              className="max-h-[300px] rounded-lg object-contain w-full"
+                            />
+                          </div>
+                        )}
+                      </div>
                     ) : null}
                   </>
                 )}
@@ -597,7 +678,7 @@ export default function ProfileActivityCard({
                     <Share2 className="w-5 h-5 md:w-5 md:h-5 text-gray-500" />
                   </button>
                 </div>
-              </Link>
+            </div>
             </div>
           </div>
         </CardContent>

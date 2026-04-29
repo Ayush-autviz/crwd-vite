@@ -339,7 +339,7 @@ export function MobileShareModal({
 
   return (
     <div
-      className={`fixed inset-0 bg-black/50 flex items-end justify-center z-50 transition-opacity duration-300 ${isAnimating ? "opacity-100" : "opacity-0"
+      className={`fixed inset-0 bg-black/50 flex items-end justify-center z-100 transition-opacity duration-300 ${isAnimating ? "opacity-100" : "opacity-0"
         }`}
       onClick={handleClose}
     >

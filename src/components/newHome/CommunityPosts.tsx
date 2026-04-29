@@ -82,6 +82,7 @@ export default function CommunityPosts({
       : undefined,
     content: post.content || '',
     imageUrl: post.media || undefined,
+    mediaType: post.media_type,
     likes: post.likes_count || 0,
     comments: post.comments_count || 0,
     isLiked: post.is_liked || false,

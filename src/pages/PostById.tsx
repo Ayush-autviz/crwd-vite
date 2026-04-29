@@ -85,6 +85,7 @@ export default function PostById() {
     orgUrl: postData.collective?.id, // Collective ID for navigation
     text: postData.content || '',
     imageUrl: postData.media || undefined,
+    mediaType: postData.media_type,
     previewDetails: postData.preview_details || null,
     fundraiser: postData.fundraiser ? {
       id: postData.fundraiser.id,
@@ -529,6 +530,7 @@ export default function PostById() {
         <ProfileActivityCard
           post={post}
           className="rounded-none shadow-none "
+          isPostDetail={true}
         />
 
         {/* Comments Section */}

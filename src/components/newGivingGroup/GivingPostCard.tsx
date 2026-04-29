@@ -13,6 +13,7 @@ import { SharePost } from "@/components/ui/SharePost";
 import { Card, CardContent } from "@/components/ui/card";
 import { cn, encodePostId } from "@/lib/utils";
 import { useAuthStore } from "@/stores/store";
+import VideoPlayer from "@/components/ui/VideoPlayer";
 import { DeletePostBottomSheet } from "@/components/post/DeletePostBottomSheet";
 
 interface GivingPostCardProps {
@@ -34,6 +35,7 @@ interface GivingPostCardProps {
         };
         content: string;
         imageUrl?: string;
+        mediaType?: string;
         likes: number;
         comments: number;
         isLiked?: boolean;
@@ -561,12 +563,12 @@ export default function GivingPostCard({ post, onCommentPress, showSimplifiedHea
                     <div className="w-8 xs:w-9 md:w-10 flex-shrink-0 hidden md:block" />
 
                     <div className="flex-1 min-w-0">
-                        <Link to={post.fundraiser ? `/fundraiser/${encodePostId(post.fundraiser.id)}` : `/post/${encodePostId(post.id)}`} className="block">
+                        <div className="block">
                             {post.fundraiser ? (
                                 <>
                                     {/* Post Content */}
                                     {post.content && (
-                                        <div className="mb-2 md:mb-4">
+                                        <Link to={`/fundraiser/${encodePostId(post.fundraiser.id)}`} className="block mb-2 md:mb-4">
                                             <div
                                                 ref={contentRef}
                                                 className="text-xs xs:text-base text-gray-900 leading-relaxed whitespace-pre-line"
@@ -603,7 +605,7 @@ export default function GivingPostCard({ post, onCommentPress, showSimplifiedHea
                                                     </>
                                                 )}
                                             </div>
-                                        </div>
+                                        </Link>
                                     )}
 
                                     {/* Show fundraiser image like normal post image */}
@@ -652,7 +654,7 @@ export default function GivingPostCard({ post, onCommentPress, showSimplifiedHea
                                     )}
 
                                     {/* Fundraiser Info */}
-                                    <div className="mb-2 md:mb-3 bg-white p-4 rounded-b-lg border border-t-0 border-gray-100">
+                                    <Link to={`/fundraiser/${encodePostId(post.fundraiser.id)}`} className="block mb-2 md:mb-3 bg-white p-4 rounded-b-lg border border-t-0 border-gray-100">
                                         <h3 className="text-sm xs:text-base md:text-lg font-bold text-gray-900 mb-2 md:mb-3">
                                             {post.fundraiser.name}
                                         </h3>
@@ -693,11 +695,11 @@ export default function GivingPostCard({ post, onCommentPress, showSimplifiedHea
                                                 )}
                                             </div>
                                         </div>
-                                    </div>
+                                    </Link>
                                 </>
                             ) : (
                                 <>
-                                    <div className="mb-2 md:mb-4">
+                                    <Link to={`/post/${encodePostId(post.id)}`} className="block mb-2 md:mb-4">
                                         <div
                                             ref={contentRef}
                                             className="text-xs xs:text-base text-gray-900 leading-relaxed whitespace-pre-line"
@@ -734,7 +736,7 @@ export default function GivingPostCard({ post, onCommentPress, showSimplifiedHea
                                                 </>
                                             )}
                                         </div>
-                                    </div>
+                                    </Link>
 
                                     {/* Show preview card if previewDetails exists, otherwise show image */}
                                     {post.previewDetails ? (
@@ -795,20 +797,43 @@ export default function GivingPostCard({ post, onCommentPress, showSimplifiedHea
                                         </div>
                                     ) : post.imageUrl ? (
                                         <div
-                                            className=" rounded-lg overflow-hidden mb-2 md:mb-3  cursor-pointer hover:opacity-90 transition-opacity relative"
+                                            className=" rounded-lg overflow-hidden mb-2 md:mb-3 relative"
                                             style={{ maxWidth: '600px', maxHeight: '300px' }}
-                                            onClick={(e) => {
-                                                e.preventDefault();
-                                                e.stopPropagation();
-                                                // Add logic to open image modal if desired, or just navigate to post
-                                                navigate(post.fundraiser ? `/fundraiser/${encodePostId(post.fundraiser.id)}` : `/post/${encodePostId(post.id)}`);
-                                            }}
                                         >
-                                            <img
-                                                src={post.imageUrl}
-                                                alt="Post"
-                                                className=" max-h-[300px] object-contain rounded-lg"
-                                            />
+                                            {post.mediaType === 'video' ? (
+                                                <VideoPlayer
+                                                    src={post.imageUrl}
+                                                    className="max-h-[300px]"
+                                                    user={{
+                                                        name: post.user.name,
+                                                        username: post.user.username,
+                                                        avatar: post.user.avatar || '',
+                                                        isVerified: false
+                                                    }}
+                                                    caption={post.content}
+                                                    likes={likesCount}
+                                                    comments={post.comments}
+                                                    isLiked={isLiked}
+                                                    onLike={() => handleLikeClick({ stopPropagation: () => {}, preventDefault: () => {} } as any)}
+                                                    onComment={() => setShowCommentsSheet(true)}
+                                                    onShare={() => setShowShareModal(true)}
+                                                />
+                                            ) : (
+                                                <div 
+                                                    className="cursor-pointer hover:opacity-90 transition-opacity"
+                                                    onClick={(e) => {
+                                                        e.preventDefault();
+                                                        e.stopPropagation();
+                                                        navigate(post.fundraiser ? `/fundraiser/${encodePostId(post.fundraiser.id)}` : `/post/${encodePostId(post.id)}`);
+                                                    }}
+                                                >
+                                                    <img
+                                                        src={post.imageUrl}
+                                                        alt="Post"
+                                                        className=" max-h-[300px] object-contain rounded-lg"
+                                                    />
+                                                </div>
+                                            )}
                                         </div>
                                     ) : null}
                                 </>
@@ -865,7 +890,7 @@ export default function GivingPostCard({ post, onCommentPress, showSimplifiedHea
                             </button> */}
                                 </div>
                             </div>
-                        </Link>
+                        </div>
 
                     </div>
                 </div>

@@ -29,6 +29,7 @@ export interface PostDetail {
   orgUrl?: string | number; // Collective ID for navigation (optional)
   text: string;
   imageUrl?: string;
+  mediaType?: string;
   previewDetails?: PreviewDetails | null;
   fundraiser?: {
     id: number;

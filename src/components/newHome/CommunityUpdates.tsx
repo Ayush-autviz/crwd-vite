@@ -102,6 +102,7 @@ function PostWithData({ update }: { update: CommunityUpdate }) {
       : update.collective,
     content: postData.content || '',
     imageUrl: postData.media || undefined,
+    mediaType: postData.media_type,
     likes: postData.likes_count || 0,
     comments: postData.comments_count || 0,
     isLiked: postData.is_liked || false,

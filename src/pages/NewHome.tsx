@@ -301,6 +301,7 @@ export default function NewHome() {
                                 : undefined,
                             content: item.content || '',
                             imageUrl: item.media || undefined,
+                            mediaType: item.media_type,
                             likes: item.likes_count || 0,
                             comments: item.comments_count || 0,
                             isLiked: item.is_liked || false,

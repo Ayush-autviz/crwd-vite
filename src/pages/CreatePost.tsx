@@ -4,7 +4,7 @@ import React, { useState, useRef, useEffect, useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useNavigate, useLocation } from "react-router-dom";
-import { ImageIcon, X, Loader2, ArrowLeft, Globe, ChevronDown, Check, Link2, Heart } from "lucide-react";
+import { ImageIcon, X, Loader2, ArrowLeft, Globe, ChevronDown, Check, Link2, Heart, Video } from "lucide-react";
 import { Toast } from "@/components/ui/toast";
 import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
 import { createPost, getLinkPreview, mentionSearch } from "@/services/api/social";
@@ -26,6 +26,7 @@ export default function CreatePostPage() {
   const navigate = useNavigate();
   const location = useLocation();
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const videoInputRef = useRef<HTMLInputElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const { user: currentUser } = useAuthStore();
   const queryClient = useQueryClient();
@@ -72,13 +73,17 @@ export default function CreatePostPage() {
   });
 
   // Track which post type is selected
-  const [postType, setPostType] = useState<"link" | "image" | "event" | "fundraiser" | null>(
+  const [postType, setPostType] = useState<"link" | "image" | "video" | "event" | "fundraiser" | null>(
     null
   );
 
   // Track selected image
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
+
+  // Track selected video
+  const [selectedVideo, setSelectedVideo] = useState<File | null>(null);
+  const [videoPreview, setVideoPreview] = useState<string | null>(null);
 
   // Track URL validation
   const [urlError, setUrlError] = useState<string | null>(null);
@@ -117,8 +122,8 @@ export default function CreatePostPage() {
   }, [previewData, form.url, urlError]);
 
   const hasUnsavedChanges = useMemo(() => {
-    return form.content.trim() !== "" || form.url.trim() !== "" || selectedImage !== null;
-  }, [form.content, form.url, selectedImage]);
+    return form.content.trim() !== "" || form.url.trim() !== "" || selectedImage !== null || selectedVideo !== null;
+  }, [form.content, form.url, selectedImage, selectedVideo]);
 
   // Use navigation guard hook
   useUnsavedChanges(hasUnsavedChanges, setShowDiscardSheet, isConfirmedDiscard);
@@ -313,8 +318,22 @@ export default function CreatePostPage() {
     }
   };
 
+  // Handle video selection
+  const handleVideoSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setSelectedVideo(file);
+      const videoUrl = URL.createObjectURL(file);
+      setVideoPreview(videoUrl);
+    }
+    // Reset input value to allow selecting the same file again
+    if (e.target) {
+      e.target.value = "";
+    }
+  };
+
   // Handle post type selection
-  const handlePostTypeSelect = (type: "link" | "image" | "event") => {
+  const handlePostTypeSelect = (type: "link" | "image" | "video" | "event") => {
     setPostType(type);
 
     // Reset form fields when switching post types
@@ -323,14 +342,18 @@ export default function CreatePostPage() {
       url: "",
     }));
 
-    // Reset image selection
+    // Reset media selection
     setSelectedImage(null);
     setImagePreview(null);
+    setSelectedVideo(null);
+    setVideoPreview(null);
     setUrlError(null);
 
     // Trigger image picker for image posts
     if (type === "image" && fileInputRef.current) {
       fileInputRef.current.click();
+    } else if (type === "video" && videoInputRef.current) {
+      videoInputRef.current.click();
     }
   };
 
@@ -371,6 +394,12 @@ export default function CreatePostPage() {
     // Add media file if it's an image post
     if (postType === "image" && selectedImage) {
       formData.append('media_file', selectedImage);
+    }
+
+    // Add media file if it's a video post
+    if (postType === "video" && selectedVideo) {
+      formData.append('media_file', selectedVideo);
+      formData.append('media_type', 'video');
     }
 
     // Add media_url if URL is provided (for link posts or when URL is filled)
@@ -641,6 +670,13 @@ export default function CreatePostPage() {
             <Link2 className="w-5 h-5 text-gray-600" />
             <span className="text-[14px] font-bold text-gray-800">Add Link</span>
           </button>
+          <button
+            onClick={() => handlePostTypeSelect("video")}
+            className="flex items-center gap-2 px-4 py-2.5 border border-gray-200 rounded-full hover:bg-gray-50 hover:border-gray-300 transition-all active:scale-95"
+          >
+            <Video className="w-5 h-5 text-gray-600" />
+            <span className="text-[14px] font-bold text-gray-800">Add Video</span>
+          </button>
           {/* {selectedCollective && (selectedCollective.created_by.id === currentUser?.id) && ( */}
           <button
             onClick={() => {
@@ -774,6 +810,29 @@ export default function CreatePostPage() {
           </div>
         )}
 
+        {/* Video Preview */}
+        {selectedVideo && videoPreview && (
+          <div className="mb-4">
+            <div className="relative rounded-lg overflow-hidden w-fit" style={{ maxWidth: '600px', maxHeight: '300px' }}>
+              <video
+                src={videoPreview}
+                controls
+                className="max-h-[300px] rounded-lg"
+              />
+              <button
+                onClick={() => {
+                  setSelectedVideo(null);
+                  setVideoPreview(null);
+                  if (postType === "video") setPostType(null);
+                }}
+                className="absolute top-2 right-2 w-8 h-8 bg-black bg-opacity-50 rounded-full flex items-center justify-center text-white hover:bg-opacity-70"
+              >
+                <X size={16} />
+              </button>
+            </div>
+          </div>
+        )}
+
       </div>
 
       {/* <div className="px-4 py-4 max-w-2xl mx-auto w-full">
@@ -843,12 +902,19 @@ export default function CreatePostPage() {
         </div> */}
       {/* </div> */}
 
-      {/* Hidden file input for image selection */}
+      {/* Hidden file input for media selection */}
       <input
         ref={fileInputRef}
         type="file"
         accept="image/*"
         onChange={handleImageSelect}
+        className="hidden"
+      />
+      <input
+        ref={videoInputRef}
+        type="file"
+        accept="video/*"
+        onChange={handleVideoSelect}
         className="hidden"
       />
 

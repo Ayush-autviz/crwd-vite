@@ -74,6 +74,7 @@ export const PopularPosts = ({
                 orgUrl: post.collective?.id,
                 text: post.content || '',
                 imageUrl: post.media || undefined,
+                mediaType: post.media_type || undefined,
                 previewDetails: post.preview_details || null,
                 likes: post.likes_count || 0,
                 comments: post.comments_count || 0,

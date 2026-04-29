@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { X, Loader2, ImageIcon, Link2, Globe, ChevronDown, Check, Heart } from "lucide-react";
+import { X, Loader2, ImageIcon, Link2, Globe, ChevronDown, Check, Heart, Video } from "lucide-react";
 import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
 import { createPost, getLinkPreview, mentionSearch } from "@/services/api/social";
 import { getJoinCollective } from "@/services/api/crwd";
@@ -35,6 +35,7 @@ export default function CreatePostBottomSheet({
     collectiveData,
 }: CreatePostBottomSheetProps) {
     const fileInputRef = useRef<HTMLInputElement>(null);
+    const videoInputRef = useRef<HTMLInputElement>(null);
     const textareaRef = useRef<HTMLTextAreaElement>(null);
     const { user: currentUser } = useAuthStore();
     const queryClient = useQueryClient();
@@ -72,9 +73,11 @@ export default function CreatePostBottomSheet({
         url: "",
     });
 
-    const [postType, setPostType] = useState<"link" | "image" | "event" | "fundraiser" | null>(null);
+    const [postType, setPostType] = useState<"link" | "image" | "video" | "event" | "fundraiser" | null>(null);
     const [selectedImage, setSelectedImage] = useState<File | null>(null);
     const [imagePreview, setImagePreview] = useState<string | null>(null);
+    const [selectedVideo, setSelectedVideo] = useState<File | null>(null);
+    const [videoPreview, setVideoPreview] = useState<string | null>(null);
     const [urlError, setUrlError] = useState<string | null>(null);
     const [showPreview, setShowPreview] = useState(false);
     const [mentionSearchQuery, setMentionSearchQuery] = useState<string | null>(null);
@@ -231,14 +234,28 @@ export default function CreatePostBottomSheet({
         if (e.target) e.target.value = "";
     };
 
-    const handlePostTypeSelect = (type: "link" | "image" | "event") => {
+    const handleVideoSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (file) {
+            setSelectedVideo(file);
+            const videoUrl = URL.createObjectURL(file);
+            setVideoPreview(videoUrl);
+        }
+        if (e.target) e.target.value = "";
+    };
+
+    const handlePostTypeSelect = (type: "link" | "image" | "video" | "event") => {
         setPostType(type);
         setForm((prev) => ({ ...prev, url: "" }));
         setSelectedImage(null);
         setImagePreview(null);
+        setSelectedVideo(null);
+        setVideoPreview(null);
         setUrlError(null);
         if (type === "image" && fileInputRef.current) {
             fileInputRef.current.click();
+        } else if (type === "video" && videoInputRef.current) {
+            videoInputRef.current.click();
         }
     };
 
@@ -271,6 +288,11 @@ export default function CreatePostBottomSheet({
             formData.append('media_file', selectedImage);
         }
 
+        if (postType === "video" && selectedVideo) {
+            formData.append('media_file', selectedVideo);
+            formData.append('media_type', 'video');
+        }
+
         if (form.url.trim() && validateUrl(form.url)) {
             formData.append('media_url', form.url);
         }
@@ -283,6 +305,8 @@ export default function CreatePostBottomSheet({
         setPostType(null);
         setSelectedImage(null);
         setImagePreview(null);
+        setSelectedVideo(null);
+        setVideoPreview(null);
         setSelectedMentions([]);
         onClose();
     };
@@ -444,6 +468,7 @@ export default function CreatePostBottomSheet({
                         <div className="flex flex-wrap gap-2.5 mb-8">
                             <button onClick={() => handlePostTypeSelect("image")} className="flex items-center gap-2 px-4 py-2.5 border border-gray-200 rounded-full hover:bg-gray-50 active:scale-95 transition-all"><ImageIcon className="w-5 h-5 text-gray-600" /><span className="text-[14px] font-bold text-gray-800">Add Image</span></button>
                             <button onClick={() => handlePostTypeSelect("link")} className="flex items-center gap-2 px-4 py-2.5 border border-gray-200 rounded-full hover:bg-gray-50 active:scale-95 transition-all"><Link2 className="w-5 h-5 text-gray-600" /><span className="text-[14px] font-bold text-gray-800">Add Link</span></button>
+                            <button onClick={() => handlePostTypeSelect("video")} className="flex items-center gap-2 px-4 py-2.5 border border-gray-200 rounded-full hover:bg-gray-50 active:scale-95 transition-all"><Video className="w-5 h-5 text-gray-600" /><span className="text-[14px] font-bold text-gray-800">Add Video</span></button>
                             {selectedCollective && (selectedCollective.created_by.id === currentUser?.id) && (
                                 <button
                                     onClick={() => navigate(`/create-fundraiser/${(selectedCollective.collective || selectedCollective).id}`)}
@@ -493,6 +518,16 @@ export default function CreatePostBottomSheet({
                                 </div>
                             </div>
                         )}
+
+                        {/* Video Preview */}
+                        {selectedVideo && videoPreview && (
+                            <div className="mb-4">
+                                <div className="relative rounded-lg overflow-hidden w-fit max-w-[600px] max-h-[180px]">
+                                    <video src={videoPreview} controls className="max-h-[180px] rounded-lg" />
+                                    <button onClick={() => { setSelectedVideo(null); setVideoPreview(null); if (postType === "video") setPostType(null); }} className="absolute top-2 right-2 w-8 h-8 bg-black/50 rounded-full flex items-center justify-center text-white"><X size={16} /></button>
+                                </div>
+                            </div>
+                        )}
                     </div>
                 </div>
 
@@ -515,6 +550,7 @@ export default function CreatePostBottomSheet({
                 </div> */}
 
                 <input type="file" ref={fileInputRef} className="hidden" accept="image/*" onChange={handleImageSelect} />
+                <input type="file" ref={videoInputRef} className="hidden" accept="video/*" onChange={handleVideoSelect} />
             </SheetContent>
         </Sheet>
     );
