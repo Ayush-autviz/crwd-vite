@@ -29,6 +29,7 @@ interface VideoPlayerProps {
   onComment?: () => void;
   onShare?: () => void;
   isLiked?: boolean;
+  disableFullscreen?: boolean;
 }
 
 const VideoPlayer: React.FC<VideoPlayerProps> = ({
@@ -43,14 +44,16 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({
   onLike,
   onComment,
   onShare,
-  isLiked = false
+  isLiked = false,
+  disableFullscreen = false
 }) => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [isPlaying, setIsPlaying] = useState(false);
-  const [isMuted, setIsMuted] = useState(false);
+  const [isMuted, setIsMuted] = useState(true);
   const [isLoading, setIsLoading] = useState(true);
   const [hasLoaded, setHasLoaded] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [currentTime, setCurrentTime] = useState(0);
   const [showControls, setShowControls] = useState(true);
   const controlsTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -119,7 +122,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({
         className
       )}
       onMouseMove={handleMouseMove}
-      onClick={togglePlay}
+      onClick={disableFullscreen ? undefined : handleFullscreenOpen}
     >
       {isLoading && (
         <div className="absolute inset-0 flex items-center justify-center bg-black/10 backdrop-blur-sm z-20">
@@ -131,8 +134,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({
         ref={videoRef}
         src={src}
         poster={poster}
-        className="relative max-w-full max-h-full cursor-pointer z-10"
-        style={{ objectFit: 'contain' }}
+        className={`block w-auto max-h-[300px] ${disableFullscreen ? 'cursor-default' : 'cursor-pointer'} z-10 object-contain rounded-lg`}
         onLoadedMetadata={handleLoadedMetadata}
         onWaiting={() => setIsLoading(true)}
         onPlaying={() => {
@@ -141,35 +143,18 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({
         }}
         onEnded={() => setIsPlaying(false)}
         onPause={() => setIsPlaying(false)}
+        onTimeUpdate={() => setCurrentTime(videoRef.current?.currentTime || 0)}
         muted={isMuted}
+        loop
+        autoPlay
         playsInline
       />
-
-      {/* Top Right Fullscreen Icon */}
-      <button
-        onClick={handleFullscreenOpen}
-        className="absolute top-2 right-2 p-1.5 bg-black/40 backdrop-blur-md rounded-full text-white transition-all z-20 border border-white/10 "
-      >
-        <Maximize className="w-3.5 h-3.5" />
-      </button>
-
-      {/* Centered Play Button Overlay */}
-      <div className={cn(
-        "absolute inset-0 flex items-center justify-center transition-opacity duration-300 z-10 pointer-events-none",
-        (isPlaying && !showControls) ? "opacity-0" : "opacity-100"
-      )}>
-        {!isPlaying && !isLoading && (
-          <div className="w-12 h-12 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center border border-white/30 shadow-xl">
-            <Play className="w-6 h-6 text-white fill-white ml-1" />
-          </div>
-        )}
-      </div>
 
       {/* Minimal Overlay Controls */}
       {!isLoading && hasLoaded && (
         <div className="absolute bottom-1.5 left-3 right-3 flex items-center justify-between z-20">
           <div className="bg-black/40 backdrop-blur-md px-2 py-0.5 rounded-lg text-white text-[10px] font-medium tabular-nums border border-white/10" style={{ fontFamily: 'Outfit, sans-serif' }}>
-            {formatTime(videoRef.current?.currentTime || 0)}
+            {formatTime(currentTime)}
           </div>
           <button
             onClick={toggleMute}
@@ -181,20 +166,22 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({
       )}
 
       {/* Fullscreen Modal Component */}
-      <VideoFullscreen
-        src={src}
-        isOpen={isModalOpen}
-        onClose={handleFullscreenClose}
-        user={user}
-        caption={caption}
-        likes={likes}
-        comments={comments}
-        shares={shares}
-        isLiked={isLiked}
-        onLike={onLike}
-        onComment={onComment}
-        onShare={onShare}
-      />
+      {!disableFullscreen && (
+        <VideoFullscreen
+          src={src}
+          isOpen={isModalOpen}
+          onClose={handleFullscreenClose}
+          user={user}
+          caption={caption}
+          likes={likes}
+          comments={comments}
+          shares={shares}
+          isLiked={isLiked}
+          onLike={onLike}
+          onComment={onComment}
+          onShare={onShare}
+        />
+      )}
     </div>
   );
 };

@@ -2,6 +2,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { Heart, MessageCircle, Share2, MoreHorizontal, Pin, Pencil, Flag, Trash2, Users } from "lucide-react";
 import VideoPlayer from "@/components/ui/VideoPlayer";
+import ImagePlayer from "@/components/ui/ImagePlayer";
 import dayjs from 'dayjs';
 import { useState, useRef, useEffect } from "react";
 import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
@@ -824,20 +825,23 @@ export default function CommunityPostCard({ post, onCommentPress, showSimplified
                             onShare={() => setShowShareModal(true)}
                           />
                         ) : (
-                          <div 
-                            className="cursor-pointer hover:opacity-90 transition-opacity"
-                            onClick={(e) => {
-                              e.preventDefault();
-                              e.stopPropagation();
-                              navigate(post.fundraiser ? `/fundraiser/${encodePostId(post.fundraiser.id)}` : `/post/${encodePostId(post.id)}`);
+                          <ImagePlayer
+                            src={post.imageUrl}
+                            className="max-h-[300px]"
+                            user={{
+                              name: post.user.name,
+                              username: post.user.username,
+                              avatar: post.user.avatar || '',
+                              isVerified: false
                             }}
-                          >
-                            <img
-                              src={post.imageUrl}
-                              alt="Post"
-                              className=" max-h-[300px] object-contain rounded-lg"
-                            />
-                          </div>
+                            caption={post.content}
+                            likes={likesCount}
+                            comments={post.comments}
+                            isLiked={isLiked}
+                            onLike={() => handleLikeClick({ stopPropagation: () => { }, preventDefault: () => { } } as any)}
+                            onComment={() => setShowCommentsSheet(true)}
+                            onShare={() => setShowShareModal(true)}
+                          />
                         )}
                       </div>
                     ) : null}

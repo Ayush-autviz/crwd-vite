@@ -12,6 +12,7 @@ import { getJoinCollective } from "@/services/api/crwd";
 import { useAuthStore } from "@/stores/store";
 import { DiscardSheet } from "@/components/ui/DiscardSheet";
 import { useUnsavedChanges } from "@/hooks/use-unsaved-changes";
+import VideoPlayer from "@/components/ui/VideoPlayer";
 
 import { MentionSearchResults } from "@/components/post/MentionSearchResults";
 import {
@@ -203,7 +204,13 @@ export default function CreatePostPage() {
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     const { name, value } = e.target;
-    setForm((prev) => ({ ...prev, [name]: value }));
+
+    let finalValue = value;
+    if (name === "content" && value.length > maxCharacters) {
+      finalValue = value.substring(0, maxCharacters);
+    }
+
+    setForm((prev) => ({ ...prev, [name]: finalValue }));
 
     // Clear URL error when user starts typing
     if (name === "url" && urlError) {
@@ -275,9 +282,13 @@ export default function CreatePostPage() {
     const lastAtSymbolIndex = textBeforeCursor.lastIndexOf('@');
     // Use user.name or user.username - keeping consistent with user.name for now as per existing logic
     const mentionName = user.name || user.username;
-    const newTextBeforeCursor = textBeforeCursor.substring(0, lastAtSymbolIndex) + `@${mentionName} `;
+    let newContent = textBeforeCursor.substring(0, lastAtSymbolIndex) + `@${mentionName} ` + textAfterCursor;
 
-    setForm(prev => ({ ...prev, content: newTextBeforeCursor + textAfterCursor }));
+    if (newContent.length > maxCharacters) {
+      newContent = newContent.substring(0, maxCharacters);
+    }
+
+    setForm(prev => ({ ...prev, content: newContent }));
     setSelectedMentions(prev => [
       ...prev.filter(m => m.name !== mentionName),
       { type: user.type, id: user.id, name: mentionName }
@@ -288,7 +299,8 @@ export default function CreatePostPage() {
     setTimeout(() => {
       if (textareaRef.current) {
         textareaRef.current.focus();
-        const newCursorPos = newTextBeforeCursor.length;
+        const mentionPart = textBeforeCursor.substring(0, lastAtSymbolIndex) + `@${mentionName} `;
+        const newCursorPos = mentionPart.length;
         textareaRef.current.setSelectionRange(newCursorPos, newCursorPos);
       }
     }, 0);
@@ -615,20 +627,20 @@ export default function CreatePostPage() {
         <div className="mb-6">
           <div className=" rounded-xl p-4 bg-[#f6f5ed]  focus-within:border-blue-400 transition-all relative min-h-[240px]">
             {/* Mirror Div for styling mentions */}
-            <div
+            {/* <div
               className="absolute inset-x-4 inset-y-4 text-[16px] whitespace-pre-wrap break-words pointer-events-none text-gray-900 border-none"
               style={{ font: 'inherit', lineHeight: '1.6' }}
             >
               {renderHighlightedText(form.content)}
               {form.content.endsWith('\n') ? '\n' : ''}
-            </div>
+            </div> */}
             <textarea
               ref={textareaRef}
               name="content"
               value={form.content}
               onChange={handleInputChange}
               placeholder="What's on your mind?"
-              className="w-full min-h-[200px] p-0 border-0 bg-transparent text-base focus:outline-none resize-none placeholder:text-gray-700 relative z-10 text-transparent caret-black"
+              className="w-full min-h-[200px] p-0 border-0 bg-transparent text-[16px] text-gray-900 focus:outline-none resize-none placeholder:text-gray-700"
               style={{ lineHeight: '1.6' }}
               maxLength={maxCharacters}
             />
@@ -814,10 +826,10 @@ export default function CreatePostPage() {
         {selectedVideo && videoPreview && (
           <div className="mb-4">
             <div className="relative rounded-lg overflow-hidden w-fit" style={{ maxWidth: '600px', maxHeight: '300px' }}>
-              <video
+              <VideoPlayer
                 src={videoPreview}
-                controls
-                className="max-h-[300px] rounded-lg"
+                className="max-h-[300px]"
+                disableFullscreen={true}
               />
               <button
                 onClick={() => {
@@ -825,7 +837,7 @@ export default function CreatePostPage() {
                   setVideoPreview(null);
                   if (postType === "video") setPostType(null);
                 }}
-                className="absolute top-2 right-2 w-8 h-8 bg-black bg-opacity-50 rounded-full flex items-center justify-center text-white hover:bg-opacity-70"
+                className="absolute top-2 cursor-pointer right-2 w-8 h-8 bg-black bg-opacity-50 rounded-full flex items-center justify-center text-white hover:bg-opacity-70"
               >
                 <X size={16} />
               </button>

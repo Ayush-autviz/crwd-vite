@@ -22,6 +22,7 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { toast } from "sonner";
+import VideoPlayer from "@/components/ui/VideoPlayer";
 
 interface CreatePostBottomSheetProps {
     isOpen: boolean;
@@ -132,7 +133,13 @@ export default function CreatePostBottomSheet({
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const { name, value } = e.target;
-        setForm((prev) => ({ ...prev, [name]: value }));
+        
+        let finalValue = value;
+        if (name === "content" && value.length > maxCharacters) {
+            finalValue = value.substring(0, maxCharacters);
+        }
+
+        setForm((prev) => ({ ...prev, [name]: finalValue }));
 
         if (name === "url" && urlError) {
             setUrlError(null);
@@ -440,16 +447,16 @@ export default function CreatePostBottomSheet({
                         {/* Main Content Input */}
                         <div className="mb-6">
                             <div className="rounded-xl p-4 bg-[#f6f5ed] focus-within:border-blue-400 transition-all relative min-h-[200px]">
-                                <div className="absolute inset-x-4 inset-y-4 text-[16px] whitespace-pre-wrap break-words pointer-events-none text-gray-900 border-none" style={{ font: 'inherit', lineHeight: '1.6' }}>
+                                {/* <div className="absolute inset-x-4 inset-y-4 text-[16px] whitespace-pre-wrap break-words pointer-events-none text-gray-900 border-none" style={{ font: 'inherit', lineHeight: '1.6' }}>
                                     {renderHighlightedText(form.content)}{form.content.endsWith('\n') ? '\n' : ''}
-                                </div>
+                                </div> */}
                                 <textarea
                                     ref={textareaRef}
                                     name="content"
                                     value={form.content}
                                     onChange={handleInputChange}
                                     placeholder="What's on your mind? Share your thoughts, updates, or stories..."
-                                    className="w-full min-h-[160px] p-0 border-0 bg-transparent text-[16px] focus:outline-none resize-none placeholder:text-gray-500 relative z-10 text-transparent caret-blue-600"
+                                    className="w-full min-h-[160px] p-0 border-0 bg-transparent text-[16px] focus:outline-none resize-none placeholder:text-gray-500"
                                     style={{ lineHeight: '1.6' }}
                                     maxLength={maxCharacters}
                                 />
@@ -512,8 +519,8 @@ export default function CreatePostBottomSheet({
                         {/* Image Preview */}
                         {selectedImage && imagePreview && (
                             <div className="mb-4">
-                                <div className="relative rounded-lg overflow-hidden w-fit max-w-[600px] max-h-[180px]">
-                                    <img src={imagePreview} alt="Selected" className="max-h-[180px] object-contain rounded-lg" />
+                                <div className="relative rounded-lg overflow-hidden w-fit max-w-[600px] max-h-[200px]">
+                                    <img src={imagePreview} alt="Selected" className="max-h-[200px] object-contain rounded-lg" />
                                     <button onClick={() => { setSelectedImage(null); setImagePreview(null); if (postType === "image") setPostType(null); }} className="absolute top-2 right-2 w-8 h-8 bg-black/50 rounded-full flex items-center justify-center text-white"><X size={16} /></button>
                                 </div>
                             </div>
@@ -522,9 +529,9 @@ export default function CreatePostBottomSheet({
                         {/* Video Preview */}
                         {selectedVideo && videoPreview && (
                             <div className="mb-4">
-                                <div className="relative rounded-lg overflow-hidden w-fit max-w-[600px] max-h-[180px]">
-                                    <video src={videoPreview} controls className="max-h-[180px] rounded-lg" />
-                                    <button onClick={() => { setSelectedVideo(null); setVideoPreview(null); if (postType === "video") setPostType(null); }} className="absolute top-2 right-2 w-8 h-8 bg-black/50 rounded-full flex items-center justify-center text-white"><X size={16} /></button>
+                                <div className="relative rounded-lg overflow-hidden w-fit max-w-[600px] max-h-[300px]">
+                                    <VideoPlayer src={videoPreview} className="max-h-[300px]" disableFullscreen={true} />
+                                    <button onClick={() => { setSelectedVideo(null); setVideoPreview(null); if (postType === "video") setPostType(null); }} className="absolute top-2 right-2 w-8 h-8 bg-black/50 rounded-full flex items-center justify-center text-white z-10"><X size={16} /></button>
                                 </div>
                             </div>
                         )}

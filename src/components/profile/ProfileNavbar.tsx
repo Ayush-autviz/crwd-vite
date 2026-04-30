@@ -429,7 +429,7 @@ export default function ProfileNavbar({
                           className="flex items-center gap-2 px-2  sm:gap-3 py-2.5 sm:py-3 rounded-lg hover:bg-gray-100 transition-colors"
                         >
                           <File className="h-4 w-4 sm:h-5 sm:w-5 text-gray-700" />
-                          <span className="text-gray-900 font-medium text-sm xs:text-base sm:text-lg">New Post</span>
+                          <span className="text-gray-900 font-medium text-sm xs:text-base sm:text-base">New Post</span>
                         </Link>
                       </div>
 

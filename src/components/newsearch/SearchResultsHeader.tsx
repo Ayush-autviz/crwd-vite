@@ -22,7 +22,7 @@ export default function SearchResultsHeader({
   };
 
   return (
-    <div className="sticky top-0 z-100 bg-white border-b px-3 md:px-6 py-3 md:py-4">
+    <div className="sticky top-0 z-60 bg-white border-b px-3 md:px-6 py-3 md:py-4">
       <div className="relative">
         <SearchIcon className="absolute left-2.5 md:left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 md:w-5 md:h-5 text-gray-400" />
         <Input

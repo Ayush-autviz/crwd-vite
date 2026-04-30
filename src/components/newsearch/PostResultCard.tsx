@@ -12,6 +12,7 @@ import { DeletePostBottomSheet } from '@/components/post/DeletePostBottomSheet';
 import { Toast } from '@/components/ui/toast';
 import { encodePostId } from '@/lib/utils';
 import VideoPlayer from '@/components/ui/VideoPlayer';
+import ImagePlayer from '@/components/ui/ImagePlayer';
 
 interface PreviewDetails {
   title?: string | null;
@@ -499,6 +500,7 @@ export default function PostResultCard({ post }: PostResultCardProps) {
                         likes={post.likes_count}
                         comments={post.comments_count}
                         isLiked={post.is_liked}
+                        disableFullscreen={true}
                       />
                     </div>
                   );
@@ -506,16 +508,21 @@ export default function PostResultCard({ post }: PostResultCardProps) {
 
                 if (isImage) {
                   return (
-                    <div
-                      className="w-full rounded-lg overflow-hidden mb-2.5 md:mb-3 cursor-pointer hover:opacity-90 transition-opacity relative"
-                      style={{ maxWidth: '600px', maxHeight: '300px' }}
-                    >
-                      <img
-                        src={post.media}
-                        alt="Post"
-                        className="max-h-[300px] object-contain rounded-lg"
-                      />
-                    </div>
+                    <ImagePlayer
+                      src={post.media}
+                      className="max-h-[300px]"
+                      user={{
+                        name: fullName,
+                        username: user?.username || '',
+                        avatar: user?.profile_picture || '',
+                      }}
+                      caption={post.content}
+                      likes={post.likes_count}
+                      comments={post.comments_count}
+                      isLiked={post.is_liked}
+                      onShare={() => setShowShareModal(true)}
+                      disableFullscreen={true}
+                    />
                   );
                 } else {
                   try {
