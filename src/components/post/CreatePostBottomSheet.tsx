@@ -37,7 +37,9 @@ export default function CreatePostBottomSheet({
 }: CreatePostBottomSheetProps) {
     const fileInputRef = useRef<HTMLInputElement>(null);
     const videoInputRef = useRef<HTMLInputElement>(null);
-    const textareaRef = useRef<HTMLTextAreaElement>(null);
+    const editorRef = useRef<HTMLDivElement>(null);
+
+
     const { user: currentUser } = useAuthStore();
     const queryClient = useQueryClient();
 
@@ -69,10 +71,12 @@ export default function CreatePostBottomSheet({
         return name.charAt(0).toUpperCase();
     };
 
+    const maxCharacters = 500;
     const [form, setForm] = useState({
         content: "",
         url: "",
     });
+
 
     const [postType, setPostType] = useState<"link" | "image" | "video" | "event" | "fundraiser" | null>(null);
     const [selectedImage, setSelectedImage] = useState<File | null>(null);
@@ -131,36 +135,37 @@ export default function CreatePostBottomSheet({
         },
     });
 
-    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-        const { name, value } = e.target;
-        
-        let finalValue = value;
-        if (name === "content" && value.length > maxCharacters) {
-            finalValue = value.substring(0, maxCharacters);
+    const handleInput = (e: React.FormEvent<HTMLDivElement>) => {
+        const target = e.currentTarget;
+        const text = target.innerText;
+        let normalizedText = text.replace(/\n$/, ""); // Normalize trailing newline
+
+        if (normalizedText.length > maxCharacters) {
+            normalizedText = normalizedText.substring(0, maxCharacters);
         }
 
-        setForm((prev) => ({ ...prev, [name]: finalValue }));
+        setForm((prev) => ({ ...prev, content: normalizedText }));
 
-        if (name === "url" && urlError) {
-            setUrlError(null);
-        }
+        // Mention search logic
+        const selection = window.getSelection();
+        if (!selection || selection.rangeCount === 0) return;
 
-        if (name === "content") {
-            const cursorPosition = (e.target as HTMLTextAreaElement).selectionStart;
-            const textBeforeCursor = value.substring(0, cursorPosition);
+        const range = selection.getRangeAt(0);
+        const cursorOffset = range.startOffset;
+        const textNode = range.startContainer;
+
+        if (textNode.nodeType === Node.TEXT_NODE) {
+            const content = textNode.textContent || "";
+            const textBeforeCursor = content.substring(0, cursorOffset);
             const lastAtSymbolIndex = textBeforeCursor.lastIndexOf('@');
 
             if (lastAtSymbolIndex !== -1) {
                 const charBeforeAt = lastAtSymbolIndex > 0 ? textBeforeCursor[lastAtSymbolIndex - 1] : null;
-                const isStartOfWord = !charBeforeAt || charBeforeAt === ' ' || charBeforeAt === '\n';
+                const isStartOfWord = !charBeforeAt || charBeforeAt === ' ' || charBeforeAt === '\u00A0' || charBeforeAt === '\n';
 
                 if (isStartOfWord) {
                     const query = textBeforeCursor.substring(lastAtSymbolIndex + 1);
-                    const isAlreadySelected = selectedMentions.some(m =>
-                        query === m.name || query === m.name + ' ' || query.startsWith(m.name + ' ')
-                    );
-
-                    if (!isAlreadySelected && query.split(' ').length <= 3 && !query.includes('\n')) {
+                    if (query.split(' ').length <= 3 && !query.includes('\n')) {
                         setMentionSearchQuery(query);
                     } else {
                         setMentionSearchQuery(null);
@@ -171,8 +176,73 @@ export default function CreatePostBottomSheet({
             } else {
                 setMentionSearchQuery(null);
             }
+        } else {
+            setMentionSearchQuery(null);
         }
     };
+
+    const handleBeforeInput = (e: any) => {
+        const target = e.currentTarget;
+        const text = target.innerText.replace(/\n$/, "");
+        const selection = window.getSelection();
+        const selectedTextLength = selection ? selection.toString().length : 0;
+
+        if ((text.length - selectedTextLength) >= maxCharacters &&
+            !e.inputType.startsWith('delete') &&
+            !e.inputType.startsWith('history')) {
+            e.preventDefault();
+        }
+    };
+
+    const handlePaste = (e: React.ClipboardEvent<HTMLDivElement>) => {
+        e.preventDefault();
+        const pastedText = e.clipboardData.getData("text/plain");
+
+        const selection = window.getSelection();
+        if (!selection || selection.rangeCount === 0) return;
+
+        const selectedText = selection.toString();
+        const currentText = e.currentTarget.innerText.replace(/\n$/, "");
+
+        const currentLengthWithoutSelection = currentText.length - selectedText.length;
+        const remainingChars = maxCharacters - currentLengthWithoutSelection;
+
+        if (remainingChars <= 0) return;
+
+        const truncatedText = pastedText.substring(0, remainingChars);
+
+        const range = selection.getRangeAt(0);
+        range.deleteContents();
+
+        const textNode = document.createTextNode(truncatedText);
+        range.insertNode(textNode);
+
+        range.setStartAfter(textNode);
+        range.setEndAfter(textNode);
+        selection.removeAllRanges();
+        selection.addRange(range);
+
+        const newInnerText = e.currentTarget.innerText.replace(/\n$/, "");
+        setForm(prev => ({ ...prev, content: newInnerText }));
+    };
+
+    const handleInputChange = (
+        e: React.ChangeEvent<HTMLInputElement>
+    ) => {
+        const { name, value } = e.target;
+
+        let finalValue = value;
+        if (name === "content" && value.length > maxCharacters) {
+            finalValue = value.substring(0, maxCharacters);
+        }
+
+        setForm((prev) => ({ ...prev, [name]: finalValue }));
+
+        if (name === "url" && urlError) {
+            setUrlError(null);
+        }
+    };
+
 
     useEffect(() => {
         if (mentionSearchQuery === null) {
@@ -198,29 +268,59 @@ export default function CreatePostBottomSheet({
     }, [mentionSearchQuery]);
 
     const handleMentionSelect = (user: any) => {
-        const cursorPosition = textareaRef.current?.selectionStart || 0;
-        const textBeforeCursor = form.content.substring(0, cursorPosition);
-        const textAfterCursor = form.content.substring(cursorPosition);
-        const lastAtSymbolIndex = textBeforeCursor.lastIndexOf('@');
-        const mentionName = user.name || user.username;
-        const newTextBeforeCursor = textBeforeCursor.substring(0, lastAtSymbolIndex) + `@${mentionName} `;
+        const selection = window.getSelection();
+        if (!selection || selection.rangeCount === 0) return;
 
-        setForm(prev => ({ ...prev, content: newTextBeforeCursor + textAfterCursor }));
+        const range = selection.getRangeAt(0);
+        const textNode = range.startContainer;
+
+        if (textNode.nodeType !== Node.TEXT_NODE) return;
+
+        const content = textNode.textContent || "";
+        const cursorOffset = range.startOffset;
+        const textBeforeCursor = content.substring(0, cursorOffset);
+        const lastAtSymbolIndex = textBeforeCursor.lastIndexOf('@');
+
+        if (lastAtSymbolIndex === -1) return;
+
+        range.setStart(textNode, lastAtSymbolIndex);
+        range.setEnd(textNode, cursorOffset);
+        range.deleteContents();
+
+        const mentionName = user.name || user.username;
+        const span = document.createElement("span");
+        span.textContent = `@${mentionName}`;
+        span.className = "mention text-blue-600 font-semibold";
+        span.contentEditable = "false";
+        span.setAttribute("data-id", user.id.toString());
+        span.setAttribute("data-type", user.type);
+
+        range.insertNode(span);
+
+        const space = document.createTextNode("\u00A0");
+        range.setStartAfter(span);
+        range.insertNode(space);
+
+        range.setStartAfter(space);
+        range.setEndAfter(space);
+
+        selection.removeAllRanges();
+        selection.addRange(range);
+
+        if (editorRef.current) {
+            const innerText = editorRef.current.innerText;
+            setForm(prev => ({ ...prev, content: innerText }));
+        }
+
         setSelectedMentions(prev => [
             ...prev.filter(m => m.name !== mentionName),
             { type: user.type, id: user.id, name: mentionName }
         ]);
+
         setMentionSearchQuery(null);
         setMentionResults([]);
-
-        setTimeout(() => {
-            if (textareaRef.current) {
-                textareaRef.current.focus();
-                const newCursorPos = newTextBeforeCursor.length;
-                textareaRef.current.setSelectionRange(newCursorPos, newCursorPos);
-            }
-        }, 0);
     };
+
 
     const handleUrlBlur = () => {
         if (form.url && !validateUrl(form.url)) {
@@ -283,9 +383,12 @@ export default function CreatePostBottomSheet({
         formData.append('content', form.content);
         formData.append('post_type', selectedCollective ? 'collective' : 'feed');
 
-        const finalMentions = selectedMentions
-            .filter(m => form.content.includes(`@${m.name}`))
-            .map(({ type, id }) => ({ type, id }));
+        const mentionNodes = editorRef.current?.querySelectorAll(".mention");
+        const finalMentions = Array.from(mentionNodes || []).map(node => ({
+            type: node.getAttribute("data-type"),
+            id: node.getAttribute("data-id")
+        }));
+
 
         if (finalMentions.length > 0) {
             formData.append('mentions', JSON.stringify(finalMentions));
@@ -309,7 +412,11 @@ export default function CreatePostBottomSheet({
 
     const handleClose = () => {
         setForm({ content: "", url: "" });
+        if (editorRef.current) {
+            editorRef.current.innerHTML = "";
+        }
         setPostType(null);
+
         setSelectedImage(null);
         setImagePreview(null);
         setSelectedVideo(null);
@@ -318,40 +425,11 @@ export default function CreatePostBottomSheet({
         onClose();
     };
 
-    const renderHighlightedText = (text: string) => {
-        if (!text) return null;
-        const mentionNames = selectedMentions.map(m => `@${m.name}`);
-        const mentionNamesLower = mentionNames.map(n => n.toLowerCase());
-        mentionNames.sort((a, b) => b.length - a.length);
 
-        if (mentionNames.length === 0) {
-            return text.split(/(@[\w\s]{1,30}(?=\s|$)|@\w+)/g).map((part, index) => {
-                if (part.startsWith('@')) {
-                    return <span key={index} className="text-blue-600 font-medium">{part}</span>;
-                }
-                return <span key={index}>{part}</span>;
-            });
-        }
-
-        const pattern = mentionNames.map(name => name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|');
-        const regex = new RegExp(`(${pattern})`, 'gi');
-
-        return text.split(regex).map((part, index) => {
-            if (mentionNamesLower.includes(part.toLowerCase())) {
-                return <span key={index} className="text-blue-600 font-medium">{part}</span>;
-            }
-            return part.split(/(@[\w\s]{1,30}(?=\s|$)|@\w+)/g).map((subPart, subIndex) => {
-                if (subPart.startsWith('@')) {
-                    return <span key={`${index}-${subIndex}`} className="text-blue-600 font-medium">{subPart}</span>;
-                }
-                return <span key={`${index}-${subIndex}`}>{subPart}</span>;
-            });
-        });
-    };
 
     const navigate = useNavigate();
     const characterCount = form.content.length;
-    const maxCharacters = 500;
+
 
     return (
         <Sheet open={isOpen} onOpenChange={(open) => !open && handleClose()}>
@@ -447,19 +525,18 @@ export default function CreatePostBottomSheet({
                         {/* Main Content Input */}
                         <div className="mb-6">
                             <div className="rounded-xl p-4 bg-[#f6f5ed] focus-within:border-blue-400 transition-all relative min-h-[200px]">
-                                {/* <div className="absolute inset-x-4 inset-y-4 text-[16px] whitespace-pre-wrap break-words pointer-events-none text-gray-900 border-none" style={{ font: 'inherit', lineHeight: '1.6' }}>
-                                    {renderHighlightedText(form.content)}{form.content.endsWith('\n') ? '\n' : ''}
-                                </div> */}
-                                <textarea
-                                    ref={textareaRef}
-                                    name="content"
-                                    value={form.content}
-                                    onChange={handleInputChange}
-                                    placeholder="What's on your mind? Share your thoughts, updates, or stories..."
-                                    className="w-full min-h-[160px] p-0 border-0 bg-transparent text-[16px] focus:outline-none resize-none placeholder:text-gray-500"
-                                    style={{ lineHeight: '1.6' }}
-                                    maxLength={maxCharacters}
+                                <div
+                                    ref={editorRef}
+                                    contentEditable
+                                    onInput={handleInput}
+                                    onPaste={handlePaste}
+                                    onBeforeInput={handleBeforeInput}
+                                    suppressContentEditableWarning
+                                    placeholder="What's on your mind?"
+                                    className="w-full min-h-[160px] p-0 border-0 bg-transparent text-[16px] text-gray-900 focus:outline-none resize-none placeholder:text-gray-500 empty:before:content-[attr(placeholder)] empty:before:text-gray-500"
+                                    style={{ lineHeight: '1.6', outline: 'none' }}
                                 />
+
                                 {isSearchingMentions ? (
                                     <div className="absolute top-full left-0 right-0 bg-white border border-gray-200 rounded-xl shadow-xl mt-2 p-4 z-[110] flex items-center justify-center">
                                         <Loader2 className="w-5 h-5 animate-spin text-blue-600" />

@@ -28,7 +28,7 @@ export default function CreatePostPage() {
   const location = useLocation();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const videoInputRef = useRef<HTMLInputElement>(null);
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const editorRef = useRef<HTMLDivElement>(null);
   const { user: currentUser } = useAuthStore();
   const queryClient = useQueryClient();
 
@@ -200,8 +200,105 @@ export default function CreatePostPage() {
 
   const [isSearchingMentions, setIsSearchingMentions] = useState(false);
 
+  const handleInput = (e: React.FormEvent<HTMLDivElement>) => {
+    const target = e.currentTarget;
+    const text = target.innerText;
+    let normalizedText = text.replace(/\n$/, ""); // Normalize trailing newline
+
+    // We only truncate the state. Hard-truncating the DOM (target.innerText = ...) 
+    // destroys mention spans, so we avoid it and rely on beforeInput/paste handlers.
+    if (normalizedText.length > maxCharacters) {
+      normalizedText = normalizedText.substring(0, maxCharacters);
+    }
+
+    setForm((prev) => ({ ...prev, content: normalizedText }));
+
+    // Mention search logic
+    const selection = window.getSelection();
+    if (!selection || selection.rangeCount === 0) return;
+
+    const range = selection.getRangeAt(0);
+    const cursorOffset = range.startOffset;
+    const textNode = range.startContainer;
+
+    // We only care about mention search if we're in a text node
+    if (textNode.nodeType === Node.TEXT_NODE) {
+      const content = textNode.textContent || "";
+      const textBeforeCursor = content.substring(0, cursorOffset);
+      const lastAtSymbolIndex = textBeforeCursor.lastIndexOf('@');
+
+      if (lastAtSymbolIndex !== -1) {
+        const charBeforeAt = lastAtSymbolIndex > 0 ? textBeforeCursor[lastAtSymbolIndex - 1] : null;
+        const isStartOfWord = !charBeforeAt || charBeforeAt === ' ' || charBeforeAt === '\u00A0' || charBeforeAt === '\n';
+
+        if (isStartOfWord) {
+          const query = textBeforeCursor.substring(lastAtSymbolIndex + 1);
+          if (query.split(' ').length <= 3 && !query.includes('\n')) {
+            setMentionSearchQuery(query);
+          } else {
+            setMentionSearchQuery(null);
+          }
+        } else {
+          setMentionSearchQuery(null);
+        }
+      } else {
+        setMentionSearchQuery(null);
+      }
+    } else {
+      setMentionSearchQuery(null);
+    }
+  };
+
+  const handleBeforeInput = (e: any) => {
+    const target = e.currentTarget;
+    const text = target.innerText.replace(/\n$/, ""); // Normalize trailing newline
+    const selection = window.getSelection();
+    const selectedTextLength = selection ? selection.toString().length : 0;
+
+    if ((text.length - selectedTextLength) >= maxCharacters &&
+      !e.inputType.startsWith('delete') &&
+      !e.inputType.startsWith('history')) {
+      e.preventDefault();
+    }
+  };
+
+  const handlePaste = (e: React.ClipboardEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    const pastedText = e.clipboardData.getData("text/plain");
+
+    const selection = window.getSelection();
+    if (!selection || selection.rangeCount === 0) return;
+
+    const selectedText = selection.toString();
+    const currentText = e.currentTarget.innerText.replace(/\n$/, "");
+
+    // Calculate how much we can actually paste
+    const currentLengthWithoutSelection = currentText.length - selectedText.length;
+    const remainingChars = maxCharacters - currentLengthWithoutSelection;
+
+    if (remainingChars <= 0) return;
+
+    const truncatedText = pastedText.substring(0, remainingChars);
+
+    const range = selection.getRangeAt(0);
+    range.deleteContents();
+
+    const textNode = document.createTextNode(truncatedText);
+    range.insertNode(textNode);
+
+    // Move cursor after pasted text
+    range.setStartAfter(textNode);
+    range.setEndAfter(textNode);
+    selection.removeAllRanges();
+    selection.addRange(range);
+
+    // Normalize and update state
+    const newInnerText = e.currentTarget.innerText.replace(/\n$/, "");
+    setForm(prev => ({ ...prev, content: newInnerText }));
+  };
+
   const handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    e: React.ChangeEvent<HTMLInputElement>
   ) => {
     const { name, value } = e.target;
 
@@ -215,39 +312,6 @@ export default function CreatePostPage() {
     // Clear URL error when user starts typing
     if (name === "url" && urlError) {
       setUrlError(null);
-    }
-
-    // Mention search logic
-    if (name === "content") {
-      const cursorPosition = (e.target as HTMLTextAreaElement).selectionStart;
-      const textBeforeCursor = value.substring(0, cursorPosition);
-      const lastAtSymbolIndex = textBeforeCursor.lastIndexOf('@');
-
-      if (lastAtSymbolIndex !== -1) {
-        const charBeforeAt = lastAtSymbolIndex > 0 ? textBeforeCursor[lastAtSymbolIndex - 1] : null;
-        const isStartOfWord = !charBeforeAt || charBeforeAt === ' ' || charBeforeAt === '\n';
-
-        if (isStartOfWord) {
-          const query = textBeforeCursor.substring(lastAtSymbolIndex + 1);
-
-          // Check if this query already corresponds to a mention we just selected
-          // We look for the name followed by a space to see if we've moved past it
-          const isAlreadySelected = selectedMentions.some(m =>
-            query === m.name || query === m.name + ' ' || query.startsWith(m.name + ' ')
-          );
-
-          // Allow up to 2 spaces in the query to support full name search
-          if (!isAlreadySelected && query.split(' ').length <= 3 && !query.includes('\n')) {
-            setMentionSearchQuery(query);
-          } else {
-            setMentionSearchQuery(null);
-          }
-        } else {
-          setMentionSearchQuery(null);
-        }
-      } else {
-        setMentionSearchQuery(null);
-      }
     }
   };
 
@@ -275,35 +339,62 @@ export default function CreatePostPage() {
   }, [mentionSearchQuery]);
 
   const handleMentionSelect = (user: any) => {
-    const cursorPosition = textareaRef.current?.selectionStart || 0;
-    const textBeforeCursor = form.content.substring(0, cursorPosition);
-    const textAfterCursor = form.content.substring(cursorPosition);
+    const selection = window.getSelection();
+    if (!selection || selection.rangeCount === 0) return;
 
+    const range = selection.getRangeAt(0);
+    const textNode = range.startContainer;
+
+    if (textNode.nodeType !== Node.TEXT_NODE) return;
+
+    const content = textNode.textContent || "";
+    const cursorOffset = range.startOffset;
+    const textBeforeCursor = content.substring(0, cursorOffset);
     const lastAtSymbolIndex = textBeforeCursor.lastIndexOf('@');
-    // Use user.name or user.username - keeping consistent with user.name for now as per existing logic
-    const mentionName = user.name || user.username;
-    let newContent = textBeforeCursor.substring(0, lastAtSymbolIndex) + `@${mentionName} ` + textAfterCursor;
 
-    if (newContent.length > maxCharacters) {
-      newContent = newContent.substring(0, maxCharacters);
+    if (lastAtSymbolIndex === -1) return;
+
+    // Set the range to cover the "@query" part
+    range.setStart(textNode, lastAtSymbolIndex);
+    range.setEnd(textNode, cursorOffset);
+    range.deleteContents();
+
+    // Create mention span
+    const mentionName = user.name || user.username;
+    const span = document.createElement("span");
+    span.textContent = `@${mentionName}`;
+    span.className = "mention text-blue-600 font-semibold"; // Highlighted blue
+    span.contentEditable = "false";
+    span.setAttribute("data-id", user.id.toString());
+    span.setAttribute("data-type", user.type);
+
+    // Insert mention span
+    range.insertNode(span);
+
+    // Add a trailing space and move cursor after it
+    const space = document.createTextNode("\u00A0"); // Using non-breaking space to avoid issues
+    range.setStartAfter(span);
+    range.insertNode(space);
+
+    range.setStartAfter(space);
+    range.setEndAfter(space);
+
+    selection.removeAllRanges();
+    selection.addRange(range);
+
+    // Update state
+    if (editorRef.current) {
+      const innerText = editorRef.current.innerText;
+      setForm(prev => ({ ...prev, content: innerText }));
     }
 
-    setForm(prev => ({ ...prev, content: newContent }));
     setSelectedMentions(prev => [
       ...prev.filter(m => m.name !== mentionName),
       { type: user.type, id: user.id, name: mentionName }
     ]);
+
     setMentionSearchQuery(null);
     setMentionResults([]);
-
-    setTimeout(() => {
-      if (textareaRef.current) {
-        textareaRef.current.focus();
-        const mentionPart = textBeforeCursor.substring(0, lastAtSymbolIndex) + `@${mentionName} `;
-        const newCursorPos = mentionPart.length;
-        textareaRef.current.setSelectionRange(newCursorPos, newCursorPos);
-      }
-    }, 0);
   };
 
   // Handle URL validation
@@ -372,7 +463,7 @@ export default function CreatePostPage() {
   // Check if post can be submitted
   const canSubmitPost = () => {
     // Post can be submitted with just content (text-only post)
-    if (!form.content.trim()) return false;
+    if (!form.content.trim() || form.content.length > maxCharacters) return false;
 
     // If URL is provided, it must be valid
     if (form.url.trim() && (!validateUrl(form.url) || urlError)) {
@@ -395,9 +486,12 @@ export default function CreatePostPage() {
     formData.append('content', form.content);
     formData.append('post_type', selectedCollective ? 'collective' : 'feed');
 
-    const finalMentions = selectedMentions
-      .filter(m => form.content.includes(`@${m.name}`))
-      .map(({ type, id }) => ({ type, id }));
+    // Extract mentions from DOM
+    const mentionNodes = editorRef.current?.querySelectorAll(".mention");
+    const finalMentions = Array.from(mentionNodes || []).map(node => ({
+      type: node.getAttribute("data-type"),
+      id: node.getAttribute("data-id")
+    }));
 
     if (finalMentions.length > 0) {
       formData.append('mentions', JSON.stringify(finalMentions));
@@ -422,38 +516,7 @@ export default function CreatePostPage() {
     createPostMutation.mutate(formData);
   };
 
-  const renderHighlightedText = (text: string) => {
-    if (!text) return null;
 
-    const mentionNames = selectedMentions.map(m => `@${m.name}`);
-    const mentionNamesLower = mentionNames.map(n => n.toLowerCase());
-    mentionNames.sort((a, b) => b.length - a.length);
-
-    // Fallback: simple highlighter if no selected mentions
-    if (mentionNames.length === 0) {
-      return text.split(/(@[\w\s]{1,30}(?=\s|$)|@\w+)/g).map((part, index) => {
-        if (part.startsWith('@')) {
-          return <span key={index} className="text-blue-600 font-medium">{part}</span>;
-        }
-        return <span key={index}>{part}</span>;
-      });
-    }
-
-    const pattern = mentionNames.map(name => name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|');
-    const regex = new RegExp(`(${pattern})`, 'gi');
-
-    return text.split(regex).map((part, index) => {
-      if (mentionNamesLower.includes(part.toLowerCase())) {
-        return <span key={index} className="text-blue-600 font-medium">{part}</span>;
-      }
-      return part.split(/(@[\w\s]{1,30}(?=\s|$)|@\w+)/g).map((subPart, subIndex) => {
-        if (subPart.startsWith('@')) {
-          return <span key={`${index}-${subIndex}`} className="text-blue-600 font-medium">{subPart}</span>;
-        }
-        return <span key={`${index}-${subIndex}`}>{subPart}</span>;
-      });
-    });
-  };
 
   if (!currentUser?.id) {
     return (
@@ -625,24 +688,17 @@ export default function CreatePostPage() {
         </div>
         {/* Main Content Input */}
         <div className="mb-6">
-          <div className=" rounded-xl p-4 bg-[#f6f5ed]  focus-within:border-blue-400 transition-all relative min-h-[240px]">
-            {/* Mirror Div for styling mentions */}
-            {/* <div
-              className="absolute inset-x-4 inset-y-4 text-[16px] whitespace-pre-wrap break-words pointer-events-none text-gray-900 border-none"
-              style={{ font: 'inherit', lineHeight: '1.6' }}
-            >
-              {renderHighlightedText(form.content)}
-              {form.content.endsWith('\n') ? '\n' : ''}
-            </div> */}
-            <textarea
-              ref={textareaRef}
-              name="content"
-              value={form.content}
-              onChange={handleInputChange}
+          <div className="rounded-xl p-4 bg-[#f6f5ed] focus-within:border-blue-400 transition-all relative min-h-[240px]">
+            <div
+              ref={editorRef}
+              contentEditable
+              onInput={handleInput}
+              onPaste={handlePaste}
+              onBeforeInput={handleBeforeInput}
+              suppressContentEditableWarning
               placeholder="What's on your mind?"
-              className="w-full min-h-[200px] p-0 border-0 bg-transparent text-[16px] text-gray-900 focus:outline-none resize-none placeholder:text-gray-700"
-              style={{ lineHeight: '1.6' }}
-              maxLength={maxCharacters}
+              className="w-full min-h-[200px] p-0 border-0 bg-transparent text-[16px] text-gray-900 focus:outline-none resize-none placeholder:text-gray-700 empty:before:content-[attr(placeholder)] empty:before:text-gray-700"
+              style={{ lineHeight: '1.6', outline: 'none' }}
             />
             {isSearchingMentions ? (
               <div className="absolute top-full left-0 right-0 bg-white border border-gray-200 rounded-xl shadow-xl mt-2 p-4 z-[60] flex items-center justify-center">
@@ -659,7 +715,7 @@ export default function CreatePostPage() {
 
             {/* Character Count */}
             <div className="absolute bottom-3 right-4">
-              <span className="text-[13px] font-medium text-gray-400">
+              <span className={`text-sm font-medium text-gray-400`}>
                 {characterCount}/{maxCharacters}
               </span>
             </div>
