@@ -21,12 +21,16 @@ export const DiscardSheet: React.FC<DiscardSheetProps> = ({
 }) => {
     return (
         <Sheet open={isOpen} onOpenChange={(open) => !open && onClose()}>
-            <SheetContent side="bottom" className="rounded-t-[20px] p-6  mx-auto">
+            <SheetContent
+                side="bottom"
+                className="rounded-t-[20px] p-6 mx-auto z-[150]"
+                overlayClassName="z-[150]"
+            >
                 <SheetHeader className="text-center p-0">
                     <SheetTitle className="text-xl font-bold text-gray-900">
                         Discard changes?
                     </SheetTitle>
-                    <SheetDescription className="text-gray-500 mt-2">
+                    <SheetDescription className="text-gray-500 sm:text-base">
                         If you go back now, your progress will be lost.
                     </SheetDescription>
                 </SheetHeader>

@@ -8,6 +8,7 @@ import { useAuthStore } from '@/stores/store';
 import { Comment } from './Comment';
 import { MentionSearchResults } from './MentionSearchResults';
 import { Button } from '@/components/ui/button';
+import { DiscardSheet } from '@/components/ui/DiscardSheet';
 
 interface CommentsBottomSheetProps {
   isOpen: boolean;
@@ -61,6 +62,7 @@ export default function CommentsBottomSheet({
   const [mentionSearchQuery, setMentionSearchQuery] = useState<string | null>(null);
   const [mentionResults, setMentionResults] = useState<any[]>([]);
   const [selectedMentions, setSelectedMentions] = useState<{ type: string; id: number | string; name: string }[]>([]);
+  const [showDiscardSheet, setShowDiscardSheet] = useState(false);
 
   const handleTextChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const value = e.target.value;
@@ -446,11 +448,21 @@ export default function CommentsBottomSheet({
   };
 
   const handleClose = () => {
+    if (commentText.trim().length > 0) {
+      setShowDiscardSheet(true);
+    } else {
+      forceClose();
+    }
+  };
+
+  const forceClose = () => {
     setIsAnimating(false);
+    setShowDiscardSheet(false);
     setTimeout(() => {
       onClose();
       setCommentText('');
       setReplyingTo(null);
+      setSelectedMentions([]);
     }, 300);
   };
 
@@ -515,7 +527,8 @@ export default function CommentsBottomSheet({
   };
 
   return (
-    <div
+    <>
+      <div
       className={`fixed inset-0 bg-black/50 flex items-end justify-center z-100 transition-opacity duration-300 ${isAnimating ? 'opacity-100' : 'opacity-0'
         }`}
       onClick={handleClose}
@@ -785,7 +798,7 @@ export default function CommentsBottomSheet({
           <form onSubmit={handleSubmit} className="flex flex-col">
             <div className="relative flex items-center w-full">
               <div className="absolute left-0 top-0 bottom-0 w-1 bg-[#1600ff] rounded-l-md z-10" />
-              <div className="relative w-full">
+              <div className="relative w-full bg-gray-50 rounded-md">
                 {/* Mirror Div for styling mentions */}
                 <div
                   className="absolute inset-0 py-3 pl-4 pr-4 text-base whitespace-pre-wrap break-words pointer-events-none text-transparent border-none min-h-[45px] max-h-[120px]"
@@ -851,6 +864,15 @@ export default function CommentsBottomSheet({
         </div>
       </div>
     </div>
+    <DiscardSheet
+      isOpen={showDiscardSheet}
+      onClose={() => {
+        setShowDiscardSheet(false);
+        setTimeout(() => inputRef.current?.focus(), 100);
+      }}
+      onDiscard={forceClose}
+    />
+  </>
   );
 }
 
