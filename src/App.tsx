@@ -90,6 +90,8 @@ import EditFundraiser from "./pages/EditFundraiser";
 import FundraiserDetail from "./pages/FundraiserDetail";
 import AppleCallback from "./pages/auth/AppleCallback";
 import NewGivingGroupPage from "./pages/NewGivingGroup";
+import Messages from "./pages/Messages";
+
 
 // Initialize PostHog
 posthog.init('phc_H8FvO89VZLDakgosw6EbwV9LPl7u2Mvjz9Iu7rPDpQF', {
@@ -216,6 +218,10 @@ function App() {
                       <Route path="/donation/manage" element={<ManageDonationBox />} />
                       <Route path="/one-time-donation" element={<OneTimeDonationPage />} />
                       <Route path="/notifications" element={<Notifications />} />
+                      <Route path="/messages" element={<Messages />} />
+                      <Route path="/messages/:id" element={<Messages />} />
+
+
                       {/* <Route
                   path="/non-profit-interests"
                   element={<NonProfitInterests />}

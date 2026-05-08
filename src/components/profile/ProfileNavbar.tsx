@@ -1,5 +1,6 @@
 import { Button } from "../ui/button";
-import { ChevronLeft, Bell, Settings, Search, Users, Mail, LogOut, ArrowRight, File } from "lucide-react";
+import { ChevronLeft, Bell, Settings, Search, Users, Mail, LogOut, ArrowRight, File, MessageCircle } from "lucide-react";
+
 import { cn } from "@/lib/utils";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuthStore } from "@/stores/store";
@@ -187,6 +188,13 @@ export default function ProfileNavbar({
                   )}
                 </button>
                 <button
+                  onClick={() => navigate("/messages")}
+                  className="p-1.5 rounded-full"
+                >
+                  <MessageCircle size={20} className="text-gray-900" />
+                </button>
+
+                <button
                   onClick={() => setOpen(true)}
                   className="p-0 cursor-pointer"
                 >
@@ -265,6 +273,15 @@ export default function ProfileNavbar({
                           <Users className="h-4 w-4 sm:h-5 sm:w-5 text-gray-700" />
                           <span className="text-gray-900 font-medium text-sm xs:text-base sm:text-lg">Giving Groups</span>
                         </Link>
+                        <Link
+                          to="/messages"
+                          onClick={handleClose}
+                          className="flex items-center gap-2 sm:gap-3 py-2.5 sm:py-3 px-2 rounded-lg hover:bg-gray-100 transition-colors"
+                        >
+                          <MessageCircle className="h-4 w-4 sm:h-5 sm:w-5 text-gray-700" />
+                          <span className="text-gray-900 font-medium text-sm xs:text-base sm:text-lg">Messages</span>
+                        </Link>
+
                         <Link
                           to="/donation"
                           onClick={handleClose}
@@ -363,6 +380,13 @@ export default function ProfileNavbar({
                   )}
                 </button>
                 <button
+                  onClick={() => navigate("/messages")}
+                  className="p-1.5 rounded-full"
+                >
+                  <MessageCircle size={20} className="text-gray-900" />
+                </button>
+
+                <button
                   onClick={() => setOpen(true)}
                   className="p-0 cursor-pointer"
                 >
@@ -443,6 +467,15 @@ export default function ProfileNavbar({
                           <Users className="h-4 w-4 sm:h-5 sm:w-5 text-gray-700" />
                           <span className="text-gray-900 font-medium text-xs xs:text-sm sm:text-base">Giving Groups</span>
                         </Link>
+                        <Link
+                          to="/messages"
+                          onClick={handleClose}
+                          className="flex items-center gap-2 sm:gap-3 py-2.5 sm:py-3 px-2 rounded-lg hover:bg-gray-100 transition-colors"
+                        >
+                          <MessageCircle className="h-4 w-4 sm:h-5 sm:w-5 text-gray-700" />
+                          <span className="text-gray-900 font-medium text-xs xs:text-sm sm:text-base">Messages</span>
+                        </Link>
+
                         <Link
                           to="/donation"
                           onClick={handleClose}
