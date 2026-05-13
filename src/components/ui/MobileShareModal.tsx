@@ -421,10 +421,14 @@ export function MobileShareModal({
                 const decoded = decodePostId(encoded);
                 if (decoded) {
                   extractedId = decoded.toString();
-                  entityTypeToSend = "post";
+                  entityTypeToSend = "fundraiser";
                 }
               } catch {
                 // ignore decode errors
+              }
+              if (!extractedId) {
+                extractedId = encoded;
+                entityTypeToSend = "fundraiser";
               }
             }
           }

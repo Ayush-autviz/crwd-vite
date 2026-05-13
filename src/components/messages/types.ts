@@ -1,5 +1,6 @@
 export interface Conversation {
   id: string;
+  participantId?: string;
   user: {
     name: string;
     avatar: string;
@@ -15,6 +16,7 @@ export interface ChatMessage {
   senderId: "me" | "other";
   text: string;
   timestamp: string;
+  date?: string;
   type?: "text" | "card" | "image" | "video";
   mediaUrl?: string;
   cardData?: {

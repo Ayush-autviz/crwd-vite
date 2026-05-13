@@ -135,9 +135,21 @@ export function ChatView({
               </div>
             )}
 
-            {messages.map((msg) => (
-              <ChatBubble key={msg.id} message={msg} />
-            ))}
+            {messages.map((msg, index) => {
+              const showDate = index === 0 || msg.date !== messages[index - 1].date;
+              return (
+                <div key={msg.id || `msg-${index}`}>
+                  {showDate && msg.date && (
+                    <div className="flex justify-center pt-1 pb-3 select-none">
+                      <span className="bg-gray-50 border border-gray-100 text-gray-500 text-xs px-3 py-1 rounded-full font-medium">
+                        {msg.date}
+                      </span>
+                    </div>
+                  )}
+                  <ChatBubble message={msg} />
+                </div>
+              );
+            })}
           </>
         )}
       </div>

@@ -20,7 +20,7 @@ export default function ExploreCards() {
       iconColor: 'text-yellow-500',
       bgColor: 'bg-yellow-50',
       title: 'Your Favorites',
-      subtitle: 'View your saved causes and collectives',
+      subtitle: 'View your saved causes and giving groups',
       onClick: () => navigate('/saved'),
     },
     {
@@ -28,7 +28,7 @@ export default function ExploreCards() {
       icon: Users,
       iconColor: 'text-purple-500',
       bgColor: 'bg-purple-50',
-      title: 'Browse Collectives',
+      title: 'Browse Giving Groups',
       subtitle: 'Discover communities you can join',
       onClick: () => navigate('/circles'),
     },

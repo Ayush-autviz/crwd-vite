@@ -23,7 +23,7 @@ export function ChatBubble({ message }: ChatBubbleProps) {
           {message.text && (
             <div
               className={cn(
-                "px-4 py-3 rounded-2xl text-base shadow-sm font-medium",
+                "px-4 py-3 rounded-lg text-base shadow-sm font-medium",
                 isMe ? "bg-[#2222EE] text-white" : "bg-gray-100 text-gray-900"
               )}
             >
@@ -36,7 +36,7 @@ export function ChatBubble({ message }: ChatBubbleProps) {
 
         <div
           className={cn(
-            "rounded-2xl overflow-hidden flex flex-col",
+            "rounded-lg overflow-hidden flex flex-col",
             (message.text && !message.text.startsWith('http'))
               ? (isMe ? "bg-[#2222EE] text-white shadow-sm" : "bg-gray-100 text-gray-900 shadow-sm")
               : "bg-transparent text-gray-900"
@@ -48,19 +48,19 @@ export function ChatBubble({ message }: ChatBubbleProps) {
                 <VideoPlayer
                   src={message.mediaUrl}
                   disableFullscreen
-                  className="w-full h-auto max-h-80 rounded-2xl"
+                  className="w-full h-auto max-h-80 rounded-lg"
                 />
               ) : (
                 <img
                   src={message.mediaUrl}
                   alt="Shared"
-                  className="w-full h-auto max-h-80 object-cover rounded-2xl"
+                  className="w-full h-auto max-h-80 object-cover rounded-lg"
                 />
               )}
             </div>
           )}
           {message.text && !message.text.startsWith('http') && (
-            <div className="px-4 py-3 text-base font-medium leading-relaxed">
+            <div className="px-4 py-2 text-base">
               {message.text}
             </div>
           )}

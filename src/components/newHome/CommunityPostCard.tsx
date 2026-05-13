@@ -936,6 +936,8 @@ export default function CommunityPostCard({ post, onCommentPress, showSimplified
           ? post.fundraiser.description || post.content
           : post.content
         }
+        entityType={post.fundraiser ? "fundraiser" : "post"}
+        entityId={post.fundraiser ? post.fundraiser.id : post.id}
       />
 
       {/* Toast */}

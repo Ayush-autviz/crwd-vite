@@ -165,11 +165,12 @@ export default function ProfilePage() {
     mutationFn: () => getOrCreateConversation(effectiveUserId),
     onSuccess: (conversation) => {
       if (conversation?.id) {
-        navigate(`/messages/${conversation.id}`);
+        navigate(`/messages/${conversation.id}`, { state: { fromProfile: true } });
       } else {
         const targetName = userProfile ? `${userProfile.first_name || ''} ${userProfile.last_name || ''}`.trim() : '';
         navigate(`/messages/new-${effectiveUserId}`, {
           state: {
+            fromProfile: true,
             newUser: {
               id: effectiveUserId,
               name: targetName || userProfile?.username || "User",
@@ -183,6 +184,7 @@ export default function ProfilePage() {
       const targetName = userProfile ? `${userProfile.first_name || ''} ${userProfile.last_name || ''}`.trim() : '';
       navigate(`/messages/new-${effectiveUserId}`, {
         state: {
+          fromProfile: true,
           newUser: {
             id: effectiveUserId,
             name: targetName || userProfile?.username || "User",

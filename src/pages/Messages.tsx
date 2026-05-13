@@ -74,6 +74,14 @@ export default function Messages() {
       lastMsgText = "Sent a video";
     } else if (entityType === "post") {
       lastMsgText = "Shared a post";
+    } else if (entityType === "cause") {
+      lastMsgText = "Shared a cause";
+    } else if (entityType === "collective") {
+      lastMsgText = "Shared a collective";
+    } else if (entityType === "profile") {
+      lastMsgText = "Shared a profile";
+    } else if (entityType === "fundraiser") {
+      lastMsgText = "Shared a fundraiser";
     } else if (lastMsgText.match(/\.(jpeg|jpg|gif|png|webp)($|\?)/i)) {
       lastMsgText = "Sent an image";
     } else if (lastMsgText.match(/\.(mp4|mov|webm)($|\?)/i)) {
@@ -84,6 +92,7 @@ export default function Messages() {
 
     return {
       id: conv.id.toString(),
+      participantId: otherUser?.id?.toString(),
       user: {
         name: otherUser.full_name,
         avatar: otherUser.profile_picture,
@@ -101,10 +110,16 @@ export default function Messages() {
 
     if (isNewConversation && newUserState) {
       // Avoid duplication if fetched server list already includes this user thread
-      const exists = list.some(c => c.id === selectedId);
+      const targetUserId = selectedId?.replace("new-", "");
+      const exists = list.some(c =>
+        c.id === selectedId ||
+        (targetUserId && c.participantId === targetUserId) ||
+        c.user.name.toLowerCase() === newUserState.name.toLowerCase()
+      );
       if (!exists) {
         list.unshift({
           id: selectedId!,
+          participantId: targetUserId,
           user: {
             name: newUserState.name,
             avatar: newUserState.avatar,
@@ -119,6 +134,27 @@ export default function Messages() {
     return list;
   }, [baseConversations, isNewConversation, selectedId, location.state?.newUser]);
 
+  // Auto-redirect to established numeric conversation ID if user thread already exists
+  useEffect(() => {
+    if (isNewConversation && selectedId) {
+      const targetUserId = selectedId.replace("new-", "");
+      const newUserState = location.state?.newUser;
+
+      // Find matching conversation in server list by participantId or full name
+      const existingConv = baseConversations.find(c =>
+        (targetUserId && c.participantId === targetUserId) ||
+        (newUserState?.name && c.user.name.toLowerCase() === newUserState.name.toLowerCase())
+      );
+
+      if (existingConv?.id) {
+        navigate(`/messages/${existingConv.id}`, {
+          replace: true,
+          state: location.state
+        });
+      }
+    }
+  }, [isNewConversation, selectedId, baseConversations, navigate, location.state]);
+
   // Flatten all messages from pages
   const allMessages = useMemo(() => {
     if (!historyData?.pages) return [];
@@ -128,59 +164,67 @@ export default function Messages() {
   // Sync state with fetched history
   useEffect(() => {
     if (historyData?.pages && !isNewConversation) {
-      const mappedMessages: ChatMessage[] = allMessages.map((msg: MessageResponse) => ({
-        id: msg.id.toString(),
-        senderId: msg.sender.id === user?.id ? "me" : "other",
-        text: msg.content,
-        timestamp: new Date(msg.created_at).toLocaleTimeString([], {
-          hour: "2-digit",
-          minute: "2-digit",
-        }),
-        type: (msg.entity_type === "post" || msg.entity_type === "cause" || msg.entity_type === "collective" || msg.entity_type === "profile") ? "card" : (msg.entity_type === "video" ? "video" : (msg.entity_type === "image" ? "image" : "text")),
-        mediaUrl:
-          msg.entity_type === "image" || msg.entity_type === "video"
-            ? msg.entity_data?.url || msg.content
-            : undefined,
-        cardData:
-          msg.entity_type === "post" || msg.entity_type === "cause" || msg.entity_type === "collective" || msg.entity_type === "profile"
-            ? {
-              type: msg.entity_type,
-              id: msg.entity_id || msg.entity_data?.id,
-              title:
-                msg.entity_type === "profile" ? (msg.entity_data?.full_name || `${msg.entity_data?.first_name || ''} ${msg.entity_data?.last_name || ''}`.trim() || msg.entity_data?.username || "Shared Profile") :
-                msg.entity_type === "post" ? (msg.entity_data?.user?.full_name || msg.entity_data?.user?.username || "Shared Post") :
-                (msg.entity_data?.collective?.name ||
-                msg.entity_data?.fundraiser?.name ||
-                msg.entity_data?.name ||
-                (msg.entity_type === "cause"
-                  ? "Shared Nonprofit"
-                  : msg.entity_type === "collective"
-                    ? "Shared Group"
-                    : "Shared Post")),
-              description:
-                msg.entity_type === "profile" ? (msg.entity_data?.bio || "") :
-                msg.entity_data?.content ||
-                msg.entity_data?.mission ||
-                msg.entity_data?.description ||
-                "",
-              image:
-                msg.entity_type === "profile" ? (msg.entity_data?.profile_picture || msg.entity_data?.avatar || "") :
-                msg.entity_data?.media ||
-                msg.entity_data?.image ||
-                msg.entity_data?.logo ||
-                msg.entity_data?.avatar ||
-                "",
-              icon: "🔗",
-              avatar: msg.entity_type === "post" ? msg.entity_data?.user?.profile_picture : undefined,
-              likesCount: msg.entity_data?.likes_count || 0,
-              commentsCount: msg.entity_data?.comments_count || 0,
-              color: msg.entity_data?.color || msg.entity_data?.collective?.color || undefined,
-              sortName: msg.entity_data?.sort_name || msg.entity_data?.collective?.sort_name || undefined,
-              username: msg.entity_data?.username,
-            }
-            : undefined,
-        isRead: msg.is_read,
-      })).reverse();
+      const mappedMessages: ChatMessage[] = allMessages
+        .filter((msg: any) => msg && msg.id != null)
+        .map((msg: MessageResponse) => ({
+          id: msg.id.toString(),
+          senderId: msg.sender.id === user?.id ? "me" : "other",
+          text: msg.content,
+          timestamp: new Date(msg.created_at).toLocaleTimeString([], {
+            hour: "2-digit",
+            minute: "2-digit",
+          }),
+          date: new Date(msg.created_at).toLocaleDateString([], {
+            month: "short",
+            day: "numeric",
+            year: new Date(msg.created_at).getFullYear() === new Date().getFullYear() ? undefined : "numeric",
+          }),
+          type: (msg.entity_type === "post" || msg.entity_type === "cause" || msg.entity_type === "collective" || msg.entity_type === "profile" || msg.entity_type === "fundraiser") ? "card" : (msg.entity_type === "video" ? "video" : (msg.entity_type === "image" ? "image" : "text")),
+          mediaUrl:
+            msg.entity_type === "image" || msg.entity_type === "video"
+              ? msg.entity_data?.url || msg.content
+              : undefined,
+          cardData:
+            msg.entity_type === "post" || msg.entity_type === "cause" || msg.entity_type === "collective" || msg.entity_type === "profile" || msg.entity_type === "fundraiser"
+              ? {
+                type: msg.entity_type,
+                id: msg.entity_id || msg.entity_data?.id,
+                title:
+                  msg.entity_type === "profile" ? (msg.entity_data?.full_name || `${msg.entity_data?.first_name || ''} ${msg.entity_data?.last_name || ''}`.trim() || msg.entity_data?.username || "Shared Profile") :
+                    msg.entity_type === "post" ? (msg.entity_data?.user?.full_name || msg.entity_data?.user?.username || "Shared Post") :
+                      msg.entity_type === "fundraiser" ? (msg.entity_data?.name || "Shared Fundraiser") :
+                        (msg.entity_data?.collective?.name ||
+                          msg.entity_data?.fundraiser?.name ||
+                          msg.entity_data?.name ||
+                          (msg.entity_type === "cause"
+                            ? "Shared Nonprofit"
+                            : msg.entity_type === "collective"
+                              ? "Shared Group"
+                              : "Shared Post")),
+                description:
+                  msg.entity_type === "profile" ? (msg.entity_data?.bio || "") :
+                    msg.entity_data?.content ||
+                    msg.entity_data?.mission ||
+                    msg.entity_data?.description ||
+                    "",
+                image:
+                  msg.entity_type === "profile" ? (msg.entity_data?.profile_picture || msg.entity_data?.avatar || "") :
+                    msg.entity_data?.media ||
+                    msg.entity_data?.image ||
+                    msg.entity_data?.logo ||
+                    msg.entity_data?.avatar ||
+                    "",
+                icon: "🔗",
+                avatar: msg.entity_type === "post" ? msg.entity_data?.user?.profile_picture : undefined,
+                likesCount: msg.entity_data?.likes_count || 0,
+                commentsCount: msg.entity_data?.comments_count || 0,
+                color: (msg.entity_data?.color && msg.entity_data.color !== "string" ? msg.entity_data.color : (msg.entity_data?.collective?.color && msg.entity_data.collective.color !== "string" ? msg.entity_data.collective.color : undefined)),
+                sortName: msg.entity_type === "fundraiser" ? undefined : (msg.entity_data?.sort_name || msg.entity_data?.collective?.sort_name || undefined),
+                username: msg.entity_data?.username,
+              }
+              : undefined,
+          isRead: msg.is_read,
+        })).reverse();
 
       setMessages(mappedMessages);
     } else if (!selectedId || isNewConversation) {
@@ -207,9 +251,7 @@ export default function Messages() {
   }, [selectedId, isNewConversation, queryClient]);
 
 
-  const handleNewMessage = useCallback((data: MessageResponse & { conversation?: { id: number | string } }) => {
-    // Ignore messages from other chats
-    if (data.conversation?.id?.toString() !== selectedId) return;
+  const handleNewMessage = useCallback((data: MessageResponse) => {
 
     const newMessage: ChatMessage = {
       id: data.id.toString(),
@@ -219,46 +261,52 @@ export default function Messages() {
         hour: "2-digit",
         minute: "2-digit",
       }),
-      type: (data.entity_type === "post" || data.entity_type === "nonprofit" || data.entity_type === "collective" || data.entity_type === "profile") ? "card" : (data.entity_type === "video" ? "video" : (data.entity_type === "image" ? "image" : "text")),
+      date: new Date(data.created_at).toLocaleDateString([], {
+        month: "short",
+        day: "numeric",
+        year: new Date(data.created_at).getFullYear() === new Date().getFullYear() ? undefined : "numeric",
+      }),
+      type: (data.entity_type === "post" || data.entity_type === "nonprofit" || data.entity_type === "collective" || data.entity_type === "profile" || data.entity_type === "fundraiser") ? "card" : (data.entity_type === "video" ? "video" : (data.entity_type === "image" ? "image" : "text")),
       mediaUrl:
         data.entity_type === "image" || data.entity_type === "video"
           ? data.entity_data?.url || data.content
           : undefined,
       cardData:
-        data.entity_type === "post" || data.entity_type === "nonprofit" || data.entity_type === "collective" || data.entity_type === "profile"
+        data.entity_type === "post" || data.entity_type === "nonprofit" || data.entity_type === "collective" || data.entity_type === "profile" || data.entity_type === "fundraiser"
           ? {
             type: data.entity_type,
             id: data.entity_id || data.entity_data?.id,
             title:
               data.entity_type === "profile" ? (data.entity_data?.full_name || `${data.entity_data?.first_name || ''} ${data.entity_data?.last_name || ''}`.trim() || data.entity_data?.username || "Shared Profile") :
-              data.entity_type === "post" ? (data.entity_data?.user?.full_name || data.entity_data?.user?.username || "Shared Post") :
-              (data.entity_data?.collective?.name ||
-              data.entity_data?.fundraiser?.name ||
-              data.entity_data?.name ||
-              (data.entity_type === "nonprofit"
-                ? "Shared Nonprofit"
-                : data.entity_type === "collective"
-                  ? "Shared Group"
-                  : "Shared Post")),
+                data.entity_type === "post" ? (data.entity_data?.user?.full_name || data.entity_data?.user?.username || "Shared Post") :
+                  data.entity_type === "fundraiser" ? (data.entity_data?.name || "Shared Fundraiser") :
+                    (data.entity_data?.collective?.name ||
+                      data.entity_data?.fundraiser?.name ||
+                      data.entity_data?.name ||
+                      (data.entity_type === "nonprofit"
+                        ? "Shared Nonprofit"
+                        : data.entity_type === "collective"
+                          ? "Shared Group"
+                          : "Shared Post")),
             description:
               data.entity_type === "profile" ? (data.entity_data?.bio || "") :
-              data.entity_data?.content ||
-              data.entity_data?.mission ||
-              data.entity_data?.description ||
-              "",
+                data.entity_data?.content ||
+                data.entity_data?.mission ||
+                data.entity_data?.description ||
+                "",
             image:
               data.entity_type === "profile" ? (data.entity_data?.profile_picture || data.entity_data?.avatar || "") :
-              data.entity_data?.media ||
-              data.entity_data?.image ||
-              data.entity_data?.logo ||
-              data.entity_data?.avatar ||
-              "",
+                data.entity_data?.media ||
+                data.entity_data?.image ||
+                data.entity_data?.logo ||
+                data.entity_data?.avatar ||
+                "",
             icon: "🔗",
             avatar: data.entity_type === "post" ? data.entity_data?.user?.profile_picture : undefined,
             likesCount: data.entity_data?.likes_count || 0,
             commentsCount: data.entity_data?.comments_count || 0,
-            color: data.entity_data?.color || data.entity_data?.collective?.color || undefined,
-            sortName: data.entity_data?.sort_name || data.entity_data?.collective?.sort_name || undefined,
+            color: (data.entity_data?.color && data.entity_data.color !== "string" ? data.entity_data.color : (data.entity_data?.collective?.color && data.entity_data.collective.color !== "string" ? data.entity_data.collective.color : undefined)),
+            sortName: data.entity_type === "fundraiser" ? undefined : (data.entity_data?.sort_name || data.entity_data?.collective?.sort_name || undefined),
             username: data.entity_data?.username,
           }
           : undefined,
@@ -280,7 +328,11 @@ export default function Messages() {
 
 
   const handleBack = () => {
-    navigate("/messages");
+    if (location.state?.fromProfile) {
+      navigate(-1);
+    } else {
+      navigate("/messages");
+    }
   };
 
   const handleSelectConversation = (conversationId: string) => {
@@ -294,6 +346,46 @@ export default function Messages() {
     try {
       const actualConvId = isNewConversation ? "" : (selectedId || "");
       const recipientId = isNewConversation ? selectedId?.replace("new-", "") : "";
+      let lastSentMessage: MessageResponse | undefined;
+      let resolvedConvId: string | undefined;
+
+      const handleSentResponse = (rawRes: any) => {
+        if (!rawRes) return;
+        // Unwrap message object if returned inside wrapper fields
+        const res = rawRes.id != null ? rawRes : (rawRes.message || rawRes.data || rawRes.result);
+
+        // Try to capture conversation ID from response roots
+        const cid = rawRes.conversation_id || rawRes.conversation?.id || rawRes.data?.conversation_id || rawRes.data?.conversation?.id || res?.conversation_id || res?.conversation?.id;
+        if (cid != null) {
+          resolvedConvId = cid.toString();
+        }
+
+        if (!res || res.id == null) return;
+        lastSentMessage = res;
+
+        // If it's an established conversation, instantly prepend the new message to React Query's cache
+        if (actualConvId) {
+          queryClient.setQueryData(["messages", actualConvId], (oldData: any) => {
+            if (!oldData?.pages) {
+              return {
+                pages: [{ count: 1, next: null, previous: null, results: [res] }],
+                pageParams: [1],
+              };
+            }
+            // Prepend to first page's results
+            const firstPage = oldData.pages[0];
+            const updatedFirstPage = {
+              ...firstPage,
+              results: [res, ...(firstPage.results || [])],
+              count: (firstPage.count || 0) + 1,
+            };
+            return {
+              ...oldData,
+              pages: [updatedFirstPage, ...oldData.pages.slice(1)],
+            };
+          });
+        }
+      };
 
       if (images && images.length > 0) {
         // Handle image uploads
@@ -305,7 +397,8 @@ export default function Messages() {
           formData.append("file", file);
           formData.append("entity_type", file.type.startsWith("video/") ? "video" : "image");
 
-          await sendChatMessage(formData);
+          const res = await sendChatMessage(formData);
+          handleSentResponse(res);
         }
       } else if (inputValue.trim()) {
         // Handle plain text
@@ -314,12 +407,41 @@ export default function Messages() {
         if (recipientId) formData.append("recipient_id", recipientId);
         formData.append("content", inputValue.trim());
 
-        await sendChatMessage(formData);
+        const res = await sendChatMessage(formData);
+        handleSentResponse(res);
       }
 
       setInputValue("");
+
       if (isNewConversation) {
-        queryClient.invalidateQueries({ queryKey: ["conversations"] });
+        // Resolve newly created conversation ID
+        let targetConvIdStr = resolvedConvId || (lastSentMessage ? (lastSentMessage.conversation?.id || (lastSentMessage as any).conversation_id)?.toString() : undefined);
+
+        if (!targetConvIdStr && recipientId) {
+          // Await conversations refetch to look up newly established numeric ID
+          await queryClient.invalidateQueries({ queryKey: ["conversations"] });
+          const latestConvs: any = queryClient.getQueryData(["conversations", searchQuery]);
+          const found = latestConvs?.results?.find((c: any) => c.participants?.some((p: any) => p.id?.toString() === recipientId));
+          if (found?.id) {
+            targetConvIdStr = found.id.toString();
+          }
+        }
+
+        if (targetConvIdStr) {
+          if (lastSentMessage) {
+            // Pre-populate cache for the real conversation ID so it renders instantly upon navigation
+            queryClient.setQueryData(["messages", targetConvIdStr], {
+              pages: [{ count: 1, next: null, previous: null, results: [lastSentMessage] }],
+              pageParams: [1],
+            });
+          }
+
+          queryClient.invalidateQueries({ queryKey: ["conversations"] });
+          navigate(`/messages/${targetConvIdStr}`, { replace: true });
+          return;
+        } else {
+          queryClient.invalidateQueries({ queryKey: ["conversations"] });
+        }
       }
     } catch (error) {
       console.error("Failed to send message:", error);
@@ -377,7 +499,15 @@ export default function Messages() {
           showDesktopMenu={true}
           showBackButton={true}
           showDesktopBackButton={true}
-          onBackClick={selectedId ? () => navigate("/messages") : () => navigate("/")}
+          onBackClick={() => {
+            if (location.state?.fromProfile) {
+              navigate(-1);
+            } else if (selectedId) {
+              navigate("/messages");
+            } else {
+              navigate("/");
+            }
+          }}
         />
 
 

@@ -177,8 +177,14 @@ export default function ProfileNavbar({
                   </button>
                 </Link>
                 <button
+                  onClick={() => navigate("/messages")}
+                  className="p-1.5 rounded-full cursor-pointer"
+                >
+                  <MessageCircle size={20} className="text-gray-900" />
+                </button>
+                <button
                   onClick={() => navigate("/notifications")}
-                  className="relative p-1.5  rounded-full"
+                  className="relative p-1.5  rounded-full cursor-pointer"
                 >
                   <Bell size={20} className="text-gray-900" />
                   {unreadCount?.data > 0 && (
@@ -186,12 +192,6 @@ export default function ProfileNavbar({
                       <span className="text-white text-[10px] font-bold">{unreadCount?.data}</span>
                     </div>
                   )}
-                </button>
-                <button
-                  onClick={() => navigate("/messages")}
-                  className="p-1.5 rounded-full"
-                >
-                  <MessageCircle size={20} className="text-gray-900" />
                 </button>
 
                 <button
@@ -369,8 +369,14 @@ export default function ProfileNavbar({
                   <Search size={20} className="text-gray-900" />
                 </Link>
                 <button
+                  onClick={() => navigate("/messages")}
+                  className="p-1.5 rounded-full cursor-pointer"
+                >
+                  <MessageCircle size={20} className="text-gray-900" />
+                </button>
+                <button
                   onClick={() => navigate("/notifications")}
-                  className="relative p-1.5 rounded-full"
+                  className="relative p-1.5 rounded-full cursor-pointer"
                 >
                   <Bell size={20} className="text-gray-900" />
                   {unreadCount?.data > 0 && (
@@ -378,12 +384,6 @@ export default function ProfileNavbar({
                       <span className="text-white text-[10px] font-bold">{unreadCount?.data}</span>
                     </div>
                   )}
-                </button>
-                <button
-                  onClick={() => navigate("/messages")}
-                  className="p-1.5 rounded-full"
-                >
-                  <MessageCircle size={20} className="text-gray-900" />
                 </button>
 
                 <button

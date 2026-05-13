@@ -17,6 +17,8 @@ export function SharedCard({ cardData, isMe }: SharedCardProps) {
       navigate(`/c/${identifier}`);
     } else if (cardData.type === "collective") {
       navigate(`/g/${identifier}`);
+    } else if (cardData.type === "fundraiser") {
+      navigate(`/fundraiser/${encodePostId(cardData.id)}`);
     } else if (cardData.type === "post") {
       navigate(`/post/${encodePostId(cardData.id)}`);
     } else if (cardData.type === "profile") {
@@ -24,12 +26,12 @@ export function SharedCard({ cardData, isMe }: SharedCardProps) {
     }
   };
 
-  if (cardData.type === "cause" || cardData.type === "nonprofit" || cardData.type === "collective" || cardData.type === "profile") {
+  if (cardData.type === "cause" || cardData.type === "nonprofit" || cardData.type === "collective" || cardData.type === "profile" || cardData.type === "fundraiser") {
     return (
       <div
         onClick={handleNavigation}
         className={cn(
-          "rounded-2xl p-1.5 shadow-sm max-w-sm w-fit cursor-pointer hover:opacity-95 transition-opacity",
+          "rounded-2xl p-1.5 shadow-sm min-w-xs max-w-sm w-fit cursor-pointer hover:opacity-95 transition-opacity",
           isMe ? "bg-[#2222EE] text-white" : "bg-gray-100 text-gray-900"
         )}
       >
@@ -79,7 +81,7 @@ export function SharedCard({ cardData, isMe }: SharedCardProps) {
     <div
       onClick={handleNavigation}
       className={cn(
-        "rounded-2xl p-1.5 shadow-md min-w-xs w-fit cursor-pointer hover:opacity-95 transition-opacity",
+        "rounded-2xl p-1.5 shadow-md min-w-xs max-w-md w-fit cursor-pointer hover:opacity-95 transition-opacity",
         isMe ? "bg-[#2222EE]" : "bg-gray-100"
       )}
     >
@@ -104,7 +106,7 @@ export function SharedCard({ cardData, isMe }: SharedCardProps) {
             </span>
           )}
           <span className={cn(
-            "font-bold text-xs tracking-tight truncate",
+            "font-bold text-sm leading-tight truncate",
             isMe ? "text-white" : "text-gray-900"
           )}>
             {cardData.title}
@@ -114,7 +116,7 @@ export function SharedCard({ cardData, isMe }: SharedCardProps) {
         {/* Description */}
         {cardData.description && (
           <p className={cn(
-            "text-xs leading-relaxed font-medium line-clamp-3",
+            "text-sm leading-relaxed font-medium line-clamp-3",
             isMe ? "text-white/90" : "text-gray-600"
           )}>
             {cardData.description}

@@ -501,6 +501,8 @@ export default function FundraiserDetail() {
           url={window.location.href}
           title={fundraiserData.name}
           description={fundraiserData.description || `Check out this fundraiser: ${fundraiserData.name}`}
+          entityType="fundraiser"
+          entityId={id || encodedId}
         />
       )}
 

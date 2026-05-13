@@ -15,7 +15,7 @@ export function ConversationItem({ conversation, isSelected, onSelect }: Convers
       className={cn(
         "flex items-center gap-4 p-3.5 rounded-2xl cursor-pointer transition-all duration-200 group mt-1",
         isSelected
-          ? "bg-white border-[1.5px] border-[#2222EE]"
+          ? "bg-blue-50 border-1 border-blue-600"
           : "hover:bg-gray-50 border-[1.5px] border-transparent"
       )}
     >
