@@ -3,7 +3,6 @@ import { Link, Mail, MessageCircle, Linkedin, Camera, X } from "lucide-react";
 import {
   TwitterShareButton,
   LinkedinShareButton,
-  FacebookMessengerShareButton,
 } from "react-share";
 import { MobileShareModal } from "./MobileShareModal";
 
@@ -13,6 +12,8 @@ interface SharePostProps {
   description?: string;
   isOpen: boolean;
   onClose: () => void;
+  entityId?: string | number;
+  entityType?: string;
 }
 
 export function SharePost({
@@ -21,6 +22,8 @@ export function SharePost({
   description = "",
   isOpen,
   onClose,
+  entityId,
+  entityType,
 }: SharePostProps) {
   const modalRef = useRef<HTMLDivElement>(null);
   const [copied, setCopied] = useState(false);
@@ -61,7 +64,7 @@ export function SharePost({
       await navigator.clipboard.writeText(url);
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
-    } catch (err) {
+    } catch {
       console.error("Failed to copy link");
     }
   };
@@ -72,20 +75,6 @@ export function SharePost({
     // Instagram doesn't have a direct share API, so we open the create post page
     const instagramUrl = `https://www.instagram.com/create/details/?mediaType=PHOTO`;
     window.open(instagramUrl, '_blank', 'width=600,height=700,scrollbars=yes,resizable=yes');
-
-    // Also copy to clipboard for convenience
-    navigator.clipboard.writeText(shareText).then(() => {
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    });
-  };
-
-  const handleTikTokShare = () => {
-    const shareText = title ? `${title}\n\n${url}` : url;
-    // Open TikTok in a new window (popup) similar to Facebook
-    // TikTok doesn't have a direct share API, so we open the upload page
-    const tiktokUrl = `https://www.tiktok.com/upload`;
-    window.open(tiktokUrl, '_blank', 'width=600,height=700,scrollbars=yes,resizable=yes');
 
     // Also copy to clipboard for convenience
     navigator.clipboard.writeText(shareText).then(() => {
@@ -124,6 +113,8 @@ export function SharePost({
       title={title}
       message={description}
       url={url}
+      entityId={entityId}
+      entityType={entityType}
     />
   );
   // }

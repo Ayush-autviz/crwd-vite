@@ -54,17 +54,24 @@ export function ChatInput({ value, onChange, onSend }: ChatInputProps) {
       {/* Image Previews */}
       {previews.length > 0 && (
         <div className="flex gap-2 mb-4 overflow-x-auto no-scrollbar pb-2">
-          {previews.map((url, index) => (
-            <div key={url} className="relative flex-shrink-0">
-              <img src={url} className="h-20 w-20 object-cover rounded-xl border border-gray-100" alt="preview" />
-              <button
-                onClick={() => removeImage(index)}
-                className="absolute -top-1 -right-1 bg-gray-900 text-white rounded-full p-0.5 shadow-md"
-              >
-                <X className="h-3 w-3" />
-              </button>
-            </div>
-          ))}
+          {previews.map((url, index) => {
+            const isVideo = selectedImages[index]?.type.startsWith('video/');
+            return (
+              <div key={url} className="relative flex-shrink-0">
+                {isVideo ? (
+                  <video src={url} className="h-20 w-20 object-cover rounded-xl border border-gray-100" />
+                ) : (
+                  <img src={url} className="h-20 w-20 object-cover rounded-xl border border-gray-100" alt="preview" />
+                )}
+                <button
+                  onClick={() => removeImage(index)}
+                  className="absolute -top-1 -right-1 bg-gray-900 text-white rounded-full p-0.5 shadow-md"
+                >
+                  <X className="h-3 w-3" />
+                </button>
+              </div>
+            );
+          })}
         </div>
       )}
 
@@ -74,7 +81,7 @@ export function ChatInput({ value, onChange, onSend }: ChatInputProps) {
             type="file"
             ref={fileInputRef}
             className="hidden"
-            accept="image/*"
+            accept="image/*,video/*"
             multiple
             onChange={handleImageChange}
           />

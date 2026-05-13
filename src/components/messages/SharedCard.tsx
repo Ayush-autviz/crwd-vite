@@ -1,35 +1,153 @@
 import { ChatMessage } from "./types";
+import { Heart, MessageCircle } from "lucide-react";
+import { cn, encodePostId } from "@/lib/utils";
+import { useNavigate } from "react-router-dom";
 
 interface SharedCardProps {
   cardData: NonNullable<ChatMessage["cardData"]>;
+  isMe?: boolean;
 }
 
-export function SharedCard({ cardData }: SharedCardProps) {
-  return (
-    <div className="bg-[#2222EE] rounded-2xl overflow-hidden p-1 shadow-md w-full max-w-sm">
-      <div className="bg-[#2222EE] p-5 space-y-4">
-        <div className="flex items-center gap-2.5">
-          <span className="bg-white/20 p-1.5 rounded-full text-base">{cardData.icon}</span>
-          <span className="text-white font-semibold text-base tracking-tight">{cardData.title}</span>
+export function SharedCard({ cardData, isMe }: SharedCardProps) {
+  const navigate = useNavigate();
+
+  const handleNavigation = () => {
+    const identifier = cardData.sortName || cardData.id;
+    if (cardData.type === "cause" || cardData.type === "nonprofit") {
+      navigate(`/c/${identifier}`);
+    } else if (cardData.type === "collective") {
+      navigate(`/g/${identifier}`);
+    } else if (cardData.type === "post") {
+      navigate(`/post/${encodePostId(cardData.id)}`);
+    } else if (cardData.type === "profile") {
+      navigate(`/u/${cardData.username || identifier}`);
+    }
+  };
+
+  if (cardData.type === "cause" || cardData.type === "nonprofit" || cardData.type === "collective" || cardData.type === "profile") {
+    return (
+      <div
+        onClick={handleNavigation}
+        className={cn(
+          "rounded-2xl p-1.5 shadow-sm max-w-sm w-fit cursor-pointer hover:opacity-95 transition-opacity",
+          isMe ? "bg-[#2222EE] text-white" : "bg-gray-100 text-gray-900"
+        )}
+      >
+        <div className={cn(
+          "rounded-xl p-3 flex items-center gap-3",
+          isMe ? "bg-white/10" : "bg-gray-200/60"
+        )}>
+          {cardData.image ? (
+            <img
+              src={cardData.image}
+              className="w-12 h-12 rounded-full object-cover flex-shrink-0 bg-white"
+              alt={cardData.title}
+            />
+          ) : (
+            <div
+              className={cn(
+                "w-12 h-12 rounded-full flex-shrink-0 flex items-center justify-center text-xl font-bold text-white",
+                !cardData.color && (isMe ? "bg-white/20" : "bg-gray-400")
+              )}
+              style={cardData.color ? { backgroundColor: cardData.color } : undefined}
+            >
+              {cardData.title?.charAt(0)?.toUpperCase()}
+            </div>
+          )}
+          <div className="flex flex-col min-w-0 pr-2">
+            <span className={cn(
+              "font-bold text-[15px] leading-tight truncate",
+              isMe ? "text-white" : "text-gray-900"
+            )}>
+              {cardData.title}
+            </span>
+            {cardData.description && (
+              <span className={cn(
+                "text-[13px] leading-snug truncate mt-0.5",
+                isMe ? "text-white/80" : "text-gray-500"
+              )}>
+                {cardData.description}
+              </span>
+            )}
+          </div>
         </div>
-        <p className="text-white/90 text-sm leading-relaxed font-medium">
-          {cardData.description}
-        </p>
       </div>
-      <div className="px-1.5 pb-1.5 relative group">
-        <img
-          src={cardData.image}
-          className="w-full h-48 object-cover rounded-lg transition-transform duration-500 group-hover:scale-[1.02]"
-          alt="card"
-        />
-        <div className="absolute bottom-5 left-6 flex items-center gap-4">
-          <div className="flex items-center gap-1.5 text-white bg-black/20 backdrop-blur-md px-2.5 py-1 rounded-full border border-white/10">
-            <span className="text-xs font-medium">❤️ 42</span>
-          </div>
-          <div className="flex items-center gap-1.5 text-white bg-black/20 backdrop-blur-md px-2.5 py-1 rounded-full border border-white/10">
-            <span className="text-xs font-medium">💬 8</span>
-          </div>
+    );
+  }
+
+  return (
+    <div
+      onClick={handleNavigation}
+      className={cn(
+        "rounded-2xl p-1.5 shadow-md min-w-xs w-fit cursor-pointer hover:opacity-95 transition-opacity",
+        isMe ? "bg-[#2222EE]" : "bg-gray-100"
+      )}
+    >
+      <div className={cn(
+        "rounded-xl p-4 space-y-3",
+        isMe ? "bg-white/10" : "bg-gray-200/60"
+      )}>
+        {/* Header */}
+        <div className="flex items-center gap-2">
+          {cardData.avatar ? (
+            <img
+              src={cardData.avatar}
+              className="w-6 h-6 rounded-full object-cover flex-shrink-0"
+              alt={cardData.title}
+            />
+          ) : (
+            <span className={cn(
+              "p-1 rounded-full text-sm flex-shrink-0 flex items-center justify-center",
+              isMe ? "bg-white/20" : "bg-gray-300"
+            )}>
+              {cardData.icon}
+            </span>
+          )}
+          <span className={cn(
+            "font-bold text-xs tracking-tight truncate",
+            isMe ? "text-white" : "text-gray-900"
+          )}>
+            {cardData.title}
+          </span>
         </div>
+
+        {/* Description */}
+        {cardData.description && (
+          <p className={cn(
+            "text-xs leading-relaxed font-medium line-clamp-3",
+            isMe ? "text-white/90" : "text-gray-600"
+          )}>
+            {cardData.description}
+          </p>
+        )}
+
+        {/* Cover Image */}
+        {cardData.image && (
+          <div className="w-full overflow-hidden rounded-lg">
+            <img
+              src={cardData.image}
+              className="w-full h-36 object-cover"
+              alt="Shared preview"
+            />
+          </div>
+        )}
+
+        {/* Interaction metrics row */}
+        {cardData.type === "post" && (
+          <div className={cn(
+            "flex items-center gap-3 pt-1",
+            isMe ? "text-white/90" : "text-gray-600"
+          )}>
+            <div className="flex items-center gap-1">
+              <Heart className="w-3.5 h-3.5" />
+              <span className="text-xs font-semibold">{cardData.likesCount || 0}</span>
+            </div>
+            <div className="flex items-center gap-1">
+              <MessageCircle className="w-3.5 h-3.5" />
+              <span className="text-xs font-semibold">{cardData.commentsCount || 0}</span>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

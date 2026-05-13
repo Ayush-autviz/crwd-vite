@@ -15,11 +15,21 @@ export interface ChatMessage {
   senderId: "me" | "other";
   text: string;
   timestamp: string;
-  type?: "text" | "card";
+  type?: "text" | "card" | "image" | "video";
+  mediaUrl?: string;
   cardData?: {
+    type?: string;
+    id?: string | number;
     title: string;
     description: string;
     image: string;
     icon: string;
+    avatar?: string;
+    likesCount?: number;
+    commentsCount?: number;
+    color?: string;
+    sortName?: string;
+    username?: string;
   };
+  isRead?: boolean;
 }

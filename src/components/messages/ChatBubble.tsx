@@ -1,6 +1,8 @@
 import { cn } from "@/lib/utils";
+import { CheckCheck } from "lucide-react";
 import { ChatMessage } from "./types";
 import { SharedCard } from "./SharedCard";
+import VideoPlayer from "../ui/VideoPlayer";
 
 interface ChatBubbleProps {
   message: ChatMessage;
@@ -17,23 +19,71 @@ export function ChatBubble({ message }: ChatBubbleProps) {
       )}
     >
       {message.type === "card" && message.cardData ? (
-        <SharedCard cardData={message.cardData} />
+        <div className="flex flex-col gap-2 ">
+          {message.text && (
+            <div
+              className={cn(
+                "px-4 py-3 rounded-2xl text-base shadow-sm font-medium",
+                isMe ? "bg-[#2222EE] text-white" : "bg-gray-100 text-gray-900"
+              )}
+            >
+              {message.text}
+            </div>
+          )}
+          <SharedCard cardData={message.cardData} isMe={isMe} />
+        </div>
       ) : (
+
         <div
           className={cn(
-            "px-4 py-3 rounded-lg text-base shadow-sm font-medium",
-            isMe ? "bg-[#2222EE] text-white" : "bg-gray-100 text-gray-900"
+            "rounded-2xl overflow-hidden flex flex-col",
+            (message.text && !message.text.startsWith('http'))
+              ? (isMe ? "bg-[#2222EE] text-white shadow-sm" : "bg-gray-100 text-gray-900 shadow-sm")
+              : "bg-transparent text-gray-900"
           )}
         >
-          {message.text}
+          {message.mediaUrl && (
+            <div className="w-full">
+              {message.type === "video" || message.mediaUrl.match(/\.(mp4|mov|webm)$/i) ? (
+                <VideoPlayer
+                  src={message.mediaUrl}
+                  disableFullscreen
+                  className="w-full h-auto max-h-80 rounded-2xl"
+                />
+              ) : (
+                <img
+                  src={message.mediaUrl}
+                  alt="Shared"
+                  className="w-full h-auto max-h-80 object-cover rounded-2xl"
+                />
+              )}
+            </div>
+          )}
+          {message.text && !message.text.startsWith('http') && (
+            <div className="px-4 py-3 text-base font-medium leading-relaxed">
+              {message.text}
+            </div>
+          )}
         </div>
       )}
-      <span className={cn(
-        "text-xs font-medium text-gray-400 mt-2 px-2 uppercase tracking-wider",
-        isMe ? "text-right" : "text-left"
+
+
+      <div className={cn(
+        "flex items-center gap-1 mt-1.5 px-1.5",
+        isMe ? "justify-end" : "justify-start"
       )}>
-        {message.timestamp}
-      </span>
+        <span className="text-[11px] font-semibold text-gray-400 uppercase tracking-wider">
+          {message.timestamp}
+        </span>
+        {isMe && (
+          <CheckCheck
+            className={cn(
+              "w-4 h-4 transition-colors",
+              message.isRead ? "text-[#2222EE]" : "text-gray-400"
+            )}
+          />
+        )}
+      </div>
     </div>
   );
 }

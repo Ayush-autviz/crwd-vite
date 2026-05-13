@@ -1106,6 +1106,8 @@ export default function ProfilePage() {
         url={`${window.location.origin}/u/${currentUser?.username}`}
         title={`Check out ${fullName}'s profile on CRWD`}
         description={`See the causes and collectives supported by ${fullName} on CRWD.`}
+        entityType="profile"
+        entityId={currentUser?.id}
       />
 
       {/* Toast notification */}

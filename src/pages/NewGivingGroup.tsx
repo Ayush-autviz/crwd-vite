@@ -500,6 +500,8 @@ export default function NewGivingGroupPage() {
                         onClose={() => setShowShareModal(false)}
                         url={window.location.href}
                         title={crwdData.name || 'Collective'}
+                        entityId={crwdData.id}
+                        entityType="collective"
                     />
                 )}
 

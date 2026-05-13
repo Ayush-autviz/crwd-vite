@@ -22,8 +22,8 @@ export function ConversationItem({ conversation, isSelected, onSelect }: Convers
       <div className="relative">
         <Avatar className="h-12 w-12 flex-shrink-0">
           <AvatarImage src={conversation.user.avatar} className="object-cover" />
-          <AvatarFallback style={{ backgroundColor: conversation.user.color }}>
-            {conversation.user.name.charAt(0)}
+          <AvatarFallback className="text-white font-semibold text-lg" style={{ backgroundColor: conversation.user.color }}>
+            {conversation.user.name.charAt(0).toUpperCase()}
           </AvatarFallback>
         </Avatar>
         {conversation.unread && (
@@ -33,8 +33,7 @@ export function ConversationItem({ conversation, isSelected, onSelect }: Convers
       <div className="flex-1 min-w-0">
         <div className="flex justify-between items-baseline mb-0.5">
           <h3 className={cn(
-            "font-bold text-[15px] truncate transition-colors",
-            isSelected ? "text-[#2222EE]" : "text-gray-900"
+            "font-bold text-[15px] truncate transition-colors text-gray-900"
           )}>
             {conversation.user.name}
           </h3>

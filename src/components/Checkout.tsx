@@ -62,6 +62,7 @@ export const Checkout = ({
   });
   const [isEditingAmount, setIsEditingAmount] = useState(false);
   const [editableAmount, setEditableAmount] = useState(parseFloat(donationBox?.monthly_amount || donationAmount.toString()));
+  const [amountInputValue, setAmountInputValue] = useState(Math.round(editableAmount).toString());
   const [showPauseModal, setShowPauseModal] = useState(false);
   const [isPauseModalVisible, setIsPauseModalVisible] = useState(false);
   const [isPauseModalAnimating, setIsPauseModalAnimating] = useState(false);
@@ -69,6 +70,7 @@ export const Checkout = ({
   const [showEditSplit, setShowEditSplit] = useState(false);
   const [showCancelConfirmModal, setShowCancelConfirmModal] = useState(false);
   const [showPaymentMethods, setShowPaymentMethods] = useState(false);
+  const [showMinAmountErrorModal, setShowMinAmountErrorModal] = useState(false);
 
   // Update showManageDonationBox when initialShowManage changes
   useEffect(() => {
@@ -78,7 +80,9 @@ export const Checkout = ({
   // Update editableAmount when donation box data changes
   useEffect(() => {
     if (donationBox?.monthly_amount) {
-      setEditableAmount(Math.round(parseFloat(donationBox.monthly_amount)));
+      const amount = Math.round(parseFloat(donationBox.monthly_amount));
+      setEditableAmount(amount);
+      setAmountInputValue(amount.toString());
     }
   }, [donationBox?.monthly_amount]);
 
@@ -397,12 +401,16 @@ export const Checkout = ({
   };
 
   const incrementAmount = () => {
-    setEditableAmount(prev => Math.round(prev) + 1);
+    const newAmount = Math.round(editableAmount) + 1;
+    setEditableAmount(newAmount);
+    setAmountInputValue(newAmount.toString());
   };
 
   const decrementAmount = () => {
     if (editableAmount > 5) {
-      setEditableAmount(prev => Math.max(5, Math.round(prev) - 1));
+      const newAmount = Math.max(5, Math.round(editableAmount) - 1);
+      setEditableAmount(newAmount);
+      setAmountInputValue(newAmount.toString());
     }
   };
 
@@ -424,6 +432,12 @@ export const Checkout = ({
   });
 
   const handleSaveAmount = () => {
+    // Enforce minimum donation amount
+    if (editableAmount < 5) {
+      setShowMinAmountErrorModal(true);
+      return;
+    }
+
     // Calculate capacity for the new amount
     const fees = calculateFeesForAmount(editableAmount);
     const net = fees.net;
@@ -442,7 +456,9 @@ export const Checkout = ({
 
   const handleCancelEdit = () => {
     if (donationBox?.monthly_amount) {
-      setEditableAmount(Math.round(parseFloat(donationBox.monthly_amount)));
+      const amount = Math.round(parseFloat(donationBox.monthly_amount));
+      setEditableAmount(amount);
+      setAmountInputValue(amount.toString());
     }
     setIsEditingAmount(false);
   };
@@ -621,10 +637,19 @@ export const Checkout = ({
                     {isEditingAmount ? (
                       <input
                         type="number"
-                        value={Math.round(editableAmount)}
+                        value={amountInputValue}
                         onChange={(e) => {
-                          const value = parseInt(e.target.value) || 5;
-                          setEditableAmount(Math.max(5, value));
+                          const val = e.target.value.replace(/[^0-9]/g, "");
+                          setAmountInputValue(val);
+                          const parsed = parseInt(val);
+                          if (!isNaN(parsed)) {
+                            setEditableAmount(parsed);
+                          } else {
+                            setEditableAmount(0);
+                          }
+                        }}
+                        onBlur={() => {
+                          // Removed automatic reset to $5 to allow user to see their value and show modal on save
                         }}
                         onKeyDown={(e) => {
                           if (e.key === 'Enter') {
@@ -1374,6 +1399,40 @@ export const Checkout = ({
         isOpen={showPaymentMethods}
         onClose={() => setShowPaymentMethods(false)}
       />
+
+      {/* Minimum Amount Error Modal */}
+      {showMinAmountErrorModal && (
+        <div
+          className="fixed inset-0 z-[70] flex items-end md:items-center justify-center"
+          onClick={() => setShowMinAmountErrorModal(false)}
+        >
+          {/* Backdrop */}
+          <div className="absolute inset-0 bg-black/50" />
+
+          {/* Modal Content */}
+          <div
+            className="relative bg-white rounded-t-2xl md:rounded-2xl shadow-xl w-full md:max-w-md m-0 md:m-4 overflow-hidden animate-in slide-in-from-bottom md:slide-in-from-center duration-200"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="p-6 text-center">
+              <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <span className="text-red-600 text-2xl font-bold">!</span>
+              </div>
+              <h2 className="text-xl font-bold text-gray-900 mb-2">Minimum Amount Required</h2>
+              <p className="text-gray-600 mb-6">
+                The minimum monthly donation amount is $5. Please increase your donation amount to continue.
+              </p>
+
+              <button
+                onClick={() => setShowMinAmountErrorModal(false)}
+                className="w-full bg-[#1600ff] hover:bg-[#1400cc] text-white font-semibold py-3 rounded-lg transition-colors"
+              >
+                Okay, I'll fix it
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
