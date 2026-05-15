@@ -540,6 +540,8 @@ export default function CreateFundraiser() {
             onClose={() => setShowShareModal(false)}
             url={window.location.origin + `/fundraiser/${encodePostId(createdFundraiser.id)}`}
             title={campaignTitle}
+            entityId={createdFundraiser.id}
+            entityType="fundraiser"
           />
         )}
 

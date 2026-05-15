@@ -495,12 +495,12 @@ export default function ProfilePage() {
                   <ProfileBio bio={userProfile.bio} />
                 )}
 
-                <div className="flex flex-col gap-2.5">
+                <div className="flex items-center justify-between gap-2.5">
                   <Button
                     onClick={handleFollowClick}
                     variant={'outline'}
                     disabled={followMutation.isPending || unfollowMutation.isPending}
-                    className="w-full h-11 border border-gray-400 rounded-lg text-base font-semibold text-gray-900 hover:bg-gray-50"
+                    className="flex-1 h-11 border border-gray-400 rounded-lg text-base font-semibold text-gray-900 hover:bg-gray-50"
                   >
                     {followMutation.isPending || unfollowMutation.isPending ? (
                       <Loader2 className="w-4 h-4 animate-spin" />
@@ -510,7 +510,7 @@ export default function ProfilePage() {
                   <Button
                     onClick={handleMessageClick}
                     disabled={messageMutation.isPending}
-                    className="w-full h-11 bg-[#2222EE] hover:bg-[#2222EE]/90 text-white rounded-lg text-base font-semibold flex items-center justify-center gap-2 shadow-sm"
+                    className="flex-1 h-11 bg-[#2222EE] hover:bg-[#2222EE]/90 text-white rounded-lg text-base font-semibold flex items-center justify-center gap-2 shadow-sm"
                   >
                     {messageMutation.isPending ? (
                       <Loader2 className="w-4 h-4 animate-spin" />
