@@ -46,6 +46,18 @@ export interface PostDetail {
   shares: number;
   isLiked?: boolean;
   mentions?: CommentMention[];
+  reposted_from?: {
+    id: number;
+    content?: string;
+    mentions?: CommentMention[];
+    user?: {
+      id: number;
+      username: string;
+      first_name?: string;
+      last_name?: string;
+      full_name?: string;
+    };
+  };
 }
 
 export interface CommentMention {

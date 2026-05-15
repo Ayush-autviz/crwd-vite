@@ -81,6 +81,7 @@ export const PopularPosts = ({
                 shares: 0, // API doesn't provide shares count
                 isLiked: post.is_liked === true, // Ensure boolean conversion
                 mentions: post.mentions,
+                reposted_from: post.reposted_from,
               };
 
               return (

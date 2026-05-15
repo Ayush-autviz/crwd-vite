@@ -1,7 +1,7 @@
 import { useNavigate, Link, useLocation } from 'react-router-dom';
 import { Card, CardContent } from '@/components/ui/card';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
-import { Heart, MessageCircle, Share2, MoreHorizontal, Trash2 } from 'lucide-react';
+import { Heart, MessageCircle, Share2, MoreHorizontal, Trash2, Repeat } from 'lucide-react';
 import dayjs from 'dayjs';
 import { useState, useRef, useEffect } from 'react';
 import { SharePost } from '@/components/ui/SharePost';
@@ -64,6 +64,18 @@ interface PostResultCardProps {
       end_date?: string;
     };
     mentions?: any[];
+    reposted_from?: {
+      id: number;
+      content?: string;
+      mentions?: any[];
+      user?: {
+        id: number;
+        username: string;
+        full_name?: string;
+        first_name?: string;
+        last_name?: string;
+      };
+    };
   };
 }
 
@@ -237,6 +249,14 @@ export default function PostResultCard({ post }: PostResultCardProps) {
       className="cursor-pointer hover:shadow-md transition-shadow border border-gray-200 bg-white rounded-lg py-3 relative"
     >
       <CardContent className="px-3 md:px-6">
+        {post.reposted_from && (
+          <div className="flex items-center gap-1.5 mb-2 px-1">
+            <Repeat className="w-3 h-3 text-gray-500" />
+            <span className="text-[10px] md:text-xs font-semibold text-gray-500 uppercase tracking-wider">
+              Reposted from {post.reposted_from.user?.full_name || post.reposted_from.user?.username || (post.reposted_from.user?.first_name ? `${post.reposted_from.user.first_name} ${post.reposted_from.user.last_name || ''}`.trim() : '')}
+            </span>
+          </div>
+        )}
         {/* User Header */}
         {/* Header Row (Avatar + Name + Collective + Ellipsis) */}
         <div className="flex items-center gap-2.5 md:gap-3 mb-3">
@@ -326,7 +346,7 @@ export default function PostResultCard({ post }: PostResultCardProps) {
             {/* Post Content */}
             {post.content && !post.fundraiser && (
               <div className="text-xs xs:text-sm md:text-base text-gray-900 mb-2.5 md:mb-3 line-clamp-3">
-                {renderContentWithMentions(post.content, post.mentions)}
+                {renderContentWithMentions(post.content, post.mentions?.length ? post.mentions : post.reposted_from?.mentions)}
               </div>
             )}
 
@@ -600,6 +620,8 @@ export default function PostResultCard({ post }: PostResultCardProps) {
           ? post.fundraiser.description || post.content
           : post.content
         }
+        entityId={post.fundraiser ? post.fundraiser.id : post.id}
+        entityType={post.fundraiser ? 'fundraiser' : 'post'}
       />
 
       {/* Toast */}

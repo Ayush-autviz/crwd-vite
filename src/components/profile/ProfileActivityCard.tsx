@@ -1,6 +1,6 @@
 
 "use client";
-import { Heart, MessageCircle, Share2 } from "lucide-react";
+import { Heart, MessageCircle, Share2, Repeat } from "lucide-react";
 import React, { useState, useEffect, useRef } from "react";
 import { CardContent } from "../ui/card";
 import { Card } from "../ui/card";
@@ -360,6 +360,15 @@ export default function ProfileActivityCard({
       >
         {/* Base padding px-4 (increased from px-3), md remains px-4 */}
         <CardContent className="px-4 md:px-4">
+          {/* Repost Header */}
+          {post.reposted_from && (
+            <div className="flex items-center gap-1.5 mb-2 px-1">
+              <Repeat className="w-3 h-3 text-gray-500" />
+              <span className="text-[10px] md:text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                Reposted from {post.reposted_from.user?.full_name || post.reposted_from.user?.username || (post.reposted_from.user?.first_name ? `${post.reposted_from.user.first_name} ${post.reposted_from.user.last_name || ''}`.trim() : '')}
+              </span>
+            </div>
+          )}
           {/* Header Row (Avatar + Name + Ellipsis) */}
           <div className="flex items-center gap-3 md:gap-3 mb-2">
             <Link to={isOwnPost ? `/profile` : `/u/${post.username}`}>
@@ -533,11 +542,11 @@ export default function ProfileActivityCard({
                 <>
                   {isPostDetail ? (
                     <div className="block text-sm md:text-sm text-gray-900 leading-6 mb-3 md:mb-3 whitespace-pre-line">
-                      {renderContentWithMentions(post.text || "", post.mentions)}
+                      {renderContentWithMentions(post.text || "", post.mentions?.length ? post.mentions : post.reposted_from?.mentions)}
                     </div>
                   ) : (
                     <Link to={`/post/${encodePostId(post.id)}`} className="block text-sm md:text-sm text-gray-900 leading-6 mb-3 md:mb-3 whitespace-pre-line">
-                      {renderContentWithMentions(post.text || "", post.mentions)}
+                      {renderContentWithMentions(post.text || "", post.mentions?.length ? post.mentions : post.reposted_from?.mentions)}
                     </Link>
                   )}
 
