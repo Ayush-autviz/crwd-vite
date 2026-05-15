@@ -119,18 +119,17 @@ export default function NewHome() {
     const uniqueUserIds = useMemo(() => {
         const notifications = allCommunityUpdates?.filter((n: any) => n.item_type === "notification") || [];
         return Array.from(new Set(
-            notifications
-                .map((notification: any) => {
-                    const data = notification.data || {};
-                    return data.donor_id ||
-                        data.follower_id ||
-                        data.creator_id ||
-                        data.new_member_id ||
-                        data.user_id ||
-                        (data.user_username && !isNaN(Number(data.user_username)) ? data.user_username : null) ||
-                        null;
-                })
-                .filter((id: any) => id !== null)
+            notifications.map((n: any) => {
+                const data = n.data || {};
+                return data.sender_id ||
+                    data.donor_id ||
+                    data.follower_id ||
+                    data.creator_id ||
+                    data.new_member_id ||
+                    data.user_id ||
+                    (data.user_username && !isNaN(Number(data.user_username)) ? data.user_username : null) ||
+                    null;
+            }).filter((id: any) => id !== null)
         )) as (string | number)[];
     }, [communityUpdatesPostsData]);
 
@@ -328,6 +327,7 @@ export default function NewHome() {
                                 site_name: item.preview_details?.site_name || item.previewDetails?.site_name,
                                 domain: item.preview_details?.domain || item.previewDetails?.domain,
                             } : undefined,
+                            reposted_from: item.reposted_from,
                             isFollowing: item.user?.id ? followingIds.has(item.user.id.toString()) : false,
                         }
                     };
@@ -342,7 +342,8 @@ export default function NewHome() {
                         username = usernameMatch[1];
                     } else {
                         // Fallback to data fields - prioritize actual username fields
-                        username = notification.data?.new_member_username ||
+                        username = (notification.data?.type === 'chat_message' ? notification.data?.sender?.username : null) ||
+                            notification.data?.new_member_username ||
                             notification.data?.follower_username ||
                             (notification.data?.user_username && isNaN(Number(notification.data.user_username)) ? notification.data.user_username : '') ||
                             notification.data?.user_username ||
@@ -379,7 +380,8 @@ export default function NewHome() {
                     }
 
                     // Extract user ID from notification data
-                    const userId = notification.data?.user_id ||
+                    const userId = notification.data?.sender_id ||
+                        notification.data?.user_id ||
                         notification.data?.donor_id ||
                         notification.data?.follower_id ||
                         notification.data?.creator_id ||
@@ -392,23 +394,34 @@ export default function NewHome() {
 
                     // Use first_name and last_name from profile, fallback to username
                     const profileUser = userProfile?.user || userProfile;
-                    let firstName = profileUser?.first_name || '';
-                    let lastName = profileUser?.last_name || '';
+                    const isChatMessage = notification.data?.type === 'chat_message';
+                    let firstName = isChatMessage
+                        ? (profileUser?.first_name || notification.data?.sender?.first_name || '')
+                        : (profileUser?.first_name || notification.user?.first_name || '');
+                    let lastName = isChatMessage
+                        ? (profileUser?.last_name || notification.data?.sender?.last_name || '')
+                        : (profileUser?.last_name || notification.user?.last_name || '');
                     let fullName = '';
 
                     if (firstName && lastName) {
                         fullName = `${firstName} ${lastName}`;
                     } else if (profileUser?.full_name) {
                         fullName = profileUser.full_name;
+                    } else if (isChatMessage && notification.data?.sender?.full_name) {
+                        fullName = notification.data.sender.full_name;
                     } else {
                         fullName = username || "Unknown User";
                     }
 
                     // Get avatar from profile if available
-                    const avatar = profileUser?.profile_picture || "";
+                    const avatar = isChatMessage
+                        ? (profileUser?.profile_picture || notification.data?.sender?.profile_picture || "")
+                        : (profileUser?.profile_picture || "");
 
                     // Extract cleaner action text
-                    let actionText = notification.body || notification.message || "";
+                    let actionText = isChatMessage
+                        ? (notification.data?.snippet || notification.body || notification.message || "")
+                        : (notification.body || notification.message || "");
                     if (actionText && username) {
                         actionText = actionText.replace(`@${username} `, "").trim();
                         actionText = actionText.charAt(0).toUpperCase() + actionText.slice(1);
@@ -452,9 +465,16 @@ export default function NewHome() {
                             postId: notification.data?.post_id || null,
                             isJoinNotification: isJoinNotification,
                             data: {
-                                profile_picture: notification.data?.user_profile_picture,
-                                color: notification.data?.user_color,
+                                profile_picture: isChatMessage
+                                    ? (profileUser?.profile_picture || notification.data?.sender?.profile_picture || null)
+                                    : (profileUser?.profile_picture || notification.data?.user_profile_picture),
+                                color: isChatMessage
+                                    ? (profileUser?.color || notification.data?.sender?.color || null)
+                                    : (profileUser?.color || notification.data?.user_color),
                                 collective_sort_name: notification.data?.collective_sort_name || notification.data?.collective?.sort_name,
+                                conversation_id: notification.data?.conversation_id,
+                                sender_id: notification.data?.sender_id,
+                                type: notification.data?.type,
                             },
                             isFollowing: userId ? followingIds.has(userId.toString()) : false,
                         }
@@ -487,6 +507,7 @@ export default function NewHome() {
                             avatarUrl: post.user.avatar,
                             color: post.user.color,
                             mentions: post.mentions,
+                            reposted_from: post.reposted_from,
                         });
                         setShowCommentsSheet(true);
                     }}

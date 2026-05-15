@@ -183,7 +183,7 @@ const Footer = ({ showOnMobile = false }: { showOnMobile?: boolean }) => {
         {/* Copyright Section - Bottom Center */}
         <div className="border-t border-gray-800 pt-6 md:pt-8">
           <div className="text-center space-y-1.5 md:space-y-2 text-[10px] md:text-xs lg:text-sm text-gray-400">
-            <p>© <span>{new Date().getFullYear()}</span> CRWD Collective.</p>
+            <p>© <span>{new Date().getFullYear()}</span> CRWD Giving Group.</p>
             <p>All donations are made to and gifted from CRWD Foundation</p>
             <p>EIN: 41-2423690</p>
           </div>

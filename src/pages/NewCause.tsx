@@ -309,6 +309,8 @@ export default function NewCausePage() {
         description={causeData?.mission || causeData?.description || 'Join us in supporting this important cause.'}
         isOpen={showShareModal}
         onClose={() => setShowShareModal(false)}
+        entityId={causeData?.id}
+        entityType="cause"
       />
 
       {/* Custom Toast */}

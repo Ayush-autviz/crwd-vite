@@ -548,7 +548,23 @@ export const Comment: React.FC<CommentProps> = ({
               {(() => {
                 // If no mentions metadata, use generic highlighter
                 if (!mentions || mentions.length === 0) {
-                  return content.split(/(@\w+)/g).map((part, index) => {
+                  const urlPattern = '(https?:\\/\\/[^\\s]+)';
+                  const regex = new RegExp(`(${urlPattern}|@\\w+)`, 'gi');
+                  return content.split(regex).map((part, index) => {
+                    if (part.match(/^https?:\/\//i)) {
+                      return (
+                        <a
+                          key={index}
+                          href={part}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-blue-600 hover:underline"
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          {part}
+                        </a>
+                      );
+                    }
                     if (part.startsWith('@')) {
                       return (
                         <span
@@ -592,13 +608,30 @@ export const Comment: React.FC<CommentProps> = ({
                 triggers.sort((a, b) => b.length - a.length);
 
                 // Add a generic trigger for any other @mentions
+                const urlPattern = '(https?:\\/\\/[^\\s]+)';
                 const triggerPattern = triggers.length > 0
-                  ? `(${triggers.map(t => t.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|')}|@\\w+)`
-                  : '(@\\w+)';
+                  ? `(${urlPattern}|${triggers.map(t => t.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|')}|@\\w+)`
+                  : `(${urlPattern}|@\\w+)`;
 
                 const regex = new RegExp(triggerPattern, 'gi');
 
                 return content.split(regex).map((part, index) => {
+                  if (!part) return null;
+                  if (part.match(/^https?:\/\//i)) {
+                    return (
+                      <a
+                        key={index}
+                        href={part}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-blue-600 hover:underline"
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        {part}
+                      </a>
+                    );
+                  }
+
                   const partLower = part.toLowerCase();
                   const mention = mentionMap[partLower];
 

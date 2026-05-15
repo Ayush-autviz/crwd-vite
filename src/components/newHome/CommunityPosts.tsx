@@ -108,6 +108,8 @@ export default function CommunityPosts({
       site_name: post.preview_details?.site_name || post.previewDetails?.site_name,
       domain: post.preview_details?.domain || post.previewDetails?.domain,
     } : undefined,
+    mentions: post.mentions,
+    reposted_from: post.reposted_from,
   }));
 
   return (

@@ -121,6 +121,7 @@ export function NotificationSummary({ update }: { update: CommunityUpdate }) {
   const actionText = update.content || "";
   const isJoinNotification = update.isJoinNotification || false;
   const isDonationNotification = !isJoinNotification && actionText.toLowerCase().includes('donated');
+  const isChatMessage = update.data?.type === 'chat_message';
 
   // Fetch joined collectives to check if user has already joined
   const { data: joinedCollectivesData } = useQuery({
@@ -183,6 +184,14 @@ export function NotificationSummary({ update }: { update: CommunityUpdate }) {
     }
   };
 
+  const handleNotificationPress = () => {
+    if (isChatMessage && update.data?.conversation_id) {
+      navigate(`/messages/${update.data.conversation_id}`);
+    } else if (update.postId) {
+      navigate(`/post/${encodePostId(update.postId)}`);
+    }
+  };
+
   const handleFollowClick = () => {
     if (update.user.id && String(currentUser?.id) !== String(update.user.id)) {
       if (isFollowing) {
@@ -231,17 +240,19 @@ export function NotificationSummary({ update }: { update: CommunityUpdate }) {
         <div className="flex items-start justify-between mb-2 md:mb-3">
           <div className="flex items-center gap-2 md:gap-3">
             {/* Avatar */}
-            <Avatar className="h-8 w-8 xs:w-9 xs:h-9 md:h-11 md:w-11 flex-shrink-0 rounded-full">
-              <AvatarImage src={update.data?.profile_picture} />
-              <AvatarFallback
-                style={{ backgroundColor: update.data?.color || '#1600ff' }}
-                className="text-white text-xs md:text-sm font-semibold"
-              >
-                {update.user.name
-                  .charAt(0)
-                  .toUpperCase()}
-              </AvatarFallback>
-            </Avatar>
+            <Link to={`/u/${update.user.username}`} className="flex-shrink-0">
+              <Avatar className="h-8 w-8 xs:w-9 xs:h-9 md:h-11 md:w-11 rounded-full">
+                <AvatarImage src={update.user.avatar || update.data?.profile_picture} />
+                <AvatarFallback
+                  style={{ backgroundColor: update.data?.color || '#1600ff' }}
+                  className="text-white text-xs md:text-sm font-semibold"
+                >
+                  {update.user.name
+                    .charAt(0)
+                    .toUpperCase()}
+                </AvatarFallback>
+              </Avatar>
+            </Link>
 
             {/* User Info */}
             <div className="flex-1 min-w-0">
@@ -326,22 +337,27 @@ export function NotificationSummary({ update }: { update: CommunityUpdate }) {
 
   // Default UI for donation and other notifications
   return (
-    <div className="bg-white rounded-lg border-0 p-2.5 md:p-4">
+    <div 
+      className={`bg-white rounded-lg border-0 p-2.5 md:p-4 ${isChatMessage ? 'cursor-pointer hover:bg-gray-50' : ''}`}
+      onClick={handleNotificationPress}
+    >
       {/* Top Section: Profile and Action Button */}
       <div className="flex items-start justify-between mb-2 md:mb-3">
         <div className="flex items-center gap-2 md:gap-3">
           {/* Avatar */}
-          <Avatar className="h-8 w-8 xs:w-9 xs:h-9 md:h-11 md:w-11 flex-shrink-0 rounded-full">
-            <AvatarImage src={update.data?.profile_picture} />
-            <AvatarFallback
-              style={{ backgroundColor: update.data?.color || '#1600ff' }}
-              className="text-white text-xs font-semibold md:text-sm"
-            >
-              {update.user.name
-                .charAt(0)
-                .toUpperCase()}
-            </AvatarFallback>
-          </Avatar>
+          <Link to={`/u/${update.user.username}`} className="flex-shrink-0">
+            <Avatar className="h-8 w-8 xs:w-9 xs:h-9 md:h-11 md:w-11 rounded-full">
+              <AvatarImage src={update.user.avatar || update.data?.profile_picture} />
+              <AvatarFallback
+                style={{ backgroundColor: update.data?.color || '#1600ff' }}
+                className="text-white text-xs font-semibold md:text-sm"
+              >
+                {update.user.name
+                  .charAt(0)
+                  .toUpperCase()}
+              </AvatarFallback>
+            </Avatar>
+          </Link>
 
           {/* User Info */}
           <div className="flex-1 min-w-0">

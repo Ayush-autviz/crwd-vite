@@ -102,6 +102,7 @@ export default function PostById() {
     shares: 0,
     isLiked: postData.is_liked || false,
     mentions: postData.mentions,
+    reposted_from: postData.reposted_from,
   } : undefined;
 
   const queryClient = useQueryClient();

@@ -11,6 +11,7 @@ import {
   Loader2,
   ArrowLeft,
   Users,
+  MessageCircle,
 } from "lucide-react";
 import { Toast } from "../components/ui/toast";
 import { useQuery, useMutation, useQueryClient, useInfiniteQuery } from "@tanstack/react-query";
@@ -24,6 +25,7 @@ import {
 } from "@/services/api/social";
 import { getUserByUsername } from "@/services/api/auth";
 import { getJoinCollective } from "@/services/api/crwd";
+import { getOrCreateConversation } from "@/services/api/chat";
 import { useAuthStore } from "@/stores/store";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import {
@@ -156,6 +158,49 @@ export default function ProfilePage() {
     } else {
       followMutation.mutate();
     }
+  };
+
+  // Start or open messaging conversation with this user
+  const messageMutation = useMutation({
+    mutationFn: () => getOrCreateConversation(effectiveUserId),
+    onSuccess: (conversation) => {
+      if (conversation?.id) {
+        navigate(`/messages/${conversation.id}`, { state: { fromProfile: true } });
+      } else {
+        const targetName = userProfile ? `${userProfile.first_name || ''} ${userProfile.last_name || ''}`.trim() : '';
+        navigate(`/messages/new-${effectiveUserId}`, {
+          state: {
+            fromProfile: true,
+            newUser: {
+              id: effectiveUserId,
+              name: targetName || userProfile?.username || "User",
+              avatar: userProfile?.profile_picture || "",
+            }
+          }
+        });
+      }
+    },
+    onError: () => {
+      const targetName = userProfile ? `${userProfile.first_name || ''} ${userProfile.last_name || ''}`.trim() : '';
+      navigate(`/messages/new-${effectiveUserId}`, {
+        state: {
+          fromProfile: true,
+          newUser: {
+            id: effectiveUserId,
+            name: targetName || userProfile?.username || "User",
+            avatar: userProfile?.profile_picture || "",
+          }
+        }
+      });
+    },
+  });
+
+  const handleMessageClick = () => {
+    if (!currentUser?.id) {
+      navigate(`/onboarding?redirectTo=${encodeURIComponent(window.location.pathname)}`);
+      return;
+    }
+    messageMutation.mutate();
   };
 
   const handleShareProfile = () => {
@@ -304,6 +349,7 @@ export default function ProfilePage() {
       site_name: post.preview_details?.site_name || post.previewDetails?.site_name,
       domain: post.preview_details?.domain || post.previewDetails?.domain,
     } : undefined,
+    reposted_from: post.reposted_from,
   })) || [];
 
   // Redirect to own profile if viewing own profile
@@ -449,16 +495,33 @@ export default function ProfilePage() {
                   <ProfileBio bio={userProfile.bio} />
                 )}
 
-                <Button
-                  onClick={handleFollowClick}
-                  variant={'outline'}
-                  disabled={followMutation.isPending || unfollowMutation.isPending}
-                  className="w-full h-11 border border-gray-400 rounded-lg text-base font-semibold text-gray-900 hover:bg-gray-50"
-                >
-                  {followMutation.isPending || unfollowMutation.isPending ? (
-                    <Loader2 className="w-4 h-4 animate-spin" />
-                  ) : isFollowing ? "Following" : "Follow"}
-                </Button>
+                <div className="flex items-center justify-between gap-2.5">
+                  <Button
+                    onClick={handleFollowClick}
+                    variant={'outline'}
+                    disabled={followMutation.isPending || unfollowMutation.isPending}
+                    className="flex-1 h-11 border border-gray-400 rounded-lg text-base font-semibold text-gray-900 hover:bg-gray-50"
+                  >
+                    {followMutation.isPending || unfollowMutation.isPending ? (
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                    ) : isFollowing ? "Following" : "Follow"}
+                  </Button>
+
+                  <Button
+                    onClick={handleMessageClick}
+                    disabled={messageMutation.isPending}
+                    className="flex-1 h-11 bg-[#2222EE] hover:bg-[#2222EE]/90 text-white rounded-lg text-base font-semibold flex items-center justify-center gap-2 shadow-sm"
+                  >
+                    {messageMutation.isPending ? (
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                    ) : (
+                      <>
+                        <MessageCircle className="w-5 h-5" />
+                        Message
+                      </>
+                    )}
+                  </Button>
+                </div>
               </section>
 
               {/* Divider */}
@@ -1100,6 +1163,8 @@ export default function ProfilePage() {
         url={`${window.location.origin}/u/${userProfile?.username || userId}`}
         title={`Check out ${userProfile?.first_name} ${userProfile?.last_name}'s profile on CRWD`}
         description={`See the causes and collectives supported by ${userProfile?.first_name} ${userProfile?.last_name} on CRWD.`}
+        entityType="profile"
+        entityId={userProfile?.id || userId}
       />
 
       {/* Toast notification */}
