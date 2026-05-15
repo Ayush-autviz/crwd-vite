@@ -22,6 +22,7 @@ interface CommentsBottomSheetProps {
     lastName?: string;
     color?: string;
     mentions?: any[];
+    reposted_from?: any;
   };
 }
 
@@ -529,65 +530,127 @@ export default function CommentsBottomSheet({
   return (
     <>
       <div
-      className={`fixed inset-0 bg-black/50 flex items-end justify-center z-100 transition-opacity duration-300 ${isAnimating ? 'opacity-100' : 'opacity-0'
-        }`}
-      onClick={handleClose}
-    >
-      <div
-        className={`bg-white rounded-t-3xl w-full h-[85vh] flex flex-col transform transition-transform duration-300 ${isAnimating ? 'translate-y-0' : 'translate-y-full'
+        className={`fixed inset-0 bg-black/50 flex items-end justify-center z-100 transition-opacity duration-300 ${isAnimating ? 'opacity-100' : 'opacity-0'
           }`}
-        style={{
-          transitionTimingFunction: 'cubic-bezier(0.25, 0.46, 0.45, 0.94)',
-        }}
-        onClick={(e) => e.stopPropagation()}
+        onClick={handleClose}
       >
-        {/* Scroll indicator */}
-        <div className="flex justify-center pt-2 pb-1 sticky top-0 bg-white z-10">
-          <div className="w-10 md:w-12 h-1.5 md:h-1 bg-gray-300 rounded-full"></div>
-        </div>
-
-        {/* Header */}
-        <div className="px-3 md:px-4 py-2.5 md:py-3 border-b border-gray-200 sticky top-0 bg-white z-10">
-          <div className="flex items-center justify-between">
-            <div className="flex-1 min-w-0">
-              <p className="text-sm text-muted-foreground truncate">
-                Commenting on <span className="font-semibold text-foreground">{postDisplayName}</span>'s {truncatedText}
-              </p>
-            </div>
-            <button
-              onClick={handleClose}
-              className="p-1.5 md:p-2 hover:bg-gray-100 rounded-full transition-colors ml-1.5 md:ml-2 flex-shrink-0"
-              aria-label="Close"
-            >
-              <X className="w-4 h-4 md:w-5 md:h-5 text-gray-700" />
-            </button>
+        <div
+          className={`bg-white rounded-t-3xl w-full h-[85vh] flex flex-col transform transition-transform duration-300 ${isAnimating ? 'translate-y-0' : 'translate-y-full'
+            }`}
+          style={{
+            transitionTimingFunction: 'cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+          }}
+          onClick={(e) => e.stopPropagation()}
+        >
+          {/* Scroll indicator */}
+          <div className="flex justify-center pt-2 pb-1 sticky top-0 bg-white z-10">
+            <div className="w-10 md:w-12 h-1.5 md:h-1 bg-gray-300 rounded-full"></div>
           </div>
-        </div>
 
-        {/* Original Post */}
-        <div className="px-3 md:px-4 py-3 md:py-4 border-b border-gray-200">
-          <div className="flex gap-2.5 md:gap-3">
-            <Avatar className="w-9 h-9 md:w-10 md:h-10 flex-shrink-0">
-              <AvatarImage src={post.avatarUrl} alt={postDisplayName} />
-              <AvatarFallback
-                style={{ backgroundColor: postAvatarColor }}
-                className="text-white font-bold text-xs md:text-sm"
-              >
-                {postUserInitials}
-              </AvatarFallback>
-            </Avatar>
-            <div className="flex-1 min-w-0">
-              <div className="flex items-center gap-1.5 md:gap-2 mb-0.5 md:mb-1">
-                <span className="font-bold text-xs md:text-sm text-foreground">{postDisplayName}</span>
+          {/* Header */}
+          <div className="px-3 md:px-4 py-2.5 md:py-3 border-b border-gray-200 sticky top-0 bg-white z-10">
+            <div className="flex items-center justify-between">
+              <div className="flex-1 min-w-0">
+                <p className="text-sm text-muted-foreground truncate">
+                  Commenting on <span className="font-semibold text-foreground">{postDisplayName}</span>'s post
+                  {/* {truncatedText} */}
+                </p>
               </div>
-              <p className="text-xs md:text-sm text-foreground whitespace-pre-line">
-                {(() => {
-                  const mentions = post.mentions || [];
-                  const content = post.text || "";
+              <button
+                onClick={handleClose}
+                className="p-1.5 md:p-2 hover:bg-gray-100 rounded-full transition-colors ml-1.5 md:ml-2 flex-shrink-0"
+                aria-label="Close"
+              >
+                <X className="w-4 h-4 md:w-5 md:h-5 text-gray-700" />
+              </button>
+            </div>
+          </div>
 
-                  if (!mentions || mentions.length === 0) {
-                    return content.split(/(@\w+)/g).map((part, index) => {
+          {/* Original Post */}
+          <div className="px-3 md:px-4 py-3 md:py-4 border-b border-gray-200">
+            <div className="flex gap-2.5 md:gap-3">
+              <Avatar className="w-9 h-9 md:w-10 md:h-10 flex-shrink-0">
+                <AvatarImage src={post.avatarUrl} alt={postDisplayName} />
+                <AvatarFallback
+                  style={{ backgroundColor: postAvatarColor }}
+                  className="text-white font-bold text-xs md:text-sm"
+                >
+                  {postUserInitials}
+                </AvatarFallback>
+              </Avatar>
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-1.5 md:gap-2 mb-0.5 md:mb-1">
+                  <span className="font-bold text-xs md:text-sm text-foreground">{postDisplayName}</span>
+                </div>
+                <p className="text-xs md:text-sm text-foreground whitespace-pre-line">
+                  {(() => {
+                    const mentions = post.mentions?.length ? post.mentions : post.reposted_from?.mentions || [];
+                    const content = post.text || "";
+
+                    if (!mentions || mentions.length === 0) {
+                      return content.split(/(@\w+)/g).map((part, index) => {
+                        if (part.startsWith('@')) {
+                          return (
+                            <span
+                              key={index}
+                              className="text-blue-600 font-medium cursor-pointer hover:underline"
+                              onClick={(e) => {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                navigate(`/u/${part.substring(1)}`);
+                              }}
+                            >
+                              {part}
+                            </span>
+                          );
+                        }
+                        return part;
+                      });
+                    }
+
+                    const mentionMap: Record<string, any> = {};
+                    const triggers: string[] = [];
+
+                    mentions.forEach(m => {
+                      const details = m.mention_details;
+                      if (details?.name) {
+                        const nameKey = `@${details.name}`.toLowerCase();
+                        mentionMap[nameKey] = m;
+                        triggers.push(`@${details.name}`);
+                      }
+                      if (details?.username) {
+                        const userKey = `@${details.username}`.toLowerCase();
+                        if (!mentionMap[userKey]) {
+                          mentionMap[userKey] = m;
+                          triggers.push(`@${details.username}`);
+                        }
+                      }
+                    });
+
+                    triggers.sort((a, b) => b.length - a.length);
+
+                    const triggerPattern = triggers.length > 0
+                      ? `(${triggers.map(t => t.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|')}|@\\w+)`
+                      : '(@\\w+)';
+
+                    const regex = new RegExp(triggerPattern, 'gi');
+
+                    return content.split(regex).map((part, index) => {
+                      const partLower = part.toLowerCase();
+                      const mention = mentionMap[partLower];
+
                       if (part.startsWith('@')) {
+                        let path = `/u/${part.substring(1)}`;
+                        if (mention) {
+                          const details = mention.mention_details;
+                          const type = (mention.mention_type || details.type || '').toLowerCase();
+                          const targetId = details.username || details.id;
+
+                          if (type === 'collective' || type === 'group') path = `/g/${targetId}`;
+                          else if (type === 'cause' || type === 'nonprofit' || type === 'organization') path = `/c/${targetId}`;
+                          else path = `/u/${targetId}`;
+                        }
+
                         return (
                           <span
                             key={index}
@@ -595,284 +658,223 @@ export default function CommentsBottomSheet({
                             onClick={(e) => {
                               e.preventDefault();
                               e.stopPropagation();
-                              navigate(`/u/${part.substring(1)}`);
+                              navigate(path);
                             }}
                           >
                             {part}
                           </span>
                         );
                       }
+
                       return part;
                     });
-                  }
-
-                  const mentionMap: Record<string, any> = {};
-                  const triggers: string[] = [];
-
-                  mentions.forEach(m => {
-                    const details = m.mention_details;
-                    if (details?.name) {
-                      const nameKey = `@${details.name}`.toLowerCase();
-                      mentionMap[nameKey] = m;
-                      triggers.push(`@${details.name}`);
-                    }
-                    if (details?.username) {
-                      const userKey = `@${details.username}`.toLowerCase();
-                      if (!mentionMap[userKey]) {
-                        mentionMap[userKey] = m;
-                        triggers.push(`@${details.username}`);
-                      }
-                    }
-                  });
-
-                  triggers.sort((a, b) => b.length - a.length);
-
-                  const triggerPattern = triggers.length > 0
-                    ? `(${triggers.map(t => t.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|')}|@\\w+)`
-                    : '(@\\w+)';
-
-                  const regex = new RegExp(triggerPattern, 'gi');
-
-                  return content.split(regex).map((part, index) => {
-                    const partLower = part.toLowerCase();
-                    const mention = mentionMap[partLower];
-
-                    if (part.startsWith('@')) {
-                      let path = `/u/${part.substring(1)}`;
-                      if (mention) {
-                        const details = mention.mention_details;
-                        const type = (mention.mention_type || details.type || '').toLowerCase();
-                        const targetId = details.username || details.id;
-
-                        if (type === 'collective' || type === 'group') path = `/g/${targetId}`;
-                        else if (type === 'cause' || type === 'nonprofit' || type === 'organization') path = `/c/${targetId}`;
-                        else path = `/u/${targetId}`;
-                      }
-
-                      return (
-                        <span
-                          key={index}
-                          className="text-blue-600 font-medium cursor-pointer hover:underline"
-                          onClick={(e) => {
-                            e.preventDefault();
-                            e.stopPropagation();
-                            navigate(path);
-                          }}
-                        >
-                          {part}
-                        </span>
-                      );
-                    }
-
-                    return part;
-                  });
-                })()}
-              </p>
+                  })()}
+                </p>
+              </div>
             </div>
           </div>
-        </div>
 
-        {/* Comments List */}
-        <div className="flex-1 overflow-y-auto px-3 md:px-4 py-3 md:py-4">
-          {isLoadingComments ? (
-            <div className="flex items-center justify-center py-6 md:py-8">
-              <Loader2 className="w-5 h-5 md:w-6 md:h-6 animate-spin text-gray-400" />
-            </div>
-          ) : comments.length === 0 ? (
-            <div className="flex flex-col items-center justify-center py-8 md:py-12">
-              <MessageCircle className="w-10 h-10 md:w-12 md:h-12 text-gray-300 mb-3 md:mb-4" />
-              <p className="text-xs md:text-sm text-muted-foreground text-center">
-                No comments yet. Be the first to comment!
-              </p>
-            </div>
-          ) : (
-            <div className="space-y-4 md:space-y-6">
-              <p className="text-xs md:text-sm text-gray-600 font-medium">
-                {comments.filter(c => !c.parentComment).length} comment{comments.filter(c => !c.parentComment).length !== 1 ? "s" : ""}
-              </p>
-              {comments
-                .filter(comment => !comment.parentComment) // Only show top-level comments
-                .map((comment) => {
-                  // Ensure replies array exists and is properly structured
-                  const commentWithReplies: CommentData = {
-                    id: comment.id,
-                    username: comment.username,
-                    firstName: comment.firstName,
-                    lastName: comment.lastName,
-                    avatarUrl: comment.avatarUrl,
-                    color: comment.color,
-                    content: comment.content,
-                    timestamp: comment.timestamp,
-                    likes: comment.likes,
-                    replies: Array.isArray(comment.replies) ? comment.replies : [],
-                    repliesCount: comment.repliesCount,
-                    parentComment: comment.parentComment,
-                    userId: comment.userId,
-                    mentions: comment.mentions,
-                  };
-
-                  const isExpanded = expandedComments.has(comment.id);
-
-                  return (
-                    <div key={comment.id}>
-                      <Comment
-                        id={commentWithReplies.id}
-                        username={commentWithReplies.username}
-                        firstName={commentWithReplies.firstName}
-                        lastName={commentWithReplies.lastName}
-                        avatarUrl={commentWithReplies.avatarUrl}
-                        color={commentWithReplies.color}
-                        content={commentWithReplies.content}
-                        timestamp={commentWithReplies.timestamp}
-                        likes={commentWithReplies.likes}
-                        replies={commentWithReplies.replies}
-                        repliesCount={commentWithReplies.repliesCount}
-                        parentComment={commentWithReplies.parentComment}
-                        userId={commentWithReplies.userId}
-                        onReply={handleReply}
-                        onLike={handleLike}
-                        onToggleReplies={toggleReplies}
-                        isExpanded={isExpanded}
-                        isLoadingReplies={loadingReplies.has(comment.id)}
-                        showReplyButton={!comment.parentComment}
-                        onDelete={(commentId) => {
-                          setComments(prev => {
-                            const filteredComments = prev.filter(c => c.id !== commentId);
-                            if (filteredComments.length === prev.length) {
-                              return prev.map(comment => ({
-                                ...comment,
-                                replies: comment.replies.filter(reply => reply.id !== commentId),
-                                repliesCount: comment.replies.filter(reply => reply.id !== commentId).length,
-                              }));
-                            }
-                            return filteredComments;
-                          });
-                          queryClient.invalidateQueries({ queryKey: ['postComments', post.id] });
-                        }}
-                        mentions={commentWithReplies.mentions}
-                      />
-                    </div>
-                  );
-                })}
-
-              {/* Show More Button for Web */}
-              {hasNextPage && (
-                <div className="flex justify-center py-4">
-                  <Button
-                    variant="outline"
-                    onClick={() => fetchNextPage()}
-                    disabled={isFetchingNextPage}
-                    className="min-w-[120px]"
-                  >
-                    {isFetchingNextPage ? (
-                      <>
-                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                        Loading...
-                      </>
-                    ) : (
-                      "Show More Comments"
-                    )}
-                  </Button>
-                </div>
-              )}
-            </div>
-          )}
-        </div>
-
-        {/* Input Bar */}
-        <div className="border-t border-gray-200 p-4 bg-white sticky bottom-0">
-          {replyingTo && (
-            <div className="flex items-center justify-between bg-gray-50 px-4 py-2 mb-2 rounded-lg border-l-4 border-blue-500">
-              <div className="flex flex-col">
-                <span className="text-xs font-semibold text-blue-600">Replying to {replyingTo.username}</span>
-                <span className="text-xs text-gray-500 line-clamp-1">{replyingTo.content}</span>
+          {/* Comments List */}
+          <div className="flex-1 overflow-y-auto px-3 md:px-4 py-3 md:py-4">
+            {isLoadingComments ? (
+              <div className="flex items-center justify-center py-6 md:py-8">
+                <Loader2 className="w-5 h-5 md:w-6 md:h-6 animate-spin text-gray-400" />
               </div>
-              <button
-                onClick={() => setReplyingTo(null)}
-                className="p-1 hover:bg-gray-200 rounded-full"
-              >
-                <X className="w-3 h-3 text-gray-500" />
-              </button>
-            </div>
-          )}
-          <form onSubmit={handleSubmit} className="flex flex-col">
-            <div className="relative flex items-center w-full">
-              <div className="absolute left-0 top-0 bottom-0 w-1 bg-[#1600ff] rounded-l-md z-10" />
-              <div className="relative w-full bg-gray-50 rounded-md">
-                {/* Mirror Div for styling mentions */}
-                <div
-                  className="absolute inset-0 py-3 pl-4 pr-4 text-base whitespace-pre-wrap break-words pointer-events-none text-transparent border-none min-h-[45px] max-h-[120px]"
-                  style={{ font: 'inherit', lineHeight: '1.5' }}
-                >
-                  {renderHighlightedText(commentText)}
-                  {commentText.endsWith('\n') ? '\n' : ''}
+            ) : comments.length === 0 ? (
+              <div className="flex flex-col items-center justify-center py-8 md:py-12">
+                <MessageCircle className="w-10 h-10 md:w-12 md:h-12 text-gray-300 mb-3 md:mb-4" />
+                <p className="text-xs md:text-sm text-muted-foreground text-center">
+                  No comments yet. Be the first to comment!
+                </p>
+              </div>
+            ) : (
+              <div className="space-y-4 md:space-y-6">
+                <p className="text-xs md:text-sm text-gray-600 font-medium">
+                  {comments.filter(c => !c.parentComment).length} comment{comments.filter(c => !c.parentComment).length !== 1 ? "s" : ""}
+                </p>
+                {comments
+                  .filter(comment => !comment.parentComment) // Only show top-level comments
+                  .map((comment) => {
+                    // Ensure replies array exists and is properly structured
+                    const commentWithReplies: CommentData = {
+                      id: comment.id,
+                      username: comment.username,
+                      firstName: comment.firstName,
+                      lastName: comment.lastName,
+                      avatarUrl: comment.avatarUrl,
+                      color: comment.color,
+                      content: comment.content,
+                      timestamp: comment.timestamp,
+                      likes: comment.likes,
+                      replies: Array.isArray(comment.replies) ? comment.replies : [],
+                      repliesCount: comment.repliesCount,
+                      parentComment: comment.parentComment,
+                      userId: comment.userId,
+                      mentions: comment.mentions,
+                    };
+
+                    const isExpanded = expandedComments.has(comment.id);
+
+                    return (
+                      <div key={comment.id}>
+                        <Comment
+                          id={commentWithReplies.id}
+                          username={commentWithReplies.username}
+                          firstName={commentWithReplies.firstName}
+                          lastName={commentWithReplies.lastName}
+                          avatarUrl={commentWithReplies.avatarUrl}
+                          color={commentWithReplies.color}
+                          content={commentWithReplies.content}
+                          timestamp={commentWithReplies.timestamp}
+                          likes={commentWithReplies.likes}
+                          replies={commentWithReplies.replies}
+                          repliesCount={commentWithReplies.repliesCount}
+                          parentComment={commentWithReplies.parentComment}
+                          userId={commentWithReplies.userId}
+                          onReply={handleReply}
+                          onLike={handleLike}
+                          onToggleReplies={toggleReplies}
+                          isExpanded={isExpanded}
+                          isLoadingReplies={loadingReplies.has(comment.id)}
+                          showReplyButton={!comment.parentComment}
+                          onDelete={(commentId) => {
+                            setComments(prev => {
+                              const filteredComments = prev.filter(c => c.id !== commentId);
+                              if (filteredComments.length === prev.length) {
+                                return prev.map(comment => ({
+                                  ...comment,
+                                  replies: comment.replies.filter(reply => reply.id !== commentId),
+                                  repliesCount: comment.replies.filter(reply => reply.id !== commentId).length,
+                                }));
+                              }
+                              return filteredComments;
+                            });
+                            queryClient.invalidateQueries({ queryKey: ['postComments', post.id] });
+                          }}
+                          mentions={commentWithReplies.mentions}
+                        />
+                      </div>
+                    );
+                  })}
+
+                {/* Show More Button for Web */}
+                {hasNextPage && (
+                  <div className="flex justify-center py-4">
+                    <Button
+                      variant="outline"
+                      onClick={() => fetchNextPage()}
+                      disabled={isFetchingNextPage}
+                      className="min-w-[120px]"
+                    >
+                      {isFetchingNextPage ? (
+                        <>
+                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                          Loading...
+                        </>
+                      ) : (
+                        "Show More Comments"
+                      )}
+                    </Button>
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+
+          {/* Input Bar */}
+          <div className="border-t border-gray-200 p-4 bg-white sticky bottom-0">
+            {replyingTo && (
+              <div className="flex items-center justify-between bg-gray-50 px-4 py-2 mb-2 rounded-lg border-l-4 border-blue-500">
+                <div className="flex flex-col">
+                  <span className="text-xs font-semibold text-blue-600">Replying to {replyingTo.username}</span>
+                  <span className="text-xs text-gray-500 line-clamp-1">{replyingTo.content}</span>
                 </div>
-                <textarea
-                  ref={inputRef}
-                  placeholder={replyingTo ? `Reply to ${replyingTo.username}...` : "Join the conversation"}
-                  value={commentText}
-                  onChange={handleTextChange}
-                  className="w-full bg-transparent border-none focus:ring-0 focus:outline-none text-base py-3 pl-4 rounded-md min-h-[45px] max-h-[120px] resize-none overflow-y-auto relative z-10 text-gray-900 caret-black"
-                  style={{
-                    color: 'rgba(0,0,0,0.4)', // Slightly transparent to let the blue show through more clearly if perfectly aligned, or use transparent if we want full custom.
-                    // Actually, let's use a subtle color or fully transparent.
-                    // Fully transparent is best if we can guarantee alignment.
-                  }}
-                  disabled={createCommentMutation.isPending || createReplyMutation.isPending || !currentUser}
-                  rows={1}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter' && !e.shiftKey) {
-                      e.preventDefault();
-                      handleSubmit(e);
-                    }
-                  }}
+                <button
+                  onClick={() => setReplyingTo(null)}
+                  className="p-1 hover:bg-gray-200 rounded-full"
+                >
+                  <X className="w-3 h-3 text-gray-500" />
+                </button>
+              </div>
+            )}
+            <form onSubmit={handleSubmit} className="flex flex-col">
+              <div className="relative flex items-center w-full">
+                <div className="absolute left-0 top-0 bottom-0 w-1 bg-[#1600ff] rounded-l-md z-10" />
+                <div className="relative w-full bg-gray-50 rounded-md">
+                  {/* Mirror Div for styling mentions */}
+                  <div
+                    className="absolute inset-0 py-3 pl-4 pr-4 text-base whitespace-pre-wrap break-words pointer-events-none text-transparent border-none min-h-[45px] max-h-[120px]"
+                    style={{ font: 'inherit', lineHeight: '1.5' }}
+                  >
+                    {renderHighlightedText(commentText)}
+                    {commentText.endsWith('\n') ? '\n' : ''}
+                  </div>
+                  <textarea
+                    ref={inputRef}
+                    placeholder={replyingTo ? `Reply to ${replyingTo.username}...` : "Join the conversation"}
+                    value={commentText}
+                    onChange={handleTextChange}
+                    className="w-full bg-transparent border-none focus:ring-0 focus:outline-none text-base py-3 pl-4 rounded-md min-h-[45px] max-h-[120px] resize-none overflow-y-auto relative z-10 text-gray-900 caret-black"
+                    style={{
+                      color: 'rgba(0,0,0,0.4)', // Slightly transparent to let the blue show through more clearly if perfectly aligned, or use transparent if we want full custom.
+                      // Actually, let's use a subtle color or fully transparent.
+                      // Fully transparent is best if we can guarantee alignment.
+                    }}
+                    disabled={createCommentMutation.isPending || createReplyMutation.isPending || !currentUser}
+                    rows={1}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' && !e.shiftKey) {
+                        e.preventDefault();
+                        handleSubmit(e);
+                      }
+                    }}
+                  />
+                </div>
+
+                <MentionSearchResults
+                  results={mentionResults}
+                  onSelect={handleMentionSelect}
                 />
               </div>
 
-              <MentionSearchResults
-                results={mentionResults}
-                onSelect={handleMentionSelect}
-              />
-            </div>
-
-            <div className="flex items-center justify-between mt-3">
-              <div className="flex items-center gap-4 text-gray-400">
-                {/* <button type="button" className="hover:text-gray-600">
+              <div className="flex items-center justify-between mt-3">
+                <div className="flex items-center gap-4 text-gray-400">
+                  {/* <button type="button" className="hover:text-gray-600">
                   <ImageIcon className="w-5 h-5" />
                 </button>
                 <button type="button" className="hover:text-gray-600">
                   <LinkIcon className="w-5 h-5" />
                 </button> */}
-              </div>
+                </div>
 
-              <button
-                type="submit"
-                disabled={!commentText.trim() || createCommentMutation.isPending || createReplyMutation.isPending || !currentUser}
-                className={`px-6 py-1.5 rounded-full font-semibold text-sm transition-colors ${commentText.trim() && !createCommentMutation.isPending && !createReplyMutation.isPending
-                  ? 'bg-[#1600ff] text-white hover:bg-[#1400cc]'
-                  : 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                  }`}
-              >
-                {createCommentMutation.isPending || createReplyMutation.isPending ? (
-                  <Loader2 className="w-4 h-4 animate-spin" />
-                ) : (
-                  'Reply'
-                )}
-              </button>
-            </div>
-          </form>
+                <button
+                  type="submit"
+                  disabled={!commentText.trim() || createCommentMutation.isPending || createReplyMutation.isPending || !currentUser}
+                  className={`px-6 py-1.5 rounded-full font-semibold text-sm transition-colors ${commentText.trim() && !createCommentMutation.isPending && !createReplyMutation.isPending
+                    ? 'bg-[#1600ff] text-white hover:bg-[#1400cc]'
+                    : 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                    }`}
+                >
+                  {createCommentMutation.isPending || createReplyMutation.isPending ? (
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                  ) : (
+                    'Reply'
+                  )}
+                </button>
+              </div>
+            </form>
+          </div>
         </div>
       </div>
-    </div>
-    <DiscardSheet
-      isOpen={showDiscardSheet}
-      onClose={() => {
-        setShowDiscardSheet(false);
-        setTimeout(() => inputRef.current?.focus(), 100);
-      }}
-      onDiscard={forceClose}
-    />
-  </>
+      <DiscardSheet
+        isOpen={showDiscardSheet}
+        onClose={() => {
+          setShowDiscardSheet(false);
+          setTimeout(() => inputRef.current?.focus(), 100);
+        }}
+        onDiscard={forceClose}
+      />
+    </>
   );
 }
 

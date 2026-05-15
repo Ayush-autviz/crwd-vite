@@ -507,6 +507,7 @@ export default function NewHome() {
                             avatarUrl: post.user.avatar,
                             color: post.user.color,
                             mentions: post.mentions,
+                            reposted_from: post.reposted_from,
                         });
                         setShowCommentsSheet(true);
                     }}
