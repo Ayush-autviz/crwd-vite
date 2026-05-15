@@ -277,6 +277,8 @@ export function MobileShareModal({
     message: "",
   });
 
+  const isPostOnly = entityType === "post" || (!entityType && url.includes("/post/") && !url.includes("/fundraiser/"));
+
   // Fetch conversations data dynamically
   const { data: convData, isLoading: isConversationsLoading } = useQuery({
     queryKey: ["share-conversations", searchQuery],
@@ -642,19 +644,21 @@ export function MobileShareModal({
         <div className="px-4 pt-4 pb-6 border-t border-gray-100 flex-shrink-0 mt-2">
           <div className="grid grid-cols-3 gap-y-5 gap-x-2 max-w-7xl mx-auto">
             {/* Repost on crwd */}
-            <div className="flex justify-center">
-              <button
-                onClick={handleRepost}
-                className="inline-flex flex-col items-center gap-1.5 cursor-pointer hover:opacity-80 transition-opacity w-auto"
-              >
-                <div className="w-11 h-11 bg-blue-50 rounded-full flex items-center justify-center">
-                  <Repeat className="w-4 h-4 text-blue-600" />
-                </div>
-                <span className="text-[10px] font-bold text-gray-800 text-center">
-                  Repost on crwd
-                </span>
-              </button>
-            </div>
+            {isPostOnly && (
+              <div className="flex justify-center">
+                <button
+                  onClick={handleRepost}
+                  className="inline-flex flex-col items-center gap-1.5 cursor-pointer hover:opacity-80 transition-opacity w-auto"
+                >
+                  <div className="w-11 h-11 bg-blue-50 rounded-full flex items-center justify-center">
+                    <Repeat className="w-4 h-4 text-blue-600" />
+                  </div>
+                  <span className="text-[10px] font-bold text-gray-800 text-center">
+                    Repost on crwd
+                  </span>
+                </button>
+              </div>
+            )}
 
             {/* Copy Link */}
             <div className="flex justify-center">

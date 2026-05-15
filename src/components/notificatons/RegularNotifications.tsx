@@ -211,14 +211,15 @@ const RegularNotifications: React.FC<RegularNotificationsProps> = ({
           .map((notification: any) => {
             const data = notification.data || {};
             const userId =
+              data.sender_id ||
               data.liker_id ||
               data.commenter_id ||
               data.mentioner_id ||
               data.follower_id ||
               data.donor_id ||
               data.new_member_id ||
-              notification.user?.id ||
               data.user_id ||
+              notification.user?.id ||
               (data.user_username && !isNaN(Number(data.user_username)) ? data.user_username : null);
             return userId;
           })
@@ -270,6 +271,7 @@ const RegularNotifications: React.FC<RegularNotificationsProps> = ({
         notification.body?.toLowerCase().includes('commented');
       const isMention = notification.title?.toLowerCase().includes('mentioned') ||
         notification.body?.toLowerCase().includes('mentioned');
+      const isChatMessage = notification.data?.type === 'chat_message';
 
       // Extract recipient name from body or title
       let collectiveName = '';
@@ -338,6 +340,7 @@ const RegularNotifications: React.FC<RegularNotificationsProps> = ({
       // Extract user info for avatar - get the user who triggered the notification
       // For likes, comments, mentions, etc., check liker_id, commenter_id, mentioner_id, etc.
       const userId =
+        notification.data?.sender_id ||
         notification.data?.user_id ||
         notification.data?.liker_id ||
         notification.data?.commenter_id ||
@@ -385,23 +388,17 @@ const RegularNotifications: React.FC<RegularNotificationsProps> = ({
       }
 
       // Get user info from fetched profile, notification.user, notification.data, or extracted from body
-      const firstName =
-        profileUser?.first_name ||
-        notification.user?.first_name ||
-        notification.data?.first_name ||
-        extractedFirstName || '';
-      const lastName =
-        profileUser?.last_name ||
-        notification.user?.last_name ||
-        notification.data?.last_name ||
-        extractedLastName || '';
-      const extractedUsername =
-        username ||
-        profileUser?.username ||
-        notification.user?.username ||
-        notification.data?.username ||
-        notification.data?.user_username ||
-        notification.data?.follower_username || '';
+      const firstName = isChatMessage
+        ? (profileUser?.first_name || notification.data?.sender?.first_name || '')
+        : (profileUser?.first_name || notification.user?.first_name || notification.data?.first_name || extractedFirstName || '');
+
+      const lastName = isChatMessage
+        ? (profileUser?.last_name || notification.data?.sender?.last_name || '')
+        : (profileUser?.last_name || notification.user?.last_name || notification.data?.last_name || extractedLastName || '');
+
+      const extractedUsername = isChatMessage
+        ? (profileUser?.username || notification.data?.sender?.username || '')
+        : (username || profileUser?.username || notification.user?.username || notification.data?.username || notification.data?.user_username || notification.data?.follower_username || '');
 
       const postId = notification.data?.post_id || notification.data?.post?.id || notification.post_id;
       const collectiveId = notification.data?.collective_id || notification.data?.collective?.id;
@@ -429,18 +426,29 @@ const RegularNotifications: React.FC<RegularNotificationsProps> = ({
       } else if (isFollower) {
         displayTitle = userFullName;
         displayDescription = 'has started following you';
+      } else if (isChatMessage) {
+        displayTitle = notification.title || (userFullName ? `New message from ${userFullName}` : 'New Message');
+        if (notification.data?.entity_type === 'image') {
+          displayDescription = 'Sent an image';
+        } else if (notification.data?.entity_type === 'fundraiser') {
+          displayDescription = 'Shared a fundraiser';
+        } else {
+          displayDescription = notification.body || 'Sent a message';
+        }
       }
 
       return {
         id: notification.id,
-        type: isDonation ? 'donation' : isNewMember ? 'new_member' : isMention ? 'mention' : isComment ? 'comment' : isLike ? 'like' : isFollower ? 'follower' : 'other',
+        type: isChatMessage ? 'chat_message' : isDonation ? 'donation' : isNewMember ? 'new_member' : isMention ? 'mention' : isComment ? 'comment' : isLike ? 'like' : isFollower ? 'follower' : 'other',
         title: displayTitle,
         description: displayDescription,
         collectiveName: collectiveName,
         memberName: memberName,
         donationAmount: donationAmount,
         time: formatTimeAgo(notification.created_at || notification.updated_at),
-        avatarUrl: notification.data?.user_profile_picture,
+        avatarUrl: isChatMessage
+          ? (profileUser?.profile_picture || notification.data?.sender?.profile_picture || '')
+          : (profileUser?.profile_picture || notification.user?.profile_picture || notification.data?.user_profile_picture || ''),
         collectiveId: collectiveId,
         collectiveSortName: collectiveSortName,
         nonprofitId: nonprofitId,
@@ -450,7 +458,10 @@ const RegularNotifications: React.FC<RegularNotificationsProps> = ({
         firstName: firstName,
         lastName: lastName,
         username: extractedUsername,
-        color: notification.data?.user_color || profileUser?.color || notification.user?.color || ""
+        color: isChatMessage
+          ? (profileUser?.color || notification.data?.sender?.color || "")
+          : (profileUser?.color || notification.data?.user_color || notification.user?.color || ""),
+        conversationId: notification.data?.conversation_id,
       };
     });
   }, [personalNotifications, userProfilesMap]);
@@ -487,7 +498,9 @@ const RegularNotifications: React.FC<RegularNotificationsProps> = ({
           key={notification.id || `regular-${idx}`}
           className={`px-3 md:px-4 py-4 md:py-6 border-b border-gray-100 last:border-b-0 ${notification.postId || notification.userId ? 'cursor-pointer hover:bg-gray-50 transition-colors' : ''}`}
           onClick={() => {
-            if (notification.postId) {
+            if (notification.type === 'chat_message' && notification.conversationId) {
+              navigate(`/messages/${notification.conversationId}`);
+            } else if (notification.postId) {
               navigate(`/post/${encodePostId(notification.postId)}`);
             } else if (notification.collectiveId) {
               navigate(`/g/${notification.collectiveSortName || notification.collectiveId}`);

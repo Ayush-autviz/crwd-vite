@@ -9,6 +9,8 @@ import { useAuthStore } from "@/stores/store";
 import { useChatSocket } from "@/hooks/useChatSocket";
 import { useQuery, useInfiniteQuery, useQueryClient } from "@tanstack/react-query";
 import { getConversations, searchConversations, getMessages, sendChatMessage, ConversationResponse, MessageResponse } from "@/services/api/chat";
+import { useNotification } from "@/contexts/NotificationContext";
+import { useChatStore } from "@/stores/chatStore";
 
 // Component imports
 import { Conversation, ChatMessage } from "@/components/messages/types";
@@ -164,6 +166,7 @@ export default function Messages() {
   // Sync state with fetched history
   useEffect(() => {
     if (historyData?.pages && !isNewConversation) {
+      console.log(`[Messages] Syncing ${allMessages.length} messages from cache to local state.`);
       const mappedMessages: ChatMessage[] = allMessages
         .filter((msg: any) => msg && msg.id != null)
         .map((msg: MessageResponse) => ({
@@ -242,13 +245,29 @@ export default function Messages() {
     setMessages([]);
   }, [selectedId]);
 
+  const { markAsRead } = useNotification();
+  const { setActiveConversationId } = useChatStore();
+
   // Invalidate queries fresh whenever a conversation route is opened
   useEffect(() => {
     if (selectedId && !isNewConversation) {
+      console.log(`[Messages] Entering conversation: ${selectedId}`);
       queryClient.invalidateQueries({ queryKey: ["messages", selectedId] });
       queryClient.invalidateQueries({ queryKey: ["conversations"] });
+      
+      // Mark as read via global socket
+      markAsRead(parseInt(selectedId));
+
+      // Set active conversation in store
+      setActiveConversationId(selectedId);
+    } else {
+      setActiveConversationId(null);
     }
-  }, [selectedId, isNewConversation, queryClient]);
+
+    return () => {
+      setActiveConversationId(null);
+    };
+  }, [selectedId, isNewConversation, queryClient, markAsRead, setActiveConversationId]);
 
 
   const handleNewMessage = useCallback((data: MessageResponse) => {

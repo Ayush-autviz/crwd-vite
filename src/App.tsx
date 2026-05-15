@@ -11,6 +11,7 @@ import posthog from 'posthog-js';
 import { PostHogProvider } from '@posthog/react';
 import Layout from "./components/Layout";
 import { FavoritesProvider } from "./contexts/FavoritesContext";
+import { NotificationProvider } from "./contexts/NotificationContext";
 import { useAuthStore } from "./stores/store";
 import Home from "./pages/Home";
 import Login from "./pages/auth/Login";
@@ -170,7 +171,8 @@ function App() {
         <ScrollToTop />
         <PostHogPageviewTracker />
         <FavoritesProvider>
-          <div className="bg-background min-h-screen">
+          <NotificationProvider>
+            <div className="bg-background min-h-screen">
             {/* <AuthRouteHandler /> */}
             <Routes>
               {/* Public routes - accessible without authentication */}
@@ -306,7 +308,8 @@ function App() {
               />
             </Routes>
             <Toaster richColors position="top-center" />
-          </div>
+            </div>
+          </NotificationProvider>
         </FavoritesProvider>
       </Router>
     </PostHogProvider>
