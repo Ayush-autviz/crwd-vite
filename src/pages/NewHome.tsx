@@ -327,6 +327,7 @@ export default function NewHome() {
                                 site_name: item.preview_details?.site_name || item.previewDetails?.site_name,
                                 domain: item.preview_details?.domain || item.previewDetails?.domain,
                             } : undefined,
+                            reposted_from: item.reposted_from,
                             isFollowing: item.user?.id ? followingIds.has(item.user.id.toString()) : false,
                         }
                     };

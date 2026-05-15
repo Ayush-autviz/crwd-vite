@@ -129,6 +129,13 @@ export const unlikePost = async (postId: string) => {
     return response.data;
 };
 
+export const repostPost = async (postId: string | number) => {
+    const response = await axiosClient.post(`/social/posts/${postId}/repost/`, {
+        post_id: postId
+    });
+    return response.data;
+};
+
 // User Followers/Following API endpoints
 export const getUserFollowers = async (userId: string) => {
     const response = await axiosClient.get(`/social/users/${userId}/followers/`);

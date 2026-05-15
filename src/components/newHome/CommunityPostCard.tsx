@@ -1,6 +1,6 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Link, useNavigate, useLocation } from "react-router-dom";
-import { Heart, MessageCircle, Share2, MoreHorizontal, Pin, Pencil, Flag, Trash2, Users } from "lucide-react";
+import { Heart, MessageCircle, Share2, MoreHorizontal, Pin, Pencil, Flag, Trash2, Users, Repeat } from "lucide-react";
 import VideoPlayer from "@/components/ui/VideoPlayer";
 import ImagePlayer from "@/components/ui/ImagePlayer";
 import dayjs from 'dayjs';
@@ -64,6 +64,7 @@ interface CommunityPostCardProps {
     mediaType?: string;
     mentions?: any[];
     isFollowing?: boolean;
+    reposted_from?: any;
   };
   onCommentPress?: (post: CommunityPostCardProps['post']) => void;
   showSimplifiedHeader?: boolean; // When true, only show name and timestamp (for collective view)
@@ -404,6 +405,16 @@ export default function CommunityPostCard({ post, onCommentPress, showSimplified
       )}
     >
       <CardContent className={cn("p-2.5 md:p-4", post.fundraiser?.is_active && "bg-[#fbfcff] p-4 rounded-t-lg")}>
+        {/* Repost Header */}
+        {post.reposted_from && (
+          <div className="flex items-center gap-1.5 mb-2 px-1">
+            <Repeat className="w-3 h-3 text-gray-500" />
+            <span className="text-[10px] md:text-xs font-semibold text-gray-500 uppercase tracking-wider">
+              Reposted from {post.reposted_from.user?.full_name || post.reposted_from.user?.username}
+            </span>
+          </div>
+        )}
+
         {/* Pinned Fundraiser Header - Only show if active and not in home feed */}
         {post.fundraiser?.is_active && !isHomeFeed && (
           <div className="flex items-center justify-between mb-2 md:mb-3">
@@ -581,7 +592,7 @@ export default function CommunityPostCard({ post, onCommentPress, showSimplified
                       >
                         {!isExpanded && canExpand ? (
                           <>
-                            {renderContentWithMentions(post.content, post.mentions, wordLimit)}
+                            {renderContentWithMentions(post.content, post.mentions?.length ? post.mentions : post.reposted_from?.mentions, wordLimit)}
                             <span
                               onClick={(e) => {
                                 e.preventDefault();
@@ -595,7 +606,7 @@ export default function CommunityPostCard({ post, onCommentPress, showSimplified
                           </>
                         ) : (
                           <>
-                            {renderContentWithMentions(post.content, post.mentions)}
+                            {renderContentWithMentions(post.content, post.mentions?.length ? post.mentions : post.reposted_from?.mentions)}
                             {isExpanded && canExpand && (
                               <span
                                 onClick={(e) => {
@@ -712,7 +723,7 @@ export default function CommunityPostCard({ post, onCommentPress, showSimplified
                     >
                       {!isExpanded && canExpand ? (
                         <>
-                          {renderContentWithMentions(post.content || "", post.mentions, wordLimit)}
+                          {renderContentWithMentions(post.content || "", post.mentions?.length ? post.mentions : post.reposted_from?.mentions, wordLimit)}
                           <span
                             onClick={(e) => {
                               e.preventDefault();
@@ -726,7 +737,7 @@ export default function CommunityPostCard({ post, onCommentPress, showSimplified
                         </>
                       ) : (
                         <>
-                          {renderContentWithMentions(post.content || "", post.mentions)}
+                          {renderContentWithMentions(post.content || "", post.mentions?.length ? post.mentions : post.reposted_from?.mentions)}
                           {isExpanded && canExpand && (
                             <span
                               onClick={(e) => {

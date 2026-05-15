@@ -241,10 +241,12 @@ import {
   sendChatMessage,
   ConversationResponse,
 } from "@/services/api/chat";
+import { repostPost } from "@/services/api/social";
 import { useAuthStore } from "@/stores/store";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { decodePostId } from "@/lib/utils";
 import { Toast } from "@/components/ui/toast";
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface MobileShareModalProps {
   isOpen: boolean;
@@ -325,12 +327,42 @@ export function MobileShareModal({
 
   const handleRepost = async () => {
     try {
-      await navigator.clipboard.writeText(url);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-      handleClose();
-    } catch {
-      console.error("Failed to repost");
+      let postIdToRepost: string | null = entityId ? entityId.toString() : null;
+
+      // If entityId isn't provided, try to extract from URL
+      if (!postIdToRepost && url.includes("/post/")) {
+        const parts = url.split("/post/");
+        if (parts.length > 1) {
+          const encoded = parts[1].split(/[/?#]/)[0];
+          if (encoded) {
+            try {
+              const decoded = decodePostId(encoded);
+              if (decoded) {
+                postIdToRepost = decoded.toString();
+              }
+            } catch {
+              // fallback below
+            }
+          }
+        }
+      }
+
+      if (!postIdToRepost) {
+        throw new Error("No post ID found to repost");
+      }
+
+      await repostPost(postIdToRepost);
+      setToastState({ show: true, message: "Post successfully reposted" });
+
+      // Delay closing to show the toast
+      setTimeout(() => {
+        setToastState(prev => ({ ...prev, show: false }));
+        handleClose();
+      }, 1500);
+    } catch (err) {
+      console.error("Failed to repost:", err);
+      setToastState({ show: true, message: "Already Reposted." });
+      setTimeout(() => setToastState(prev => ({ ...prev, show: false })), 1500);
     }
   };
 
@@ -570,73 +602,83 @@ export function MobileShareModal({
 
         {/* User / Chat Conversations List Container */}
         <div className="px-4 overflow-y-auto divide-y divide-gray-50 flex-grow min-h-[120px] max-h-[220px] scrollbar-thin scrollbar-thumb-gray-200">
-          {conversations.map((conv: ConversationResponse) => {
-            const otherUser =
-              conv.participants.find(p => p.id !== user?.id) ||
-              conv.participants[0];
-            if (!otherUser) return null;
-
-            const isSent = sentIds.has(conv.id);
-            const isCurrentSending = isSending === conv.id;
-
-            return (
-              <div
-                key={conv.id}
-                onClick={() => {
-                  if (!isSent && !isCurrentSending) {
-                    handleSendToChat(conv.id, otherUser.full_name);
-                  }
-                }}
-                className={`flex items-center justify-between py-2.5 px-2 rounded-lg transition-colors gap-2 ${isSent || isCurrentSending
-                  ? "opacity-60 cursor-default"
-                  : "cursor-pointer hover:bg-gray-50 active:bg-gray-100"
-                  }`}
-              >
-                <div className="flex items-center gap-2.5 min-w-0 flex-grow">
-                  <Avatar className="w-9 h-9 border border-gray-100 flex-shrink-0">
-                    <AvatarImage
-                      src={otherUser.profile_picture || undefined}
-                      alt={otherUser.full_name}
-                    />
-                    <AvatarFallback
-                      style={{ backgroundColor: otherUser.color || "#ccc" }}
-                      className="text-white font-bold text-xs"
-                    >
-                      {otherUser.full_name
-                        ? otherUser.full_name.charAt(0).toUpperCase()
-                        : "?"}
-                    </AvatarFallback>
-                  </Avatar>
-                  <div className="min-w-0 flex flex-col">
-                    <span className="text-xs font-bold text-gray-900 truncate">
-                      {otherUser.full_name}
-                    </span>
-                    <span className="text-[10px] font-medium text-gray-400 truncate">
-                      @{otherUser.username}
-                    </span>
+          {isConversationsLoading ? (
+            <div className="space-y-3 py-2">
+              {[1, 2, 3].map((i) => (
+                <div key={i} className="flex items-center gap-3 px-2">
+                  <Skeleton className="w-9 h-9 rounded-full" />
+                  <div className="flex flex-col gap-1.5 flex-grow">
+                    <Skeleton className="h-3 w-24 rounded" />
+                    <Skeleton className="h-2 w-16 rounded" />
                   </div>
                 </div>
-
-                {isSent && (
-                  <span className="text-[10px] font-bold text-gray-400 flex items-center gap-0.5 flex-shrink-0">
-                    <Check className="w-3 h-3 stroke-[3]" /> Sent
-                  </span>
-                )}
-                {isCurrentSending && (
-                  <span className="text-[10px] font-bold text-blue-600 animate-pulse flex-shrink-0">
-                    Sending...
-                  </span>
-                )}
-              </div>
-            );
-          })}
-
-          {conversations.length === 0 && (
-            <div className="py-8 text-center text-xs font-medium text-gray-400">
-              {isConversationsLoading
-                ? "Loading chats..."
-                : "No conversations found"}
+              ))}
             </div>
+          ) : conversations.length === 0 ? (
+            <div className="py-8 text-center text-xs font-medium text-gray-400">
+              No conversations found
+            </div>
+          ) : (
+            conversations.map((conv: ConversationResponse) => {
+              const otherUser =
+                conv.participants.find(p => p.id !== user?.id) ||
+                conv.participants[0];
+              if (!otherUser) return null;
+
+              const isSent = sentIds.has(conv.id);
+              const isCurrentSending = isSending === conv.id;
+
+              return (
+                <div
+                  key={conv.id}
+                  onClick={() => {
+                    if (!isSent && !isCurrentSending) {
+                      handleSendToChat(conv.id, otherUser.full_name);
+                    }
+                  }}
+                  className={`flex items-center justify-between py-2.5 px-2 rounded-lg transition-colors gap-2 ${isSent || isCurrentSending
+                    ? "opacity-60 cursor-default"
+                    : "cursor-pointer hover:bg-gray-50 active:bg-gray-100"
+                    }`}
+                >
+                  <div className="flex items-center gap-2.5 min-w-0 flex-grow">
+                    <Avatar className="w-9 h-9 border border-gray-100 flex-shrink-0">
+                      <AvatarImage
+                        src={otherUser.profile_picture || undefined}
+                        alt={otherUser.full_name}
+                      />
+                      <AvatarFallback
+                        style={{ backgroundColor: otherUser.color || "#ccc" }}
+                        className="text-white font-bold text-xs"
+                      >
+                        {otherUser.full_name
+                          ? otherUser.full_name.charAt(0).toUpperCase()
+                          : "?"}
+                      </AvatarFallback>
+                    </Avatar>
+                    <div className="min-w-0 flex flex-col">
+                      <span className="text-xs font-bold text-gray-900 truncate">
+                        {otherUser.full_name}
+                      </span>
+                      <span className="text-[10px] font-medium text-gray-400 truncate">
+                        @{otherUser.username}
+                      </span>
+                    </div>
+                  </div>
+
+                  {isSent && (
+                    <span className="text-[10px] font-bold text-gray-400 flex items-center gap-0.5 flex-shrink-0">
+                      <Check className="w-3 h-3 stroke-[3]" /> Sent
+                    </span>
+                  )}
+                  {isCurrentSending && (
+                    <span className="text-[10px] font-bold text-blue-600 animate-pulse flex-shrink-0">
+                      Sending...
+                    </span>
+                  )}
+                </div>
+              );
+            })
           )}
         </div>
 

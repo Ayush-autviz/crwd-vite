@@ -417,6 +417,7 @@ export default function ProfilePage() {
       site_name: post.preview_details?.site_name || post.previewDetails?.site_name,
       domain: post.preview_details?.domain || post.previewDetails?.domain,
     } : undefined,
+    reposted_from: post.reposted_from,
   })) || [];
 
   return (
